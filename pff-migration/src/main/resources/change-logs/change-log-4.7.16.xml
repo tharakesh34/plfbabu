@@ -2275,5 +2275,842 @@ UNION ALL
 		</sql>
 	</changeSet>
 
+
+<changeSet id="27" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTBRANCHES', 'Branches extract', 2, '"', '~', 0, 0, 'BranchCode,BranchDesc,BranchAddrLine1,BranchAddrLine2,BranchPOBox,BranchCity,BranchProvince,BranchCountry,BranchTel,BranchIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTBRANCHES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTBRANCHES'), 'RMTBRANCHES', 0, 'BranchCode', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchCode', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchDesc', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchAddrLine1', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchAddrLine2', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchPOBox', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchCity', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchProvince', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchCountry', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchTel', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchIsActive', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="28" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_BMTBANKDETAIL', 'Banks extract', 2, '"', '~', 0, 0, 'BankCode,BankName,Active,AccNoLength', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BMTBANKDETAIL_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_BMTBANKDETAIL'), 'BMTBANKDETAIL', 0, 'BankCode', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTBANKDETAIL' and configid = (select id from data_engine_config where name = 'ME_BMTBANKDETAIL')), 'BankCode', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTBANKDETAIL' and configid = (select id from data_engine_config where name = 'ME_BMTBANKDETAIL')), 'BankName', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTBANKDETAIL' and configid = (select id from data_engine_config where name = 'ME_BMTBANKDETAIL')), 'Active', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTBANKDETAIL' and configid = (select id from data_engine_config where name = 'ME_BMTBANKDETAIL')), 'AccNoLength', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="29" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_BANKBRANCHES', 'Bank Branches extract', 2, '"', '~', 0, 0, 'BankCode,BranchCode,BranchDesc,City,MICR,IFSC,Active,AddOfBranch', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BANKBRANCHES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_BANKBRANCHES'), 'BANKBRANCHES', 0, 'BankCode', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'BankCode', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'BranchCode', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'BranchDesc', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'City', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'MICR', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'IFSC', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'Active', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'AddOfBranch', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="30" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTCOUNTRYVSPROVINCE', 'Country States extract', 2, '"', '~', 0, 0, 'CPCountry,CPProvince,CPProvinceName,CPIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTCOUNTRYVSPROVINCE_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTCOUNTRYVSPROVINCE'), 'RMTCOUNTRYVSPROVINCE', 0, 'CPCountry', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTCOUNTRYVSPROVINCE' and configid = (select id from data_engine_config where name = 'ME_RMTCOUNTRYVSPROVINCE')), 'CPCountry', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTCOUNTRYVSPROVINCE' and configid = (select id from data_engine_config where name = 'ME_RMTCOUNTRYVSPROVINCE')), 'CPProvince', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTCOUNTRYVSPROVINCE' and configid = (select id from data_engine_config where name = 'ME_RMTCOUNTRYVSPROVINCE')), 'CPProvinceName', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTCOUNTRYVSPROVINCE' and configid = (select id from data_engine_config where name = 'ME_RMTCOUNTRYVSPROVINCE')), 'CPIsActive', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="31" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTPROVINCEVSCITY', 'State Cities extract', 2, '"', '~', 0, 0, 'PCCountry,PCProvince,PCCity,PCCityName,BankRefNo,CITYISACTIVE', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTPROVINCEVSCITY_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY'), 'RMTPROVINCEVSCITY', 0, 'PCCountry', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTPROVINCEVSCITY' and configid = (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY')), 'PCCountry', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTPROVINCEVSCITY' and configid = (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY')), 'PCProvince', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTPROVINCEVSCITY' and configid = (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY')), 'PCCity', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTPROVINCEVSCITY' and configid = (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY')), 'PCCityName', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTPROVINCEVSCITY' and configid = (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY')), 'BankRefNo', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTPROVINCEVSCITY' and configid = (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY')), 'CITYISACTIVE', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="32" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_BMTCUSTCATEGORIES', 'Customer Categories extract', 2, '"', '~', 0, 0, 'CustCtgCode,CustCtgDesc,CustCtgType,CustCtgIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BMTCUSTCATEGORIES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_BMTCUSTCATEGORIES'), 'BMTCUSTCATEGORIES', 0, 'CustCtgCode', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTCUSTCATEGORIES' and configid = (select id from data_engine_config where name = 'ME_BMTCUSTCATEGORIES')), 'CustCtgCode', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTCUSTCATEGORIES' and configid = (select id from data_engine_config where name = 'ME_BMTCUSTCATEGORIES')), 'CustCtgDesc', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTCUSTCATEGORIES' and configid = (select id from data_engine_config where name = 'ME_BMTCUSTCATEGORIES')), 'CustCtgType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTCUSTCATEGORIES' and configid = (select id from data_engine_config where name = 'ME_BMTCUSTCATEGORIES')), 'CustCtgIsActive', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="33" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTBASERATECODES', 'Base Rate Codes extract', 2, '"', '~', 0, 0, 'BRType,BRTypeDesc,BRTypeIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTBASERATECODES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTBASERATECODES'), 'RMTBASERATECODES', 0, 'BRType', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATECODES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATECODES')), 'BRType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATECODES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATECODES')), 'BRTypeDesc', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATECODES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATECODES')), 'BRTypeIsActive', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="34" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTBASERATES', 'Base Rates extract', 2, '"', '~', 0, 0, 'BRType,Currency,BREffDate,BRRate,BRTypeIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTBASERATES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTBASERATES'), 'RMTBASERATES', 0, 'BRType', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATES')), 'BRType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATES')), 'Currency', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATES')), 'BREffDate', 0, 'N', 0, 'DATE:dd/MM/yyyy');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATES')), 'BRRate', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATES')), 'BRTypeIsActive', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="35" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTSPLRATECODES', 'Special Rate Codes extract', 2, '"', '~', 0, 0, 'SRType,SRTypeDesc,SRIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTSPLRATECODES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTSPLRATECODES'), 'RMTSPLRATECODES', 0, 'SRType', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTSPLRATECODES' and configid = (select id from data_engine_config where name = 'ME_RMTSPLRATECODES')), 'SRType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTSPLRATECODES' and configid = (select id from data_engine_config where name = 'ME_RMTSPLRATECODES')), 'SRTypeDesc', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTSPLRATECODES' and configid = (select id from data_engine_config where name = 'ME_RMTSPLRATECODES')), 'SRIsActive', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="36" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTSPLRATES', 'Special Rates extract', 2, '"', '~', 0, 0, 'SRType,SREffDate,SRRate', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTSPLRATES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTSPLRATES'), 'RMTSPLRATES', 0, 'SRType', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTSPLRATES' and configid = (select id from data_engine_config where name = 'ME_RMTSPLRATES')), 'SRType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTSPLRATES' and configid = (select id from data_engine_config where name = 'ME_RMTSPLRATES')), 'SREffDate', 0, 'N', 0, 'DATE:dd/MM/yyyy');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTSPLRATES' and configid = (select id from data_engine_config where name = 'ME_RMTSPLRATES')), 'SRRate', 0, 'N', 0, 'NUMBER:###0.#########');
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="37" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_BMTPRODUCT', 'Products extract', 2, '"', '~', 0, 0, 'ProductCode,ProductDesc', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BMTPRODUCT_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_BMTPRODUCT'), 'BMTPRODUCT', 0, 'ProductCode', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTPRODUCT' and configid = (select id from data_engine_config where name = 'ME_BMTPRODUCT')), 'ProductCode', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTPRODUCT' and configid = (select id from data_engine_config where name = 'ME_BMTPRODUCT')), 'ProductDesc', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="38" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTFINANCETYPES', 'Loan Types extract', 2, '"', '~', 0, 0, 'FinType,FinCategory,FinTypeDesc,FinMaxAmount,FinMinAmount,FinIsAlwMD,FinBaseRate,FinSplRate,FinMargin,FinIntRate,FinSchdMthd,FinGrcBaseRate,FinGrcSplRate,FinGrcMargin,FinGrcIntRate,FinIsAlwGrcRepay,FinGrcSchdMthd,FinRepayMethod,FinIsAlwPartialRpy,FinIsActive,StepFinance,SteppingMandatory,AlwdStepPolicies,PlanEMIHMaxPerYear,PlanEMIHMax,PlanEMIHLockPeriod,UnPlanEMIHLockPeriod,UnPlanEMICpz,MaxUnplannedEmi,AlwUnPlanEmiHoliday,AlwMaxDisbCheckReq', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTFINANCETYPES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTFINANCETYPES'), 'ETL_RMTFINANCETYPES', 0, 'FinType', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinCategory', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinTypeDesc', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinMaxAmount', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinMinAmount', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinIsAlwMD', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinBaseRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinSplRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinMargin', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinIntRate', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinSchdMthd', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinGrcBaseRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinGrcSplRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinGrcMargin', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinGrcIntRate', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinIsAlwGrcRepay', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinGrcSchdMthd', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinRepayMethod', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinIsAlwPartialRpy', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinIsActive', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'StepFinance', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'SteppingMandatory', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'AlwdStepPolicies', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'PlanEMIHMaxPerYear', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'PlanEMIHMax', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'PlanEMIHLockPeriod', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'UnPlanEMIHLockPeriod', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'UnPlanEMICpz', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'MaxUnplannedEmi', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'AlwUnPlanEmiHoliday', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'AlwMaxDisbCheckReq', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="39" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_PROMOTIONS', 'Promotions extract', 2, '"', '~', 0, 0, 'FinType,FinCategory,FinTypeDesc,FinMaxAmount,FinMinAmount,FinIsAlwMD,FInIsAlwGrace,FinRateType,FinBaseRate,FinSplRate,FinMargin,FinIntRate,FInMinRate,FinMaxRate,FinSchdMthd,FinGrcRateType,FinGrcBaseRate,FinGrcSplRate,FinGrcMargin,FinMinTerm,FinMaxTerm,FInRepayMethod,FinIsActive,StepFinance,SteppingMandatory,AlwManualSteps,AlwdStepPolicies,DftStepPolicy,Product,StartDate,EndDate,AlwMultiPartyDisb,PlanEMIHAlw,PlanEMIHMethod,PlanEMIHMaxPerYear,PlanEMIHMax,PlanEMIHLockPeriod,UnPlanEMIHLockPeriod,UnPlanEMICpz,MaxUnplannedEmi,AlwUnPlanEmiHoliday,AlwMaxDisbCheckReq', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'PROMOTIONS_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_PROMOTIONS'), 'ETL_PROMOTIONS', 0, 'FinType', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinCategory', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinTypeDesc', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinMaxAmount', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinMinAmount', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinIsAlwMD', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FInIsAlwGrace', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinRateType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinBaseRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinSplRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinMargin', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinIntRate', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FInMinRate', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinMaxRate', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinSchdMthd', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinGrcRateType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinGrcBaseRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinGrcSplRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinGrcMargin', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinMinTerm', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinMaxTerm', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FInRepayMethod', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinIsActive', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'StepFinance', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'SteppingMandatory', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'AlwManualSteps', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'AlwdStepPolicies', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'DftStepPolicy', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'Product', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'StartDate', 0, 'N', 0, 'DATE:dd/MM/yyyy');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'EndDate', 0, 'N', 0, 'DATE:dd/MM/yyyy');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'AlwMultiPartyDisb', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'PlanEMIHAlw', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'PlanEMIHMethod', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'PlanEMIHMaxPerYear', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'PlanEMIHMax', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'PlanEMIHLockPeriod', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'UnPlanEMIHLockPeriod', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'UnPlanEMICpz', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'MaxUnplannedEmi', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'AlwUnPlanEmiHoliday', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'AlwMaxDisbCheckReq', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="40" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_FINTYPEPARTNERBANKS', 'Loan Type Partner Banks extract', 2, '"', '~', 0, 0, 'Id,FinType,Purpose,PaymentMode,PartnerBankID', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'FINTYPEPARTNERBANKS_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS'), 'FINTYPEPARTNERBANKS', 0, 'Id', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'FINTYPEPARTNERBANKS' and configid = (select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS')), 'Id', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'FINTYPEPARTNERBANKS' and configid = (select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS')), 'FinType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'FINTYPEPARTNERBANKS' and configid = (select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS')), 'Purpose', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'FINTYPEPARTNERBANKS' and configid = (select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS')), 'PaymentMode', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'FINTYPEPARTNERBANKS' and configid = (select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS')), 'PartnerBankID', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="41" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_VASPRODUCTTYPE', 'VAS Product Types extract', 2, '"', '~', 0, 0, 'PRODUCTTYPE,PRODUCTTYPEDESC,PRODUCTCTG,ACTIVE', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'VASPRODUCTTYPE_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_VASPRODUCTTYPE'), 'VASPRODUCTTYPE', 0, 'PRODUCTTYPE', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'VASPRODUCTTYPE' and configid = (select id from data_engine_config where name = 'ME_VASPRODUCTTYPE')), 'PRODUCTTYPE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'VASPRODUCTTYPE' and configid = (select id from data_engine_config where name = 'ME_VASPRODUCTTYPE')), 'PRODUCTTYPEDESC', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'VASPRODUCTTYPE' and configid = (select id from data_engine_config where name = 'ME_VASPRODUCTTYPE')), 'PRODUCTCTG', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'VASPRODUCTTYPE' and configid = (select id from data_engine_config where name = 'ME_VASPRODUCTTYPE')), 'ACTIVE', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+	<changeSet id="42" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_VASSTRUCTURE', 'VAS Structure extract', 2, '"', '~', 0, 0, 'PRODUCTCODE,PRODUCTTYPE,PRODUCTDESC,FREELOCKPERIOD,REMARKS,ACTIVE,VASFEE,ALLOWFEETOMODIFY,MANUFACTURERID', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'VASSTRUCTURE_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_VASSTRUCTURE'), 'ETL_VASSTRUCTURE', 0, 'PRODUCTCODE', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'PRODUCTCODE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'PRODUCTTYPE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'PRODUCTDESC', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'FREELOCKPERIOD', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'REMARKS', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'ACTIVE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'VASFEE', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'ALLOWFEETOMODIFY', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'MANUFACTURERID', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+	<changeSet id="43" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_AMTVEHICLEDEALER_VASMANF', 'VAS Manufacturers extract', 2, '"', '~', 0, 0, 'DEALERID,DEALERNAME,DEALERTELEPHONE,DEALERFAX,DEALERADDRESS1,DEALERADDRESS2,DEALERTYPE,DEALERADDRESS3,DEALERCOUNTRY,DEALERPROVINCE,DEALERCITY,EMAIL,POBOX,ZIPCODE,Active', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'AMTVEHICLEDEALER_VASMANF_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF'), 'ETL_VAS_MANUFACTURER', 0, 'DEALERID', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERID', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERNAME', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERTELEPHONE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERFAX', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERADDRESS1', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERADDRESS2', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERTYPE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERADDRESS3', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERCOUNTRY', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERPROVINCE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERCITY', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'EMAIL', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'POBOX', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'ZIPCODE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'Active', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+	<changeSet id="44" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_BUILDERGROUP', 'Builder Groups extract', 2, '"', '~', 0, 0, 'id,name,segmentation', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BUILDERGROUP_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_BUILDERGROUP'), 'BUILDERGROUP', 0, 'id', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERGROUP' and configid = (select id from data_engine_config where name = 'ME_BUILDERGROUP')), 'id', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERGROUP' and configid = (select id from data_engine_config where name = 'ME_BUILDERGROUP')), 'name', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERGROUP' and configid = (select id from data_engine_config where name = 'ME_BUILDERGROUP')), 'segmentation', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+	<changeSet id="45" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_BUILDERCOMPANY', 'Builder Companies extract', 2, '"', '~', 0, 0, 'id,name,segmentation,groupId', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BUILDERCOMPANY_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_BUILDERCOMPANY'), 'BUILDERCOMPANY', 0, 'id', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERCOMPANY' and configid = (select id from data_engine_config where name = 'ME_BUILDERCOMPANY')), 'id', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERCOMPANY' and configid = (select id from data_engine_config where name = 'ME_BUILDERCOMPANY')), 'name', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERCOMPANY' and configid = (select id from data_engine_config where name = 'ME_BUILDERCOMPANY')), 'segmentation', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERCOMPANY' and configid = (select id from data_engine_config where name = 'ME_BUILDERCOMPANY')), 'groupId', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+	<changeSet id="46" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_BUILDERPROJCET', 'Builder Projects extract', 2, '"', '~', 0, 0, 'id,name,builderId,apfNo', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BUILDERPROJCET_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_BUILDERPROJCET'), 'BUILDERPROJCET', 0, 'id', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERPROJCET' and configid = (select id from data_engine_config where name = 'ME_BUILDERPROJCET')), 'id', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERPROJCET' and configid = (select id from data_engine_config where name = 'ME_BUILDERPROJCET')), 'name', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERPROJCET' and configid = (select id from data_engine_config where name = 'ME_BUILDERPROJCET')), 'builderId', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERPROJCET' and configid = (select id from data_engine_config where name = 'ME_BUILDERPROJCET')), 'apfNo', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+	<changeSet id="47" author="vijaykumar.l">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_LOCALITY', 'Localities extract', 2, '"', '~', 0, 0, 'id,name,city', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'LOCALITY_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_LOCALITY'), 'LOCALITY', 0, 'id', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'LOCALITY' and configid = (select id from data_engine_config where name = 'ME_LOCALITY')), 'id', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'LOCALITY' and configid = (select id from data_engine_config where name = 'ME_LOCALITY')), 'name', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'LOCALITY' and configid = (select id from data_engine_config where name = 'ME_LOCALITY')), 'city', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+
+<changeSet id="48" author="vijaykumar.l">
+		<sql>
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_BANKBRANCHES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_BMTBANKDETAIL'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_BMTCUSTCATEGORIES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_BMTPRODUCT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_BUILDERCOMPANY'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_BUILDERGROUP'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_BUILDERPROJCET'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_LOCALITY'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_PROMOTIONS'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTBASERATECODES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTBASERATES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTBRANCHES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTCOUNTRYVSPROVINCE'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTFINANCETYPES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTSPLRATECODES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTSPLRATES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_VASPRODUCTTYPE'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_VASSTRUCTURE'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
