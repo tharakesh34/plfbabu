@@ -114,4 +114,10 @@
 			 <column name="queryId"  type="number(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="6" author="Vinay">
+		<addColumn tableName="AdtFinanceMain">
+			 <column name="EligibilityMethod" defaultValue="" type="VARCHAR(4)"/>
+		</addColumn>
+	</changeSet>
 	</databaseChangeLog>
