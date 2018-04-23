@@ -57,6 +57,8 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.authorization.AuthorizationLimit;
 import com.pennant.backend.model.authorization.AuthorizationLimitDetail;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.authorization.AuthorizationLimitService;
 import com.pennant.backend.util.PennantConstants;
@@ -550,4 +552,34 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 		} 
 
 
+		@Override
+		public AuditHeader validateFinanceAuthorizationLimit(AuditHeader auditHeader) {
+			
+			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+			FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData(); 
+			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+			
+			AuthorizationLimit authorizationLimit= getAuthorizationLimitDAO().getAuthorizationLimit(financeDetail.getUserDetails().getUserId(),"_AView");
+			AuthorizationLimitDetail authorizationLimitDetail=null;
+			String[] parameters = new String[2];
+			parameters[0] = financeDetail.getUserDetails().getFullName();
+			parameters[1] = financeMain.getLovDescFinProduct();
+			
+			if(authorizationLimit==null){
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "AUL01", parameters, null));
+			}else{	
+				authorizationLimitDetail = authorizationLimitDetailDAO.getAuthorizationLimitDetailByCode(authorizationLimit.getId(), financeMain.getLovDescFinProduct(), TableType.MAIN_TAB);	
+			}
+
+			
+			if(authorizationLimitDetail==null){
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "AUL02", parameters, null));
+			}
+
+			if(financeMain.getFinAssetValue().compareTo(authorizationLimitDetail.getLimitAmount())>0){
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "AUL03", parameters, null));
+			}
+			
+			return auditHeader;
+		}
 }

@@ -53,4 +53,5 @@ public interface AuthorizationLimitService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader,boolean hold);
 	AuditHeader doReject(AuditHeader auditHeader);
+	AuditHeader validateFinanceAuthorizationLimit(AuditHeader auditHeader);
 }

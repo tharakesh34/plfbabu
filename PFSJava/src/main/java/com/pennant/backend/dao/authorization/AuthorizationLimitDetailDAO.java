@@ -75,6 +75,7 @@ public interface AuthorizationLimitDetailDAO extends BasicCrudDao<AuthorizationL
 	 */
 	boolean isDuplicateKey(long id, long authLimitId, String code, TableType tableType);
 	List<AuthorizationLimitDetail> getListByAuthLimitId(long authLimitId, String type);
-	void deleteByAuthLimitId(long authLimitId, TableType tableType);	
+	void deleteByAuthLimitId(long authLimitId, TableType tableType);
+	AuthorizationLimitDetail getAuthorizationLimitDetailByCode(long authLimitId,String code, TableType tableType);	
 	
 }

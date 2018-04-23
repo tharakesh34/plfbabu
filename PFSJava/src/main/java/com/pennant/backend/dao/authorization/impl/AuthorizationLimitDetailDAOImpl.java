@@ -118,6 +118,43 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 	}		
 	
 	@Override
+	public AuthorizationLimitDetail getAuthorizationLimitDetailByCode(long authLimitId,String code, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" id, authLimitId, code, limitAmount, ");
+	
+		if (tableType.getSuffix().contains("View")) {
+			sql.append(" ProductDesc,CollateralDesc, " );
+		}
+	
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(" From Auth_Limit_Details");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where authLimitId=:authLimitId and code = :code");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		AuthorizationLimitDetail authorizationLimitDetail = new AuthorizationLimitDetail();
+		authorizationLimitDetail.setAuthLimitId(authLimitId);
+		authorizationLimitDetail.setCode(code);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimitDetail);
+		RowMapper<AuthorizationLimitDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AuthorizationLimitDetail.class);
+
+		try {
+			authorizationLimitDetail = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			authorizationLimitDetail = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return authorizationLimitDetail;
+	}	
+	@Override
 	public boolean isDuplicateKey(long id,long authLimitId,String code, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
