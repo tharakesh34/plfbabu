@@ -438,13 +438,13 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	 * Method for Rendering Document Details Data in finance
 	 */
 	private void appendDocumentDetailTab() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		createTab("DOCUMENTDETAIL", true);
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getTechnicalVerification().getDocuments());
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
 				getTabpanel("DOCUMENTDETAIL"), map);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private String getTabID(String id) {
@@ -479,7 +479,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	 * @param tabVisible
 	 */
 	public void createTab(String moduleID, boolean tabVisible) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String tabName = Labels.getLabel("tab_label_" + moduleID);
 		Tab tab = new Tab(tabName);
 		tab.setId(getTabID(moduleID));
@@ -491,7 +491,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight("100%");
 		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/**
@@ -778,7 +778,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	 * 
 	 **/
 	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		doRemoveValidation();
 
@@ -798,7 +798,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			}
 			throw new WrongValuesException(wvea);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/**
