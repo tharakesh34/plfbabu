@@ -880,5 +880,12 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="22" author="Vinay">
+	<sql>
+		delete from SMTPARAMETERS where sysparmcode='FEESALLOWZRO';
+		Insert into SMTPARAMETERS values ('FEESALLOWZERO','Fees allowed zero.','String','1','Y',1,0,null,null,'Fees allowed zero when calculated type is fixed amount',1,1000,'0001-07-26 00:00:00.0','Approved',null,null,null,null,null,0);
+	</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 	
