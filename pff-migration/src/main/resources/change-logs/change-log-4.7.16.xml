@@ -1891,5 +1891,11 @@ UNION ALL
 		     LEFT JOIN smtdivisiondetail t36 ON t7.findivision = t36.divisioncode
 		</createView>
 	</changeSet>
+	
+	<changeSet id="25" author="Vinay">
+		<sql>
+			Insert into RBFIELDDETAILS values ('ELGRULE','ELGRULE','eligibilityMethod','Eligibility Method to control fileds in finance','nvarchar',4,'0','1',' ','static','  ');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
