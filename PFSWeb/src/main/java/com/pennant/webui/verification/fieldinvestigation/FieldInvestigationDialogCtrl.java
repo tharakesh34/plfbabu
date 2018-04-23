@@ -499,12 +499,8 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		map.put("financeMainDialogCtrl", this);
 		map.put("isNotFinanceProcess", true);
 		map.put("moduleName", VerificationType.TV.name());
-
-		if (PennantConstants.RCD_STATUS_SUBMITTED.equals(fieldInvestigation.getRecordStatus()) || enqiryModule) {
-			map.put("isEditable", false);
-		} else {
-			map.put("isEditable", true);
-		}
+		map.put("enqiryModule", enqiryModule);
+		map.put("isEditable", !isReadOnly("FieldInvestigationDialog_Documents"));
 
 		return map;
 	}
@@ -718,7 +714,6 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		}
 
 		if (enqiryModule) {
-			// doReadOnly();
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
 		}
@@ -1138,7 +1133,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 					}
 					
 					details.setReferenceId(String.valueOf(fieldInvestigation.getVerificationId()));
-					details.setDocModule(VerificationType.TV.getCode());
+					details.setDocModule(VerificationType.FI.getCode());
 					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					details.setRecordStatus(fieldInvestigation.getRecordStatus());
