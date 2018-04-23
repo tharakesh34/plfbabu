@@ -886,6 +886,11 @@ UNION ALL
 		Insert into SMTPARAMETERS values ('FEESALLOWZERO','Fees allowed zero.','String','1','Y',1,0,null,null,'Fees allowed zero when calculated type is fixed amount',1,1000,'0001-07-26 00:00:00.0','Approved',null,null,null,null,null,0);
 	</sql>
 	</changeSet>
-	
+	<changeSet id="23" author="Jayant">
+		<sql>
+			delete from secrolegroups where grpid in (Select grpid from secgroups where grpcode='DATAENGINE_IMPORT') and roleid in (Select roleid from secroles where rolecd='DATAENGINE_IMPORT');
+			insert into secrolegroups values((Select Max(rolegrpid)+1 from secrolegroups),(Select grpid from secgroups where grpcode='DATAENGINE_IMPORT'),(Select roleid from secroles where rolecd='DATAENGINE_IMPORT'),0,'1000','2018-04-23 11:22:56','','','','','','','0');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
