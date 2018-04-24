@@ -3291,5 +3291,395 @@ delete from  reportlist  where module='Chequeheader';
 values ('ChequeHeader','ChequeHeader','listheader_FinReference.label,listheader_NoOfCheques.label,listheader_TotalAmount.label','finReference,noOfCheques,totalAmount','String,int,int',' ','ReportList03',' Cheque Maintanance',' Loan Management',3,1001,to_date('07-07-15','DD-MM-RR'),'Approved',' ',' ',' ',' ',' ',0,0);
 </sql>
 </changeSet>
+<changeSet id="25" author="Jayant">
+	<comment> New Module : AuthLimits  </comment>
+		<createTable tableName="auth_limits">
+			<column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_auth_limits"/>
+			</column>
+			<column name="limittype" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="userid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="roleid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="module" type="varchar(8)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="limitamount" type="decimal(18,0)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="startdate" type="datetime"/>
+			<column name="expirydate" type="datetime"/>
+			<column name="holdstartdate" type="datetime"/>
+			<column name="holdexpirydate" type="datetime"/>
+			<column name="active" type="boolean"/>
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="26" author="Jayant">
+		<addUniqueConstraint tableName="auth_limits" columnNames="limittype, userid, roleid, module" constraintName="uk_auth_limits"/>
+	</changeSet>
+	<changeSet id="27" author="Jayant">
+	<comment> New Module : AuthLimits</comment>
+		<createTable tableName="auth_limits_temp">
+			<column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_auth_limits_temp"/>
+			</column>
+			<column name="limittype" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="userid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="roleid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="module" type="varchar(8)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="limitamount" type="decimal(18,0)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="startdate" type="datetime"/>
+			<column name="expirydate" type="datetime"/>
+			<column name="holdstartdate" type="datetime"/>
+			<column name="holdexpirydate" type="datetime"/>
+			<column name="active" type="boolean"/>
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="28" author="Jayant">
+		<addUniqueConstraint tableName="auth_limits_temp" columnNames="limittype, userid, roleid, module" constraintName="uk_auth_limits_temp"/>
+	</changeSet>
+	<changeSet id="29" author="Jayant">
+		<comment> New Module : AuthLimits  </comment>
+		<createTable tableName="auth_limits_htemp">
+			<column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_auth_limits_htemp"/>
+			</column>
+			<column name="limittype" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="userid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="roleid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="module" type="varchar(8)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="limitamount" type="decimal(18,0)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="startdate" type="datetime"/>
+			<column name="expirydate" type="datetime"/>
+			<column name="holdstartdate" type="datetime"/>
+			<column name="holdexpirydate" type="datetime"/>
+			<column name="active" type="boolean"/>
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="30" author="Jayant">
+	<comment> New Module : AuthLimits  </comment>
+		<createTable tableName="auth_limit_details">
+			<column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_auth_limit_details"/>
+			</column>
+			<column name="authlimitid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="code" type="varchar(20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="limitamount" type="decimal(18,0)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="31" author="Jayant">
+		<addUniqueConstraint tableName="auth_limit_details" columnNames="authlimitid, code" constraintName="uk_auth_limit_details"/>
+	</changeSet>
+	<changeSet id="32" author="Jayant">
+	<comment> New Module : AuthLimits  </comment>
+		<createTable tableName="auth_limit_details_temp">
+			<column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_auth_limit_details_temp"/>
+			</column>
+			<column name="authlimitid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="code" type="varchar(20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="limitamount" type="decimal(18,0)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="33" author="Jayant">
+		<addUniqueConstraint tableName="auth_limit_details_temp" columnNames="authlimitid, code" constraintName="uk_auth_limit_details_temp"/>
+	</changeSet>
+	<changeSet id="34" author="Jayant">
+		<createSequence sequenceName="seqauth_limits" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999"/>
+	</changeSet>
+	<changeSet id="35" author="Jayant">
+		<createSequence sequenceName="seqauth_limit_details" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999"/>
+	</changeSet>
+	<changeSet id="36" author="Jayant">
+		<createView viewName="Auth_Limits_AView" replaceIfExists="true">
+		 SELECT     T1.id, T1.LimitType, T1.UserID, t2.UsrLogin, t2.UsrFName, t2.UsrMName, t2.UsrLName, T1.RoleId, t3.RoleCd, t3.RoleDesc roleName, T1.Module, 
+           T1.LimitAmount, T1.StartDate, T1.ExpiryDate, T1.HoldStartDate, T1.HoldExpiryDate, T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+           T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		   FROM       Auth_Limits T1 LEFT OUTER JOIN
+           SecRoles t3 ON T1.RoleId = t3.RoleID LEFT OUTER JOIN
+           SecUsers t2 ON T1.UserID = t2.UsrID
+		</createView>
+	</changeSet>
+	<changeSet id="37" author="Jayant">
+		<createView viewName="Auth_Limits_View" replaceIfExists="true">
+			SELECT     T1.id, T1.LimitType, T1.UserID, t2.UsrLogin, t2.UsrFName, t2.UsrMName, t2.UsrLName, T1.RoleId, t3.RoleCd, t3.RoleDesc roleName, T1.Module, 
+           T1.LimitAmount, T1.StartDate, T1.ExpiryDate, T1.HoldStartDate, T1.HoldExpiryDate, T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+           T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM       Auth_Limits_Temp T1 LEFT OUTER JOIN
+           SecRoles t3 ON T1.RoleId = t3.RoleID LEFT OUTER JOIN
+           SecUsers t2 ON T1.UserID = t2.UsrID
+			UNION ALL
+
+			SELECT     T1.id, T1.LimitType, T1.UserID, t2.UsrLogin, t2.UsrFName, t2.UsrMName, t2.UsrLName, T1.RoleId, t3.RoleCd, t3.RoleDesc roleName, T1.Module, 
+           T1.LimitAmount, T1.StartDate, T1.ExpiryDate, T1.HoldStartDate, T1.HoldExpiryDate, T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+           T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM       Auth_Limits T1 LEFT OUTER JOIN
+           SecRoles t3 ON T1.RoleId = t3.RoleID LEFT OUTER JOIN
+           SecUsers t2 ON T1.UserID = t2.UsrID
+			WHERE     NOT EXISTS (SELECT 1 FROM Auth_Limits_TEMP WHERE id = T1.id)
+		</createView>
+	</changeSet>
+	<changeSet id="38" author="Jayant">
+		<createView viewName="Auth_Limits_HView" replaceIfExists="true">
+			SELECT     T1.id, T1.LimitType, T1.UserID, t2.UsrLogin, t2.UsrFName, t2.UsrMName, t2.UsrLName, T1.RoleId, t3.RoleCd, t3.RoleDesc roleName, T1.Module, 
+           T1.LimitAmount, T1.StartDate, T1.ExpiryDate, T1.HoldStartDate, T1.HoldExpiryDate, T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+           T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM       Auth_Limits_HTemp T1 LEFT OUTER JOIN
+           SecRoles t3 ON T1.RoleId = t3.RoleID LEFT OUTER JOIN
+           SecUsers t2 ON T1.UserID = t2.UsrID
+		UNION ALL
+
+			SELECT     T1.id, T1.LimitType, T1.UserID, t2.UsrLogin, t2.UsrFName, t2.UsrMName, t2.UsrLName, T1.RoleId, t3.RoleCd, t3.RoleDesc roleName, T1.Module, 
+           T1.LimitAmount, T1.StartDate, T1.ExpiryDate, T1.HoldStartDate, T1.HoldExpiryDate, T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+           T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM       Auth_Limits T1 LEFT OUTER JOIN
+           SecRoles t3 ON T1.RoleId = t3.RoleID LEFT OUTER JOIN
+           SecUsers t2 ON T1.UserID = t2.UsrID
+			WHERE     NOT EXISTS (SELECT 1 FROM Auth_Limits_HTEMP WHERE id = T1.id)
+		</createView>
+	</changeSet>
+	<changeSet id="39" author="Jayant">
+		<createView viewName="Auth_Limit_Details_AView" replaceIfExists="true">
+			SELECT     T1.id, T1.AuthLimitId, T1.Code, T2.ProductDesc, T3.CollateralDesc, T1.LimitAmount, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
+           T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
+           BMTProduct T2 ON T1.Code = T2.ProductCode LEFT OUTER JOIN
+           CollateralStructure T3 ON T1.Code = T3.CollateralType
+		</createView>
+	</changeSet>
+	<changeSet id="40" author="Jayant">
+		<createView viewName="Auth_Limit_Details_View" replaceIfExists="true">
+			SELECT     T1.id, T1.AuthLimitId, T1.Code, T2.ProductDesc, T3.CollateralDesc, T1.LimitAmount, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
+           T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM       Auth_Limit_Details_Temp T1 LEFT OUTER JOIN
+           BMTProduct T2 ON T1.Code = T2.ProductCode LEFT OUTER JOIN
+           CollateralStructure T3 ON T1.Code = T3.CollateralType
+			UNION ALL
+			SELECT     T1.id, T1.AuthLimitId, T1.Code, T2.ProductDesc, T3.CollateralDesc, T1.LimitAmount, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
+           T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
+           BMTProduct T2 ON T1.Code = T2.ProductCode LEFT OUTER JOIN
+           CollateralStructure T3 ON T1.Code = T3.CollateralType
+			WHERE     NOT EXISTS (SELECT 1 FROM Auth_Limit_Details_Temp WHERE id = T1.id)
+		</createView>
+	</changeSet>
+	<changeSet id="41" author="Jayant">
+		<sql>
+			update SeqSecGroups set seqno = (Select Max(grpid)+1 from Secgroups);
+			update SeqSecRights set seqno = (Select Max(rightid)+1 from SecRights);
+			update SeqSecGroupRights set seqno = (Select Max(grprightid)+1 from SecGroupRights);
+			update SeqSecRoleGroups set seqno = (Select Max(rolegrpid)+1 from SecRoleGroups);
+			
+			INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'FIN_USER_AUTHORIZATIONLIMIT_MAKER', 'Finance User AuthorizationLimit Maker', 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'FIN_USER_AUTHORIZATIONLIMIT_APPROVER', 'Finance User AuthorizationLimit Approver', 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'FIN_ROLE_AUTHORIZATIONLIMIT_MAKER', 'Finance Role AuthorizationLimit Maker', 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+4) from SeqSecGroups), 'FIN_ROLE_AUTHORIZATIONLIMIT_APPROVER', 'Finance Role AuthorizationLimit Approver ', 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+5) from SeqSecGroups), 'FIN_USER_AUTHORIZATIONLIMIT_HOLD_MAKER', 'Finance User AuthorizationLimit Hold Maker ', 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+6) from SeqSecGroups), 'FIN_USER_AUTHORIZATIONLIMIT_HOLD_APPROVER', 'Finance User AuthorizationLimit Hold Approver', 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+7) from SeqSecGroups), 'FIN_ROLE_AUTHORIZATIONLIMIT_HOLD_MAKER', 'Finance Role AuthorizationLimit Hold Maker', 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+8) from SeqSecGroups), 'FIN_ROLE_AUTHORIZATIONLIMIT_HOLD_APPROVER', 'Finance Role AuthorizationLimit Hold Approver', 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			
+			INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),0,'menu_Category_AuthorizationLimit','MENU',0,1000,'2018-04-06  04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+2) from SeqSecRights),0,'menu_Category_FinanceAuthorizationLimit','MENU',0,1000,'2018-04-06  04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menu_Item_FinanceUserAuthorizationLimit','MENU',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menu_Item_FinanceRoleAuthorizationLimit','MENU',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),0,'menuItem_Authorization_FinanceUserAuthorizationLimitHold','MENU',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),0,'menuItem_Authorization_FinanceRoleAuthorizationLimitHold','MENU',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			
+			INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_AuthorizationLimitList_PrintList','AuthorizationLimitList',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_AuthorizationLimitList_NewAuthorizationLimit','AuthorizationLimitList',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_AuthorizationLimitDialog_btnNew','AuthorizationLimitDialog',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_AuthorizationLimitDialog_btnEdit','AuthorizationLimitDialog',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+11) from SeqSecRights),2,'button_AuthorizationLimitDialog_btnDelete','AuthorizationLimitDialog',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+12) from SeqSecRights),2,'button_AuthorizationLimitDialog_btnSave','AuthorizationLimitDialog',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			
+			INSERT INTO SecRights SELECT (select (SeqNo+12+1) from SeqSecRights),3,'AuthorizationLimitDialog_UserID','AuthorizationLimitDialog',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+12+2) from SeqSecRights),3,'AuthorizationLimitDialog_RoleId','AuthorizationLimitDialog',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+12+3) from SeqSecRights),3,'AuthorizationLimitDialog_LimitAmount','AuthorizationLimitDialog',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+12+4) from SeqSecRights),3,'AuthorizationLimitDialog_StartDate','AuthorizationLimitDialog',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+12+5) from SeqSecRights),3,'AuthorizationLimitDialog_ExpiryDate','AuthorizationLimitDialog',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+12+6) from SeqSecRights),3,'AuthorizationLimitDialog_HoldStartDate','AuthorizationLimitDialog',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+12+7) from SeqSecRights),3,'AuthorizationLimitDialog_HoldExpiryDate','AuthorizationLimitDialog',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+12+8) from SeqSecRights),3,'AuthorizationLimitDialog_Active','AuthorizationLimitDialog',0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			
+
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+1) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+2) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+3) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+4) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+5) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+11) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+6) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+12) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+7) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+12+1) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+8) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+12+3) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+9) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+12+4) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+10) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+12+5) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+11) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+12+8) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+			
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+12) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+1) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+13) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+2) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+14) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+15) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+12) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+1) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+2) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+11) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+21) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+12) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+22) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+12+2) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+23) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+12+3) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+24) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+12+4) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+25) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+12+5) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+26) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+12+8) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+27) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+1) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+28) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+2) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+29) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+30) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+12) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+31) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+1) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+32) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+2) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+33) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+5) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+34) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+12) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+35) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+12+6) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+36) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+12+7) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+37) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+1) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+38) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+2) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+39) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+5) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+40) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+11) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+41) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+1) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+42) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+2) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+43) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+44) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+12) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+45) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+12+6) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+56) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+12+7) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+57) from SeqSecGroupRights), (select (SeqNo+8) from SeqSecGroups), (select (SeqNo+1) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+58) from SeqSecGroupRights), (select (SeqNo+8) from SeqSecGroups), (select (SeqNo+2) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+59) from SeqSecGroupRights), (select (SeqNo+8) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+60) from SeqSecGroupRights), (select (SeqNo+8) from SeqSecGroups), (select (SeqNo+11) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			update SeqSecGroupRights set SeqNo = (SeqNo+60);
+			<!--
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+1) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+3) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+4) from SeqSecRoleGroups), (select (SeqNo+4) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+5) from SeqSecRoleGroups), (select (SeqNo+5) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+6) from SeqSecRoleGroups), (select (SeqNo+6) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+7) from SeqSecRoleGroups), (select (SeqNo+7) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+8) from SeqSecRoleGroups), (select (SeqNo+8) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			-->
+			update SeqSecRoleGroups set SeqNo = (SeqNo+2) ;
+			
+			update SeqSecGroups set SeqNo = (SeqNo+8) ;
+			update SeqSecRights set SeqNo = (SeqNo+12+8) ;
+		</sql>
+	
+	</changeSet>
 </databaseChangeLog>
 	

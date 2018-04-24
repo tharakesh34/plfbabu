@@ -128,4 +128,101 @@
 		<column name="accHolderName" type="VARCHAR(200)"></column>
 	</addColumn>
 </changeSet>
+<changeSet id="11" author="Jayant">
+		<createTable tableName="adtauth_limits">
+			<column name="auditid" type="bigint">
+				<constraints nullable="false"/>			
+			</column>
+			<column name="auditdate" type="datetime">
+				<constraints nullable="false"/>	
+			</column>
+			<column name="auditseq" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="auditimage" type="varchar(10)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="limittype" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="userid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="roleid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="module" type="varchar(8)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="limitamount" type="decimal(18,0)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="startdate" type="datetime"/>
+			<column name="expirydate" type="datetime"/>
+			<column name="holdstartdate" type="datetime"/>
+			<column name="holdexpirydate" type="datetime"/>
+			<column name="active" type="boolean"/>
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="12" author="Jayant">
+		<addPrimaryKey tableName="adtauth_limits" columnNames="auditid, auditdate, auditseq, auditimage" constraintName="pk_adtauth_limits"/>
+	</changeSet>
+	<changeSet id="13" author="Jayant">
+		<createTable tableName="adtauth_limit_details">
+			<column name="auditid" type="bigint">
+				<constraints nullable="false"/>			
+			</column>
+			<column name="auditdate" type="datetime">
+				<constraints nullable="false"/>	
+			</column>
+			<column name="auditseq" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="auditimage" type="varchar(10)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="authlimitid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="code" type="varchar(20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="limitamount" type="decimal(18,0)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="14" author="Jayant">
+		<addPrimaryKey tableName="adtauth_limit_details" columnNames="auditid, auditdate, auditseq, auditimage" constraintName="pk_adtauth_limit_details"/>
+	</changeSet>
 	</databaseChangeLog>
