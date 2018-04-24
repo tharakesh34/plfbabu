@@ -280,6 +280,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinanceTaxDetailService			financeTaxDetailService;
 	
 	private ExtendedFieldDetailsService		extendedFieldDetailsService;
+	@Autowired
 	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
 	private ExtendedFieldDetailDAO			extendedFieldDetailDAO;
 
