@@ -3664,9 +3664,9 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+60) from SeqSecGroupRights), (select (SeqNo+8) from SeqSecGroups), (select (SeqNo+11) from SeqSecRights),1,0,10000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 			
 			update SeqSecGroupRights set SeqNo = (SeqNo+60);
-			<!--
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+1) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			<!--
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+3) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+4) from SeqSecRoleGroups), (select (SeqNo+4) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+5) from SeqSecRoleGroups), (select (SeqNo+5) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
