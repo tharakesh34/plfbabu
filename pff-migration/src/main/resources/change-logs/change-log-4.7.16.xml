@@ -3695,5 +3695,12 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		</sql>	
 	</changeSet>
 
+	<changeSet id="44" author="Vinay">
+		<sql>
+			delete from SMTPARAMETERS where sysparmcode='ELGMETHOD';
+			Insert into SMTPARAMETERS values ('ELGMETHOD','Eligibility Method field visibility','String','1','Y',1,0,null,null,'Eligibility Method field visibility for Pofectus only.',1,1000,'0001-07-26
+			00:00:00.0','Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
