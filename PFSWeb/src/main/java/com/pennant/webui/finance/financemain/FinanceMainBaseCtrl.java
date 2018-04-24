@@ -9330,7 +9330,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//FinanceMain Detail Tab ---> 1. Basic Details
 		if(isBranchanged){
-			aFinanceMain.setSwiftBranchCode(branchSwiftCode);			
+			aFinanceMain.setSwiftBranchCode(branchSwiftCode);
+			aFinanceMain.setFinBranch(this.finBranch.getValue());
 		}else{
 			aFinanceMain.setSwiftBranchCode(getFinanceDetail().getCustomerDetails().getCustomer().getCustSwiftBrnCode());
 		}
