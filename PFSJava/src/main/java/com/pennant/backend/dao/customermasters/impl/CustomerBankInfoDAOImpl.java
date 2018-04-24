@@ -483,4 +483,34 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
+	
+	@Override
+	public CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(long custId){
+		logger.debug("Entering");
+		CustomerBankInfo customerBankInfo = new CustomerBankInfo();
+		customerBankInfo.setCustID(custId);
+		StringBuilder selectSql = new StringBuilder();	
+		selectSql.append("select coalesce(sum(CreditTranNo),0) as CreditTranNo ,coalesce(sum(CreditTranAmt),0) as CreditTranAmt, coalesce(sum(CreditTranAvg),0) as CreditTranAvg, coalesce(sum(DebitTranNo),0) as DebitTranNo,");
+		selectSql.append("coalesce(sum(DebitTranAmt),0) as DebitTranAmt, coalesce(sum(CashDepositNo),0) CashDepositNo, coalesce(sum(CashDepositAmt),0) as CashDepositAmt, coalesce(sum(CashWithdrawalNo),0) as CashWithdrawalNo,");
+		selectSql.append("coalesce(sum(CashWithdrawalAmt),0) as CashWithdrawalAmt, coalesce(sum(ChqDepositNo),0) as ChqDepositNo, coalesce(sum(ChqDepositAmt),0) as ChqDepositAmt, coalesce(sum(ChqIssueNo),0) as ChqIssueNo,");
+		selectSql.append("coalesce(sum(ChqIssueAmt),0) as ChqIssueAmt, coalesce(sum(InwardChqBounceNo),0) as InwardChqBounceNo, coalesce(sum(OutwardChqBounceNo),0) as OutwardChqBounceNo,");
+		selectSql.append("coalesce(sum (EodBalMin),0) as EodBalMin, coalesce(sum(EodBalMax),0) as EodBalMax, coalesce(sum(EodBalAvg),0) as EodBalAvg");
+		selectSql.append(" FROM  CustomerBankInfo");
+		selectSql.append(" Where CustID = :CustID");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
+		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
+				CustomerBankInfo.class);
+
+		try{
+			customerBankInfo = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+					beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			customerBankInfo = null;
+		}
+		logger.debug("Leaving");
+		return customerBankInfo;
+	}
 }

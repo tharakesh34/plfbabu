@@ -89,10 +89,10 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditReviewDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
@@ -190,6 +190,32 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	boolean showCurrentYear;
 	int notesEnteredCount;
 	int noOfRecords;
+	private BigDecimal sumOfEMI  = BigDecimal.ZERO;
+	private BigDecimal firstRepay = BigDecimal.ZERO;
+	private BigDecimal finAmount = BigDecimal.ZERO;
+	private BigDecimal finAssetValue = BigDecimal.ZERO;
+	private BigDecimal repayProfitRate = BigDecimal.ZERO;
+	private int	roundingTarget = 0;
+	private int numberOfTerms = 0;
+	private String creditTranNo;
+	private String creditTranAmt;
+	private String creditTranAvg;
+	private String debitTranNo;
+	private String debitTranAmt;
+	private String cashDepositNo;
+	private String cashDepositAmt;
+	private String cashWithdrawalNo;
+	private String cashWithdrawalAmt;
+	private String chqDepositNo;
+	private String chqDepositAmt;
+	private String chqIssue;
+	private String chqIssueAmt;
+	private String inwardChqBounceNo;
+	private String outwardChqBounceNo;
+	private String eodBalAvg;
+	private String eodBalMax;
+	private String eodBalMin;
+	HashMap<String, String> extendedDataMap = new HashMap<String, String>();
 	/**
 	 * default constructor.<br>
 	 */
@@ -212,6 +238,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 */
 	public void onCreate$window_CreditApplicationReviewDialog(Event event) throws Exception {
 		logger.debug("Entering");
+		logger.debug("TIME MILLI SECONDS ENTERING"+System.currentTimeMillis());
+
 
 		// Set the page level components.
 		setPageComponents(window_CreditApplicationReviewDialog);
@@ -229,6 +257,107 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				year = this.toYear.getValue();
 				if(arguments.containsKey("facility")){
 					isEnquiry = true;
+				}
+				// This data is expected to come from Finance Main Dialog (Mainly Loan Details, banking details and obligations)
+				if(arguments.containsKey("creditTranNo")) {
+					creditTranNo = (String)arguments.get("creditTranNo");
+					extendedDataMap.put("EXT_CREDITTRANNO",creditTranNo);
+				}
+				if(arguments.containsKey("creditTranAmt")) {
+					creditTranAmt = (String)arguments.get("creditTranAmt");
+					extendedDataMap.put("EXT_CREDITTRANAMT",creditTranAmt);
+				}
+				if(arguments.containsKey("creditTranAvg")) {
+					creditTranAvg = (String)arguments.get("creditTranAvg");
+					extendedDataMap.put("EXT_CREDITTRANAVG",creditTranAvg);
+				}
+				if(arguments.containsKey("debitTranNo")) {
+					debitTranNo = (String)arguments.get("debitTranNo");
+					extendedDataMap.put("EXT_DEBITTRANNO",debitTranNo);
+				}
+				if(arguments.containsKey("debitTranAmt")) {
+					debitTranAmt = (String)arguments.get("debitTranAmt");
+					extendedDataMap.put("EXT_DEBITTRANAMT",debitTranAmt);
+				}
+				if(arguments.containsKey("cashDepositNo")) {
+					cashDepositNo = (String)arguments.get("cashDepositNo");
+					extendedDataMap.put("EXT_CASHDEPOSITNO",cashDepositNo);
+				}
+				if(arguments.containsKey("cashDepositAmt")) {
+					cashDepositAmt = (String)arguments.get("cashDepositAmt");
+					extendedDataMap.put("EXT_CASHDEPOSITAMT",cashDepositAmt);
+				}
+				if(arguments.containsKey("cashWithdrawalNo")) {
+					cashWithdrawalNo = (String)arguments.get("cashWithdrawalNo");
+					extendedDataMap.put("EXT_CASHWITHDRAWALNO",cashWithdrawalNo);
+				}
+				if(arguments.containsKey("cashWithdrawalAmt")) {
+					cashWithdrawalAmt = (String)arguments.get("cashWithdrawalAmt");
+					extendedDataMap.put("EXT_CASHWITHDRAWALAMT",cashWithdrawalAmt);
+				}
+				if(arguments.containsKey("chqDepositNo")) {
+					chqDepositNo = (String)arguments.get("chqDepositNo");
+					extendedDataMap.put("EXT_CHQDEPOSITNO",chqDepositNo);
+				}
+				if(arguments.containsKey("chqDepositAmt")) {
+					chqDepositAmt = (String)arguments.get("chqDepositAmt");
+					extendedDataMap.put("EXT_CHQDEPOSITAMT",chqDepositAmt);
+				}
+				if(arguments.containsKey("chqIssue")) {
+					chqIssue = (String)arguments.get("chqIssue");
+					extendedDataMap.put("EXT_CHQISSUENO",chqIssue);
+				}
+				if(arguments.containsKey("chqIssueAmt")) {
+					chqIssueAmt = (String)arguments.get("chqIssueAmt");
+					extendedDataMap.put("EXT_CHQISSUEAMT",chqIssueAmt);
+				}
+				if(arguments.containsKey("inwardChqBounceNo")) {
+					inwardChqBounceNo = (String)arguments.get("inwardChqBounceNo");
+					extendedDataMap.put("EXT_INWARDCHQBOUNCENO",inwardChqBounceNo);
+				}
+				if(arguments.containsKey("outwardChqBounceNo")) {
+					outwardChqBounceNo = (String)arguments.get("outwardChqBounceNo");
+					extendedDataMap.put("EXT_OUTWARDCHQBOUNCENO",outwardChqBounceNo);
+				}
+				if(arguments.containsKey("eodBalAvg")) {
+					eodBalAvg = (String)arguments.get("eodBalAvg");
+					extendedDataMap.put("EXT_EODBALAVG",eodBalAvg);
+				}
+				if(arguments.containsKey("eodBalMax")) {
+					eodBalMax = (String)arguments.get("eodBalMax");
+					extendedDataMap.put("EXT_EODBALMAX",eodBalMax);
+				}
+				if(arguments.containsKey("eodBalMin")) {
+					eodBalMin = (String)arguments.get("eodBalMin");
+					extendedDataMap.put("EXT_EODBALMIN",eodBalMin);
+				}
+				if(arguments.containsKey("sumOfEMI")) {
+					sumOfEMI = (BigDecimal)arguments.get("sumOfEMI");
+					extendedDataMap.put("EXT_OBLIGATION",sumOfEMI.toString());
+				}
+				if(arguments.containsKey("numberOfTerms")) {
+					numberOfTerms = (int)arguments.get("numberOfTerms");
+					extendedDataMap.put("EXT_NUMBEROFTERMS",String.valueOf(numberOfTerms));
+				}
+				if(arguments.containsKey("repayProfitRate")) {
+					repayProfitRate = (BigDecimal)arguments.get("repayProfitRate");
+					extendedDataMap.put("EXT_REPAYPROFITRATE",String.valueOf(repayProfitRate));
+				}
+				if(arguments.containsKey("roundingTarget")) {
+					roundingTarget = (int)arguments.get("roundingTarget");
+					extendedDataMap.put("EXT_ROUNDINGTARGET",String.valueOf(roundingTarget));
+				}
+				if(arguments.containsKey("finAssetValue")) {
+					finAssetValue = (BigDecimal)arguments.get("finAssetValue");
+					extendedDataMap.put("EXT_FINASSETVALUE",finAssetValue.toString());
+				}
+				if(arguments.containsKey("finAmount")) {
+					finAmount = (BigDecimal)arguments.get("finAmount");
+					extendedDataMap.put("EXT_FINAMOUNT",finAmount.toString());
+				}
+				if(arguments.containsKey("firstRepay")) {
+					firstRepay = (BigDecimal)arguments.get("firstRepay");
+					extendedDataMap.put("EXT_FIRSTREPAY",firstRepay.toString());
 				}
 				setTabs(isEnquiry);
 				getBorderLayoutHeight();
@@ -308,6 +437,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 					this.btnNotes.setVisible(true);
 				}
 			}
+			
 			if (isEnquiry) {
 				this.toYear.setVisible(true);
 				this.auditedYear.setVisible(false);
@@ -329,6 +459,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			MessageUtil.showError(e);
 			this.window_CreditApplicationReviewDialog.onClose();
 		}
+		logger.debug("TIME MILLI SECONDS LEAVING"+System.currentTimeMillis());
 		logger.debug("Leaving" + event.toString());
 	}
 	
@@ -791,15 +922,13 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		logger.debug("Entering");
 		
 		if(isEnquiry){
-		this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), this.toYear.getValue(), noOfYears, this.custCtgCode, true, isEnquiry);
+		this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), this.toYear.getValue(), noOfYears, this.custCtgCode, true, isEnquiry, extendedDataMap);
 		} else if(maxAuditYear != null){
-			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), Integer.parseInt(maxAuditYear), noOfYears, this.custCtgCode, true, isEnquiry);
+			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), Integer.parseInt(maxAuditYear), noOfYears, this.custCtgCode, true, isEnquiry, null);
 		}
-		
 		if(this.dataMap.containsKey("lovDescCcyEditField")){
 			currFormatter = Integer.parseInt(this.dataMap.get("lovDescCcyEditField"));
 		}
-		
 		for(FinCreditRevCategory fcrc:listOfFinCreditRevCategory){
 			CreditReviewSubCtgDetails creditReviewSubCtgDetails = new CreditReviewSubCtgDetails();
 			creditReviewSubCtgDetails.setMainGroup("T");

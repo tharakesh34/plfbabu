@@ -1,5 +1,6 @@
 package com.pennant.backend.service.customermasters;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -13,5 +14,7 @@ public interface CustomerExtLiabilityService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	int getVersion(long custId, int liabilitySeq);
+	
+	BigDecimal getSumAmtCustomerExtLiabilityById(long custId);
 
 }

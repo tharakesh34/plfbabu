@@ -108,6 +108,7 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> {
 
 	private transient DedupParmService dedupParmService;
 	private List<ValueLabel> listCustCtgCode = PennantAppUtil.getcustCtgCodeList();
+	List<ValueLabel> collateralTypesList = PennantAppUtil.getCollateralTypesList();
 
 	/**
 	 * default constructor.<br>
@@ -153,8 +154,8 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> {
 		registerField("queryDesc", listheader_QueryDesc, SortOrder.NONE, queryDesc, sortOperator_queryDesc,
 				Operators.STRING);
 		registerField("queryModule", queryModules, SortOrder.NONE, sortOperator_queryModules, Operators.STRING);
-		fillComboBox(this.querySubCode, "", this.listCustCtgCode, "");
-		registerField("querySubCode");
+		registerField("querySubCode", querySubCode, SortOrder.ASC, sortOperator_querySubCode,Operators.STRING);
+		fillComboBox(this.querySubCode, "", this.collateralTypesList, "");
 
 		// Render the page and display the data.
 		doRenderPage();

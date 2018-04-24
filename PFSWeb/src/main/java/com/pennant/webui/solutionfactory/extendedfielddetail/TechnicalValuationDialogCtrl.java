@@ -616,14 +616,6 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 				fieldNameList.add(getTechValuationFieldDetailsList().get(i).getFieldName());
 			}
 		}
-
-		if (this.dialogCtrl != null) {
-			try {
-				dialogCtrl.getClass().getMethod("setFieldNames", List.class).invoke(dialogCtrl, fieldNameList);
-			} catch (Exception e) {
-				logger.error("Exception: ", e);
-			}
-		}
 		logger.debug("Leaving");
 	}
 

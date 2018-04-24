@@ -57,4 +57,5 @@ public class SMTParameterConstants {
 	public static final String	LOAN_REF_FORMAT		= "LOAN_REF_FORMAT";
 	public static final String	LOAN_REF_PREFIX		= "LOAN_REF_PREFIX";
 	public static final String	FEESALLOWZERO		= "FEESALLOWZERO";
+	public static final String	ELGMETHOD			= "ELGMETHOD";
 }

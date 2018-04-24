@@ -789,8 +789,9 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 					percValue = percValue.add(coOwnerDetail.getCoOwnerPercentage());
 				}
 			}
-			if (percValue.compareTo(new BigDecimal(100)) >= 0) {
-				throw new WrongValueException(coOwnerPercentage, Labels.getLabel("NUMBER_MAXVALUE", new String[] {
+			// Discussed with raju below validation changed.
+			if (percValue.compareTo(new BigDecimal(100)) > 0) {
+				throw new WrongValueException(coOwnerPercentage, Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] {
 						Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerPercentageValidation.value"), "100" }));
 			}
 

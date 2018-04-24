@@ -55,6 +55,11 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	public CustomerBankInfo getCustomerBankInfoById(long bankId) {
 		return getCustomerBankInfoDAO().getCustomerBankInfoById(bankId, "_AView");
 	}
+	
+	@Override
+	public CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(long custId) {
+		return getCustomerBankInfoDAO().getSumOfAmtsCustomerBankInfoByCustId(custId);
+	}
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)

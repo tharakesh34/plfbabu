@@ -241,6 +241,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> trackCheckList;
 	private static ArrayList<ValueLabel> chequeStatusList;
 	private static ArrayList<ValueLabel> ChequeAccTypeList;
+	private static ArrayList<ValueLabel> eligibilityMethod;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -3163,6 +3164,16 @@ public class PennantStaticListUtil {
 		return ChequeAccTypeList;
 	}
 
-
+	public static ArrayList<ValueLabel> getEligibilityMethodList() {
+		if (eligibilityMethod == null) {
+			eligibilityMethod = new ArrayList<ValueLabel>(2);
+			eligibilityMethod.add(new ValueLabel("CP", Labels.getLabel("label_EligibilityMethod_CashFlow")));
+			eligibilityMethod.add(new ValueLabel("GTP", Labels.getLabel("label_EligibilityMethod_GrossTurnover")));
+			eligibilityMethod.add(new ValueLabel("BS", Labels.getLabel("label_EligibilityMethod_BankingSurrogate")));
+			eligibilityMethod.add(new ValueLabel("BT", Labels.getLabel("label_EligibilityMethod_BankingTurnover")));
+		}
+		return eligibilityMethod;
+	}
+	
 }
 

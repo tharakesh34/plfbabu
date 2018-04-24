@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.script.ScriptEngine;
@@ -45,7 +46,7 @@ public class CreditReviewSummaryData {
 	 * @param noOfYears
 	 * @return Map<String,String>
 	 */
-	public Map<String,String>  setDataMap(long custID, int year, int noOfYears, String custCtgType, boolean required, boolean isEnquiry) {
+	public Map<String,String>  setDataMap(long custID, int year, int noOfYears, String custCtgType, boolean required, boolean isEnquiry, Map<String, String> externalDataMap) {
 		logger.debug("Entering");
 
 		// create a script engine manager
@@ -62,6 +63,21 @@ public class CreditReviewSummaryData {
 		} else {
 			detailedMap = this.creditApplicationReviewService.getListCreditReviewSummaryByCustId(custID, noOfYears+1,year, "_View");
 		}
+
+		logger.debug("Loading external data to dataMap");
+		// Load extended points to script engine.
+		// This data is expected to come from Finance Main Dialog (Mainly Loan Details, banking details and obligations)
+		// If there is no external data, no need to load the data to Map
+		// If this screen is not loaded from Finance Main tabs data will be empty and if any ratios/cells using these variables will not work
+		// Changes done to use eligibility tab without the facility for Profectus
+		
+		for (Entry<String, String> entry : externalDataMap.entrySet()) {
+	        if (entry.getKey().startsWith("EXT_")) {
+				engine.put(entry.getKey(),externalDataMap.get(entry.getKey()));
+				dataMap.put(entry.getKey(),externalDataMap.get(entry.getKey()));
+	        }
+	    }
+		logger.debug("Loading external data to dataMap");
 		
 		Set<String> set = detailedMap.keySet();
 

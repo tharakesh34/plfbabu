@@ -46,7 +46,9 @@
  * 														Functionality and hence the 		*
  * 														Condition is removed and committed. *                                                                                    * 
  *                                                                                          * 
- *                                                                                          * 
+ * 23-04-2018		Vinay					0.3			As per mail from raju, 				*
+ * 														Eligibility Method filed added 		*
+ * 														for Profectus.                      * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -177,6 +179,7 @@ import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -234,7 +237,9 @@ import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.commitment.CommitmentService;
+import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.CustomerExtLiabilityService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dda.DDAProcessService;
@@ -261,6 +266,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
@@ -553,6 +559,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Decimalbox									oDChargeAmtOrPerc;
 	protected Checkbox										oDAllowWaiver;
 	protected Decimalbox									oDMaxWaiverPerc;
+	//###_0.3
+	protected Row											row_EligibilityMethod;
+	protected Combobox										eligibilityMethod;
 
 	protected Space											space_oDChargeAmtOrPerc;
 	protected Space											space_oDMaxWaiverPerc;
@@ -809,6 +818,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private InstallmentDueService							installmentDueService;
 	private ShortMessageService							 	shortMessageService;
 	private MailTemplateService							 	mailTemplateService;
+	private CustomerBankInfoService							customerBankInfoService;
+	private CustomerExtLiabilityService						customerExtLiabilityService;
 
 	protected BigDecimal									availCommitAmount		= BigDecimal.ZERO;
 	protected Commitment									commitment;
@@ -2682,6 +2693,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			break;
 		case AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW:
+			logger.debug("TIME MILLI SECONDS ENTERING"+System.currentTimeMillis());
 			tab.removeForward(Events.ON_SELECT, (Tab) null, selectMethodName);
 			appendCreditReviewDetailTab(true);
 			break;
@@ -3639,7 +3651,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			fillComboBox(this.oDChargeCalOn, "", PennantStaticListUtil.getODCCalculatedOn(), "");
 			fillComboBox(this.oDChargeType, "", PennantStaticListUtil.getODCChargeType(), "");
 		}
-
+		
+		// ###_0.3
+		fillComboBox(this.eligibilityMethod, aFinanceMain.getEligibilityMethod(), PennantStaticListUtil.getEligibilityMethodList(), "");
+		
 		//FinanceMain Details Tab ---> 5. DDA Registration Details
 		if (this.gb_ddaRequest.isVisible()) {
 			this.bankName.setValue(aFinanceMain.getBankName());
@@ -3714,7 +3729,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected void appendCreditReviewDetailTab(boolean onLoadProcess) {
 		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-
+		long custId = getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID();
 		boolean createTab = false;
 		if (getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW) == null) {
 			createTab = true;
@@ -3725,11 +3740,38 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW);
 		}
 		if (onLoadProcess) {
+			CustomerBankInfo customerBankInfo = customerBankInfoService.getSumOfAmtsCustomerBankInfoByCustId(custId);
+			BigDecimal sumOfEMI = customerExtLiabilityService.getSumAmtCustomerExtLiabilityById(custId);
+			map.put("creditTranNo",String.valueOf(customerBankInfo.getCreditTranNo()));
+			map.put("creditTranAmt",customerBankInfo.getCreditTranAmt().toString());
+			map.put("creditTranAvg",customerBankInfo.getCreditTranAvg().toString());
+			map.put("debitTranNo",String.valueOf(customerBankInfo.getDebitTranNo()));
+			map.put("debitTranAmt",customerBankInfo.getDebitTranAmt().toString());
+			map.put("cashDepositNo",String.valueOf(customerBankInfo.getCashDepositNo()));
+			map.put("cashDepositAmt",customerBankInfo.getCashDepositAmt().toString());
+			map.put("cashWithdrawalNo",String.valueOf(customerBankInfo.getCashWithdrawalNo()));
+			map.put("cashWithdrawalAmt",customerBankInfo.getCashWithdrawalAmt().toString());
+			map.put("chqDepositNo",String.valueOf(customerBankInfo.getChqDepositNo()));
+			map.put("chqDepositAmt",customerBankInfo.getChqDepositAmt().toString());
+			map.put("chqIssueN",String.valueOf(customerBankInfo.getChqIssueNo()));
+			map.put("chqIssueAmt",customerBankInfo.getChqIssueAmt().toString());
+			map.put("inwardChqBounceNo",String.valueOf(customerBankInfo.getInwardChqBounceNo()));
+			map.put("outwardChqBounceNo",String.valueOf(customerBankInfo.getOutwardChqBounceNo()));
+			map.put("eodBalAvg",customerBankInfo.getEodBalAvg().toString());
+			map.put("eodBalMax",customerBankInfo.getEodBalMax().toString());
+			map.put("eodBalMin",customerBankInfo.getEodBalMin().toString());
+			map.put("sumOfEMI", sumOfEMI);
 			map.put("facility", "");
 			map.put("custCIF", this.custCIF.getValue());
-			map.put("custID", getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
+			map.put("custID", custId);
 			map.put("userRole", getRole());
 			map.put("custCtgType", getFinanceDetail().getCustomerDetails().getCustomer().getCustCtgCode());
+			map.put("numberOfTerms", getFinanceMain().getNumberOfTerms());
+			map.put("repayProfitRate", getFinanceMain().getRepayProfitRate());
+			map.put("roundingTarget", getFinanceMain().getRoundingTarget());
+			map.put("finAssetValue", getFinanceMain().getFinAssetValue());
+			map.put("finAmount", getFinanceMain().getFinAmount());
+			map.put("firstRepay", getFinanceMain().getFirstRepay());
 
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW), map);
@@ -3889,6 +3931,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
+		// ###_0.3
+		String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
+		if (StringUtils.equals("Y", elgMethodVisible)) {
+			this.row_EligibilityMethod.setVisible(true);
+		}
+		
 		// setFocus
 		this.finAmount.focus();
 
@@ -11028,6 +11076,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				wve.add(we);
 			}
 		}
+		// ###_0.3
+		//Eligibility Method
+		try {
+			aFinanceMain.setEligibilityMethod(getComboboxValue(this.eligibilityMethod));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		//FinanceMain Details Tab ---> Rollover Finance Details
 		if (this.gb_RolloverFinance.isVisible()) {
@@ -14501,6 +14556,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		detail.getCustomerEligibilityCheck().setReqFinPurpose(financeMain.getFinPurpose());
 		financeMain.setCustDSR(detail.getCustomerEligibilityCheck().getDSCR());
 		detail.getCustomerEligibilityCheck().setAgreeName(financeMain.getAgreeName());
+		// ###_0.3
+		detail.getCustomerEligibilityCheck().setEligibilityMethod(financeMain.getEligibilityMethod());
 		detail.getFinScheduleData().setFinanceMain(financeMain);
 		setFinanceDetail(detail);
 		logger.debug("Leaving");
@@ -16667,4 +16724,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		getTab(AssetConstants.UNIQUE_ID_TVINITIATION).setSelected(true);
 		MessageUtil.showMessage("Collateral details are added or changed, please take respective actions");
 	}
+
+	public void setCustomerBankInfoService(CustomerBankInfoService customerBankInfoService) {
+		this.customerBankInfoService = customerBankInfoService;
+	}
+
+	public void setCustomerExtLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
+		this.customerExtLiabilityService = customerExtLiabilityService;
+	}
+	
 }

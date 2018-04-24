@@ -639,7 +639,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal recalIGSTFee = BigDecimal.ZERO;
 	private BigDecimal recalSGSTFee = BigDecimal.ZERO;
 	private BigDecimal recalUGSTFee = BigDecimal.ZERO;
-
+	
+	private String eligibilityMethod;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -3597,6 +3598,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getEligibilityMethod() {
+		return eligibilityMethod;
+	}
+
+	public void setEligibilityMethod(String eligibilityMethod) {
+		this.eligibilityMethod = eligibilityMethod;
 	}
 
 }

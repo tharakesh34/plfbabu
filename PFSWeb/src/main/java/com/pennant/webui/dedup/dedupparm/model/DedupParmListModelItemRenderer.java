@@ -79,7 +79,7 @@ public class DedupParmListModelItemRenderer implements ListitemRenderer<DedupPar
 			lc = new Listcell(PennantAppUtil.getlabelDesc(dedupParm.getQuerySubCode(), PennantAppUtil.getcustCtgCodeList()));
 			lc.setParent(item);
 		} else 	if (dedupParm.getQueryModule().equals(FinanceConstants.DEDUP_COLLATERAL)) {
-			lc = new Listcell(dedupParm.getQuerySubCode());
+			lc = new Listcell(PennantAppUtil.getlabelDesc(dedupParm.getQuerySubCode(), PennantAppUtil.getCollateralTypesList()));
 			lc.setParent(item);
 		}else{
 			lc = new Listcell();

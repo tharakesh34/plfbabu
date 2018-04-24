@@ -1834,6 +1834,8 @@
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="pdfParserCaller" ref="pdfParserCaller" />
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
+		<property name="customerBankInfoService" ref="customerBankInfoService" />
+		<property name="customerExtLiabilityService" ref="customerExtLiabilityService" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"

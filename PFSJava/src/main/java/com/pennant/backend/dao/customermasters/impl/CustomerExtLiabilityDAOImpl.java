@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -442,5 +443,37 @@ public class CustomerExtLiabilityDAOImpl extends BasisCodeDAO<CustomerExtLiabili
 
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+	
+	/**
+	 * Fetch the Record  Customer Total sum amounts details by key field
+	 * 
+	 * @param custId (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return CustomerExtLiability
+	 */
+	@Override
+	public BigDecimal getSumAmtCustomerExtLiabilityById(long custId) {
+		logger.debug("Entering");
+		CustomerExtLiability customerExtLiability = new CustomerExtLiability();
+		customerExtLiability.setCustID(custId);
+		customerExtLiability.setEmiCnsdrForFOIR(true);
+		StringBuilder selectSql = new StringBuilder();	
+		selectSql.append("select coalesce(sum(InstalmentAmount),0) as InstalmentAmount ");
+		selectSql.append(" FROM  CustomerExtLiability");
+		selectSql.append(" Where CustID = :custID AND EMICnsdrForFOIR = :EmiCnsdrForFOIR");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerExtLiability);
+		BigDecimal emiSum = BigDecimal.ZERO;
+		try{
+			emiSum = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
+		}catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			return emiSum;
+		}
+		logger.debug("Leaving");
+		return emiSum;
 	}
 }

@@ -64,4 +64,5 @@ public interface CustomerBankInfoDAO {
 	 int getCustomerBankInfoByCustBankName(long custId,String bankName,String accountNumber,long bankId,String type);
 	 CustomerBankInfo getCustomerBankInfoByCustId(CustomerBankInfo customerBankInfo,String type);
 	int getCustomerBankInfoByBank(String bankCode, String type);
+	CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(long custId);
 }
