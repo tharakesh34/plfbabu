@@ -99,6 +99,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	private BigDecimal foir = BigDecimal.ZERO;
 	private BigDecimal ltv = BigDecimal.ZERO;
 	private BigDecimal disbursedAmount = BigDecimal.ZERO;
+	private String eligibilityMethod;
 	/*private String custCIF;	
 	private String custSubSector = "";
 	private String custCOB = "";
@@ -748,6 +749,14 @@ public class CustomerEligibilityCheck implements Serializable {
 
 	public void setCustIndustry(String custIndustry) {
 		this.custIndustry = custIndustry;
+	}
+
+	public String getEligibilityMethod() {
+		return eligibilityMethod;
+	}
+
+	public void setEligibilityMethod(String eligibilityMethod) {
+		this.eligibilityMethod = eligibilityMethod;
 	}
 	
 }
