@@ -152,7 +152,13 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 			} else {
 				appendFinBasicDetails(null);
 			}
-			doCheckRight();
+			if (!approvalEnquiry) {
+				doCheckRight();
+			}
+			if (approvalEnquiry || enquiry) {
+				this.btnNew_ManualDeviation.setVisible(false);	
+			}
+			
 			doShowDialog();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -212,7 +218,6 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 			if (enquiry) {
 				this.window_deviationDetailDialog.setHeight("75%");
 				this.window_deviationDetailDialog.setWidth("90%");
-				this.btnNew_ManualDeviation.setVisible(false);
 				this.window_deviationDetailDialog.doModal();
 
 			} else {

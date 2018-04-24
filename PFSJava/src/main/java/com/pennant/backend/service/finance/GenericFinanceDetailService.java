@@ -1724,7 +1724,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			gstInvoiceTxn.setInvoice_Amt(invoiceAmout);
 			gstInvoiceTxn.setGstInvoiceTxnDetailsList(gstInvoiceTxnDetails);
 			
-			this.gstInvoiceTxnService.save(gstInvoiceTxn);
+			//this.gstInvoiceTxnService.save(gstInvoiceTxn);
 		}
 		
 		logger.debug(Literal.LEAVING);
