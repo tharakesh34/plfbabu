@@ -2275,7 +2275,11 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-
+	<changeSet id="26.1" author="vijaykumar.l">
+		<sql>
+			delete from DATA_ENGINE_CONFIG where name= 'ME_RMTBASERATECODES';
+		</sql>
+	</changeSet>
 <changeSet id="27" author="vijaykumar.l">
 	<sql>
 	insert into data_engine_config 
