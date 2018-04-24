@@ -743,7 +743,10 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		Object ruleResult = null;
 		CollateralSetup aCollateralSetup = getCollateralSetup();
 		CollateralStructure structure = aCollateralSetup.getCollateralStructure();
-		HashMap<String, Object> declaredMap = aCollateralSetup.getCustomerDetails().getCustomer().getDeclaredFieldValues();
+		HashMap<String, Object> declaredMap = new HashMap<>();
+		if(aCollateralSetup.getCustomerDetails() != null) {
+			declaredMap = aCollateralSetup.getCustomerDetails().getCustomer().getDeclaredFieldValues();
+		}
 		declaredMap.put("ct_collateralType", aCollateralSetup.getCollateralType());
 		declaredMap.put("ct_collateralCcy", aCollateralSetup.getCollateralCcy());
 		if(this.extendedFieldRenderList != null && this.extendedFieldRenderList.size() > 0){
