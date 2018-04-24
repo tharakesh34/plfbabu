@@ -193,7 +193,7 @@
 										<checkbox id="active" checked="true" disabled="true" />
 									</hbox>
 								</row>
-								<row visible="false">
+								<row>
 									<label id="label_ApprovalID" value="${c:l('label_MandateDialog_ApprovalID.value')}"/>
 									<hbox>
 										<space spacing="2px" />

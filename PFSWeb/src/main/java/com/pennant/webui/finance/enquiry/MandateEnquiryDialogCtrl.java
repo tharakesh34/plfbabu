@@ -50,6 +50,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -76,6 +77,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
@@ -87,6 +89,7 @@ import com.pennant.webui.mandate.mandate.MandateListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 /**
  * ************************************************************<br>
@@ -171,6 +174,9 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private Tabpanel						tabPanel_dialogWindow;
 	private FinanceEnquiryHeaderDialogCtrl	financeEnquiryHeaderDialogCtrl	= null;
 
+	@Autowired
+	private ExternalDocumentManager			externalDocumentManager;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -531,19 +537,33 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	public void onClick$btnViewMandateDoc(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
+		try {
+			String custCIF = getMandate().getCustCIF();
+			byte[] docImage = getMandate().getDocImage();
+			Long documentRef = getMandate().getDocumentRef();
+			String externalRef = getMandate().getExternalRef();
+			String documentName = getMandate().getDocumentName();
+			
+			if (docImage == null && documentRef > 0) {
+				mandate.setDocImage(mandateService.getDocumentManImage(documentRef));
+			} else {
+				if (docImage == null && StringUtils.isNotBlank(externalRef)) {
+					DocumentDetails document = externalDocumentManager.getExternalDocument(documentName, externalRef,
+							custCIF);
+					if (document != null) {
+						mandate.setDocumentName(document.getDocName());
+						mandate.setDocImage(document.getDocImage());
+					}
+				}
+			}
 
-		mandate.setDocImage(getMandateService().getDocumentManImage(getMandate().getDocumentRef().toString()));
-
-		if (StringUtils.isNotBlank(mandate.getDocumentName()) && mandate.getDocImage() != null
-				&& StringUtils.isNotBlank(mandate.getDocImage().toString())) {
-			try {
+			if (mandate.getDocImage() != null) {
 				HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("mandate", mandate);
 				Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
-
-			} catch (Exception e) {
-				logger.debug(e);
 			}
+		} catch (Exception e) {
+			logger.debug(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -562,7 +582,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 	    }          
 	    return AmtInWord.toString().trim();
-	} 
+	}
 	
 	// ******************************************************//
 	// ****************** getter / setter *******************//

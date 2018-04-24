@@ -750,8 +750,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	@Override
-	public byte[] getDocumentManImage(String mandateRef) {
-		DocumentManager data = getDocumentManagerDAO().getById(Long.valueOf(mandateRef));
+	public byte[] getDocumentManImage(long mandateRef) {
+		DocumentManager data = getDocumentManagerDAO().getById(mandateRef);
 		if (data != null) {
 			return data.getDocImage();
 		}
