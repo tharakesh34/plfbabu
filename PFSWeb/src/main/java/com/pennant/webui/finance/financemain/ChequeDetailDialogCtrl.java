@@ -1425,6 +1425,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			Listcell emiAmtLc = (Listcell) list.get(5);
 			Decimalbox emiAmount = (Decimalbox) emiAmtLc.getFirstChild();
 			if (!emiAmount.isReadonly()) {
+				if (emiAmount.getValue() == null || emiAmount.getValue().compareTo(BigDecimal.ZERO) < 0) {
+					emiAmount.setValue(BigDecimal.ZERO);
+				}
 				totalChequeAmt = totalChequeAmt.add(emiAmount.getValue());
 				noOfCheques++;
 			}
