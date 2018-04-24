@@ -73,8 +73,9 @@
 				<div>
 					<groupbox id="finBasicdetails" zclass="null"></groupbox>
 					<groupbox id="gb_basicDetails" sclass="gb-dialog">
-						<grid sclass="GridLayoutNoBorder"
-							fixedLayout="true" style="border:0px">
+						<grid id="grid_NumbOfChqs"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px">
 							<columns>
 								<column width="15%" />
 								<column width="35%" />
@@ -101,9 +102,10 @@
 							</rows>
 						</grid>
 					</groupbox>
-					<groupbox>
-						<grid sclass="GridLayoutNoBorder"
-							fixedLayout="true" style="border:0px">
+					<groupbox id ="gb_ChequeDetails" >
+						<grid id="grid_chequeDetails"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px">
 							<columns>
 								<column width="15%" />
 								<column width="35%" />

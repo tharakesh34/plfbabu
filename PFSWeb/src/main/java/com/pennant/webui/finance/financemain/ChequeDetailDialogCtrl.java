@@ -66,6 +66,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
@@ -143,6 +144,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	protected Combobox					chequeStatus;
 	protected Combobox					accountType;
 	protected Textbox					accHolderName;
+	protected Grid						grid_chequeDetails;
+	protected Grid						grid_NumbOfChqs;
 
 	private ChequeDetail				chequeDetail;
 	private boolean						fromLoan				= false;
@@ -870,15 +873,11 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 			this.btnSave.setVisible(true);
 
-			int borderLayout;
-			if (fromLoan) {
-				borderLayout = 360;
-			} else {
-				borderLayout = 320;
-			}
-			this.listBoxChequeDetail.setHeight(this.borderLayoutHeight - borderLayout + "px");
 			//this.window_ChequeDetailDialog.setHeight(this.borderLayoutHeight - 80 + "px");
-
+			int listBoxHeight = this.grid_chequeDetails.getRows().getVisibleItemCount()
+					+ this.grid_NumbOfChqs.getRows().getVisibleItemCount() + 6;
+			this.listBoxChequeDetail.setHeight(getListBoxHeight(listBoxHeight));
+						
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
