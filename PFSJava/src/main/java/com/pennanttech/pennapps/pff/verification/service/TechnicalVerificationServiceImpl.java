@@ -47,7 +47,6 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -569,7 +568,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			vrf.setNewRecord(true);
 			vrf.setReference(vrf.getCif());
 			vrf.setRecordType(collateralSetup.getRecordType());
-			vrf.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
+			vrf.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 			setTvFields(vrf, collateralSetup);
 			verifications.add(vrf);
 
@@ -583,14 +582,6 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		List<Verification> preVerifications = verificationDAO.getVeriFications(verification.getKeyReference(),
 				VerificationType.TV.getKey());
 		List<Verification> screenVerifications = getScreenVerifications(verification);
-
-		for (Verification prvVrf : preVerifications) {
-			prvVrf.setCollaterals(getCollateralsByRef(prvVrf.getReferenceFor(), verification.getCollaterals()));
-		}
-		for (Verification screenVrf : screenVerifications) {
-			screenVrf.setCollaterals(extendedFieldRenderDAO.getExtendedFieldMap(screenVrf.getReferenceFor(),
-					"collateral_" + screenVrf.getReferenceType() + "_ed", null));
-		}
 		setLastStatus(screenVerifications);
 
 		if (!preVerifications.isEmpty()) {
@@ -605,23 +596,12 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			}
 
 		}
-
 		getChangedVerifications(preVerifications, screenVerifications, verification.getKeyReference());
 		verification.setVerifications(
 				compareVerifications(screenVerifications, preVerifications, verification.getKeyReference()));
 
 		logger.info(Literal.LEAVING);
 		return verification;
-	}
-
-	private List<Map<String, Object>> getCollateralsByRef(String collateralRef, List<Map<String, Object>> collaterals) {
-		List<Map<String, Object>> result = new ArrayList<>();
-		for (Map<String, Object> map : collaterals) {
-			if (collateralRef.equals(map.get("reference"))) {
-				result.add(map);
-			}
-		}
-		return result;
 	}
 
 	private void setLastStatus(List<Verification> verifications) {
@@ -633,13 +613,12 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		}
 		if (cif.length != 0) {
 			List<TechnicalVerification> list = technicalVerificationDAO.getList(cif);
-
 			for (Verification verification : verifications) {
 				TechnicalVerification current = verification.getTechnicalVerification();
 				for (TechnicalVerification previous : list) {
 					if (previous.getCustCif().equals(verification.getCif())
 							&& previous.getCollateralRef().equals(current.getCollateralRef())) {
-						if (!isCollateralChanged(previous, verification.getCollaterals())) {
+						if (!isCollateralChanged(previous, current)) {
 							verification.setStatus(previous.getStatus());
 							verification.setVerificationDate(new Timestamp(previous.getDate().getTime()));
 						}
@@ -663,7 +642,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			for (Verification newVer : newList) {
 				if (oldVer.getReferenceFor().equals(newVer.getReferenceFor())) {
 					if (oldVer.getRequestType() == RequestType.INITIATE.getKey()
-							&& isCollateralChanged(oldVer.getCollaterals(), newVer.getCollaterals())
+							&& isCollateralChanged(oldVer.getTechnicalVerification(), newVer.getTechnicalVerification())
 							&& tvIds.contains(oldVer.getId())) {
 						newVer.setRecordType(PennantConstants.RCD_UPD);
 					}
@@ -707,7 +686,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 				if (vrf.getReferenceFor().equals(preVrf.getReferenceFor())
 						&& (StringUtils.isEmpty(vrf.getRecordType())
 								|| !vrf.getRecordType().equals(PennantConstants.RCD_UPD))
-						&& !isCollateralChanged(preVrf.getCollaterals(), vrf.getCollaterals())
+						&& !isCollateralChanged(preVrf.getTechnicalVerification(), vrf.getTechnicalVerification())
 						&& !tvIds.contains(vrf.getId())) {
 					screenVerifications.remove(vrf);
 					preVerifications.remove(preVrf);
@@ -718,19 +697,16 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		return screenVerifications;
 	}
 
-	private boolean isCollateralChanged(TechnicalVerification prvVrf, List<Map<String, Object>> currentCollaterals) {
-		if (prvVrf == null) {
+	@Override
+	public boolean isCollateralChanged(TechnicalVerification prvVrf, TechnicalVerification currentVrf) {
+		if (prvVrf == null || currentVrf == null) {
 			return false;
 		}
-		List<Map<String, Object>> prvCollaterals = extendedFieldRenderDAO.getExtendedFieldMapByVerificationId(
-				prvVrf.getVerificationId(),
-					"collateral_" + prvVrf.getCollateralType() + "_ed_tv");
-		return isCollateralChanged(prvCollaterals, currentCollaterals);
-	}
 
-	@Override
-	public boolean isCollateralChanged(List<Map<String, Object>> prvCollaterals,
-			List<Map<String, Object>> currentCollaterals) {
+		List<Map<String, Object>> prvCollaterals = extendedFieldRenderDAO.getExtendedFieldMapByVerificationId(
+				prvVrf.getVerificationId(), "collateral_" + prvVrf.getCollateralType() + "_ed_tv");
+		List<Map<String, Object>> currentCollaterals = extendedFieldRenderDAO.getExtendedFieldMap(
+				currentVrf.getCollateralRef(), "collateral_" + currentVrf.getCollateralType() + "_ed", null);
 		if (prvCollaterals.size() != currentCollaterals.size()) {
 			return true;
 		}

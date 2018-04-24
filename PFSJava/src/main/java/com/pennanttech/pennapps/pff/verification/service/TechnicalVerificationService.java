@@ -14,7 +14,6 @@
 package com.pennanttech.pennapps.pff.verification.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -48,5 +47,5 @@ public interface TechnicalVerificationService {
 
 	List<TechnicalVerification> getList(String keyReference);
 
-	boolean isCollateralChanged(List<Map<String, Object>> prvCollaterals, List<Map<String, Object>> currentCollaterals);
+	boolean isCollateralChanged(TechnicalVerification prvVrf, TechnicalVerification currentVrf);
 }

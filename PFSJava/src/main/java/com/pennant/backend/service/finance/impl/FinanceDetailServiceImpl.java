@@ -217,7 +217,6 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.verification.Module;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
@@ -281,7 +280,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinanceTaxDetailService			financeTaxDetailService;
 	
 	private ExtendedFieldDetailsService		extendedFieldDetailsService;
-	@Autowired
 	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
 	private ExtendedFieldDetailDAO			extendedFieldDetailDAO;
 
@@ -647,7 +645,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		verification.setVerificationType(VerificationType.FI.getKey());
 		verification.setModule(Module.LOAN.getKey());
 		verification.setKeyReference(financeMain.getFinReference());
-		verification.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
+		verification.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		verification = fieldInvestigationService.getFiVeriFication(verification);
 		financeDetail.setFiVerification(verification);
 	}
@@ -662,11 +660,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					"_Aview");
 			collateralSetup.setRecordType(CollAsmt.getRecordType());
 			verification.getCollateralSetupList().add(collateralSetup);
-
-			verification.getCollaterals()
-					.addAll(extendedFieldRenderDAO.getExtendedFieldMap(collateralSetup.getCollateralRef(),
-							"collateral_" + collateralSetup.getCollateralType() + "_ed", null));
-
 		}
 		List<CollateralSetup> screenCollaterals = new ArrayList<>();
 		screenCollaterals.addAll(verification.getCollateralSetupList());
@@ -685,7 +678,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		verification.setKeyReference(financeMain.getFinReference());
 		verification.setCustId(customer.getCustID());
 		verification.setCustomerName(customer.getCustShrtName());
-		verification.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
+		verification.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		verification = technicalVerificationService.getTvVeriFication(verification);
 		financeDetail.setTvVerification(verification);
 	}
