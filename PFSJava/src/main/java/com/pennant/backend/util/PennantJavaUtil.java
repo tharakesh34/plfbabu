@@ -1797,7 +1797,7 @@ public class PennantJavaUtil {
 
 		
 		ModuleUtil.register("RejectFinanceMain", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
-				"RejectFinanceMain", "RejectFinanceMain" }, masterWF , new String[] { "FinReference", "CustID", "FinType" },
+				"RejectFinanceMain", "RejectFinanceMain" }, masterWF , new String[] { "FinReference", "FinType" },
 				null, 300));
 
 		ModuleUtil.register("ReinstateFinance", new ModuleMapping("ReinstateFinance", ReinstateFinance.class,
