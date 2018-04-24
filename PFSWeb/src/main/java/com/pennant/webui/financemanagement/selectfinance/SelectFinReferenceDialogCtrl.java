@@ -294,7 +294,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			Date appDate = DateUtility.getAppDate();
 			Date allowedDate = DateUtility.addDays(appDate, -allowedDays);
 			this.finReference.setFilters(new Filter[] {
-					new Filter("LastMntOn", allowedDate.toString(), Filter.OP_GREATER_THAN),
+					new Filter("LastMntOn", allowedDate, Filter.OP_GREATER_THAN),
 					new Filter("RcdMaintainSts", "", Filter.OP_EQUAL) });
 		}
 		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_NOCISSUANCE)) {
