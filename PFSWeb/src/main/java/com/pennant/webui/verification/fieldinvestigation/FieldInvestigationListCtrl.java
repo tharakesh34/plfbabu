@@ -62,7 +62,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	protected Listheader listheader_PinCode;
 	protected Listheader listheader_LoanReference;
 	protected Listheader listheader_Agency;
-	protected Listheader listheader_VerificationDate;
+	protected Listheader						listheader_CreatedOn;
 
 	// checkRights
 	protected Button button_FieldInvestigationList_FieldInvestigationSearch;
@@ -73,14 +73,14 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	protected Listbox sortOperator_PinCode;
 	protected Listbox sortOperator_LoanReference;
 	protected Listbox sortOperator_Agency;
-	protected Listbox sortOperator_VerificationDate;
+	protected Listbox							sortOperator_CreatedOn;
 
 	protected Textbox cif;
 	protected Textbox addressType;
 	protected Textbox pinCode;
 	protected Textbox loanReference;
 	protected ExtendedCombobox agency; 
-	protected Datebox verificationDate;
+	protected Datebox							createdOn;
 
 	
 	private String module = "";
@@ -135,7 +135,8 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		registerField("zipCode", listheader_PinCode, SortOrder.ASC, pinCode, sortOperator_PinCode, Operators.STRING);
 		registerField("keyReference", listheader_LoanReference, SortOrder.ASC, loanReference,
 				sortOperator_LoanReference, Operators.STRING);
-		registerField("date", listheader_VerificationDate, SortOrder.NONE, verificationDate, sortOperator_VerificationDate, Operators.DATE);
+		registerField("createdOn", listheader_CreatedOn, SortOrder.NONE, createdOn, sortOperator_CreatedOn,
+				Operators.DATE);
 		registerField("agencyName",listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
 		// Render the page and display the data.
 		doRenderPage();

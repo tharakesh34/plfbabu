@@ -37,7 +37,7 @@ public class FieldInvestigationListModelItemRenderer implements ListitemRenderer
 		lc.setParent(item);
 		lc = new Listcell(fi.getAgencyName());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(fi.getDate()));
+		lc = new Listcell(DateUtility.formatToLongDate(fi.getCreatedOn()));
 	  	lc.setParent(item);
 	  	lc = new Listcell(fi.getRecordStatus());
 		lc.setParent(item);
