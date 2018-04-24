@@ -3284,5 +3284,12 @@ UNION ALL
 			('FEES','EARLYPAY','finAgetilldate','months between loan start data and app date','int',9,'1','1',' ','static','  '); 
 		</sql>
 	</changeSet>
+<changeSet id="27" author="Srikanth">
+<sql>
+delete from  reportlist  where module='Chequeheader';
+ Insert into REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) 
+values ('ChequeHeader','ChequeHeader','listheader_FinReference.label,listheader_NoOfCheques.label,listheader_TotalAmount.label','finReference,noOfCheques,totalAmount','String,int,int',' ','ReportList03',' Cheque Maintanance',' Loan Management',3,1001,to_date('07-07-15','DD-MM-RR'),'Approved',' ',' ',' ',' ',' ',0,0);
+</sql>
+</changeSet>
 </databaseChangeLog>
 	
