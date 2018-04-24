@@ -3681,5 +3681,23 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		</sql>
 	
 	</changeSet>
+	
+	<changeSet id="42" author="Vinay">
+		<addColumn tableName="COLLATERALSTRUCTURE">
+			<column name="valuationFrequency" type="varchar(5)"
+				defaultValue="" />
+			<column name="nextValuationDate" type="datetime" defaultValue="$(call.date)" />
+			<column name="valuationPending" type="boolean" defaultValue="0" />
+			<column name="queryId" type="number(18,0)" defaultValue="0" />
+		</addColumn>
+		<addColumn tableName="COLLATERALSTRUCTURE_TEMP">
+			<column name="valuationFrequency" type="varchar(5)"
+				defaultValue="" />
+			<column name="nextValuationDate" type="datetime" defaultValue="$(call.date)" />
+			<column name="valuationPending" type="boolean" defaultValue="0" />
+			<column name="queryId" type="number(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
 	
