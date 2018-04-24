@@ -1,20 +1,23 @@
 package com.pennanttech.framework.component.dataengine;
 
-import com.pennant.backend.model.ValueLabel;
-import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.dataengine.DataEngineExport;
-import com.pennanttech.dataengine.config.DataEngineConfig;
-import com.pennanttech.dataengine.model.Configuration;
-import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.pennapps.core.resource.Literal;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Window;
+
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.DataEngineExport;
+import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.model.Configuration;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 	private static final Logger	logger				= Logger.getLogger(MasterDataExtractionCtrl.class);
@@ -85,8 +88,7 @@ public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 
 		String config = masterConfiguration.getSelectedItem().getValue();
 		DataEngineStatus status = new DataEngineStatus(config);
-		DataEngineExport export = new DataEngineExport(dataEngineConfig.getDataSource(), 1000, "ORACLE", true, null,
-				status);
+		DataEngineExport export = new DataEngineExport(dataEngineConfig.getDataSource(), 1000, App.DATABASE.toString(),true, null,status);
 
 		export.exportData(config);
 
