@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -66,6 +67,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private String reInitRemarks;
 	private List<CollateralSetup> collateralSetupList = new ArrayList<>();
 	private TechnicalVerification technicalVerification;
+	private List<Map<String, Object>> collaterals = new ArrayList<>();
 
 	public Verification() {
 		super();
@@ -89,6 +91,7 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("reInitAgency");
 		excludeFields.add("reInitRemarks");
 		excludeFields.add("technicalVerification");
+		excludeFields.add("collaterals");
 		return excludeFields;
 	}
 
@@ -378,6 +381,14 @@ public class Verification extends AbstractWorkflowEntity {
 
 	public void setTechnicalVerification(TechnicalVerification technicalVerification) {
 		this.technicalVerification = technicalVerification;
+	}
+
+	public List<Map<String, Object>> getCollaterals() {
+		return collaterals;
+	}
+
+	public void setCollaterals(List<Map<String, Object>> collaterals) {
+		this.collaterals = collaterals;
 	}
 
 }

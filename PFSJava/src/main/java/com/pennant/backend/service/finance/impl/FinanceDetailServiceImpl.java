@@ -647,7 +647,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		verification.setModule(Module.LOAN.getKey());
 		verification.setKeyReference(financeMain.getFinReference());
 		verification.setCreatedOn(new Timestamp(System.currentTimeMillis()));
-		verification.setCreatedBy(financeMain.getLastMntBy());
 		verification = fieldInvestigationService.getFiVeriFication(verification);
 		financeDetail.setFiVerification(verification);
 	}
@@ -662,6 +661,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					"_Aview");
 			collateralSetup.setRecordType(CollAsmt.getRecordType());
 			verification.getCollateralSetupList().add(collateralSetup);
+
+			verification.getCollaterals()
+					.addAll(extendedFieldRenderDAO.getExtendedFieldMap(collateralSetup.getCollateralRef(),
+							"collateral_" + collateralSetup.getCollateralType() + "_ed", null));
+
 		}
 		List<CollateralSetup> screenCollaterals = new ArrayList<>();
 		screenCollaterals.addAll(verification.getCollateralSetupList());
@@ -681,7 +685,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		verification.setCustId(customer.getCustID());
 		verification.setCustomerName(customer.getCustShrtName());
 		verification.setCreatedOn(new Timestamp(System.currentTimeMillis()));
-		verification.setCreatedBy(1000);
 		verification = technicalVerificationService.getTvVeriFication(verification);
 		financeDetail.setTvVerification(verification);
 	}

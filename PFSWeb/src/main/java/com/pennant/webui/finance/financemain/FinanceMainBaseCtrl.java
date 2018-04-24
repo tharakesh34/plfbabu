@@ -294,8 +294,10 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.verification.Decision;
+import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
+import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
@@ -884,6 +886,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	
 	@Autowired
 	private FieldInvestigationService						fieldInvestigationService;
+	@Autowired
+	TechnicalVerificationService technicalVerificationService;
 	@Autowired
 	private CollateralSetupDAO								collateralSetupDAO;
 
@@ -16613,17 +16617,28 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	
 	private boolean isCollateralChanged(FinanceDetail aFinanceDetail, Verification verification) {
 		boolean flag=true;
-		List<CollateralSetup> savedCollaterals = verification.getCollateralSetupList();
+
+		List<Verification> savedVerifications = verification.getVerifications();
 		List<CollateralSetup> screenCollaterals = new ArrayList<>();
+		TechnicalVerification screenTV = new TechnicalVerification();
 		for (CollateralAssignment CollAsmt : aFinanceDetail.getCollateralAssignmentList()) {
 			CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(), "_Aview");
 			collateralSetup.setRecordType(CollAsmt.getRecordType());
 			screenCollaterals.add(collateralSetup);
 		}
 		for (CollateralSetup screenCollateral : screenCollaterals) {
-			for (CollateralSetup savedCollateral : savedCollaterals) {
-				if(screenCollateral.getCollateralRef().equals(savedCollateral.getCollateralRef()) || (StringUtils.isNotEmpty(screenCollateral.getRecordType())
-						&& screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN))){
+			screenTV.setCollateralRef(screenCollateral.getCollateralRef());
+			screenTV.setCollateralType(screenCollateral.getCollateralType());
+			for (Verification savedVerification : savedVerifications) {
+				if (StringUtils.isNotEmpty(screenCollateral.getRecordType())
+						&& screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+					return true;
+				}
+				if (screenCollateral.getCollateralRef().equals(savedVerification.getReferenceFor())
+				/*
+				 * && !technicalVerificationService.isCollateralChanged(screenTV,getCollateralsByRef(savedVerification.
+				 * getReferenceFor(), verification))
+				 */) {
 					flag = false;
 				}
 			}
@@ -16633,6 +16648,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			flag = true;
 		}
 		return false;
+	}
+
+	private List<Map<String, Object>> getCollateralsByRef(String collateralRef, Verification verification) {
+		List<Map<String, Object>> result = new ArrayList<>();
+		List<Map<String, Object>> collaterals = verification.getCollaterals();
+		for (Map<String, Object> map : collaterals) {
+			if (collateralRef.equals(map.get("reference"))) {
+				result.add(map);
+			}
+		}
+		return result;
 	}
 	private void addNewTvVerification(FinanceDetail aFinanceDetail) {
 		financeDetailService.setTvInitVerification(aFinanceDetail);

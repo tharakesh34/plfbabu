@@ -758,7 +758,6 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 				}
 				vrf.setRecordType(address.getRecordType());
 				vrf.setReferenceFor(address.getCustAddrType());
-				vrf.setCreatedBy(verification.getCreatedBy());
 				vrf.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 				setFiFields(vrf, address, customerDetails.getCustomerPhoneNumList());
 
@@ -771,7 +770,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	@Override
 	public Verification getFiVeriFication(Verification verification) {
 		logger.info(Literal.ENTERING);
-		List<Verification> preVerifications = verificationDAO.getFiVeriFications(verification.getKeyReference(),
+		List<Verification> preVerifications = verificationDAO.getVeriFications(verification.getKeyReference(),
 				VerificationType.FI.getKey());
 		List<Verification> screenVerifications = getScreenVerifications(verification);
 
@@ -805,17 +804,18 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		for (Verification verification : verifications) {
 			cif[i++] = verification.getCif();
 		}
+		if (cif.length != 0) {
+			List<FieldInvestigation> list = fieldInvestigationDAO.getList(cif);
 
-		List<FieldInvestigation> list = fieldInvestigationDAO.getList(cif);
-
-		for (Verification verification : verifications) {
-			FieldInvestigation current = verification.getFieldInvestigation();
-			for (FieldInvestigation previous : list) {
-				if (previous.getCif().equals(verification.getCif())
-						&& previous.getAddressType().equals(current.getAddressType())) {
-					if (!isAddressChange(previous, current)) {
-						verification.setStatus(previous.getStatus());
-						verification.setVerificationDate(new Timestamp(previous.getDate().getTime()));
+			for (Verification verification : verifications) {
+				FieldInvestigation current = verification.getFieldInvestigation();
+				for (FieldInvestigation previous : list) {
+					if (previous.getCif().equals(verification.getCif())
+							&& previous.getAddressType().equals(current.getAddressType())) {
+						if (!isAddressChange(previous, current)) {
+							verification.setStatus(previous.getStatus());
+							verification.setVerificationDate(new Timestamp(previous.getDate().getTime()));
+						}
 					}
 				}
 			}

@@ -161,7 +161,15 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private void onchangeVerificationType(Combobox cfiv, ExtendedCombobox cAgency, ExtendedCombobox cReason) {
-		RequestType type = RequestType.getType(Integer.parseInt(cfiv.getSelectedItem().getValue()));
+		RequestType type;
+		try {
+			type = RequestType.getType(Integer.parseInt(cfiv.getSelectedItem().getValue()));
+		} catch (Exception e) {
+			String value = cfiv.getValue();
+			cfiv.setValue("");
+			throw new WrongValueException(cfiv,
+					Labels.getLabel("STATIC_INVALID", new String[] { value + " is not valid," }));
+		}
 		switch (type) {
 		case INITIATE:
 			cAgency.setReadonly(false);
@@ -711,6 +719,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		showErrorDetails(wve, tab);
 
+		this.verification.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		financeDetail.setTvVerification(this.verification);
 
 		logger.debug("Leaving");

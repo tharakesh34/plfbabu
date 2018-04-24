@@ -116,7 +116,6 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		int i = 0;
 
 		for (Verification item : verification.getVerifications()) {
-			item.setWorkflowId(0);
 			item.setLastMntOn(verification.getLastMntOn());
 			item.setLastMntBy(verification.getLastMntBy());
 			item.setVersion(verification.getVersion());
@@ -126,6 +125,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			item.setNextTaskId(verification.getNextTaskId());
 			item.setRecordStatus(verification.getRecordStatus());
 			item.setWorkflowId(verification.getWorkflowId());
+			item.setLastMntBy(verification.getLastMntBy());
+			item.setCreatedBy(verification.getLastMntBy());
 			if (StringUtils.isEmpty(item.getRecordType())) {
 				item.setRecordType(verification.getRecordType());
 			}
@@ -394,7 +395,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 	@Override
 	public List<Verification> getVerifications(String keyReference, int verificationType) {
-		List<Verification> verifications = verificationDAO.getFiVeriFications(keyReference, verificationType);
+		List<Verification> verifications = verificationDAO.getVeriFications(keyReference, verificationType);
 		for (Verification verification : verifications) {
 			if (verification.getStatus() == Status.POSITIVE.getKey()
 					|| verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {

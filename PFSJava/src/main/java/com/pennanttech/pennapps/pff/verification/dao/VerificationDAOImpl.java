@@ -49,12 +49,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 	}
 
 	@Override
-	public List<Verification> getFiVeriFications(String keyReference, int verificationType) {
-		logger.debug(Literal.ENTERING);
-		return getVeriFications(keyReference, verificationType);
-	}
-
-	private List<Verification> getVeriFications(String keyReference, int verificationType) {
+	public List<Verification> getVeriFications(String keyReference, int verificationType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.

@@ -52,7 +52,6 @@ import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.TechnicalVerificationDAO;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
-import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
@@ -569,7 +568,6 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			vrf.setNewRecord(true);
 			vrf.setReference(vrf.getCif());
 			vrf.setRecordType(collateralSetup.getRecordType());
-			vrf.setCreatedBy(verification.getCreatedBy());
 			vrf.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 			setTvFields(vrf, collateralSetup);
 			verifications.add(vrf);
@@ -581,9 +579,17 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	@Override
 	public Verification getTvVeriFication(Verification verification) {
 		logger.info(Literal.ENTERING);
-		List<Verification> preVerifications = verificationDAO.getFiVeriFications(verification.getKeyReference(),
+		List<Verification> preVerifications = verificationDAO.getVeriFications(verification.getKeyReference(),
 				VerificationType.TV.getKey());
 		List<Verification> screenVerifications = getScreenVerifications(verification);
+
+		for (Verification prvVrf : preVerifications) {
+			prvVrf.setCollaterals(getCollateralsByRef(prvVrf.getReferenceFor(), verification.getCollaterals()));
+		}
+		for (Verification screenVrf : screenVerifications) {
+			screenVrf.setCollaterals(extendedFieldRenderDAO.getExtendedFieldMap(screenVrf.getReferenceFor(),
+					"collateral_" + screenVrf.getReferenceType() + "_ed", null));
+		}
 		setLastStatus(screenVerifications);
 
 		if (!preVerifications.isEmpty()) {
@@ -598,12 +604,23 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			}
 
 		}
+
 		getChangedVerifications(preVerifications, screenVerifications, verification.getKeyReference());
 		verification.setVerifications(
 				compareVerifications(screenVerifications, preVerifications, verification.getKeyReference()));
 
 		logger.info(Literal.LEAVING);
 		return verification;
+	}
+
+	private List<Map<String, Object>> getCollateralsByRef(String collateralRef, List<Map<String, Object>> collaterals) {
+		List<Map<String, Object>> result = new ArrayList<>();
+		for (Map<String, Object> map : collaterals) {
+			if (collateralRef.equals(map.get("reference"))) {
+				result.add(map);
+			}
+		}
+		return result;
 	}
 
 	private void setLastStatus(List<Verification> verifications) {
@@ -613,16 +630,18 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		for (Verification verification : verifications) {
 			cif[i++] = verification.getCif();
 		}
-		List<TechnicalVerification> list = technicalVerificationDAO.getList(cif);
+		if (cif.length != 0) {
+			List<TechnicalVerification> list = technicalVerificationDAO.getList(cif);
 
-		for (Verification verification : verifications) {
-			TechnicalVerification current = verification.getTechnicalVerification();
-			for (TechnicalVerification previous : list) {
-				if (previous.getCustCif().equals(verification.getCif())
-						&& previous.getCollateralRef().equals(current.getCollateralRef())) {
-					if (!isCollateralChanged(previous, current)) {
-						verification.setStatus(previous.getStatus());
-						verification.setVerificationDate(new Timestamp(previous.getDate().getTime()));
+			for (Verification verification : verifications) {
+				TechnicalVerification current = verification.getTechnicalVerification();
+				for (TechnicalVerification previous : list) {
+					if (previous.getCustCif().equals(verification.getCif())
+							&& previous.getCollateralRef().equals(current.getCollateralRef())) {
+						if (!isCollateralChanged(previous, verification.getCollaterals())) {
+							verification.setStatus(previous.getStatus());
+							verification.setVerificationDate(new Timestamp(previous.getDate().getTime()));
+						}
 					}
 				}
 			}
@@ -643,7 +662,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			for (Verification newVer : newList) {
 				if (oldVer.getReferenceFor().equals(newVer.getReferenceFor())) {
 					if (oldVer.getRequestType() == RequestType.INITIATE.getKey()
-							&& isCollateralChanged(oldVer.getTechnicalVerification(), newVer.getTechnicalVerification())
+							&& isCollateralChanged(oldVer.getCollaterals(), newVer.getCollaterals())
 							&& tvIds.contains(oldVer.getId())) {
 						newVer.setRecordType(PennantConstants.RCD_UPD);
 					}
@@ -687,7 +706,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 				if (vrf.getReferenceFor().equals(preVrf.getReferenceFor())
 						&& (StringUtils.isEmpty(vrf.getRecordType())
 								|| !vrf.getRecordType().equals(PennantConstants.RCD_UPD))
-						&& !isCollateralChanged(preVrf.getTechnicalVerification(), vrf.getTechnicalVerification())
+						&& !isCollateralChanged(preVrf.getCollaterals(), vrf.getCollaterals())
 						&& !tvIds.contains(vrf.getId())) {
 					screenVerifications.remove(vrf);
 					preVerifications.remove(preVrf);
@@ -698,15 +717,19 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		return screenVerifications;
 	}
 
-	private boolean isCollateralChanged(TechnicalVerification prvVrf, TechnicalVerification currentVrf) {
-		if (prvVrf == null || currentVrf == null) {
+	private boolean isCollateralChanged(TechnicalVerification prvVrf, List<Map<String, Object>> currentCollaterals) {
+		if (prvVrf == null) {
 			return false;
 		}
-
 		List<Map<String, Object>> prvCollaterals = extendedFieldRenderDAO.getExtendedFieldMapByVerificationId(
-				prvVrf.getVerificationId(), "collateral_" + prvVrf.getCollateralType() + "_ed_tv");
-		List<Map<String, Object>> currentCollaterals = extendedFieldRenderDAO.getExtendedFieldMap(
-				prvVrf.getCollateralRef(), "collateral_" + prvVrf.getCollateralType() + "_ed", null);
+				prvVrf.getVerificationId(),
+					"collateral_" + prvVrf.getCollateralType() + "_ed_tv");
+		return isCollateralChanged(prvCollaterals, currentCollaterals);
+	}
+
+	@Override
+	public boolean isCollateralChanged(List<Map<String, Object>> prvCollaterals,
+			List<Map<String, Object>> currentCollaterals) {
 		if (prvCollaterals.size() != currentCollaterals.size()) {
 			return true;
 		}
