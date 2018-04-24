@@ -137,7 +137,8 @@ public class SnapShotService extends SnapShotDataExecution {
 				
 				for (SnapShotCondition condition : configuration.getConditions()) {
 					
-					String sqlQry = getSqlQry(configuration.getFromSchema(),configuration.getFromTable(), configuration.getToTable(), columns, condition);
+					String sqlQry = getSqlQry(configuration.getFromSchema(),configuration.getFromTable(), configuration.getToTable(), columns, condition,fullDownLoad);
+					
 					if(!fullDownLoad){
 						param.put("ENDDATE", endDate);
 						if(startDate!=null){
@@ -146,8 +147,6 @@ public class SnapShotService extends SnapShotDataExecution {
 						}else{
 							sqlQry = StringUtils.replace(sqlQry, "{LASTMNTON}","  LASTMNTON <= :ENDDATE ");
 						}
-					}else{
-						sqlQry = StringUtils.replace(sqlQry, "{LASTMNTON}"," ");
 					}
 					
 					recordCount = recordCount + generateSnapShotData(sqlQry, param, configuration.getFromTable());

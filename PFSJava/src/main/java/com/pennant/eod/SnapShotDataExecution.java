@@ -102,6 +102,51 @@ public class SnapShotDataExecution {
 		return buffer.toString();
 	}
 
+	protected  String getSqlQry(String fromSchema, String fromTable, String totable, String columns,SnapShotCondition condition,boolean fullDownLoad) {
+		StringBuffer buffer = new StringBuffer("INSERT INTO ");
+		buffer.append(totable);
+		buffer.append(" ");
+
+		if (StringUtils.trimToNull(columns) != null) {
+			buffer.append(" ( ");
+			buffer.append(columns);
+			buffer.append(" ) ");
+		}
+
+		buffer.append(" SELECT ");
+
+		if (StringUtils.trimToNull(columns) != null) {
+			buffer.append(columns);
+			buffer.append("  ");
+		} else {
+			buffer.append(" * ");
+		}
+
+		buffer.append(" FROM ");
+		if (StringUtils.trimToNull(fromSchema) != null) {
+			buffer.append(fromSchema);
+			buffer.append(".");
+		}
+		buffer.append(fromTable);
+		buffer.append(" ");
+
+		if (StringUtils.trimToNull(condition.getCondition()) != null) {
+			buffer.append(" WHERE ");
+			buffer.append(StringUtils.replace(condition.getCondition(), "{SCHMA}", fromSchema + "."));
+			if(!fullDownLoad){
+				buffer.append(" AND {LASTMNTON} ");
+			}
+		}else{
+
+			if(!fullDownLoad){
+				buffer.append(" Where {LASTMNTON} ");
+			}
+			
+		}
+
+		return buffer.toString();
+	}
+	
 	protected  boolean clearData(String table, boolean delete) {
 
 		try {
