@@ -13,6 +13,7 @@ package com.pennanttech.pennapps.pff.verification.model;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private Long reason;
 	private String remarks;
 	private long createdBy;
-	private Timestamp createdOn;
+	private Date createdOn;
 	private int status;
 	private Long agencyReason;
 	private String agencyRemarks;
@@ -227,11 +228,11 @@ public class Verification extends AbstractWorkflowEntity {
 		this.createdBy = createdBy;
 	}
 
-	public Timestamp getCreatedOn() {
+	public Date getCreatedOn() {
 		return createdOn;
 	}
 
-	public void setCreatedOn(Timestamp createdOn) {
+	public void setCreatedOn(Date createdOn) {
 		this.createdOn = createdOn;
 	}
 

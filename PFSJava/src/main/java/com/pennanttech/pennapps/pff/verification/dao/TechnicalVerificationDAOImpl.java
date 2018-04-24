@@ -118,10 +118,10 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		paramSource.addValue("custCif", Arrays.asList(custCif));
 
 		RowMapper<TechnicalVerification> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TechnicalVerification.class);
+ 				.newInstance(TechnicalVerification.class);
 
 		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+  			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

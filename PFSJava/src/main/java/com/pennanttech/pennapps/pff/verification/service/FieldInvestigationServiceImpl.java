@@ -46,6 +46,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -758,7 +759,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 				}
 				vrf.setRecordType(address.getRecordType());
 				vrf.setReferenceFor(address.getCustAddrType());
-				vrf.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+				vrf.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
 				setFiFields(vrf, address, customerDetails.getCustomerPhoneNumList());
 
 				verifications.add(vrf);

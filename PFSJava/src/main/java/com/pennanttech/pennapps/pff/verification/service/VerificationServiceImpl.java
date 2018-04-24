@@ -63,6 +63,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.Status;
@@ -150,7 +151,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				}
 			} else {
 				if (item.getDecision() == Decision.RE_INITIATE.getKey()) {
-					item.setCreatedOn(item.getLastMntOn());
+					item.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
 					item.setCreatedBy(item.getLastMntBy());
 
 					Verification reInit = new Verification();
