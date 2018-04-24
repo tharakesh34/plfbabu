@@ -1091,35 +1091,18 @@ UNION ALL
 			format.','','Approved','','','','','',0,current_timestamp,1000,0);
 		</sql>
 	</changeSet>
-
 	<changeSet id="18" author="Vinay">
 		<addColumn tableName="COLLATERALSTRUCTURE">
 			<column name="valuationFrequency" type="varchar(5)"
 				defaultValue="" />
-			<column name="nextValuationDate" type="datetime" defaultValue="now()" />
+			<column name="nextValuationDate" type="datetime" defaultValue="${call.date}" />
 			<column name="valuationPending" type="boolean" defaultValue="0" />
 			<column name="queryId" type="number(18,0)" defaultValue="0" />
 		</addColumn>
 		<addColumn tableName="COLLATERALSTRUCTURE_TEMP">
 			<column name="valuationFrequency" type="varchar(5)"
 				defaultValue="" />
-			<column name="nextValuationDate" type="datetime" defaultValue="now()" />
-			<column name="valuationPending" type="boolean" defaultValue="0" />
-			<column name="queryId" type="number(18,0)" defaultValue="0" />
-		</addColumn>
-	</changeSet>
-	<changeSet id="18" author="Vinay">
-		<addColumn tableName="COLLATERALSTRUCTURE">
-			<column name="valuationFrequency" type="varchar(5)"
-				defaultValue="" />
-			<column name="nextValuationDate" type="datetime" defaultValue="$(call.date)" />
-			<column name="valuationPending" type="boolean" defaultValue="0" />
-			<column name="queryId" type="number(18,0)" defaultValue="0" />
-		</addColumn>
-		<addColumn tableName="COLLATERALSTRUCTURE_TEMP">
-			<column name="valuationFrequency" type="varchar(5)"
-				defaultValue="" />
-			<column name="nextValuationDate" type="datetime" defaultValue="$(call.date)" />
+			<column name="nextValuationDate" type="datetime" defaultValue="${call.date}" />
 			<column name="valuationPending" type="boolean" defaultValue="0" />
 			<column name="queryId" type="number(18,0)" defaultValue="0" />
 		</addColumn>
@@ -3698,6 +3681,19 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 	
 	</changeSet>
 	
+	<changeSet id="42" author="Vinay">
+		<sql>
+			delete from REPORTLIST where Code='ErrorDetail';
+			Insert into REPORTLIST values ('ErrorDetail','ErrorDetail','listheader_ErrorCode.label,listheader_ErrorLanguage.label,listheader_ErrorSeverity.label,listheader_ErrorMessage.label,listheader_ErrorExtendedMessage.label','code,language,severity,message,extendedMessage','String,String,String,String,String',' ','ReportList05',' Error Details','Administration',1,1001,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		</sql>	
+	</changeSet>
+	
+	<changeSet id="43" author="Vinay">
+		<sql>
+			update data_engine_event_properties set private_key = null;
+			update data_engine_config set postevent = null where name  in ('MANDATES_EXPORT','DISB_CITI_EXPORT');
+		</sql>	
+	</changeSet>
 
 </databaseChangeLog>
 	
