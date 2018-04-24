@@ -439,16 +439,16 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				vasRecording.setExtendedFieldRender(extendedFieldRender);
 			}
 
+			// Document Details
+			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(vasReference,
+					VASConsatnts.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+			if (vasRecording.getDocuments() != null && !vasRecording.getDocuments().isEmpty()) {
+				vasRecording.getDocuments().addAll(documentList);
+			} else {
+				vasRecording.setDocuments(documentList);
+			}
 			// Not Required Other Process details for the Enquiry
 			if (!isEnquiry) {
-				// Document Details
-				List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(vasReference,
-						VASConsatnts.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
-				if (vasRecording.getDocuments() != null && !vasRecording.getDocuments().isEmpty()) {
-					vasRecording.getDocuments().addAll(documentList);
-				} else {
-					vasRecording.setDocuments(documentList);
-				}
 
 				// Agreement Details & Check List Details
 				if (StringUtils.isNotEmpty(vasRecording.getRecordType())
