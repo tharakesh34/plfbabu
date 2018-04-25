@@ -115,8 +115,8 @@ import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.security.LdapContext;
 import com.pennanttech.pennapps.core.security.UserAttributes;
 import com.pennanttech.pennapps.core.security.UserType;
@@ -926,15 +926,18 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 		if (!this.usrFName.isReadonly()) {
 			this.usrFName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_SecurityUserDialog_UsrFName.value"), PennantRegularExpressions.REGEX_NAME, true));
+					.getLabel("label_SecurityUserDialog_UsrFName.value"), PennantRegularExpressions.REGEX_ALPHA_SPACE,
+					true));
 		}
 		if (!this.usrMName.isReadonly()) {
 			this.usrMName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_SecurityUserDialog_UsrMName.value"), PennantRegularExpressions.REGEX_NAME, false));
+					.getLabel("label_SecurityUserDialog_UsrMName.value"), PennantRegularExpressions.REGEX_ALPHA_SPACE,
+					false));
 		}
 		if (!this.usrLName.isReadonly()) {
 			this.usrLName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_SecurityUserDialog_UsrLName.value"), PennantRegularExpressions.REGEX_NAME, true));
+					.getLabel("label_SecurityUserDialog_UsrLName.value"), PennantRegularExpressions.REGEX_ALPHA_SPACE,
+					true));
 		}
 		if (!this.usrMobile.isReadonly()) {
 			if (StringUtils.isNotEmpty(this.usrMobile.getValue())) {
