@@ -53,7 +53,8 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private String agencyName;
 	private String agency;
 	private Timestamp createdOn;
-	private String custCif;
+	private String cif;
+	private Long custId;
 	private String custName;
 	private String keyReference;
 	private String collateralType;
@@ -97,7 +98,8 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		excludeFields.add("agencyName");
 		excludeFields.add("agency");
 		excludeFields.add("createdOn");
-		excludeFields.add("custCif");
+		excludeFields.add("cif");
+		excludeFields.add("custId");
 		excludeFields.add("custName");
 		excludeFields.add("keyReference");
 		excludeFields.add("collateralType");
@@ -131,12 +133,20 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		this.verificationId = verificationId;
 	}
 
-	public String getCustCif() {
-		return custCif;
+	public String getCif() {
+		return cif;
 	}
 
-	public void setCustCif(String custCif) {
-		this.custCif = custCif;
+	public void setCif(String cif) {
+		this.cif = cif;
+	}
+
+	public Long getCustId() {
+		return custId;
+	}
+
+	public void setCustId(Long custId) {
+		this.custId = custId;
 	}
 
 	public String getCustName() {
