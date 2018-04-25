@@ -498,7 +498,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 			this.pCCity.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCCity.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}	
 		if (!this.pCCityName.isReadonly()){
-			this.pCCityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCCityName.value"),PennantRegularExpressions.REGEX_NAME, true));
+			this.pCCityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCCityName.value"),PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
 		}
 		if (!this.pCCountry.isReadonly()) {
 			this.pCCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCCountry.value"), null, true,true));
