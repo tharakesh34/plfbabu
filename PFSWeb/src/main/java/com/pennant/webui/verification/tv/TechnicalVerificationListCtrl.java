@@ -137,7 +137,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		setItemRender(new TechnicalVerificationListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerField("custCif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
+		registerField("cif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
 		registerField("collateralType", listheader_CollateralType, SortOrder.ASC, collateralType, sortOperator_CollateralType, Operators.STRING);
 		registerField("collateralRef", listheader_CollateralReference, SortOrder.ASC, collateralReference, sortOperator_CollateralReference, Operators.STRING);
 		registerField("keyReference", listheader_LoanReference, SortOrder.ASC, loanReference, sortOperator_LoanReference, Operators.STRING);

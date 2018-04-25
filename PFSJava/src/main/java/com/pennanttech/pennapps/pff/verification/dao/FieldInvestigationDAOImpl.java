@@ -226,7 +226,7 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 		sql.append(
 				" livingstandard, negativecheck, noofattempts, agentcode, agentname, status, reason, summaryremarks,");
 		if (type.equalsIgnoreCase("_view")) {
-			sql.append("cif, keyreference, createdon, lovrelationdesc, reasoncode, reasondesc,");
+			sql.append("cif, custid, keyreference, createdon, lovrelationdesc, reasoncode, reasondesc,");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");

@@ -27,7 +27,7 @@ public class TechnicalVerificationListModelItemRenderer implements ListitemRende
 	public void render(Listitem item, TechnicalVerification tv, int count) throws Exception {
 		Listcell lc;
 		
-		String customerName = tv.getCustCif();
+		String customerName = tv.getCif();
 		if (StringUtils.trimToNull(tv.getCustName()) != null) {
 			customerName = customerName.concat(" - ").concat(tv.getCustName());
 		}

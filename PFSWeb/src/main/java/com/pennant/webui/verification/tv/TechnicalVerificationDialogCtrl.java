@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -55,11 +56,13 @@ import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -140,6 +143,8 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	private transient TechnicalVerificationListCtrl technicalVerificationListCtrl;
 	private transient TechnicalVerificationService technicalVerificationService;
 	private transient CollateralSetupService collateralSetupService;
+	@Autowired
+	private transient CustomerDetailsService customerDetailsService;
 
 	private TechnicalVerification technicalVerification = null;
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
@@ -392,7 +397,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		logger.debug(Literal.ENTERING);
 
 		//Basic Details
-		this.custCIF.setValue(tv.getCustCif());
+		this.custCIF.setValue(tv.getCif());
 		this.finReference.setValue(tv.getKeyReference());
 		this.custName.setValue(tv.getCustName());
 		this.collateralType.setValue(tv.getCollateralType());
@@ -549,7 +554,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	 */
 	private ArrayList<Object> getHeaderBasicDetails(TechnicalVerification tv) {
 		ArrayList<Object> arrayList = new ArrayList<Object>();
-		arrayList.add(0, tv.getCustCif());
+		arrayList.add(0, tv.getCif());
 		arrayList.add(1, tv.getCollateralRef());
 		arrayList.add(2, tv.getCustName());
 		arrayList.add(3, tv.getCollateralCcy());
@@ -773,6 +778,28 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 
 		logger.debug(Literal.LEAVING + event.toString());
 	}
+	/**
+	 * When user clicks on button "Customer CIF" button
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnSearchCustomerDetails(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug(Literal.ENTERING + event.toString());
+
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		 CustomerDetails customerDetails = customerDetailsService.getCustomerById(this.technicalVerification.getCustId());
+		if (customerDetails != null) {
+			map.put("customerDetails", customerDetails);
+			map.put("isEnqProcess", true);
+			map.put("CustomerEnq", true);
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
+		}
+
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+	
+	
 	/**
 	 * Method to show error details if occurred
 	 * 

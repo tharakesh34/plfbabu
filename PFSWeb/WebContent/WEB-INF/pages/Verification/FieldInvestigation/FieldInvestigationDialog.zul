@@ -102,6 +102,10 @@
 														id="space_CustCIF" spacing="2px" />
 													<textbox
 														id="custCIF" width="155px" readonly="true" />
+													<button
+														id="btnSearchCustomerDetails"
+														tooltiptext="${c:l('label_CollateralSearch_CollateralRef.tooltiptext')}"
+														image="/images/icons/more.png" />
 												</hbox>
 												<label
 													id="label_FinReference"

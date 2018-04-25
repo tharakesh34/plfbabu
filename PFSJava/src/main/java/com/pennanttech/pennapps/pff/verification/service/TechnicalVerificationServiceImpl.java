@@ -616,7 +616,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			for (Verification verification : verifications) {
 				TechnicalVerification current = verification.getTechnicalVerification();
 				for (TechnicalVerification previous : list) {
-					if (previous.getCustCif().equals(verification.getCif())
+					if (previous.getCif().equals(verification.getCif())
 							&& previous.getCollateralRef().equals(current.getCollateralRef())) {
 						if (!isCollateralChanged(previous, current)) {
 							verification.setStatus(previous.getStatus());

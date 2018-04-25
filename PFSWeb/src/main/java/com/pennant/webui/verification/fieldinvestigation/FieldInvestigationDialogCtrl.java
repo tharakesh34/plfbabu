@@ -27,6 +27,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.HtmlBasedComponent;
+import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -57,7 +58,10 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
@@ -160,6 +164,8 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 
 	@Autowired
 	private transient FieldInvestigationService fieldInvestigationService;
+	@Autowired
+	private transient CustomerDetailsService customerDetailsService;
 	private boolean fromLoanOrg;
 
 	/**
@@ -738,6 +744,29 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		}
 		logger.debug(Literal.LEAVING);
 	}
+	
+	/**
+	 * When user clicks on button "Customer CIF" button
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnSearchCustomerDetails(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug(Literal.ENTERING + event.toString());
+
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		 CustomerDetails customerDetails = customerDetailsService.getCustomerById(this.fieldInvestigation.getCustId());
+		if (customerDetails != null) {
+			map.put("customerDetails", customerDetails);
+			map.put("isEnqProcess", true);
+			map.put("CustomerEnq", true);
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
+		}
+
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+	
+	
 
 	/**
 	 * Method to show error details if occurred
