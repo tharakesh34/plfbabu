@@ -242,10 +242,18 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void onChangeDecision(ForwardEvent event) throws Exception {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox reInitAgency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
-		Combobox decision = (Combobox) getComponent(listitem, "Decision");
-
-		if (Decision.getType(Integer.parseInt(decision.getSelectedItem().getValue())).getKey() == Decision.RE_INITIATE
-				.getKey()) {
+		Combobox decisionBox = (Combobox) getComponent(listitem, "Decision");
+		Decision decision;
+		try {
+			decision = Decision.getType(Integer.parseInt(decisionBox.getSelectedItem().getValue()));
+		} catch (Exception e) {
+			String value = decisionBox.getValue();
+			decisionBox.setValue("");
+			throw new WrongValueException(decisionBox,
+					Labels.getLabel("STATIC_INVALID", new String[] { value + " is not valid," }));
+		}
+		
+		if (decision.getKey() == Decision.RE_INITIATE.getKey()) {
 			reInitAgency.setReadonly(false);
 		} else {
 			reInitAgency.setValue("");

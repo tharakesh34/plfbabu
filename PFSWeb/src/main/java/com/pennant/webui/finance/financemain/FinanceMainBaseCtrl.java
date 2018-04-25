@@ -16673,12 +16673,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 	
 	private boolean isCollateralChanged(FinanceDetail aFinanceDetail, Verification verification) {
-		boolean flag=true;
-		
+		boolean flag = true;
+
 		List<Verification> savedVerifications = verification.getVerifications();
 		List<CollateralSetup> screenCollaterals = new ArrayList<>();
 		for (CollateralAssignment CollAsmt : aFinanceDetail.getCollateralAssignmentList()) {
-			CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(), "_Aview");
+			CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(),
+					"_Aview");
 			collateralSetup.setRecordType(CollAsmt.getRecordType());
 			screenCollaterals.add(collateralSetup);
 		}
@@ -16688,12 +16689,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						&& screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
 					return true;
 				}
-				if (screenCollateral.getCollateralRef().equals(savedVerification.getReferenceFor())
-				/* && !technicalVerificationService.isCollateralChanged(savedTV, screenTV) */) {
+				if (screenCollateral.getCollateralRef().equals(savedVerification.getReferenceFor())) {
 					flag = false;
 				}
 			}
-			if(flag){
+			if (flag) {
 				return flag;
 			}
 			flag = true;

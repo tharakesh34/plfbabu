@@ -638,9 +638,12 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 
 	private void getChangedVerifications(List<Verification> oldList, List<Verification> newList, String keyReference) {
 		List<Long> tvIds = getTechnicalVerificaationIds(oldList, keyReference);
-		for (Verification oldVer : oldList) {
-			for (Verification newVer : newList) {
+		for (Verification newVer : newList) {
+			for (Verification oldVer : oldList) {
 				if (oldVer.getReferenceFor().equals(newVer.getReferenceFor())) {
+					if (oldVer.getRequestType() != RequestType.INITIATE.getKey()) {
+						break;
+					}
 					if (oldVer.getRequestType() == RequestType.INITIATE.getKey()
 							&& isCollateralChanged(oldVer.getTechnicalVerification(), newVer.getTechnicalVerification())
 							&& tvIds.contains(oldVer.getId())) {
