@@ -243,6 +243,60 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 						return errorDetails;
 					}
 				}
+				
+				//docType is mandatory in XML Level
+				if (StringUtils.isNotBlank(detail.getDoctype())) {
+					if (!(StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_PDF)
+							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_DOC)
+							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_DOCX)
+							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_IMAGE))) {
+						String[] valueParm = new String[1];
+						valueParm[0] = detail.getDoctype();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", "", valueParm), "EN"));
+					}
+				}
+
+				//docName is mandatory in XML Level
+				if (StringUtils.isNotBlank(detail.getDocName()) && StringUtils.isNotBlank(detail.getDoctype())) {
+					String docName = detail.getDocName().toLowerCase();
+					boolean isImage = false;
+					if (StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_IMAGE)) {
+						isImage = true;
+						if (!docName.endsWith(".jpg") && !docName.endsWith(".jpeg") && !docName.endsWith(".png")) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "document type: " + docName;
+							valueParm[1] = detail.getDoctype();
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90289", "", valueParm), "EN"));
+						}
+					}
+
+					//if docName has no extension.
+					if (!docName.contains(".")) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "docName: " + docName;
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90291", "", valueParm), "EN"));
+
+					} else {
+						// document name is only extension
+						String docNameExtension = docName.substring(docName.lastIndexOf("."));
+						if (StringUtils.equalsIgnoreCase(docName, docNameExtension)) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "docName: ";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
+
+						}
+					}
+					String docExtension = docName.substring(docName.lastIndexOf(".") + 1);
+					//if doc type and doc Extension are invalid
+					if (!isImage) {
+						if (!StringUtils.equalsIgnoreCase(detail.getDoctype(), docExtension)) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "document type: " + docName;
+							valueParm[1] = detail.getDoctype();
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90289", "", valueParm), "EN"));
+						}
+					}
+				}				
 
 				// validate finance documents
 				if (!docType.isDocIsCustDoc() && docType.isDocIsMandatory()) {
@@ -265,12 +319,6 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 						String[] valueParm = new String[1];
 						valueParm[0] = "docFormat";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					} else if(!StringUtils.equalsIgnoreCase(detail.getDoctype(), "jpg") 
-							&& !StringUtils.equalsIgnoreCase(detail.getDoctype(), "png")
-							&& !StringUtils.equalsIgnoreCase(detail.getDoctype(), "pdf")) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "docFormat, Available formats are jpg,png,PDF";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm)));
 					}
 
 					//TODO: Need to add password protected field in documentdetails
