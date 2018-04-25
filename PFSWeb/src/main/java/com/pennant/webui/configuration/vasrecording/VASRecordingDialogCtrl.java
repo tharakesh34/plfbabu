@@ -719,9 +719,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						finFeeDetail.setFeeSeq(0);
 						finFeeDetail.setFeeOrder(0);
 						finFeeDetail.setCalculatedAmount(aVASRecording.getFee());
-						finFeeDetail.setActualAmount(aVASRecording.getFee());
+						//finFeeDetail.setActualAmount(aVASRecording.getFee());
 						finFeeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
-						finFeeDetail.setRemainingFee(aVASRecording.getFee());
+						//finFeeDetail.setRemainingFee(aVASRecording.getFee());
 						finFeeDetail.setFixedAmount(aVASRecording.getFee());
 						finFeeDetail.setCalculateOn(PennantConstants.List_Select);
 						finFeeDetail.setAlwDeviation(true);
@@ -729,11 +729,34 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						finFeeDetail.setAlwModifyFee(vASConfiguration.isAllowFeeToModify());
 						finFeeDetail.setAlwModifyFeeSchdMthd(true);
 						
+						finFeeDetail.setTaxComponent("");
+						finFeeDetail.setTaxApplicable(false);
+						
+						finFeeDetail.setActualAmountOriginal(aVASRecording.getFee());
+						finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
+						finFeeDetail.setActualAmount(aVASRecording.getFee());
+						
+						finFeeDetail.setRemainingFeeOriginal(aVASRecording.getFee());
+						finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
+						finFeeDetail.setRemainingFee(aVASRecording.getFee());
+						
 						if(!StringUtils.equals(aVASRecording.getFeePaymentMode(), PennantConstants.List_Select)){
 							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PAID_BY_CUSTOMER);
+							//finFeeDetail.setPaidAmount(aVASRecording.getFee());
+							//finFeeDetail.setRemainingFee(BigDecimal.ZERO);
+							
+							finFeeDetail.setPaidAmountOriginal(aVASRecording.getFee());
+							finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
 							finFeeDetail.setPaidAmount(aVASRecording.getFee());
+							
+							finFeeDetail.setRemainingFeeOriginal(BigDecimal.ZERO);
+							finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
 							finFeeDetail.setRemainingFee(BigDecimal.ZERO);
 						}
+						
+						finFeeDetail.setNetAmountOriginal(aVASRecording.getFee());
+						finFeeDetail.setNetAmountGST(BigDecimal.ZERO);
+						finFeeDetail.setNetAmount(aVASRecording.getFee());
 						
 						finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
 						finFeeDetailsList.add(finFeeDetail);
