@@ -725,4 +725,27 @@
 			values ((select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),4,'Date','DATERANGE','Date','invoicedate',null,'---Select----',null,null,0,0,0,0,4,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
 		</sql>
 	</changeSet>
+	
+	
+	 <changeSet id="33" author="Kesav">
+	 	<comment> cgst, sgst, ugst and igst columns added for GST changes</comment>
+		<createView viewName="finfeescheduledetail_aview" replaceIfExists="true">
+			 SELECT t1.feeid,
+				    t1.schdate,
+				    t1.schamount,
+				    t1.paidamount,
+				    t1.osamount,
+				    t1.waiveramount,
+				    t1.writeoffamount,
+				    t2.finreference,
+				    t2.feetypeid,
+				    t2.finevent,
+					t1.cgst,
+				    t1.sgst,
+				    t1.ugst,
+				    t1.igst
+				   FROM finfeescheduledetail t1
+				     JOIN finfeedetail t2 ON t1.feeid = t2.feeid
+     	</createView>
+	</changeSet>
 </databaseChangeLog>
