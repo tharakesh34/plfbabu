@@ -1599,6 +1599,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				if (CollectionUtils.isNotEmpty(companyProvince.getTaxDetailList())) {
 					TaxDetail taxDetail = companyProvince.getTaxDetailList().get(0);
 					
+					if (StringUtils.isBlank(taxDetail.getHsnNumber()) || StringUtils.isBlank(taxDetail.getNatureService())) {
+						return;		//FIXME write this case as a error message
+					}
+					
 					gstInvoiceTxn.setCompany_GSTIN(taxDetail.getTaxCode());
 					gstInvoiceTxn.setCompany_Address1(taxDetail.getAddressLine1());
 					gstInvoiceTxn.setCompany_Address2(taxDetail.getAddressLine2());
@@ -1632,7 +1636,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 							
 							Customer cust =  customerDAO.getCustomerByID(customerAddres.getCustID());
 							province = customerAddres.getCustAddrProvince();
-							gstInvoiceTxn.setCustomerID(cust.getCustCIF()); //TODO check custcif is available or not
+							gstInvoiceTxn.setCustomerID(cust.getCustCIF()); 
 							gstInvoiceTxn.setCustomerName(cust.getCustShrtName());
 							
 							String custAddress = "";
@@ -1698,7 +1702,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			}
 			
 			customerProvince = gstInvoiceTxnService.getApprovedProvince(country, province);
-			gstInvoiceTxn.setCustomerStateCode(customerProvince.getTaxStateCode());	//Need to clarify the state code
+			gstInvoiceTxn.setCustomerStateCode(customerProvince.getTaxStateCode());	
 			gstInvoiceTxn.setCustomerStateName(customerProvince.getCPProvinceName());
 			
 			BigDecimal invoiceAmout = BigDecimal.ZERO;
@@ -1712,7 +1716,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					details.setIGST_RATE(feeDetail.getIgst());
 					details.setSGST_RATE(feeDetail.getSgst());
 					details.setUGST_RATE(feeDetail.getUgst());
-					details.setCGST_AMT(finTaxDetails.getNetCGST()); //TODO confirm which GST amount
+					details.setCGST_AMT(finTaxDetails.getNetCGST()); //confirm which GST amount
 					details.setIGST_AMT(finTaxDetails.getNetIGST());
 					details.setSGST_AMT(finTaxDetails.getNetSGST());
 					details.setUGST_AMT(finTaxDetails.getNetUGST());
@@ -1724,7 +1728,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			gstInvoiceTxn.setInvoice_Amt(invoiceAmout);
 			gstInvoiceTxn.setGstInvoiceTxnDetailsList(gstInvoiceTxnDetails);
 			
-			//this.gstInvoiceTxnService.save(gstInvoiceTxn);
+			this.gstInvoiceTxnService.save(gstInvoiceTxn);
 		}
 		
 		logger.debug(Literal.LEAVING);
