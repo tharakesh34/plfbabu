@@ -47,7 +47,7 @@ public class TechnicalVerificationListModelItemRenderer implements ListitemRende
 		lc = new Listcell(tv.getAgencyName());
 		lc.setParent(item);
 		
-		lc = new Listcell(DateUtility.formatToLongDate(tv.getDate()));
+		lc = new Listcell(DateUtility.formatToLongDate(tv.getCreatedOn()));
 	  	lc.setParent(item);
 		
 		lc = new Listcell(tv.getRecordStatus());
