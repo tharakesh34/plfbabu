@@ -62,7 +62,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 	protected Listheader listheader_CollateralReference;
 	protected Listheader listheader_LoanReference;
 	protected Listheader listheader_Agency;
-	protected Listheader listheader_VerificationDate;
+	protected Listheader							listheader_CreadtedOn;
 
 	// checkRights
 	protected Button button_TechnicalVerificationList_TechnicalVerificationSearch;
@@ -73,14 +73,14 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 	protected Listbox sortOperator_CollateralReference;
 	protected Listbox sortOperator_LoanReference;
 	protected Listbox sortOperator_Agency;
-	protected Listbox sortOperator_VerificationDate;
+	protected Listbox								sortOperator_CreadtedOn;
 
 	protected Textbox cif;
 	protected Textbox collateralType;
 	protected Textbox collateralReference;
 	protected Textbox loanReference;
 	protected ExtendedCombobox agency; 
-	protected Datebox verificationDate;
+	protected Datebox								CreadtedOn;
 	
 	private String module = "";
 
@@ -141,8 +141,9 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		registerField("collateralType", listheader_CollateralType, SortOrder.ASC, collateralType, sortOperator_CollateralType, Operators.STRING);
 		registerField("collateralRef", listheader_CollateralReference, SortOrder.ASC, collateralReference, sortOperator_CollateralReference, Operators.STRING);
 		registerField("keyReference", listheader_LoanReference, SortOrder.ASC, loanReference, sortOperator_LoanReference, Operators.STRING);
-		registerField("date", listheader_VerificationDate, SortOrder.NONE, verificationDate, sortOperator_VerificationDate, Operators.DATE);
-		registerField("agencyName",listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
+		registerField("agencyName", listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
+		registerField("createdOn", listheader_CreadtedOn, SortOrder.NONE, CreadtedOn, sortOperator_CreadtedOn,
+				Operators.DATE);
 		registerField("verificationId");
 		registerField("custName");
 
