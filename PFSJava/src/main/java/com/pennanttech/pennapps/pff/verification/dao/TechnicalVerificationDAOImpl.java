@@ -224,7 +224,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		sql.append(" Select verificationId, agentCode, agentName, type,  date, status, reason,");
 		sql.append(" summaryRemarks, sourceFormName, verificationFormName, observationRemarks,  valuationAmount,");
 		if (type.contains("View")) {
-			sql.append(" custCif, custName, keyReference, collateralType, collateralRef,contactNumber1, ");
+			sql.append(" custCif, custName, keyReference, collateralType, collateralRef,contactNumber1, createdon, ");
 			sql.append(" contactNumber2, collateralCcy, collateralLoc, reasonCode, reasonDesc, agencyName, agency,");
 		}
 		sql.append(
