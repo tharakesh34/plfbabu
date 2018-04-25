@@ -880,10 +880,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeDetail.setRolledoverFinanceHeader(header);
 		}
 
+		String tableType = "";
+		if (StringUtils.isNotBlank(financeMain.getRecordType())) {
+			tableType = "_Temp";
+		}
 		// Plan EMI Holiday Details
 		if (financeMain.isPlanEMIHAlw()) {
 			if (StringUtils.equals(financeMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
-				scheduleData.setPlanEMIHmonths(getFinPlanEmiHolidayDAO().getPlanEMIHMonthsByRef(finReference, ""));
+				scheduleData.setPlanEMIHmonths(getFinPlanEmiHolidayDAO().getPlanEMIHMonthsByRef(finReference,tableType));
 			} else if (StringUtils.equals(financeMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
 				scheduleData.setPlanEMIHDates(getFinPlanEmiHolidayDAO().getPlanEMIHDatesByRef(finReference, ""));
 			}
