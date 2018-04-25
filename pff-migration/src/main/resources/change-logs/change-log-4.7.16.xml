@@ -3732,5 +3732,17 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 		</sql>
 	</changeSet>
+	
+	<changeSet id="46" author="Durga Prasad D">
+		<sql>
+			UPDATE CollateralStructure SET valuationPending = false;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="47" author="Durga Prasad D">
+		<sql>
+		    UPDATE CollateralStructure_Temp SET valuationPending = false;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
