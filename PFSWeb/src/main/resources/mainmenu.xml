@@ -532,14 +532,6 @@
 		<menuItem id="menu_Item_TechnicalVerification"
 			zulNavigation="/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationList.zul"
 			rightName="menuItem_Verification_TechnicalVerification" />
-		<menu id="menu_Category_Verification_Enquiry">
-			<menuItem id="menu_Item_FieldInvestigation_Enquiry"
-				zulNavigation="/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul?module=ENQ"
-				rightName="menuItem_Verification_FieldInvestigation_Enquiry" />
-			<menuItem id="menu_Item_TechnicalVerification_Enquiry"
-				zulNavigation="/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationList.zul?module=ENQ"
-				rightName="menuItem_Verification_TechnicalVerification_Enquiry" />
-		</menu>
 	</menu>
 
 	<!-- Loan Management -->
@@ -850,6 +842,14 @@
 			<menuItem id="menu_Item_PaymentInstructionsEnquiry"
 				zulNavigation="/WEB-INF/pages/Payment/PaymentHeaderList.zul?enqiryModule=Y"
 				rightName="menuItem_payment_PaymentInstructionsEnquiry" />
+		</menu>
+		<menu id="menu_Category_Verification_Enquiry">
+			<menuItem id="menu_Item_FieldInvestigation_Enquiry"
+				zulNavigation="/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul?module=ENQ"
+				rightName="menuItem_Verification_FieldInvestigation_Enquiry" />
+			<menuItem id="menu_Item_TechnicalVerification_Enquiry"
+				zulNavigation="/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationList.zul?module=ENQ"
+				rightName="menuItem_Verification_TechnicalVerification_Enquiry" />
 		</menu>
 		<menu id="menu_Category_BulkProcessingEnquiry">
 			<menuItem id="menu_Item_PresentmentHeaderEnquiry"
