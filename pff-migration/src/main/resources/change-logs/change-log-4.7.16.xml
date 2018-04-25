@@ -3746,11 +3746,11 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 	</changeSet>
 	<changeSet id="48" author="Jayant">
 		<insert tableName="ErrorDetails">
-			<column name="ErrorCode">AUL01</column>
-			<column name="ErrorLanguage">EN</column>
-			<column name="ErrorSeverity">E</column>
-			<column name="ErrorMessage">Authorization Limits Not Exists for {0}.</column>
-			<column name="ErrorExtendedMessage"></column>
+			<column name="Code">AUL01</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Authorization Limits Not Exists for {0}.</column>
+			<column name="ExtendedMessage"></column>
 			<column name="RecordStatus">Approved</column>
 			<column name="RoleCode"></column>
 			<column name="NextRoleCode"></column>
@@ -3765,11 +3765,11 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 	</changeSet>
 	<changeSet id="49" author="Jayant">
 	<insert tableName="ErrorDetails">
-			<column name="ErrorCode">AUL02</column>
-			<column name="ErrorLanguage">EN</column>
-			<column name="ErrorSeverity">E</column>
-			<column name="ErrorMessage">Authorization Limits Not Exists for {0} and Product {1}.</column>
-			<column name="ErrorExtendedMessage"></column>
+			<column name="Code">AUL02</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Authorization Limits Not Exists for {0} and Product {1}.</column>
+			<column name="ExtendedMessage"></column>
 			<column name="RecordStatus">Approved</column>
 			<column name="RoleCode"></column>
 			<column name="NextRoleCode"></column>
@@ -3784,11 +3784,11 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 	</changeSet>
 	<changeSet id="50" author="Jayant">		
 	<insert tableName="ErrorDetails">
-			<column name="ErrorCode">AUL03</column>
-			<column name="ErrorLanguage">EN</column>
-			<column name="ErrorSeverity">E</column>
-			<column name="ErrorMessage">Insufficient Authorization Limits for {0} and Product {1}.</column>
-			<column name="ErrorExtendedMessage"></column>
+			<column name="Code">AUL03</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Insufficient Authorization Limits for {0} and Product {1}.</column>
+			<column name="ExtendedMessage"></column>
 			<column name="RecordStatus">Approved</column>
 			<column name="RoleCode"></column>
 			<column name="NextRoleCode"></column>
