@@ -8,7 +8,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_CustomerSelect" border="none"
-		apply="${CustomerSelectctrl}" width="80%" height="80%"
+		apply="${CustomerSelectctrl}" width="80%" height="82%"
 		sizable="false">
 
 		<div sclass="z-toolbar" style="padding:0px" height="28px">
