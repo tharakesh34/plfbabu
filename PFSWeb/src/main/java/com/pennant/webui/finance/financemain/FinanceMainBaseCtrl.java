@@ -5779,6 +5779,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (financeDetail.isFiInitTab()) {
 					Verification verification = financeDetail.getFiVerification();
 					if(aFinanceDetail.isFiInitTab() && isAddressChanged(aFinanceDetail, verification,false)){
+						addNewFiVerification(aFinanceDetail);
 						return;
 					}
 				}
@@ -5837,6 +5838,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (financeDetail.isFiInitTab()) {
 					Verification verification = financeDetail.getFiVerification();
 					if (aFinanceDetail.isFiInitTab() && isAddressChanged(aFinanceDetail, verification, true)) {
+						addNewFiVerification(aFinanceDetail);
 						return;
 					}
 				}
@@ -16567,12 +16569,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private boolean isAddressChanged(FinanceDetail aFinanceDetail, Verification verification,boolean jointAcc) {
 		List<CustomerDetails> screenCustomers = new ArrayList<>();
 		screenCustomers.add(aFinanceDetail.getCustomerDetails());
+		if (verification.getCustomerDetailsList().isEmpty() && !screenCustomers.isEmpty()) {
+			return true;
+		}
 		for (JointAccountDetail jointAccountDetail : aFinanceDetail.getJountAccountDetailList()) {
 			screenCustomers.add(getCustomerDetailsService().getApprovedCustomerById(jointAccountDetail.getCustID()));
 		}
-
 		if (screenCustomers.size() != verification.getCustomerDetailsList().size() && jointAcc) {
-			addNewFiVerification(aFinanceDetail);
 			return true;
 		}
 		for (CustomerDetails screenCustomer : screenCustomers) {
@@ -16582,7 +16585,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							savedcustomer.getAddressList())
 							|| fieldInvestigationService.isAddressesAdded(savedcustomer.getAddressList(),
 									screenCustomer.getAddressList())) {
-						addNewFiVerification(aFinanceDetail);
 						return true;
 					} else {
 						for (CustomerAddres screenaddres : screenCustomer.getAddressList()) {
@@ -16592,7 +16594,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 												.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)))
 										|| (oldAddres.getCustAddrType().equals(screenaddres.getCustAddrType())
 												&& fieldInvestigationService.isAddressChanged(screenaddres, oldAddres))) {
-									addNewFiVerification(aFinanceDetail);
 									return true;
 								}
 							}

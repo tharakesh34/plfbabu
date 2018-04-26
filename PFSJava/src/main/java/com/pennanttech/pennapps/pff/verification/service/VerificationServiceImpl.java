@@ -133,6 +133,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			}
 
 			if (isInitTab) {
+				// clear Re-init for non initiated records  
+				if (item.getRequestType() != RequestType.INITIATE.getKey()) {
+					item.setReinitid(null);
+				}
 				if (item.isNew()) {
 					verificationDAO.save(item, TableType.MAIN_TAB);
 				} else {

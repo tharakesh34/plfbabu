@@ -15,6 +15,7 @@ package com.pennanttech.pennapps.pff.verification.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -641,13 +642,13 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		for (Verification newVer : newList) {
 			for (Verification oldVer : oldList) {
 				if (oldVer.getReferenceFor().equals(newVer.getReferenceFor())) {
-					if (oldVer.getRequestType() != RequestType.INITIATE.getKey()) {
+					if (oldVer.getRequestType() != RequestType.INITIATE.getKey() || !tvIds.contains(oldVer.getId())) {
 						break;
 					}
 					if (oldVer.getRequestType() == RequestType.INITIATE.getKey()
 							&& isCollateralChanged(oldVer.getTechnicalVerification(), newVer.getTechnicalVerification())
 							&& tvIds.contains(oldVer.getId())) {
-						newVer.setRecordType(PennantConstants.RCD_UPD);
+						newVer.setReinitid(oldVer.getId());
 					}
 				}
 			}
@@ -679,16 +680,15 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			List<Verification> preVerifications, String keyReference) {
 		List<Verification> tempList = new ArrayList<>();
 		tempList.addAll(screenVerifications);
+		Collections.reverse(preVerifications);
 		tempList.addAll(preVerifications);
+		Collections.reverse(preVerifications);
 		List<Long> tvIds = getTechnicalVerificaationIds(preVerifications, keyReference);
-
 		screenVerifications.addAll(preVerifications);
 
 		for (Verification vrf : tempList) {
 			for (Verification preVrf : preVerifications) {
-				if (vrf.getReferenceFor().equals(preVrf.getReferenceFor())
-						&& (StringUtils.isEmpty(vrf.getRecordType())
-								|| !vrf.getRecordType().equals(PennantConstants.RCD_UPD))
+				if (vrf.getReferenceFor().equals(preVrf.getReferenceFor()) && vrf.getReinitid() == null
 						&& !isCollateralChanged(preVrf.getTechnicalVerification(), vrf.getTechnicalVerification())
 						&& !tvIds.contains(vrf.getId())) {
 					screenVerifications.remove(vrf);

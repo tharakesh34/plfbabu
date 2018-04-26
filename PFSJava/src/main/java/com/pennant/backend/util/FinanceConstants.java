@@ -359,9 +359,11 @@ public class FinanceConstants {
 	//GST Rule Module
 	public static final String RULE_MODULE_GST 					= "GSTRULE"; 			// GST RULE
 
-	//Field Investigation
-	public static final String	PROCEDT_VERIFICATION_FI_INIT	= "FIINIT";
-	public static final String	PROCEDT_VERIFICATION_FI_APPR	= "FIAPPR";
-	public static final String	PROCEDT_VERIFICATION_TV_INIT	= "TVINIT";
-	public static final String	PROCEDT_VERIFICATION_TV_APPR	= "TVAPPR";
+	//Verifications
+	public static final String PROCEDT_VERIFICATION_FI_INIT = "FIINIT";
+	public static final String PROCEDT_VERIFICATION_FI_APPR = "FIAPPR";
+	public static final String PROCEDT_VERIFICATION_TV_INIT = "TVINIT";
+	public static final String PROCEDT_VERIFICATION_TV_APPR = "TVAPPR";
+	public static final String PROCEDT_VERIFICATION_LV_INIT = "LVINIT";
+	public static final String PROCEDT_VERIFICATION_LV_APPR = "LVAPPR";
 }

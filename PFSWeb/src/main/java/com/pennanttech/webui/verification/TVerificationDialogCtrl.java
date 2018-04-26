@@ -408,11 +408,31 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				listCell = new Listcell();
 				listCell.setId("Decision".concat(String.valueOf(i)));
 				Combobox decision = new Combobox();
-				fillComboBox(decision, vrf.getDecision(), Decision.getList());
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
 				
+				List<ValueLabel> decisionList = new ArrayList<>();
+				if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()
+						|| vrf.getStatus() == Status.POSITIVE.getKey()) {
+					decisionList.add(
+							new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
+					decisionList
+							.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
+					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+				} else if (vrf.getStatus() == Status.NOTCMPLTD.getKey()
+						|| vrf.getStatus() == Status.NEGATIVE.getKey()) {
+					decisionList.add(
+							new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
+					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+				} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
+					decisionList.add(
+							new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
+					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+				} else {
+					fillComboBox(decision, vrf.getDecision(), Decision.getList());
+				}
+
 				decision.setParent(listCell);
 				listCell.setParent(item);
 				
@@ -455,6 +475,23 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private List<ValueLabel> filterDecisions(List<ValueLabel> list) {
+		boolean flag = true;
+		List<ValueLabel> decisionList = new ArrayList<>();
+		for (ValueLabel decValueLabel : Decision.getList()) {
+			for (ValueLabel valueLabel : list) {
+				if (Integer.parseInt(valueLabel.getValue()) == Integer.parseInt(decValueLabel.getValue())) {
+					flag = false;
+				}
+			}
+			if (flag) {
+				decisionList.add(decValueLabel);
+			}
+			flag = true;
+		}
+		return decisionList;
 	}
 
 	private void fillAgencies(ExtendedCombobox agency) {
@@ -573,11 +610,11 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			break;
 		case "Decision":
 			Combobox combobox = (Combobox) getComponent(listitem, "Decision");
-			int decision  = Integer.parseInt(getComboboxValue(combobox));
-			verification.setDecision(Integer.parseInt(getComboboxValue((Combobox) getComponent(listitem, "Decision"))));
-			if(!combobox.isDisabled() && decision == 0) {
-				throw new WrongValueException(combobox, Labels.getLabel("STATIC_INVALID",
-						new String[] { "Decision should be mandatory"}));
+			int decision = Integer.parseInt(getComboboxValue(combobox));
+			verification.setDecision(decision);
+			if (!combobox.isDisabled() && decision == 0) {
+				throw new WrongValueException(combobox,
+						Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
 			}
 			break;
 		case "ReInitAgency":
@@ -589,7 +626,12 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 			break;
 		case "ReInitRemarks":
-			verification.setReInitRemarks(((Textbox) getComponent(listitem, "ReInitRemarks")).getValue());
+			Textbox textbox = (Textbox) getComponent(listitem, "ReInitRemarks");
+			verification.setReInitRemarks(textbox.getValue());
+			if (verification.getDecision() == Decision.OVERRIDE.getKey()
+					&& StringUtils.isEmpty(verification.getReInitRemarks())) {
+				throw new WrongValueException(textbox, "Remarks is mandatory");
+			}
 			break;
 		default:
 			break;

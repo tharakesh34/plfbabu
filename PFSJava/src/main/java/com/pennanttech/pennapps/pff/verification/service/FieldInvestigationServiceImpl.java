@@ -788,9 +788,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 				}
 			}
 		}
-
-		screenVerifications
-				.addAll(getChangedVerifications(preVerifications, screenVerifications, verification.getKeyReference()));
+		getChangedVerifications(preVerifications, screenVerifications, verification.getKeyReference());
 		verification.setVerifications(
 				compareVerifications(screenVerifications, preVerifications, verification.getKeyReference()));
 
@@ -823,23 +821,25 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		}
 	}
 
-	private List<Verification> getChangedVerifications(List<Verification> oldList, List<Verification> newList,
+	private void getChangedVerifications(List<Verification> oldList, List<Verification> newList,
 			String keyReference) {
-		List<Verification> verifications = new ArrayList<>();
 		List<Long> fiIds = getFieldInvestigationIds(oldList, keyReference);
-		for (Verification oldVer : oldList) {
-			for (Verification newVer : newList) {
+		for (Verification newVer : newList) {
+			for (Verification oldVer : oldList) {
 				if (oldVer.getCustId().compareTo(newVer.getCustId()) == 0
 						&& oldVer.getReferenceFor().equals(newVer.getReferenceFor())) {
+					if (oldVer.getRequestType() != RequestType.INITIATE.getKey() || !fiIds.contains(oldVer.getId())) {
+						break;
+					}
 					if (oldVer.getRequestType() == RequestType.INITIATE.getKey()
 							&& isAddressChange(oldVer.getFieldInvestigation(), newVer.getFieldInvestigation())
-							&& !fiIds.contains(oldVer.getId())) {
-						verifications.add(oldVer);
+							&& fiIds.contains(oldVer.getId())) {
+						newVer.setReinitid(oldVer.getId());
 					}
 				}
+
 			}
 		}
-		return verifications;
 	}
 
 	private boolean isAddressChange(FieldInvestigation oldAddress, FieldInvestigation newAddress) {
@@ -891,7 +891,9 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			List<Verification> preVerifications, String keyReference) {
 		List<Verification> tempList = new ArrayList<>();
 		tempList.addAll(screenVerifications);
+		Collections.reverse(preVerifications);
 		tempList.addAll(preVerifications);
+		Collections.reverse(preVerifications);
 		List<Long> fiIds = getFieldInvestigationIds(preVerifications, keyReference);
 
 		screenVerifications.addAll(preVerifications);
@@ -902,6 +904,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 						&& vrf.getReferenceFor().equals(preVrf.getReferenceFor())
 						&& (StringUtils.isEmpty(vrf.getRecordType())
 								|| !vrf.getRecordType().equals(PennantConstants.RCD_UPD))
+						&& vrf.getReinitid() == null
 						&& !isAddressChange(preVrf.getFieldInvestigation(), vrf.getFieldInvestigation())
 						&& !fiIds.contains(vrf.getId())) {
 					screenVerifications.remove(vrf);

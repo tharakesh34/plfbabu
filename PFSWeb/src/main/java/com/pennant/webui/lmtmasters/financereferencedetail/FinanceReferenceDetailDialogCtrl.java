@@ -1124,10 +1124,16 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		if(!validateFeeAccounting()){
 			return;
 		}
-		if(!validateStages(FinanceConstants.PROCEDT_VERIFICATION_FI_INIT,FinanceConstants.PROCEDT_VERIFICATION_FI_APPR,VerificationType.FI)){
+		if (!validateStages(FinanceConstants.PROCEDT_VERIFICATION_FI_INIT,
+				FinanceConstants.PROCEDT_VERIFICATION_FI_APPR, VerificationType.FI)) {
 			return;
 		}
-		if(!validateStages(FinanceConstants.PROCEDT_VERIFICATION_TV_INIT,FinanceConstants.PROCEDT_VERIFICATION_TV_APPR,VerificationType.TV)){
+		if (!validateStages(FinanceConstants.PROCEDT_VERIFICATION_TV_INIT,
+				FinanceConstants.PROCEDT_VERIFICATION_TV_APPR, VerificationType.TV)) {
+			return;
+		}
+		if (!validateStages(FinanceConstants.PROCEDT_VERIFICATION_LV_INIT,
+				FinanceConstants.PROCEDT_VERIFICATION_LV_APPR, VerificationType.LV)) {
 			return;
 		}
 		final FinanceReferenceDetail aFinanceReferenceDetail = new FinanceReferenceDetail();

@@ -109,7 +109,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from verification_tv_view");
-		sql.append(" Where custcif in(:custCif) and date is not null");
+		sql.append(" Where cif in(:custCif) and date is not null");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

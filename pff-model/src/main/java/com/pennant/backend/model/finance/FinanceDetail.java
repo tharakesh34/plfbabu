@@ -261,6 +261,8 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean fiInitTab = false;
 	private boolean tvApprovalTab =false;
 	private boolean tvInitTab = false;
+	private boolean lvApprovalTab = false;
+	private boolean lvInitTab = false;
 	
 	public FinanceDetail() {
 		
@@ -976,4 +978,21 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setTvVerification(Verification tvVerification) {
 		this.tvVerification = tvVerification;
 	}
+
+	public boolean isLvApprovalTab() {
+		return lvApprovalTab;
+	}
+
+	public void setLvApprovalTab(boolean lvApprovalTab) {
+		this.lvApprovalTab = lvApprovalTab;
+	}
+
+	public boolean isLvInitTab() {
+		return lvInitTab;
+	}
+
+	public void setLvInitTab(boolean lvInitTab) {
+		this.lvInitTab = lvInitTab;
+	}
+
 }

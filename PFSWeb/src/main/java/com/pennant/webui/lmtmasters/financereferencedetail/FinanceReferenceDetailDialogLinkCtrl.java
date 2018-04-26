@@ -585,20 +585,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		try {
 			if (!this.mandInputInStage.isReadonly()) {
 
-				//Verification Approval Event validations in Miscellaneous Tab
-				if (aFinanceReferenceDetail.getFinRefType() == FinanceConstants.PROCEDT_LIMIT) {
-					if (StringUtils.equals(aFinanceReferenceDetail.getLovDescNamelov(),
-							FinanceConstants.PROCEDT_VERIFICATION_FI_APPR)
-							&& getCheckedValues(listboxmandInputInStage).split(",").length > 1) {
-						throw new WrongValueException(this.listboxmandInputInStage,
-								Labels.getLabel("message.error.onlyOneStage", new String[] {VerificationType.FI.toString()}));
-					} else if (StringUtils.equals(aFinanceReferenceDetail.getLovDescNamelov(),
-							FinanceConstants.PROCEDT_VERIFICATION_TV_APPR)
-							&& getCheckedValues(listboxmandInputInStage).split(",").length > 1) {
-						throw new WrongValueException(this.listboxmandInputInStage,
-								Labels.getLabel("message.error.onlyOneStage", new String[] {VerificationType.TV.toString()}));
-					}
-				}
+				hasSingleApprStage(aFinanceReferenceDetail);
 				// Set checked values
 				this.mandInputInStage.setValue(getCheckedValues(listboxmandInputInStage));
 				// then check for empty
@@ -703,6 +690,28 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 		aFinanceReferenceDetail.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
+	}
+
+	private void hasSingleApprStage(FinanceReferenceDetail aFinanceReferenceDetail) {
+		//Verification Approval Event validations in Miscellaneous Tab
+		if (aFinanceReferenceDetail.getFinRefType() == FinanceConstants.PROCEDT_LIMIT) {
+			if (StringUtils.equals(aFinanceReferenceDetail.getLovDescNamelov(),
+					FinanceConstants.PROCEDT_VERIFICATION_FI_APPR)
+					&& getCheckedValues(listboxmandInputInStage).split(",").length > 1) {
+				throw new WrongValueException(this.listboxmandInputInStage,
+						Labels.getLabel("message.error.onlyOneStage", new String[] {VerificationType.FI.toString()}));
+			} else if (StringUtils.equals(aFinanceReferenceDetail.getLovDescNamelov(),
+					FinanceConstants.PROCEDT_VERIFICATION_TV_APPR)
+					&& getCheckedValues(listboxmandInputInStage).split(",").length > 1) {
+				throw new WrongValueException(this.listboxmandInputInStage,
+						Labels.getLabel("message.error.onlyOneStage", new String[] {VerificationType.TV.toString()}));
+			} else if (StringUtils.equals(aFinanceReferenceDetail.getLovDescNamelov(),
+					FinanceConstants.PROCEDT_VERIFICATION_LV_APPR)
+					&& getCheckedValues(listboxmandInputInStage).split(",").length > 1) {
+				throw new WrongValueException(this.listboxmandInputInStage,
+						Labels.getLabel("message.error.onlyOneStage", new String[] { VerificationType.LV.toString() }));
+			}
+		}
 	}
 
 	/**

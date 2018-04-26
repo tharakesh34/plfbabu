@@ -218,6 +218,7 @@ import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.verification.Module;
+import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
@@ -583,6 +584,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					}
 				}
 			}
+			//hiding the initiate and non investigated records
+			for (int i = 0; i < verifications.size(); i++) {
+				if (verifications.get(i).getRequestType() == RequestType.INITIATE.getKey()
+						&& verifications.get(i).getFieldInvestigation() == null) {
+					verifications.remove(verifications.get(i));
+					i--;
+				}
+			}
 			verification.setVerifications(verifications);
 			financeDetail.setFiVerification(verification);
 		}
@@ -610,6 +619,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					if (vrf.getId() == tv.getVerificationId()) {
 						vrf.setTechnicalVerification(tv);
 					}
+				}
+			}
+			//hiding the initiate and non verification records
+			for (int i = 0; i < verifications.size(); i++) {
+				if (verifications.get(i).getRequestType() == RequestType.INITIATE.getKey()
+						&& verifications.get(i).getTechnicalVerification() == null) {
+					verifications.remove(verifications.get(i));
+					i--;
 				}
 			}
 			verification.setVerifications(verifications);
@@ -1753,14 +1770,26 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					accSetIdList.add(finrefDetail.getFinRefId());
 					continue;
 				} else if (finrefDetail.getFinRefType() == FinanceConstants.PROCEDT_LIMIT ) {
-					if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),FinanceConstants.PROCEDT_VERIFICATION_FI_INIT) && StringUtils.trimToEmpty(finrefDetail.getMandInputInStage()).contains((nextRoleCode + ","))) {
-						financeDetail.setFiInitTab(true);
-					}else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),FinanceConstants.PROCEDT_VERIFICATION_FI_APPR) && StringUtils.trimToEmpty(finrefDetail.getMandInputInStage()).contains((nextRoleCode + ","))) {
-						financeDetail.setFiApprovalTab(true);
-					}else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),FinanceConstants.PROCEDT_VERIFICATION_TV_INIT) && StringUtils.trimToEmpty(finrefDetail.getMandInputInStage()).contains((nextRoleCode + ","))) {
-						financeDetail.setTvInitTab(true);
-					}else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),FinanceConstants.PROCEDT_VERIFICATION_TV_APPR) && StringUtils.trimToEmpty(finrefDetail.getMandInputInStage()).contains((nextRoleCode + ","))) {
-						financeDetail.setTvApprovalTab(true);
+					if (StringUtils.trimToEmpty(finrefDetail.getMandInputInStage()).contains(nextRoleCode + ",")) {
+						if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
+								FinanceConstants.PROCEDT_VERIFICATION_FI_INIT)) {
+							financeDetail.setFiInitTab(true);
+						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
+								FinanceConstants.PROCEDT_VERIFICATION_FI_APPR)) {
+							financeDetail.setFiApprovalTab(true);
+						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
+								FinanceConstants.PROCEDT_VERIFICATION_TV_INIT)) {
+							financeDetail.setTvInitTab(true);
+						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
+								FinanceConstants.PROCEDT_VERIFICATION_TV_APPR)) {
+							financeDetail.setTvApprovalTab(true);
+						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
+								FinanceConstants.PROCEDT_VERIFICATION_LV_INIT)) {
+							financeDetail.setLvInitTab(true);
+						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
+								FinanceConstants.PROCEDT_VERIFICATION_LV_APPR)) {
+							financeDetail.setLvApprovalTab(true);
+						}
 					}
 				}
 			}
