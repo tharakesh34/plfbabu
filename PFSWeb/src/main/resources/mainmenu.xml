@@ -1015,6 +1015,9 @@
 			<menuItem id="menu_Item_ClientLendingStatusByMaturity"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_FinDeptReports_ClientLendingStatusByMaturity" />
+			<menuItem id="menu_Item_ClosedLoans"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menuItem_FinDeptReports_ClosedLoans" />
 			-->
 
 			<!-- menuItem id="menu_Item_TrialBalanceReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 

@@ -6650,6 +6650,7 @@
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="receiptService" ref="receiptService" />
+		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 	</bean>
 
 	<!--================= Holiday Util =================== -->

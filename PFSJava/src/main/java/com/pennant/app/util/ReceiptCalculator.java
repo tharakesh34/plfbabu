@@ -31,7 +31,9 @@
  ********************************************************************************************
  * 26-04-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2018		Vinay					 0.2     	As discussed with siva kumar 		*
+ * 														In Suspense (NPA) case to
+ * 														Allow different repay Heirarchy		* 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -59,6 +61,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -79,7 +82,9 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.rits.cloning.Cloner;
 
 public class ReceiptCalculator implements Serializable {
@@ -90,6 +95,7 @@ public class ReceiptCalculator implements Serializable {
 	private FinODDetailsDAO						finODDetailsDAO;
 	private ManualAdviseDAO						manualAdviseDAO;
 	private ReceiptService						receiptService;
+	private FinanceProfitDetailDAO				financeProfitDetailDAO;
 
 	// Default Constructor
 	public ReceiptCalculator() {
@@ -784,6 +790,14 @@ public class ReceiptCalculator implements Serializable {
 			boolean isSchdPaid = false;
 			List<RepayScheduleDetail> partialRpySchdList = new ArrayList<>();
 			String repayHierarchy = scheduleData.getFinanceType().getRpyHierarchy();
+			// ###_0.2 
+			boolean isSusp = financeProfitDetailDAO.isSuspenseFinance(financeMain.getFinReference());
+			if(isSusp){
+				String allDiffRepayNPA = SysParamUtil.getValueAsString(SMTParameterConstants.ALW_DIFF_RPYHCY_NPA);
+				if (StringUtils.equals(PennantConstants.YES, allDiffRepayNPA)) {
+					repayHierarchy = SysParamUtil.getValueAsString(SMTParameterConstants.RPYHCY_ON_NPA);
+				}
+			}
 			char[] rpyOrder = repayHierarchy.replace("CS", "C").toCharArray();
 			int lastRenderSeq = 0;
 			
@@ -2064,6 +2078,14 @@ public class ReceiptCalculator implements Serializable {
 		}
 		
 		String repayHierarchy = scheduleData.getFinanceType().getRpyHierarchy();
+		// ###_0.2
+		boolean isSusp = financeProfitDetailDAO.isSuspenseFinance(financeMain.getFinReference());
+		if(isSusp){
+			String allDiffRepayNPA = SysParamUtil.getValueAsString(SMTParameterConstants.ALW_DIFF_RPYHCY_NPA);
+			if (StringUtils.equals(PennantConstants.YES, allDiffRepayNPA)) {
+				repayHierarchy = SysParamUtil.getValueAsString(SMTParameterConstants.RPYHCY_ON_NPA);
+			}
+		}
 		boolean seperatePenalties = false;
 		if(repayHierarchy.contains("CS")){
 			seperatePenalties = true;
@@ -2505,6 +2527,14 @@ public class ReceiptCalculator implements Serializable {
 	}
 	public void setReceiptService(ReceiptService receiptService) {
 		this.receiptService = receiptService;
+	}
+
+	public FinanceProfitDetailDAO getFinanceProfitDetailDAO() {
+		return financeProfitDetailDAO;
+	}
+
+	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
+		this.financeProfitDetailDAO = financeProfitDetailDAO;
 	}
 
 }
