@@ -74,6 +74,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.CheckList;
@@ -88,16 +89,20 @@ import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
+import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -191,6 +196,10 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	protected Listheader listheadShowInStage;
 	protected Listheader listheadAllowInputInStage;
 	protected Listheader listheadMandInputInStage;
+
+	private transient FinanceWorkFlowService financeWorkFlowService;
+	boolean canRaiseManualDeviation = true;
+
 
 	/**
 	 * default constructor.<br>
@@ -602,6 +611,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
 		try {
 			if (this.lovDescRefDesc.getValue() == null || StringUtils.isEmpty(this.lovDescRefDesc.getValue())) {
 				throw new WrongValueException(this.lovDescRefDesc, Labels.getLabel("FIELD_NO_EMPTY",
@@ -611,7 +621,33 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		// Manual deviations triggering validation.
+		if ("MDEVTR".equals(aFinanceReferenceDetail.getLovDescNamelov())) {
+			// Load the respective workflow.
+			String workflowType = financeWorkFlowService.getFinanceWorkFlowType(aFinanceReferenceDetail.getFinType(),
+					aFinanceReferenceDetail.getFinEvent(), PennantConstants.WORFLOW_MODULE_FINANCE);
+			WorkFlowDetails workflow = WorkFlowUtil.getDetailsByType(workflowType);
+			WorkflowEngine workflowEngine = new WorkflowEngine(workflow.getWorkFlowXml());
+			// Validate whether the selected stages are before the deviation approval authorities.
+			if (StringUtils.isNotEmpty(mandInputInStage.getValue())) {
+				String[] stages = mandInputInStage.getValue().split(PennantConstants.DELIMITER_COMMA);
+				List<String> delegators = workflowEngine.getActors(true);
+				for (String stage : stages) {
+					for (String delegator : delegators) {
+						if (workflowEngine.compareRoles(stage, delegator) == Flow.PREDECESSOR) {
+							canRaiseManualDeviation = false;
+							break;
+						}else{
+							continue;
+						}
+					}
+				}
+			}
+			if (!canRaiseManualDeviation) {
+				return;
+			}
+		}
+		// Manual Deviation Raise validation
 		try {
 
 			aFinanceReferenceDetail.setOverRide(this.overRide.isChecked());
@@ -948,6 +984,12 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		final FinanceReferenceDetail aFinanceReferenceDetail = new FinanceReferenceDetail();
 		BeanUtils.copyProperties(getFinanceReferenceDetail(), aFinanceReferenceDetail);
 		doWriteComponentsToBean(aFinanceReferenceDetail);
+		if (!canRaiseManualDeviation) {
+			MessageUtil.showError(
+					"Select Privileged Users alone to raise Manual Deviations");
+			canRaiseManualDeviation = true;
+			return;
+		}
 		// save it to database
 		try {
 			processFinRefDetails(aFinanceReferenceDetail);
@@ -980,6 +1022,10 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	}
 	public FinanceReferenceDetailService getFinanceReferenceDetailService() {
 		return this.financeReferenceDetailService;
+	}
+
+	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
+		this.financeWorkFlowService = financeWorkFlowService;
 	}
 
 	public FinanceReferenceDetailDialogCtrl getFinanceReferenceDetailDialogCtrl() {
