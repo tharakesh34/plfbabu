@@ -3812,5 +3812,39 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			INSERT INTO ErrorDetails VALUES('93004','EN','E','Your authorization limit has been expired.','','Approved','','','','','',0,current_timestamp,1000,0);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="52" author="Vinay">
+		<comment>Repay heirarchy on NPA cases, for core version</comment>
+		<sql>
+			delete from SMTPARAMETERS where sysparmcode='ALW_DIFF_RPYHCY_NPA';
+			Insert into SMTPARAMETERS values ('ALW_DIFF_RPYHCY_NPA','Allow different repay heirarchy on NPA','String','1','Y',1,0,null,null,'Allow different repay heirarchy on NPA',1,1000,'0001-07-26	00:00:00.0','Approved',null,null,null,null,null,0);
+			
+			delete from SMTPARAMETERS where sysparmcode='RPYHCY_ON_NPA';
+			Insert into SMTPARAMETERS values ('RPYHCY_ON_NPA','Repay heirarchy on NPA','String','1','PICF',4,0,null,null,'Repay heirarchy on NPA',1,1000,'0001-07-26	00:00:00.0','Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="53" author="Vinay">
+		<comment>Cancel Loan Information Report Scripts, for core version</comment>
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_FinDeptReports_ClosedLoans','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REPORTS_ADMIN') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinDeptReports_ClosedLoans'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			
+			delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_ClosedLoans');
+			delete from REPORTCONFIGURATION where menuitemcode='menu_Item_ClosedLoans';
+			
+			Insert into REPORTCONFIGURATION 
+			values ((select max(reportid)+1 from REPORTCONFIGURATION),'Closed Loans Informtion','Closed Loans Informtion',1,'ClosedLoans','dataSource',1,'menu_Item_ClosedLoans',1,1000,null,null,null,null,null,null,0,current_timestamp,1,0);
+			
+			Insert into REPORTFILTERFIELDS 
+			values ((select reportid from reportconfiguration where menuitemcode='menu_Item_ClosedLoans'),7,'Status','STATICLIST','Status','t1.closingstatus','getFinanceClosingStatusList',null,null,null,0,0,0,0,1,0,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
