@@ -3765,12 +3765,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("custID", custId);
 			map.put("userRole", getRole());
 			map.put("custCtgType", getFinanceDetail().getCustomerDetails().getCustomer().getCustCtgCode());
-			map.put("numberOfTerms", getFinanceMain().getNumberOfTerms());
-			map.put("repayProfitRate", getFinanceMain().getRepayProfitRate());
-			map.put("roundingTarget", getFinanceMain().getRoundingTarget());
-			map.put("finAssetValue", getFinanceMain().getFinAssetValue());
-			map.put("finAmount", getFinanceMain().getFinAmount());
-			map.put("firstRepay", getFinanceMain().getFirstRepay());
+			map.put("numberOfTerms", getFinanceDetail().getFinScheduleData().getFinanceMain().getNumberOfTerms());
+			if(getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0){
+				map.put("repayProfitRate", getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(0).getCalculatedRate());
+			}else{
+				map.put("repayProfitRate", BigDecimal.ZERO);
+			}
+			map.put("roundingTarget", getFinanceDetail().getFinScheduleData().getFinanceMain().getRoundingTarget());
+			map.put("finAssetValue", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue());
+			map.put("finAmount", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount());
+			map.put("firstRepay", getFinanceDetail().getFinScheduleData().getFinanceMain().getFirstRepay());
 
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW), map);

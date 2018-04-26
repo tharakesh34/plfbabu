@@ -71,12 +71,14 @@ public class CreditReviewSummaryData {
 		// If this screen is not loaded from Finance Main tabs data will be empty and if any ratios/cells using these variables will not work
 		// Changes done to use eligibility tab without the facility for Profectus
 		
-		for (Entry<String, String> entry : externalDataMap.entrySet()) {
-	        if (entry.getKey().startsWith("EXT_")) {
-				engine.put(entry.getKey(),externalDataMap.get(entry.getKey()));
-				dataMap.put(entry.getKey(),externalDataMap.get(entry.getKey()));
-	        }
-	    }
+		if(externalDataMap != null && externalDataMap.size() > 0){
+			for (Entry<String, String> entry : externalDataMap.entrySet()) {
+				if (entry.getKey().startsWith("EXT_")) {
+					engine.put(entry.getKey(),externalDataMap.get(entry.getKey()));
+					dataMap.put(entry.getKey(),externalDataMap.get(entry.getKey()));
+				}
+			}
+		}
 		logger.debug("Loading external data to dataMap");
 		
 		Set<String> set = detailedMap.keySet();

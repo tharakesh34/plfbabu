@@ -223,6 +223,7 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		registerField("numberOfTerms");
 		registerField("maturityDate");
 		registerField("feeChargeAmt");
+		registerField("finAmount");
 
 		// Render the page and display the data.
 		doRenderPage();

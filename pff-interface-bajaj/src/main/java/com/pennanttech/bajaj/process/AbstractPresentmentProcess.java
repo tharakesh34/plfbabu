@@ -45,7 +45,7 @@ public class AbstractPresentmentProcess extends AbstractInterface implements Pre
 		StringBuilder sql = getSqlQuery();
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("IdList", idList);
-		paramMap.addValue("EXCLUDEREASON", "0");
+		paramMap.addValue("EXCLUDEREASON", 0);
 
 		List<Presentment> presements = namedJdbcTemplate.query(sql.toString(), paramMap, new PresentmentRowMapper());
 
