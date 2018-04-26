@@ -43,12 +43,14 @@
 package com.pennant.backend.service.authorization.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.authorization.AuthorizationLimitDAO;
@@ -63,6 +65,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.authorization.AuthorizationLimitService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -555,31 +558,44 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 		@Override
 		public AuditHeader validateFinanceAuthorizationLimit(AuditHeader auditHeader) {
 			
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+			//AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+			AuditDetail auditDetail = auditHeader.getAuditDetail();
 			FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData(); 
 			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+			Date currDate = DateUtility.getSysDate();
 			
-			AuthorizationLimit authorizationLimit= getAuthorizationLimitDAO().getAuthorizationLimit(financeDetail.getUserDetails().getUserId(),"_AView");
+			AuthorizationLimit authorizationLimit= getAuthorizationLimitDAO().getLimitForFinanceAuth(financeDetail.getUserDetails().getUserId(),"_AView", true);
 			AuthorizationLimitDetail authorizationLimitDetail=null;
-			String[] parameters = new String[2];
-			parameters[0] = financeDetail.getUserDetails().getFullName();
-			parameters[1] = financeMain.getLovDescFinProduct();
 			
-			if(authorizationLimit==null){
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "AUL01", parameters, null));
-			}else{	
-				authorizationLimitDetail = authorizationLimitDetailDAO.getAuthorizationLimitDetailByCode(authorizationLimit.getId(), financeMain.getLovDescFinProduct(), TableType.MAIN_TAB);	
+		if (authorizationLimit == null) {
+			auditDetail.setErrorDetail(new ErrorDetail("93001", null));
+			auditHeader.setAuditDetail(auditDetail);
+			return auditHeader;
+		} else {
+			if (!(currDate.compareTo(authorizationLimit.getStartDate()) < 0
+					|| currDate.compareTo(authorizationLimit.getExpiryDate()) > 0)) {
+				authorizationLimitDetail = authorizationLimitDetailDAO.getAuthorizationLimitDetailByCode(
+						authorizationLimit.getId(), financeMain.getFinCategory(), TableType.MAIN_TAB);
+			} else {
+				auditDetail.setErrorDetail(new ErrorDetail("93003", null));
+				auditHeader.setAuditDetail(auditDetail);
+				return auditHeader;
+
+			}
+		}
+			
+			if(authorizationLimitDetail==null) {
+				auditDetail.setErrorDetail(new ErrorDetail("93001", null));
+				auditHeader.setAuditDetail(auditDetail);
+				return auditHeader;
 			}
 
-			
-			if(authorizationLimitDetail==null){
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "AUL02", parameters, null));
+			if(financeMain.getFinAssetValue().compareTo(authorizationLimitDetail.getLimitAmount())>0) {
+				auditDetail.setErrorDetail(new ErrorDetail("93002", null));
+				auditHeader.setAuditDetail(auditDetail);
+				return auditHeader;
 			}
 
-			if(financeMain.getFinAssetValue().compareTo(authorizationLimitDetail.getLimitAmount())>0){
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "AUL03", parameters, null));
-			}
-			
 			return auditHeader;
 		}
 }

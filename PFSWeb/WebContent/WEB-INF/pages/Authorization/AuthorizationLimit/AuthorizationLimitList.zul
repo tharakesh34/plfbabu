@@ -72,7 +72,10 @@
 								<row>
 									<label id="label_AuthorizationLimitList_RecordStatus" value="${c:l('label_AuthorizationLimitList_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
+									<hbox>
+									<space spacing="2px"></space>
 									<textbox id="recordStatus" width="100px" maxlength="50" />
+									</hbox>
 									<label id="label_AuthorizationLimitList_RecordType" value="${c:l('label_AuthorizationLimitList_RecordType.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />

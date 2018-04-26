@@ -113,7 +113,47 @@ public class AuthorizationLimitDAOImpl extends BasisNextidDaoImpl<AuthorizationL
 
 		logger.debug(Literal.LEAVING);
 		return authorizationLimit;
-	}		
+	}	
+	
+	
+	@Override
+	public AuthorizationLimit getLimitForFinanceAuth(long id,String type, boolean active) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" id, limitType, userID, roleId, module, limitAmount, ");
+		sql.append(" startDate, expiryDate, holdStartDate, holdExpiryDate, active, ");
+		
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(" usrLogin,UsrFName,UsrMName,UsrLName,roleCd,roleName , " );
+		}
+	
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(" From Auth_Limits");
+		sql.append(type);
+		sql.append(" Where userID = :id and active = :active");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		AuthorizationLimit authorizationLimit = new AuthorizationLimit();
+		authorizationLimit.setId(id);
+		authorizationLimit.setActive(active);;
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimit);
+		RowMapper<AuthorizationLimit> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AuthorizationLimit.class);
+
+		try {
+			authorizationLimit = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			authorizationLimit = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return authorizationLimit;
+	}	
 	
 	@Override
 	public boolean isDuplicateKey(long id,int limitType,long userID,long roleId,String module, TableType tableType) {

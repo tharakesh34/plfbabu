@@ -78,4 +78,5 @@ public interface AuthorizationLimitDAO extends BasicCrudDao<AuthorizationLimit> 
 	boolean isDuplicateKey(long id, int limitType, long userID, long roleId, String module, TableType tableType);
 	void updateHold(AuthorizationLimit authorizationLimit, TableType tableType);	
 	void saveHold(AuthorizationLimit authorizationLimit);
+	AuthorizationLimit getLimitForFinanceAuth(long id, String type, boolean active);
 }

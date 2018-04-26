@@ -182,6 +182,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.systemmasters.IncomeType;
+import com.pennant.backend.service.authorization.AuthorizationLimitService;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
 import com.pennant.backend.service.configuration.impl.VasRecordingValidation;
@@ -307,6 +308,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private CollateralSetupDAO collateralSetupDAO;
 	@Autowired
 	private DeviationHelper deviationHelper;
+	@Autowired
+	private AuthorizationLimitService authorizationLimitService;
 		
 	public FinanceDetailServiceImpl() {
 		super();
@@ -4334,7 +4337,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				afinanceMain.setDeviationApproval(deviationfound);
 			}
 			break;
+		case PennantConstants.method_doCheckAuthLimit:
+			/*if (!"Save".equals(afinanceMain.getRecordStatus()) && afinanceMain.getNextRoleCode().equals("")) {
+				authorizationLimitService.validateFinanceAuthorizationLimit(auditHeader);
+			}*/
+			authorizationLimitService.validateFinanceAuthorizationLimit(auditHeader);
 
+		break;
 		default:
 			// Execute any other custom service tasks
 			if(StringUtils.isNotBlank(task.getOperation())) {

@@ -175,6 +175,7 @@ public class PennantConstants {
 	public static final String method_doFundsAvailConfirmed = "doFundsAvailConfirmed";
 	public static final String method_doCheckProspectCustomer = "doCheckProspectCustomer";
 	public static final String method_doCheckDeviations = "doCheckDeviations";
+	public static final String method_doCheckAuthLimit = "doCheckAuthLimit";
 	public static final String method_doCheckScore = "doCheckScore";
 	public static final String method_doCheckLPOApproval = "doCheckLPOApproval";
 	public static final String WF_SEND_LPO_REQUETS = "LPORequest";
