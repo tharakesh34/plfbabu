@@ -51,6 +51,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.authorization.AuthorizationLimit;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -90,7 +91,7 @@ public class AuthorizationLimitListModelItemRenderer implements ListitemRenderer
 			lc.setParent(item);
 		}
 
-		lc = new Listcell(PennantApplicationUtil.formatAmount(authorizationLimit.getLimitAmount(), CurrencyUtil.getFormat(""), false));
+		lc = new Listcell(PennantApplicationUtil.amountFormate(authorizationLimit.getLimitAmount(),CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
 		lc.setParent(item);
 		lc.setStyle("text-align:Right;");
 		

@@ -170,18 +170,14 @@
 									label="${c:l('listheader_AuthLimitCode')}" sort="auto"
 									hflex="min" />
 								<listheader
-									id="listheader_AuthLimitDesc"
-									label="${c:l('listheader_AuthLimitDesc')}" hflex="min" />
-								<listheader
 									id="listheader_AuthLimitAmount"
 									label="${c:l('listheader_AuthLimitAmount')}" hflex="min" />
 								<listheader
 									id="listheader_AuthLimitOperation"
-									label="${c:l('listheader_AuthLimitOperation')}" hflex="min" />
+									label="${c:l('label.RecordType')}" hflex="min" />
 								<listheader
 									id="listheader_AuthLimitDeletion"
-									label="${c:l('label.RecordType')}" hflex="min" />
-
+									label="${c:l('listheader_AuthLimitOperation')}" hflex="min" />
 							</listhead>
 						</listbox>
 					</groupbox>

@@ -1240,11 +1240,11 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			lc.appendChild(combobox);
 			item.appendChild(lc);
 			
-			Listcell lc1 = new Listcell();
+	/*		Listcell lc1 = new Listcell();
 			Label label= new Label(detail.getCodeName());
 			lc1.appendChild(label);
 			item.appendChild(lc1);
-			
+*/			
 			Listcell lc2 = new Listcell();
 			CurrencyBox codeLimitAmount = new CurrencyBox();
 			codeLimitAmount.setId("code"+listCount);
@@ -1269,6 +1269,11 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			item.appendChild(lc2);
 			
 			Listcell lc3 = new Listcell();
+			Label operationLabel= new Label(detail.getRecordType());
+			lc3.appendChild(operationLabel);
+			item.appendChild(lc3);
+
+			Listcell lc4 = new Listcell();
 			Button delete = new Button();
 			
 			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())){
@@ -1277,23 +1282,16 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 				delete.setLabel(Labels.getLabel("btnDelete.label"));	
 			}
 			
-			lc3.appendChild(delete);
+			lc4.appendChild(delete);
 			delete.addForward("onClick", self, "onClick_Delete");
-			item.appendChild(lc3);
+			item.appendChild(lc4);
 			delete.setVisible(true);
 			delete.setDisabled(codeLimitAmount.isReadonly());
-			
-			
-			Listcell lc4 = new Listcell();
-			Label operationLabel= new Label(detail.getRecordType());
-			lc4.appendChild(operationLabel);
-			item.appendChild(lc4);
-			
+
 			item.setAttribute("data", detail);
 			
-			
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onAuthorizationLimitDetailItemDoubleClicked");
-			
+
 			listBoxCodeLimit.appendChild(item);
 			setKeyPhaseFilters();
 			this.listCount++;
@@ -1376,16 +1374,14 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			
 			AuthorizationLimitDetail detail = (AuthorizationLimitDetail) listitem.getAttribute("data");
 			
+			if (StringUtils.isBlank(detail.getRecordType())) {
+				detail.setVersion(detail.getVersion() + 1);
+				detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				detail.setNewRecord(true);
+			}
+
 			detail.setLimitAmount(PennantApplicationUtil.unFormateAmount(currencyBox.getValidateValue(), CurrencyUtil.getFormat("")));
 			// Update the Record Type for any value change
-			
-			if(!detail.getLimitAmount().equals(detail.getBefImage().getLimitAmount())){
-				if (StringUtils.isBlank(detail.getRecordType())) {
-					detail.setVersion(detail.getVersion() + 1);
-					detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					detail.setNewRecord(true);
-				}	
-			}
 
 			listitem.setAttribute("data", detail);
 			logger.debug(Literal.LEAVING);

@@ -197,7 +197,7 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 		registerField("limitType");		
 		
 		if(limitType==1){
-			registerField("usrLogin", listheader_UserID, SortOrder.NONE, userID, sortOperator_UserID, Operators.STRING);
+			registerField("usrLogin", listheader_UserID, SortOrder.NONE, userID, sortOperator_UserID, Operators.DEFAULT);
 			registerField("userID");
 			registerField("UsrFName");
 			registerField("UsrMName");
@@ -215,7 +215,7 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 			listheader_RoleId.setVisible(false);
 		}
 		if(limitType==2){
-			registerField("roleId", listheader_RoleId, SortOrder.NONE, roleId, sortOperator_RoleId, Operators.STRING);
+			registerField("roleId", listheader_RoleId, SortOrder.NONE, roleId, sortOperator_RoleId, Operators.DEFAULT);
 			registerField("roleCd");
 			registerField("roleName");
 
