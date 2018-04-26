@@ -52,10 +52,11 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader> {
@@ -197,7 +198,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		this.button_ErrorDetails.setVisible(false);
 		this.label_FinTaxUploadDialog_Errors.setVisible(false);
 
-		if ((media.getFormat().endsWith("xls")) ||(media.getFormat().endsWith("xlsx"))) {
+		if (MediaUtil.isExcel(media)) {
 			isSupported = true;
 			if (media.getName().length() > 100) {
 				throw new WrongValueException(this.uploadedfileName, Labels.getLabel("label_Filename_length_File"));
@@ -207,7 +208,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		}
 
 		if (isSupported) {
-			if ((media.getFormat().endsWith("xls"))) {
+			if (MediaUtil.isXls(media)) {
 				firstSheet = new HSSFWorkbook(media.getStreamData()).getSheetAt(0);
 			} else {
 				firstSheet = new XSSFWorkbook(media.getStreamData()).getSheetAt(0);
@@ -436,10 +437,10 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			throw new WrongValueException(this.btnUpload, "Please Upload a Valid File to save");
 		}
 		if (afinTaxUploadHeader.isNew()) {
-			if ("xls".equals(media.getFormat())) {
+			if (MediaUtil.isXls(media)) {
 				copyInputStreamToFile(media.getByteData(),
 						new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH")));
-			} else if ("xlsx".equals(media.getFormat())) {
+			} else {
 				copyInputStreamToFile(media.getByteData(),
 						new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH")));
 			}
