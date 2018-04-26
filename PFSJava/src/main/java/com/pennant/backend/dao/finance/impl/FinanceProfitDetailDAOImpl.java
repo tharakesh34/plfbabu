@@ -874,5 +874,30 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		}
 		return 0;
 	}
+	
+	/**
+	 * @param finReference
+	 * @param type
+	 * 
+	 * method return PFTINSUSP from FinPFtDetails Based On Reference
+	 */
+	@Override
+	public 	boolean isSuspenseFinance(String finReference) {
+		logger.debug("Entering");
+		try {
+			MapSqlParameterSource source = new MapSqlParameterSource();
+			source.addValue("finReference", finReference);
+			StringBuilder selectSql = new StringBuilder("Select PFTINSUSP ");
+			selectSql.append(" From Finpftdetails");
+			selectSql.append(" Where FinReference =:FinReference ");
+			logger.debug("selectSql: " + selectSql.toString());
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(source);
+			logger.debug("Leaving");
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Boolean.class);
+		} catch (Exception e) {
+			logger.debug(e);
+		}
+		return false;
+	}
 
 }

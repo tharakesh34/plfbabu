@@ -106,4 +106,6 @@ public interface FinanceProfitDetailDAO {
 	void updateBounceDetailsEOD(Date valueDate);
 
 	int getCurOddays(String finReference, String type);
+	
+	boolean isSuspenseFinance(String finReference);
 }
