@@ -3804,8 +3804,8 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 	
 	<changeSet id="51" author="Manoj">
 		<sql>
-			Delete from ErrorDetails where code in ('AUL01','AUL02','AUL03')
-			Delete from ErrorDetails where code in ('93002','93001','93003', '93004')
+			Delete from ErrorDetails where code in ('AUL01','AUL02','AUL03');
+			Delete from ErrorDetails where code in ('93002','93001','93003', '93004');
 			INSERT INTO ErrorDetails VALUES('93002','EN','E','The loan amount exceeds your authorization limit please submit to the next stage.','','Approved','','','','','',0,current_timestamp,1000,0);
 			INSERT INTO ErrorDetails VALUES('93001','EN','E','No authorization limit provided, please submit to the next stage.','','Approved','','','','','',0,current_timestamp,1000,0);
 			INSERT INTO ErrorDetails VALUES('93003','EN','E','Your authorization limit has been expired.','','Approved','','','','','',0,current_timestamp,1000,0);
