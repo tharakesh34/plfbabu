@@ -72,10 +72,10 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.model.CustomerSelectItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -382,7 +382,7 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				if (searchOpId == -1) {
 					// do nothing
 				} else {
-					searchObject.addFilter(new Filter("CustDOB", DateUtility.formatUtilDate(this.custDob.getValue(), PennantConstants.DBDateFormat), searchOpId));
+					searchObject.addFilter(new Filter("CustDOB", this.custDob.getValue(), searchOpId));
 				}
 			}
 		}
