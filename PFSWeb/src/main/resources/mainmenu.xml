@@ -712,18 +712,18 @@
 				rightName="menuItem_PresentmentDetail_PresentmentFileImport" />
 		</menu>
 		<menu id="menu_Category_ExternalUplaods" rightName="menuCat_SystemMaster">
-	<!-- 		<menuItem id="menu_Item_FinanceTaxDetailUpload"
+			<menuItem id="menu_Item_FinanceTaxDetailUpload"
 				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinTaxUploadDetailList.zul"
-				rightName="menuItem_FinanceManagement_FinanceTaxDetail" /> -->
+				rightName="menuItem_FinanceManagement_FinanceTaxDetail" />
 			<menuItem id="menu_Item_PostingDownloads"
 				zulNavigation="/WEB-INF/pages/InterfaceBajaj/PostingsDownloadCtrl.zul"
 				rightName="menuItem_SystemMaster_AddressType" />
 			<menuItem id="menu_Item_DataEngine_MasterExport"
 				zulNavigation="/WEB-INF/pages/DataEngine/MasterDataExtraction.zul"
 				rightName="menuItem_DataExtraction" />
-			<!--  <menuItem id="menu_Item_ExternalUplaods"
+			<menuItem id="menu_Item_ExternalUplaods"
 				zulNavigation="/WEB-INF/pages/ExternalUploads/ExternalUploadList.zul"
-				rightName="menuItem_SystemMaster_AddressType" /> -->
+				rightName="menuItem_SystemMaster_AddressType" />
 		</menu>
 	</menu>
 
