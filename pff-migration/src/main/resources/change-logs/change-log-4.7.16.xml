@@ -3926,5 +3926,56 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		<column name="ORG_INVOICENO" type="VARCHAR(50)"/>
 		</createTable>
 </changeSet>
+<changeSet id="55" author="Prasad">
+	<sql>
+		delete from REPORTFILTERFIELDS where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_ClosedLoans');
+		delete from reportconfiguration where menuitemcode='menu_Item_ClosedLoans';
+		
+		Insert into REPORTCONFIGURATION 
+		values ((select max(reportid)+1 from REPORTCONFIGURATION),'Closed Loans','Closed Loans',1,'ClosedLoans','datasource',1,'menu_Item_ClosedLoans',1,1000,null,null,null,null,null,null,0,current_timestamp,1,0);
+		
+		Insert into REPORTFILTERFIELDS 
+		values ((select reportid from reportconfiguration where menuitemcode='menu_Item_ClosedLoans'),1,'FinReference','LOVSEARCH','Loan Reference','t1.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		
+		Insert into REPORTFILTERFIELDS 
+		values ((select reportid from reportconfiguration where menuitemcode='menu_Item_ClosedLoans'),2,'FinType','LOVSEARCH','Loan Type','t1.fintype',null,'FinanceType','getFinType','getFinTypeDesc',0,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		
+		delete from REPORTFILTERFIELDS where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_FullyPartialDisbursment');
+		delete from reportconfiguration where menuitemcode='menu_Item_FullyPartialDisbursment';
+		
+		Insert into REPORTCONFIGURATION 
+		values ((select max(reportid)+1 from REPORTCONFIGURATION),'Fully/Partial Disbursment','Fully/Partial Disbursment',1,'FullyPartlyDisbursmentReport','datasource',1,'menu_Item_FullyPartialDisbursment',1,1000,null,null,null,null,null,null,0,current_timestamp,1,0);	
+		
+		Insert into REPORTFILTERFIELDS 
+		values ((select reportid from reportconfiguration where menuitemcode='menu_Item_FullyPartialDisbursment'),1,'FinReference','LOVSEARCH','Loan Reference','t1.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		
+		Insert into REPORTFILTERFIELDS 
+		values ((select reportid from reportconfiguration where menuitemcode='menu_Item_FullyPartialDisbursment'),2,'FinType','LOVSEARCH','Loan Type','t1.fintype',null,'FinanceType','getFinType','getFinTypeDesc',0,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		
+		Insert into REPORTFILTERFIELDS 
+		values ((select reportid from reportconfiguration where menuitemcode='menu_Item_FullyPartialDisbursment'),3,'FinStartDate','DATERANGE','Loan Start Date','t1.FinStartDate',null,'---Select----',null,null,0,0,0,0,3,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		
+		delete from REPORTFILTERFIELDS where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_ForeclosureTerminationReport');
+		delete from reportconfiguration where menuitemcode='menu_Item_ForeclosureTerminationReport';
+		
+		
+		Insert into REPORTCONFIGURATION 
+		values ((select max(reportid)+1 from REPORTCONFIGURATION),'Foreclosure Termination Report','Foreclosure Termination Report',1,'ForeclosureTerminationReport','datasource',1,'menu_Item_ForeclosureTerminationReport',1,1000,null,null,null,null,null,null,0,current_timestamp,1,1);
+		
+		
+		Insert into REPORTFILTERFIELDS 
+		values ((select reportid from reportconfiguration where menuitemcode='menu_Item_ForeclosureTerminationReport'),1,'FinReference','LOVSEARCH','Loan Reference','t1.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		
+		delete from REPORTFILTERFIELDS where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_IndemnityReport');
+		delete from reportconfiguration where menuitemcode='menu_Item_IndemnityReport';
+		
+		Insert into REPORTCONFIGURATION 
+		values ((select max(reportid)+1 from REPORTCONFIGURATION),'Indemnity Report','Indemnity Report',1,'IndemnityReport','datasource',1,'menu_Item_IndemnityReport',1,1000,null,null,null,null,null,null,0,current_timestamp,1,1);
+		
+		Insert into REPORTFILTERFIELDS 
+		values ((select reportid from reportconfiguration where menuitemcode='menu_Item_IndemnityReport'),1,'FinReference','LOVSEARCH','Loan Reference','t1.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				
+	</sql>
+</changeSet>
 </databaseChangeLog>
 	
