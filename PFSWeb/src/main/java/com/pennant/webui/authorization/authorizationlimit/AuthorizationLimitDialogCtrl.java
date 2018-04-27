@@ -224,8 +224,12 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		BeanUtils.copyProperties(this.authorizationLimit, aAuthorizationLimit);
 		String tranType=PennantConstants.TRAN_WF;
 		
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + PennantApplicationUtil.getFullName(aAuthorizationLimit.getUsrFName(),aAuthorizationLimit.getUsrMName(),aAuthorizationLimit.getUsrLName());
+		String record="User ID : " + aAuthorizationLimit.getUsrLogin();
+		if(!userRow.isVisible()){
+			record="Role Code : "+ aAuthorizationLimit.getRoleCd();
+		}
+			
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + record ;
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(aAuthorizationLimit.getRecordType()).equals("")){
 				aAuthorizationLimit.setVersion(aAuthorizationLimit.getVersion()+1);
@@ -937,7 +941,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 							
 						if(validAmount){
 							if(aAuthorizationLimit.getLimitAmount().compareTo(amount)<0){
-								parameters[1]=this.limitAmount.getCcyTextBox().getValue();
+								parameters[1]=PennantApplicationUtil.formatAmount(this.limitAmount.getActualValue(), CurrencyUtil.getFormat(""), false);
 								throw new WrongValueException(codeLimitAmount,Labels.getLabel("NUMBER_MAXVALUE_EQ", parameters));	
 							}
 						}
