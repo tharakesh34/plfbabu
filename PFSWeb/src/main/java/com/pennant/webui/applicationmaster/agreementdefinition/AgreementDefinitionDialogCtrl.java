@@ -752,7 +752,7 @@ public class AgreementDefinitionDialogCtrl extends
 		if (!this.aggName.isReadonly()) {
 			this.aggName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AgreementDefinitionDialog_AggName.value"),
-							PennantRegularExpressions.REGEX_NAME, true));
+							PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
 		}
 
 		if (!this.aggReportName.isReadonly()) {
