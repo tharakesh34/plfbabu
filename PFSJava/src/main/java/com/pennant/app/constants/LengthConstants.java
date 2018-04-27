@@ -63,5 +63,6 @@ public class LengthConstants {
 	public static final int LEN_RATE_SCALE					= 9;
 	public static final int LEN_IBAN						= 23;
 	public static final int LEN_PAN							= 10;
+	public static final int LEN_AADHAAR = 14;
 	public static final int LEN_MOBILE						= 10;
 }

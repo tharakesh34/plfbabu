@@ -157,7 +157,7 @@ public class PennantRegularExpressions {
 	public static final String REGEX_CR="REGEX_CR";
 	public static final String REGEX_CR1="REGEX_CR1";
 	public static final String REGEX_CR2="REGEX_CR2";
-	public static final String REGEX_EIDNUMBER="REGEX_EIDNUMBER";
+	public static final String REGEX_EIDNUMBER = "REGEX_EID_NUMBER";
 	public static final String REGEX_TRADELICENSE="REGEX_TRADELICENSE";
 	public static final String REGEX_UPP_BOX_ALPHA="REGEX_UPP_BOX_ALPHA";
 	public static final String REGEX_UPP_BOX_ALPHANUM="REGEX_UPP_BOX_ALPHANUM";
@@ -172,11 +172,11 @@ public class PennantRegularExpressions {
 	public static final String REGEX_AREA_MAXLENGTH = "REGEX_AREA_MAXLENGTH";
 	public static final String REGEX_PASSPORT="REGEX_PASSPORT";
 	public static final String REGEX_CORP_CUST="REGEX_CORP_CUST";
-	public static final String REGEX_AADHAR_NUMBER="REGEX_AADHAR_NUMBER";
+	public static final String REGEX_AADHAR_NUMBER = "REGEX_AADHAAR_NUMBER";
 	public static final String REGEX_UPPBOX_ALPHA_FL3="REGEX_UPPBOX_ALPHA_FL3";
 	public static final String REGEX_UPPBOX_ALPHANUM_FL3="REGEX_UPPBOX_ALPHANUM_FL3";
 	public static final String REGEX_ACCOUNTNUMBER="REGEX_ACCOUNTNUMBER";
-	public static final String REGEX_PANNUMBER="REGEX_PANNUMBER";
+	public static final String REGEX_PANNUMBER = "REGEX_PAN_NUMBER";
 	public static final String REGEX_GSTIN="REGEX_GSTIN";
 	public static final String REGEX_ACC_HOLDER_NAME="REGEX_ACC_HOLDER_NAME";
 	public static final String REGEX_FAVOURING_NAME="REGEX_FAVOURING_NAME";
