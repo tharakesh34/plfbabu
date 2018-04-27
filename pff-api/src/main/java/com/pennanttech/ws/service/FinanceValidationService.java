@@ -56,6 +56,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.util.APIConstants;
 
 @Service("financeValidationService")
@@ -783,7 +784,7 @@ public class FinanceValidationService {
 					}
 
 					// validate Is Customer document?
-					if (docType.isDocIsCustDoc()) {
+					if (DocumentCategories.CUSTOMER.getKey().equals(docType.getCategoryCode())) {
 						if (StringUtils.isBlank(detail.getCustDocTitle())) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "CustDocTitle";
