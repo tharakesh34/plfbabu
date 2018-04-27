@@ -29,6 +29,7 @@ public class ActivityLogDAOImpl implements ActivityLogDAO {
 		sql.append("UserLogin ");
 		sql.append("from activitylog_view ");
 		sql.append("where ").append(keyColumn).append(" = :keyValue ");
+		sql.append("order by auditid");
 		logger.debug("SQL: " + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
