@@ -3864,5 +3864,67 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 		</sql>
 	</changeSet>
+	<changeSet author="Kesav" id="54">
+	<comment> Purpose: GST_INVOICE </comment>
+	<createTable tableName="GST_INVOICE_DTL">
+		<column name="TRANSACTION_DATE" type="DATETIME"/> 
+		<column name="HOST_TRANSID" type="VARCHAR(100)"/> 
+		<column name="TRANS_TYPE" type="VARCHAR(1)"/> 
+		<column name="INVOICENO" type="VARCHAR(50)"/> 
+		<column name="SFDC_DEALID" type="VARCHAR(20)"/> 
+		<column name="BUSINESS_AREA" type="VARCHAR(2)"/> 
+		<column name="SOURCE_SYS" type="VARCHAR(2)"/> 
+		<column name="COMPANY_CODE" type="DECIMAL(8,0)"/> 
+		<column name="CUST_NAME" type="VARCHAR(300)"/> 
+		<column name="CUST_GSTIN" type="VARCHAR(15)"/> 
+		<column name="CUST_ID" type="DECIMAL(8,0)"/> 
+		<column name="HSN_SAC_CODE" type="VARCHAR(20)"/> 
+		<column name="LEDGER_CODE" type="VARCHAR(12)"/> 
+		<column name="NATURE_OF_SERVICE" type="VARCHAR(50)"/> 
+		<column name="LOAN_ACC_NO" type="VARCHAR(20)"/> 
+		<column name="PAN_NO" type="VARCHAR(30)"/> 
+		<column name="PRODUCT_CODE" type="VARCHAR(8)"/> 
+		<column name="CHARGECODE" type="DECIMAL(8,0)"/> 
+		<column name="CUST_ADD" type="VARCHAR(1000)"/> 
+		<column name="CUST_STATE_CODE" type="VARCHAR(2)"/> 
+		<column name="ADD_CHANGE_DATE" type="DATETIME"/> 
+		<column name="LOANBRANCH" type="DECIMAL(8,0)"/> 
+		<column name="LOAN_BRANCH_STATE" type="VARCHAR(2)"/> 
+		<column name="LOAN_SRV_BRANCH" type="DECIMAL(8,0)"/> 
+		<column name="BFL_GSTINNO" type="VARCHAR(15)"/> 
+		<column name="BFL_GSTIN_ADDRESS" type="VARCHAR(1000)"/> 
+		<column name="TXN_BRANCH_STATE_CODE" type="VARCHAR(2)"/> 
+		<column name="TRANS_AMT" type="DECIMAL(19,5)"/> 
+		<column name="TAXABLE_AMT" type="DECIMAL(19,5)"/> 
+		<column name="CGST_RATE" type="DECIMAL(5,2)"/> 
+		<column name="CGST_AMT" type="DECIMAL(19,5)"/> 
+		<column name="CGST_SURCHARGE_RATE" type="DECIMAL(5,2)"/> 
+		<column name="CGST_SURCHARGE_AMT" type="DECIMAL(19,5)"/> 
+		<column name="CGST_CESS_RATE" type="DECIMAL(5,2)"/> 
+		<column name="CGST_CESS_AMT" type="DECIMAL(19,5)"/> 
+		<column name="SGST_RATE" type="DECIMAL(5,2)"/> 
+		<column name="SGST_AMT" type="DECIMAL(19,5)"/> 
+		<column name="SGST_SURCHARGE_RATE" type="DECIMAL(5,2)"/> 
+		<column name="SGST_SURCHARGE_AMT" type="DECIMAL(19,5)"/> 
+		<column name="SGST_CESS_RATE" type="DECIMAL(5,2)"/> 
+		<column name="SGST_CESS_AMT" type="DECIMAL(19,5)"/> 
+		<column name="IGST_RATE" type="DECIMAL(5,2)"/> 
+		<column name="IGST_AMT" type="DECIMAL(19,5)"/> 
+		<column name="IGST_SURCHARGE_RATE" type="DECIMAL(5,2)"/> 
+		<column name="IGST_SURCHARGE_AMT" type="DECIMAL(19,5)"/> 
+		<column name="IGST_CESS_RATE" type="DECIMAL(5,2)"/> 
+		<column name="IGST_CESS_AMT" type="DECIMAL(19,5)"/> 
+		<column name="UTGST_RATE" type="DECIMAL(5,2)"/> 
+		<column name="UTGST_AMT" type="DECIMAL(19,5)"/> 
+		<column name="UTGST_SURCHARGE_RATE" type="DECIMAL(5,2)"/> 
+		<column name="UTGST_SURCHARGE_AMT" type="DECIMAL(19,5)"/> 
+		<column name="UTGST_CESS_RATE" type="DECIMAL(5,2)"/> 
+		<column name="UTGST_CESS_AMT" type="DECIMAL(19,5)"/> 
+		<column name="REGISTERED_CUSTOMER" type="VARCHAR(1)"/> 
+		<column name="REVERSE_CHARGE_APPL" type="VARCHAR(1)"/> 
+		<column name="INVOICETYPE" type="VARCHAR(1)"/> 
+		<column name="ORG_INVOICENO" type="VARCHAR(50)"/>
+		</createTable>
+</changeSet>
 </databaseChangeLog>
 	
