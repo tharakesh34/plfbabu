@@ -1714,6 +1714,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
+		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 	</bean>
 
 	<!--============ Product Detail ============== -->
