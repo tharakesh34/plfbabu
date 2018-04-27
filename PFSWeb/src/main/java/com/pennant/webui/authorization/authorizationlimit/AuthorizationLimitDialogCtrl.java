@@ -225,7 +225,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		String tranType=PennantConstants.TRAN_WF;
 		
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aAuthorizationLimit.getId();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + PennantApplicationUtil.getFullName(aAuthorizationLimit.getUsrFName(),aAuthorizationLimit.getUsrMName(),aAuthorizationLimit.getUsrLName());
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(aAuthorizationLimit.getRecordType()).equals("")){
 				aAuthorizationLimit.setVersion(aAuthorizationLimit.getVersion()+1);
@@ -909,7 +909,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 					// Validation 
 
 					ExtendedCombobox combobox= (ExtendedCombobox) listitem.getFirstChild().getFirstChild();
-					CurrencyBox codeLimitAmount = (CurrencyBox) listitem.getFirstChild().getNextSibling().getNextSibling().getFirstChild();
+					CurrencyBox codeLimitAmount = (CurrencyBox) listitem.getFirstChild().getNextSibling().getFirstChild();
 					AuthorizationLimitDetail detail = (AuthorizationLimitDetail) listitem.getAttribute("data");
 					
 					try {
@@ -1248,8 +1248,9 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			Listcell lc2 = new Listcell();
 			CurrencyBox codeLimitAmount = new CurrencyBox();
 			codeLimitAmount.setId("code"+listCount);
+			codeLimitAmount.setProperties(true,CurrencyUtil.getFormat(""));
 			
-			codeLimitAmount.setFormat(PennantConstants.amountFormate2);
+			
 			codeLimitAmount.setValue(PennantApplicationUtil.formateAmount(detail.getLimitAmount(), CurrencyUtil.getFormat("")));
 			
 			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType()) || StringUtils.equals("Y",hold )){
@@ -1260,8 +1261,6 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			
 			if(codeLimitAmount.isReadonly()){
 				codeLimitAmount.setMandatory(false);
-			}else{
-				codeLimitAmount.setMandatory(true);
 			}
 			codeLimitAmount.addForward("onFulfill", self, "onChangeLimitAmount");
 			

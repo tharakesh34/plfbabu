@@ -307,6 +307,7 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 		authorizationlimit.setWorkflowId(getWorkFlowId());
 		authorizationlimit.setLimitType(limitType);
 		authorizationlimit.setModule(module);
+		authorizationlimit.setActive(true);
 
 		// Display the dialog page.
 		doShowDialogPage(authorizationlimit);
