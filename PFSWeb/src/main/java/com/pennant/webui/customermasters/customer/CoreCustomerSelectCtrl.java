@@ -93,40 +93,38 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.
  */
 public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private static final long serialVersionUID = 9086034736503097868L;
 	private static final Logger logger = Logger.getLogger(CoreCustomerSelectCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUl-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUl-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_CoreCustomer; 
-	protected Textbox custCIF; 
-	protected Borderlayout borderLayout_CoreCustomer; 
+	protected Window window_CoreCustomer;
+	protected Textbox custCIF;
+	protected Borderlayout borderLayout_CoreCustomer;
 	// checkRights
-	protected Button btnSearchCustFetch; 
-	protected CustomerListCtrl customerListCtrl; 
+	protected Button btnSearchCustFetch;
+	protected CustomerListCtrl customerListCtrl;
 	private transient boolean validationOn;
 	protected Radio exsiting;
 	protected Radio prospect;
 	protected Combobox custCtgType;
 	protected Row row_custCtgType;
 	protected Row row_CustCIF;
-	protected ExtendedCombobox custNationality; 					
+	protected ExtendedCombobox custNationality;
 	protected Row row_custCountry;
 	protected Label label_CoreCustomerDialog_CustNationality;
 	protected Row row_PrimaryID;
 	protected Uppercasebox primaryID;
 	protected Space space_PrimaryID;
 	protected Label label_CoreCustomerDialog_PrimaryID;
-	
+
 	private boolean isRetailCustomer = false;
-	
+
 	private CustomerDetailsService customerDetailsService;
 	private CustomerService customerService;
 	private CustomerIncomeService customerIncomeService;
@@ -135,7 +133,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private BranchService branchService;
 	private CustomerTypeService customerTypeService;
 	private String isPANMandatory = "";
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -149,11 +147,10 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected Customer object in a
-	 * Map.
+	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
+	 * selected Customer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -173,29 +170,29 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		doSetFieldProperties();
 
 		fillComboBox(custCtgType, "", PennantAppUtil.getcustCtgCodeList(), "");
-		
+
 		//As per mail below functionality added for Profectus 
 		isPANMandatory = SysParamUtil.getValueAsString(SMTParameterConstants.PANCARD_REQ);
-		if (StringUtils.equals("Y",isPANMandatory)) {
+		if (StringUtils.equals("Y", isPANMandatory)) {
 			space_PrimaryID.setSclass(PennantConstants.mandateSclass);
-		}else{
+		} else {
 			space_PrimaryID.setSclass("");
 		}
-		
+
 		this.custCIF.setFocus(true);
 		this.window_CoreCustomer.doModal();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onChange$custCtgType(Event event){
+	public void onChange$custCtgType(Event event) {
 		logger.debug("Entering" + event.toString());
 		doClearCRCPR();
-		isRetailCustomer = this.custCtgType.getSelectedItem().getValue().toString().equals(PennantConstants.PFF_CUSTCTG_INDIV);
+		isRetailCustomer = this.custCtgType.getSelectedItem().getValue().toString()
+				.equals(PennantConstants.PFF_CUSTCTG_INDIV);
 		primaryID.setValue("");
 		setCPRNumberProperties();
 		logger.debug("Leaving" + event.toString());
 	}
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -216,25 +213,25 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		doClearMessage();
 		setValidationOn(true);
 		if (this.prospect.isChecked()) {
-			if(!ImplementationConstants.CLIENT_NFL) {//FIXME: Need final resolution for specific client implementation
+			if (!ImplementationConstants.CLIENT_NFL) {//FIXME: Need final resolution for specific client implementation
 				this.primaryID.clearErrorMessage();
 				if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
-					this.primaryID.setConstraint(new PTStringValidator(Labels
-							.getLabel("label_CoreCustomerDialog_PrimaryID.value"),
-							PennantRegularExpressions.REGEX_EIDNUMBER, false));
+					this.primaryID.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_CoreCustomerDialog_PrimaryID.value"),
+									PennantRegularExpressions.REGEX_EIDNUMBER, false));
 				} else {
 					this.primaryID.setConstraint(
 							new PTStringValidator(Labels.getLabel("label_CoreCustomerDialog_PrimaryID.value"),
-							PennantRegularExpressions.REGEX_PANNUMBER,true));
+									PennantRegularExpressions.REGEX_PANNUMBER, true));
 				}
 			}
 		}
-		
+
 		//As per mail this changes for Profectus 
-		if(StringUtils.equals(isPANMandatory, "Y")){
+		if (StringUtils.equals(isPANMandatory, "Y")) {
 			this.primaryID
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_CoreCustomerDialog_PrimaryID.value"),
-					PennantRegularExpressions.REGEX_PANNUMBER,true));
+							PennantRegularExpressions.REGEX_PANNUMBER, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -251,7 +248,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.primaryID.setConstraint("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -281,29 +278,31 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			String cif = StringUtils.trimToEmpty(this.custCIF.getValue());
 			Customer customer = null;
 			//If  customer exist is checked 
-			if (this.exsiting.isChecked()){
+			if (this.exsiting.isChecked()) {
 				if (StringUtils.isEmpty(cif)) {
-					throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",new String[] { Labels.getLabel("label_CoreCustomerDialog_CoreCustID.value") }));
-				}else{
+					throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
+							new String[] { Labels.getLabel("label_CoreCustomerDialog_CoreCustID.value") }));
+				} else {
 					customer = getCustomerDetailsService().getCheckCustomerByCIF(cif);
 				}
 				if (customer == null) {
 					newRecord = true;
 					customerDetails = getCustomerInterfaceService().getCustomerInfoByInterface(cif, "");
 					if (customerDetails == null) {
-						throw new InterfaceException("9999",Labels.getLabel("Cust_NotFound"));
+						throw new InterfaceException("9999", Labels.getLabel("Cust_NotFound"));
 					}
 				}
-				
-			} else  if (this.prospect.isChecked()) {
+
+			} else if (this.prospect.isChecked()) {
 				newRecord = true;
-				String ctgType=this.custCtgType.getSelectedItem().getValue().toString();
+				String ctgType = this.custCtgType.getSelectedItem().getValue().toString();
 
 				ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 				try {
 					if (StringUtils.trimToEmpty(ctgType).equals(PennantConstants.List_Select)) {
-						throw new WrongValueException(this.custCtgType, Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CoreCustomerDialog_CustType.value") }));
+						throw new WrongValueException(this.custCtgType, Labels.getLabel("FIELD_NO_EMPTY",
+								new String[] { Labels.getLabel("label_CoreCustomerDialog_CustType.value") }));
 					}
 				} catch (WrongValueException e) {
 					wve.add(e);
@@ -311,29 +310,32 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				try {
 					if (StringUtils.isBlank(this.custNationality.getValue())) {
-						if(isRetailCustomer){
-							throw new WrongValueException(this.custNationality, Labels.getLabel("FIELD_NO_EMPTY",new String[] { Labels.getLabel("label_CoreCustomerDialog_CustCountry.value") }));
-						}else{
-							throw new WrongValueException(this.custNationality, Labels.getLabel("FIELD_NO_EMPTY",new String[] { Labels.getLabel("label_CoreCustomerDialog_CustNationality.value") }));
+						if (isRetailCustomer) {
+							throw new WrongValueException(this.custNationality, Labels.getLabel("FIELD_NO_EMPTY",
+									new String[] { Labels.getLabel("label_CoreCustomerDialog_CustCountry.value") }));
+						} else {
+							throw new WrongValueException(this.custNationality,
+									Labels.getLabel("FIELD_NO_EMPTY", new String[] {
+											Labels.getLabel("label_CoreCustomerDialog_CustNationality.value") }));
 						}
 					}
 				} catch (WrongValueException e) {
 					wve.add(e);
 				}
-                
+
 				String eidNumbr = null;
-				try{
+				try {
 					eidNumbr = this.primaryID.getValue();
-				}catch(WrongValueException e){
+				} catch (WrongValueException e) {
 					wve.add(e);
 				}
-				
+
 				boolean isCustCatIndividual = ctgType.equals(PennantConstants.PFF_CUSTCTG_INDIV);
-				String custCPRCR="";
+				String custCPRCR = "";
 
 				doRemoveValidation();
-				
-				if(wve.size() > 0){
+
+				if (wve.size() > 0) {
 					WrongValueException[] wvea = new WrongValueException[wve.size()];
 					for (int i = 0; i < wve.size(); i++) {
 						wvea[i] = wve.get(i);
@@ -341,9 +343,9 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					throw new WrongValuesException(wvea);
 				}
 
-				if(StringUtils.isNotBlank(custCPRCR)){
-					String custCIF = getCustomerService().getCustomerByCRCPR(custCPRCR,"_View");
-					if(custCIF != null){
+				if (StringUtils.isNotBlank(custCPRCR)) {
+					String custCIF = getCustomerService().getCustomerByCRCPR(custCPRCR, "_View");
+					if (custCIF != null) {
 						MessageUtil
 								.showError(Labels.getLabel("label_CoreCustomerDialog_ProspectExist",
 										new String[] {
@@ -356,13 +358,16 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					}
 				}
 				String custCIF = null;
-				if(StringUtils.isNotBlank(eidNumbr)){
+				if (StringUtils.isNotBlank(eidNumbr)) {
 					custCIF = getCustomerDetailsService().getEIDNumberById(eidNumbr, "_View");
 				}
-				if(StringUtils.isNotBlank(custCIF)){
-					String msg = Labels.getLabel("label_CoreCustomerDialog_ProspectExist",new String[]{
-							isCustCatIndividual ? Labels.getLabel("label_CustCRCPR") : Labels.getLabel("label_CustTradeLicenseNumber"),
-									custCIF + ". \n"});
+				if (StringUtils.isNotBlank(custCIF)) {
+					String msg = Labels
+							.getLabel("label_CoreCustomerDialog_ProspectExist",
+									new String[] {
+											isCustCatIndividual ? Labels.getLabel("label_CustCRCPR")
+													: Labels.getLabel("label_CustTradeLicenseNumber"),
+											custCIF + ". \n" });
 					if (MessageUtil.confirm(msg) != MessageUtil.YES) {
 						return;
 					}
@@ -374,10 +379,10 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 						newRecord = true;
 						customerDetails = getCustomerInterfaceService().getCustomerInfoByInterface(custCIF, "");
 						if (customerDetails == null) {
-							throw new InterfaceException("9999",Labels.getLabel("Cust_NotFound"));
+							throw new InterfaceException("9999", Labels.getLabel("Cust_NotFound"));
 						}
 					}
-				}else{
+				} else {
 					customerDetails = getCustomerDetailsService().getNewCustomer(true);
 					customerDetails.getCustomer().setLovDescCustCtgType(ctgType);
 					customerDetails.getCustomer().setCustCtgCode(ctgType);
@@ -388,29 +393,32 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					customerDetails.getCustomer().setLovDescCustNationalityName(this.custNationality.getDescription());
 
 					//Setting Primary Relation Ship Officer
-					RelationshipOfficer officer = getRelationshipOfficerService().getApprovedRelationshipOfficerById(getUserWorkspace().getUserDetails().getUsername());
-					if(officer != null){
+					RelationshipOfficer officer = getRelationshipOfficerService()
+							.getApprovedRelationshipOfficerById(getUserWorkspace().getUserDetails().getUsername());
+					if (officer != null) {
 						customerDetails.getCustomer().setCustRO1(Long.parseLong(officer.getROfficerCode()));
 						customerDetails.getCustomer().setLovDescCustRO1Name(officer.getROfficerDesc());
 					}
 
 					//Setting User Branch to Customer Branch
-					Branch branch = getBranchService().getApprovedBranchById(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
-					if(branch != null){
+					Branch branch = getBranchService().getApprovedBranchById(
+							getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
+					if (branch != null) {
 						customerDetails.getCustomer().setCustDftBranch(branch.getBranchCode());
 						customerDetails.getCustomer().setLovDescCustDftBranchName(branch.getBranchDesc());
 					}
 
-					
 					//Reset Data from WIF Details if Exists
-					if(!(StringUtils.isEmpty(custCPRCR))){
-						WIFCustomer wifCustomer = getCustomerService().getWIFCustomerByID(0,custCPRCR);
-						if(wifCustomer != null){
+					if (!(StringUtils.isEmpty(custCPRCR))) {
+						WIFCustomer wifCustomer = getCustomerService().getWIFCustomerByID(0, custCPRCR);
+						if (wifCustomer != null) {
 							BeanUtils.copyProperties(wifCustomer, customerDetails.getCustomer());
 							customerDetails.getCustomer().setCustID(Long.MIN_VALUE);
-							customerDetails.setCustomerIncomeList(getCustomerIncomeService().getCustomerIncomes(wifCustomer.getCustID(), true));
+							customerDetails.setCustomerIncomeList(
+									getCustomerIncomeService().getCustomerIncomes(wifCustomer.getCustID(), true));
 
-							if(customerDetails.getCustomerIncomeList() != null && !customerDetails.getCustomerIncomeList().isEmpty()){
+							if (customerDetails.getCustomerIncomeList() != null
+									&& !customerDetails.getCustomerIncomeList().isEmpty()) {
 								for (CustomerIncome income : customerDetails.getCustomerIncomeList()) {
 									income.setLovDescCustCIF(customerDetails.getCustomer().getCustCIF());
 								}
@@ -423,9 +431,9 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (customer != null) {
 				customerDetails = getCustomerDetailsService().getCustomerById(customer.getId());
 			}
-			
+
 			if (StringUtils.isNotEmpty(customerDetails.getCustomer().getNextRoleCode())) {
-				if(!getUserWorkspace().getUserRoles().contains(customerDetails.getCustomer().getNextRoleCode())){
+				if (!getUserWorkspace().getUserRoles().contains(customerDetails.getCustomer().getNextRoleCode())) {
 					throw new AppException(Labels.getLabel("customer_maintainance_otherQueue"));
 				}
 
@@ -446,7 +454,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onFulfill$custNationality(Event event){
+	public void onFulfill$custNationality(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doClearCRCPR();
@@ -454,7 +462,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onCheck$exsiting(Event event){
+	public void onCheck$exsiting(Event event) {
 		this.custCIF.setDisabled(false);
 		this.row_custCtgType.setVisible(false);
 		this.row_custCountry.setVisible(false);
@@ -462,7 +470,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		row_PrimaryID.setVisible(false);
 	}
 
-	public void onCheck$prospect(Event event){
+	public void onCheck$prospect(Event event) {
 		this.custCIF.setValue("");
 		this.custCIF.setDisabled(true);
 		this.row_custCtgType.setVisible(true);
@@ -470,13 +478,12 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.row_CustCIF.setVisible(false);
 		row_PrimaryID.setVisible(true);
 
-		if(!ImplementationConstants.CLIENT_NFL) {
+		if (!ImplementationConstants.CLIENT_NFL) {
 			this.primaryID.setSclass(PennantConstants.mandateSclass);
 		}
 
 		this.custNationality.setValue(SysParamUtil.getValueAsString("CURR_SYSTEM_COUNTRY"));
 	}
-
 
 	/**
 	 * when the "close" button is clicked. <br>
@@ -490,7 +497,6 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.window_CoreCustomer.onClose();
 		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
@@ -508,35 +514,37 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void setCPRNumberProperties(){
+	public void setCPRNumberProperties() {
 		logger.debug("Entering");
-		if(isRetailCustomer){
-			this.label_CoreCustomerDialog_CustNationality.setValue(Labels.getLabel("label_FinanceCustomerList_CustNationality.value"));
+		if (isRetailCustomer) {
+			this.label_CoreCustomerDialog_CustNationality
+					.setValue(Labels.getLabel("label_FinanceCustomerList_CustNationality.value"));
 			label_CoreCustomerDialog_PrimaryID.setValue(Labels.getLabel("label_CoreCustomerDialog_PrimaryID.value"));
 			this.primaryID.setMaxlength(LengthConstants.LEN_EID);
-		}else{
-			this.label_CoreCustomerDialog_CustNationality.setValue(Labels.getLabel("label_CoreCustomerDialog_CustNationality.value"));
+		} else {
+			this.label_CoreCustomerDialog_CustNationality
+					.setValue(Labels.getLabel("label_CoreCustomerDialog_CustNationality.value"));
 			label_CoreCustomerDialog_PrimaryID
 					.setValue(Labels.getLabel("label_CoreCustomerDialog_TradeLicenseNumber.value"));
 		}
 		this.primaryID.setMaxlength(LengthConstants.LEN_PAN);
-		if("#".equals(getComboboxValue(this.custCtgType))){
+		if ("#".equals(getComboboxValue(this.custCtgType))) {
 			label_CoreCustomerDialog_PrimaryID.setValue(Labels.getLabel("label_CoreCustomerDialog_PrimaryID.value"));
 		}
 		logger.debug("Leaving");
 	}
 
-	public void doClearCRCPR(){
+	public void doClearCRCPR() {
 		logger.debug("Entering");
-		
+
 		Clients.clearWrongValue(this.custNationality);
 		Clients.clearWrongValue(this.primaryID);
 		this.primaryID.setConstraint("");
 		this.primaryID.setErrorMessage("");
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	private void setCustomerStatus(CustomerDetails customerDetails) {
 		try {
 			if (StringUtils.isBlank(customerDetails.getCustomer().getCustSts())) {
@@ -550,8 +558,6 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			logger.debug("Exception: ", e);
 		}
 	}
-
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -575,6 +581,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public CustomerIncomeService getCustomerIncomeService() {
 		return customerIncomeService;
 	}
+
 	public void setCustomerIncomeService(CustomerIncomeService customerIncomeService) {
 		this.customerIncomeService = customerIncomeService;
 	}
@@ -590,14 +597,15 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public RelationshipOfficerService getRelationshipOfficerService() {
 		return relationshipOfficerService;
 	}
-	public void setRelationshipOfficerService(
-			RelationshipOfficerService relationshipOfficerService) {
+
+	public void setRelationshipOfficerService(RelationshipOfficerService relationshipOfficerService) {
 		this.relationshipOfficerService = relationshipOfficerService;
 	}
 
 	public BranchService getBranchService() {
 		return branchService;
 	}
+
 	public void setBranchService(BranchService branchService) {
 		this.branchService = branchService;
 	}
@@ -605,6 +613,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public CustomerTypeService getCustomerTypeService() {
 		return customerTypeService;
 	}
+
 	public void setCustomerTypeService(CustomerTypeService customerTypeService) {
 		this.customerTypeService = customerTypeService;
 	}
