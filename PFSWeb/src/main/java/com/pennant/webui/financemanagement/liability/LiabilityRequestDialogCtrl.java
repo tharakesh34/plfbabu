@@ -602,7 +602,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 				}
 
 				String msg = PennantApplicationUtil.getSavingStatus(getLiabilityRequest().getRoleCode(),
-						getLiabilityRequest().getNextRoleCode(), getLiabilityRequest().getFinReference(), " Finance ",
+						getLiabilityRequest().getNextRoleCode(), getLiabilityRequest().getFinReference(), " Loan ",
 						getLiabilityRequest().getRecordStatus(), getNextUserId());
 				Clients.showNotification(msg, "info", null, null, -1);
 

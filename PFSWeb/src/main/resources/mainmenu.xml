@@ -936,6 +936,12 @@
 			<menuItem id="menu_Item_GST_InvoiceReport"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_CustomerTemplates_NoLiabilitesCertificate" /> <!-- rightName="menu_Item_GST_InvoiceReport" -->
+			<menuItem id="menu_Item_ForeclosureTerminationReport"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menuItem_CustomerTemplates_ForeclosureTerminationReport" />
+			<menuItem id="menu_Item_IndemnityReport"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menuItem_CustomerTemplates_IndemnityReport" />
 		</menu>
 		<menu id="menu_Category_Disbursements" rightName="">
 			<menuItem id="menu_Item_DAILYDISBURSALREPORT"
@@ -944,6 +950,9 @@
 			<menuItem id="menu_Item_Disbursment"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="" />
+			<menuItem id="menu_Item_FullyPartialDisbursment"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_Disbursements_FullyPartialDisbursment" />
 		</menu>
 		<menu id="menu_Category_Loan" rightName="">
 			<menuItem id="menu_Item_Install_Due_Today"

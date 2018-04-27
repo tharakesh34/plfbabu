@@ -717,7 +717,17 @@
 																id="applicationNo" width="170px" visible="true" />
 														</hbox>
 													</row>
-
+													<row id="row_EligibilityMethod" visible="false">
+													<label
+														id="label_FinanceMainDialog_EligibilityMethod"
+														value="${c:l('label_FinanceMainDialog_EligibilityMethod.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<combobox 
+															id="eligibilityMethod" width="200px" />
+													</hbox>
+												</row>
 												</rows>
 											</grid>
 										</groupbox>

@@ -11082,10 +11082,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		// ###_0.3
 		//Eligibility Method
-		try {
-			aFinanceMain.setEligibilityMethod(getComboboxValue(this.eligibilityMethod));
-		} catch (WrongValueException we) {
-			wve.add(we);
+		if(this.row_EligibilityMethod.isVisible()){
+			try {
+				aFinanceMain.setEligibilityMethod(getComboboxValue(this.eligibilityMethod));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
 
 		//FinanceMain Details Tab ---> Rollover Finance Details
