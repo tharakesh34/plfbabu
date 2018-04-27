@@ -3981,7 +3981,11 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 				
 	</sql>
 </changeSet>
-
+<changeSet id="56" author="Jayant">
+	<sql>
+		update reportconfiguration set datasourcename='dataSource' where datasourcename in ('datasource','pfsDatasource');
+	</sql>
+</changeSet>
 
 </databaseChangeLog>
 	
