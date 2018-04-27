@@ -84,10 +84,10 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	private String lovValue;
 	private FinCovenantType befImage;
 	private LoggedInUser userDetails;
-	private boolean lovDescIsCustDoc;
 	
 	private Date receivableDate;
 	private Date docReceivedDate;
+	private String categoryCode;
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -112,6 +112,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 		excludeFields.add("mandRoleDesc");
 		excludeFields.add("validateCovenantType");
 		excludeFields.add("docReceivedDate");
+		excludeFields.add("categoryCode");
 		
 		return excludeFields;
 	}
@@ -226,20 +227,20 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 		this.receivableDate = receivableDate;
 	}
 
-	public boolean isLovDescIsCustDoc() {
-		return lovDescIsCustDoc;
-	}
-
-	public void setLovDescIsCustDoc(boolean lovDescIsCustDoc) {
-		this.lovDescIsCustDoc = lovDescIsCustDoc;
-	}
-
 	public Date getDocReceivedDate() {
 		return docReceivedDate;
 	}
 
 	public void setDocReceivedDate(Date docReceivedDate) {
 		this.docReceivedDate = docReceivedDate;
+	}
+
+	public String getCategoryCode() {
+		return categoryCode;
+	}
+
+	public void setCategoryCode(String categoryCode) {
+		this.categoryCode = categoryCode;
 	}
 
 }

@@ -144,6 +144,7 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
 	private static final Logger				logger	= Logger.getLogger(GenericFinanceDetailService.class);
@@ -802,7 +803,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			if (StringUtils.isBlank(documentDetails.getRecordType())) {
 				continue;
 			}
-			if (!documentDetails.isDocIsCustDoc()) {
+			if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode()))) {
 				saveRecord = false;
 				updateRecord = false;
 				deleteRecord = false;
@@ -820,7 +821,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				documentDetails.setLastMntBy(financeMain.getLastMntBy());
 				documentDetails.setWorkflowId(0);
 
-				if (documentDetails.isDocIsCustDoc()) {
+				if (DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode())) {
 					approveRec = true;
 				}
 

@@ -99,6 +99,7 @@ import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -1101,7 +1102,9 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 							if (StringUtils.equals(finDocumentDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 								MessageUtil.showError(Labels.getLabel("label_DocumentDeleteStatus"));
 							} else {
-								finDocumentDetail.setDocIsCustDoc(checkListDetail.isDocIsCustDOC());
+								if (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode())) {
+									finDocumentDetail.setCategoryCode(DocumentCategories.CUSTOMER.getKey());
+								}
 								docDialogCtrl.updateExistingDocument(finDocumentDetail, checkListDetail.getCheckListId(), true);
 							}
 						} else {

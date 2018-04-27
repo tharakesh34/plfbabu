@@ -299,6 +299,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
@@ -2376,6 +2377,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("moduleDefiner", moduleDefiner);
+			map.put("module", DocumentCategories.FINANCE.getKey());
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL), map);
 		}
@@ -5959,7 +5961,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (!recSave && !finCovenantType.isAlwWaiver() && !finCovenantType.isAlwPostpone()
 							&& StringUtils.equals(getRole(), finCovenantType.getMandRole())
 							&& !isCovenantDocumentExist(aFinanceDetail, finCovenantType.getCovenantType())) {
-						if (finCovenantType.isLovDescIsCustDoc()) {
+						if (DocumentCategories.CUSTOMER.getKey().equals(finCovenantType.getCategoryCode())) {
 							this.custDetailTab.setSelected(true);
 							;
 						} else {

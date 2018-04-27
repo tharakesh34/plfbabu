@@ -77,6 +77,7 @@ import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -103,6 +104,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private boolean isNotFinanceProcess = false;
 	private Map<String, List<Listitem>> checkListDocTypeMap = null;
 	private List<Object> custDetails = null;
+	private String module;
 	
 	/**
 	 * default constructor.<br>
@@ -177,6 +179,11 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				this.window_documentDetailDialog = (Component) arguments.get("window");
 			}
 			
+			// Module
+			if (arguments.containsKey("module")) {
+				module = (String) arguments.get("module");
+			}
+			
 			doShowDialog();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -245,6 +252,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	private void doSetFieldProperties() {
 		logger.debug("Entering ");
+		
 		this.docCategory.setMaxlength(50);
 		this.docCategory.setTextBoxWidth(160);
 		this.docCategory.setMandatoryStyle(true);
@@ -252,11 +260,17 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.docCategory.setValueColumn("DocTypeCode");
 		this.docCategory.setDescColumn("DocTypeDesc");
 		this.docCategory.setValidateColumns(new String[]{"DocTypeCode"});
-		this.docCategory.setFilters(new Filter[]{new Filter("DocIsCustDoc",0,Filter.OP_EQUAL)});
 		
+		if (DocumentCategories.VERIFICATION_FI.getKey().equals(module)
+				|| DocumentCategories.VERIFICATION_TV.getKey().equals(module)
+				|| DocumentCategories.FINANCE.getKey().equals(module)
+				|| DocumentCategories.COLLATERAL.getKey().equals(module)) {
+			this.docCategory.setFilters(new Filter[] { new Filter("CategoryCode", module, Filter.OP_EQUAL) });
+		} else {
+			this.docCategory.setFilters(new Filter[] { new Filter("CategoryCode",DocumentCategories.CUSTOMER.getKey(), Filter.OP_EQUAL) });
+		}
 		
 		logger.debug("Leaving ");
-		
 	}
 
 	/**
@@ -335,7 +349,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 		try {
 			this.window_DocumentTypeSelectDialog.onClose();
-			if(!doctype.isDocIsCustDoc()){
+			if(!(DocumentCategories.CUSTOMER.getKey().equals(doctype.getCategoryCode()))){
 				DocumentDetails documentDetails = getDocumentDetails();
 				documentDetails.setNewRecord(true);
 				documentDetails.setWorkflowId(0);

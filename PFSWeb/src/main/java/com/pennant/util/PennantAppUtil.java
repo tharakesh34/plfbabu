@@ -91,7 +91,6 @@ import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.dedup.DynamicCollateralType;
-import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
 import com.pennant.backend.model.finance.commodity.CommodityDetail;
@@ -125,6 +124,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class PennantAppUtil {
@@ -973,10 +973,10 @@ public class PennantAppUtil {
 	public static List<DocumentType> getDocumentTypesList() {
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		JdbcSearchObject<DocumentType> searchObject = new JdbcSearchObject<DocumentType>(DocumentType.class);
-		searchObject.addTabelName("BMTDocumentTypes");
+		searchObject.addTabelName("BMTDocumentTypes_Aview");
 		searchObject.addField("DocTypeCode");
 		searchObject.addField("DocTypeDesc");
-		searchObject.addField("DocIsCustDoc");
+		searchObject.addField("CategoryCode");
 		searchObject.addField("DocExpDateIsMand");
 		searchObject.addField("DocIssueDateMand");
 		searchObject.addField("DocIdNumMand");
@@ -1004,10 +1004,10 @@ public class PennantAppUtil {
 		ArrayList<ValueLabel> docTypes = new ArrayList<ValueLabel>();
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		JdbcSearchObject<DocumentType> searchObject = new JdbcSearchObject<DocumentType>(DocumentType.class);
-		searchObject.addTabelName("BMTDocumentTypes");
+		searchObject.addTabelName("BMTDocumentTypes_Aview");
 		searchObject.addField("DocTypeCode");
 		searchObject.addField("DocTypeDesc");
-		searchObject.addFilterEqual("DocIsCustDoc", 1);
+		searchObject.addFilterEqual("CategoryCode", DocumentCategories.CUSTOMER.getKey());
 		
 		List<DocumentType> appList = pagedListService.getBySearchObject(searchObject);
 		for (int i = 0; i < appList.size(); i++) {

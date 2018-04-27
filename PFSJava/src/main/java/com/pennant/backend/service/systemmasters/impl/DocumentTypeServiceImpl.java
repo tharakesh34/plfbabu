@@ -136,6 +136,9 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 			getDocumentTypeDAO().update(documentType, tableType);
 		}
 
+		String[] fields = PennantJavaUtil.getFieldDetails(new DocumentType(),documentType.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,fields[0],fields[1], documentType.getBefImage(), documentType));
+		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -168,6 +171,9 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 
 		getDocumentTypeDAO().delete(documentType, TableType.MAIN_TAB);
 
+		String[] fields = PennantJavaUtil.getFieldDetails(new DocumentType(),documentType.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,fields[0],fields[1], documentType.getBefImage(), documentType));
+		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -269,6 +275,8 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 			}
 		}
 
+		String[] fields = PennantJavaUtil.getFieldDetails(new DocumentType(),documentType.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,fields[0],fields[1], documentType.getBefImage(), documentType));
 		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -307,6 +315,9 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getDocumentTypeDAO().delete(documentType, TableType.TEMP_TAB);
 
+		String[] fields = PennantJavaUtil.getFieldDetails(new DocumentType(),documentType.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,fields[0],fields[1], documentType.getBefImage(), documentType));
+		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;

@@ -99,9 +99,12 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		documentType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, DocIsCustDoc," );
+		selectSql.append(" SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, CategoryId, Pdd, Otc, LvReq, RcuReq,");
 		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId," );
 		selectSql.append(" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef");
+		if (type.contains("View")) {
+			selectSql.append(" ,categoryCode,categoryDesc ");
+		}
 		selectSql.append(" FROM  BMTDocumentTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where DocTypeCode =:DocTypeCode") ;
@@ -163,10 +166,10 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into BMTDocumentTypes");
 		sql.append(tableType.getSuffix());
-		sql.append(" (DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, DocIsCustDoc," );
+		sql.append(" (DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, CategoryId, Pdd, Otc, LvReq, RcuReq," );
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
 		sql.append(" RecordType, WorkflowId, DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef)");
-		sql.append(" values(:DocTypeCode, :DocTypeDesc, :DocIsMandatory, :DocTypeIsActive, :DocIsCustDoc," );
+		sql.append(" values(:DocTypeCode, :DocTypeDesc, :DocIsMandatory, :DocTypeIsActive, :CategoryId, :Pdd, :Otc, :LvReq, :RcuReq," );
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		sql.append(" :RecordType, :WorkflowId, :DocExpDateIsMand, :DocIssueDateMand, :DocIdNumMand, :DocIssuedAuthorityMand, :DocIsPdfExtRequired, :DocIsPasswordProtected, :PdfMappingRef)");
 		
@@ -191,10 +194,10 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update BMTDocumentTypes");
 		sql.append(tableType.getSuffix());
-		sql.append(" set DocTypeDesc = :DocTypeDesc, DocIsCustDoc = :DocIsCustDoc,");
-		sql.append(" DocIsMandatory = :DocIsMandatory, DocTypeIsActive = :DocTypeIsActive,");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		sql.append(" set DocTypeDesc = :DocTypeDesc,");
+		sql.append(" DocIsMandatory = :DocIsMandatory, DocTypeIsActive = :DocTypeIsActive, CategoryId = :CategoryId, Pdd = :Pdd, ");
+		sql.append(" Otc = :Otc, LvReq = :LvReq, RcuReq = :RcuReq, Version = :Version , LastMntBy = :LastMntBy, ");
+		sql.append("  LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, DocExpDateIsMand = :DocExpDateIsMand,");
 		sql.append(" DocIssueDateMand= :DocIssueDateMand, DocIdNumMand = :DocIdNumMand, DocIssuedAuthorityMand = :DocIssuedAuthorityMand,");
 		sql.append(" DocIsPdfExtRequired = :DocIsPdfExtRequired, DocIsPasswordProtected = :DocIsPasswordProtected, PdfMappingRef = :PdfMappingRef");
@@ -247,7 +250,7 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 	public List<DocumentType> getApprovedPdfExternalList(String type) {
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, DocIsCustDoc," );
+		selectSql.append("SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, CategoryId, Pdd, Otc, LvReq, RcuReq," );
 		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId," );
 		selectSql.append(" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef");
 		selectSql.append(" FROM  BMTDocumentTypes"); 

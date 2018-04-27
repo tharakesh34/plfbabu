@@ -371,7 +371,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		customerDocument.setCustID(custId);
 		customerDocument.setCustDocCategory(docType);
 		
-		StringBuilder selectSql = new StringBuilder("Select CustID, CustDocCategory docCategory, 1 docIsCustDoc, ");
+		StringBuilder selectSql = new StringBuilder("Select CustID, CustDocCategory docCategory, 'CUSTOMER' categoryCode, ");
 		selectSql.append(" CustDocType DocType, CustDocName DocName, DocRefId, DocPurpose, DocUri,");
 		if(type.contains("View")){
 			selectSql.append(" lovDescCustDocCategory lovDescDocCategoryName, CustDocTitle, CustDocSysName,");
@@ -411,7 +411,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 	public List<DocumentDetails> getCustDocListByDocTypes(final long custId, List<String> docTypeList, String type) {
 		logger.debug("Entering");
 		
-		StringBuilder selectSql = new StringBuilder("Select CustID, CustDocCategory docCategory, 1 docIsCustDoc, ");
+		StringBuilder selectSql = new StringBuilder("Select CustID, CustDocCategory docCategory, 'CUSTOMER' categoryCode, ");
 		selectSql.append(" CustDocType DocType, DocPurpose, DocUri, CustDocName DocName, RecordStatus,");
 		selectSql.append(" RecordType, WorkflowId" );
 		selectSql.append(" From CustomerDocuments");
@@ -440,7 +440,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		CustomerDocument customerDocument = new CustomerDocument();
 		customerDocument.setCustID(custId);
 		
-		StringBuilder selectSql = new StringBuilder("Select CustID, CustDocCategory docCategory, 1 docIsCustDoc, ");
+		StringBuilder selectSql = new StringBuilder("Select CustID, CustDocCategory docCategory, 'CUSTOMER' categoryCode, ");
 		selectSql.append(" CustDocType DocType, CustDocName DocName, DocRefId, DocPurpose, DocUri,");
 		if(type.contains("View")){
 			selectSql.append(" lovDescCustDocCategory lovDescDocCategoryName, CustDocTitle, CustDocSysName,");

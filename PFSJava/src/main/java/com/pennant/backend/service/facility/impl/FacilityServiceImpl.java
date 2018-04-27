@@ -80,6 +80,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 
 /**
  * Service implementation for methods that depends on <b>Facility</b>.<br>
@@ -432,7 +433,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			for (FacilityReferenceDetail financeReferenceDetail : facility.getCheckList()) {
 				checkListDetailList = getCheckListDetailDAO().getCheckListDetailByChkList(financeReferenceDetail.getFinRefId(), "_AView");
 				for (CheckListDetail checkListDetail : checkListDetailList) {
-					if(checkListDetail.isDocIsCustDOC()){
+					if(DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode())){
 						docTypeList.add(checkListDetail.getDocType());
 					}
 				}
@@ -1300,7 +1301,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		boolean approveRec = false;
 		for (int i = 0; i < auditDetails.size(); i++) {
 			DocumentDetails documentDetails = (DocumentDetails) auditDetails.get(i).getModelData();
-			if(!documentDetails.isDocIsCustDoc()){
+			if(!(DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode()))){
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -1483,8 +1484,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		DocumentDetails documentDetails= (DocumentDetails) auditDetail.getModelData();
-		if (!documentDetails.isDocIsCustDoc()) {
-
+		if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode()))) {
 			DocumentDetails tempDocumentDetails= null;
 			if (documentDetails.isWorkflow()){
 				tempDocumentDetails = getDocumentDetailsDAO().getDocumentDetailsById( documentDetails.getId(), "_Temp");

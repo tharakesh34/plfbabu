@@ -44,6 +44,8 @@
 package com.pennant.backend.model.systemmasters;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -63,11 +65,18 @@ public class DocumentType extends AbstractWorkflowEntity {
 	private boolean docIssueDateMand;
 	private boolean docIdNumMand;
 	private boolean docTypeIsActive;
-	private boolean docIsCustDoc;
 	private boolean docIssuedAuthorityMand;
 	private boolean docIsPdfExtRequired;
 	private boolean docIsPasswordProtected;
 	private long pdfMappingRef;
+	private boolean pdd;
+	private boolean otc;
+	private boolean lvReq;
+	private boolean rcuReq;
+	private Long categoryId;
+
+	private String categoryCode;
+	private String categoryDesc;
 
 	private boolean newRecord;
 	private String lovValue;
@@ -86,7 +95,14 @@ public class DocumentType extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("categoryCode");
+		excludeFields.add("categoryDesc");
+		return excludeFields;
+	}
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -129,14 +145,6 @@ public class DocumentType extends AbstractWorkflowEntity {
 
 	public void setDocTypeIsActive(boolean docTypeIsActive) {
 		this.docTypeIsActive = docTypeIsActive;
-	}
-
-	public boolean isDocIsCustDoc() {
-		return docIsCustDoc;
-	}
-
-	public void setDocIsCustDoc(boolean docIsCustDoc) {
-		this.docIsCustDoc = docIsCustDoc;
 	}
 
 	public boolean isNewRecord() {
@@ -202,6 +210,7 @@ public class DocumentType extends AbstractWorkflowEntity {
 	public void setDocIssuedAuthorityMand(boolean docIssuedAuthorityMand) {
 		this.docIssuedAuthorityMand = docIssuedAuthorityMand;
 	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
@@ -209,6 +218,7 @@ public class DocumentType extends AbstractWorkflowEntity {
 	public boolean isDocIsPdfExtRequired() {
 		return docIsPdfExtRequired;
 	}
+
 	public void setDocIsPdfExtRequired(boolean docIsPdfExtRequired) {
 		this.docIsPdfExtRequired = docIsPdfExtRequired;
 	}
@@ -228,4 +238,61 @@ public class DocumentType extends AbstractWorkflowEntity {
 	public void setPdfMappingRef(long pdfMappingRef) {
 		this.pdfMappingRef = pdfMappingRef;
 	}
+
+	public boolean isPdd() {
+		return pdd;
+	}
+
+	public void setPdd(boolean pdd) {
+		this.pdd = pdd;
+	}
+
+	public boolean isOtc() {
+		return otc;
+	}
+
+	public void setOtc(boolean otc) {
+		this.otc = otc;
+	}
+
+	public boolean isLvReq() {
+		return lvReq;
+	}
+
+	public void setLvReq(boolean lvReq) {
+		this.lvReq = lvReq;
+	}
+
+	public boolean isRcuReq() {
+		return rcuReq;
+	}
+
+	public void setRcuReq(boolean rcuReq) {
+		this.rcuReq = rcuReq;
+	}
+
+	public Long getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public String getCategoryCode() {
+		return categoryCode;
+	}
+
+	public void setCategoryCode(String categoryCode) {
+		this.categoryCode = categoryCode;
+	}
+
+	public String getCategoryDesc() {
+		return categoryDesc;
+	}
+
+	public void setCategoryDesc(String categoryDesc) {
+		this.categoryDesc = categoryDesc;
+	}
+
 }

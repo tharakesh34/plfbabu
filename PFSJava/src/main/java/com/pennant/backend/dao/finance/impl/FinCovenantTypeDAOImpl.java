@@ -163,7 +163,7 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		finCovenantType.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,lovdescIsCustDoc,");
+		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate, CategoryCode,");
 		if(isEnquiry){
 			selectSql.append(" CovenantTypeDesc,DocReceivedDate,");
 		}else{
@@ -471,7 +471,7 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		finCovenantType.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,lovdescIsCustDoc,");
+		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,CategoryCode,");
 		if(isEnquiry){
 			selectSql.append(" CovenantTypeDesc,DocReceivedDate,");
 		}else{

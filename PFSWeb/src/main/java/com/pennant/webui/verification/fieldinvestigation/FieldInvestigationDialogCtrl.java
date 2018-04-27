@@ -58,7 +58,6 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -76,6 +75,7 @@ import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.fi.FILivingStandard;
 import com.pennanttech.pennapps.pff.verification.fi.FINeighbourHoodFeedBack;
@@ -493,6 +493,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		createTab("DOCUMENTDETAIL", true);
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getFieldInvestigation().getDocuments());
+		map.put("module", DocumentCategories.VERIFICATION_FI.getKey());
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
 				getTabpanel("DOCUMENTDETAIL"), map);
 		logger.debug("Leaving");

@@ -105,6 +105,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 
 public class CommitmentServiceImpl extends GenericService<Commitment> implements CommitmentService {
 	private static final Logger		logger	= Logger.getLogger(CommitmentServiceImpl.class);
@@ -1873,7 +1874,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				continue;
 			}
 
-			if (!documentDetail.isDocIsCustDoc()) {
+			if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetail.getCategoryCode()))) {
 
 				saveRecord = false;
 				updateRecord = false;
@@ -1894,7 +1895,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 				documentDetail.setLastMntBy(commitment.getLastMntBy());
 
-				if (documentDetail.isDocIsCustDoc()) {
+				if (DocumentCategories.CUSTOMER.getKey().equals(documentDetail.getCategoryCode())) {
 					approveRec = true;
 				}
 

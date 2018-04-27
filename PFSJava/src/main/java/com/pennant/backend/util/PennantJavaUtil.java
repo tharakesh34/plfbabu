@@ -382,6 +382,8 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.core.util.ClassUtil;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.document.DocumentCategory;
 import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.StatuReasons;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
@@ -496,7 +498,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("CustDocumentType", new ModuleMapping("DocumentType", DocumentType.class, new String[] {
 				"BMTDocumentTypes", "BMTDocumentTypes_AView" }, masterWF, new String[] { "DocTypeCode", "DocTypeDesc" },
-				new Object[][] { { "DocTypeIsActive", "0", 1 }, { "DocIsCustDoc", "0", 1 } }, 350));
+				new Object[][] { { "DocTypeIsActive", "0", 1 }, { "CategoryCode", "0", DocumentCategories.CUSTOMER.getKey() } }, 350));
 
 		ModuleUtil.register("EMailType", new ModuleMapping("EMailType", EMailType.class, new String[] {
 				"BMTEMailTypes", "BMTEMailTypes_AView" }, masterWF, new String[] { "EmailTypeCode", "EmailTypeDesc" },
@@ -2246,6 +2248,9 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("AuthorizationLimitDetail", new ModuleMapping("AuthorizationLimitDetail", AuthorizationLimitDetail.class, new String[] { "Auth_Limit_Details",
 		"Auth_Limit_Details_AView" }, masterWF, new String[] {"Code","LimitAmount"},null, 600));
+		
+		ModuleUtil.register("DocumentCategory", new ModuleMapping("DocumentCategory", DocumentCategory.class, new String[] { "DocumentCategory",
+		"DocumentCategory" }, null, new String[] {"Code", "Description"}, null, 600));
 
 	}
 

@@ -47,6 +47,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -183,7 +184,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			documentDetails.setLastMntBy(fi.getLastMntBy());
 			documentDetails.setWorkflowId(0);
 
-			if (documentDetails.isDocIsCustDoc()) {
+			if (DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode())) {
 				approveRec = true;
 			}
 

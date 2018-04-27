@@ -48,6 +48,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -841,7 +842,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			documentDetails.setLastMntBy(tv.getLastMntBy());
 			documentDetails.setWorkflowId(0);
 
-			if (documentDetails.isDocIsCustDoc()) {
+			if (DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode())) {
 				approveRec = true;
 			}
 

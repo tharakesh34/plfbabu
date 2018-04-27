@@ -124,6 +124,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 
@@ -1050,7 +1051,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			for (DocumentDetails details : financeDetail.getDocumentDetailsList()) {
 				details.setReferenceId("");
 				details.setFinEvent("");
-				if (!details.isDocIsCustDoc()) {
+				if (!(DocumentCategories.CUSTOMER.getKey().equals(details.getCategoryCode()))) {
 					details.setNewRecord(true);
 					details.setRecordType(PennantConstants.RCD_ADD);
 				}

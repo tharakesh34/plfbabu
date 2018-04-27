@@ -24,6 +24,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 
@@ -223,7 +224,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90401", valueParm)));
 					return errorDetails;
 				} else {
-					if(docType.isDocIsCustDoc()) {
+					if(DocumentCategories.CUSTOMER.getKey().equals(docType.getCategoryCode())) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDocCategory();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90408", valueParm)));
@@ -297,9 +298,9 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 						}
 					}
 				}				
-
+				
 				// validate finance documents
-				if (!docType.isDocIsCustDoc() && docType.isDocIsMandatory()) {
+				if (!(DocumentCategories.CUSTOMER.getKey().equals(docType.getCategoryCode())) && docType.isDocIsMandatory()) {
 					if (StringUtils.isBlank(detail.getDocUri())) {
 						if (detail.getDocImage() == null || detail.getDocImage().length <= 0) {
 							String[] valueParm = new String[2];

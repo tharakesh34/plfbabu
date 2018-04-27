@@ -78,7 +78,7 @@
 										id="sortOperator_docTypeCode" width="43px" mold="select"
 										rows="1" />
 									<uppercasebox id="docTypeCode"
-										width="100px" maxlength="50" />
+										width="300px" maxlength="50" />
 									<label
 										id="label_DocumentTypeSearch_DocTypeDesc"
 										value="${c:l('label_DocumentTypeSearch_DocTypeDesc.value')}" />
@@ -86,7 +86,7 @@
 										id="sortOperator_docTypeDesc" width="43px" mold="select"
 										rows="1" />
 									<textbox id="docTypeDesc"
-										width="300px" />
+										width="350px" />
 								</row>
 								<row>
 									<label

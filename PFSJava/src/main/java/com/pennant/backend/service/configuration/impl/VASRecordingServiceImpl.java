@@ -137,6 +137,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -1019,7 +1020,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			if (StringUtils.isBlank(documentDetails.getRecordType())) {
 				continue;
 			}
-			if (!documentDetails.isDocIsCustDoc()) {
+			if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode()))) {
 				saveRecord = false;
 				updateRecord = false;
 				deleteRecord = false;
@@ -1037,7 +1038,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				documentDetails.setLastMntBy(vasRecording.getLastMntBy());
 				documentDetails.setWorkflowId(0);
 
-				if (documentDetails.isDocIsCustDoc()) {
+				if (DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode())) {
 					approveRec = true;
 				}
 				if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
@@ -1965,7 +1966,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						}
 					}
 					DocumentType docType = documentTypeDAO.getDocumentTypeById(detail.getDocCategory(), "");
-					if (docType == null || docType.isDocIsCustDoc()) {
+					if (docType == null || (DocumentCategories.CUSTOMER.getKey().equals(docType.getCategoryCode()))) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDocCategory();
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90401", "", valueParm));

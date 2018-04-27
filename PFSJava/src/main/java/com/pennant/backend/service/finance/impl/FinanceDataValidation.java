@@ -122,6 +122,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 
@@ -1581,7 +1582,7 @@ public class FinanceDataValidation {
 				}*/
 
 				// validate Is Customer document?
-				if (docType.isDocIsCustDoc()) {
+				if (DocumentCategories.CUSTOMER.getKey().equals(docType.getCategoryCode())) {
 					CustomerDocument custDocs = new CustomerDocument();
 					custDocs.setCustDocCategory(detail.getDocCategory());
 					custDocs.setCustDocName(detail.getDocName());
@@ -1600,7 +1601,7 @@ public class FinanceDataValidation {
 				}
 
 				// validate finance documents
-				if (!docType.isDocIsCustDoc() && docType.isDocIsMandatory()) {
+				if (!(DocumentCategories.CUSTOMER.getKey().equals(docType.getCategoryCode())) && docType.isDocIsMandatory()) {
 					if (StringUtils.isBlank(detail.getDocUri())) {
 						if (detail.getDocImage() == null || detail.getDocImage().length <= 0) {
 							String[] valueParm = new String[2];

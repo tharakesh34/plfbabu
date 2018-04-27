@@ -123,6 +123,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -1329,7 +1330,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		aDocumentDetails.setRecordType(StringUtils.trimToEmpty(aCustomerDocument.getRecordType()));
 		aDocumentDetails.setLastMntBy(aCustomerDocument.getLastMntBy());
 		aDocumentDetails.setLastMntOn(aCustomerDocument.getLastMntOn());
-		aDocumentDetails.setDocIsCustDoc(true);
+		aDocumentDetails.setCategoryCode(DocumentCategories.CUSTOMER.getKey());
 		aDocumentDetails.setVersion(aCustomerDocument.getVersion());
 		aDocumentDetails.setDocIsPasswordProtected(aCustomerDocument.isDocIsPasswordProtected());
 		aDocumentDetails.setPdfMappingRef(aCustomerDocument.getPdfMappingRef());

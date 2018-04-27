@@ -86,6 +86,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -871,7 +872,9 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 						Map<String, DocumentDetails> docDetailMap = docDialogCtrl.getDocDetailMap();
 						if (docDetailMap != null && docDetailMap.containsKey(docType)) {
 							DocumentDetails finDocumentDetail = docDetailMap.get(docType);
-							finDocumentDetail.setDocIsCustDoc(checkListDetail.isDocIsCustDOC());
+							if (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode())) {
+								finDocumentDetail.setCategoryCode(DocumentCategories.CUSTOMER.getKey());
+							}
 							docDialogCtrl.updateExistingDocument(finDocumentDetail, true, true);
 						} else {
 							MessageUtil.showError("Document not Yet uploaded.");

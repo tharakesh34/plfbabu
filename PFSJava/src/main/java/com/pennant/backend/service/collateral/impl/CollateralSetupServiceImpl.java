@@ -49,8 +49,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -113,6 +113,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.rits.cloning.Cloner;
 
 /**
@@ -1714,7 +1715,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			if (StringUtils.isBlank(documentDetails.getRecordType())) {
 				continue;
 			}
-			if (!documentDetails.isDocIsCustDoc()) {
+			if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode()))	) {
 				saveRecord = false;
 				updateRecord = false;
 				deleteRecord = false;
@@ -1732,7 +1733,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				documentDetails.setLastMntBy(collateralSetup.getLastMntBy());
 				documentDetails.setWorkflowId(0);
 
-				if (documentDetails.isDocIsCustDoc()) {
+				if (DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode())) {
 					approveRec = true;
 				}
 

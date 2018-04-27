@@ -8,36 +8,35 @@ import java.util.Set;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class CoreDocumentDetails extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= -5569765259024813213L;
+	private static final long serialVersionUID = -5569765259024813213L;
 
-	private long				docId				= Long.MIN_VALUE;
-	private String				docModule;
-	private String				referenceId="";
-	private String				finEvent="";
+	private long docId = Long.MIN_VALUE;
+	private String docModule;
+	private String referenceId = "";
+	private String finEvent = "";
 
-	private String				docCategory;
-	private String				doctype;
-	private String				docName;
-	private byte[]				docImage;
-	private boolean				docIsCustDoc;
-	
-	private String 				custDocTitle;
-	private String 				custDocSysName;
-	private Timestamp 			custDocRcvdOn;
-	private Date 				custDocExpDate;
-	private Date 				custDocIssuedOn;
-	private String				custDocIssuedCountry;
-	private String 				lovDescCustDocIssuedCountry;
-	private boolean 			custDocIsVerified;
-	private long 				custDocVerifiedBy;
-	private boolean 			custDocIsAcrive;
-	private String				lovDescCustCIF;
-	
-	private String 				lovDescDocCategoryName;
-	private boolean 			newRecord = false;
+	private String docCategory;
+	private String doctype;
+	private String docName;
+	private byte[] docImage;
+
+	private String custDocTitle;
+	private String custDocSysName;
+	private Timestamp custDocRcvdOn;
+	private Date custDocExpDate;
+	private Date custDocIssuedOn;
+	private String custDocIssuedCountry;
+	private String lovDescCustDocIssuedCountry;
+	private boolean custDocIsVerified;
+	private long custDocVerifiedBy;
+	private boolean custDocIsAcrive;
+	private String lovDescCustCIF;
+
+	private String lovDescDocCategoryName;
+	private boolean newRecord = false;
 
 	// New proeprty added for holding the DocumentManager table's ID
-	private long docRefId		= Long.MIN_VALUE;
+	private long docRefId = Long.MIN_VALUE;
 
 	public CoreDocumentDetails() {
 		super();
@@ -50,9 +49,9 @@ public class CoreDocumentDetails extends AbstractWorkflowEntity {
 		this.doctype = doctype;
 		this.docName = docName;
 		this.docImage = docImage;
-		this.newRecord  = true;
+		this.newRecord = true;
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("custDocTitle");
@@ -64,8 +63,8 @@ public class CoreDocumentDetails extends AbstractWorkflowEntity {
 		excludeFields.add("custDocIsVerified");
 		excludeFields.add("custDocVerifiedBy");
 		excludeFields.add("custDocIsAcrive");
-		excludeFields.add("docIsCustDoc");
-		// In the excludeFields method, docImage is added to avoid attachment stored in Audit Tables
+		// In the excludeFields method, docImage is added to avoid attachment
+		// stored in Audit Tables
 		excludeFields.add("docImage");
 		return excludeFields;
 	}
@@ -119,16 +118,16 @@ public class CoreDocumentDetails extends AbstractWorkflowEntity {
 	}
 
 	public void setReferenceId(String referenceId) {
-	    this.referenceId = referenceId;
-    }
-	
+		this.referenceId = referenceId;
+	}
+
 	public void setRefId(long referenceId) {
-	    this.referenceId = String.valueOf(referenceId);
-    }
+		this.referenceId = String.valueOf(referenceId);
+	}
 
 	public String getReferenceId() {
-	    return referenceId;
-    }
+		return referenceId;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
@@ -139,116 +138,108 @@ public class CoreDocumentDetails extends AbstractWorkflowEntity {
 	}
 
 	public void setLovDescDocCategoryName(String lovDescDocCategoryName) {
-	    this.lovDescDocCategoryName = lovDescDocCategoryName;
-    }
+		this.lovDescDocCategoryName = lovDescDocCategoryName;
+	}
 
 	public String getLovDescDocCategoryName() {
-	    return lovDescDocCategoryName;
-    }
-
-	public boolean isDocIsCustDoc() {
-    	return docIsCustDoc;
-    }
+		return lovDescDocCategoryName;
+	}
 
 	public String getCustDocTitle() {
-    	return custDocTitle;
-    }
+		return custDocTitle;
+	}
 
 	public void setCustDocTitle(String custDocTitle) {
-    	this.custDocTitle = custDocTitle;
-    }
+		this.custDocTitle = custDocTitle;
+	}
 
 	public String getCustDocSysName() {
-    	return custDocSysName;
-    }
+		return custDocSysName;
+	}
 
 	public void setCustDocSysName(String custDocSysName) {
-    	this.custDocSysName = custDocSysName;
-    }
+		this.custDocSysName = custDocSysName;
+	}
 
 	public Timestamp getCustDocRcvdOn() {
-    	return custDocRcvdOn;
-    }
+		return custDocRcvdOn;
+	}
 
 	public void setCustDocRcvdOn(Timestamp custDocRcvdOn) {
-    	this.custDocRcvdOn = custDocRcvdOn;
-    }
+		this.custDocRcvdOn = custDocRcvdOn;
+	}
 
 	public Date getCustDocExpDate() {
-    	return custDocExpDate;
-    }
+		return custDocExpDate;
+	}
 
 	public void setCustDocExpDate(Date custDocExpDate) {
-    	this.custDocExpDate = custDocExpDate;
-    }
+		this.custDocExpDate = custDocExpDate;
+	}
 
 	public Date getCustDocIssuedOn() {
-    	return custDocIssuedOn;
-    }
+		return custDocIssuedOn;
+	}
 
 	public void setCustDocIssuedOn(Date custDocIssuedOn) {
-    	this.custDocIssuedOn = custDocIssuedOn;
-    }
+		this.custDocIssuedOn = custDocIssuedOn;
+	}
 
 	public String getCustDocIssuedCountry() {
-    	return custDocIssuedCountry;
-    }
+		return custDocIssuedCountry;
+	}
 
 	public void setCustDocIssuedCountry(String custDocIssuedCountry) {
-    	this.custDocIssuedCountry = custDocIssuedCountry;
-    }
+		this.custDocIssuedCountry = custDocIssuedCountry;
+	}
 
 	public String getLovDescCustDocIssuedCountry() {
-    	return lovDescCustDocIssuedCountry;
-    }
+		return lovDescCustDocIssuedCountry;
+	}
 
 	public void setLovDescCustDocIssuedCountry(String lovDescCustDocIssuedCountry) {
-    	this.lovDescCustDocIssuedCountry = lovDescCustDocIssuedCountry;
-    }
+		this.lovDescCustDocIssuedCountry = lovDescCustDocIssuedCountry;
+	}
 
 	public boolean isCustDocIsVerified() {
-    	return custDocIsVerified;
-    }
+		return custDocIsVerified;
+	}
 
 	public void setCustDocIsVerified(boolean custDocIsVerified) {
-    	this.custDocIsVerified = custDocIsVerified;
-    }
+		this.custDocIsVerified = custDocIsVerified;
+	}
 
 	public long getCustDocVerifiedBy() {
-    	return custDocVerifiedBy;
-    }
+		return custDocVerifiedBy;
+	}
 
 	public void setCustDocVerifiedBy(long custDocVerifiedBy) {
-    	this.custDocVerifiedBy = custDocVerifiedBy;
-    }
+		this.custDocVerifiedBy = custDocVerifiedBy;
+	}
 
 	public boolean isCustDocIsAcrive() {
-    	return custDocIsAcrive;
-    }
+		return custDocIsAcrive;
+	}
 
 	public void setCustDocIsAcrive(boolean custDocIsAcrive) {
-    	this.custDocIsAcrive = custDocIsAcrive;
-    }
-
-	public void setDocIsCustDoc(boolean docIsCustDoc) {
-    	this.docIsCustDoc = docIsCustDoc;
-    }
+		this.custDocIsAcrive = custDocIsAcrive;
+	}
 
 	public String getLovDescCustCIF() {
-    	return lovDescCustCIF;
-    }
+		return lovDescCustCIF;
+	}
 
 	public void setLovDescCustCIF(String lovDescCustCIF) {
-    	this.lovDescCustCIF = lovDescCustCIF;
-    }
+		this.lovDescCustCIF = lovDescCustCIF;
+	}
 
 	public String getFinEvent() {
-	    return finEvent;
-    }
+		return finEvent;
+	}
 
 	public void setFinEvent(String finEvent) {
-	    this.finEvent = finEvent;
-    }
+		this.finEvent = finEvent;
+	}
 
 	// Getter settters added for docRefId property.
 	public long getDocRefId() {

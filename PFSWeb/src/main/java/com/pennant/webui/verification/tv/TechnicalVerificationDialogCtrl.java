@@ -80,6 +80,7 @@ import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
@@ -447,6 +448,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		createTab("DOCUMENTDETAIL", true);
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getTechnicalVerification().getDocuments());
+		map.put("module", DocumentCategories.VERIFICATION_TV.getKey());
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
 				getTabpanel("DOCUMENTDETAIL"), map);
 		logger.debug(Literal.LEAVING);
@@ -467,7 +469,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		map.put("isNotFinanceProcess", true);
 		map.put("moduleName", VerificationType.FI.name());
 		map.put("enqiryModule", enqiryModule);
-		map.put("isEditable", !isReadOnly("TechnicalVerificationDialog_Documents"));
+		map.put("isEditable", !isReadOnly(/*"TechnicalVerificationDialog_Documents"*/"TechnicalVerificationDialog_AgentCode"));
 		
 		return map;
 	}

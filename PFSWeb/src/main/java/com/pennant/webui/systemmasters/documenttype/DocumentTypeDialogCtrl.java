@@ -61,7 +61,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.util.PennantConstants;
@@ -71,6 +70,8 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.document.DocumentDataMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.document.DocumentCategory;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -95,11 +96,15 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	protected Checkbox 	docIssueDateMand; 			// autoWired
 	protected Checkbox 	docIdNumMand; 				// autoWired
 	protected Checkbox 	docTypeIsActive; 			// autoWired
-	protected Checkbox 	docIsCustDoc; 				// autoWired
+	protected Checkbox 	pddDoc; 			// autoWired
+	protected Checkbox 	otcDoc; 			// autoWired
+	protected Checkbox 	lvReq; 			// autoWired
+	protected Checkbox 	rcuReq; 			// autoWired
 	protected Checkbox 	docIssuedAuthorityMand; 	// autoWired
 	protected Checkbox 	docIsPdfExtRequired; 	// autoWired
 	protected Checkbox 	docIsPasswordProtected; 	// autoWired
 	protected ExtendedCombobox mappingRef;
+	protected ExtendedCombobox docCategory;
 	protected Row rowMappingRef;
 	
 
@@ -111,7 +116,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	
 	// ServiceDAOs / Domain Classes
 	private transient DocumentTypeService documentTypeService;
-
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -209,6 +214,14 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.mappingRef.setValueColumn("Type");
 		this.mappingRef.setDescColumn("TypeDescription");
 		this.mappingRef.setValidateColumns(new String[]{"Type"});
+		
+		this.docCategory.setMaxlength(16);
+		this.docCategory.setModuleName("DocumentCategory");
+		this.docCategory.setValueColumn("Code");
+		this.docCategory.setDescColumn("Description");
+		this.docCategory.setValidateColumns(new String[]{"Code"});
+		this.docCategory.setMandatoryStyle(true);
+		
 		logger.debug("Leaving");
 	}
 
@@ -228,6 +241,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_DocumentTypeDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_DocumentTypeDialog_btnSave"));
 		this.btnCancel.setVisible(false);
+		
 		logger.debug("Leaving");
 	}
 
@@ -325,15 +339,27 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docTypeCode.setValue(aDocumentType.getDocTypeCode());
 		this.docTypeDesc.setValue(aDocumentType.getDocTypeDesc());
 		this.docIsMandatory.setChecked(aDocumentType.isDocIsMandatory());
+		this.pddDoc.setChecked(aDocumentType.isPdd());
+		this.otcDoc.setChecked(aDocumentType.isOtc());
+		this.lvReq.setChecked(aDocumentType.isLvReq());
+		this.rcuReq.setChecked(aDocumentType.isRcuReq());
 		this.docExpDateIsMand.setChecked(aDocumentType.isDocExpDateIsMand());
 		this.docIssueDateMand.setChecked(aDocumentType.isDocIssueDateMand());
 		this.docIdNumMand.setChecked(aDocumentType.isDocIdNumMand());
 		this.docIssuedAuthorityMand.setChecked(aDocumentType.isDocIssuedAuthorityMand());
 		this.docTypeIsActive.setChecked(aDocumentType.isDocTypeIsActive());
-		this.docIsCustDoc.setChecked(aDocumentType.isDocIsCustDoc());
 		this.recordStatus.setValue(aDocumentType.getRecordStatus());
 		this.docIsPdfExtRequired.setChecked(aDocumentType.isDocIsPdfExtRequired());
 		this.docIsPasswordProtected.setChecked(aDocumentType.isDocIsPasswordProtected());
+		
+		DocumentCategory category = new DocumentCategory();
+		category.setId(aDocumentType.getCategoryId());
+		category.setCode(aDocumentType.getCategoryCode());
+		category.setDescription(aDocumentType.getCategoryDesc());
+		this.docCategory.setValue(category.getCode());
+		this.docCategory.setDescription(category.getDescription());
+		this.docCategory.setObject(category);
+		
 		this.mappingRef.setValue(String.valueOf(getDocumentType().getPdfMappingRef()).equals("0")?"":String.valueOf(getDocumentType().getPdfMappingRef()));
 		if(aDocumentType.isDocIsPdfExtRequired()){
 			this.mappingRef.setMandatoryStyle(true);
@@ -364,13 +390,35 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aDocumentType.setDocTypeDesc(this.docTypeDesc.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aDocumentType.setDocIsMandatory(this.docIsMandatory.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aDocumentType.setPdd(this.pddDoc.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aDocumentType.setOtc(this.otcDoc.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aDocumentType.setLvReq(this.lvReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aDocumentType.setRcuReq(this.rcuReq.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -405,10 +453,14 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 			wve.add(we);
 		}
 		try {
-			aDocumentType.setDocIsCustDoc(this.docIsCustDoc.isChecked());
+			if (this.docCategory.getObject() != null) {
+				DocumentCategory category = (DocumentCategory) this.docCategory.getObject();
+				aDocumentType.setCategoryId(category.getId());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+	 
 		try {
 			aDocumentType.setDocIsPdfExtRequired(this.docIsPdfExtRequired.isChecked());
 		} catch (WrongValueException we) {
@@ -443,6 +495,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		aDocumentType.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
+	
 	public void onFulfill$mappingRef(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = this.mappingRef.getObject();
@@ -453,6 +506,20 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		}
 		logger.debug("Leaving" + event.toString());
 
+	}
+	 
+	public void onFulfill$docCategory(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = this.docCategory.getObject();
+
+		if (dataObject instanceof DocumentCategory) {
+			DocumentCategory category = (DocumentCategory) dataObject;
+			doCheckCustomerDoc(category.getCode());
+			this.docCategory.setObject(category);
+		} else {
+			doCheckCustomerDoc(null);
+		}
+		logger.debug("Leaving" + event.toString());
 	}
 	/**
 	 * Opens the Dialog window modal.
@@ -513,9 +580,13 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 			this.docTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_DocTypeDesc.value"), 
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
+		
+		if (!this.docCategory.isReadonly()){
+			this.docCategory.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_DocCategory.value"),  null, true, true));
+		}
+		
 		if (this.docIsPdfExtRequired.isChecked() && !this.docIsPdfExtRequired.isDisabled()){
-			this.mappingRef.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_MappingRef.value"), 
-					null, true, true));
+			this.mappingRef.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_MappingRef.value"),  null, true, true));
 		}
 
 		logger.debug("Leaving");
@@ -612,8 +683,12 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		}
 		this.docTypeDesc.setReadonly(isReadOnly("DocumentTypeDialog_docTypeDesc"));
 		this.docIsMandatory.setDisabled(isReadOnly("DocumentTypeDialog_docIsMandatory"));
+		this.pddDoc.setDisabled(isReadOnly("DocumentTypeDialog_pddDoc"));
+		this.otcDoc.setDisabled(isReadOnly("DocumentTypeDialog_otcDoc"));
+		this.lvReq.setDisabled(isReadOnly("DocumentTypeDialog_lvReq"));
+		this.rcuReq.setDisabled(isReadOnly("DocumentTypeDialog_rcuReq"));
 		this.docTypeIsActive.setDisabled(isReadOnly("DocumentTypeDialog_docTypeIsActive"));
-		this.docIsCustDoc.setDisabled(isReadOnly("DocumentTypeDialog_docIsMandatory"));
+		this.docCategory.setButtonDisabled(isReadOnly("DocumentTypeDialog_docIsMandatory"));
 		this.docIsPdfExtRequired.setDisabled(isReadOnly("DocumentTypeDialog_docIsPdfExtRequired"));
 		this.docExpDateIsMand.setDisabled(true);
 		this.docIssueDateMand.setDisabled(true);
@@ -621,12 +696,11 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docIssuedAuthorityMand.setDisabled(true);
 		this.docIsPasswordProtected.setDisabled(true);
 		this.mappingRef.setButtonDisabled(true);
-		if(getDocumentType().isDocIsPdfExtRequired()){
+		if (getDocumentType().isDocIsPdfExtRequired()) {
 			this.docIsPasswordProtected.setDisabled(isReadOnly("DocumentTypeDialog_docIsPasswordProtected"));
 			this.mappingRef.setButtonDisabled(isReadOnly("DocumentTypeDialog_mappingRef"));
-			}
-		
-		if(getDocumentType().isDocIsCustDoc()){
+		}
+		if (DocumentCategories.CUSTOMER.getKey().equals(getDocumentType().getCategoryCode())) {
 			this.docExpDateIsMand.setDisabled(isReadOnly("DocumentTypeDialog_docExpDateIsMand"));
 			this.docIssueDateMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIssueDateMand"));
 			this.docIdNumMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIdNumMand"));
@@ -659,12 +733,16 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docTypeCode.setReadonly(true);
 		this.docTypeDesc.setReadonly(true);
 		this.docIsMandatory.setDisabled(true);
+		this.pddDoc.setDisabled(true);
+		this.otcDoc.setDisabled(true);
+		this.lvReq.setDisabled(true);
+		this.rcuReq.setDisabled(true);
 		this.docExpDateIsMand.setDisabled(true);
 		this.docIssueDateMand.setDisabled(true);
 		this.docIdNumMand.setDisabled(true);
 		this.docIssuedAuthorityMand.setDisabled(true);
 		this.docTypeIsActive.setDisabled(true);
-		this.docIsCustDoc.setDisabled(true);
+		this.docCategory.setButtonDisabled(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -687,8 +765,12 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docTypeCode.setValue("");
 		this.docTypeDesc.setValue("");
 		this.docIsMandatory.setChecked(false);
+		this.pddDoc.setChecked(false);
+		this.otcDoc.setChecked(false);
+		this.lvReq.setChecked(false);
+		this.rcuReq.setChecked(false);
 		this.docTypeIsActive.setChecked(false);
-		this.docIsCustDoc.setChecked(false);
+		this.docCategory.setValue("");
 		logger.debug("Leaving");
 	}
 
@@ -955,10 +1037,6 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		logger.debug("Leaving");
 	}
 	
-	public void onCheck$docIsCustDoc(Event event){
-		doCheckCustomerDoc();
-	}
-	
 	
 	public void onCheck$docIsPdfExtRequired(Event event){
 		doCheckPdfExt();
@@ -984,9 +1062,10 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	 * Method to check document type checked or not
 	 * 
 	 */
-	private void doCheckCustomerDoc(){
+	private void doCheckCustomerDoc(String categoryCode) {
 		logger.debug("Entering");
-		if(docIsCustDoc.isChecked()){
+		
+		if (DocumentCategories.CUSTOMER.getKey().equals(categoryCode)) {
 			this.docExpDateIsMand.setDisabled(isReadOnly("DocumentTypeDialog_docExpDateIsMand"));
 			this.docIdNumMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIssueDateMand"));
 			this.docIssueDateMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIdNumMand"));
@@ -995,7 +1074,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 			this.docIssueDateMand.setChecked(true);
 			this.docIdNumMand.setChecked(true);
 			this.docIssuedAuthorityMand.setChecked(true);
-		}else{
+		} else {
 			this.docExpDateIsMand.setChecked(false);
 			this.docExpDateIsMand.setDisabled(true);
 			this.docIssueDateMand.setChecked(false);
@@ -1005,6 +1084,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 			this.docIssuedAuthorityMand.setChecked(false);
 			this.docIssuedAuthorityMand.setDisabled(true);
 		}
+		
 		logger.debug("Leaving");
 	}
 	/**

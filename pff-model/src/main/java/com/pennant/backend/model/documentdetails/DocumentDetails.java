@@ -14,8 +14,8 @@ import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-@XmlType(propOrder = { "docCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName", "custDocIssuedOn", "custDocExpDate",
-		"docPurpose", "docName", "doctype", "docImage", "docUri" })
+@XmlType(propOrder = { "docCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName", "custDocIssuedOn",
+		"custDocExpDate", "docPurpose", "docName", "doctype", "docImage", "docUri" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = -5569765259024813213L;
@@ -27,16 +27,16 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	@XmlElement
 	private String docCategory;
-	@XmlElement(name="docFormat")
+	@XmlElement(name = "docFormat")
 	private String doctype;
 	@XmlElement
 	private String docName;
-	@XmlElement(name="docContent")
+	@XmlElement(name = "docContent")
 	private byte[] docImage;
-	private boolean docIsCustDoc;
+	private String categoryCode;
 	@XmlElement
 	private String custDocTitle;
-	@XmlElement(name="custDocIssuedAuth")
+	@XmlElement(name = "custDocIssuedAuth")
 	private String custDocSysName;
 	private Timestamp custDocRcvdOn;
 	@XmlElement
@@ -47,7 +47,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private String custDocIssuedCountry;
 	@XmlElement
 	private String docPurpose;
-	@XmlElement(name="docRefId")
+	@XmlElement(name = "docRefId")
 	private String docUri;
 	private String lovDescCustDocIssuedCountry;
 	private boolean custDocIsVerified;
@@ -62,10 +62,10 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private Date docReceivedDate;
 	private boolean docReceived;
 	private String password;
-	private boolean docIsPasswordProtected= false;
-	private long pdfMappingRef= Long.MIN_VALUE;
+	private boolean docIsPasswordProtected = false;
+	private long pdfMappingRef = Long.MIN_VALUE;
 	private String pdfPassWord;
-	private boolean docIsPdfExtRequired= false;
+	private boolean docIsPdfExtRequired = false;
 	// New proeprty added for holding the DocumentManager table's ID
 	private long docRefId = Long.MIN_VALUE;
 
@@ -94,9 +94,10 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("custDocIsVerified");
 		excludeFields.add("custDocVerifiedBy");
 		excludeFields.add("custDocIsAcrive");
-		excludeFields.add("docIsCustDoc");
+		excludeFields.add("categoryCode");
 		excludeFields.add("password");
-		// In the excludeFields method, docImage is added to avoid attachment stored in Audit Tables
+		// In the excludeFields method, docImage is added to avoid attachment
+		// stored in Audit Tables
 		excludeFields.add("docIsPasswordProtected");
 		excludeFields.add("pdfMappingRef");
 		excludeFields.add("pdfPassWord");
@@ -213,8 +214,12 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		return lovDescDocCategoryName;
 	}
 
-	public boolean isDocIsCustDoc() {
-		return docIsCustDoc;
+	public String getCategoryCode() {
+		return categoryCode;
+	}
+
+	public void setCategoryCode(String categoryCode) {
+		this.categoryCode = categoryCode;
 	}
 
 	public String getCustDocTitle() {
@@ -313,10 +318,6 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		this.custDocIsAcrive = custDocIsAcrive;
 	}
 
-	public void setDocIsCustDoc(boolean docIsCustDoc) {
-		this.docIsCustDoc = docIsCustDoc;
-	}
-
 	public String getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}
@@ -341,7 +342,6 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	public void setDocRefId(long docRefId) {
 		this.docRefId = docRefId;
 	}
-
 
 	public boolean isDocReceived() {
 		return docReceived;

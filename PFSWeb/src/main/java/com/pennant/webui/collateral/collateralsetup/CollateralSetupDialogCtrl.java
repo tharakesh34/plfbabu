@@ -143,6 +143,7 @@ import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldRender
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -882,6 +883,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		createTab(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL, true);
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getCollateralSetup().getDocuments());
+		map.put("module", DocumentCategories.COLLATERAL.getKey());
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
 				getTabpanel(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL), map);
 		logger.debug("Leaving");

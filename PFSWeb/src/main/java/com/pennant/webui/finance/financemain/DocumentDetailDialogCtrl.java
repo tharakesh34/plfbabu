@@ -90,6 +90,7 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
@@ -128,6 +129,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private boolean isNotFinanceProcess = false;
 	private String moduleName;
 	private boolean isEditable;
+	private String module;
 
 	/**
 	 * default constructor.<br>
@@ -204,6 +206,11 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			// Document details
 			if (arguments.containsKey("documentDetails")) {
 				setDocumentDetailsList((List<DocumentDetails>) arguments.get("documentDetails"));
+			}
+			
+			// Module
+			if (arguments.containsKey("module")) {
+				module = (String) arguments.get("module");
 			}
 			
 			doShowDialog();
@@ -297,6 +304,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		map.put("window", window_documentDetailDialog);
 		map.put("moduleCode", moduleCode);
 		map.put("isEditable", isEditable);
+		map.put("module", module);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/DocumentTypeSelectDialog.zul",
 				window_documentDetailDialog, map);
 		logger.debug("Leaving" + event.toString());
@@ -323,7 +331,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 
 		List<Object> list = getCustomerBasicDetails();
-		if (checkListDetail != null && checkListDetail.isDocIsCustDOC()) {
+		if (checkListDetail != null && (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail	.getCategoryCode()))) {
 			CustomerDocument customerDocument = new CustomerDocument();
 			customerDocument.setNewRecord(true);
 			customerDocument.setCustDocCategory(checkListDetail.getDocType());
@@ -385,7 +393,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		try {
 
-			if (checkListDetail != null && checkListDetail.isDocIsCustDOC()) {
+			if (checkListDetail != null && (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail	.getCategoryCode()))) {
 				Executions.createComponents(
 						"/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map);
 			} else {
@@ -422,7 +430,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			listitem.appendChild(listcell);
 			listitem.setAttribute("data", documentDetail);
 			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onFinDocumentItemDoubleClicked");
-			if (!documentDetail.isDocIsCustDoc()) {
+			if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetail.getCategoryCode()))) {
 				this.listBoxDocumentDetails.appendChild(listitem);
 			}
 			docDetailMap.put(documentDetail.getDocCategory(), documentDetail);
@@ -513,7 +521,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		map.put("roleCode", getRole());
 		map.put("moduleType", "");
 		map.put("enqiryModule", enqiryModule);
-		map.put("isCheckList", finDocumentDetail.isDocIsCustDoc() ? true : (checklistID > 0 ? true : false));
+		map.put("isCheckList", (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())) ? true : (checklistID > 0 ? true : false));
 		map.put("customerDialogCtrl", this);
 		map.put("moduleName", moduleName);
 		map.put("isEditable", isEditable);
@@ -537,7 +545,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 
 		CustomerDocument customerDocument = null;
-		if (customerDocument == null && finDocumentDetail.isDocIsCustDoc()) {
+		if (customerDocument == null && (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode()))) {
 			customerDocument = new CustomerDocument();
 
 			customerDocument.setCustID(list != null ? Long.valueOf(list.get(0).toString()) : 0);
@@ -590,7 +598,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				}
 			}
 
-			if (finDocumentDetail.isDocIsCustDoc()) {
+			if (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())) {
 				map.put("customerDocument", doSetDocumentTypeMandProp(customerDocument));
 				map.put("financeMainDialogCtrl", this.financeMainDialogCtrl);
 				Executions.createComponents(
@@ -608,7 +616,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	private DocumentDetails getDocumentContent(DocumentDetails finDocumentDetail, List<Object> list,
 			HashMap<String, Object> map) {
-		if (finDocumentDetail.isDocIsCustDoc()) {
+		if (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())) {
 			finDocumentDetail = getCustomerDocumentService().getCustDocByCustAndDocType(
 					list != null ? Long.valueOf(list.get(0).toString()) : 0, finDocumentDetail.getDocCategory());
 		} else {

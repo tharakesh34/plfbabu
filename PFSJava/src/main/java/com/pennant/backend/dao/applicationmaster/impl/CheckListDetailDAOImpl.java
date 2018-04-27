@@ -190,7 +190,7 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		selectSql.append(" RecordType, WorkflowId" );
 
 		if(StringUtils.trimToEmpty(type).contains("View")){
-		selectSql.append(", DocIsCustDOC, LovDescDocCategory lovDescDocType ");
+		selectSql.append(", CategoryCode, LovDescDocCategory lovDescDocType ");
 		}
 		selectSql.append(" From RMTCheckListDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -220,7 +220,7 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		selectSql.append(" RecordType, WorkflowId" );
 
 		if(StringUtils.trimToEmpty(type).contains("View")){
-		selectSql.append(", DocIsCustDOC, LovDescDocCategory lovDescDocType ");
+		selectSql.append(", CategoryCode, LovDescDocCategory lovDescDocType ");
 		}
 		selectSql.append(" From RMTCheckListDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));

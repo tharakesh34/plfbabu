@@ -73,6 +73,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -237,7 +238,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 		if (enqModule) {
 			map.put("enqModule", enqModule);
 		}
-		if(checkListDetail != null && checkListDetail.isDocIsCustDOC()){
+		if(checkListDetail != null && (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode()))){
 			CustomerDocument customerDocument = new CustomerDocument();
 			customerDocument.setNewRecord(true);
 			customerDocument.setCustDocCategory(checkListDetail.getDocType());
@@ -284,7 +285,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 			logger.debug(e);
 		}
 		try {
-			if(checkListDetail!= null && checkListDetail.isDocIsCustDOC()){
+			if(checkListDetail!= null && (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode()))){
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map);
 			}else{
 				Executions.createComponents("/WEB-INF/pages/Facility/Facility/FacilityDocDetailDialog.zul", component, map);
@@ -347,7 +348,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 		map.put("roleCode", getRole());
 		map.put("moduleType", "");
 		map.put("viewProcess", viewProcess);
-		map.put("isCheckList",finDocumentDetail.isDocIsCustDoc()?true:isCheckList);
+		map.put("isCheckList",(DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode()))?true:isCheckList);
 		map.put("customerDialogCtrl", this);
 		//map.put("newRecord", "true");
 		map.put("roleCode", getRole());
@@ -356,14 +357,14 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 		}
 		Facility financeMain = updateFinanceMain();
 		if(finDocumentDetail.getDocImage() == null){
-			if(finDocumentDetail.isDocIsCustDoc()){
+			if(DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())){
 				finDocumentDetail = getCustomerDocumentService().getCustDocByCustAndDocType(financeMain.getCustID(), finDocumentDetail.getDocCategory());
 			}else{
 				getFinanceDetailService().getFinDocDetailByDocId(finDocumentDetail.getDocId());
 			}
 		}
 		CustomerDocument customerDocument = null;
-		if(customerDocument == null && finDocumentDetail.isDocIsCustDoc()){
+		if(customerDocument == null && (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode()))){
 			customerDocument = 	new CustomerDocument();
  
 			if(financeMain != null){
@@ -411,7 +412,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 			} catch (Exception e) {
 				logger.debug(e);
 			}
-			if(finDocumentDetail.isDocIsCustDoc()){
+			if(DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())){
 				map.put("customerDocument", customerDocument);
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map);
 			}else{

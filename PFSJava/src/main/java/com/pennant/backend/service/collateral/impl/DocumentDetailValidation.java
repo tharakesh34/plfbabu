@@ -18,6 +18,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 
 public class DocumentDetailValidation {
 
@@ -64,7 +65,7 @@ public class DocumentDetailValidation {
 		DocumentDetails documentDetails = (DocumentDetails) auditDetail.getModelData();
 		
 		// Validate Customer  Document seperatly.
-		if(documentDetails.isDocIsCustDoc()){
+		if(DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode())){
 			return null;
 		}
 		DocumentDetails tempDocument = null;
