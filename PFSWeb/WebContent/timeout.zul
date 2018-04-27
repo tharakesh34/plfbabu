@@ -4,6 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+	<?link rel="shortcut icon" type="image/x-icon" href="/Favicon.png" ?>
 	<?page title="Timeout"?>
 
 	<window border="3d">
