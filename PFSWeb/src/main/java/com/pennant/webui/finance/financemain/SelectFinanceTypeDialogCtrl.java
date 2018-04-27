@@ -1670,7 +1670,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.eidNumber.setValue("");
 		if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 			this.label_SelectFinanceTypeDialog_EIDNumber.setValue(Labels
-					.getLabel("label_CoreCustomerDialog_EIDNumber.value"));
+					.getLabel("label_CoreCustomerDialog_PrimaryID.value"));
 			this.eidNumber.setMaxlength(LengthConstants.LEN_EID);
 		} else {
 			this.label_SelectFinanceTypeDialog_EIDNumber.setValue(Labels

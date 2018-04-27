@@ -61,9 +61,9 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.smtmasters.PFSParameterService;
 import com.pennant.webui.smtmasters.pfsparameter.model.PFSParameterListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -197,23 +197,28 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> {
 
 		// Get the selected entity.
 		String id = (String) selectedItem.getAttribute("id");
-		PFSParameter aPFSParameter = systemParameterService.getPFSParameterById(id);
+		PFSParameter parameter = systemParameterService.getPFSParameterById(id);
 
-		if (aPFSParameter == null) {
+		if (parameter == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
 
-		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND SysParmCode='" + aPFSParameter.getSysParmCode() + "' AND version="
-				+ aPFSParameter.getVersion() + " ";
+		if (!parameter.isSysParmMaint()) {
+			MessageUtil.showMessage(Labels.getLabel("info.param_not_editable"));
+			return;
+		}
 
-		if (doCheckAuthority(aPFSParameter, whereCond)) {
+		// Check whether the user has authority to change/view the record.
+		String whereCond = " AND SysParmCode='" + parameter.getSysParmCode() + "' AND version=" + parameter.getVersion()
+				+ " ";
+
+		if (doCheckAuthority(parameter, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
-			if (isWorkFlowEnabled() && aPFSParameter.getWorkflowId() == 0) {
-				aPFSParameter.setWorkflowId(getWorkFlowId());
+			if (isWorkFlowEnabled() && parameter.getWorkflowId() == 0) {
+				parameter.setWorkflowId(getWorkFlowId());
 			}
-			doShowDialogPage(aPFSParameter);
+			doShowDialogPage(parameter);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
