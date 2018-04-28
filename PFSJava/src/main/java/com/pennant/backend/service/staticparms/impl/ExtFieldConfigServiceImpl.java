@@ -235,12 +235,12 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 	 * @return ExtFieldConfig
 	 */
 	@Override
-	public ExtendedFieldHeader getExtendedFieldHeaderByModule(String moduleName, String subModuleName) {
+	public ExtendedFieldHeader getExtendedFieldHeaderByModule(String moduleName, String subModuleName,String event) {
 		logger.debug(Literal.ENTERING);
 
 		ExtendedFieldHeader extFldHeader = null;
 
-		extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(moduleName, subModuleName,
+		extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(moduleName, subModuleName, event,
 				"_View");
 		if (extFldHeader != null) {
 			extFldHeader.setExtendedFieldDetails(
@@ -260,12 +260,13 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 	 * @return ExtFieldConfig
 	 */
 	@Override
-	public ExtendedFieldHeader getApprovedExtendedFieldHeaderByModule(String moduleName, String subModuleName) {
+	public ExtendedFieldHeader getApprovedExtendedFieldHeaderByModule(String moduleName, String subModuleName,
+			String event) {
 		logger.debug(Literal.ENTERING);
 
 		ExtendedFieldHeader extFldHeader = null;
 
-		extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(moduleName, subModuleName,
+		extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(moduleName, subModuleName, event,
 				"_AView");
 		if (extFldHeader != null) {
 			extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(
@@ -362,7 +363,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 
 				// Table creation in DB for Newly created Configuration Type Details
 				getExtendedFieldHeaderDAO().createTable(extendedFieldHeader.getModuleName(),
-						extendedFieldHeader.getSubModuleName());
+						extendedFieldHeader.getSubModuleName(), extendedFieldHeader.getEvent());
 
 			} else {
 				tranType = PennantConstants.TRAN_UPD;

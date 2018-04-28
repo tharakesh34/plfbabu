@@ -4140,9 +4140,9 @@
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="reasonDetailDAO" ref="reasonDetailDAO" />
 		<property name="finChequeHeaderService" ref="finChequeHeaderService" />
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="finTypeExpenseDAO" ref="finTypeExpenseDAO" />
 		<property name="finExpenseDetailsDAO" ref="finExpenseDetailsDAO" />
-
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
 		<property name="jointAccountDetailService" ref="finJointAccountDetailService" />
@@ -4396,7 +4396,7 @@
 	<!-- FinAssetTypes -->
 	<bean id="finAssetTypeDAO"
 		class="com.pennant.backend.dao.collateral.impl.FinAssetTypesDAOImpl"
-		parent="basisCodeDAO">
+		parent="basisNextidDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
@@ -6086,6 +6086,7 @@
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />

@@ -90,6 +90,7 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
@@ -472,7 +473,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		FinAssetTypes assignment = new FinAssetTypes();
-		String[] fields = PennantJavaUtil.getFieldDetails(assignment, "");
+		String[] fields = PennantJavaUtil.getFieldDetails(assignment, assignment.getExcludeFields());
 		FinanceMain financeMain = detail.getFinScheduleData().getFinanceMain();
 
 		for (int i = 0; i < detail.getFinAssetTypesList().size(); i++) {
@@ -738,7 +739,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		if (list != null && list.size() > 0) {
 
 			for (int i = 0; i < list.size(); i++) {
-
+				String field = list.get(i).getAuditField();
+				String fieldValues = list.get(i).getAuditValue();
 				String transType = "";
 				String rcdType = "";
 				Object object = ((AuditDetail) list.get(i)).getModelData();
@@ -767,8 +769,17 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 						// check and change below line for Complete code
 						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
 								.invoke(object, object.getClass().getClasses());
-						auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),
-								fields[0], fields[1], befImg, object));
+
+						AuditDetail auditDetail = new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),
+								fields[0], fields[1], befImg, object);
+						if (auditDetail.getModelData() instanceof ExtendedFieldRender) {
+							auditDetail.setExtended(true);
+							auditDetail.setAuditField(field);
+							auditDetail.setAuditValue(fieldValues);
+						}
+
+						auditDetailsList.add(auditDetail);
+
 					}
 				} catch (Exception e) {
 					logger.error("Exception: ", e);

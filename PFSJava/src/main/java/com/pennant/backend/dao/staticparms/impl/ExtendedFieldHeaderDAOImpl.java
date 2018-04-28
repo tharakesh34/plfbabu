@@ -61,6 +61,7 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -95,7 +96,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		extendedFieldHeader.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName," );
+		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,Event," );
 		selectSql.append(" SubModuleName, TabHeading, NumberOfColumns, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode," );
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
@@ -121,7 +122,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	/**
 	 * Fetch by Module and Submodule names
 	 */
-	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(final String moduleName, String subModuleName, String type) {
+	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(final String moduleName, String subModuleName,String event, String type) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = null;
@@ -129,16 +130,20 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		source = new MapSqlParameterSource();
 		source.addValue("ModuleName", moduleName);
 		source.addValue("SubModuleName", subModuleName);
-
+		 
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,");
-		selectSql.append(" SubModuleName, TabHeading, NumberOfColumns, ");
+		selectSql.append(" SubModuleName,Event, TabHeading, NumberOfColumns, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
 		selectSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation ");
 		selectSql.append(" From ExtendedFieldHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where ModuleName = :ModuleName AND SubModuleName = :SubModuleName");
+		selectSql.append(" Where ModuleName = :ModuleName AND SubModuleName = :SubModuleName ");
 
+		if (StringUtils.trimToNull(event) != null) {
+			source.addValue("Event", event);
+			selectSql.append("AND Event = :Event ");
+		}
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExtendedFieldHeader.class);
 
@@ -151,6 +156,40 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		return null;
 	}
 
+	/**
+	 * Fetch by Module and Submodule names
+	 */
+	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(final String moduleName, String subModuleName,
+			String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+
+		source = new MapSqlParameterSource();
+		source.addValue("ModuleName", moduleName);
+		source.addValue("SubModuleName", subModuleName);
+
+		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,");
+		selectSql.append(" SubModuleName,Event, TabHeading, NumberOfColumns, ");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
+		selectSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation ");
+		selectSql.append(" From ExtendedFieldHeader");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ModuleName = :ModuleName AND SubModuleName = :SubModuleName ");
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ExtendedFieldHeader.class);
+
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception :", e);
+		}
+		logger.debug("Leaving");
+		return null;
+	}
+	
 	/**
 	 * To Set  dataSource
 	 * @param dataSource
@@ -168,15 +207,16 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	}
 
 	/**
-	 * This method Deletes the Record from the ExtendedFieldHeader or ExtendedFieldHeader_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Extended Field Header by key ModuleId
+	 * This method Deletes the Record from the ExtendedFieldHeader or ExtendedFieldHeader_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Extended Field Header by key ModuleId
 	 * 
-	 * @param Extended Field Header (extendedFieldHeader)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Extended
+	 *            Field Header (extendedFieldHeader)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
-	 * @throws DataAccessException
+	 * @throws DataAccessExceptionReference
+	 *             , SeqNo
 	 * 
 	 */
 	@Override
@@ -226,11 +266,11 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		StringBuilder insertSql = new StringBuilder("Insert Into ExtendedFieldHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (ModuleId, ModuleName, SubModuleName, TabHeading, NumberOfColumns, ");
+		insertSql.append(" (ModuleId, ModuleName, SubModuleName, Event, TabHeading, NumberOfColumns, ");
 		insertSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:ModuleId, :ModuleName, :SubModuleName, :TabHeading, :NumberOfColumns, ");
+		insertSql.append(" Values(:ModuleId, :ModuleName, :SubModuleName, :Event, :TabHeading, :NumberOfColumns, ");
 		insertSql.append(" :PreValidationReq, :PostValidationReq, :PreValidation, :PostValidation, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
@@ -244,13 +284,14 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	}
 
 	/**
-	 * This method updates the Record ExtendedFieldHeader or ExtendedFieldHeader_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Extended Field Header by key ModuleId and Version
+	 * Reference , SeqNo This method updates the Record ExtendedFieldHeader or ExtendedFieldHeader_Temp. if Record not
+	 * updated then throws DataAccessException with error 41004. update Extended Field Header by key ModuleId and
+	 * Version
 	 * 
-	 * @param Extended Field Header (extendedFieldHeader)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Extended
+	 *            Field Header (extendedFieldHeader)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -263,7 +304,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		StringBuilder	updateSql =new StringBuilder("Update ExtendedFieldHeader");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
 		updateSql.append(" Set  ModuleName = :ModuleName, " );
-		updateSql.append(" SubModuleName = :SubModuleName, TabHeading = :TabHeading, " );
+		updateSql.append(" SubModuleName = :SubModuleName,Event = :Event, TabHeading = :TabHeading, " );
 		updateSql.append(" NumberOfColumns = :NumberOfColumns, ");
 		updateSql.append(" PreValidationReq = :PreValidationReq, PostValidationReq = :PostValidationReq, ");
 		updateSql.append(" PreValidation = :PreValidation, PostValidation = :PostValidation, ");
@@ -291,17 +332,23 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 * @param tableName
 	 */
 	@Override
-	public void createTable(String module, String subModule) {
+	public void createTable(String module, String subModule, String event) {
 		logger.debug("Entering");
 		int numbOfTables = 3;
 		if (StringUtils.equals(module, CollateralConstants.MODULE_NAME)) {
 			numbOfTables = 7;
 		}
+
+		String eventCode = null;
+		if (event != null) {
+			eventCode = PennantStaticListUtil.getFinEventCode(event);
+		}
+
 		for (int i = 0; i < numbOfTables; i++) {
 
 			// For SQL server
 			StringBuilder syntax = new StringBuilder();
-			String tableName = getTableName(module, subModule, i);
+			String tableName = getTableName(module, subModule, eventCode, i);
 			if (App.DATABASE == App.Database.SQL_SERVER) {
 				syntax.append("create table ");
 				syntax.append(tableName);
@@ -445,7 +492,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 *         if count =6 AdtVERIFICATION_subModule_TV
 	 * 
 	 */
-	private static String getTableName(String module, String subModule, int count) {
+	private static String getTableName(String module, String subModule, String eventCode, int count) {
 		StringBuilder syntax = new StringBuilder();
 		String tableType = "";
 		if (count == 0 || count == 4) {
@@ -461,6 +508,10 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		syntax.append(module);
 		syntax.append("_");
 		syntax.append(subModule);
+		if (StringUtils.trimToNull(eventCode) != null) {
+			syntax.append("_");
+			syntax.append(eventCode);
+		}
 		if (count < 4) {
 			syntax.append("_ED");
 		} else if (count >= 4) {

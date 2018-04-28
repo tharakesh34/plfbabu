@@ -42,6 +42,8 @@
  */
 package com.pennant.webui.lmtmasters.financeworkflow;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -61,6 +63,8 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.FinServicingEvent;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.FinanceConstants;
@@ -68,10 +72,10 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.lmtmasters.financeworkflow.model.FinanceWorkFlowListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul file.
@@ -198,11 +202,18 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 		setPageComponents(window_FinanceWorkFlowList, borderLayout_FinanceWorkFlowList, listBoxFinanceWorkFlow,
 				pagingFinanceWorkFlowList);
 
+		// Get the finance servicing events.
+		List<FinServicingEvent> events = new ArrayList<>();
+
 		if (FinanceConstants.FINSER_EVENT_ORG.equals(eventAction)) {
-			setItemRender(new FinanceWorkFlowListModelItemRenderer(PennantStaticListUtil.getFinServiceEvents(false)));
+			events = PennantStaticListUtil.getFinServiceEvents(false);
 		} else {
-			setItemRender(new FinanceWorkFlowListModelItemRenderer(PennantStaticListUtil.getFinServiceEvents(true)));
+			events = PennantStaticListUtil.getFinServiceEvents(true);
 		}
+		
+		List<ValueLabel> list = PennantStaticListUtil.getValueLabels(events);
+
+		setItemRender(new FinanceWorkFlowListModelItemRenderer(list));
 
 		// Register buttons and fields.
 		registerButton(button_FinanceWorkFlowList_NewFinanceWorkFlow, "button_" + super.pageRightName
@@ -214,7 +225,8 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 				Operators.STRING);
 		
 		registerField("finEvent", listheader_FinEvent,SortOrder.ASC, finEvent, sortOperator_finEvent,Operators.STRING);
-		fillComboBox(finEvent, null, PennantStaticListUtil.getFinServiceEvents(true), "");
+		fillComboBox(finEvent, null,
+				PennantStaticListUtil.getValueLabels(PennantStaticListUtil.getFinServiceEvents(true)), "");
 		
 		registerField("workFlowType", listheader_WorkFlowType, SortOrder.NONE, workFlowType, sortOperator_workFlowType,
 				Operators.STRING);

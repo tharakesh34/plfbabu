@@ -85,21 +85,30 @@ public class ExtendedFieldsValidation {
 
 		ExtendedFieldHeader tempExtendedFieldHeader= null;
 		if (extendedFieldHeader.isWorkflow()){
-			tempExtendedFieldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(extendedFieldHeader.getModuleName(),extendedFieldHeader.getSubModuleName(), "_Temp");
+			tempExtendedFieldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(
+					extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName(),
+					extendedFieldHeader.getEvent(), "_Temp");
 		}
-		ExtendedFieldHeader befExtendedFieldHeader= getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(extendedFieldHeader.getModuleName(),extendedFieldHeader.getSubModuleName(), "");
+		ExtendedFieldHeader befExtendedFieldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(
+				extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName(),
+				extendedFieldHeader.getEvent(), "");
 
 		ExtendedFieldHeader oldExtendedFieldHeader= extendedFieldHeader.getBefImage();
 
-		String[] errParm = new String[2];
-		String[] valueParm = new String[2];
+		String[] errParm = new String[3];
+		String[] valueParm = new String[3];
 
 		valueParm[0] = extendedFieldHeader.getModuleName();
 		valueParm[1] = extendedFieldHeader.getSubModuleName();
 
 		errParm[0] = PennantJavaUtil.getLabel("label_ModuleName") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_SubModuleName") + ":" + valueParm[1];
-
+		  
+		if (extendedFieldHeader.getEvent() != null) {
+			valueParm[2] = StringUtils.trimToEmpty(extendedFieldHeader.getEvent());
+				errParm[2] = PennantJavaUtil.getLabel("label_FinEvent") + ":" + valueParm[2];
+		   }
+		
 		if (extendedFieldHeader.isNew()){ // for New record or new record into work flow
 
 			if (!extendedFieldHeader.isWorkflow()){// With out Work flow only new records  
@@ -109,7 +118,7 @@ public class ExtendedFieldsValidation {
 			}else{ // with work flow
 				if (extendedFieldHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befExtendedFieldHeader !=null || tempExtendedFieldHeader!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,  "41015", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,  "41008", errParm,valueParm), usrLanguage));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befExtendedFieldHeader ==null || tempExtendedFieldHeader!=null ){

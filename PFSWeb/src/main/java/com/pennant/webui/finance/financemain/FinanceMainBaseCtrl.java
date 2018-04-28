@@ -1680,11 +1680,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Recommend & Comments Details Tab Addition
 		appendRecommendDetailTab(onLoad);
 		// Extended Field Details
-		if (StringUtils.isEmpty(moduleDefiner)) {
 			if (onLoad) {
-				appendExtendedFieldDetails(aFinanceDetail);
+				appendExtendedFieldDetails(aFinanceDetail,moduleDefiner);
 			}
-		}
 		
 		logger.debug("Leaving");
 	}
@@ -3787,7 +3785,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * This method is for append extended field details
 	 */
-	private void appendExtendedFieldDetails(FinanceDetail aFinanceDetail) {
+	private void appendExtendedFieldDetails(FinanceDetail aFinanceDetail, String finEvent) {
 		logger.debug("Entering");
  
 		try {
@@ -3795,9 +3793,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (aFinanceMain == null) {
 				return;
 			}
+			if (finEvent.isEmpty()) {
+				finEvent = FinanceConstants.FINSER_EVENT_ORG;
+			}
+
 			extendedFieldCtrl = new ExtendedFieldCtrl();
-			ExtendedFieldHeader extendedFieldHeader = this.extendedFieldCtrl
-					.getExtendedFieldHeader(ExtendedFieldConstants.MODULE_LOAN, aFinanceMain.getFinCategory());
+			ExtendedFieldHeader extendedFieldHeader = this.extendedFieldCtrl.getExtendedFieldHeader(
+					ExtendedFieldConstants.MODULE_LOAN, aFinanceMain.getFinCategory(), finEvent);
 			if (extendedFieldHeader == null) {
 				return;
 			}

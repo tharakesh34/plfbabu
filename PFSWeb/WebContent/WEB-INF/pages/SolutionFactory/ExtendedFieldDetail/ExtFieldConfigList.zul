@@ -78,6 +78,10 @@
 									<checkbox id="postValidationReq" checked="false"/>
 								</row>
 								<row>
+								    <label value="${c:l('label_ExtendedFieldConfig_Event.value')}" />
+									<listbox id="sortOperator_event" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<combobox id="finEvent" width="250px" maxlength="50" />
+								
 									<label  value="${c:l('label_ExtendedFieldConfig_TabHeading.value')}" />
 									<listbox id="sortOperator_TabHeading" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="tabHeading"/>
@@ -98,6 +102,7 @@
 						<listhead sizable="true">
 							<listheader id="listheader_ModuleName" label="${c:l('label_ExtendedFieldConfig_Module.value')}" sort="auto" hflex="min"  />
 							<listheader id="listheader_SubModuleName" label="${c:l('label_ExtendedFieldConfig_SubModule.value')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_Event" label="${c:l('label_ExtendedFieldConfig_Event.value')}" sort="auto" hflex="min"  />
 							<listheader id="listheader_TabHeading" label="${c:l('label_ExtendedFieldConfig_TabHeading.value')}" sort="auto"  hflex="min"  />
 							<listheader id="listheader_PreValidationReq" label="${c:l('label_ExtendedFieldConfig_PreValidationReq.value')}" sort="auto"  hflex="min"  />
 							<listheader id="listheader_PostValidationReq" label="${c:l('label_ExtendedFieldConfig_PostValidationReq.value')}" sort="auto"  hflex="min"  />

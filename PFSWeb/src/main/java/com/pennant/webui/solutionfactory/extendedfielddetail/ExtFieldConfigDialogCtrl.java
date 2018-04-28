@@ -83,6 +83,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -116,6 +117,10 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	protected Space space_subModule;
 	protected Label label_SubModule;
 	protected Textbox tabHeading;
+
+	protected Label label_Event;
+	protected Combobox finEvent;
+	protected Space space_event;
 
 	protected Label moduleDesc;
 	protected Label subModuleDesc;
@@ -157,6 +162,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	
 	private List<ValueLabel>   configList = PennantStaticListUtil.getConfigTypes();
 	private List<ValueLabel>   custCtgList = PennantAppUtil.getcustCtgCodeList();
+	private List<FinServicingEvent>				events				= PennantStaticListUtil.getFinEvents(true);
 	private List<ValueLabel>   verificatinList = PennantStaticListUtil.getVerificatinTypes();
 	
 	private String subModuleVal;
@@ -272,6 +278,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	public void onChange$module(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		String moduleVal = this.module.getSelectedItem().getValue().toString();
+		this.tabHeading.setValue("");
 		visibleComponent(moduleVal, "");
 		logger.debug(Literal.LEAVING + event.toString());
 	}
@@ -283,20 +290,29 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 			this.label_SubModule.setVisible(true);
 			this.product.setVisible(false);
 			this.product.setValue(null);
+			this.label_Event.setVisible(false);
+			this.space_event.setVisible(false);
+			this.finEvent.setVisible(false);
 			fillComboBox(subModule, subModuleVal, custCtgList, "");
-		} else if (moduleVal.equals(ExtendedFieldConstants.MODULE_LOAN)) {
+		}  else if (moduleVal.equals(ExtendedFieldConstants.MODULE_LOAN)) {
 			this.subModule.setVisible(false);
 			this.space_subModule.setVisible(false);
+			this.label_Event.setVisible(true);
+			this.space_event.setVisible(true);
+			this.finEvent.setVisible(true);
 			this.label_SubModule.setVisible(true);
 			this.product.setVisible(true);
 			this.product.setValue(subModuleVal);
-			fillComboBox(subModule, "", custCtgList, "");
+			fillComboBox(finEvent, extendedFieldHeader.getEvent(), PennantStaticListUtil.getValueLabels(events), "");
 		} else if (moduleVal.equals(ExtendedFieldConstants.MODULE_VERIFICATION)) {
 			this.subModule.setVisible(true);
 			this.space_subModule.setVisible(true);
 			this.label_SubModule.setVisible(true);
 			this.product.setVisible(false);
 			this.product.setValue(null);
+			this.label_Event.setVisible(false);
+			this.space_event.setVisible(false);
+			this.finEvent.setVisible(false);
 			fillComboBox(subModule, subModuleVal, verificatinList, "");
 		} else {
 			this.subModule.setVisible(false);
@@ -789,6 +805,21 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		}
 		
 		try {
+
+			if (!this.finEvent.isDisabled() && this.finEvent.isVisible() && (this.finEvent.getSelectedItem() == null
+					|| this.finEvent.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select))) {
+				throw new WrongValueException(this.finEvent, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_FinanceWorkFlowDialog_FinEvent.value") }));
+			}
+
+			if (StringUtils.equals(extendedFieldHeader.getModuleName(), ExtendedFieldConstants.MODULE_LOAN)) {
+				extendedFieldHeader.setEvent(getComboboxValue(this.finEvent));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
 			extendedFieldHeader.setTabHeading(this.tabHeading.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -928,6 +959,11 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		if (!this.tabHeading.isDisabled()) {
 			this.tabHeading.setConstraint(new PTStringValidator(Labels.getLabel("label_ExtendedFieldConfig_TabHeading.value"),PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
+		
+		if (!this.finEvent.isDisabled() && this.finEvent.isVisible()) {
+			this.finEvent.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinanceWorkFlowDialog_FinEvent.value"), null, true));
+		}	
  	
 		logger.debug(Literal.LEAVING);
 	}
@@ -1063,6 +1099,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		} else {
 			this.module.setDisabled(true);
 			this.subModule.setDisabled(true);
+			this.finEvent.setDisabled(true);
 			this.product.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}

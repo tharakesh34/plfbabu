@@ -631,7 +631,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				vASRecording.getBefImage(), vASRecording));
-		auditHeader.setAuditDetails(auditDetails);
+		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.debug("Leaving");
@@ -2107,6 +2107,58 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		}
 		logger.debug("Leaving");
 		return auditDetail;
+	}
+
+	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
+
+		if (list != null && list.size() > 0) {
+			for (int i = 0; i < list.size(); i++) {
+				boolean extended = list.get(i).isExtended();
+				String fields = list.get(i).getAuditField();
+				String fieldValues = list.get(i).getAuditValue();
+				String transType = "";
+				String rcdType = "";
+				Object object = ((AuditDetail) list.get(i)).getModelData();
+				try {
+
+					rcdType = object.getClass().getMethod("getRecordType").invoke(object).toString();
+
+					if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+						transType = PennantConstants.TRAN_ADD;
+					} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+							|| rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+						transType = PennantConstants.TRAN_DEL;
+					} else {
+						transType = PennantConstants.TRAN_UPD;
+					}
+
+					if (StringUtils.isNotEmpty(transType)) {
+
+						// check and change below line for Complete code
+						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
+								.invoke(object, object.getClass().getClasses());
+
+						AuditDetail auditDetail = new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),
+								befImg,
+								object);
+						if (extended) {
+							auditDetail.setExtended(extended);
+						}
+						auditDetail.setAuditField(fields);
+						auditDetail.setAuditValue(fieldValues);
+						auditDetailsList.add(auditDetail);
+					}
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+				}
+			}
+		}
+
+		logger.debug("Leaving");
+		return auditDetailsList;
 	}
 
 	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {

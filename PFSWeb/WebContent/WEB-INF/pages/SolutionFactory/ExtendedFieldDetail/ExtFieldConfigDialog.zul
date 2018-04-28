@@ -216,6 +216,16 @@
 														<space  spacing="2px" sclass="mandatory" />
 														<textbox id="tabHeading" width="150px"  />
 													</hbox>
+													
+													<label
+												  	id="label_Event"
+												  	value="${c:l('label_FinanceWorkFlowDialog_FinEvent.value')}" />
+												  <hbox>
+												  	<space id="space_event"
+												  		spacing="2px" sclass="mandatory" />
+												  	<combobox
+												  		id="finEvent" width="180px" visible="false"/>
+												  </hbox>
 												</row>
 												<row>
 													<label

@@ -1172,7 +1172,7 @@ public class FinanceDataValidation {
 			//ExtendedFieldDetails Validation
 			String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
 			errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
-					ExtendedFieldConstants.MODULE_LOAN, subModule);
+					ExtendedFieldConstants.MODULE_LOAN, financeDetail.getExtendedFieldHeader().getEvent(), subModule);
 			if (!errorDetails.isEmpty()) {
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
@@ -1249,7 +1249,7 @@ public class FinanceDataValidation {
 		if(financeDetail.getExtendedDetails() != null && !financeDetail.getExtendedDetails().isEmpty()) {
 			String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
 			errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
-					ExtendedFieldConstants.MODULE_LOAN, subModule);
+					ExtendedFieldConstants.MODULE_LOAN, financeDetail.getExtendedFieldHeader().getEvent(), subModule);
 			if (!errorDetails.isEmpty()) {
 				return errorDetails;
 			}

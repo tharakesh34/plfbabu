@@ -67,6 +67,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.lmtmasters.FinanceReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
@@ -78,12 +79,12 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.lmtmasters.financereferencedetail.model.FinanceReferenceDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -169,7 +170,8 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 		this.sortOperator_finEvent.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finEvent.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		fillComboBox(finEvent, null, PennantStaticListUtil.getFinServiceEvents(true), "");
+		fillComboBox(finEvent, null,
+				PennantStaticListUtil.getValueLabels(PennantStaticListUtil.getFinServiceEvents(true)), "");
 		
 		/* set components visible dependent on the users rights */
 		doCheckRights();
@@ -189,13 +191,19 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 		this.listheader_FinEvent.setSortDescending(new FieldComparator("FinEvent", false));
 
 		// set the itemRenderer
+		List<FinServicingEvent> events;
+
 		if (StringUtils.equals(eventName, FinanceConstants.FINSER_EVENT_ORG)) {
-			this.listBoxFinanceReferenceDetail.setItemRenderer(new FinanceReferenceDetailListModelItemRenderer(
-					PennantStaticListUtil.getFinServiceEvents(false), this.moduleName));
+			events = PennantStaticListUtil.getFinServiceEvents(false);
+			listBoxFinanceReferenceDetail
+					.setItemRenderer(new FinanceReferenceDetailListModelItemRenderer(
+							PennantStaticListUtil.getValueLabels(events), moduleName));
 			this.listheader_FinEvent.setVisible(false);
 		}else{
-			this.listBoxFinanceReferenceDetail.setItemRenderer(new FinanceReferenceDetailListModelItemRenderer(
-					PennantStaticListUtil.getFinServiceEvents(true), this.moduleName));
+			events = PennantStaticListUtil.getFinServiceEvents(true);
+			listBoxFinanceReferenceDetail
+					.setItemRenderer(new FinanceReferenceDetailListModelItemRenderer(
+							PennantStaticListUtil.getValueLabels(events), moduleName));
 			this.row_finevent.setVisible(true);
 		}
 

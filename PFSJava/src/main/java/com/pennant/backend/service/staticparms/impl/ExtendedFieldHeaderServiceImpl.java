@@ -321,9 +321,13 @@ public class ExtendedFieldHeaderServiceImpl extends GenericService<ExtendedField
 
 		ExtendedFieldHeader tempExtendedFieldHeader= null;
 		if (extendedFieldHeader.isWorkflow()){
-			tempExtendedFieldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(extendedFieldHeader.getModuleName(),extendedFieldHeader.getSubModuleName(), "_Temp");
+			tempExtendedFieldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(
+					extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName(),
+					extendedFieldHeader.getEvent(), "_Temp");
 		}
-		ExtendedFieldHeader befExtendedFieldHeader= getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(extendedFieldHeader.getModuleName(),extendedFieldHeader.getSubModuleName(), "");
+		ExtendedFieldHeader befExtendedFieldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(
+				extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName(),
+				extendedFieldHeader.getEvent(), "");
 
 		ExtendedFieldHeader oldExtendedFieldHeader= extendedFieldHeader.getBefImage();
 

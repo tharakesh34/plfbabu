@@ -230,6 +230,13 @@
 	<comment>Active data type changes from numeric to smallint</comment>
 		<modifyDataType tableName="AdtIrrCodes" columnName="Active" newDataType="smallint"/>
 	</changeSet>
+
+	<changeSet id="16" author="lakshmi.n">
+	<comment>Add a event column in adtextendedfieldheader</comment>
+	<addColumn tableName="adtextendedfieldheader">
+		<column name="event" type="VARCHAR(20)" />
+	</addColumn>
+	</changeSet>
 	
 	<changeSet id="16" author="Vinay">
  		<comment>Update scripts for existing data</comment>

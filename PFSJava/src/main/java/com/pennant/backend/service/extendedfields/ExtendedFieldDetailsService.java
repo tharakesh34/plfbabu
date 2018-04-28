@@ -25,7 +25,6 @@ import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -41,11 +40,11 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 
 public class ExtendedFieldDetailsService {
 
@@ -66,60 +65,7 @@ public class ExtendedFieldDetailsService {
 		
 		for (int i = 0; i < details.size(); i++) {
 			ExtendedFieldRender extendedFieldRender = details.get(i);
-
-			if (StringUtils.isEmpty(StringUtils.trimToEmpty(extendedFieldRender.getRecordType()))) {
-				continue;
-			}
-			boolean isRcdType = false;
-
-			if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType = true;
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				if (extendedFieldRender.isWorkflow()) {
-					isRcdType = true;
-				}
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-
-			if ("saveOrUpdate".equals(method) && (isRcdType)) {
-				extendedFieldRender.setNewRecord(true);
-			}
-
-			if (!tranType.equals(PennantConstants.TRAN_WF)) {
-				if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					tranType = PennantConstants.TRAN_ADD;
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					tranType = PennantConstants.TRAN_DEL;
-				} else {
-					tranType = PennantConstants.TRAN_UPD;
-				}
-			}
-
-			// Audit Details Preparation
-			HashMap<String, Object> auditMapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
-			auditMapValues.put("Reference", extendedFieldRender.getReference());
-			auditMapValues.put("SeqNo", extendedFieldRender.getSeqNo());
-			auditMapValues.put("Version", extendedFieldRender.getVersion());
-			auditMapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
-			auditMapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
-			auditMapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
-			auditMapValues.put("RoleCode", extendedFieldRender.getRoleCode());
-			auditMapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
-			auditMapValues.put("TaskId", extendedFieldRender.getTaskId());
-			auditMapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
-			auditMapValues.put("RecordType", extendedFieldRender.getRecordType());
-			auditMapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
-			extendedFieldRender.setAuditMapValues(auditMapValues);
-
-			String[] fields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
-			AuditDetail auditDetail = new AuditDetail(tranType, i + 1, fields[0], fields[1], extendedFieldRender.getBefImage(), extendedFieldRender);
-			auditDetail.setExtended(true);
-			auditDetails.add(auditDetail);
-			
+			auditDetails.add(setExtendedFieldAuditData(extendedFieldRender, tranType, method, i + 1));
 		}
 		
 		logger.debug("Leaving");
@@ -129,15 +75,16 @@ public class ExtendedFieldDetailsService {
 	public List<AuditDetail> setExtendedFieldsAuditData(ExtendedFieldRender extendedFieldRender, String tranType,
 			String method) {
 		logger.debug(Literal.ENTERING);
-		
+		int auditSeq = 1;
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		auditDetails.add(setExtendedFieldAuditData(extendedFieldRender, tranType, method));
+		auditDetails.add(setExtendedFieldAuditData(extendedFieldRender, tranType, method, auditSeq));
 
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
-	public AuditDetail setExtendedFieldAuditData(ExtendedFieldRender extendedFieldRender, String tranType, String method) {
+	public AuditDetail setExtendedFieldAuditData(ExtendedFieldRender extendedFieldRender, String tranType,
+			String method, int auditSeq) {
 		logger.debug(Literal.ENTERING);
 		
 		if (extendedFieldRender == null) {
@@ -192,78 +139,14 @@ public class ExtendedFieldDetailsService {
 		extendedFieldRender.setAuditMapValues(auditMapValues);
 
 		String[] fields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, fields[0], fields[1], extendedFieldRender.getBefImage(),
+		AuditDetail auditDetail = new AuditDetail(tranType, auditSeq, fields[0], fields[1],
+				extendedFieldRender.getBefImage(),
 				extendedFieldRender);
 		auditDetail.setExtended(true);
 		
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-	/**
-	 * Methods for Creating List of Audit Details with detailed fields
-	 * 
-	 * @param detail
-	 * @param auditTranType
-	 * @param method
-	 * @return
-	 */
-	public List<AuditDetail> setDocumentDetailsAuditData(FieldInvestigation fieldInvestigation, String auditTranType,
-			String method) {
-		logger.debug("Entering");
-
-		List<AuditDetail> auditDetails = new ArrayList<>();
-
-		DocumentDetails document = new DocumentDetails();
-		String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
-
-		for (int i = 0; i < fieldInvestigation.getDocuments().size(); i++) {
-			DocumentDetails documentDetails = fieldInvestigation.getDocuments().get(i);
-
-			if (StringUtils.isEmpty(StringUtils.trimToEmpty(documentDetails.getRecordType()))) {
-				continue;
-			}
-
-			documentDetails.setWorkflowId(fieldInvestigation.getWorkflowId());
-			boolean isRcdType = false;
-
-			if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType = true;
-			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				if (fieldInvestigation.isWorkflow()) {
-					isRcdType = true;
-				}
-			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-
-			if ("saveOrUpdate".equals(method) && (isRcdType)) {
-				documentDetails.setNewRecord(true);
-			}
-
-			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-				}
-			}
-
-			documentDetails.setRecordStatus(fieldInvestigation.getRecordStatus());
-			documentDetails.setUserDetails(fieldInvestigation.getUserDetails());
-			documentDetails.setLastMntOn(fieldInvestigation.getLastMntOn());
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], documentDetails.getBefImage(),
-					documentDetails));
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-	}
-	
 	
 	/**
 	 * Method For Preparing List of AuditDetails for Check List for Extended FieldDetails
@@ -277,12 +160,13 @@ public class ExtendedFieldDetailsService {
 			String type) {
 		logger.debug(Literal.ENTERING);
 		
+		String tableName = getTableName(extFldHeader.getModuleName(), extFldHeader.getSubModuleName(),
+				extFldHeader.getEvent());
+
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
 		boolean approveRec = false;
-
-		String tableName = getTableName(extFldHeader.getModuleName(), extFldHeader.getSubModuleName());
 
 		for (int i = 0; i < deatils.size(); i++) {
 			ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) deatils.get(i).getModelData();
@@ -406,7 +290,8 @@ public class ExtendedFieldDetailsService {
 	 * @param type
 	 * @return
 	 */
-	public List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> deatils, ExtendedFieldHeader extFldHeader, String tableName, String type) {
+	public List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> deatils, String tableName,
+			String type) {
 		logger.debug(Literal.ENTERING);
 		
 		boolean saveRecord = false;
@@ -527,7 +412,8 @@ public class ExtendedFieldDetailsService {
 		return deatils;
 	}
 
-	public List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> details, String module, String type) {
+	public List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> details, String module, String event,
+			String type) {
 		logger.debug(Literal.ENTERING);
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -540,7 +426,7 @@ public class ExtendedFieldDetailsService {
 				if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
 					continue;
 				}
-				String tableName = getTableName(module, extendedFieldRender.getTypeCode());
+				String tableName = getTableName(module, extendedFieldRender.getTypeCode(), event);
 				saveRecord = false;
 				updateRecord = false;
 				deleteRecord = false;
@@ -649,6 +535,10 @@ public class ExtendedFieldDetailsService {
 		tableName.append(extFldHeader.getModuleName());
 		tableName.append("_");
 		tableName.append(extFldHeader.getSubModuleName());
+		if (extFldHeader.getEvent() != null) {
+			  tableName.append("_");
+			tableName.append(PennantStaticListUtil.getFinEventCode(extFldHeader.getEvent()));
+		  }
 		tableName.append("_ED");
 		
 		return deleteDetails(reference, tableType, tranType, deatils, tableName.toString());
@@ -706,7 +596,7 @@ public class ExtendedFieldDetailsService {
 		return auditList;
 	}
 
-	public List<AuditDetail> delete(List<AuditDetail> details, String module, String reference, String tableType) {
+	public List<AuditDetail> delete(List<AuditDetail> details, String module, String reference,String event, String tableType) {
 		logger.debug(Literal.ENTERING);
 		List<String> tableNames = new ArrayList<>();
 		for (int i = 0; i < details.size(); i++) {
@@ -717,6 +607,10 @@ public class ExtendedFieldDetailsService {
 			tableName.append(module);
 			tableName.append("_");
 			tableName.append(detail.getTypeCode());
+			if(StringUtils.trimToNull(event)!=null){
+				tableName.append("_");
+				tableName.append(PennantStaticListUtil.getFinEventCode(event));
+			}
 			tableName.append("_ED");
 
 			details.get(i).setExtended(true);
@@ -737,7 +631,8 @@ public class ExtendedFieldDetailsService {
 
 	public List<AuditDetail> validateExtendedDdetails(ExtendedFieldHeader extFldHeader, List<AuditDetail> details,
 			String method, String usrLanguage) {
-		String tableName = getTableName(extFldHeader.getModuleName(), extFldHeader.getSubModuleName());
+		String tableName = getTableName(extFldHeader.getModuleName(), extFldHeader.getSubModuleName(),
+				extFldHeader.getEvent());
 		return vaildateDetails(details, method, usrLanguage, tableName);
 
 	}
@@ -1333,21 +1228,25 @@ public class ExtendedFieldDetailsService {
 		return scriptValidationService.getPostValidationErrors(postValidation, mapValues);
 	}
 
-	private String getTableName(String module, String subModuleName) {
+	private String getTableName(String module, String subModuleName,String event) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(module);
 		sb.append("_");
 		sb.append(subModuleName);
+		if (StringUtils.trimToNull(event) != null) {
+			sb.append("_");
+			sb.append(PennantStaticListUtil.getFinEventCode(event));
+		}
 		sb.append("_ED");
 		return sb.toString();
 	}
 
-	public List<ErrorDetail> validateExtendedFieldDetails(List<ExtendedField> extendedFieldData, String module, String subModule) {
+	public List<ErrorDetail> validateExtendedFieldDetails(List<ExtendedField> extendedFieldData, String module, String subModule,String event) {
 		logger.debug(Literal.ENTERING);
 		
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		//get the ExtendedFieldHeader for given module and subModule
-		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(module, subModule, "");
+		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(module, subModule,event, "");
 		List<ExtendedFieldDetail> extendedFieldDetails = null;
 
 		//based on ExtendedFieldHeader moduleId get the ExtendedFieldDetails List
@@ -1560,7 +1459,8 @@ public class ExtendedFieldDetailsService {
 		// process Extended field details
 		// Get the ExtendedFieldHeader for given module and subModule
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
-				ExtendedFieldConstants.MODULE_LOAN, finMain.getFinCategory(), "");
+				ExtendedFieldConstants.MODULE_LOAN, finMain.getFinCategory(),
+				financeDetail.getExtendedFieldHeader().getEvent(), "");
 		financeDetail.setExtendedFieldHeader(extendedFieldHeader);
 
 		List<ExtendedField> extendedFields = financeDetail.getExtendedDetails();
@@ -1602,7 +1502,8 @@ public class ExtendedFieldDetailsService {
 
 		if (financeDetail.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = auditDetailMap.get("LoanExtendedFieldDetails");
-			details = processingExtendedFieldDetailList(details, ExtendedFieldConstants.MODULE_LOAN, suffix);
+			details = processingExtendedFieldDetailList(details, ExtendedFieldConstants.MODULE_LOAN,
+					financeDetail.getExtendedFieldHeader().getEvent(), suffix);
 			auditDetails.addAll(details);
 		}
 		AuditHeader auditHeader = getAuditHeader(financeDetail.getFinScheduleData().getFinanceMain(), 

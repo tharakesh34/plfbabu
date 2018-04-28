@@ -64,6 +64,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -426,7 +427,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 		}
 		
 		String moduleName = aFinanceWorkFlow.getModuleName();
-		if(isCollateral){
+		if (isCollateral) {
 			exclFields = ","+PennantConstants.WORFLOW_MODULE_FINANCE+","+PennantConstants.WORFLOW_MODULE_FACILITY+","+PennantConstants.WORFLOW_MODULE_VAS+","+PennantConstants.WORFLOW_MODULE_PROMOTION+","+PennantConstants.WORFLOW_MODULE_COMMITMENT+",";
 			moduleName = PennantConstants.WORFLOW_MODULE_COLLATERAL;
 			this.moduleName.setDisabled(true);
@@ -441,13 +442,18 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 			moduleName = PennantConstants.WORFLOW_MODULE_VAS;
 			this.moduleName.setDisabled(true);
 		}
-		ArrayList<ValueLabel> list = null;
+		
+		// Get the finance servicing events.
+		List<FinServicingEvent> events = new ArrayList<>();
+		
 		if(StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_ORG)){
-			list = PennantStaticListUtil.getFinServiceEvents(false);
+			events = PennantStaticListUtil.getFinServiceEvents(false);
 		}else{
-			list = PennantStaticListUtil.getFinServiceEvents(true);
+			events = PennantStaticListUtil.getFinServiceEvents(true);
 		}
 		
+		List<ValueLabel> list = PennantStaticListUtil.getValueLabels(events);
+
 		fillComboBox(this.moduleName, moduleName, PennantStaticListUtil.getWorkFlowModules(), exclFields);
 		doSetFinTypeProperties();
 		this.finType.setValue(aFinanceWorkFlow.getFinType());
@@ -709,7 +715,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 		String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
 				Labels.getLabel("label_FinanceWorkFlowDialog_FinType.value")+" : "+aFinanceWorkFlow.getFinType();
 		if(!StringUtils.equals(aFinanceWorkFlow.getFinEvent(), FinanceConstants.FINSER_EVENT_ORG)){
-			msg = msg.concat(" & "+Labels.getLabel("label_FinanceWorkFlowDialog_FinEvent.value")+" : "+aFinanceWorkFlow.getFinEvent());
+			msg = msg.concat(" & " + Labels.getLabel("label_FinanceWorkFlowDialog_FinEvent.value") + " : "
+					+ aFinanceWorkFlow.getFinEvent());
 		}
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinanceWorkFlow.getRecordType())){

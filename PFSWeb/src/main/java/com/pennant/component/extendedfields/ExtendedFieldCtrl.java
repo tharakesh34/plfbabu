@@ -45,6 +45,7 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.staticparms.ExtFieldConfigService;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -266,8 +267,22 @@ public class ExtendedFieldCtrl {
 	 * @param String
 	 *            subModule
 	 **/
+	public ExtendedFieldHeader getExtendedFieldHeader(String module, String subModule,String event) {
+		ExtendedFieldHeader extendedFieldHeader = extFieldConfigService.getApprovedExtendedFieldHeaderByModule(module,subModule,event);
+		this.extendedFieldHeader = extendedFieldHeader;
+		return extendedFieldHeader;
+	}
+	
+	/**
+	 * Method Getting the extended field header details
+	 * 
+	 * @param String
+	 *            module
+	 * @param String
+	 *            subModule
+	 **/
 	public ExtendedFieldHeader getExtendedFieldHeader(String module, String subModule) {
-		ExtendedFieldHeader extendedFieldHeader = extFieldConfigService.getApprovedExtendedFieldHeaderByModule(module,subModule);
+		ExtendedFieldHeader extendedFieldHeader = extFieldConfigService.getApprovedExtendedFieldHeaderByModule(module,subModule,null);
 		this.extendedFieldHeader = extendedFieldHeader;
 		return extendedFieldHeader;
 	}
@@ -299,6 +314,11 @@ public class ExtendedFieldCtrl {
 		tableName.append(extendedFieldHeader.getModuleName());
 		tableName.append("_");
 		tableName.append(extendedFieldHeader.getSubModuleName());
+		if (extendedFieldHeader.getEvent() != null) {
+			tableName.append("_");
+			tableName.append(
+					StringUtils.trimToEmpty(PennantStaticListUtil.getFinEventCode(extendedFieldHeader.getEvent())));
+		}
 		tableName.append("_ED");
 
 		Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(reference, tableName.toString(),

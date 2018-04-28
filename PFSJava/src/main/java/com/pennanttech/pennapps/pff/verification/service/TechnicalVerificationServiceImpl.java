@@ -132,8 +132,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			tableName.append("_");
 			tableName.append(tv.getExtendedFieldHeader().getSubModuleName());
 			tableName.append("_TV");
-			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-					tv.getExtendedFieldHeader(), tableName.toString(), tableType.getSuffix());
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details, tableName.toString(),
+					tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
 		
@@ -333,8 +333,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 				tableName.append(tv.getExtendedFieldHeader().getSubModuleName());
 				tableName.append("_TV");
 
-				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-						tv.getExtendedFieldHeader(), tableName.toString(), TableType.MAIN_TAB.getSuffix());
+				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details, tableName.toString(),
+						TableType.MAIN_TAB.getSuffix());
 				auditDetails.addAll(details);
 			}
 

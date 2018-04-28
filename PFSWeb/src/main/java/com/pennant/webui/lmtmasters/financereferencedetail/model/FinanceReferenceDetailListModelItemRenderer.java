@@ -44,7 +44,7 @@
 package com.pennant.webui.lmtmasters.financereferencedetail.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
@@ -64,10 +64,10 @@ import com.pennant.util.PennantAppUtil;
 public class FinanceReferenceDetailListModelItemRenderer implements ListitemRenderer<FinanceWorkFlow>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	ArrayList<ValueLabel> eventList = null;
+	List<ValueLabel> eventList = null;
 	String moduleName = null;
 
-	public FinanceReferenceDetailListModelItemRenderer(ArrayList<ValueLabel> list, String moduleName) {
+	public FinanceReferenceDetailListModelItemRenderer(List<ValueLabel> list, String moduleName) {
 		this.eventList = list;
 		this.moduleName = moduleName;
 	}

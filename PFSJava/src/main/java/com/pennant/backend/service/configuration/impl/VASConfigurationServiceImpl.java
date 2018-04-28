@@ -306,7 +306,8 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 		VASConfiguration vasConfiguration = getVASConfigurationDAO().getVASConfigurationByCode(productCode, "_View");
 		ExtendedFieldHeader extFldHeader = null;
 		if (vasConfiguration != null) {
-			extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(VASConsatnts.MODULE_NAME, vasConfiguration.getProductCode(), "_View");
+			extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(VASConsatnts.MODULE_NAME,
+					vasConfiguration.getProductCode(), "_View");
 			if (extFldHeader != null) {
 				extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_View"));
 			}
@@ -331,7 +332,8 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 		VASConfiguration vasConfiguration = getVASConfigurationDAO().getVASConfigurationByCode(productCode, "_AView");
 		ExtendedFieldHeader extFldHeader = null;
 		if (vasConfiguration != null) {
-			extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(VASConsatnts.MODULE_NAME, vasConfiguration.getProductCode(), "_AView");
+			extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(VASConsatnts.MODULE_NAME,
+					vasConfiguration.getProductCode(), "_AView");
 			if (extFldHeader != null) {
 				extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_AView"));
 			}
@@ -412,7 +414,8 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 				extendedFieldHeader.setRecordType("");
 				getExtendedFieldHeaderDAO().save(extendedFieldHeader, "");
 				// Table creation in DB for Newly created Configuration Type Details
-				getExtendedFieldHeaderDAO().createTable(extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName());
+				getExtendedFieldHeaderDAO().createTable(extendedFieldHeader.getModuleName(),
+						extendedFieldHeader.getSubModuleName(), extendedFieldHeader.getEvent());
 
 			} else {
 				tranType = PennantConstants.TRAN_UPD;

@@ -58,6 +58,7 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
@@ -67,6 +68,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.service.staticparms.ExtFieldConfigService;
@@ -75,10 +77,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader> implements Serializable {
 
@@ -92,6 +94,7 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 
 	protected Listheader listheader_ModuleName;
 	protected Listheader listheader_SubModuleName;
+	protected Listheader listheader_Event;
 	protected Listheader listheader_TabHeading;
 	protected Listheader listheader_PreValidationReq;
 	protected Listheader listheader_PostValidationReq;
@@ -102,12 +105,14 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 
 	protected Uppercasebox moduleName;
 	protected Textbox subModuleName;
+	protected Combobox finEvent;
 	protected Textbox tabHeading;
 	protected Checkbox preValidationReq;
 	protected Checkbox postValidationReq;
 
 	protected Listbox sortOperator_ModuleName;
 	protected Listbox sortOperator_SubModuleName;
+	protected Listbox sortOperator_event;
 	protected Listbox sortOperator_TabHeading;
 	protected Listbox sortOperator_PreValidationReq;
 	protected Listbox sortOperator_PostValidationReq;
@@ -160,7 +165,12 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 		registerField("TabHeading", listheader_TabHeading, SortOrder.NONE, tabHeading, sortOperator_TabHeading, Operators.STRING);
 		registerField("preValidationReq", listheader_PreValidationReq, SortOrder.ASC, preValidationReq, sortOperator_PreValidationReq, Operators.BOOLEAN);
 		registerField("postValidationReq", listheader_PostValidationReq, SortOrder.ASC, postValidationReq, sortOperator_PostValidationReq, Operators.BOOLEAN);
+		registerField("event", listheader_Event, SortOrder.NONE, finEvent, sortOperator_event,
+				Operators.STRING);
 		
+		List<FinServicingEvent> events = PennantStaticListUtil.getFinEvents(true);
+		fillComboBox(finEvent, null, PennantStaticListUtil.getValueLabels(events), "");
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -227,8 +237,9 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 
 		// Get the selected entity.
 		ExtendedFieldHeader object = (ExtendedFieldHeader) selectedItem.getAttribute("Object");
-		ExtendedFieldHeader extendedFieldHeader = getExtFieldConfigService().getExtendedFieldHeaderByModule(object.getModuleName(),object.getSubModuleName());
-
+	
+		ExtendedFieldHeader extendedFieldHeader = getExtFieldConfigService()
+				.getExtendedFieldHeaderByModule(object.getModuleName(), object.getSubModuleName(), object.getEvent());
 		if (extendedFieldHeader == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
@@ -285,6 +296,9 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 			lc.setParent(item);
 			
 			lc = new Listcell(ext.getSubModuleName());
+			lc.setParent(item);
+			
+			lc = new Listcell(ext.getEvent());
 			lc.setParent(item);
 
 			lc = new Listcell(ext.getTabHeading());

@@ -44,7 +44,7 @@
 package com.pennant.webui.lmtmasters.financeworkflow.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
@@ -63,9 +63,9 @@ import com.pennant.util.PennantAppUtil;
  */
 public class FinanceWorkFlowListModelItemRenderer implements ListitemRenderer<FinanceWorkFlow>, Serializable {
 
-	ArrayList<ValueLabel> eventList = null;
+	List<ValueLabel> eventList = null;
 
-	public FinanceWorkFlowListModelItemRenderer(ArrayList<ValueLabel> list) {
+	public FinanceWorkFlowListModelItemRenderer(List<ValueLabel> list) {
 		this.eventList = list;
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - Pennant Technologies
+D * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -98,6 +98,7 @@ import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.FinCollateralMark;
 import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.DDAProcessData;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -714,7 +715,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Accounting
 			appendAccountingDetailTab(true);
 		}
-
+		 //Append Extended Field Details
+		appendExtendedFieldDetails(aFinanceDetail, moduleDefiner);
+		 
 		// fill the components with the Finance Flags Data and Display
 		doFillFinFlagsList(aFinanceDetail.getFinFlagsDetails());
 
@@ -2112,6 +2115,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// fill the financeMain object with the components data
 		doWriteComponentsToBean(aFinanceDetail);
 
+		// Extended Fields
+		if (aFinanceDetail.getExtendedFieldHeader() != null) {
+			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save());
+		}
+
 		// Document Details Saving
 		if (getDocumentDetailDialogCtrl() != null) {
 			aFinanceDetail.setDocumentDetailsList(getDocumentDetailDialogCtrl().getDocumentDetailsList());
@@ -2560,10 +2568,56 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			}
 		}
+		
+		if (aFinanceDetail.getExtendedFieldRenderList() != null
+				&& !aFinanceDetail.getExtendedFieldRenderList().isEmpty()) {
+			for (ExtendedFieldRender extendedFieldDetail : aFinanceDetail.getExtendedFieldRenderList()) {
+				extendedFieldDetail.setReference(afinanceMain.getFinReference());
+				extendedFieldDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+				extendedFieldDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				extendedFieldDetail.setRecordStatus(afinanceMain.getRecordStatus());
+				extendedFieldDetail.setWorkflowId(afinanceMain.getWorkflowId());
+				extendedFieldDetail.setTaskId(taskId);
+				extendedFieldDetail.setNextTaskId(nextTaskId);
+				extendedFieldDetail.setRoleCode(getRole());
+				extendedFieldDetail.setNextRoleCode(nextRoleCode);
+				if (PennantConstants.RECORD_TYPE_DEL.equals(afinanceMain.getRecordType())) {
+					if (StringUtils.trimToNull(extendedFieldDetail.getRecordType()) == null) {
+						extendedFieldDetail.setRecordType(afinanceMain.getRecordType());
+						extendedFieldDetail.setNewRecord(true);
+					}
+				}
+			}
+		}
+
+		// Extended Field details
+		if (aFinanceDetail.getExtendedFieldRender() != null) {
+			int seqNo = 0;
+			ExtendedFieldRender details = aFinanceDetail.getExtendedFieldRender();
+			details.setReference(afinanceMain.getFinReference());
+			details.setSeqNo(++seqNo);
+			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			details.setRecordStatus(afinanceMain.getRecordStatus());
+			details.setRecordType(afinanceMain.getRecordType());
+			details.setVersion(afinanceMain.getVersion());
+			details.setWorkflowId(afinanceMain.getWorkflowId());
+			details.setTaskId(taskId);
+			details.setNextTaskId(nextTaskId);
+			details.setRoleCode(getRole());
+			details.setNextRoleCode(nextRoleCode);
+			details.setNewRecord(afinanceMain.isNewRecord());
+			if (PennantConstants.RECORD_TYPE_DEL.equals(afinanceMain.getRecordType())) {
+				if (StringUtils.trimToNull(details.getRecordType()) == null) {
+					details.setRecordType(afinanceMain.getRecordType());
+					details.setNewRecord(true);
+				}
+			}
+		}
+
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			afinanceMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-
 			// Check for service tasks. If one exists perform the task(s)
 			String finishedTasks = "";
 			String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks);

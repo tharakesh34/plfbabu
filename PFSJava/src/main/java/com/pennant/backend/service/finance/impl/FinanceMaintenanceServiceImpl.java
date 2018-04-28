@@ -30,6 +30,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -47,6 +48,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.validation.FinGuarantorDetailValidation;
@@ -74,6 +76,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	private FinFlagDetailsDAO			finFlagDetailsDAO;
 	private MandateDAO					mandateDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	public FinanceMaintenanceServiceImpl() {
 		super();
@@ -422,6 +425,14 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			details = processingFinFlagDetailList(details, financeDetail, tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
+		
+		// Extended field Details
+				if (financeDetail.getExtendedFieldRender() != null) {
+					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
+					details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					financeDetail.getExtendedFieldHeader(), tableType.getSuffix());
+					auditDetails.addAll(details);
+				}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
@@ -703,6 +714,14 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			details = processingFinCollateralDetailList(details, "_Temp", financeMain.getFinReference());
 			auditDetailList.addAll(details);
 		}
+		
+		
+		// Extended field Render Details.
+		List<AuditDetail> extendedDetails = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			auditDetailList.addAll(extendedFieldDetailsService.delete(financeDetail.getExtendedFieldHeader(),
+					financeMain.getFinReference(), "_Temp", auditHeader.getAuditTranType(), extendedDetails));
+		}
 
 		// ScheduleDetails deletion
 		getFinODPenaltyRateDAO().delete(financeMain.getFinReference(), "_Temp");
@@ -914,6 +933,14 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				auditDetails.addAll(details);
 			}
 		}
+		
+		// Extended field Details
+		if (financeDetail.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					financeDetail.getExtendedFieldHeader(), "");
+			auditDetails.addAll(details);
+		}
 
 		//Finance Profit Details Updation - Repayment Account
 		getProfitDetailsDAO().updateRpyAccount(financeMain.getFinReference(), financeMain.getRepayAccountId());
@@ -989,6 +1016,13 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 					auditHeader.getAuditTranType()));
 		}
 
+		// Extended field Render Details.
+		List<AuditDetail> extendedDetails = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			auditDetailList.addAll(extendedFieldDetailsService.delete(financeDetail.getExtendedFieldHeader(),
+					financeMain.getFinReference(), "_Temp", auditHeader.getAuditTranType(), extendedDetails));
+		}
+		
 		FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
 		FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
 		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -1003,7 +1037,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				.getBefImage(), financeMain));
 
 		// Adding audit as Insert/Update/deleted into main table
-		auditHeader.setAuditDetails(auditDetails);
+		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		//Reset Finance Detail Object for Service Task Verifications
@@ -1068,6 +1102,14 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		if (guarantorAccDetailList != null && !guarantorAccDetailList.isEmpty()) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("GuarantorDetails");
 			details = getFinGuarantorDetailValidation().gurantorDetailsListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+		
+		// Extended field details Validation
+		if (financeDetail.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
+			ExtendedFieldHeader extHeader = financeDetail.getExtendedFieldHeader();
+			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
 
@@ -1286,6 +1328,13 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 		}
 
+		// Extended Field Details
+				if (financeDetail.getExtendedFieldRender() != null) {
+					auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
+							.setExtendedFieldsAuditData(financeDetail.getExtendedFieldRender(), auditTranType, method));
+					auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
+				}
+		
 		financeDetail.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 		auditHeader.setAuditDetails(auditDetails);
@@ -1822,5 +1871,12 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	public void setFinGuarantorDetailValidation(FinGuarantorDetailValidation finGuarantorDetailValidation) {
 		this.finGuarantorDetailValidation = finGuarantorDetailValidation;
 	}
- 
+	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
+		return extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
 }

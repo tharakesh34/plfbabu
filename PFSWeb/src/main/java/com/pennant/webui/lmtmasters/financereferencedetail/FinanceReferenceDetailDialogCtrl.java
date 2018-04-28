@@ -82,6 +82,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -475,12 +476,14 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	public void doWriteBeanToComponents(FinanceReference aFinanceReference) {
 		logger.debug("Entering");
 		
-		ArrayList<ValueLabel> list = null;
+		List<FinServicingEvent> events;
 		if(StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_ORG)){
-			list = PennantStaticListUtil.getFinServiceEvents(false);
+			events = PennantStaticListUtil.getFinServiceEvents(false);
 		}else{
-			list = PennantStaticListUtil.getFinServiceEvents(true);
+			events = PennantStaticListUtil.getFinServiceEvents(true);
 		}
+
+		List<ValueLabel> list = PennantStaticListUtil.getValueLabels(events);
 
 		this.finType.setValue(aFinanceReference.getFinType());
 		fillComboBox(this.finEvent, aFinanceReference.getFinEvent(), list, "");

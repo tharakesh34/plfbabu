@@ -262,7 +262,8 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	public AssetType getAssetTypeById(String id) {
 		AssetType assetType = getAssetTypeDAO().getAssetTypeById(id, "_View");
 		if(assetType != null) {
-			ExtendedFieldHeader extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(AssetConstants.EXTENDEDFIELDS_MODULE, assetType.getAssetType(), "_View");
+			ExtendedFieldHeader extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(
+					AssetConstants.EXTENDEDFIELDS_MODULE, assetType.getAssetType(), "_View");
 			if (extFldHeader != null) {
 				extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_View"));
 			}
@@ -281,7 +282,8 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	 */
 	public AssetType getApprovedAssetTypeById(String id) {
 		AssetType assetType = getAssetTypeDAO().getAssetTypeById(id, "_AView");
-		ExtendedFieldHeader extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(AssetConstants.EXTENDEDFIELDS_MODULE, assetType.getAssetType(), "_AView");
+		ExtendedFieldHeader extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(
+				AssetConstants.EXTENDEDFIELDS_MODULE, assetType.getAssetType(), "_AView");
 		if (extFldHeader != null) {
 			extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_AView"));
 		}
@@ -363,7 +365,8 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 				getExtendedFieldHeaderDAO().save(extendedFieldHeader, "");
 
 				// Table creation in DB for Newly created Configuration Type Details
-				getExtendedFieldHeaderDAO().createTable(extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName());
+				getExtendedFieldHeaderDAO().createTable(extendedFieldHeader.getModuleName(),
+						extendedFieldHeader.getSubModuleName(), extendedFieldHeader.getEvent());
 
 			} else {
 				tranType = PennantConstants.TRAN_UPD;

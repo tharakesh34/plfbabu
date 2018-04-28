@@ -67,7 +67,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ExtendedFieldHeader table</b>.<br>
  *
  */
-@XmlType(propOrder = { "moduleName", "subModuleName", "extendedFieldDetailList","returnStatus" })
+@XmlType(propOrder = { "moduleName", "subModuleName", "extendedFieldDetailList", "returnStatus" })
 @XmlRootElement(name = "extendedDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entity {
@@ -76,9 +76,10 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 
 	private long moduleId = Long.MIN_VALUE;
 	@XmlElement(name = "module")
-	private String moduleName="";
+	private String moduleName = "";
 	@XmlElement(name = "subModule")
-	private String subModuleName="";
+	private String subModuleName = "";
+	private String event;
 	private String tabHeading;
 	private String numberOfColumns;
 	private boolean newRecord;
@@ -97,7 +98,7 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	@XmlElement
 	private WSReturnStatus returnStatus;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -264,4 +265,12 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 		this.returnStatus = returnStatus;
 	}
 
+	public String getEvent() {
+		return event;
+	}
+
+	public void setEvent(String event) {
+		this.event = event;
+	}
+	
 }

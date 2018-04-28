@@ -122,6 +122,8 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -147,12 +149,14 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainExtService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
+import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.core.EventManager;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -566,6 +570,11 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	private transient FinCollateralHeaderDialogCtrl			finCollateralHeaderDialogCtrl;
 	private transient CollateralHeaderDialogCtrl			collateralHeaderDialogCtrl;
 	private transient ManualPaymentDialogCtrl				manualPaymentDialogCtrl				= null;
+
+	
+	// Extended fields
+	protected ExtendedFieldCtrl 								extendedFieldCtrl 					= null;
+	private String										        pdfExtTabPanelId;
 
 	//Bean Setters  by application Context
 	private AccountInterfaceService							accountInterfaceService;
@@ -1699,7 +1708,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving");
 	}
-
+	
 	public void onSelectRecommendDetailTab(ForwardEvent event) throws InterruptedException {
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		tab.removeForward(Events.ON_SELECT, (Tab) null, "onSelectRecommendDetailTab");
@@ -1849,6 +1858,51 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * This method is for append extended field details
+	 */
+	protected void appendExtendedFieldDetails(FinanceDetail aFinanceDetail,String finEvent) {
+		logger.debug("Entering");
+ 
+		try {
+			FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+			if (aFinanceMain == null) {
+				return;
+			}
+			  if(finEvent.isEmpty()){
+				  finEvent = FinanceConstants.FINSER_EVENT_ORG;
+			  }
+			
+			extendedFieldCtrl = new ExtendedFieldCtrl();
+			ExtendedFieldHeader extendedFieldHeader = this.extendedFieldCtrl
+					.getExtendedFieldHeader(ExtendedFieldConstants.MODULE_LOAN, aFinanceMain.getFinCategory(),finEvent);
+			if (extendedFieldHeader == null) {
+				return;
+			}
+			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
+					.getExtendedFieldRender(aFinanceMain.getFinReference());
+			extendedFieldCtrl.createTab(tabsIndexCenter, tabpanelsBoxIndexCenter);
+			setPdfExtTabPanelId("TabPanel"+ExtendedFieldConstants.MODULE_LOAN+aFinanceMain.getFinCategory());
+			aFinanceDetail.setExtendedFieldHeader(extendedFieldHeader);
+			aFinanceDetail.setExtendedFieldRender(extendedFieldRender);
+
+			if (aFinanceDetail.getBefImage() != null) {
+				aFinanceDetail.getBefImage().setExtendedFieldHeader(extendedFieldHeader);
+				aFinanceDetail.getBefImage().setExtendedFieldRender(extendedFieldRender);
+			}
+
+			extendedFieldCtrl.setCcyFormat(CurrencyUtil.getFormat(aFinanceMain.getFinCcy()));
+			extendedFieldCtrl.setReadOnly(/* isReadOnly("CustomerDialog_custFirstName") */false);
+			extendedFieldCtrl.setWindow(getMainWindow());
+			extendedFieldCtrl.setTabHeight(170);
+			extendedFieldCtrl.render();
+		} catch (Exception e) {
+			logger.error("Exception", e);
+		}
+		logger.debug("Leaving");
+	}
+	
+	
 	public void onSelectCollateralTab(ForwardEvent event) throws IllegalAccessException, InvocationTargetException,
 			InterruptedException {
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
@@ -7952,5 +8006,13 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
+
+	public String getPdfExtTabPanelId() {
+		return pdfExtTabPanelId;
+	}
+
+	public void setPdfExtTabPanelId(String pdfExtTabPanelId) {
+		this.pdfExtTabPanelId = pdfExtTabPanelId;
 	}
 }

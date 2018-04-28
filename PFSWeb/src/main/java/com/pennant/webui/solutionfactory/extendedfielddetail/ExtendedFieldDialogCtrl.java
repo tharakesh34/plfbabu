@@ -679,7 +679,13 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 			}
 
 			String tableName = getExtendedFieldHeader().getModuleName();
-			tableName = tableName.concat("_").concat(getExtendedFieldHeader().getSubModuleName()).concat("_ED");
+			tableName = tableName.concat("_").concat(getExtendedFieldHeader().getSubModuleName());
+			
+			if (getExtendedFieldHeader().getEvent() != null) {
+				tableName = tableName.concat("_")
+						.concat(PennantStaticListUtil.getFinEventCode(getExtendedFieldHeader().getEvent()));
+			}
+			tableName=tableName.concat("_ED");
 			efd.setLovDescTableName(tableName);//PennantStaticListUtil.getModuleName(efd)
 		}
 	}

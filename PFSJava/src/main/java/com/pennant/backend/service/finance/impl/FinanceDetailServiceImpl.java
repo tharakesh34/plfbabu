@@ -2435,7 +2435,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
 
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-						VASConsatnts.MODULE_NAME, tableType.getSuffix());
+						VASConsatnts.MODULE_NAME,null, tableType.getSuffix());
 				auditDetails.addAll(details);
 			}
 
@@ -2449,7 +2449,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					extendedFieldRender.setReference(finReference);
 				}
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-						AssetConstants.EXTENDEDFIELDS_MODULE, tableType.getSuffix());
+						AssetConstants.EXTENDEDFIELDS_MODULE,null, tableType.getSuffix());
 				auditDetails.addAll(details);
 			}
 
@@ -2457,7 +2457,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getExtendedFieldRender() != null) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-						ExtendedFieldConstants.MODULE_LOAN, tableType.getSuffix());
+						ExtendedFieldConstants.MODULE_LOAN, financeDetail.getExtendedFieldHeader().getEvent(),
+						tableType.getSuffix());
 				if(details != null && !details.isEmpty()) {
 					auditDetails.addAll(details);
 				}
@@ -3065,7 +3066,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					&& financeDetail.getExtendedFieldRenderList().size() > 0) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
 				auditDetails.addAll(extendedFieldDetailsService.delete(details, AssetConstants.EXTENDEDFIELDS_MODULE,
-						financeMain.getFinReference(), "_Temp"));
+						financeMain.getFinReference(),null, "_Temp"));
 			}
 
 			// Vas Recording Details details Prasad
@@ -3079,14 +3080,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Vas Recording Extended field Details
 				List<AuditDetail> vasExtDetails = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
 				auditDetails.addAll(extendedFieldDetailsService.delete(vasExtDetails, VASConsatnts.MODULE_NAME,
-						financeMain.getFinReference(), "_Temp"));
+						financeMain.getFinReference(),null, "_Temp"));
 			}
 
 			// Loan Extended field Details
 			if (financeDetail.getExtendedFieldRender() != null) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
 				auditDetails.addAll(extendedFieldDetailsService.delete(details, ExtendedFieldConstants.MODULE_LOAN,
-						financeMain.getFinReference(), "_Temp"));
+						financeMain.getFinReference(), financeDetail.getExtendedFieldHeader().getEvent(), "_Temp"));
 			}
 			
 			// Deleting Finance Insurance Details
@@ -3615,7 +3616,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					// Vas Recording Extended Field Details
 					List<AuditDetail> exdDetails = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
 					exdDetails = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-							VASConsatnts.MODULE_NAME, "");
+							VASConsatnts.MODULE_NAME,null, "");
 					auditDetails.addAll(exdDetails);
 				}
 				
@@ -3884,7 +3885,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						extendedFieldRender.setReference(financeMain.getFinReference());
 					}
 					details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-							AssetConstants.EXTENDEDFIELDS_MODULE, "");
+							AssetConstants.EXTENDEDFIELDS_MODULE,null, "");
 					auditDetails.addAll(details);
 				}
 
@@ -3892,7 +3893,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (financeDetail.getExtendedFieldRender() != null) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
 					details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-							ExtendedFieldConstants.MODULE_LOAN, "");
+							ExtendedFieldConstants.MODULE_LOAN, financeDetail.getExtendedFieldHeader().getEvent(), "");
 					auditDetails.addAll(details);
 				}
 
@@ -4049,7 +4050,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						&& financeDetail.getExtendedFieldRenderList().size() > 0) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
 					auditDetailList.addAll(extendedFieldDetailsService.delete(details,
-							AssetConstants.EXTENDEDFIELDS_MODULE, financeMain.getFinReference(), "_Temp"));
+							AssetConstants.EXTENDEDFIELDS_MODULE, financeMain.getFinReference(),null, "_Temp"));
 				}
 
 
@@ -4062,7 +4063,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					// Vas Recording Extended field Details
 					List<AuditDetail> vasExtDetails = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
 					auditDetailList.addAll(extendedFieldDetailsService.delete(vasExtDetails,
-							VASConsatnts.MODULE_NAME, financeMain.getFinReference(), "_Temp"));
+							VASConsatnts.MODULE_NAME, financeMain.getFinReference(),null, "_Temp"));
 				}
 
 				
@@ -4070,7 +4071,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (financeDetail.getExtendedFieldRender() != null) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
 					auditDetailList.addAll(extendedFieldDetailsService.delete(details,
-							ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinReference(), "_Temp"));
+							ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinReference(),
+							financeDetail.getExtendedFieldHeader().getEvent(), "_Temp"));
 				}
 				
 				// Deleting Finance Insurance Details
@@ -4155,7 +4157,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
 				.getBefImage(), financeMain));
-		auditHeader.setAuditDetails(auditDetails);
+		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
 		// Adding audit as Insert/Update/deleted into main table
 		if (!isWIF) {
 			getAuditHeaderDAO().addAudit(auditHeader);
@@ -5368,7 +5370,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					&& financeDetail.getExtendedFieldRenderList().size() > 0) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
 				auditDetails.addAll(extendedFieldDetailsService.delete(details, AssetConstants.EXTENDEDFIELDS_MODULE,
-						financeMain.getFinReference(), "_Temp"));
+						financeMain.getFinReference(),null, "_Temp"));
 			}
 			
 			// Vas Recording Details details Prasad
@@ -5381,14 +5383,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Vas Recording Extended field Details
 				List<AuditDetail> vasExtDetails = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
 				auditDetails.addAll(extendedFieldDetailsService.delete(vasExtDetails, VASConsatnts.MODULE_NAME,
-						financeMain.getFinReference(), "_Temp"));
+						financeMain.getFinReference(),null, "_Temp"));
 			}
 
 			// Loan Extended field Details
 			if (financeDetail.getExtendedFieldRender() != null) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
 				auditDetails.addAll(extendedFieldDetailsService.delete(details, ExtendedFieldConstants.MODULE_LOAN,
-						financeMain.getFinReference(), "_Temp"));
+						financeMain.getFinReference(), financeDetail.getExtendedFieldHeader().getEvent(), "_Temp"));
 			}
 
 			// Deleting Finance Insurance Details
@@ -5538,7 +5540,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				extendedFieldRender.setTypeCodeDesc(recording.getProductDesc());
 				extendedFieldRender.setReference(recording.getVasReference());
 				details.add(extendedFieldDetailsService.setExtendedFieldAuditData(extendedFieldRender, auditTranType,
-						method));
+						method, i + 1));
 
 			}
 			financeDetail.getAuditDetailMap().put("VasExtendedDetails", details);
@@ -5867,6 +5869,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				sb.append(extendedFieldHeader.getModuleName());
 				sb.append("_");
 				sb.append(extendedFieldHeader.getSubModuleName());
+				if (extendedFieldHeader.getEvent() != null) {
+					sb.append("_");
+					sb.append(PennantStaticListUtil.getFinEventCode(extendedFieldHeader.getEvent()));
+				}
 				sb.append("_ED");
 				details = extendedFieldDetailsService.vaildateDetails(details, method, usrLanguage, sb.toString());
 				auditDetails.addAll(details);

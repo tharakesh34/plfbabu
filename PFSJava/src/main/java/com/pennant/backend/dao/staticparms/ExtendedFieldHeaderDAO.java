@@ -55,9 +55,11 @@ public interface ExtendedFieldHeaderDAO {
 
 	long save(ExtendedFieldHeader extendedFieldHeader, String type);
 
+	ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String moduleName, String subModuleName,String event, String type);
+	
 	ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String moduleName, String subModuleName, String type);
 
-	void createTable(String module, String subModule);
+	void createTable(String module, String subModule, String event);
 
 	void dropTable(String module, String subModule);
 

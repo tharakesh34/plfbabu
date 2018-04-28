@@ -44,16 +44,15 @@
 package com.pennant.backend.service.staticparms;
 
 import com.pennant.backend.model.audit.AuditHeader;
-
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 
 public interface ExtFieldConfigService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	ExtendedFieldHeader getExtendedFieldHeaderByModule(String moduleName, String subModuleName);
+	ExtendedFieldHeader getExtendedFieldHeaderByModule(String moduleName, String subModuleName,String event);
 
-	ExtendedFieldHeader getApprovedExtendedFieldHeaderByModule(String moduleName, String subModuleName);
+	ExtendedFieldHeader getApprovedExtendedFieldHeaderByModule(String moduleName, String subModuleName, String event);
 
 	AuditHeader delete(AuditHeader auditHeader);
 

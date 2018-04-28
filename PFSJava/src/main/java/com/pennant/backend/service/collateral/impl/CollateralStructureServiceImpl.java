@@ -59,7 +59,6 @@ import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralStructure;
-
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.GenericService;
@@ -384,7 +383,8 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 				getExtendedFieldHeaderDAO().save(extendedFieldHeader, "");
 				
 				// Table creation in DB for Newly created Configuration Type Details
-				getExtendedFieldHeaderDAO().createTable(extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName());
+				getExtendedFieldHeaderDAO().createTable(extendedFieldHeader.getModuleName(),
+						extendedFieldHeader.getSubModuleName(), extendedFieldHeader.getEvent());
 				
 			} else {
 				tranType = PennantConstants.TRAN_UPD;

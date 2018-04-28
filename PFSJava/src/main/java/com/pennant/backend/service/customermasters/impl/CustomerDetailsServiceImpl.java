@@ -1664,7 +1664,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		// validate ExtendedFieldDetails
 		List<ErrorDetail> errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(
 				customerDetails.getExtendedDetails(), ExtendedFieldConstants.MODULE_CUSTOMER,
-				customerDetails.getCustCtgCode());
+				customerDetails.getCustCtgCode(), null);
 		auditDetail.getErrorDetails().addAll(errorDetails);		
 
 		logger.debug("Leaving");
