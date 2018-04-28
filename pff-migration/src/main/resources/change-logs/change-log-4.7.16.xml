@@ -1091,7 +1091,7 @@ UNION ALL
 			format.','','Approved','','','','','',0,current_timestamp,1000,0);
 		</sql>
 	</changeSet>
-	<changeSet id="18" author="Vinay">
+	<!-- <changeSet id="18" author="Vinay">
 		<addColumn tableName="COLLATERALSTRUCTURE">
 			<column name="valuationFrequency" type="varchar(5)"
 				defaultValue="" />
@@ -1107,7 +1107,7 @@ UNION ALL
 			<column name="queryId" type="number(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+	 -->
 	<changeSet id="19" author="Vinay">
 		<createView viewName="COLLATERALSTRUCTURE_AVIEW"
 			replaceIfExists="true">
@@ -4091,5 +4091,14 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
  		</sql>
  	</changeSet>
+ 	
+ 	<changeSet id="63" author="Vinay">
+ 		<sql>
+ 			Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage","recordstatus","rolecode","nextrolecode","taskid","nexttaskid","recordtype","workflowid","lastmnton","lastmntby","version") values ('WFEE08','EN','E','{0} Should not be empty.',null,'Approved',null,null,null,null,null,0,to_timestamp('0001-02-27 00:00:00.0','null'),1000,0);
+			Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage","recordstatus","rolecode","nextrolecode","taskid","nexttaskid","recordtype","workflowid","lastmnton","lastmntby","version") values ('WFEE09','EN','E','Missing argument in {0} parameter.',null,'Approved',null,null,null,null,null,0,to_timestamp('0001-02-27 00:00:00.0','null'),1000,0);
+			Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage","recordstatus","rolecode","nextrolecode","taskid","nexttaskid","recordtype","workflowid","lastmnton","lastmntby","version") values ('WFEE10','EN','E','Signature of {0} parameter should be (String,Object,Long,Long).',null,'Approved',null,null,null,null,null,0,to_timestamp('0001-02-27 00:00:00.0','null'),1000,0);
+ 		</sql>
+ 	</changeSet>
+ 	
 </databaseChangeLog>
 	
