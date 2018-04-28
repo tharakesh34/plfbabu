@@ -63,6 +63,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -70,7 +71,6 @@ import com.pennant.backend.model.bmtmasters.ProductDeviation;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.PagedListService;
-import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -477,6 +477,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		}
 		this.deviationCode.setAttribute("deviationCode", Long.parseLong(deviationCode));
 		this.deviationCode.setAttribute("severity", aFinanceDeviations.getSeverity());
+		this.deviationCode.setAttribute("severityName", aFinanceDeviations.getSeverityName());
 		this.deviationCode.setValue(aFinanceDeviations.getDeviationCodeName(),
 				aFinanceDeviations.getDeviationCodeDesc());
 		this.remarks.setValue(aFinanceDeviations.getRemarks());
@@ -509,10 +510,17 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 					String severity2 = severity.toString();
 					if (StringUtils.isNotEmpty(severity2)) {
 						aFinanceDeviations.setSeverity(Long.parseLong(severity2));
+
 					}
 
 				}
-
+				//Set severity Name to Product Manual Deviation bean
+				Object severityName = this.deviationCode.getAttribute("severityName");
+				if (severityName != null) {
+					if (StringUtils.isNotEmpty(severityName.toString())) {
+						aFinanceDeviations.setSeverityName(severityName.toString());
+					}
+				}
 			} else {
 				aFinanceDeviations.setDeviationCode("");
 			}
@@ -811,6 +819,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 			if (details != null) {
 				this.deviationCode.setAttribute("deviationCode", details.getProductDevID());
 				this.deviationCode.setAttribute("severity", details.getSeverity());
+				this.deviationCode.setAttribute("severityName", details.getSeverityName());
 			} else {
 				this.deviationCode.setValue("", "");
 				this.deviationCode.setAttribute("severity", 0);
