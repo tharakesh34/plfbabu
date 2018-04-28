@@ -94,7 +94,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="docTypeDesc"
-										maxlength="50" width="450px" />
+										maxlength="50" width="350px" />
 								</hbox>
 							</row>
 							<row>
