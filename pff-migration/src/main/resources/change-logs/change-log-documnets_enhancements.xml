@@ -432,12 +432,20 @@
 		]]>
 	</sql>
 	</changeSet>
-	
-	<changeSet id="9.0" author="Durgaprasad G">
+	<changeSet id="9.0" author="Durgaprasad G" dbms="mssql">
 		<dropColumn tableName="bmtdocumenttypes_temp" columnName="dociscustdoc"/>
 		<dropColumn tableName="bmtdocumenttypes" columnName="dociscustdoc"/>
 	</changeSet>
-	
+	<changeSet id="9.0" author="Durgaprasad G" dbms="oracle">
+		<dropColumn tableName="bmtdocumenttypes_temp" columnName="dociscustdoc"/>
+		<dropColumn tableName="bmtdocumenttypes" columnName="dociscustdoc"/>
+	</changeSet>
+		<changeSet id="9.0" author="Durgaprasad G" dbms="postgresql">
+		<sql>
+			alter table bmtdocumenttypes_temp drop column dociscustdoc cascade;
+			alter table bmtdocumenttypes drop column dociscustdoc cascade;
+		</sql>
+	</changeSet>
 	<changeSet id="10.0" author="Durgaprasad G">
 		<createView viewName="fincovenanttype_aview" replaceIfExists="true">
 			SELECT t1.finreference,
