@@ -2170,8 +2170,8 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinFeeFactorUpload", new ModuleMapping("UploadHeader", UploadHeader.class, new String[] { "UploadHeader",
 		"UploadHeader_FFFView" }, null, new String[] {"UploadId","FileName"},null, 600));
 		
-		ModuleUtil.register("IRRCode", new ModuleMapping("IRRCode", IRRCode.class, new String[] { "IRRCodes", "IRRCodes_AView" }, masterWF, new String[] {"IRRID","IRRCode","IRRCodeDesc"},new String[][] { {
-			"Active", "0", "1" } }, 600));
+		ModuleUtil.register("IRRCode", new ModuleMapping("IRRCode", IRRCode.class, new String[] { "IRRCodes", "IRRCodes_AView" }, masterWF, new String[] {"IRRID","IRRCode","IRRCodeDesc"},new Object[][] { {
+			"Active", "0", 1 } }, 600));
 	
 		ModuleUtil.register("IRRFeeType", new ModuleMapping("IRRFeeType", IRRFeeType.class, new String[] { "IRRFeeTypes",
 		 "IRRFeeTypes_AView" }, masterWF, new String[] {"IRRID","FeeTypeID","FeePercentage"},null, 600));
