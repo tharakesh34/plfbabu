@@ -4194,14 +4194,10 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		  <sql>
 		  	 <![CDATA[
 			delete from REPORTLIST Where Code = 'TechnicalVerification';
-			
-			
 			 INSERT INTO REPORTLIST  
 			 Values ('TechnicalVerification','TechnicalVerification','listheader_CIF.label,listheader_CollateralType.label,listheader_CollateralReference.label,listheader_LoanReference.label',
 			 'cif,collateralType,collateralRef,keyReference','String,String,String,String',' ','ReportList04','Technical Verification','Technical Verification',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
-			 
-			
-			 	 	 ]]>
+			  	 	 ]]>
 		   </sql>
 	  </changeSet>
  
