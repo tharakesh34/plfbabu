@@ -20,6 +20,8 @@ public class ProductDeviation extends AbstractWorkflowEntity {
 	private String				lovValue;
 	private Product				befImage;
 	private LoggedInUser		userDetails;
+	private String severityCode;
+	private String severityName;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -122,5 +124,21 @@ public class ProductDeviation extends AbstractWorkflowEntity {
 
 	public void setSeverity(long severity) {
 		this.severity = severity;
+	}
+
+	public String getSeverityCode() {
+		return severityCode;
+	}
+
+	public void setSeverityCode(String severityCode) {
+		this.severityCode = severityCode;
+	}
+
+	public String getSeverityName() {
+		return severityName;
+	}
+
+	public void setSeverityName(String severityName) {
+		this.severityName = severityName;
 	}
 }
