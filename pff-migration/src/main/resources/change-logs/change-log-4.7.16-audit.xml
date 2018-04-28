@@ -225,4 +225,9 @@
 	<changeSet id="14" author="Jayant">
 		<addPrimaryKey tableName="adtauth_limit_details" columnNames="auditid, auditdate, auditseq, auditimage" constraintName="pk_adtauth_limit_details"/>
 	</changeSet>
+	
+	<changeSet id="15" author="Vinay">
+	<comment>Active data type changes from numeric to smallint</comment>
+		<modifyDataType tableName="AdtIrrCodes" columnName="Active" newDataType="smallint"/>
+	</changeSet>
 	</databaseChangeLog>
