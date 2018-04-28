@@ -250,7 +250,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 					getErrorDetails("92008",
-							new String[] { APIHeader.API_SERVICEVERSION, PennantConstants.APIDateFormatter });
+							new String[] { APIHeader.API_REQ_TIME, PennantConstants.APIDateFormatter });
 
 				}
 			} else if (APIHeader.API_LANGUAGE.equalsIgnoreCase(key)) {
