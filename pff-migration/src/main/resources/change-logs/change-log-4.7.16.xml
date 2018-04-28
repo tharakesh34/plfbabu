@@ -1091,7 +1091,7 @@ UNION ALL
 			format.','','Approved','','','','','',0,current_timestamp,1000,0);
 		</sql>
 	</changeSet>
-	<!-- <changeSet id="18" author="Vinay">
+	<changeSet id="18" author="Vinay">
 		<addColumn tableName="COLLATERALSTRUCTURE">
 			<column name="valuationFrequency" type="varchar(5)"
 				defaultValue="" />
@@ -1106,7 +1106,7 @@ UNION ALL
 			<column name="valuationPending" type="boolean" defaultValue="0" />
 			<column name="queryId" type="number(18,0)" defaultValue="0" />
 		</addColumn>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="19" author="Vinay">
 		<createView viewName="COLLATERALSTRUCTURE_AVIEW"
@@ -3559,7 +3559,7 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			WHERE     NOT EXISTS (SELECT 1 FROM Auth_Limit_Details_Temp WHERE id = T1.id)
 		</createView>
 	</changeSet>
-	<!-- <changeSet id="41" author="Jayant">
+	<changeSet id="41" author="Jayant">
 		<sql>
 			update SeqSecGroups set seqno = (Select Max(grpid)+1 from Secgroups);
 			update SeqSecRights set seqno = (Select Max(rightid)+1 from SecRights);
@@ -3683,7 +3683,7 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		</sql>
 	
 	
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="42" author="Vinay">
 		<sql>
