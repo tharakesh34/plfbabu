@@ -4182,5 +4182,13 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		]]>
 	</sql>
 	</changeSet>
+	<changeSet id="59" author="Jayant">
+		<sql>
+			delete from REPORTFILTERFIELDS where reportid in (Select reportid from reportconfiguration where reportjaspername='ClosedLoans') and FIELDID=3;
+			Insert into REPORTFILTERFIELDS (REPORTID,FIELDID,FIELDNAME,FIELDTYPE,FIELDLABEL,FIELDDBNAME,APPUTILMETHODNAME,MODULENAME,LOVHIDDENFIELDMETHOD,LOVTEXTFIELDMETHOD,MULTISELECTSEARCH,FIELDLENGTH,FIELDMAXVALUE,FIELDMINVALUE,SEQORDER,MANDATORY,FIELDCONSTRAINT,FIELDERRORMESSAGE,WHERECONDITION,STATICVALUE,FIELDWIDTH,FILTERREQUIRED,DEFAULTFILTER,VERSION,LASTMNTBY,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON,FILTERFILEDS) 
+			values ((Select reportid from reportconfiguration where reportjaspername='ClosedLoans'),3,'Status','STATICLIST','Status','t3.closingstatus','getFinanceClosingStatusList',
+        	null,null,null,0,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,now(),null);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
