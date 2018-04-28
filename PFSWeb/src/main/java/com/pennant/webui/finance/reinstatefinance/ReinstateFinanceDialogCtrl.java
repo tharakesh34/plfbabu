@@ -801,7 +801,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 				}
 				else{
 					msg = PennantApplicationUtil.getSavingStatus(aReinstateFinance.getRoleCode(),aReinstateFinance.getNextRoleCode(), 
-							aReinstateFinance.getFinReference(), " Finance ", aReinstateFinance.getRecordStatus());
+							aReinstateFinance.getFinReference(), " Loan ", aReinstateFinance.getRecordStatus());
 					Clients.showNotification(msg,  "info", null, null, -1);
 				}
 			}
