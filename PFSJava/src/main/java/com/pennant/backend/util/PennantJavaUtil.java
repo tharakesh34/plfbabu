@@ -2205,16 +2205,12 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("FIStatusReason", new ModuleMapping("FIStatusReason", ReasonCode.class,
 				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
-				new Object[][] { { "ReasonTypecode", "0", StatuReasons.FISRES.getKey() }, { "Active", "0", 1 } }, 300));
+				new Object[][] { { "ReasonTypecode", "0", StatuReasons.FISRES.getKey() }, { "Active", "0", 1 } }, 500));
 
 		
 		ModuleUtil.register("TVStatusReason", new ModuleMapping("TVStatusReason", ReasonCode.class,
 				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
-				new Object[][] { { "ReasonTypecode", "0", StatuReasons.TVSRES.getKey() }, { "Active", "0", 1 } }, 300));
-		
-		ModuleUtil.register("TVStatusReason", new ModuleMapping("TVStatusReason", ReasonCode.class,
-				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
-				new Object[][] { { "ReasonTypecode", "0", StatuReasons.TVSRES.getKey() }, { "Active", "0", 1 } }, 300));
+				new Object[][] { { "ReasonTypecode", "0", StatuReasons.TVSRES.getKey() }, { "Active", "0", 1 } }, 500));
 		
 		/*Technical Verification*/
 		ModuleUtil.register("TechnicalVerification", new ModuleMapping("TechnicalVerification", TechnicalVerification.class,

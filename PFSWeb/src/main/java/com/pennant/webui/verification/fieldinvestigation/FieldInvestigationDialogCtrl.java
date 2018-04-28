@@ -225,12 +225,11 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			doLoadWorkFlow(this.fieldInvestigation.isWorkflow(), this.fieldInvestigation.getWorkflowId(),
 					this.fieldInvestigation.getNextTaskId());
 
-			if (isWorkFlowEnabled()) {
+			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-			} 
-			
-			if (!enqiryModule) {
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
+			} else if (fromLoanOrg) {
+				setWorkFlowEnabled(true);
 			}
 			
 			doSetFieldProperties();
