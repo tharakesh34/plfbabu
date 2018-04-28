@@ -286,6 +286,8 @@
 			<menuItem id="menu_Item_PartnerSource"
 				zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=SOPT"
 				rightName="menuItem_SystemMaster_VehicleDealer" />
+			<menuItem id="menu_Item_IRRCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/IRRCode/IRRCodeList.zul" 
+				rightName="menuItem_applicationmaster_IRRCode"/>
 		</menu>
 		<menuItem id="menu_Item_LovFieldDetail"
 			zulNavigation="/WEB-INF/pages/SystemMaster/LovFieldDetail/LovFieldDetailList.zul"
@@ -486,8 +488,12 @@
 		<menuItem id="menu_Item_VASCancel"
 			zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=C"
 			rightName="menuItem_Finance_VASCancel" />
-		<menuItem id="menu_Item_CorpCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CorpCreditAppReview"/>
-		<menuItem id="menu_Item_CreditApplicationReviewMaintinence" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewMaintinenceList.zul"/>
+		<menuItem id="menu_Item_CorpCreditAppReview"
+			zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CorpCreditAppReview"
+			rightName="menuItem_CorpCreditAppReview" />
+		<menuItem id="menu_Item_CreditApplicationReviewMaintinence"
+			zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewMaintinenceList.zul"
+			rightName="menuItem_CreditApplicationReviewMaintinence" />
 <!-- 		<menuItem id="menu_Item_CommCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CommCreditAppReview"/>
 		<menuItem id="menu_Item_FinCreditRevSubCategory" zulNavigation="/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul"/> -->
 	</menu>
