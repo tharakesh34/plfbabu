@@ -3986,6 +3986,31 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		update reportconfiguration set datasourcename='dataSource' where datasourcename in ('datasource','pfsDatasource');
 	</sql>
 </changeSet>
-
+<changeSet id="57" author="Appalaswamy">
+<comment>SeverityName display issue fix</comment>
+	<createView viewName="productdeviations_aview" replaceIfExists="true">
+ 	SELECT t1.productdevid,
+    t1.deviationid,
+    t1.productcode,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.code AS deviationcode,
+    t2.description AS deviationdesc,
+    t2.severity,
+    T3.FieldCodeValue SeverityCode,
+    T3.ValueDesc SeverityName 
+   	FROM productdeviations t1
+    JOIN manualdeviations t2 ON t1.deviationid = t2.deviationid 
+    INNER JOIN RMTLovFieldDetail t3 ON t2.Severity = t3.fieldcodeid
+ 	</createView>
+ 	</changeSet>
 </databaseChangeLog>
 	
