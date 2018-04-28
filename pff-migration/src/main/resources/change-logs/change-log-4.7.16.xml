@@ -1091,7 +1091,7 @@ UNION ALL
 			format.','','Approved','','','','','',0,current_timestamp,1000,0);
 		</sql>
 	</changeSet>
-	<changeSet id="18" author="Vinay">
+	<!-- <changeSet id="18" author="Vinay">
 		<addColumn tableName="COLLATERALSTRUCTURE">
 			<column name="valuationFrequency" type="varchar(5)"
 				defaultValue="" />
@@ -1106,7 +1106,7 @@ UNION ALL
 			<column name="valuationPending" type="boolean" defaultValue="0" />
 			<column name="queryId" type="number(18,0)" defaultValue="0" />
 		</addColumn>
-	</changeSet>
+	</changeSet> -->
 	
 	<changeSet id="19" author="Vinay">
 		<createView viewName="COLLATERALSTRUCTURE_AVIEW"
@@ -3559,7 +3559,7 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			WHERE     NOT EXISTS (SELECT 1 FROM Auth_Limit_Details_Temp WHERE id = T1.id)
 		</createView>
 	</changeSet>
-	<changeSet id="41" author="Jayant">
+	<!-- <changeSet id="41" author="Jayant">
 		<sql>
 			update SeqSecGroups set seqno = (Select Max(grpid)+1 from Secgroups);
 			update SeqSecRights set seqno = (Select Max(rightid)+1 from SecRights);
@@ -3665,14 +3665,14 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			update SeqSecGroupRights set SeqNo = (SeqNo+60);
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+1) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
-			<!--
+			
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+3) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+4) from SeqSecRoleGroups), (select (SeqNo+4) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+5) from SeqSecRoleGroups), (select (SeqNo+5) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+6) from SeqSecRoleGroups), (select (SeqNo+6) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+7) from SeqSecRoleGroups), (select (SeqNo+7) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+8) from SeqSecRoleGroups), (select (SeqNo+8) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2018-04-06 04:16:21','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
-			-->
+			
 			update SeqSecRoleGroups set SeqNo = (SeqNo+2) ;
 			
 			update SeqSecGroups set SeqNo = (SeqNo+8) ;
@@ -3683,7 +3683,7 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		</sql>
 	
 	
-	</changeSet>
+	</changeSet> -->
 	
 	<changeSet id="42" author="Vinay">
 		<sql>
@@ -4011,6 +4011,55 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
     JOIN manualdeviations t2 ON t1.deviationid = t2.deviationid 
     INNER JOIN RMTLovFieldDetail t3 ON t2.Severity = t3.fieldcodeid
  	</createView>
+ 	</changeSet>
+ 	
+ 	<changeSet id="58" author="Vinay">
+ 		<comment>Update scripts for existing data</comment>
+ 		<sql>
+ 			update CustomerBankInfo set creditTranNo      =0 where creditTranNo       is null;
+			update CustomerBankInfo set debitTranNo       =0 where debitTranNo        is null;
+			update CustomerBankInfo set cashDepositNo     =0 where cashDepositNo      is null;
+			update CustomerBankInfo set cashWithdrawalNo  =0 where cashWithdrawalNo   is null;
+			update CustomerBankInfo set chqDepositNo      =0 where chqDepositNo       is null;
+			update CustomerBankInfo set chqIssueNo        =0 where chqIssueNo         is null;
+			update CustomerBankInfo set inwardChqBounceNo =0 where inwardChqBounceNo  is null;
+			update CustomerBankInfo set outwardChqBounceNo=0 where outwardChqBounceNo is null;
+			
+		</sql>
+	</changeSet>
+		
+	<changeSet id="59" author="Vinay">
+ 		<comment>Update scripts for existing data</comment>
+ 		<sql>
+			update CustomerBankInfo_Temp set creditTranNo      =0 where creditTranNo       is null;
+			update CustomerBankInfo_Temp set debitTranNo       =0 where debitTranNo        is null;
+			update CustomerBankInfo_Temp set cashDepositNo     =0 where cashDepositNo      is null;
+			update CustomerBankInfo_Temp set cashWithdrawalNo  =0 where cashWithdrawalNo   is null;
+			update CustomerBankInfo_Temp set chqDepositNo      =0 where chqDepositNo       is null;
+			update CustomerBankInfo_Temp set chqIssueNo        =0 where chqIssueNo         is null;
+			update CustomerBankInfo_Temp set inwardChqBounceNo =0 where inwardChqBounceNo  is null;
+			update CustomerBankInfo_Temp set outwardChqBounceNo=0 where outwardChqBounceNo is null;
+ 		</sql>
+ 	</changeSet>
+ 	
+ 	<changeSet id="60" author="Vinay">
+ 		<comment>Update scripts for existing data</comment>
+ 		<sql>
+ 			update CustomerExtLiability set tenure         =0 where tenure          is null;
+			update CustomerExtLiability set tenureBal      =0 where tenureBal       is null;
+			update CustomerExtLiability set bounceNo       =0 where bounceNo        is null;
+			update CustomerExtLiability set emiCnsdrForFOIR=0 where emiCnsdrForFOIR is null;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="61" author="Vinay">
+ 		<comment>Update scripts for existing data</comment>
+ 		<sql>
+			update CustomerExtLiability_temp set tenure         =0 where tenure          is null;
+			update CustomerExtLiability_temp set tenureBal      =0 where tenureBal       is null;
+			update CustomerExtLiability_temp set bounceNo       =0 where bounceNo        is null;
+			update CustomerExtLiability_temp set emiCnsdrForFOIR=0 where emiCnsdrForFOIR is null;
+ 		</sql>
  	</changeSet>
 </databaseChangeLog>
 	

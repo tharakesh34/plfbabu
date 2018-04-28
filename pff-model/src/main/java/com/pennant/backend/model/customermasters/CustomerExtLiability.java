@@ -51,12 +51,12 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	
 	//As per Profectus documnet below fields added
 	private BigDecimal roi = BigDecimal.ZERO;
-	private int tenure;
-	private int tenureBal;
-	private int bounceNo;
+	private int tenure = 0;
+	private int tenureBal = 0;
+	private int bounceNo = 0;
 	private BigDecimal pos = BigDecimal.ZERO;
 	private BigDecimal overdue = BigDecimal.ZERO;
-	private boolean emiCnsdrForFOIR;
+	private boolean emiCnsdrForFOIR = false;
 	private String source;
 	private String checkedBy;
 	private String securityDetail;

@@ -90,21 +90,21 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity  
 	private String sourceId;
 	
 	//As per Profectus documnet below fields added
-	private int creditTranNo;
+	private int creditTranNo = 0;
 	private BigDecimal creditTranAmt = BigDecimal.ZERO;
 	private BigDecimal creditTranAvg = BigDecimal.ZERO;
-	private int debitTranNo;
+	private int debitTranNo = 0;
 	private BigDecimal debitTranAmt = BigDecimal.ZERO;
-	private int cashDepositNo;
+	private int cashDepositNo = 0;
 	private BigDecimal cashDepositAmt = BigDecimal.ZERO;
-	private int cashWithdrawalNo;
+	private int cashWithdrawalNo = 0;
 	private BigDecimal cashWithdrawalAmt = BigDecimal.ZERO;
-	private int chqDepositNo;
+	private int chqDepositNo = 0;
 	private BigDecimal chqDepositAmt = BigDecimal.ZERO;
-	private int chqIssueNo;
+	private int chqIssueNo = 0;
 	private BigDecimal chqIssueAmt = BigDecimal.ZERO;
-	private int inwardChqBounceNo;
-	private int outwardChqBounceNo;
+	private int inwardChqBounceNo = 0;
+	private int outwardChqBounceNo = 0;
 	private BigDecimal eodBalMin = BigDecimal.ZERO;
 	private BigDecimal eodBalMax = BigDecimal.ZERO;
 	private BigDecimal eodBalAvg = BigDecimal.ZERO;

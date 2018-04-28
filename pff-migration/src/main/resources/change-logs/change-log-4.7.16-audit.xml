@@ -230,4 +230,28 @@
 	<comment>Active data type changes from numeric to smallint</comment>
 		<modifyDataType tableName="AdtIrrCodes" columnName="Active" newDataType="smallint"/>
 	</changeSet>
+	
+	<changeSet id="16" author="Vinay">
+ 		<comment>Update scripts for existing data</comment>
+		<sql>
+			update AdtCustomerBankInfo set creditTranNo      =0 where creditTranNo       is null;
+			update AdtCustomerBankInfo set debitTranNo       =0 where debitTranNo        is null;
+			update AdtCustomerBankInfo set cashDepositNo     =0 where cashDepositNo      is null;
+			update AdtCustomerBankInfo set cashWithdrawalNo  =0 where cashWithdrawalNo   is null;
+			update AdtCustomerBankInfo set chqDepositNo      =0 where chqDepositNo       is null;
+			update AdtCustomerBankInfo set chqIssueNo        =0 where chqIssueNo         is null;
+			update AdtCustomerBankInfo set inwardChqBounceNo =0 where inwardChqBounceNo  is null;
+			update AdtCustomerBankInfo set outwardChqBounceNo=0 where outwardChqBounceNo is null;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="17" author="Vinay">
+ 		<comment>Update scripts for existing data</comment>
+		<sql>
+			update AdtCustomerExtLiability set tenure         =0 where tenure          is null;
+			update AdtCustomerExtLiability set tenureBal      =0 where tenureBal       is null;
+			update AdtCustomerExtLiability set bounceNo       =0 where bounceNo        is null;
+			update AdtCustomerExtLiability set emiCnsdrForFOIR=0 where emiCnsdrForFOIR is null;
+		</sql>
+	</changeSet>
 	</databaseChangeLog>
