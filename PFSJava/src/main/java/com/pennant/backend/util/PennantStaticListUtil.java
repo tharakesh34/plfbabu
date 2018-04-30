@@ -1059,6 +1059,7 @@ public class PennantStaticListUtil {
 			dealerType.add(new ValueLabel("V", Labels.getLabel("label_Vendor")));
 			dealerType.add(new ValueLabel("S", Labels.getLabel("label_Supplier")));
 			dealerType.add(new ValueLabel("DSA", Labels.getLabel("label_DSA")));
+			dealerType.add(new ValueLabel("DMA", Labels.getLabel("label_DMA")));
 			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_VASM, "VAS Manufacturer"));
 			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_PARTNER, "Partner Source"));
 
@@ -3249,6 +3250,7 @@ public class PennantStaticListUtil {
 			eligibilityMethod.add(new ValueLabel("GTP", Labels.getLabel("label_EligibilityMethod_GrossTurnover")));
 			eligibilityMethod.add(new ValueLabel("BS", Labels.getLabel("label_EligibilityMethod_BankingSurrogate")));
 			eligibilityMethod.add(new ValueLabel("BT", Labels.getLabel("label_EligibilityMethod_BankingTurnover")));
+			eligibilityMethod.add(new ValueLabel("TL", Labels.getLabel("label_EligibilityMethod_TL")));
 		}
 		return eligibilityMethod;
 	}
