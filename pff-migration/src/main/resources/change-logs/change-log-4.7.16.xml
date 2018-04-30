@@ -4372,5 +4372,93 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			<column name="ReasonCode" type="char(3)" />
 		</createTable>
 	</changeSet>
+	<changeSet id="62" author="Pruthvi">
+		<comment>  Created and assigned menu rights for the menu items that doesn’t specify any right name </comment>
+		<sql>
+			delete from secrights where rightname='menu_Item_AccountMappingReport';
+			delete from secrights where rightname='menu_Item_LimitDetails';
+			delete from secrights where rightname='menu_Item_MandateDetails';
+			delete from secrights where rightname='menu_Item_CollateralDetails';
+			delete from secrights where rightname='menu_Item_NoObjectionCertificate';
+			delete from secrights where rightname='menu_Item_WelcomeLetter';
+			delete from secrights where rightname='menu_Item_Disbursment';
+			delete from secrights where rightname='menu_Item_VasDetails';
+			delete from secrights where rightname='menu_Item_WriteoffReport';
+			delete from secrights where rightname='menuItem_AdminReports_UserRoles';
+			
+			Insert into SECRIGHTS 
+			values ((select max(rightid)+1 from SECRIGHTS),0,'menu_Item_AccountMappingReport','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
+			Insert into SECRIGHTS 
+			values ((select max(rightid)+1 from SECRIGHTS),0,'menu_Item_LimitDetails','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
+			Insert into SECRIGHTS 
+			values ((select max(rightid)+1 from SECRIGHTS),0,'menu_Item_MandateDetails','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
+			Insert into SECRIGHTS 
+			values ((select max(rightid)+1 from SECRIGHTS),0,'menu_Item_CollateralDetails','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
+			Insert into SECRIGHTS 
+			values ((select max(rightid)+1 from SECRIGHTS),0,'menu_Item_NoObjectionCertificate','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
+			Insert into SECRIGHTS 
+			values ((select max(rightid)+1 from SECRIGHTS),0,'menu_Item_WelcomeLetter','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
+			Insert into SECRIGHTS 
+			values ((select max(rightid)+1 from SECRIGHTS),0,'menu_Item_Disbursment','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
+			Insert into SECRIGHTS 
+			values ((select max(rightid)+1 from SECRIGHTS),0,'menu_Item_VasDetails','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
+			Insert into SECRIGHTS 
+			values ((select max(rightid)+1 from SECRIGHTS),0,'menu_Item_WriteoffReport','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
+			Insert into SECRIGHTS 
+			values ((select max(rightid)+1 from SECRIGHTS),0,'menuItem_AdminReports_UserRoles','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
+			
+			
+			update seqSECRIGHTS set seqno=(select max(rightid)+1 from SECRIGHTS);
+		</sql>
+	</changeSet>
+	<changeSet id="63" author="Pruthvi">
+		<comment>  Created and assigned menu rights for the menu items that doesn’t specify any right name </comment>
+		<sql>
+			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='REPORTS_ADMIN') and rightid=(select rightid from secrights where rightname='menu_Item_AccountMappingReport');
+			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='REPORTS_CLLIMITS') and rightid=(select rightid from secrights where rightname='menu_Item_LimitDetails');
+			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='REPORTS_CLLIMITS') and rightid=(select rightid from secrights where rightname='menu_Item_MandateDetails');
+			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='REPORTS_CLLIMITS') and rightid=(select rightid from secrights where rightname='menu_Item_CollateralDetails');
+			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='REPORTS_ADMIN') and rightid=(select rightid from secrights where rightname='menu_Item_NoObjectionCertificate');
+			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='REPORTS_ADMIN') and rightid=(select rightid from secrights where rightname='menu_Item_WelcomeLetter');
+			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='REPORTS_DAILYDISBRPT') and rightid=(select rightid from secrights where rightname='menu_Item_Disbursment');
+			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='REPORTS_ADMIN') and rightid=(select rightid from secrights where rightname='menu_Item_VasDetails');
+			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='REPORTS_ADMIN') and rightid=(select rightid from secrights where rightname='menu_Item_WriteoffReport');
+			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='REPORTS_ADMIN') and rightid=(select rightid from secrights where rightname='menuItem_AdminReports_UserRoles');
+			
+			
+			Insert into SECGROUPRIGHTS 
+			values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(select grpid from secgroups where grpcode='REPORTS_ADMIN'),(select rightid from secrights where rightname='menu_Item_AccountMappingReport'),1,0,10000,current_timestamp,' ',null,null,null,null,null,0);
+			
+			Insert into SECGROUPRIGHTS 
+			values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(select grpid from secgroups where grpcode='REPORTS_CLLIMITS'),(select rightid from secrights where rightname='menu_Item_LimitDetails'),1,0,10000,current_timestamp,' ',null,null,null,null,null,0);
+			
+			Insert into SECGROUPRIGHTS 
+			values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(select grpid from secgroups where grpcode='REPORTS_CLLIMITS'),(select rightid from secrights where rightname='menu_Item_MandateDetails'),1,0,10000,current_timestamp,' ',null,null,null,null,null,0);
+			
+			Insert into SECGROUPRIGHTS 
+			values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(select grpid from secgroups where grpcode='REPORTS_CLLIMITS'),(select rightid from secrights where rightname='menu_Item_CollateralDetails'),1,0,10000,current_timestamp,' ',null,null,null,null,null,0);
+			
+			Insert into SECGROUPRIGHTS 
+			values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(select grpid from secgroups where grpcode='REPORTS_ADMIN'),(select rightid from secrights where rightname='menu_Item_NoObjectionCertificate'),1,0,10000,current_timestamp,' ',null,null,null,null,null,0);
+			
+			Insert into SECGROUPRIGHTS 
+			values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(select grpid from secgroups where grpcode='REPORTS_ADMIN'),(select rightid from secrights where rightname='menu_Item_WelcomeLetter'),1,0,10000,current_timestamp,' ',null,null,null,null,null,0);
+			
+			Insert into SECGROUPRIGHTS 
+			values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(select grpid from secgroups where grpcode='REPORTS_DAILYDISBRPT'),(select rightid from secrights where rightname='menu_Item_Disbursment'),1,0,10000,current_timestamp,' ',null,null,null,null,null,0);
+			
+			Insert into SECGROUPRIGHTS 
+			values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(select grpid from secgroups where grpcode='REPORTS_ADMIN'),(select rightid from secrights where rightname='menu_Item_VasDetails'),1,0,10000,current_timestamp,' ',null,null,null,null,null,0);
+			
+			Insert into SECGROUPRIGHTS 
+			values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(select grpid from secgroups where grpcode='REPORTS_ADMIN'),(select rightid from secrights where rightname='menu_Item_WriteoffReport'),1,0,10000,current_timestamp,' ',null,null,null,null,null,0);
+			
+			Insert into SECGROUPRIGHTS 
+			values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(select grpid from secgroups where grpcode='REPORTS_ADMIN'),(select rightid from secrights where rightname='menuItem_AdminReports_UserRoles'),1,0,10000,current_timestamp,' ',null,null,null,null,null,0);
+			
+			
+			update seqSECGROUPRIGHTS set seqno=(select max(GRPRIGHTID)+1 from SECGROUPRIGHTS); 
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
