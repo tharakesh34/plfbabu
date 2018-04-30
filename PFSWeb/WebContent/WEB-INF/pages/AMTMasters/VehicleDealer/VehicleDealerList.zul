@@ -128,16 +128,8 @@
 										id="sortOperator_dealerTelephone" width="43px" mold="select"
 										rows="1" />
 									<hbox>
-										<textbox id="phoneCountryCode"
-											width="40px" />
-										<label value="-"
-											style="display:inline-block;padding-top:4px;" />
-										<textbox id="phoneAreaCode"
-											width="40px" />
-										<label value="-"
-											style="display:inline-block;padding-top:4px;" />
 										<textbox id="dealerTelephone"
-											width="80px" />
+											width="100px" />
 									</hbox>
 									<label
 										id="label_VehicleDealerSearch_Active"

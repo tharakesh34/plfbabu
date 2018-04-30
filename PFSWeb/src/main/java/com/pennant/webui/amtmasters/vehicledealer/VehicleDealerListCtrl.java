@@ -45,7 +45,6 @@ package com.pennant.webui.amtmasters.vehicledealer;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.springframework.util.StringUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -62,16 +61,15 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.amtmasters.vehicledealer.model.VehicleDealerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -102,8 +100,6 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	protected Textbox dealerName;
 	protected Combobox dealerType;
 	protected Textbox dealerTelephone;
-	protected Textbox phoneCountryCode;
-	protected Textbox phoneAreaCode;
 	protected Textbox email;
 	protected Textbox dealerProvince;
 	protected Textbox dealerCity;
@@ -140,29 +136,12 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-
-		Filter[] filters = new Filter[2];
-		String phoneNumber = PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(),
-				this.phoneAreaCode.getValue(), this.dealerTelephone.getValue());
-		if (StringUtils.isEmpty(phoneNumber)) {
-			filters = new Filter[1];
-			filters[0] = new Filter("DealerType", this.module, Filter.OP_EQUAL);
-		} else {
-			filters = new Filter[2];
-			filters[0] = SearchFilterControl.getFilter("dealerTelephone", phoneNumber, sortOperator_dealerTelephone);
-			filters[1] = new Filter("DealerType", this.module, Filter.OP_EQUAL);
-		}
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("DealerType", this.module, Filter.OP_EQUAL);
 		searchObject.addFilterAnd(filters);
 	}
 
-	@Override
-	protected void doReset() {
-		super.doReset();
-		SearchFilterControl.resetFilters(phoneAreaCode, sortOperator_dealerTelephone);
-		SearchFilterControl.resetFilters(phoneCountryCode, sortOperator_dealerTelephone);
-		SearchFilterControl.resetFilters(dealerTelephone, sortOperator_dealerTelephone);
-	}
-
+ 
 	/**
 	 * The framework calls this event handler when an application requests that
 	 * the window to be created.
@@ -187,6 +166,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 				Operators.STRING);
 		registerField("dealerName", listheader_DealerName, SortOrder.NONE, dealerName, sortOperator_dealerName,
 				Operators.STRING);
+		registerField("dealerTelephone", listheader_DealerTelephone, SortOrder.NONE, dealerTelephone, sortOperator_dealerTelephone, Operators.STRING);
 		registerField("email", listheader_Email, SortOrder.NONE, email, sortOperator_email, Operators.STRING);
 		registerField("dealerTelephone", listheader_DealerTelephone, SortOrder.NONE);
 		registerField("dealerFax", listheader_DealerFax, SortOrder.NONE);
@@ -317,9 +297,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 		
 		this.dealerId.setMaxlength(19);
 		this.dealerName.setMaxlength(50);
-		this.phoneAreaCode.setMaxlength(3);
-		this.phoneCountryCode.setMaxlength(3);
-		this.dealerTelephone.setMaxlength(8);
+		this.dealerTelephone.setMaxlength(10);
 		this.recordStatus.setMaxlength(50);
 		
 		logger.debug(Literal.LEAVING);

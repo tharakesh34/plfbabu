@@ -80,7 +80,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTEmailValidator;
-import com.pennant.util.Constraint.PTPhoneNumberValidator;
+import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
@@ -116,10 +116,6 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	protected ExtendedCombobox dealerCountry; // autowired
 	protected ExtendedCombobox dealerCity; // autowired
 	protected ExtendedCombobox dealerProvince; // autowired
-	protected Textbox faxCountryCode; // autoWired
-	protected Textbox faxAreaCode; // autoWired
-	protected Textbox phoneCountryCode; // autoWired
-	protected Textbox phoneAreaCode; // autoWired
 	protected Textbox email;
 	protected Textbox dealerPoBox;
 	protected Textbox zipCode;
@@ -252,12 +248,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		
 		// Empty sent any required attributes
 		this.dealerName.setMaxlength(50);
-		this.dealerTelephone.setMaxlength(8);
-		this.phoneCountryCode.setMaxlength(3);
-		this.phoneAreaCode.setMaxlength(3);
-		this.dealerFax.setMaxlength(8);
-		this.faxCountryCode.setMaxlength(3);
-		this.faxAreaCode.setMaxlength(3);
+		this.dealerTelephone.setMaxlength(10);
+		this.dealerFax.setMaxlength(10);
 		this.dealerAddress1.setMaxlength(50);
 		this.dealerAddress2.setMaxlength(50);
 		this.dealerAddress3.setMaxlength(50);
@@ -508,14 +500,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		logger.debug(Literal.ENTERING);
 		fillComboBox(dealerType, module, PennantStaticListUtil.getDealerType(), "");
 		this.dealerName.setValue(aVehicleDealer.getDealerName());
-		String[] telephone = PennantApplicationUtil.unFormatPhoneNumber(aVehicleDealer.getDealerTelephone());
-		this.phoneCountryCode.setValue(telephone[0]);
-		this.phoneAreaCode.setValue(telephone[1]);
-		this.dealerTelephone.setValue(telephone[2]);
-		String[] fax = PennantApplicationUtil.unFormatPhoneNumber(aVehicleDealer.getDealerFax());
-		this.faxCountryCode.setValue(fax[0]);
-		this.faxAreaCode.setValue(fax[1]);
-		this.dealerFax.setValue(fax[2]);
+		this.dealerTelephone.setValue(aVehicleDealer.getDealerTelephone());
+		this.dealerFax.setValue(aVehicleDealer.getDealerFax());
 		this.dealerAddress1.setValue(aVehicleDealer.getDealerAddress1());
 		this.dealerAddress2.setValue(aVehicleDealer.getDealerAddress2());
 		this.dealerAddress3.setValue(aVehicleDealer.getDealerAddress3());
@@ -593,15 +579,12 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			wve.add(we);
 		}
 		try {
-			aVehicleDealer.setDealerTelephone(PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(),
-					this.phoneAreaCode.getValue(), this.dealerTelephone.getValue()));
+			aVehicleDealer.setDealerTelephone(this.dealerTelephone.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aVehicleDealer.setDealerFax(PennantApplicationUtil.formatPhoneNumber(this.faxCountryCode.getValue(),
-					this.faxAreaCode.getValue(), this.dealerFax.getValue()));
-
+			aVehicleDealer.setDealerFax(this.dealerFax.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -807,22 +790,13 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		doClearMessage();
 
 		if (!this.dealerName.isReadonly()) {
-			this.dealerName
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_DealerName.value"),
-							PennantRegularExpressions.REGEX_NAME, true));
-		}
-		if (!this.phoneCountryCode.isReadonly()) {
-			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(
-					Labels.getLabel("label_VehicleDealerDialog_phoneCountryCode.value"), true, 1));
-		}
-		if (!this.phoneAreaCode.isReadonly()) {
-			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(
-					Labels.getLabel("label_VehicleDealerDialog_phoneAreaCode.value"), true, 2));
-		}
+			this.dealerName.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_DealerName.value"),PennantRegularExpressions.REGEX_NAME, true));
+		} 
+		
 		if (!this.dealerTelephone.isReadonly()) {
-			this.dealerTelephone.setConstraint(new PTPhoneNumberValidator(
-					Labels.getLabel("label_VehicleDealerDialog_DealerTelephone.value"), true, 3));
+			this.dealerTelephone.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_VehicleDealerDialog_DealerTelephone.value"), true));
 		}
+		
 		if (!this.dealerAddress1.isReadonly()) {
 			this.dealerAddress1.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_DealerAddress1.value"),
@@ -843,16 +817,9 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		}
 		if (!this.dealerFax.isReadonly()) {
 			this.dealerFax.setConstraint(
-					new PTPhoneNumberValidator(Labels.getLabel("label_VehicleDealerDialog_DealerFax.value"), true, 3));
+					new PTMobileNumberValidator(Labels.getLabel("label_VehicleDealerDialog_DealerFax.value"), true));
 		}
-		if (!this.faxCountryCode.isReadonly()) {
-			this.faxCountryCode.setConstraint(new PTPhoneNumberValidator(
-					Labels.getLabel("label_VehicleDealerDialog_faxCountryCode.value"), true, 1));
-		}
-		if (!this.faxAreaCode.isReadonly()) {
-			this.faxAreaCode.setConstraint(new PTPhoneNumberValidator(
-					Labels.getLabel("label_VehicleDealerDialog_faxAreaCode.value"), true, 2));
-		}
+	 
 		if (!this.email.isReadonly()) {
 			this.email.setConstraint(
 					new PTEmailValidator(Labels.getLabel("label_VehicleDealerDialog_Email.value"), true));
@@ -932,10 +899,6 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.dealerCountry.setConstraint("");
 		this.dealerCity.setConstraint("");
 		this.dealerProvince.setConstraint("");
-		this.phoneCountryCode.setConstraint("");
-		this.phoneAreaCode.setConstraint("");
-		this.faxCountryCode.setConstraint("");
-		this.faxAreaCode.setConstraint("");
 		this.accountNumber.setConstraint("");
 		this.iBANnumber.setConstraint("");
 		this.paymentMode.setConstraint("");
@@ -1020,11 +983,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		}
 		this.dealerName.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_dealerName"));
 		this.dealerTelephone.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_dealerName"));
-		this.phoneCountryCode.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_dealerName"));
-		this.phoneAreaCode.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_dealerName"));
 		this.dealerFax.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_dealerFax"));
-		this.faxAreaCode.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_dealerFax"));
-		this.faxCountryCode.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_dealerFax"));
 		this.dealerAddress1.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_dealerAddress1"));
 		this.dealerAddress2.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_dealerAddress2"));
 		this.dealerAddress3.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_dealerAddress3"));
@@ -1083,10 +1042,6 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.dealerCountry.setReadonly(true);
 		this.dealerCity.setReadonly(true);
 		this.dealerProvince.setReadonly(true);
-		this.faxAreaCode.setReadonly(true);
-		this.faxCountryCode.setReadonly(true);
-		this.phoneAreaCode.setReadonly(true);
-		this.phoneCountryCode.setReadonly(true);
 		this.emirates.setReadonly(true);
 		this.paymentMode.setDisabled(true);
 		this.email.setReadonly(true);
@@ -1134,10 +1089,6 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.dealerCountry.setDescription("");
 		this.dealerCity.setDescription("");
 		this.dealerProvince.setDescription("");
-		this.phoneCountryCode.setValue("");
-		this.phoneAreaCode.setValue("");
-		this.faxCountryCode.setValue("");
-		this.faxAreaCode.setValue("");
 		this.emirates.setValue("");
 		this.emirates.setDescription("");
 		this.email.setValue("");
@@ -1563,10 +1514,6 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.dealerCountry.setErrorMessage("");
 		this.dealerCity.setErrorMessage("");
 		this.dealerProvince.setErrorMessage("");
-		this.phoneCountryCode.setErrorMessage("");
-		this.phoneAreaCode.setErrorMessage("");
-		this.faxCountryCode.setErrorMessage("");
-		this.faxAreaCode.setErrorMessage("");
 		this.paymentMode.setErrorMessage("");
 		this.emirates.setErrorMessage("");
 		this.email.setErrorMessage("");

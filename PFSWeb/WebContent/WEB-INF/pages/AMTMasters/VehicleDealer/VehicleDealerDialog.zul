@@ -114,35 +114,16 @@
 									id="label_VehicleDealerDialog_DealerTelephone"
 									value="${c:l('label_VehicleDealerDialog_DealerTelephone.value')}" />
 								<hbox>
-									<space spacing="2px"
+								  <space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="phoneCountryCode"
-										width="40px" />
-									<label value="-"
-										style="display:inline-block;padding-top:4px;" />
-									<textbox id="phoneAreaCode"
-										width="40px" />
-									<label value="-"
-										style="display:inline-block;padding-top:4px;" />
-									<textbox id="dealerTelephone"
-										width="70px" />
+									<textbox id="dealerTelephone" width="180px" />
 								</hbox>
 								<label
 									id="label_VehicleDealerDialog_DealerFax"
 									value="${c:l('label_VehicleDealerDialog_DealerFax.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="faxCountryCode"
-										width="40px" />
-									<label value="-"
-										style="display:inline-block;padding-top:4px;" />
-									<textbox id="faxAreaCode"
-										width="40px" />
-									<label value="-"
-										style="display:inline-block;padding-top:4px;" />
-									<textbox id="dealerFax"
-										width="70px" />
+									<space spacing="2px" sclass="mandatory" />
+									<textbox id="dealerFax" width="280px" />
 								</hbox>
 							</row>
 							<row visible="true">
