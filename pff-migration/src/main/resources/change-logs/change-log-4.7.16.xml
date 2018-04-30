@@ -3737,13 +3737,33 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		</sql>
 	</changeSet>
 	
-	<changeSet id="46" author="Durga Prasad D">
+	<changeSet id="46" author="Durga Prasad D" dbms="mssql">
+		<sql>
+			UPDATE CollateralStructure SET valuationPending = 0;
+		</sql>
+	</changeSet>
+	<changeSet id="46" author="Durga Prasad D" dbms="oracle">
+		<sql>
+			UPDATE CollateralStructure SET valuationPending = 0;
+		</sql>
+	</changeSet>
+	<changeSet id="46" author="Durga Prasad D" dbms="postgresql">
 		<sql>
 			UPDATE CollateralStructure SET valuationPending = false;
 		</sql>
 	</changeSet>
 	
-	<changeSet id="47" author="Durga Prasad D">
+	<changeSet id="47" author="Durga Prasad D" dbms="mssql">
+		<sql>
+		    UPDATE CollateralStructure_Temp SET valuationPending = 0;
+		</sql>
+	</changeSet>
+	<changeSet id="47" author="Durga Prasad D" dbms="oracle">
+		<sql>
+		    UPDATE CollateralStructure_Temp SET valuationPending = 0;
+		</sql>
+	</changeSet>
+	<changeSet id="47" author="Durga Prasad D" dbms="postgresql">
 		<sql>
 		    UPDATE CollateralStructure_Temp SET valuationPending = false;
 		</sql>
