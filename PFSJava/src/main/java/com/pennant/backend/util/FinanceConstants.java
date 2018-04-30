@@ -351,13 +351,6 @@ public class FinanceConstants {
 	// Fee Type Tax
 	public static final String FEE_TAXCOMPONENT_INCLUSIVE 		= "I"; 					// Inclusive
 	public static final String FEE_TAXCOMPONENT_EXCLUSIVE 		= "E"; 					// Exclusive
-	//Rule code Constants for GST
-	public static final String RULE_CODE_CGST 					= "CGST"; 				// CGST
-	public static final String RULE_CODE_IGST 					= "IGST"; 				// IGST
-	public static final String RULE_CODE_SGST 					= "SGST"; 				// SGST
-	public static final String RULE_CODE_UGST 					= "UGST"; 				// UGST
-	//GST Rule Module
-	public static final String RULE_MODULE_GST 					= "GSTRULE"; 			// GST RULE
 
 	//Verifications
 	public static final String PROCEDT_VERIFICATION_FI_INIT = "FIINIT";

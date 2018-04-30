@@ -113,14 +113,64 @@
 									id="label_ProvinceDialog_CPProvinceName"
 									value="${c:l('label_ProvinceDialog_CPProvinceName.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="cPProvinceName"
-										maxlength="50" width="450px" />
+									<space spacing="2px" sclass="mandatory" />
+									<textbox id="cPProvinceName" maxlength="50" width="450px" />
 								</hbox>
 							</row>
-
-							<row visible="true">
+							<row>
+								<label
+									id="label_ProvinceDialog_UnionTerritory"
+									value="${c:l('label_ProvinceDialog_UnionTerritory.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="unionTerritory" checked="false" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_ProvinceDialog_TaxExempted" value="${c:l('label_ProvinceDialog_TaxExempted.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="taxExempted" checked="false" />
+								</hbox>
+							</row>
+							<row id="row_taxAvailable">
+								<label
+									id="label_ProvinceDialog_TaxAvailable"
+									value="${c:l('label_ProvinceDialog_TaxAvailable.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="taxAvailable" checked="false"/>
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_ProvinceDialog_TaxStateCode"
+									value="${c:l('label_ProvinceDialog_TaxStateCode.value')}" />
+								<hbox>
+									<space id="space_taxStateCode" spacing="2px" sclass="mandatory" />
+									<textbox id="taxStateCode" width="50px" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_ProvinceDialog_BusinessArea"
+									value="${c:l('label_ProvinceDialog_BusinessArea.value')}" />
+								<hbox>
+									<space id="space_businessArea" spacing="2px"  sclass="mandatory"/>
+									<textbox id="businessArea" width="180px" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_ProvinceDialog_BankRefNo"
+									value="${c:l('label_ProvinceDialog_BankRefNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="bankRefNo" width="180px" />
+								</hbox>
+							</row>
+							<row>
 								<label
 									id="label_ProvinceDialog_SystemDefault"
 									value="${c:l('label_ProvinceDialog_SystemDefault.value')}" />
@@ -131,73 +181,11 @@
 							</row>
 							<row>
 								<label
-									id="label_ProvinceDialog_BankRefNo"
-									value="${c:l('label_ProvinceDialog_BankRefNo.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<textbox id="bankRefNo"
-										width="180px" />
-								</hbox>
-							</row>
-							<row id="row_taxAvailable">
-								<label
-									id="label_ProvinceDialog_TaxAvailable"
-									value="${c:l('label_ProvinceDialog_TaxAvailable.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<checkbox id="taxAvailable"
-										checked="false"/>
-								</hbox>
-							</row>
-							<row>
-								<label
-									id="label_ProvinceDialog_TaxExempted"
-									value="${c:l('label_ProvinceDialog_TaxExempted.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<checkbox id="taxExempted"
-										checked="false" />
-								</hbox>
-							</row>
-							<row>
-								<label
-									id="label_ProvinceDialog_UnionTerritory"
-									value="${c:l('label_ProvinceDialog_UnionTerritory.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<checkbox id="unionTerritory"
-										checked="false" />
-								</hbox>
-							</row>
-							<row>
-								<label
-									id="label_ProvinceDialog_TaxStateCode"
-									value="${c:l('label_ProvinceDialog_TaxStateCode.value')}" />
-								<hbox>
-									<space id="space_taxStateCode" spacing="2px"
-										sclass="mandatory" />
-									<textbox id="taxStateCode"
-										width="50px" />
-								</hbox>
-							</row>
-							<row>
-								<label
-									id="label_ProvinceDialog_BusinessArea"
-									value="${c:l('label_ProvinceDialog_BusinessArea.value')}" />
-								<hbox>
-									<space id="space_businessArea" spacing="2px"  sclass="mandatory"/>
-									<textbox id="businessArea"
-										width="180px" />
-								</hbox>
-							</row>
-							<row>
-								<label
 									id="label_ProvinceDialog_CPIsActive"
 									value="${c:l('label_ProvinceDialog_CPIsActive.value')}" />
 								<hbox>
 									<space spacing="2px" />
-									<checkbox id="cPIsActive"
-										checked="false" />
+									<checkbox id="cPIsActive" checked="false" />
 								</hbox>
 							</row>
 						</rows>

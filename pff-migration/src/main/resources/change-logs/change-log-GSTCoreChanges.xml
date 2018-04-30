@@ -748,4 +748,103 @@
 				     JOIN finfeedetail t2 ON t1.feeid = t2.feeid
      	</createView>
 	</changeSet>
+	
+	<changeSet author="Kesav" id="34">
+		<dropPrimaryKey tableName="GST_Invoice_Txn" constraintName="pk_gst_invoice_txn"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="35">
+		<addPrimaryKey tableName="GST_Invoice_Txn" constraintName="pk_gst_invoice_txn" columnNames="invoiceno"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="36">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="Invoice_Amt" columnDataType="NUMBER(19,5)" />	
+	</changeSet>
+	
+	<changeSet author="Kesav" id="37">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="Company_GSTIN" columnDataType="varchar(100)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="38">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="Company_Address1" columnDataType="varchar(1000)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="39">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="Company_PINCode" columnDataType="varchar(10)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="40">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="Company_State_Code" columnDataType="varchar(8)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="41">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="Company_State_Name" columnDataType="varchar(50)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="42">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="HSNNumber" columnDataType="varchar(100)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="43">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="NatureService" columnDataType="varchar(100)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="44">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="CustomerName" columnDataType="varchar(150)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="45">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="Invoice_Status" columnDataType="varchar(1)" />		
+	</changeSet>
+	
+	<changeSet author="Kesav" id="46">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="CompanyCode" columnDataType="varchar(8)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="47">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="CompanyName" columnDataType="varchar(50)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="48">
+		<comment> data type modified from varchar(8) to varchar(20)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="FeeCode" newDataType="varchar(20)" />
+	</changeSet> 
+	
+	<changeSet author="Kesav" id="49">
+		<comment> data type modified from NUMBER(19,5) to NUMBER(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="UGST_AMT" newDataType="NUMBER(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="50">
+		<comment> data type modified from NUMBER(19,5) to NUMBER(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn" columnName="Invoice_Amt" newDataType="NUMBER(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="51">
+		<comment> data type modified from NUMBER(19,5) to NUMBER(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="CGST_AMT" newDataType="NUMBER(18,0)" />
+	</changeSet>
+		
+	<changeSet author="Kesav" id="52">
+		<comment> data type modified from NUMBER(19,5) to NUMBER(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="SGST_AMT" newDataType="NUMBER(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="53">
+		<comment> data type modified from NUMBER(19,5) to NUMBER(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="IGST_AMT" newDataType="NUMBER(18,0)" />
+	</changeSet>
+	
 </databaseChangeLog>

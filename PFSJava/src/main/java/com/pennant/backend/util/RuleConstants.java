@@ -24,7 +24,7 @@ public class RuleConstants {
 	public static final String MODULE_BOUNCE = "BOUNCE";
 	public static final String MODULE_GSTRULE = "GSTRULE";	//GST Rules
 	public static final String MODULE_AMORTIZATIONMETHOD = "AMZMTH";
-
+	
 	// Rule Event Codes
 	public static final String EVENT_ADDDBS = "ADDDBS";
 	public static final String EVENT_AGRRULE = "AGRRULE";
@@ -133,6 +133,12 @@ public class RuleConstants {
 	public static final String COMPONENTTYPE_STRING = "String"; 	
 	public static final String COMPONENTTYPE_PERCENTAGE = "Percentage"; 	
 	public static final String COMPONENTTYPE_EXTENDEDCOMBOBOX = "ExtendedCombobox"; 	
+	
+	//Rule code Constants for GST
+	public static final String CODE_CGST 	= "CGST"; 				// CGST
+	public static final String CODE_IGST 	= "IGST"; 				// IGST
+	public static final String CODE_SGST 	= "SGST"; 				// SGST
+	public static final String CODE_UGST 	= "UGST"; 				// UGST
 	
 	private RuleConstants() {
 		super();

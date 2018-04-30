@@ -101,6 +101,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -1126,19 +1127,19 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		BigDecimal sgstPercentage = BigDecimal.ZERO;
 		BigDecimal tgstPercentage = BigDecimal.ZERO;
 		
-		List<Rule> rules = ruleService.getGSTRuleDetails(FinanceConstants.RULE_MODULE_GST, "");
+		List<Rule> rules = ruleService.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
 		
 		for (Rule rule : rules) {
-			if (StringUtils.equals(FinanceConstants.RULE_CODE_CGST, rule.getRuleCode())) {
+			if (StringUtils.equals(RuleConstants.CODE_CGST, rule.getRuleCode())) {
 				cgstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
 				tgstPercentage = tgstPercentage.add(cgstPercentage);
-			} else if (StringUtils.equals(FinanceConstants.RULE_CODE_IGST, rule.getRuleCode())) {
+			} else if (StringUtils.equals(RuleConstants.CODE_IGST, rule.getRuleCode())) {
 				igstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
 				tgstPercentage = tgstPercentage.add(igstPercentage);
-			} else if (StringUtils.equals(FinanceConstants.RULE_CODE_SGST, rule.getRuleCode())) {
+			} else if (StringUtils.equals(RuleConstants.CODE_SGST, rule.getRuleCode())) {
 				sgstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
 				tgstPercentage = tgstPercentage.add(sgstPercentage);
-			} else if (StringUtils.equals(FinanceConstants.RULE_CODE_UGST, rule.getRuleCode())) {
+			} else if (StringUtils.equals(RuleConstants.CODE_UGST, rule.getRuleCode())) {
 				ugstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
 				tgstPercentage = tgstPercentage.add(ugstPercentage);
 			}
@@ -1458,7 +1459,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				}
 			}
 			
-			if (StringUtils.isBlank(toCountryCode) || StringUtils.isBlank(toStateCode)) {	//TODO if toCountry is not available 
+			if (StringUtils.isBlank(toCountryCode) || StringUtils.isBlank(toStateCode)) {	// if toCountry is not available 
 				gstExecutionMap.put("toState", "");
 				gstExecutionMap.put("toUnionTerritory", 2);
 				gstExecutionMap.put("toStateGstExempted", "");
