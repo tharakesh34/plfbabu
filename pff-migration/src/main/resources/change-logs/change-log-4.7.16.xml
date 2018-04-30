@@ -4532,5 +4532,19 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			Insert into RMTCURRENCIES values ('USD','840','US Dollar','USD',2,100,'A/A_360','A360',0,66.6116,1,3.672,3.673,0,0,0,0,0,1,null,null,0,1000,null,' ',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="69" author="Manoj">
+		<comment>Data engine configuration changes for Profectus for mandates and disbursement downloads</comment>
+			<sql>
+				update data_engine_config set name = 'DISB_HDFC_EXPORT' where name = 'DISB_CITI_EXPORT';
+				update data_engine_config set postevent = null
+				update partnerbanks set alwfiledownload = 0
+				update data_engine_config set filesequenceno = 1 where name = 'DISB_HDFC_EXPORT';
+				update data_engine_config set filenameformat = '${ddmm},.${SEQ_DATE_FILE}' where name = 'DISB_HDFC_EXPORT';
+				update data_engine_Config set  fileprefixname = 'PROFECTUSPAY' where name = 'DISB_HDFC_EXPORT';
+				update data_Engine_config set name = 'DISB_HDFC_IMPORT' where name = 'DISB_CITI_IMPORT';
+				update data_Engine_config set name = 'PROFECTUSMAN' where name = 'MANDATES_EXPORT';	
+			</sql>
+	</changeSet>
 </databaseChangeLog>
 	
