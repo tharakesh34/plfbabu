@@ -117,7 +117,7 @@ public class ImplementationConstants {
 	public static final boolean	ALLOW_AUTO_DISBURSEMENTS		= false;		// Allow Auto Disbursements which will be called during the EOD.
 	public static final boolean	VARTUAL_DPD						= true;
 	public static final boolean	ALLOW_COSTOFFUNDS	           	= true;		// Cost Of Funds For Loan Type.
-	public static final boolean	ALLOW_IRRCODES	           		= false;	// IRR Codes For Loan Type.
+	public static final boolean	ALLOW_IRRCODES	           		= true;	// IRR Codes For Loan Type.
 	
 	public static final boolean	ALLOW_FEES_RECALCULATE     		= true;		//Fees Recalculate always
 	public static final boolean	ALLOW_PAID_FEE_SCHEDULE_METHOD	= false;	//Fee Schedule Methods for Paid by customer and Waved by Bank.
