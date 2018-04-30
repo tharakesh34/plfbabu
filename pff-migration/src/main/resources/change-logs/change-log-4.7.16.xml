@@ -4119,5 +4119,144 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
    FROM finassettypes_temp t1
  	</createView>
  	</changeSet>
+ 		<changeSet id="58" author="lakshmi.n">
+		<comment>Rename the column from finassettypeid to assettypeid </comment>
+		<renameColumn tableName="finassettypes" oldColumnName="finassettypeid"
+			newColumnName="assettypeid" />
+		<renameColumn tableName="finassettypes_temp"
+			oldColumnName="finassettypeid" newColumnName="assettypeid" />
+	</changeSet>
+	
+	<changeSet id="58.1" author="lakshmi.n">
+	<createView viewName="finassettypes_tview" replaceIfExists="true">
+	SELECT t1.assettypeid,
+    t1.assettype,
+    t1.seqno,
+    t1.reference,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM finassettypes_temp t1;
+	</createView>
+	</changeSet>
+	<changeSet id="58.2" author="lakshmi.n">
+	<comment> Add a event column in extendedfieldheader_temp and extendedfieldheader </comment>
+	<addColumn tableName="extendedfieldheader_temp">
+		<column name="event" type="VARCHAR(20)" />
+	</addColumn>
+	<addColumn tableName="extendedfieldheader">
+		<column name="event" type="VARCHAR(20)"></column>
+	</addColumn>
+	</changeSet>
+	<changeSet id="58.3" author="lakshmi.n">
+		<createView viewName="extendedfieldheader_aview"
+			replaceIfExists="true">
+	SELECT extendedfieldheader.moduleid,
+	    extendedfieldheader.modulename,
+	    extendedfieldheader.submodulename,
+	    extendedfieldheader.tabheading,
+	    extendedfieldheader.numberofcolumns,
+	    extendedfieldheader.version,
+	    extendedfieldheader.lastmntby,
+	    extendedfieldheader.lastmnton,
+	    extendedfieldheader.recordstatus,
+	    extendedfieldheader.rolecode,
+	    extendedfieldheader.nextrolecode,
+	    extendedfieldheader.taskid,
+	    extendedfieldheader.nexttaskid,
+	    extendedfieldheader.recordtype,
+	    extendedfieldheader.workflowid,
+	    extendedfieldheader.postvalidation,
+	    extendedfieldheader.prevalidation,
+	    extendedfieldheader.postvalidationreq,
+	    extendedfieldheader.prevalidationreq,
+	    extendedfieldheader.event
+	   FROM extendedfieldheader;
+		</createView>
+	</changeSet>
+	<changeSet id="58.4" author="lakshmi.n">
+		<createView viewName="extendedfieldheader_view"
+		replaceIfExists="true">
+	 SELECT t1.moduleid,
+	    t1.modulename,
+	    t1.submodulename,
+	    t1.tabheading,
+	    t1.numberofcolumns,
+	    t1.version,
+	    t1.lastmntby,
+	    t1.lastmnton,
+	    t1.recordstatus,
+	    t1.rolecode,
+	    t1.nextrolecode,
+	    t1.taskid,
+	    t1.nexttaskid,
+	    t1.recordtype,
+	    t1.workflowid,
+	    t1.postvalidation,
+	    t1.prevalidation,
+	    t1.postvalidationreq,
+	    t1.prevalidationreq,
+	    t1.event
+	   FROM extendedfieldheader_temp t1
+	UNION ALL
+	 SELECT t1.moduleid,
+	    t1.modulename,
+	    t1.submodulename,
+	    t1.tabheading,
+	    t1.numberofcolumns,
+	    t1.version,
+	    t1.lastmntby,
+	    t1.lastmnton,
+	    t1.recordstatus,
+	    t1.rolecode,
+	    t1.nextrolecode,
+	    t1.taskid,
+	    t1.nexttaskid,
+	    t1.recordtype,
+	    t1.workflowid,
+	    t1.postvalidation,
+	    t1.prevalidation,
+	    t1.postvalidationreq,
+	    t1.prevalidationreq,
+	    t1.event
+	   FROM extendedfieldheader t1
+	  WHERE NOT (EXISTS ( SELECT 1
+	           FROM extendedfieldheader_temp
+	          WHERE extendedfieldheader_temp.moduleid = t1.moduleid));
+		</createView>
+	</changeSet>
+	<changeSet id="58.5" author="lakshmi.n">
+	<sql>
+		<![CDATA[
+		update extendedfieldheader set event='Origination' where modulename='LOAN';
+		update extendedfieldheader_temp set event='Origination' where modulename='LOAN';
+		]]>
+	</sql>
+	</changeSet>
+	<changeSet id="59" author="Jayant">
+		<sql>
+			delete from REPORTFILTERFIELDS where reportid in (Select reportid from reportconfiguration where reportjaspername='ClosedLoans') and FIELDID=3;
+			Insert into REPORTFILTERFIELDS (REPORTID,FIELDID,FIELDNAME,FIELDTYPE,FIELDLABEL,FIELDDBNAME,APPUTILMETHODNAME,MODULENAME,LOVHIDDENFIELDMETHOD,LOVTEXTFIELDMETHOD,MULTISELECTSEARCH,FIELDLENGTH,FIELDMAXVALUE,FIELDMINVALUE,SEQORDER,MANDATORY,FIELDCONSTRAINT,FIELDERRORMESSAGE,WHERECONDITION,STATICVALUE,FIELDWIDTH,FILTERREQUIRED,DEFAULTFILTER,VERSION,LASTMNTBY,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON,FILTERFILEDS) 
+			values ((Select reportid from reportconfiguration where reportjaspername='ClosedLoans'),3,'Status','STATICLIST','Status','t3.closingstatus','getFinanceClosingStatusList',
+        	null,null,null,0,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,now(),null);
+		</sql>
+	</changeSet>
+	<changeSet id="59" author="Durgaprasad G">
+		  <sql>
+		  	 <![CDATA[
+			delete from REPORTLIST Where Code = 'TechnicalVerification';
+			 INSERT INTO REPORTLIST  
+			 Values ('TechnicalVerification','TechnicalVerification','listheader_CIF.label,listheader_CollateralType.label,listheader_CollateralReference.label,listheader_LoanReference.label',
+			 'cif,collateralType,collateralRef,keyReference','String,String,String,String',' ','ReportList04','Technical Verification','Technical Verification',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+			  	 	 ]]>
+		   </sql>
+	  </changeSet>
 </databaseChangeLog>
 	
