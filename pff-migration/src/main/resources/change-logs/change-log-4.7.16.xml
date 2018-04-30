@@ -4131,7 +4131,21 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
  		</sql>
  	</changeSet>
  	
- 	<changeSet id="63" author="Vinay">
+ 	<changeSet id="63" author="Vinay" dbms="oracle">
+ 		<sql>
+ 			Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage","recordstatus","rolecode","nextrolecode","taskid","nexttaskid","recordtype","workflowid","lastmnton","lastmntby","version") values ('WFEE08','EN','E','{0} Should not be empty.',null,'Approved',null,null,null,null,null,0,to_timestamp('0001-02-27 00:00:00.0','null'),1000,0);
+			Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage","recordstatus","rolecode","nextrolecode","taskid","nexttaskid","recordtype","workflowid","lastmnton","lastmntby","version") values ('WFEE09','EN','E','Missing argument in {0} parameter.',null,'Approved',null,null,null,null,null,0,to_timestamp('0001-02-27 00:00:00.0','null'),1000,0);
+			Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage","recordstatus","rolecode","nextrolecode","taskid","nexttaskid","recordtype","workflowid","lastmnton","lastmntby","version") values ('WFEE10','EN','E','Signature of {0} parameter should be (String,Object,Long,Long).',null,'Approved',null,null,null,null,null,0,to_timestamp('0001-02-27 00:00:00.0','null'),1000,0);
+ 		</sql>
+ 	</changeSet>
+ 	<changeSet id="63" author="Vinay" dbms="mssql">
+ 		<sql>
+ 			Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage","recordstatus","rolecode","nextrolecode","taskid","nexttaskid","recordtype","workflowid","lastmnton","lastmntby","version") values ('WFEE08','EN','E','{0} Should not be empty.',null,'Approved',null,null,null,null,null,0,'',1000,0);
+			Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage","recordstatus","rolecode","nextrolecode","taskid","nexttaskid","recordtype","workflowid","lastmnton","lastmntby","version") values ('WFEE09','EN','E','Missing argument in {0} parameter.',null,'Approved',null,null,null,null,null,0,'',1000,0);
+			Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage","recordstatus","rolecode","nextrolecode","taskid","nexttaskid","recordtype","workflowid","lastmnton","lastmntby","version") values ('WFEE10','EN','E','Signature of {0} parameter should be (String,Object,Long,Long).',null,'Approved',null,null,null,null,null,0,'',1000,0);
+ 		</sql>
+ 	</changeSet>
+ 	<changeSet id="63" author="Vinay" dbms="postgresql">
  		<sql>
  			Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage","recordstatus","rolecode","nextrolecode","taskid","nexttaskid","recordtype","workflowid","lastmnton","lastmntby","version") values ('WFEE08','EN','E','{0} Should not be empty.',null,'Approved',null,null,null,null,null,0,to_timestamp('0001-02-27 00:00:00.0','null'),1000,0);
 			Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage","recordstatus","rolecode","nextrolecode","taskid","nexttaskid","recordtype","workflowid","lastmnton","lastmntby","version") values ('WFEE09','EN','E','Missing argument in {0} parameter.',null,'Approved',null,null,null,null,null,0,to_timestamp('0001-02-27 00:00:00.0','null'),1000,0);
@@ -4284,7 +4298,7 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			delete from REPORTFILTERFIELDS where reportid in (Select reportid from reportconfiguration where reportjaspername='ClosedLoans') and FIELDID=3;
 			Insert into REPORTFILTERFIELDS (REPORTID,FIELDID,FIELDNAME,FIELDTYPE,FIELDLABEL,FIELDDBNAME,APPUTILMETHODNAME,MODULENAME,LOVHIDDENFIELDMETHOD,LOVTEXTFIELDMETHOD,MULTISELECTSEARCH,FIELDLENGTH,FIELDMAXVALUE,FIELDMINVALUE,SEQORDER,MANDATORY,FIELDCONSTRAINT,FIELDERRORMESSAGE,WHERECONDITION,STATICVALUE,FIELDWIDTH,FILTERREQUIRED,DEFAULTFILTER,VERSION,LASTMNTBY,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON,FILTERFILEDS) 
 			values ((Select reportid from reportconfiguration where reportjaspername='ClosedLoans'),3,'Status','STATICLIST','Status','t3.closingstatus','getFinanceClosingStatusList',
-        	null,null,null,0,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,now(),null);
+        	null,null,null,0,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
 		</sql>
 	</changeSet>
 	<changeSet id="59" author="Durgaprasad G">
