@@ -2652,8 +2652,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 
-		if (!StringUtils.equals(customerDetails.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
-			//getListAuditDetails(listDeletion(customerDetails, "_Temp", auditHeader.getAuditTranType()))
+		if (!StringUtils.equals(customerDetails.getSourceId(), PennantConstants.FINSOURCE_ID_API) && !customerDetails.isNewRecord()) {
 			auditDetailList.addAll(listDeletion(customerDetails, "_Temp", auditHeader.getAuditTranType()));
 			getCustomerDAO().delete(customer, "_Temp");
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
