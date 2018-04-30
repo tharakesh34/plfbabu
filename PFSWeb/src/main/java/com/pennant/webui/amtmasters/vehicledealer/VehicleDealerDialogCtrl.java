@@ -59,6 +59,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -105,6 +106,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	 */
 	protected Window window_VehicleDealerDialog; // autowired
 	protected Label windowTitle;
+	protected Row row_DealerType; // autowired
 	protected Combobox dealerType; // autowired
 	protected Textbox dealerName; // autowired
 	protected Textbox dealerTelephone; // autowired
@@ -564,7 +566,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if (this.dealerType.getSelectedItem().getValue().equals(PennantConstants.List_Select)) {
+			if (this.row_DealerType.isVisible() && this.dealerType.getSelectedItem().getValue().equals(PennantConstants.List_Select)) {
 				throw new WrongValueException(this.dealerType, Labels.getLabel("FIELD_IS_MAND",
 						new String[] { Labels.getLabel("label_VehicleDealerDialog_DealerType.value") }));
 			}

@@ -79,7 +79,7 @@
 							<column width="35%" />
 						</columns>
 						<rows>
-							<row visible="false">
+							<row id="row_DealerType" visible="false">
 								<label
 									id="label_VehicleDealerDialog_DealerType"
 									value="${c:l('label_VehicleDealerDialog_DealerType.value')}" />
