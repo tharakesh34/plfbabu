@@ -206,6 +206,10 @@ public class FinMandateServiceImpl implements FinMandateService {
 				} else {
 					mandate.setOrgReference(finmain.getFinReference());
 					mandate.setStatus(MandateConstants.STATUS_NEW);
+					String mandateCustomStatus = SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS);
+					if (StringUtils.isNotBlank(mandateCustomStatus)) {
+						mandate.setStatus(mandateCustomStatus);
+					}
 					mandate.setRecordType("");
 					mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					getDocument(mandate);

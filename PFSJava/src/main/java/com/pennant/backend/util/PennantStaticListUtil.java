@@ -17,6 +17,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.RoundingTarget;
@@ -2331,7 +2332,12 @@ public class PennantStaticListUtil {
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_FIN,Labels.getLabel("label_Mandate_FINANCE")));
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_CANCEL,Labels.getLabel("label_Mandate_CANCEL")));
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_INPROCESS,Labels.getLabel("label_Mandate_INPROCESS")));
-
+			//Added custom mandate status to the list if sysprams contains custom mandate Status.
+			String customMandateStatus = SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS);
+			if (StringUtils.isNotBlank(customMandateStatus)) {
+				statusTypeList.add(
+						new ValueLabel(customMandateStatus, Labels.getLabel("label_Mandate_" + customMandateStatus)));
+			}
 		}
 		return statusTypeList;
 	}

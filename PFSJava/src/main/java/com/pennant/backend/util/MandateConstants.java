@@ -68,6 +68,7 @@ public class MandateConstants {
 	public static final String	MODULE_REGISTRATION	= "REGISTRATION";
 	public static final String	MODULE_STATUSUPLOAD	= "STATUSUPLOAD";
 
+	public static final String	MANDATE_CUSTOM_STATUS		= "MANDATE_CUSTOM_STATUS";
 	public static final List<String> skipRegistration() {
 		List<String> list = new ArrayList<String>(1);
 		list.add(TYPE_ECS);
