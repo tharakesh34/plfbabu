@@ -32,7 +32,9 @@
  ********************************************************************************************
  * 30-06-2011       Pennant                  0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 29-04-2018		Raju/Vinay				 0.2		To avoid Postgres issue also as it 	*
+ * 														is primary key no need to check 	*
+ * 														for null	                        * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -7067,13 +7069,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.alwdIRRDetails.setConstraint("");
 		this.alwdIRRDetails.setErrorMessage("");
 
-		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("IRRID", null, Filter.OP_NOT_EQUAL);
+		// ####_0.2
+		//Filter[] filter = new Filter[1];
+		//filter[0] = new Filter("IRRID", null, Filter.OP_NOT_EQUAL);
 
 		String selectedValues = null;
 		if (isVasAlwd) {
 			selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceTypeDialog,
-					"IRRCode", this.alwdIRRDetails.getValue(), filter);
+					"IRRCode", this.alwdIRRDetails.getValue(), null);
 		} 
 		if (selectedValues != null) {
 
