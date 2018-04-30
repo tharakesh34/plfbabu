@@ -160,7 +160,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		this.searchObject.addField("PARTNERBANKNAME");
 		this.searchObject.addField("ALWFILEDOWNLOAD");
 
-		list.add("DISB_CITI_EXPORT");
+		list.add("DISB_HDFC_EXPORT");
 		list.add("DISB_IMPS_EXPORT");
 		list.add("DISB_OTHER_CHEQUE_DD_EXPORT");
 		list.add("DISB_OTHER_NEFT_RTGS_EXPORT");

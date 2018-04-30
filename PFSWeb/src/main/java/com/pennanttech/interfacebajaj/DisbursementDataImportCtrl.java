@@ -95,9 +95,9 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 		for (Configuration config : configList) {
 			String configName = config.getName();
-			if ("DISB_CITI_IMPORT".equals(configName) || "DISB_OTHER_IMPORT".equals(configName)) {
-				if ("DISB_CITI_IMPORT".equals(configName)) {
-					DISB_STP_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_CITI_IMPORT");
+			if ("DISB_HDFC_IMPORT".equals(configName) || "DISB_OTHER_IMPORT".equals(configName)) {
+				if ("DISB_HDFC_IMPORT".equals(configName)) {
+					DISB_STP_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_HDFC_IMPORT");
 					valueLabel = new ValueLabel(configName, "Bank Disbursement Response");
 					doFillPanel(config, DISB_STP_IMPORT_STATUS);
 					menuList.add(valueLabel);
@@ -208,7 +208,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		try {
 			try {
 				Thread thread = null;
-				if (fileConfiguration.getSelectedItem().getValue().equals("DISB_CITI_IMPORT")) {
+				if (fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")) {
 					thread = new Thread(new ProcessData(userId, DISB_STP_IMPORT_STATUS));
 				} else {
 					thread = new Thread(new ProcessData(userId, DISB_OTHER_IMPORT_STATUS));

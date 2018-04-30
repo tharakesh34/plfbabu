@@ -107,7 +107,7 @@ public class MandateProcess extends AbstractMandateProcess{
 
 			List<Mandate> list =   searchProcessor.getResults(search);
 
-			for (Mandate mandate : list) {
+			/*for (Mandate mandate : list) {
 				// Fetch document from DMS by using document reference
 				String reference = String.valueOf(mandate.getMandateID());
 				DocumentDetails detail = documentManagementService.getExternalDocument(mandate.getExternalRef(), reference);
@@ -123,7 +123,7 @@ public class MandateProcess extends AbstractMandateProcess{
 		        } catch (IOException e) {
 		           logger.error("Exception", e);
 		        }
-			}
+			}*/
 			
 			if (file.isDirectory()) {
 				for (File item : file.listFiles()) {
