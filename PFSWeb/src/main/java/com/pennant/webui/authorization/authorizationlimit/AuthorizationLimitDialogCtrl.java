@@ -300,16 +300,24 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 				holdRow.setVisible(true);
 				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_HoldStartDate"), this.holdStartDate);
 				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_HoldExpiryDate"), this.holdExpiryDate);
-
+				
 				readOnlyComponent(true, this.active);
 				readOnlyComponent(true, this.limitAmount);
-
+				this.btnDelete.setVisible(false);
 			}else{
 				holdRow.setVisible(false);
-				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_StartDate"), this.startDate);
-				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_ExpiryDate"), this.expiryDate);
-				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_Active"), this.active);
-				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_LimitAmount"), this.limitAmount);
+				if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, authorizationLimit.getRecordType())){
+					readOnlyComponent(true, this.limitAmount);
+					readOnlyComponent(true, this.startDate);
+					readOnlyComponent(true, this.expiryDate);
+					readOnlyComponent(true, this.active);
+					readOnlyComponent(true, this.limitAmount);
+				}else{
+					readOnlyComponent(isReadOnly("AuthorizationLimitDialog_StartDate"), this.startDate);
+					readOnlyComponent(isReadOnly("AuthorizationLimitDialog_ExpiryDate"), this.expiryDate);
+					readOnlyComponent(isReadOnly("AuthorizationLimitDialog_Active"), this.active);
+					readOnlyComponent(isReadOnly("AuthorizationLimitDialog_LimitAmount"), this.limitAmount);
+				}
 			}
 
 			if(this.startDate.isReadonly()){
@@ -818,6 +826,9 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			this.holdExpiryDate.setValue(aAuthorizationLimit.getHoldExpiryDate());
 			this.active.setChecked(aAuthorizationLimit.isActive());
 			refreshListBox(aAuthorizationLimit.getAuthorizationLimitDetails());
+			
+			this.recordStatus.setValue(aAuthorizationLimit.getRecordStatus());
+			
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -1196,7 +1207,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 				AuthorizationLimitDetail  limitDetail= new AuthorizationLimitDetail();
 				BeanUtils.copyProperties(detail, limitDetail);
 				detail.setBefImage(limitDetail);
-				addListIteam(detail);
+				addListIteam(limitDetail);
 			}
 		}
 
@@ -1260,7 +1271,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType()) || StringUtils.equals("Y",hold )){
 				readOnlyComponent(true, codeLimitAmount);
 			}else{
-				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_LimitAmount"), codeLimitAmount);
+				readOnlyComponent(limitAmount.isReadonly(), codeLimitAmount);
 			}
 			
 			if(codeLimitAmount.isReadonly()){
@@ -1429,7 +1440,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		
 		public void refreshListIteam(Listitem listitem){
 			AuthorizationLimitDetail detail = (AuthorizationLimitDetail) listitem.getAttribute("data");
-			CurrencyBox codeLimitAmount = (CurrencyBox) listitem.getFirstChild().getNextSibling().getNextSibling().getFirstChild();
+			CurrencyBox codeLimitAmount = (CurrencyBox) listitem.getFirstChild().getNextSibling().getFirstChild();
 
 			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())){
 				readOnlyComponent(true, codeLimitAmount);
@@ -1443,7 +1454,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 				codeLimitAmount.setMandatory(true);
 			}
 
-			Button delete= (Button) listitem.getFirstChild().getNextSibling().getNextSibling().getNextSibling().getFirstChild();
+			Button delete= (Button) codeLimitAmount.getParent().getNextSibling().getNextSibling().getFirstChild();
 
 			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())){
 				delete.setLabel(Labels.getLabel("btnCancel.label"));
@@ -1451,9 +1462,9 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 				delete.setLabel(Labels.getLabel("btnDelete.label"));	
 			}
 			
-			Label operationLabel= (Label) listitem.getFirstChild().getNextSibling().getNextSibling().getNextSibling().getNextSibling().getFirstChild();
+			Label operationLabel= (Label) codeLimitAmount.getParent().getNextSibling().getFirstChild();
 			operationLabel.setValue(detail.getRecordType());
-		}
+		} 
 		
 		//label_Cancel
 		
