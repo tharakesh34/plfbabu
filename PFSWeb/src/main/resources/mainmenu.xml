@@ -248,7 +248,7 @@
 			 rightName="menuItem_ApplicationMaster_ExpenseType" />
 			<menuItem id="menu_Item_FeeType"
 				zulNavigation="/WEB-INF/pages/FeeType/FeeType/FeeTypeList.zul"
-				rightName="" />
+				rightName="menuItem_FeeType_FeeType" />
 			<menuItem id="menu_Item_Flag"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/Flag/FlagList.zul"
 				rightName="menuItem_ApplicationMaster_Flags" />
@@ -326,7 +326,8 @@
 		</menu>
 		<menu id="menu_Category_NotificationRules">
 			<menuItem id="menu_Item_MailTemplate"
-				zulNavigation="/WEB-INF/pages/Mail/MailTemplate/MailTemplateList.zul" />
+				zulNavigation="/WEB-INF/pages/Mail/MailTemplate/MailTemplateList.zul"
+				rightName="menuItem_Mail_MailTemplate" />
 			<menuItem id="menu_Item_Notifications"
 				zulNavigation="/WEB-INF/pages/Mail/Notifications/NotificationsList.zul"
 				rightName="menuItem_RulesFactory_Notifications" />
