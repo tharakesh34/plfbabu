@@ -4341,7 +4341,8 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 	  <changeSet id="61" author="SreeKanth" dbms="postgresql">
 	  	<comment> Procedure For Renaming TableName where EXTENDEDFIELDHEADER has Module LOAN</comment>
 	  	<sql splitStatements="false" stripComments="true"> 
-	  		$do$
+	  		DO
+			$do$
 				DECLARE
 				row record;
 				BEGIN
@@ -4355,7 +4356,7 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 				    END LOOP;
 					
 					END;
-				$do$;	
+				$do$;
 	  	</sql>
 	  </changeSet>
 	  	<changeSet id="28" author="Prasad" dbms="postgresql">
