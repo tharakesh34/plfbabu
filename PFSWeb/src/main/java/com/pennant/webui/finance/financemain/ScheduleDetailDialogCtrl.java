@@ -31,7 +31,9 @@
  ********************************************************************************************
  * 12-11-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 30-04-2018 		Vinay   				 0.2 		As Discussed with Raju and Siva, 	*
+ * 													IRR Code calculation functionality		*
+ * 													implemented.                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -90,6 +92,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -131,9 +134,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 */
 	protected Window window_ScheduleDetailDialog; // autoWired
 	protected Listbox listBoxSchedule; // autoWired
-	
+	protected Listbox iRRListBox; // autoWired
 	protected Tabs tabsIndexCenter; // autoWired
 	protected Tab financeSchdDetailsTab; // autoWired
+	protected Tab irrDetailsTab; // autoWired
 	protected Tabpanels tabpanelsBoxIndexCenter; // autoWired
 	protected Borderlayout borderlayoutScheduleDetail; // autoWired
 
@@ -998,7 +1002,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			doFillSchInsDetails(aFinSchData.getFinInsuranceList());
 			setPlanEMIHDateList(aFinSchData.getPlanEMIHDates());
 			setPlanEMIHMonths(aFinSchData.getPlanEMIHmonths());
-
+			doFillIrrDetails(aFinSchData.getiRRDetails());
 			// ##########################################################################################
 			// Reset Schedule Data after Servicing Actions
 			// ##########################################################################################
@@ -1081,6 +1085,48 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * Method for Rendering IRR Details
+	 */
+	public void doFillIrrDetails(List<FinIRRDetails> irrCodeNvalueList) {
+		logger.debug("Entering");
+		
+		if(!irrCodeNvalueList.isEmpty()){
+			this.iRRListBox.getItems().clear();
+			this.irrDetailsTab.setVisible(true);
+			this.effectiveRateOfReturn.setVisible(false);
+			this.label_FinanceMainDialog_EffectiveRateOfReturn.setVisible(false);
+		}else{
+			this.irrDetailsTab.setVisible(false);
+			this.effectiveRateOfReturn.setVisible(true);
+			this.label_FinanceMainDialog_EffectiveRateOfReturn.setVisible(true);
+		}
+		
+		for (FinIRRDetails ResultOfIRRFeeType : irrCodeNvalueList) {
+			Listitem listitem = new Listitem();
+			Listcell irrcode = new Listcell();
+			Listcell irrdesc = new Listcell();
+			Listcell calcamountWithFee = new Listcell();
+			
+			irrcode.setLabel(ResultOfIRRFeeType.getiRRCode());
+			irrdesc.setLabel(ResultOfIRRFeeType.getIrrCodeDesc());
+			calcamountWithFee.setLabel(ResultOfIRRFeeType.getIRR().toString());
+			
+			listitem.appendChild(irrcode);
+			listitem.appendChild(irrdesc);
+			listitem.appendChild(calcamountWithFee);
+			
+			if (isWIF) {
+				iRRListBox.setHeight(this.borderLayoutHeight - 72 + "px");
+			} else {
+				iRRListBox.setHeight(this.borderLayoutHeight - 142 + "px");
+			}
+			
+			iRRListBox.appendChild(listitem);
+		}
+		logger.debug("Leaving");
+	}
+	
 	/**
 	 * Method for Removing previously embedded tabs if any to Re-render them dynamically 
 	 */

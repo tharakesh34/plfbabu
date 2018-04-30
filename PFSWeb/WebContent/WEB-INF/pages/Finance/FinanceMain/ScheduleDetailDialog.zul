@@ -280,6 +280,8 @@
 							<tabs id="tabsIndexCenter">
 								<tab id="financeSchdDetailsTab"
 									label="${c:l('finSchdDetails')}" />
+								<tab id="irrDetailsTab"
+									label="${c:l('irrDetails')}" visible="false" />
 							</tabs>
 							<tabpanels id="tabpanelsBoxIndexCenter">
 								<tabpanel style="overflow:auto">
@@ -524,6 +526,28 @@
 												id="listHeader_vSProfit" hflex="min" align="right" />
 											<listheader
 												id="listHeader_orgPrincipalDue" hflex="min" align="right" />
+										</listhead>
+									</listbox>
+								</tabpanel>
+								
+								<tabpanel height="100%">
+									<listbox id="iRRListBox"
+										emptyMessage="${c:l('listbox.emptyMessage')}"
+										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+										height="100%" multiple="false" sizedByContent="true"
+										span="true">
+										<listhead sizable="false"
+											style="padding:0px;position:relative;">
+											<listheader
+												id="listHeader_IRRCode" label="${c:l('irr_code.value')}"
+												sort="auto" hflex="min" />
+											<listheader
+												id="listHeader_IRRCodeDesc"
+												label="${c:l('irrVAlue_WithoutFee.value')}" sort="auto"
+												hflex="min" />
+											<listheader
+												id="listHeader_IRR" label="${c:l('irrVAlue_WithFee.value')}"
+												align="right" sort="auto" hflex="min" />
 										</listhead>
 									</listbox>
 								</tabpanel>

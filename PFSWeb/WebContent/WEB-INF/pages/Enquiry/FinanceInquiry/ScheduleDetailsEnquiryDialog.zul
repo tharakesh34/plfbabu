@@ -22,16 +22,18 @@
 								label="Schedule Details" />
 							<tab id="repayGraphTab" visible="false"
 								label="Graph Report" />
+							<tab id="irrDetailsTab" visible="false"
+								label="${c:l('irrDetails')}" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel id="tabpanel_basicDetails"
 								style="overflow:auto">
 								<listbox id="listBoxSchedule"
-										emptyMessage="${c:l('listbox.emptyMessage')}"
-										fixedLayout="true"   sizedByContent="true" span="true" width="100%"
-										height="100%" multiple="false">
-										<listhead sizable="false"
-											style="padding:0px;position:relative;">
+									emptyMessage="${c:l('listbox.emptyMessage')}"
+									fixedLayout="true" sizedByContent="true" span="true"
+									width="100%" height="100%" multiple="false">
+									<listhead sizable="false"
+										style="padding:0px;position:relative;">
 										<listheader hflex="min" />
 										<listheader
 											label="${c:l('listheader_ScheduleDate.label')}" hflex="min" />
@@ -50,7 +52,11 @@
 										<listheader
 											id="listheader_SchFee"
 											label="${c:l('listheader_SchFee.label')}" hflex="min" />
-										<listheader id="listheader_TDSAmount"
+										<listheader
+											id="listheader_SchTax" hflex="min"
+											label="${c:l('listheader_SchTax.label')}" align="right" />
+										<listheader
+											id="listheader_TDSAmount"
 											label="${c:l('listheader_TDSAmount.label')}" hflex="min" />
 										<listheader
 											id="listheader_SchAdvProfit" hflex="min"
@@ -65,9 +71,10 @@
 											label="${c:l('listheader_TotalAdv.label')}" visible="false"
 											align="right" />
 										<listheader
-												id="listheader_Rebate" hflex="min" visible="false"
-												align="right" />
-										<listheader id="listheader_Total"
+											id="listheader_Rebate" hflex="min" visible="false"
+											align="right" />
+										<listheader
+											id="listheader_Total"
 											label="${c:l('listheader_Total.label')}" hflex="min" />
 										<listheader
 											label="${c:l('listheader_ScheduleEndBal.label')}"
@@ -97,6 +104,27 @@
 							</tabpanel>
 							<tabpanel id="tabpanel_graph"
 								style="overflow:auto">
+							</tabpanel>
+							<tabpanel height="100%">
+								<listbox id="iRRListBox"
+									emptyMessage="${c:l('listbox.emptyMessage')}"
+									tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+									height="100%" multiple="false" sizedByContent="true"
+									span="true">
+									<listhead sizable="false"
+										style="padding:0px;position:relative;">
+										<listheader
+											id="listHeader_IRRCode" label="${c:l('irr_code.value')}"
+											sort="auto" hflex="min" />
+										<listheader
+											id="listHeader_IRRCodeDesc"
+											label="${c:l('irrVAlue_WithoutFee.value')}" sort="auto"
+											hflex="min" />
+										<listheader id="listHeader_IRR"
+											label="${c:l('irrVAlue_WithFee.value')}" align="right"
+											sort="auto" hflex="min" />
+									</listhead>
+								</listbox>
 							</tabpanel>
 						</tabpanels>
 					</tabbox>

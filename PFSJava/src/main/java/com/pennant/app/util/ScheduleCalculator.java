@@ -26,9 +26,11 @@
  * Description : *
  * 
  ******************************************************************************************** 
- * Date Author Version Comments *
+ * Date Author Version Comments * 
  ******************************************************************************************** 
  * 26-04-2011 Pennant 0.1 * * * * * * * * *
+ * 30-04-2018 Vinay   0.2 	As Discussed with Raju and Siva, IRR Code calculation functionality 
+ * 							implemented  
  ******************************************************************************************** 
  */
 package com.pennant.app.util;
@@ -51,10 +53,15 @@ import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.model.FrequencyDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
+import com.pennant.backend.dao.applicationmaster.IRRFeeTypeDAO;
+import com.pennant.backend.dao.applicationmaster.IRRFinanceTypeDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
 import com.pennant.backend.model.applicationmaster.BaseRate;
+import com.pennant.backend.model.applicationmaster.IRRFeeType;
+import com.pennant.backend.model.applicationmaster.IRRFinanceType;
 import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -77,7 +84,10 @@ public class ScheduleCalculator {
 	private FinScheduleData finScheduleData;
 	private static BaseRateDAO baseRateDAO;
 	private static SplRateDAO splRateDAO;
-
+	// ####_ 0.2
+	private static IRRFeeTypeDAO iRRFeeTypeDAO;
+	private static IRRFinanceTypeDAO irrFinanceTypeDAO;
+	
 	// PROCESS METHODS IN SCHEDULE CALCULATOR
 	public static final String PROC_GETCALSCHD = "procGetCalSchd";
 	public static final String PROC_CHANGEGRACEEND = "procChangeGraceEnd";
@@ -3036,7 +3046,19 @@ public class ScheduleCalculator {
 		finMain.setTotalGrossPft(finMain.getTotalProfit().add(finMain.getTotalCpz()));
 
 		// Effective Rate Of Return Calculations / XIRR && IRR
-		calculateXIRRAndIRR(finScheduleData, finMain);
+		// ####_ 0.2
+		List<IRRFinanceType> irrFinanceTypes = getIrrFinanceTypeDAO().getIRRFinanceTypeByFinType(finMain.getFinType(),
+				"_AView");
+		finScheduleData.setiRRDetails(new ArrayList<FinIRRDetails>()); // reseting list object.
+		
+		//FIXME: PV: To avoid error
+		if (irrFinanceTypes.isEmpty()) {
+			//calculateXIRRAndIRR(finScheduleData, finMain, null);
+		} else {
+			for (int j = 0; j < irrFinanceTypes.size(); j++) {
+				calculateXIRRAndIRR(finScheduleData, finMain, irrFinanceTypes.get(j));
+			}
+		}
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
@@ -3047,10 +3069,11 @@ public class ScheduleCalculator {
 	 * @param finMain
 	 * @return
 	 */
-	private void calculateXIRRAndIRR(FinScheduleData finSchdData, FinanceMain finMain) {
+	// ####_ 0.2
+	private void calculateXIRRAndIRR(FinScheduleData finSchdData, FinanceMain finMain, IRRFinanceType irrFinType) {
 		logger.debug("Entering");
 
-		// BigDecimal cal_IRR = BigDecimal.ZERO;
+		//BigDecimal cal_IRR = BigDecimal.ZERO;
 		BigDecimal cal_XIRR = BigDecimal.ZERO;
 		BigDecimal cal_XIRR_WithFee = BigDecimal.ZERO;
 		BigDecimal calcAmount = BigDecimal.ZERO;
@@ -3061,26 +3084,42 @@ public class ScheduleCalculator {
 		List<FinFeeDetail> finFeeDList = finSchdData.getFinFeeDetailList();
 
 		BigDecimal feeAmount = BigDecimal.ZERO;
-		// CH - In case of Fee Added to Loan Amount - fee should be added to the
-		// finance amount and subtracted from the Fee amount which means it is
-		// zero.
-		// Hence not including it in the calculation
-		for (FinFeeDetail finFeeDetail : finFeeDList) {
-			if (!StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT,
-					finFeeDetail.getFeeScheduleMethod())
-					&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR,
-							finFeeDetail.getFeeScheduleMethod())
-					&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
-							finFeeDetail.getFeeScheduleMethod())
-					&& !StringUtils.equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE,
-							finFeeDetail.getFeeScheduleMethod())) {
-				feeAmount = feeAmount.add(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount())
-						.subtract(finFeeDetail.getPaidAmount()));
-			}
-			feeAmount = feeAmount.add(finFeeDetail.getPaidAmount());
+		List<IRRFeeType> irrFeeList = null;
+		if (irrFinType != null) {
+			irrFeeList = getiRRFeeTypeDAO().getIRRFeeTypeList(irrFinType.getIRRID(), "");
 		}
 
-		// FIXME CH Servicing Fees should be handled
+		for (FinFeeDetail fee : finFeeDList) {
+			if (!StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT, fee.getFeeScheduleMethod())
+					&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR, fee.getFeeScheduleMethod())
+					&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
+							fee.getFeeScheduleMethod())
+					&& !StringUtils.equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE,
+							fee.getFeeScheduleMethod())) {
+
+				BigDecimal feePerc = BigDecimal.ZERO;
+				boolean isRcdFound = false;
+				if (irrFeeList != null) {
+					for (IRRFeeType irrFeeType : irrFeeList) {
+						if (irrFeeType.getFeeTypeID() == fee.getFeeTypeID()) {
+							feePerc = irrFeeType.getFeePercentage();
+							isRcdFound = true;
+						}
+					}
+				}
+				BigDecimal calFeeAmount = BigDecimal.ZERO;
+				if (isRcdFound) {
+					calFeeAmount = fee.getActualAmount().subtract(fee.getWaivedAmount());
+					calFeeAmount = (calFeeAmount.multiply(feePerc)).divide(new BigDecimal(100), 0,
+							RoundingMode.HALF_DOWN);
+					feeAmount = feeAmount.add(calFeeAmount);
+				} else {
+					feeAmount = feeAmount.add(fee.getActualAmount().subtract(fee.getWaivedAmount()));
+				}
+			}
+		}
+
+		//FIXME CH Servicing Fees should be handled
 		for (FinanceScheduleDetail finScheduleDetail : finSchdData.getFinanceScheduleDetails()) {
 
 			if (finScheduleDetail.isDisbOnSchDate()) {
@@ -3104,21 +3143,25 @@ public class ScheduleCalculator {
 			}
 		}
 		/*
-		 * cal_IRR = RateCalculation.calculateIRR(schAmountList); int
-		 * termsPerYear =
-		 * CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq());
-		 * calculated_IRR = calculated_IRR.multiply(new
+		 * cal_IRR = RateCalculation.calculateIRR(schAmountList); int termsPerYear =
+		 * CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq()); calculated_IRR = calculated_IRR.multiply(new
 		 * BigDecimal(termsPerYear));
 		 */
 
-		// In OD Facility cases, schedule may not exists before disbursements
-		if(!repayDateList.isEmpty()){
-			cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
-			cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
-		}
+		cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
+		cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
 
 		finMain.setAnualizedPercRate(cal_XIRR.setScale(9));
 		finMain.setEffectiveRateOfReturn(cal_XIRR_WithFee.setScale(9));
+
+		if (irrFinType != null) {
+			FinIRRDetails irr = new FinIRRDetails();
+			irr.setiRRID(irrFinType.getIRRID());
+			irr.setiRRCode(irrFinType.getIrrCode());
+			irr.setIrrCodeDesc(irrFinType.getIrrCodeDesc());
+			irr.setIRR(cal_XIRR_WithFee.setScale(9));
+			finSchdData.getiRRDetails().add(irr);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -6715,6 +6758,22 @@ public class ScheduleCalculator {
 
 	public void setSplRateDAO(SplRateDAO splRateDAO) {
 		ScheduleCalculator.splRateDAO = splRateDAO;
+	}
+
+	public static IRRFeeTypeDAO getiRRFeeTypeDAO() {
+		return iRRFeeTypeDAO;
+	}
+
+	public static void setiRRFeeTypeDAO(IRRFeeTypeDAO iRRFeeTypeDAO) {
+		ScheduleCalculator.iRRFeeTypeDAO = iRRFeeTypeDAO;
+	}
+
+	public static IRRFinanceTypeDAO getIrrFinanceTypeDAO() {
+		return irrFinanceTypeDAO;
+	}
+
+	public static void setIrrFinanceTypeDAO(IRRFinanceTypeDAO irrFinanceTypeDAO) {
+		ScheduleCalculator.irrFinanceTypeDAO = irrFinanceTypeDAO;
 	}
 
 }

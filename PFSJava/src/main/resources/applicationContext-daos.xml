@@ -7935,6 +7935,8 @@
 	<bean id="scheduleCalculator" class="com.pennant.app.util.ScheduleCalculator">
 		<property name="splRateDAO" ref="splRateDAO" />
 		<property name="baseRateDAO" ref="baseRateDAO" />
+		<property name="iRRFeeTypeDAO" ref="iRRFeeTypeDAO" />
+		<property name="irrFinanceTypeDAO" ref="irrFinanceTypeDAO" />
 	</bean>
 
 	<!--============ CustomerLimitService ============== -->

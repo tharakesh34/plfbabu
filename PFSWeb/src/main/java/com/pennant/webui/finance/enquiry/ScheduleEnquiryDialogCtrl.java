@@ -31,7 +31,9 @@
  ********************************************************************************************
  * 12-11-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 30-04-2018		Vinay					 0.2       As Discussed with Raju and Siva,     * 
+ * 													IRR Code calculation functionality		*
+ * 													implemented.                             * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -61,7 +63,9 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
@@ -74,6 +78,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
@@ -99,13 +104,17 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 	 */
 	protected Window 		window_ScheduleEnquiryDialog; 		
 	protected Listbox 		listBoxSchedule;
+	protected Listbox 		iRRListBox; // autoWired
 	
 	protected Borderlayout  borderlayoutScheduleEnquiry;		
 	private Tabpanel 		tabPanel_dialogWindow;
 	protected Tab 			repayGraphTab;
+	// ####_0.2
+	protected Tab 			irrDetailsTab; // autoWired
 	private Tabpanel 		tabpanel_graph;
 	// Step Finance Fields
 	protected Listheader    listheader_SchFee;
+	protected Listheader    listheader_SchTax;
 	protected Listheader    listHeader_cashFlowEffect;
 	protected Listheader    listHeader_vSProfit;
 	protected Listheader    listHeader_orgPrincipalDue;
@@ -185,8 +194,10 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
  
 		if (isSchdFee) {
 			this.listheader_SchFee.setVisible(true);
+			this.listheader_SchTax.setVisible(true);
 		} else {
 			this.listheader_SchFee.setVisible(false);
+			this.listheader_SchTax.setVisible(false);
 		}
 		
 		this.listHeader_cashFlowEffect.setVisible(false);
@@ -270,7 +281,41 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 		logger.debug("Leaving");
 	}
 
-
+	/**
+	 * Method for Rendering IRR Details
+	 */
+	// ####_0.2
+	public void doFillIrrDetails(List<FinIRRDetails> irrCodeNvalueList) {
+		logger.debug("Entering");
+		
+		if(!irrCodeNvalueList.isEmpty()){
+			this.iRRListBox.getItems().clear();
+			this.irrDetailsTab.setVisible(true);
+		}else{
+			this.irrDetailsTab.setVisible(false);
+		}
+		
+		for (FinIRRDetails ResultOfIRRFeeType : irrCodeNvalueList) {
+			Listitem listitem = new Listitem();
+			Listcell irrcode = new Listcell();
+			Listcell irrdesc = new Listcell();
+			Listcell calcamountWithFee = new Listcell();
+			
+			irrcode.setLabel(ResultOfIRRFeeType.getiRRCode());
+			irrdesc.setLabel(ResultOfIRRFeeType.getIrrCodeDesc());
+			calcamountWithFee.setLabel(ResultOfIRRFeeType.getIRR().toString());
+			
+			listitem.appendChild(irrcode);
+			listitem.appendChild(irrdesc);
+			listitem.appendChild(calcamountWithFee);
+			
+			iRRListBox.setHeight(this.borderLayoutHeight - 142 + "px");
+			
+			iRRListBox.appendChild(listitem);
+		}
+		logger.debug("Leaving");
+	}
+	
 	/**
 	 * Method to fill the ScheduleList
 	 * 
@@ -345,7 +390,8 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 						showAdvRate = true;
 					}
 				}
-				
+				// ####_0.2
+				doFillIrrDetails(finScheduleData.getiRRDetails());
 				//Preparing Total Advance Profit Amount
 				totalAdvPft = totalAdvPft.add(curSchd.getAdvProfit());
 

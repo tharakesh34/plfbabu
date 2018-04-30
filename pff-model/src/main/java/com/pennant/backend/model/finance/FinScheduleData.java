@@ -159,7 +159,8 @@ public class FinScheduleData {
 	
 	private List<FinReceiptDetail> finReceiptDetails = new ArrayList<FinReceiptDetail>();
 	private List<FinFeeReceipt> finFeeReceipts = new ArrayList<FinFeeReceipt>();
-
+	private List<FinIRRDetails> iRRDetails = new ArrayList<FinIRRDetails>(); 
+	
 	public FinScheduleData() {
 		super();
 	}
@@ -544,5 +545,13 @@ public class FinScheduleData {
 
 	public void setFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts) {
 		this.finFeeReceipts = finFeeReceipts;
+	}
+
+	public List<FinIRRDetails> getiRRDetails() {
+		return iRRDetails;
+	}
+
+	public void setiRRDetails(List<FinIRRDetails> iRRDetails) {
+		this.iRRDetails = iRRDetails;
 	}
 }
