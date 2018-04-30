@@ -443,7 +443,7 @@ public class ExtendedFieldDetailsService {
 
 				//Table Name addition for Audit
 				extendedFieldRender.setTableName(tableName);
-				extendedFieldRender.setWorkflowId(0);
+				// extendedFieldRender.setWorkflowId(0);
 
 				if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					deleteRecord = true;
