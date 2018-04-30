@@ -3837,7 +3837,7 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		</sql>
 	</changeSet>
 	
-	<changeSet id="52" author="Vinay">
+	<changeSet id="52" author="Vinay" dbms="postgresql">
 		<comment>Repay heirarchy on NPA cases, for core version</comment>
 		<sql>
 			delete from SMTPARAMETERS where sysparmcode='ALW_DIFF_RPYHCY_NPA';
@@ -3847,7 +3847,26 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			Insert into SMTPARAMETERS values ('RPYHCY_ON_NPA','Repay heirarchy on NPA','String','1','PICF',4,0,null,null,'Repay heirarchy on NPA',1,1000,'0001-07-26	00:00:00.0','Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
-	
+	<changeSet id="52" author="Vinay" dbms="mssql">
+		<comment>Repay heirarchy on NPA cases, for core version</comment>
+		<sql>
+			delete from SMTPARAMETERS where sysparmcode='ALW_DIFF_RPYHCY_NPA';
+			Insert into SMTPARAMETERS values ('ALW_DIFF_RPYHCY_NPA','Allow different repay heirarchy on NPA','String','1','Y',1,0,null,null,'Allow different repay heirarchy on NPA',1,1000,null,'Approved',null,null,null,null,null,0);
+			
+			delete from SMTPARAMETERS where sysparmcode='RPYHCY_ON_NPA';
+			Insert into SMTPARAMETERS values ('RPYHCY_ON_NPA','Repay heirarchy on NPA','String','1','PICF',4,0,null,null,'Repay heirarchy on NPA',1,1000,null,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+	<changeSet id="52" author="Vinay" dbms="oracle">
+		<comment>Repay heirarchy on NPA cases, for core version</comment>
+		<sql>
+			delete from SMTPARAMETERS where sysparmcode='ALW_DIFF_RPYHCY_NPA';
+			Insert into SMTPARAMETERS values ('ALW_DIFF_RPYHCY_NPA','Allow different repay heirarchy on NPA','String','1','Y',1,0,null,null,'Allow different repay heirarchy on NPA',1,1000,'0001-07-26	00:00:00.0','Approved',null,null,null,null,null,0);
+			
+			delete from SMTPARAMETERS where sysparmcode='RPYHCY_ON_NPA';
+			Insert into SMTPARAMETERS values ('RPYHCY_ON_NPA','Repay heirarchy on NPA','String','1','PICF',4,0,null,null,'Repay heirarchy on NPA',1,1000,'0001-07-26	00:00:00.0','Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
 	<changeSet id="53" author="Vinay">
 		<comment>Cancel Loan Information Report Scripts, for core version</comment>
 		<sql>
