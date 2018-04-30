@@ -4311,5 +4311,52 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			  	 	 ]]>
 		   </sql>
 	  </changeSet>
+	  <changeSet id="60" author="Jayant" dbms="oracle">
+	  	<comment> Procedure For Renaming TableName where EXTENDEDFIELDHEADER has Module LOAN</comment>
+	  	<sql splitStatements="false" stripComments="true"> 
+			DECLARE countT int;
+				begin
+				  for i in (Select SUBMODULENAME from extendedfieldheader where modulename='LOAN')
+				    loop
+				        begin
+				            Select COUNT(*) into countT from user_tables where table_name='LOAN_'||i.SUBMODULENAME||'_ED';
+				        if(countT >0) then
+				         execute immediate 'rename LOAN_'||i.SUBMODULENAME||'_ED'||' to LOAN_'||i.SUBMODULENAME||'_ORG_ED';
+				         else
+				         DBMS_OUTPUT.PUT_LINE('TableName : LOAN_'||i.SUBMODULENAME||'_ED NOT FOUND !!!');
+				        end if;
+				        end;
+				      begin
+				            Select COUNT(*) into countT from user_tables where table_name='LOAN_'||i.SUBMODULENAME||'_ED_TEMP';
+				        if(countT >0) then
+				         execute immediate 'rename LOAN_'||i.SUBMODULENAME||'_ED_TEMP'||' to LOAN_'||i.SUBMODULENAME||'_ORG_ED_TEMP';
+				         else
+				         DBMS_OUTPUT.PUT_LINE('TableName : LOAN_'||i.SUBMODULENAME||'_ED_TEMP NOT FOUND !!!');
+				        end if;
+				        end;
+				    end loop;
+				end;
+		</sql>
+	  </changeSet>
+	  <changeSet id="61" author="SreeKanth" dbms="postgresql">
+	  	<comment> Procedure For Renaming TableName where EXTENDEDFIELDHEADER has Module LOAN</comment>
+	  	<sql splitStatements="false" stripComments="true"> 
+	  		$do$
+				DECLARE
+				row record;
+				BEGIN
+				     
+				    FOR row IN Select SUBMODULENAME From EXTENDEDFIELDHEADER WHERE  MODULENAME = 'LOAN'
+					
+				    LOOP
+					    EXECUTE 'ALTER TABLE IF EXISTS LOAN_'||row.SUBMODULENAME||'_ED RENAME TO LOAN_'||row.SUBMODULENAME||'_ORG_ED';
+					    EXECUTE 'ALTER TABLE IF EXISTS LOAN_'||row.SUBMODULENAME||'_ED_TEMP RENAME TO LOAN_'||row.SUBMODULENAME||'_ORG_ED_TEMP';
+						RAISE NOTICE '%', row.SUBMODULENAME;
+				    END LOOP;
+					
+					END;
+				$do$;	
+	  	</sql>
+	  </changeSet>
 </databaseChangeLog>
 	

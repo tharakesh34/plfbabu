@@ -261,4 +261,42 @@
 			update AdtCustomerExtLiability set emiCnsdrForFOIR=0 where emiCnsdrForFOIR is null;
 		</sql>
 	</changeSet>
+	<changeSet id="18" author="Jayant" dbms="oracle">
+	  	<comment> Procedure For Renaming TableName where ADTEXTENDEDFIELDHEADER has Module LOAN</comment>
+	  	<sql splitStatements="false" stripComments="true"> 
+			DECLARE countT int;
+				begin
+				  for i in (Select SUBMODULENAME from extendedfieldheader where modulename='LOAN')
+				    loop
+				        begin
+				            Select COUNT(*) into countT from user_tables where table_name='ADTLOAN_'||i.SUBMODULENAME||'_ED';
+				        if(countT >0) then
+				         execute immediate 'rename ADTLOAN_'||i.SUBMODULENAME||'_ED'||' to ADTLOAN_'||i.SUBMODULENAME||'_ORG_ED';
+				         else
+				         DBMS_OUTPUT.PUT_LINE('TableName : ADTLOAN_'||i.SUBMODULENAME||'_ED NOT FOUND !!!');
+				        end if;
+				        end;
+				    end loop;
+				end;
+		</sql>
+	  </changeSet>
+	  <changeSet id="19" author="SreeKanth" dbms="postgresql">
+	  	<comment> Procedure For Renaming TableName where EXTENDEDFIELDHEADER has Module LOAN</comment>
+	  	<sql splitStatements="false" stripComments="true"> 
+	  		$do$
+				DECLARE
+				row record;
+				BEGIN
+				     
+				    FOR row IN Select SUBMODULENAME From ADTEXTENDEDFIELDHEADER WHERE  MODULENAME = 'LOAN'
+					
+				    LOOP
+					    EXECUTE 'ALTER TABLE IF EXISTS ADTLOAN_'||row.SUBMODULENAME||'_ED RENAME TO ADTLOAN_'||row.SUBMODULENAME||'_ORG_ED';
+						RAISE NOTICE '%', row.SUBMODULENAME;
+				    END LOOP;
+					
+					END;
+				$do$;	
+	  	</sql>
+	  </changeSet>
 	</databaseChangeLog>
