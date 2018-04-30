@@ -26,11 +26,11 @@
 			Set search_path = plfaudit,public,pg_catalog;
 		</sql>
 	</changeSet>
-	 <changeSet id="1.0" author="durgaprasad.g">
+	<!--  <changeSet id="1.0" author="durgaprasad.g">
 		<addColumn tableName="ADTEXTENDEDFIELDDETAIL"  >
 			<column name="ExtendedType" defaultValue="0" type="int"/>
 		</addColumn>
-	</changeSet>
+	</changeSet> -->
 	
 	<changeSet id="2" author="murthy.y">
 		<createTable tableName="adtverification_tv">

@@ -9,7 +9,7 @@
 	<property name="call.substr" value="substring" dbms="mssql" />
 	<property name="call.substr" value="substr" dbms="oracle" />
 	<property name="call.substr" value="substring" dbms="postgresql" />
-	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
 	<property name="call.auditdb" value=" " dbms="oracle" />
 	<property name="call.concatenate" value="+" dbms="mssql" />
 	<property name="call.concatenate" value="||" dbms="oracle" />
