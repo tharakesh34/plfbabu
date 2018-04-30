@@ -4152,7 +4152,7 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage","recordstatus","rolecode","nextrolecode","taskid","nexttaskid","recordtype","workflowid","lastmnton","lastmntby","version") values ('WFEE10','EN','E','Signature of {0} parameter should be (String,Object,Long,Long).',null,'Approved',null,null,null,null,null,0,to_timestamp('0001-02-27 00:00:00.0','null'),1000,0);
  		</sql>
  	</changeSet>
- 	<changeSet id="64" author="Prasad">
+<!--  	<changeSet id="64" author="Prasad">
 	<comment>missed assettypeid column while testing </comment>
 	<createView viewName="finassettypes_tview" replaceIfExists="true">
  	 SELECT t1.finassettypeid AS assettypeid,
@@ -4171,7 +4171,7 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
     t1.workflowid
    FROM finassettypes_temp t1
  	</createView>
- 	</changeSet>
+ 	</changeSet> -->
  		<changeSet id="58" author="lakshmi.n">
 		<comment>Rename the column from finassettypeid to assettypeid </comment>
 		<renameColumn tableName="finassettypes" oldColumnName="finassettypeid"
