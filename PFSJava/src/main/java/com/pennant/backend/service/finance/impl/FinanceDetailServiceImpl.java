@@ -3570,42 +3570,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							financeDetail.getRolledoverFinanceHeader().getRolledoverFinanceDetails(), "");
 				}
 
-				// Plan EMI Holiday Details
-				// =======================================
-				if (financeMain.isPlanEMIHAlw()) {
-					if (StringUtils.equals(financeMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
-						if (financeDetail.getFinScheduleData().getPlanEMIHmonths() != null
-								&& !financeDetail.getFinScheduleData().getPlanEMIHmonths().isEmpty()) {
-
-							List<FinPlanEmiHoliday> holidayList = new ArrayList<>();
-							for (int i = 0; i < financeDetail.getFinScheduleData().getPlanEMIHmonths().size(); i++) {
-								int planEMIHMonth = financeDetail.getFinScheduleData().getPlanEMIHmonths().get(i);
-								FinPlanEmiHoliday emiHoliday = new FinPlanEmiHoliday();
-								emiHoliday.setFinReference(financeMain.getFinReference());
-								emiHoliday.setPlanEMIHMonth(planEMIHMonth);
-								holidayList.add(emiHoliday);
-							}
-
-							getFinPlanEmiHolidayDAO().savePlanEMIHMonths(holidayList, "");
-						}
-					} else if (StringUtils.equals(financeMain.getPlanEMIHMethod(),
-							FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
-						if (financeDetail.getFinScheduleData().getPlanEMIHDates() != null
-								&& !financeDetail.getFinScheduleData().getPlanEMIHDates().isEmpty()) {
-
-							List<FinPlanEmiHoliday> holidayList = new ArrayList<>();
-							for (int i = 0; i < financeDetail.getFinScheduleData().getPlanEMIHDates().size(); i++) {
-								Date planEMIHDate = financeDetail.getFinScheduleData().getPlanEMIHDates().get(i);
-								FinPlanEmiHoliday emiHoliday = new FinPlanEmiHoliday();
-								emiHoliday.setFinReference(financeMain.getFinReference());
-								emiHoliday.setPlanEMIHDate(planEMIHDate);
-								holidayList.add(emiHoliday);
-							}
-
-							getFinPlanEmiHolidayDAO().savePlanEMIHDates(holidayList, "");
-						}
-					}
-				}
 				// Vas Recording Details
 				if (financeDetail.getFinScheduleData().getVasRecordingList() != null
 						&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
@@ -3917,13 +3881,65 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Finance Fee Receipt Details
-			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
+			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_PLANNEDEMI)) {
 				if (financeDetail.getFinScheduleData().getFinFeeReceipts() == null
 						|| financeDetail.getFinScheduleData().getFinFeeReceipts().isEmpty()) {
 					getFinFeeDetailService().createExcessAmount(financeMain.getFinReference(), null);
 				} else {
 					getFinFeeDetailService().doApproveFinFeeReceipts(
 							financeDetail.getFinScheduleData().getFinFeeReceipts(), "", tranType, financeMain.getFinReference());
+				}
+			}
+
+			// Plan EMI Holiday Details Deletion, if exists on Old image
+			// =======================================
+			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_PLANNEDEMI)) {
+				if (financeMain != null && financeMain.isPlanEMIHAlw()) {
+					if (StringUtils.equals(financeMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+						getFinPlanEmiHolidayDAO().deletePlanEMIHMonths(financeMain.getFinReference(), "");
+					} else if (StringUtils.equals(financeMain.getPlanEMIHMethod(),
+							FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
+						getFinPlanEmiHolidayDAO().deletePlanEMIHDates(financeMain.getFinReference(), "");
+					}
+				}
+			}
+		}
+
+		// Plan EMI Holiday Details
+		// =======================================
+		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)
+				|| StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_PLANNEDEMI)) {
+			if (financeMain.isPlanEMIHAlw()) {
+				if (StringUtils.equals(financeMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+					if (financeDetail.getFinScheduleData().getPlanEMIHmonths() != null
+							&& !financeDetail.getFinScheduleData().getPlanEMIHmonths().isEmpty()) {
+
+						List<FinPlanEmiHoliday> holidayList = new ArrayList<>();
+						for (int i = 0; i < financeDetail.getFinScheduleData().getPlanEMIHmonths().size(); i++) {
+							int planEMIHMonth = financeDetail.getFinScheduleData().getPlanEMIHmonths().get(i);
+							FinPlanEmiHoliday emiHoliday = new FinPlanEmiHoliday();
+							emiHoliday.setFinReference(financeMain.getFinReference());
+							emiHoliday.setPlanEMIHMonth(planEMIHMonth);
+							holidayList.add(emiHoliday);
+						}
+
+						getFinPlanEmiHolidayDAO().savePlanEMIHMonths(holidayList, "");
+					}
+				} else if (StringUtils.equals(financeMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
+					if (financeDetail.getFinScheduleData().getPlanEMIHDates() != null
+							&& !financeDetail.getFinScheduleData().getPlanEMIHDates().isEmpty()) {
+
+						List<FinPlanEmiHoliday> holidayList = new ArrayList<>();
+						for (int i = 0; i < financeDetail.getFinScheduleData().getPlanEMIHDates().size(); i++) {
+							Date planEMIHDate = financeDetail.getFinScheduleData().getPlanEMIHDates().get(i);
+							FinPlanEmiHoliday emiHoliday = new FinPlanEmiHoliday();
+							emiHoliday.setFinReference(financeMain.getFinReference());
+							emiHoliday.setPlanEMIHDate(planEMIHDate);
+							holidayList.add(emiHoliday);
+						}
+
+						getFinPlanEmiHolidayDAO().savePlanEMIHDates(holidayList, "");
+					}
 				}
 			}
 		}
@@ -5539,6 +5555,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				extendedFieldRender.setTypeCode(recording.getProductCode());
 				extendedFieldRender.setTypeCodeDesc(recording.getProductDesc());
 				extendedFieldRender.setReference(recording.getVasReference());
+				extendedFieldRender.setWorkflowId(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
 				details.add(extendedFieldDetailsService.setExtendedFieldAuditData(extendedFieldRender, auditTranType,
 						method, i + 1));
 
