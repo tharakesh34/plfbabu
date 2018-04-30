@@ -4358,5 +4358,19 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 				$do$;	
 	  	</sql>
 	  </changeSet>
+	  	<changeSet id="28" author="Prasad" dbms="postgresql">
+	  	<comment> FOR : Maintaining PRESENTMENT FILE IMPORT RESPONSE </comment>
+		<createTable tableName="PRESENTMENT_FILEIMPORT">
+			<column name="BranchCode" type="char(3)" />
+			<column name="AgreementNo" type="char(14)" />
+			<column name="InstalmentNo" type="char(3)" />
+			<column name="BFLReferenceNo" type="char(3)" />
+			<column name="Batchid" type="char(29)" />
+			<column name="AmountCleared" type="char(14)" />
+			<column name="ClearingDate" type="datetime" />
+			<column name="Status" type="char(1)" />
+			<column name="ReasonCode" type="char(3)" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
 	
