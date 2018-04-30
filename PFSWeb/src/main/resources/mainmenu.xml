@@ -180,6 +180,12 @@
 				<menuItem id="menu_Item_Technical_Verification"
 					zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=TVAGENCY"
 					rightName="menu_Item_Agencies_Technical_Verification" />
+				<menuItem id="menu_Item_DirectSellingAgent"
+					zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=DSA"
+					rightName="menuItem_SystemMaster_VehicleDealer" />
+				<menuItem id="menu_Item_DirectMarketAgent"
+					zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=DMA"
+					rightName="menuItem_SystemMaster_VehicleDealer" />
 			</menu>
 			<menuItem id="menu_Item_BuilderGroup"
 				zulNavigation="/WEB-INF/pages/SystemMaster/BuilderGroup/BuilderGroupList.zul"
