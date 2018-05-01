@@ -56,6 +56,15 @@
 										<combobox id="delegationRole" width="175px" />
 									</hbox>
 								</row>
+								<!--  ## 01-05-2018 - Start - story #361(tuleap server) Manual Deviations -->
+								<row id="row_ApprovelStatus" >
+									<label value="${c:l('label_ManualDeviationTriggerDialog_status.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="status" width="175px" />
+									</hbox>
+								</row>
+								<!--   ### 01-05-2018 - End -->
 								<row>
 									<label value="${c:l('label_ManualDeviationTriggerDialog_remarks.value')}" />
 									<hbox>

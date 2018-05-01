@@ -15,5 +15,6 @@ public interface FinanceDeviationsService {
 	void processApproval(List<FinanceDeviations> list,AuditHeader auditHeader,String finreference);
 	FinanceDetail getFinanceDetailById(String id);
 	FinanceMain getFinanceMain(String finReference);
-
+	//### 01-05-2018 story #361(tuleap server) Manual Deviations
+	AuditHeader doCheckDeviationApproval(AuditHeader auditHeader);
 }

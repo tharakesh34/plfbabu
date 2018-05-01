@@ -4362,6 +4362,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			authorizationLimitService.validateFinanceAuthorizationLimit(auditHeader);
 
 		break;
+		//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
+		case PennantConstants.METHOD_DO_CHECK_DEVIATION_APPROVAL:
+			getDeviationDetailsService().doCheckDeviationApproval(auditHeader);
+
+			break;
+			// ### 01-05-2018 - End
 		default:
 			// Execute any other custom service tasks
 			if(StringUtils.isNotBlank(task.getOperation())) {

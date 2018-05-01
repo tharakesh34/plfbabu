@@ -57,6 +57,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -74,6 +75,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -112,6 +114,8 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	private boolean						newRecord			= false;
 	private boolean						newCustomer			= false;
 	private Textbox						remarks;
+	private Combobox					status;
+	private Row							row_ApprovelStatus;
 
 	private List<FinanceDeviations>		financeDeviationsList;
 	private List<ValueLabel>			delegator			= null;
@@ -119,7 +123,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	@Autowired
 	private DeviationHelper				deviationHelper;
 	private String						prodCode;
-
+	ArrayList<ValueLabel>				approveStatus	= PennantStaticListUtil.getApproveStatus();
 	/**
 	 * default constructor.<br>
 	 */
@@ -342,6 +346,12 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 				doReadOnly();
 				btnCancel.setVisible(false);
 			}
+			//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
+
+			if((getUserWorkspace().getUserRoles().contains(aFinanceDeviations.getUserRole()))) {
+				btnDelete.setVisible(true);
+			}
+			// ### 01-05-2018 - End
 		}
 
 		try {
@@ -413,8 +423,12 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		if (!enqModule) {
 //			this.btnNew.setVisible(true);
 //			this.btnEdit.setVisible(true);
-			this.btnDelete.setVisible(true);
+//			this.btnDelete.setVisible(true);
 			this.btnSave.setVisible(true);
+			//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
+			readOnlyComponent(true, delegationRole);
+			readOnlyComponent(true, status);
+			// ### 01-05-2018 - End
 		} else {
 			this.btnNew.setVisible(false);
 			this.btnEdit.setVisible(false);
@@ -471,7 +485,23 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 
 		aFinanceDeviations.setModule(DeviationConstants.TY_LOAN);
 		fillComboBox(delegationRole, aFinanceDeviations.getDelegationRole(), delegator, "");
+		//### 01-05-2018 - story #361(tuleap server) Manual Deviations
+		fillComboBox(status, aFinanceDeviations.getApprovalStatus(), approveStatus, "");
+
 		String deviationCode = aFinanceDeviations.getDeviationCode();
+		//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
+
+		if(aFinanceDeviations.isNewRecord()||StringUtils.equals(aFinanceDeviations.getRecordType(), PennantConstants.RCD_ADD)||(getUserWorkspace().getUserRoles().contains(aFinanceDeviations.getUserRole()))) {
+			readOnlyComponent(false, delegationRole);
+		}
+		
+		if (DeviationConstants.MULTIPLE_APPROVAL) {
+			if (getUserWorkspace().getUserRoles().contains(aFinanceDeviations.getDelegationRole())) {
+				readOnlyComponent(false, status);
+				readOnlyComponent(false, delegationRole);
+			}
+		}
+		// ### 01-05-2018 - End
 		if (StringUtils.isEmpty(deviationCode)) {
 			deviationCode="0";
 		}
@@ -535,7 +565,19 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		} catch (WrongValueException e) {
 			wve.add(e);
 		}
-
+		//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
+		if (this.status.isVisible()) {
+			try {
+				aFinanceDeviations.setApprovalStatus(this.status.getSelectedItem().getValue());
+				long userId = getUserWorkspace().getLoggedInUser().getUserId();
+				if (StringUtils.isBlank(aFinanceDeviations.getDelegatedUserId())) {
+					aFinanceDeviations.setDelegatedUserId(String.valueOf(userId));
+				}
+			} catch (WrongValueException e) {
+				wve.add(e);
+			}
+		}
+		// ### 01-05-2018 - End
 		aFinanceDeviations.setDeviationDate(new Timestamp(DateUtility.getAppDate().getTime()));
 		aFinanceDeviations.setRemarks(this.remarks.getValue());
 

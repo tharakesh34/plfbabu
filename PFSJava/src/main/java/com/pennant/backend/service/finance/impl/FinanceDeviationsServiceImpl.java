@@ -16,6 +16,7 @@ import com.pennant.backend.dao.finance.FinanceDeviationsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScoreHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
+import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -28,7 +29,6 @@ import com.pennant.backend.model.finance.FinanceScoreDetail;
 import com.pennant.backend.model.finance.FinanceScoreHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
 import com.pennant.backend.service.finance.FinanceDeviationsService;
@@ -36,6 +36,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 
 public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
@@ -162,6 +163,11 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 
 		//Checking records to save and Update
 		for (FinanceDeviations newfindev : newlist) {
+			//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
+			if(!StringUtils.equals(newfindev.getApprovalStatus(),PennantConstants.List_Select)) {
+				continue;
+			}
+			// ### 01-05-2018 - End
 			FinanceDeviations oldFindev = getFinanceDeviationByID(oldList, newfindev);
 			if (oldFindev == null) {
 				deviationDetailsDAO.save(newfindev, tableType);
@@ -197,7 +203,21 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 				auditDetails.add(finDeviationAudit);
 			}
 		}
+		//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
+		//if status is approved then processApproval
+		for (FinanceDeviations financeDeviations : newlist) {
+			
+			if(!StringUtils.equals(financeDeviations.getApprovalStatus(),PennantConstants.List_Select)) { 
+				deviationDetailsDAO.save(financeDeviations, "");
+				auditDetails.add(getFinDeviationsAudit(financeDeviations, ++count, PennantConstants.TRAN_ADD));
 
+				deviationDetailsDAO.delete(financeDeviations, "_Temp");
+				financeDeviations.setBefImage(financeDeviations);
+				auditDetails.add(getFinDeviationsAudit(financeDeviations, ++count, PennantConstants.TRAN_DEL));
+			}
+
+		}
+		// ### 01-05-2018 - End
 		//Add audit if any changes
 		if (auditDetails.isEmpty()) {
 			return;
@@ -348,6 +368,36 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 			}
 		}
 		return false;
+	}
+	//### 01-05-2018 - story #361(tuleap server) Manual Deviations
+	@Override
+	public AuditHeader doCheckDeviationApproval(AuditHeader auditHeader) {
+		AuditDetail auditDetail = auditHeader.getAuditDetail();
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		List<FinanceDeviations> list = new ArrayList<>();
+		List<FinanceDeviations> mDeviations = financeDetail.getManualDeviations();
+		
+		if (mDeviations != null && !mDeviations.isEmpty()) {
+			list.addAll(mDeviations);
+		}
+		
+		boolean deviationfound = false;
+		if (list != null && !list.isEmpty()) {
+			for (FinanceDeviations financeDeviations : list) {
+				if (!StringUtils.equalsIgnoreCase(financeDeviations.getApprovalStatus(),
+						PennantConstants.RCD_STATUS_APPROVED)) {
+					deviationfound = true;
+					break;
+				}
+			}
+		}
+		
+		if (deviationfound) {
+			auditDetail.setErrorDetail(new ErrorDetail("30901", null));
+			auditHeader.setAuditDetail(auditDetail);
+		}
+		
+		return auditHeader;
 	}
 
 	private AuditHeader getAuditHeader(AuditHeader auditHeader) {
