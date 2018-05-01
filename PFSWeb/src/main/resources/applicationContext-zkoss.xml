@@ -4591,6 +4591,9 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="manualAdviseService" ref="manualAdviseService" />
 		<property name="eventManager" ref="eventManager" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
 	</bean>
 	<bean id="selectManualAdviseFinReferenceDialogCtrl"
 		class="com.pennant.webui.financemanagement.selectmanualadvise.SelectManualAdviseFinReferenceDialogCtrl"

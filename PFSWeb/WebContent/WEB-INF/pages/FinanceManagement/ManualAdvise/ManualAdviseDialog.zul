@@ -210,6 +210,51 @@
 							
 						</rows>
 					</grid>
+						
+					<groupbox id="gb_GSTDetails" sclass="gb-dialog">
+						<caption label= "${c:l('label_ManualAdviseDialog_GSTDetails.value')}"/>
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="200px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_ManualAdviseDialog_TaxComponent" value = "${c:l('label_ManualAdviseDialog_TaxComponent.value')}" />
+									<label id="label_TaxComponent" style="font-weight:bold;"/>
+								</row>
+								<row>
+									<label id="label_ManualAdviseDialog_AdviseAmount" value = "${c:l('label_ManualAdviseDialog_AdviseAmount.value')}" /> 
+									<decimalbox id="feeAmount" maxlength="18" readonly="true" style="border:none; background-color:white; font-weight:bold;"/>
+								</row>
+								<row>
+									<label id="label_ManualAdviseDialog_CGST" value="${c:l('label_ManualAdviseDialog_CGST.value')}" />
+									<decimalbox id="cgst" maxlength="18" readonly="true" style="border:none; background-color:white; font-weight:bold;"/>
+								</row>
+								<row>
+									<label id="label_ManualAdviseDialog_SGST" value = "${c:l('label_ManualAdviseDialog_SGST.value')}"/>
+									<decimalbox id="sgst" maxlength="18" readonly="true" style="border:none; background-color:white; font-weight:bold;"/>
+								</row>
+								<row>
+									<label id="label_ManualAdviseDialog_IGST" value = "${c:l('label_ManualAdviseDialog_IGST.value')}"/>
+									<decimalbox id="igst" maxlength="18" readonly="true" style="border:none; background-color:white; font-weight:bold;"/>
+								</row>
+								<row>
+									<label id="label_ManualAdviseDialog_UGST" value = "${c:l('label_ManualAdviseDialog_UGST.value')}"/>
+									<decimalbox id="ugst" maxlength="18" readonly="true" style="border:none; background-color:white; font-weight:bold;"/>
+								</row>
+								<row>
+									<label id="label_ManualAdviseDialog_TotalGST" value = "${c:l('label_ManualAdviseDialog_TotalGST.value')}"/>
+									<decimalbox id="totalGST" maxlength="18" readonly="true" style="border:none; background-color:white; font-weight:bold;"/>
+								</row>
+								<row>
+									<label id="label_ManualAdviseDialog_Total" value = "${c:l('label_ManualAdviseDialog_Total.value')}"/>
+									<decimalbox id="total" maxlength="18" readonly="true" style="border:none; background-color:white; font-weight:bold;"/>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				
 					<groupbox id="adviseMovements">
 						<listbox id="listBoxAdviseMovements"
 							fixedLayout="true" span="true"

@@ -65,7 +65,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -148,7 +147,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 	private FeeType						feeType;
 	private transient FeeTypeListCtrl	feeTypeListCtrl;
-	private List<Property> listAdviseType = PennantStaticListUtil.getManualAdviseTypes();
+	private List<ValueLabel> listAdviseType = PennantStaticListUtil.getManualAdviseTypes();
 	private List<ValueLabel> listTaxComponent = PennantStaticListUtil.getFeeTaxTypes();
 	
 	public static final int DEFAULT_ADVISETYPE = FinanceConstants.MANUAL_ADVISE_RECEIVABLE;
@@ -430,7 +429,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		if (this.manualAdvice.isChecked()) {
 			this.label_AdviseType.setVisible(true);
 			this.hlayout_AdviseType.setVisible(true);
-			fillList(adviseType, listAdviseType, String.valueOf(aFeeType.getAdviseType()));
+			fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
 
 		}else{
 			this.label_AdviseType.setVisible(false);
@@ -502,7 +501,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.feeTypeDesc.setValue(aFeeType.getFeeTypeDesc());
 		this.manualAdvice.setChecked(aFeeType.isManualAdvice());
 		this.hostFeeTypeCode.setValue(aFeeType.getHostFeeTypeCode());
-		fillList(adviseType, listAdviseType, String.valueOf(aFeeType.getAdviseType()));
+		fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
 		
 		if (this.manualAdvice.isChecked()) {
 			this.label_AdviseType.setVisible(true);

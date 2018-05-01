@@ -199,7 +199,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> receiptModes;
 	private static ArrayList<ValueLabel> receiptModeStatus;
 	private static ArrayList<ValueLabel> allocationMethods;
-	private static  List<Property> ManualAdviseTypes;
+	private static ArrayList<ValueLabel> manualAdviseTypes;
 	private static List<Property> reasonTypeList;
 	private static List<Property> categoryTypeList;
 	private static ArrayList<ValueLabel> actionList;
@@ -2782,13 +2782,13 @@ public class PennantStaticListUtil {
 		return allocationMethods;
 	}
 	
-	public static List<Property> getManualAdviseTypes(){
-		if(ManualAdviseTypes == null){
-			ManualAdviseTypes = new ArrayList<Property>(2);
-			ManualAdviseTypes.add(new Property(FinanceConstants.MANUAL_ADVISE_RECEIVABLE, Labels.getLabel("label_ManualAdvise_Receivable")));
-			ManualAdviseTypes.add(new Property(FinanceConstants.MANUAL_ADVISE_PAYABLE, Labels.getLabel("label_ManualAdvise_Payable")));
+	public static ArrayList<ValueLabel> getManualAdviseTypes(){
+		if (manualAdviseTypes == null){
+			manualAdviseTypes = new ArrayList<ValueLabel>(2);
+			manualAdviseTypes.add(new ValueLabel(String.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE), Labels.getLabel("label_ManualAdvise_Receivable")));
+			manualAdviseTypes.add(new ValueLabel(String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE), Labels.getLabel("label_ManualAdvise_Payable")));
 		}
-		return ManualAdviseTypes;
+		return manualAdviseTypes;
 	}
 
 	public static List<Property> getReasonType() {

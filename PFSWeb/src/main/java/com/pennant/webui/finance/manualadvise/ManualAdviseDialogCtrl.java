@@ -45,6 +45,7 @@ package com.pennant.webui.finance.manualadvise;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -58,6 +59,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
@@ -72,13 +74,20 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.Property;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinTaxDetails;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.rmtmasters.FinTypeFees;
+import com.pennant.backend.service.finance.FinFeeDetailService;
+import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -131,9 +140,13 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	private transient ManualAdviseListCtrl manualAdviseListCtrl;
 	private transient ManualAdviseService manualAdviseService;
+	private FinanceDetailService financeDetailService;
+	private FinFeeDetailService finFeeDetailService;
+	private transient FinanceTaxDetailService financeTaxDetailService;
+	
 	private EventManager eventManager;
 
-	private List<Property> listAdviseType = PennantStaticListUtil.getManualAdviseTypes();
+	private List<ValueLabel> listAdviseType = PennantStaticListUtil.getManualAdviseTypes();
 	
 	public static final int DEFAULT_ADVISETYPE = FinanceConstants.MANUAL_ADVISE_RECEIVABLE;
 
@@ -145,6 +158,17 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	protected Label										lbl_startDate;
 	protected Label										lbl_MaturityDate;
 	protected Groupbox									finBasicdetails;
+	
+	//GST Details
+	protected Groupbox gb_GSTDetails;
+	protected Label label_TaxComponent;
+	protected Decimalbox feeAmount;
+	protected Decimalbox cgst;
+	protected Decimalbox sgst;
+	protected Decimalbox igst;
+	protected Decimalbox ugst;
+	protected Decimalbox totalGST;
+	protected Decimalbox total;
 
 	private FinanceMain financeMain;
 	/**
@@ -386,18 +410,28 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onFulfillFeeTypeID(Event event) {
+	public void onFulfill$feeTypeID(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = feeTypeID.getObject();
 		if (dataObject instanceof String) {
 			this.feeTypeID.setValue(dataObject.toString());
 			this.feeTypeID.setDescription("");
+			this.feeTypeID.setAttribute("TaxApplicable", false);
+			this.feeTypeID.setAttribute("TaxComponent", "");
 		} else {
 			FeeType details = (FeeType) dataObject;
 			if (details != null) {
 				this.feeTypeID.setAttribute("FeeTypeID", details.getFeeTypeID());
+				this.feeTypeID.setAttribute("TaxApplicable", details.isTaxApplicable());
+				this.feeTypeID.setAttribute("TaxComponent", details.getTaxComponent());
+			} else {
+				this.feeTypeID.setAttribute("TaxApplicable", false);
+				this.feeTypeID.setAttribute("TaxComponent", "");
 			}
 		}
+		
+		calculateGST();
+		
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -405,6 +439,119 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		logger.debug(Literal.ENTERING);
 		
 		setFeeTypeFilters();
+		
+		calculateGST();
+		
+		logger.debug(Literal.LEAVING);
+	}
+	
+	/**
+	 * Method for getting Discrepancies based on Finance Amount
+	 */
+	public void onFulfill$adviseAmount(Event event) {
+		logger.debug("Entering " + event.toString());
+
+		if (this.adviseAmount.getActualValue() != null && this.adviseAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
+			//do nothing
+		} else {
+			this.adviseAmount.setValue(BigDecimal.ZERO);
+		}
+		calculateGST();
+
+		logger.debug("Leaving " + event.toString());
+	}
+	
+	private void calculateGST() {
+		logger.debug(Literal.ENTERING);
+		
+		boolean taxApplicable = (boolean) this.feeTypeID.getAttribute("TaxApplicable");
+		String taxComp = (String) this.feeTypeID.getAttribute("TaxComponent");
+		
+		if (taxApplicable && StringUtils.equals(getComboboxValue(this.adviseType), String.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE))) {
+			
+			this.gb_GSTDetails.setVisible(true);
+			FinanceDetail  financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinReference(), "", false);
+			
+			if (financeDetail != null) {
+				BigDecimal adviseAmount = BigDecimal.ZERO;
+				FinFeeDetail finFeeDetail = new FinFeeDetail();
+				FinTypeFees finTypeFee = new FinTypeFees();
+				
+				financeDetail.setFinanceTaxDetails(financeTaxDetailService.getApprovedFinanceTaxDetail(financeMain.getFinReference()));
+				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+				HashMap<String, Object> gstExecutionMap = finFeeDetailService.prepareGstMappingDetails(financeDetail, financeMain.getFinBranch());
+				
+				if (this.adviseAmount.getActualValue() != null) {
+					adviseAmount = (PennantApplicationUtil.unFormateAmount(this.adviseAmount.getActualValue(), PennantConstants.defaultCCYDecPos));
+				}
+				
+				finFeeDetail.setCalculatedAmount(adviseAmount);
+				
+				this.feeTypeID.getValidatedValue();
+				
+				finFeeDetail.setTaxComponent(taxComp);
+				finFeeDetail.setTaxApplicable(taxApplicable);
+				finTypeFee.setTaxComponent(taxComp);
+				finTypeFee.setTaxApplicable(taxApplicable);
+				finTypeFee.setAmount(adviseAmount);
+				
+				finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail, gstExecutionMap);
+				finFeeDetailService.calculateGSTFees(finFeeDetail, financeMain, gstExecutionMap);
+				
+				String taxComponent = "";
+				
+				if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())) {
+					taxComponent = Labels.getLabel("label_FeeTypeDialog_Exclusive");
+				} else if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, finFeeDetail.getTaxComponent())) {
+					taxComponent = Labels.getLabel("label_FeeTypeDialog_Inclusive");
+				}
+				
+				this.label_TaxComponent.setValue(taxComponent);
+				
+				int formatter = CurrencyUtil.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
+				
+				this.feeAmount.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+				this.feeAmount.setScale(formatter);
+				this.feeAmount.setValue(PennantAppUtil.formateAmount(finFeeDetail.getNetAmountOriginal(), formatter));
+				readOnlyComponent(true, this.feeAmount);
+				
+				if (finFeeDetail.getFinTaxDetails() != null) {
+					FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
+					
+					this.cgst.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+					this.cgst.setValue(PennantAppUtil.formateAmount(finTaxDetails.getNetCGST(), formatter));
+					
+					this.sgst.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+					this.sgst.setValue(PennantAppUtil.formateAmount(finTaxDetails.getNetSGST(), formatter));
+					
+					this.igst.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+					this.igst.setValue(PennantAppUtil.formateAmount(finTaxDetails.getNetIGST(), formatter));
+					
+					this.ugst.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+					this.ugst.setValue(PennantAppUtil.formateAmount(finTaxDetails.getNetUGST(), formatter));
+					
+					BigDecimal totalGstAmount = BigDecimal.ZERO;
+					totalGstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetIGST()).add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetUGST());
+					
+					BigDecimal totalAmount = BigDecimal.ZERO;
+					totalAmount = finFeeDetail.getNetAmountOriginal().add(totalGstAmount);
+					
+					this.totalGST.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+					this.totalGST.setValue(PennantAppUtil.formateAmount(totalGstAmount, formatter));
+					
+					this.total.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+					this.total.setValue(PennantAppUtil.formateAmount(totalAmount, formatter));
+				}
+			}
+		} else {
+			this.gb_GSTDetails.setVisible(false);
+			this.cgst.setValue(BigDecimal.ZERO);
+			this.sgst.setValue(BigDecimal.ZERO);
+			this.igst.setValue(BigDecimal.ZERO);
+			this.ugst.setValue(BigDecimal.ZERO);
+			this.totalGST.setValue(BigDecimal.ZERO);
+			this.total.setValue(BigDecimal.ZERO);
+		}
 		
 		logger.debug(Literal.LEAVING);
 	}
@@ -451,10 +598,13 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.lbl_startDate.setValue(DateUtility.formateDate(financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate.setValue(DateUtility.formateDate(financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
 		 
-		fillList(adviseType, listAdviseType, String.valueOf(aManualAdvise.getAdviseType()));
+		fillComboBox(this.adviseType, String.valueOf(aManualAdvise.getAdviseType()), listAdviseType, "");
 		setFeeTypeFilters();
 		//this.finReference.setValue(aManualAdvise.getFinReference());
 		this.feeTypeID.setAttribute("FeeTypeID", aManualAdvise.getFeeTypeID());
+		this.feeTypeID.setAttribute("TaxApplicable", aManualAdvise.isTaxApplicable());
+		this.feeTypeID.setAttribute("TaxComponent", aManualAdvise.getTaxComponent());
+		
 		this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
 		this.sequence.setValue(aManualAdvise.getSequence());
 		this.adviseAmount.setValue(PennantApplicationUtil.formateAmount(aManualAdvise.getAdviseAmount(),
@@ -493,7 +643,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		}
 		this.recordStatus.setValue(manualAdvise.getRecordStatus());
 		
-
+		calculateGST();
+		
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -1224,6 +1375,30 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	public void setFinanceMain(FinanceMain financeMain) {
 		this.financeMain = financeMain;
+	}
+
+	public FinanceDetailService getFinanceDetailService() {
+		return financeDetailService;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+
+	public FinFeeDetailService getFinFeeDetailService() {
+		return finFeeDetailService;
+	}
+
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	public FinanceTaxDetailService getFinanceTaxDetailService() {
+		return financeTaxDetailService;
+	}
+
+	public void setFinanceTaxDetailService(FinanceTaxDetailService financeTaxDetailService) {
+		this.financeTaxDetailService = financeTaxDetailService;
 	}
 
 }

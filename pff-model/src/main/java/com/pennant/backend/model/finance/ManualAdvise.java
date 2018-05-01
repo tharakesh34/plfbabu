@@ -96,6 +96,9 @@ private static final long serialVersionUID = 1L;
 	private String bounceCodeDesc;
 	private long receiptID = 0;
 	
+	//GST fields
+	private boolean taxApplicable;
+	private String	taxComponent;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -112,6 +115,7 @@ private static final long serialVersionUID = 1L;
 	
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
+		
 		excludeFields.add("adviseTypeName");
 		excludeFields.add("finReferenceName");
 		excludeFields.add("feeTypeDesc");
@@ -119,6 +123,9 @@ private static final long serialVersionUID = 1L;
 		excludeFields.add("bounceCode");
 		excludeFields.add("bounceCodeDesc");
 		excludeFields.add("taxPercent");
+		excludeFields.add("taxApplicable");
+		excludeFields.add("taxComponent");
+		
 		return excludeFields;
 	}
 
@@ -321,6 +328,22 @@ private static final long serialVersionUID = 1L;
 
 	public void setTaxPercent(BigDecimal taxPercent) {
 		this.taxPercent = taxPercent;
+	}
+
+	public boolean isTaxApplicable() {
+		return taxApplicable;
+	}
+
+	public void setTaxApplicable(boolean taxApplicable) {
+		this.taxApplicable = taxApplicable;
+	}
+
+	public String getTaxComponent() {
+		return taxComponent;
+	}
+
+	public void setTaxComponent(String taxComponent) {
+		this.taxComponent = taxComponent;
 	}
 
 }
