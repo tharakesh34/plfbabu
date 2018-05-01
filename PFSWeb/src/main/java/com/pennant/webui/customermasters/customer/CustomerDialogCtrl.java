@@ -224,6 +224,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Checkbox							salariedCustomer;															// autowired
 	protected ExtendedCombobox					custRO1;																	// autowired
 	protected Uppercasebox						eidNumber;																	// autowired
+	protected Space	                            space_EidNumber; 															// autowired
 	protected Label								label_CustomerDialog_EIDNumber;												// autowired
 	protected Textbox							custTradeLicenceNum;														// autowired
 	protected Textbox							custRelatedParty;															// autowired
@@ -426,6 +427,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// Extended fields
 	private ExtendedFieldCtrl					extendedFieldCtrl				= null;
 	private ExternalDocumentManager				externalDocumentManager			= null;
+	
+	String primaryIdRegex = null;
+	String primaryIdLabel;
+	boolean primaryIdMandatory = false;
+
+	
 
 	/**
 	 * default constructor.<br>
@@ -1971,7 +1978,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			this.space_CustShrtName.setSclass("");
 			this.label_CustomerDialog_SalaryTransfered.setVisible(true);
-			this.label_CustomerDialog_EIDNumber.setValue(Labels.getLabel("label_CoreCustomerDialog_PrimaryID.value"));
+			//this.label_CustomerDialog_EIDNumber.setValue(Labels.getLabel("label_CoreCustomerDialog_PrimaryID.value"));
 			this.label_CustomerDialog_CustShrtName.setValue(Labels.getLabel("label_CustomerDialog_CustShrtName.value"));
 			this.label_CustomerDialog_CustCOB.setValue(Labels.getLabel("label_CustomerDialog_CustCOB.value"));
 			this.directorDetails.setVisible(false);
@@ -1985,6 +1992,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.label_CustomerDialog_Target.setVisible(true);
 			this.target.setVisible(true);
 			this.target.setMandatoryStyle(false);
+			
 		} else {
 			this.row_FirstMiddleName.setVisible(false);
 			this.row_LastName.setVisible(false);
@@ -2001,8 +2009,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.label_CustomerDialog_CustShrtName.setValue(Labels.getLabel("label_CustomerDialog_CustomerName.value"));
 			this.label_CustomerDialog_CustDOB
 					.setValue(Labels.getLabel("label_CustomerDialog_CustDateOfIncorporation.value"));
-			this.label_CustomerDialog_EIDNumber
-					.setValue(Labels.getLabel("label_CoreCustomerDialog_TradeLicenseNumber.value"));
+			//this.label_CustomerDialog_EIDNumber.setValue(Labels.getLabel("label_CoreCustomerDialog_TradeLicenseNumber.value"));
 			this.label_CustomerDialog_CustCOB.setValue(Labels.getLabel("label_CustomerDialog_CustCOI.value"));
 			this.gb_rating.setVisible(getUserWorkspace().isAllowed("CustomerDialog_ShowCustomerRatings"));
 			this.gp_CustEmployeeDetails.setVisible(false);
@@ -2019,6 +2026,19 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// this.custRO1.setMandatoryStyle(false);
 		}
 
+		
+		Map<String, String> attributes = PennantStaticListUtil.getPrimaryIdAttributes(customerDetails.getCustomer().getCustCtgCode());
+		
+		primaryIdLabel = attributes.get("LABEL");
+		primaryIdMandatory = Boolean.valueOf(attributes.get("MANDATORY"));
+		primaryIdRegex = attributes.get("REGEX");
+		int maxLength = Integer.valueOf(attributes.get("LENGTH")); 
+		
+		label_CustomerDialog_EIDNumber.setValue(Labels.getLabel(primaryIdLabel));
+		space_EidNumber.setSclass(primaryIdMandatory ? PennantConstants.mandateSclass : "");
+		eidNumber.setSclass(PennantConstants.mandateSclass);
+		eidNumber.setMaxlength(maxLength);
+		
 		logger.debug("Leaving");
 	}
 
@@ -2160,25 +2180,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		// below fields are always mandatory
 
 		if (!this.eidNumber.isReadonly()) {
-
-			if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
-				if (isRetailCustomer) {
-					this.eidNumber.setConstraint(
-							new PTStringValidator(Labels.getLabel("label_CustomerDialog_TradeLicenseNumber.value"),
-									PennantRegularExpressions.REGEX_EIDNUMBER, false));
-
-				} else {
-					this.eidNumber.setConstraint(
-							new PTStringValidator(Labels.getLabel("label_CustomerDialog_TradeLicenseNumber.value"),
-									PennantRegularExpressions.REGEX_TRADELICENSE, false));
-				}
-			} else {
-				this.eidNumber.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_CustomerDialog_TradeLicenseNumber.value"),
-								PennantRegularExpressions.REGEX_PANNUMBER, false));
-
-			}
-
+			//### 01-05-2018 ToolApp ID : #360
+			this.eidNumber.setConstraint(new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
 		}
 
 		// below fields are conditional mandatory
@@ -4143,7 +4146,19 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					}
 					this.eidNumber.setConstraint("");
 				}
-			} else if (PennantConstants.PANNUMBER.equalsIgnoreCase(idType)) {
+				// ### 01-05-2018  TuleApp ID : #360
+			} else if (SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL_DOC_TYPE").equalsIgnoreCase(idType)) {
+				try {
+					idNumber = this.eidNumber.getValue();
+				} catch (WrongValueException we) {
+					logger.error("Exception", we);
+					idNumber = "";
+				}
+				this.eidNumber.setConstraint("");
+
+			}
+			//### 01-05-2018 TuleApp ID : #360
+			else if (SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP_DOC_TYPE").equalsIgnoreCase(idType)) {
 				try {
 					idNumber = this.eidNumber.getValue();
 				} catch (WrongValueException we) {

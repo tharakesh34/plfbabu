@@ -281,8 +281,7 @@
 														id="label_CustomerDialog_EIDNumber"
 														value="${c:l('label_CustomerDialog_EIDNumber.value')}" />
 													<hbox>
-														<space
-															spacing="2px" />
+														<space id="space_EidNumber" spacing="2px"/>
 														<uppercasebox
 															id="eidNumber" width="156px" />
 													</hbox>

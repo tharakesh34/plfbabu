@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -112,8 +113,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.constants.InterfaceConstants;
@@ -191,6 +191,11 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public String								wIfFinaceRef_Temp	= "";
 	private String 								isPANMandatory		= "";
 
+	// Properties related to primary identity.
+	private String primaryIdLabel;
+	private String primaryIdRegex;
+	private boolean primaryIdMandatory;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -1252,20 +1257,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				} catch (WrongValueException e) {
 					wve.add(e);
 				}
-				if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
-					this.eidNumber.setConstraint(new PTStringValidator(Labels
-							.getLabel("label_SelectFinanceTypeDialog_TradeLicenseNumber.value"),
-							PennantRegularExpressions.REGEX_TRADELICENSE, false));
-				}else if(StringUtils.equals("Y",isPANMandatory)){
-					this.eidNumber.setConstraint(new PTStringValidator(Labels
-							.getLabel("label_SelectFinanceTypeDialog_TradeLicenseNumber.value"),
-							PennantRegularExpressions.REGEX_PANNUMBER, true));
-				}
-				else {
-					this.eidNumber.setConstraint(new PTStringValidator(Labels
-							.getLabel("label_SelectFinanceTypeDialog_TradeLicenseNumber.value"),
-							PennantRegularExpressions.REGEX_PANNUMBER, false));
-				}
+				//### 01-05-2018 Tuleapp id #360			
+				eidNumber.setConstraint(
+						new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
+				
 			}
 			try {
 				this.eidNumber.getValue();
@@ -1648,12 +1643,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Entering" + event.toString());
 		changeCustCtgType();
 		
-		isPANMandatory = SysParamUtil.getValueAsString(SMTParameterConstants.PANCARD_REQ);
+		/*isPANMandatory = SysParamUtil.getValueAsString(SMTParameterConstants.PANCARD_REQ);
 		if (StringUtils.equals("Y",isPANMandatory)) {
 			this.space_EIDNumber.setSclass(PennantConstants.mandateSclass);
 		}else{
 			this.space_EIDNumber.setSclass("");
-		}
+		}*/
 
 		
 		logger.debug("Leaving" + event.toString());
@@ -1669,16 +1664,26 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		Clients.clearWrongValue(this.eidNumber);
 		Clients.clearWrongValue(this.finType);
 		this.eidNumber.setValue("");
-		if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
-			this.label_SelectFinanceTypeDialog_EIDNumber.setValue(Labels
-					.getLabel("label_CoreCustomerDialog_PrimaryID.value"));
-			this.eidNumber.setMaxlength(LengthConstants.LEN_EID);
-		} else {
-			this.label_SelectFinanceTypeDialog_EIDNumber.setValue(Labels
-					.getLabel("label_CoreCustomerDialog_TradeLicenseNumber.value"));
-		}
+		//### 01-05-2018 Tuleapp id #360			
+		doSetPrimaryIdAttributes();
 
 		logger.debug("Leaving");
+	}
+	
+	
+	private void doSetPrimaryIdAttributes() {
+		Map<String, String> attributes = PennantStaticListUtil.getPrimaryIdAttributes(getComboboxValue(custCtgType));
+		
+		primaryIdLabel = attributes.get("LABEL");
+		primaryIdMandatory = Boolean.valueOf(attributes.get("MANDATORY"));
+		primaryIdRegex = attributes.get("REGEX");
+		int maxLength = Integer.valueOf(attributes.get("LENGTH")); 
+
+		label_SelectFinanceTypeDialog_EIDNumber.setValue(Labels.getLabel(primaryIdLabel));
+		space_EIDNumber.setSclass(primaryIdMandatory ? PennantConstants.mandateSclass : "");
+		eidNumber.setSclass(PennantConstants.mandateSclass);
+		eidNumber.setValue("");
+		eidNumber.setMaxlength(maxLength);
 	}
 
 	/**

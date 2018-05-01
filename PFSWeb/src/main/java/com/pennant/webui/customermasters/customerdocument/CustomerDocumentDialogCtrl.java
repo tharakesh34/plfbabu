@@ -106,6 +106,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -182,7 +183,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	protected Button btnSearchPRCustid; 
 
 
-
+	String primaryIdRegex = null;
 
 
 	// ServiceDAOs / Domain Classes
@@ -910,37 +911,19 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		if (!this.custID.isReadonly()){
 			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocCIF.value"),null,true));
 		}
-
-		if (!this.custDocTitle.isReadonly()){
-			if (StringUtils.trimToEmpty(this.custDocType.getValue()).equalsIgnoreCase(PennantConstants.CPRCODE)) {
-				this.custDocTitle.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
-						PennantRegularExpressions.REGEX_AADHAR_NUMBER, isIdNumMand));
-				if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
-					this.custDocTitle.setConstraint(new PTStringValidator(Labels
-							.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
-							PennantRegularExpressions.REGEX_EIDNUMBER, isIdNumMand));
-				}
-
-			}else if(StringUtils.trimToEmpty(this.custDocType.getValue()).equalsIgnoreCase(PennantConstants.PASSPORT)){
-				this.custDocTitle.clearErrorMessage();
-				if(StringUtils.isBlank(this.custDocTitle.getValue()) || 
-						(StringUtils.trimToEmpty(this.custDocTitle.getValue()).length() > 50)){
-					this.custDocTitle.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
-							PennantRegularExpressions.REGEX_PASSPORT, isIdNumMand));
-				}
-			}else if(StringUtils.trimToEmpty(this.custDocType.getValue()).equalsIgnoreCase(PennantConstants.PANNUMBER)){
-				this.custDocTitle.clearErrorMessage();
-				this.custDocTitle.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
-						PennantRegularExpressions.REGEX_PANNUMBER, isIdNumMand));
-			}
-
-
-			else{
-				this.custDocTitle.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
-						PennantRegularExpressions.REGEX_ALPHANUM_CODE, isIdNumMand));
-			}
+		
+		// ### 01-05-2018 TuleApp ID : #360
+		
+		if (!this.custDocTitle.isReadonly()) {
+			this.custDocTitle.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle"), primaryIdRegex, isIdNumMand));
+		} else {
+			this.custDocTitle.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, isIdNumMand));
 		}
+			
+		// ### 01-05-2018 - End	
 
 		if (!this.custDocSysName.isReadonly()){
 			this.custDocSysName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocSysName.value"), 
@@ -1984,20 +1967,20 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			if (details != null) {
 				this.custDocType.setValue(details.getDocTypeCode());
 				this.custDocType.setDescription(details.getDocTypeDesc());
-				if(details.isDocExpDateIsMand()){
-					expDateIsMand=true;
+				if (details.isDocExpDateIsMand()) {
+					expDateIsMand = true;
 					this.space_CustDocExpDate.setSclass(PennantConstants.mandateSclass);
 				}
-				if(details.isDocIssueDateMand()){
-					isIssueDateMand=true;
+				if (details.isDocIssueDateMand()) {
+					isIssueDateMand = true;
 					this.space_custDocIssuedOn.setSclass(PennantConstants.mandateSclass);
 				}
-				if(details.isDocIdNumMand()){
-					isIdNumMand=true;
+				if (details.isDocIdNumMand()) {
+					isIdNumMand = true;
 					this.space_CustIDNumber.setSclass(PennantConstants.mandateSclass);
 				}
-				if(details.isDocIssuedAuthorityMand()){
-					isIssuedAuth=true;
+				if (details.isDocIssuedAuthorityMand()) {
+					isIssuedAuth = true;
 					this.space_CustDocSysName.setSclass(PennantConstants.mandateSclass);
 				}
 				if (details.isDocIsMandatory()) {
@@ -2006,7 +1989,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				}
 				if (details.isDocIsPasswordProtected()) {
 					this.passwordRow.setVisible(true);
-				}else{
+				} else {
 					this.passwordRow.setVisible(false);
 				}
 				getCustomerDocument().setDocIsPdfExtRequired(details.isDocIsPdfExtRequired());
@@ -2016,34 +1999,34 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		}
 		this.custDocTitle.setValue("");
 
-		if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
-			if (PennantConstants.CPRCODE.equals(this.custDocType.getValue())) {
-				if (getCustomerDialogCtrl() != null) {
-					this.custDocTitle.setValue(getCustomerDialogCtrl().getCustIDNumber(PennantConstants.CPRCODE));
-				} else {
-					String custCRCPR = PennantApplicationUtil.formatEIDNumber(getCustomerDocumentService()
-							.getCustCRCPRById(getCustomerDocument().getCustID(), ""));
-					this.custDocTitle.setValue(custCRCPR);
-				}
-			} else if (PennantConstants.TRADELICENSE.equals(this.custDocType.getValue())) {
-				if (getCustomerDialogCtrl() != null) {
-					this.custDocTitle.setValue(getCustomerDialogCtrl().getCustIDNumber(PennantConstants.TRADELICENSE));
-				} else {
-					String custCRCPR = PennantApplicationUtil.formatEIDNumber(getCustomerDocumentService()
-							.getCustCRCPRById(getCustomerDocument().getCustID(), ""));
-					this.custDocTitle.setValue(custCRCPR);
-				}
+		// ### 01-05-2018 TuleApp ID : #360
+
+		if (isRetailCustomer) {
+			String retValue = SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL_DOC_TYPE");
+			if (retValue.equals(this.custDocType.getValue())) {
+				this.custDocTitle.setValue(getCustomerDialogCtrl().getCustIDNumber(this.custDocType.getValue()));
 			}
 		} else {
-			if (PennantConstants.PANNUMBER.equals(this.custDocType.getValue())) {
-				this.custDocTitle.setValue(getCustomerDialogCtrl().getCustIDNumber(PennantConstants.PANNUMBER));
-			}else if (!isRetailCustomer && PennantConstants.TRADELICENSE.equals(this.custDocType.getValue())) {
-				if (getCustomerDialogCtrl() != null) {
-					this.custDocIssuedOn.setValue(getCustomerDialogCtrl().getcustIncorpDate());
-				} 
+			String corpValue = SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP_DOC_TYPE");
+			if (corpValue.equals(this.custDocType.getValue())) {
+				this.custDocTitle.setValue(getCustomerDialogCtrl().getCustIDNumber(this.custDocType.getValue()));
 			}
 		}
+		
+		Map<String, String> attributes = new HashMap<>();
 
+		if (isRetailCustomer) {
+			attributes = PennantStaticListUtil.getPrimaryIdAttributes(PennantConstants.PFF_CUSTCTG_INDIV);
+		} else {
+			attributes = PennantStaticListUtil.getPrimaryIdAttributes(PennantConstants.PFF_CUSTCTG_CORP);
+
+		}
+
+		primaryIdRegex = attributes.get("REGEX");
+		
+		// ### 01-05-2018 - End	
+
+		
 		logger.debug("Leaving" + event.toString());
 	}
 	/**
