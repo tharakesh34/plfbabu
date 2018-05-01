@@ -4606,5 +4606,66 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		</sql>
 	</changeSet>
 	
+	<changeSet id="75" author="Vinay">
+	<comment> FinIRRDetails for schedule calculator </comment>
+		<createTable tableName="FinIRRDetails">
+			<column name="IRRID" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FINREFERENCE" type="varchar(20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="IRR" type="decimal(13,9)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="76" author="Vinay">
+	<comment> FinIRRDetails for schedule calculator </comment>
+		<createTable tableName="FinIRRDetails_Temp">
+			<column name="IRRID" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FINREFERENCE" type="varchar(20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="IRR" type="decimal(13,9)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="77" author="Vinay">
+		<addPrimaryKey columnNames="IRRID, FINREFERENCE"
+			constraintName="PK_FinIRRDetails" tableName="FinIRRDetails" />
+		<addPrimaryKey columnNames="IRRID, FINREFERENCE"
+			constraintName="PK_FinIRRDetails_Temp" tableName="FinIRRDetails_Temp" />
+	</changeSet>
+	
 </databaseChangeLog>
 	
