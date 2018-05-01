@@ -4740,5 +4740,43 @@ UNION ALL
 			constraintName="PK_FinIRRDetails_Temp" tableName="FinIRRDetails_Temp" />
 	</changeSet>
 	
+	<changeSet id="78" author="Manoj">
+	<comment>Data engine configuration set up for profectus</comment>
+		<sql>
+			update data_engine_config set skipheaderrow = 1 where name = 'DISB_HDFC_IMPORT';
+			update data_Engine_config set name = 'MANDATES_EXPORT' where name = 'PROFECTUSMAN';
+			update data_Engine_config set fileprefixname = 'PROFECTUSMAN' where name = 'MANDATES_EXPORT';
+			update data_engine_config set worksheet = 'Mandates' where name = 'MANDATES_IMPORT';
+			update data_engine_table set recordlength = 29 where id = (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT'));
+		</sql>
+	</changeSet>
+	
+	<changeSet id="79" author="Manoj">
+		<comment>Data engine configuration set up for profectus</comment>
+		<sql>
+			delete from data_engine_Column where id = select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'CustCif',         			0, 'N', null, null, null, 			null,2,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Benficiary_name', 			0, 'N', null, null, null, 			null,3,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Disbursement_type', 			0, 'N', null, null, null, 			null,4,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Benficiary_account',			0, 'N', null, null, null, 			null,5,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Benficiary_bank',   			0, 'N', null, null, null, 			null,6,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Disbursement_amount',		0, 'N', null, null, null, 			null,8,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Drawee_location', 			0, 'N', null, null, null, 			null,13,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Print_location', 			0, 'N', null, null, null, 			null,14,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Benficiary_address1', 		0, 'N', null, null, null, 			null,15,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Benficiary_address2', 		0, 'N', null, null, null, 			null,16,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Benficiary_address3', 		0, 'N', null, null, null, 			null,17,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Benficiary_address4', 		0, 'N', null, null, null, 			null,18,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Cheque_number', 				0, 'N', null, null, null, 			null,20,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Benficiry_email', 			0, 'N', null, null, null, 			null,21,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Benficiary_mobile', 			0, 'N', null, null, null, 			null,22,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Resp_batch_id', 				0, 'N', null, null, '${FILE_ID}', 	null,24,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Status', 					0, 'N', null, null, null, 			null,25,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Remarks', 					0, 'N', null, null, null, 			null,26,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Transactionref', 			0, 'N', null, null, null, 			null,27,null,null,null,null,'O');
+			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Id', 						0, 'N', null, null, null, 			null,28,null,null,null,null,'O');
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 	
