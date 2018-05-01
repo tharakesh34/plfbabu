@@ -395,7 +395,7 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 			listBoxActivityLog.appendChild(item);
 			prvActivityDate = prvAuditDate = activity.getAuditDate();
 
-			if (StringUtils.isEmpty(activity.getNextRoleCode())
+			if (StringUtils.isEmpty(activity.getNextTaskId())
 					|| activities.indexOf(activity) == activities.size() - 1) {
 				List<Long> list = new ArrayList<>();
 				list.add(activity.getWorkflowId());

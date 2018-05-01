@@ -12,6 +12,7 @@ public class Activity implements java.io.Serializable {
 	private String roleCode;
 	private String nextRoleCode;
 	private String taskId;
+	private String nextTaskId;
 	private String recordType;
 	private String userLogin;
 	private long workflowId;
@@ -72,6 +73,14 @@ public class Activity implements java.io.Serializable {
 
 	public void setTaskId(String taskId) {
 		this.taskId = taskId;
+	}
+
+	public String getNextTaskId() {
+		return nextTaskId;
+	}
+
+	public void setNextTaskId(String nextTaskId) {
+		this.nextTaskId = nextTaskId;
 	}
 
 	public String getRecordType() {
