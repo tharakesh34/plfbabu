@@ -907,26 +907,21 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 				MessageUtil.showError(Labels.getLabel("label_GstinMap"));
 				return;
 			} else if (this.taxAvailable.isChecked() && getTaxDetailList() != null) {
-				boolean recordFound = false;
 				int count = 0;
 				for (TaxDetail taxDet : getTaxDetailList()) {
 					if(!StringUtils.equals(taxDet.getRecordType(), PennantConstants.RECORD_TYPE_CAN) && 
 							!StringUtils.equals(taxDet.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-						recordFound = true;
 						count ++;
 					}
 				}
 				if (!aProvince.isNewRecord() && StringUtils.equals(PennantConstants.RCD_STATUS_APPROVED, this.province.getRecordStatus())) {
-					if (!recordFound) {
+					if (count == 0) {
 						MessageUtil.showError(Labels.getLabel("label_GstinMap"));
 						return;
-					}
-					
-					if (count > 1) {
+					} else if (count > 1) {
 						MessageUtil.showError(Labels.getLabel("label_Max_GstinMap"));
 						return;
 					}
-					
 				} 
 			}
 		}

@@ -998,7 +998,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 			
 		} else if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, finTypeFee.getTaxComponent())) {
-			gstNetOriginal =  calculateInclusivePercentage(finTypeFee.getAmount(), gstPercentage, financeMain);
+			gstNetOriginal = calculateInclusivePercentage(finTypeFee.getAmount(), gstPercentage, financeMain);
 			gstNetOriginal = CalculationUtil.roundAmount(gstNetOriginal, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
 			
 			finFeeDetail.setNetAmount(finTypeFee.getAmount());
