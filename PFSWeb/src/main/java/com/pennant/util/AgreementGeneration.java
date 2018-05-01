@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -479,12 +478,17 @@ public class AgreementGeneration implements Serializable {
 			if(null!=detail.getFinScheduleData()&&null!=detail.getFinScheduleData().getFinanceMain()){
 				agreement.setNumOfPayGrace(Integer.toString(detail.getFinScheduleData().getFinanceMain().getGraceTerms()));
 				agreement.setFirstDisbursementAmt(PennantAppUtil.amountFormate(detail.getFinScheduleData().getFinanceMain().getFinAmount(), formatter));
-				agreement.setRepaySplRate(String.valueOf(detail.getFinScheduleData().getFinanceMain().getRepaySpecialRate()));
-				agreement.setRepayMargin(String.valueOf(detail.getFinScheduleData().getFinanceMain().getRepayMargin()));
+				if(null!=detail.getFinScheduleData().getFinanceMain().getRepaySpecialRate()){
+					agreement.setRepaySplRate(String.valueOf(detail.getFinScheduleData().getFinanceMain().getRepaySpecialRate()));
+				}
+				if(null!=detail.getFinScheduleData().getFinanceMain().getRepayMargin()){
+					agreement.setRepayMargin(String.valueOf(detail.getFinScheduleData().getFinanceMain().getRepayMargin()));
+				}
 			}
 			
 			// ----------------Loan Details
-			if(null!=detail.getFinScheduleData() && null!=detail.getFinScheduleData().getFinanceScheduleDetails()&& null!=detail.getFinScheduleData().getFinanceScheduleDetails().get(0)){
+			if(null!=detail.getFinScheduleData() && null!=detail.getFinScheduleData().getFinanceScheduleDetails()&& null!=detail.getFinScheduleData().getFinanceScheduleDetails().get(0)
+					&&null!=detail.getFinScheduleData().getFinanceScheduleDetails().get(0).getCalculatedRate()){
 				agreement.setEffDateFltRate(String.valueOf(detail.getFinScheduleData().getFinanceScheduleDetails().get(0).getCalculatedRate()));
 				
 			}
@@ -1295,7 +1299,9 @@ public class AgreementGeneration implements Serializable {
 			if (main.getRpyMinRate() != null) {
 				agreement.setFinMaxRate(PennantApplicationUtil.formatRate(main.getRpyMaxRate().doubleValue(), 9));
 			}
-			agreement.setRepayBaseRate(main.getRepayBaseRate());
+			if(null!=main.getRepayBaseRate()){
+				agreement.setRepayBaseRate(main.getRepayBaseRate());
+			}
 			agreement.setFinAmtPertg(PennantApplicationUtil.amountFormate(
 					main.getFinAmount().multiply(new BigDecimal(125))
 							.divide(new BigDecimal(100), RoundingMode.HALF_DOWN), formatter));
