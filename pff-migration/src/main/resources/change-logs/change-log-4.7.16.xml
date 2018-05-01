@@ -4582,5 +4582,18 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		</sql>
 	</changeSet>
 	
+	<changeSet id="73" author="Manoj">
+		<comment>story #360 Externalize customer primary identity</comment>
+		<sql>
+			delete from smtparameters where sysparmcode in ('CUST_PRIMARY_ID_RETL','CUST_PRIMARY_ID_CORP','CUST_PRIMARY_ID_REQ','CUST_PRIMARY_ID_RETL_DOC_TYPE','CUST_PRIMARY_ID_CORP_DOC_TYPE') ;
+			INSERT INTO SMTPARAMETERS VALUES ('CUST_PRIMARY_ID_RETL', 'Retail Customer Primary ID (PAN, AADHAAR, EID)', 'String', 0, 'PAN', '50', 0, NULL, NULL, 'Retail Customer Primary ID', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			INSERT INTO SMTPARAMETERS VALUES ('CUST_PRIMARY_ID_CORP', 'Corporate Customer Primary ID (PAN, AADHAAR, EID)', 'String', 0, 'PAN', '50', 0, NULL, NULL, 'Corporate Customer Primary ID', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			INSERT INTO SMTPARAMETERS VALUES ('CUST_PRIMARY_ID_REQ', 'Customer Primary ID Required (Y, N)', 'String', 0, 'Y', 1, 0, NULL, NULL, 'Customer Primary ID Required', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			INSERT INTO SMTPARAMETERS VALUES ('CUST_PRIMARY_ID_RETL_DOC_TYPE', 'Customer Primary ID DocType for Retl', 'String', 0, 'PAN', '50', 0, NULL, NULL, 'Retail Customer Primary ID', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			INSERT INTO SMTPARAMETERS VALUES ('CUST_PRIMARY_ID_CORP_DOC_TYPE', 'Customer Primary ID DocType for Corp', 'String', 0, 'PAN', '50', 0, NULL, NULL, 'Corp Customer Primary ID', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 	
