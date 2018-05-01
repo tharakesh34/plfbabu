@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -192,6 +193,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	private List<FinCreditReviewSummary> creditReviewSummaryList = new ArrayList<FinCreditReviewSummary>();
 	private List<FinCreditRevCategory> listOfFinCreditRevCategory = null;
 	private Map<String,BigDecimal> curYearValuesMap = new HashMap<String,BigDecimal>();
+	private Map<String,BigDecimal> extValuesMap = new HashMap<String,BigDecimal>();
 	private Map<String,BigDecimal> prvYearValuesMap = null;
 	private Map<String,FinCreditReviewSummary> summaryMap = new HashMap<String,FinCreditReviewSummary>();
 	public List<FinCreditRevSubCategory>  listOfFinCreditRevSubCategory  = null;
@@ -304,7 +306,41 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving" + event.toString());
 	}
 
-
+	/**
+	 * set default values zero for Extended Fields
+	 * to remove exceptions in console and work performance   
+	 * @return
+	 */
+	private Map<String, BigDecimal> setExtValuesMap() {
+		extValuesMap.put("EXT_CREDITTRANNO", BigDecimal.ZERO);
+		extValuesMap.put("EXT_CREDITTRANAMT", BigDecimal.ZERO);
+		extValuesMap.put("EXT_CREDITTRANAVG", BigDecimal.ZERO);
+		extValuesMap.put("EXT_DEBITTRANNO", BigDecimal.ZERO);
+		extValuesMap.put("EXT_DEBITTRANAMT", BigDecimal.ZERO);
+		extValuesMap.put("EXT_CASHDEPOSITNO", BigDecimal.ZERO);
+		extValuesMap.put("EXT_CASHDEPOSITAMT", BigDecimal.ZERO);
+		extValuesMap.put("EXT_CASHWITHDRAWALNO", BigDecimal.ZERO);
+		extValuesMap.put("EXT_CASHWITHDRAWALAMT", BigDecimal.ZERO);
+		extValuesMap.put("EXT_CHQDEPOSITNO", BigDecimal.ZERO);
+		extValuesMap.put("EXT_CHQDEPOSITAMT", BigDecimal.ZERO);
+		extValuesMap.put("EXT_CHQISSUEN", BigDecimal.ZERO);
+		extValuesMap.put("EXT_CHQISSUEAMT", BigDecimal.ZERO);
+		extValuesMap.put("EXT_INWARDCHQBOUNCENO", BigDecimal.ZERO);
+		extValuesMap.put("EXT_OUTWARDCHQBOUNCENO", BigDecimal.ZERO);
+		extValuesMap.put("EXT_EODBALAVG", BigDecimal.ZERO);
+		extValuesMap.put("EXT_EODBALMAX", BigDecimal.ZERO);
+		extValuesMap.put("EXT_EODBALMIN", BigDecimal.ZERO);
+		extValuesMap.put("EXT_SUMOFEMI", BigDecimal.ZERO);
+		extValuesMap.put("EXT_NUMBEROFTERMS", BigDecimal.ZERO);
+		extValuesMap.put("EXT_CHQISSUENO", BigDecimal.ZERO);
+		extValuesMap.put("EXT_OBLIGATION", BigDecimal.ZERO);
+		extValuesMap.put("EXT_REPAYPROFITRATE", BigDecimal.ZERO);
+		extValuesMap.put("EXT_ROUNDINGTARGET", BigDecimal.ZERO);
+		extValuesMap.put("EXT_FINASSETVALUE", BigDecimal.ZERO);
+		extValuesMap.put("EXT_FINAMOUNT", BigDecimal.ZERO);
+		extValuesMap.put("EXT_FIRSTREPAY", BigDecimal.ZERO);
+		return extValuesMap;
+	}
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
@@ -759,6 +795,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 			doWriteBeanToComponents(aCreditReviewDetails);
 
 			if(customer != null){
+				setExtValuesMap();
 				doSetCustomer(customer, newSearchObject);
 			}
 
@@ -1542,8 +1579,8 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 			ratioTabCount ++;
 			render(finCreditRevCategory,setListToTab(tabPanel,finCreditRevCategory));
 		}
-		appendDocumentDetailTab();
-		appendRecommendDetailTab();
+		/*appendDocumentDetailTab();
+		appendRecommendDetailTab();*/
 		logger.debug("Leaving");
 	}
 
@@ -1900,11 +1937,11 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		audQualLabel.setParent(listheader_audAmt);
 		listheader_audAmt.setParent(listHead);	
 
-		Listheader listheader_curUSConvrtn = new Listheader(AccountConstants.CURRENCY_USD);
+		/*Listheader listheader_curUSConvrtn = new Listheader(AccountConstants.CURRENCY_USD);
 		listheader_curUSConvrtn.setHflex("85px");
 		listheader_curUSConvrtn.setAlign("center");
 		listheader_curUSConvrtn.setId("curCnvrtn"+getId(fcrc.getCategoryDesc()));
-		listheader_curUSConvrtn.setParent(listHead);
+		listheader_curUSConvrtn.setParent(listHead);*/
 
 		Listheader listheader_breakDown= new Listheader(Labels.getLabel("listheader_breakDowns.value", ""));
 		creditReviewSubCtgDetailsHeaders.setCurYearBreakDownHeader(Labels.getLabel("listheader_breakDowns.value", "")+"_"
@@ -1960,11 +1997,11 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		listheader_previousAudAmt.setAlign("center");
 		listheader_previousAudAmt.setParent(listHead);
 
-		Listheader listheader_prevcurUSConvrtn = new Listheader(AccountConstants.CURRENCY_USD);
+		/*Listheader listheader_prevcurUSConvrtn = new Listheader(AccountConstants.CURRENCY_USD);
 		listheader_prevcurUSConvrtn.setHflex("85px");
 		listheader_prevcurUSConvrtn.setAlign("center");
 		listheader_prevcurUSConvrtn.setId("prevCnvrtn"+getId(fcrc.getCategoryDesc()));
-		listheader_prevcurUSConvrtn.setParent(listHead);
+		listheader_prevcurUSConvrtn.setParent(listHead);*/
 
 		int currentAuditYear = Integer.parseInt(this.creditReviewDetails.getAuditYear());
 
@@ -2106,7 +2143,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		//Get FinCredit Categories based on the Customer Category Type 
 		this.listOfFinCreditRevCategory = this.creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(this.creditRevCode);
 		prvYearValuesMap = new HashMap<String, BigDecimal>();
-
+		prvYearValuesMap.putAll(extValuesMap);
 		this.creditReviewSummaryList = this.creditApplicationReviewService.getLatestCreditReviewSummaryByCustId(this.custID.longValue());
 
 		int audityear = Integer.parseInt(creditReviewDetails.getAuditYear());
@@ -2114,14 +2151,39 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		creditReviewSummaryMap= getCreditApplicationReviewService().
 				getListCreditReviewSummaryByCustId2(aCustomer.getCustID(), 2, audityear-1,  
 						category, creditReviewDetails.getAuditPeriod(), false, "_VIEW");
-
+		// If previous years data map is empty, than get data from current year data and to set that empty map with 
+		// empty values for to avoid exceptions and improve performance.
+		boolean isCurrentDataMapAvil = false;
+		if(creditReviewSummaryMap == null ||creditReviewSummaryMap.isEmpty()){
+			isCurrentDataMapAvil = true;
+			creditReviewSummaryMap= getCreditApplicationReviewService().getListCreditReviewSummaryByCustId2(aCustomer.getCustID(), 0, audityear, category, creditReviewDetails.getAuditPeriod(), true, type);
+			creditReviewSummaryMap.put(String.valueOf(audityear-1), creditReviewSummaryMap.get(String.valueOf(audityear)));
+			creditReviewSummaryMap.put(String.valueOf(audityear-2), creditReviewSummaryMap.get(String.valueOf(audityear)));
+		}
 		prv1YearValuesMap = new HashMap<String,BigDecimal>();
+		prv1YearValuesMap.putAll(extValuesMap);
 		prv1YearValuesMap.put("auditYear", BigDecimal.valueOf(audityear-2));
 		creditReviewSummaryList = creditReviewSummaryMap.get(String.valueOf(audityear-2));
 		if(this.creditReviewSummaryList != null && this.creditReviewSummaryList.size() > 0){
 			for(int k=0;k<this.creditReviewSummaryList.size(); k++){
-				prv1YearValuesMap.put(this.creditReviewSummaryList.get(k).getSubCategoryCode(),PennantAppUtil.formateAmount(this.creditReviewSummaryList.get(k).getItemValue(),this.currFormatter).setScale(this.currFormatter,RoundingMode.HALF_DOWN));
-				engine.put("Y"+(audityear-2)+this.creditReviewSummaryList.get(k).getSubCategoryCode(),PennantAppUtil.formateAmount(this.creditReviewSummaryList.get(k).getItemValue(),this.currFormatter));
+				// to set map and engine default values for which is not available previous years
+				if(isCurrentDataMapAvil){
+					prv1YearValuesMap.put(this.creditReviewSummaryList.get(k).getSubCategoryCode(),BigDecimal.ZERO);
+					engine.put("Y"+(audityear-2)+this.creditReviewSummaryList.get(k).getSubCategoryCode(),BigDecimal.ZERO);
+				}else{
+					//if data available to set data for it
+					prv1YearValuesMap.put(this.creditReviewSummaryList.get(k).getSubCategoryCode(),PennantAppUtil.formateAmount(this.creditReviewSummaryList.get(k).getItemValue(),this.currFormatter).setScale(this.currFormatter,RoundingMode.HALF_DOWN));
+					engine.put("Y"+(audityear-2)+this.creditReviewSummaryList.get(k).getSubCategoryCode(),PennantAppUtil.formateAmount(this.creditReviewSummaryList.get(k).getItemValue(),this.currFormatter));
+				}
+			}
+			// External fields to put default data for map and engine  
+			if(extValuesMap != null && extValuesMap.size() > 0){
+				for (Entry<String, BigDecimal> entry : extValuesMap.entrySet()) {
+					if (entry.getKey().startsWith("EXT_")) {
+						engine.put(entry.getKey(),extValuesMap.get(entry.getKey()));
+						prv1YearValuesMap.put(entry.getKey(),extValuesMap.get(entry.getKey()));
+					}
+				}
 			}
 		}
 
@@ -2145,14 +2207,26 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				//  summaryMap.put(this.creditReviewSummaryList.get(k).getSubCategoryCode(),this.creditReviewSummaryList.get(k));
 				engine.put("Y"+(audityear-1)+this.creditReviewSummaryList.get(k).getSubCategoryCode(),PennantAppUtil.formateAmount(this.creditReviewSummaryList.get(k).getItemValue(),this.currFormatter));
 			}
+			// External fields to put default data for map and engine 
+			if(extValuesMap != null && extValuesMap.size() > 0){
+				for (Entry<String, BigDecimal> entry : extValuesMap.entrySet()) {
+					if (entry.getKey().startsWith("EXT_")) {
+						engine.put(entry.getKey(),extValuesMap.get(entry.getKey()));
+						prvYearValuesMap.put(entry.getKey(),extValuesMap.get(entry.getKey()));
+					}
+				}
+			}
 		}
 
 		setData(prvYearValuesMap);
+		curYearValuesMap.putAll(extValuesMap);
 		//if(!this.creditReviewDetails.isNewRecord()){
-
-		creditReviewSummaryMap= getCreditApplicationReviewService().
-				getListCreditReviewSummaryByCustId2(aCustomer.getCustID(), 0, audityear, 
-						category, creditReviewDetails.getAuditPeriod(), true, type);
+		// below flag is previous years data not available.It is true 
+		if(!isCurrentDataMapAvil){
+			creditReviewSummaryMap= getCreditApplicationReviewService().
+					getListCreditReviewSummaryByCustId2(aCustomer.getCustID(), 0, audityear, 
+							category, creditReviewDetails.getAuditPeriod(), true, type);
+		}
 
 		if(creditReviewSummaryMap.get(creditReviewDetails.getAuditYear()) != null && creditReviewSummaryMap.size() > 0) {
 			this.creditReviewSummaryList = creditReviewSummaryMap.get(creditReviewDetails.getAuditYear());
@@ -2420,7 +2494,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				}
 
 				/*************************** Current Year US$ Conversion  ************************/
-				label_convrsnUSD = (Label) item.getFellowIfAny("uSD1_"+finCreditRevSubCategory.getSubCategoryCode());
+				/*label_convrsnUSD = (Label) item.getFellowIfAny("uSD1_"+finCreditRevSubCategory.getSubCategoryCode());
 				BigDecimal curAmt = db_Amount.getValue() != null ? db_Amount.getValue() : BigDecimal.ZERO;
 				BigDecimal convrsnPrice = BigDecimal.ZERO;
 				if(creditReviewDetails.getConversionRate() != null && creditReviewDetails.getConversionRate() != BigDecimal.ZERO){
@@ -2429,7 +2503,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 					convrsnPrice = curAmt.divide(conversionRate.getValue());
 				}
 				label_convrsnUSD.setValue(PennantAppUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE,false));
-
+*/
 
 				/*************************** Break Down ************************/
 				label_BreakDown = (Label) item.getFellowIfAny("rLabel"+finCreditRevSubCategory.getSubCategoryCode()); 
@@ -2466,7 +2540,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 									// Current Year Audit Value
 									creditReviewSubCtgDetails.setCurYearAuditValue(PennantAppUtil.formatAmount(db_Amount.getValue(), this.currFormatter, false));
 									// Current Year Conversation Price
-									creditReviewSubCtgDetails.setCurYearUSDConvstn(PennantAppUtil.formatAmount(convrsnPrice, 2,false));
+									//creditReviewSubCtgDetails.setCurYearUSDConvstn(PennantAppUtil.formatAmount(convrsnPrice, 2,false));
 									// Current Year Break Down
 									creditReviewSubCtgDetails.setCurYearBreakDown(PennantAppUtil.formatAmount(breakDown, 2, false));
 									// Current Year Percentage Change
@@ -2715,8 +2789,9 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		Image lcImage = null;		
 		String mainCategory = "";
 		String amtFormat=PennantApplicationUtil.getAmountFormate(currFormatter);
-		BigDecimal prvAmt, curAmt, convrsnPrice;
-		String uSDConvstnVal="";
+		BigDecimal prvAmt, curAmt;
+		//BigDecimal convrsnPrice;
+		//String uSDConvstnVal="";
 		boolean isRatio = false;
 		if(FacilityConstants.CREDITREVIEW_REMARKS.equals(finCreditRevSubCategory.getRemarks())){
 			isRatio = true;
@@ -2805,7 +2880,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				db_Amount.setParent(lc);
 				lc.setParent(item);
 
-				/*************************** Current Year US$ Conversion  ************************/
+				/*************************** Current Year US$ Conversion  ************************//*
 				lc = new Listcell();
 				Label label_currenYrUSConvrsn = new Label(); 
 				label_currenYrUSConvrsn.setId("uSD1_"+finCreditRevSubCategory.getSubCategoryCode());
@@ -2823,7 +2898,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				label_currenYrUSConvrsn.setStyle("font-size: 12px;");
 				label_currenYrUSConvrsn.setParent(lc);
 				lc.setStyle("text-align:right;");
-				lc.setParent(item);
+				lc.setParent(item);*/
 
 				/*************************** Break Down ************************/
 				lc = new Listcell();
@@ -2880,7 +2955,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 						lc.setStyle("text-align:right; border-width: 2; font-size: 2px;");
 						lc.setParent(item);
 
-						/*************************** Previous Year US$ Conversion  ************************/
+						/*************************** Previous Year US$ Conversion  ************************//*
 
 						lc = new Listcell();
 						Label label_prevYrUSConvrsn = new Label(); 
@@ -2898,7 +2973,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 						label_prevYrUSConvrsn.setStyle("font-size: 12px;");
 						label_prevYrUSConvrsn.setParent(lc);
 						lc.setStyle("text-align:right; border-width: 2;");
-						lc.setParent(item);
+						lc.setParent(item);*/
 
 						/*************************** Previous BreakDown ************************/
 						lc = new Listcell();

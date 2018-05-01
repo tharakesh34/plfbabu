@@ -82,15 +82,35 @@
 									style="padding-left:12px;" />
 								<extendedcombobox id="custNationality" />
 							</row>
-							<row id="row_PrimaryID" visible="false">
+							<row id="row_EIDNumber" visible="false">
 								<label
-									id="label_CoreCustomerDialog_PrimaryID"
-									value="${c:l('label_CoreCustomerDialog_PrimaryID.value')}"
+									id="label_CoreCustomerDialog_EIDNumber"
+									value="${c:l('label_CoreCustomerDialog_EIDNumber.value')}"
 									style="padding-left:12px;" />
 								<hbox>
-									<space id="space_PrimaryID" spacing="2px"/>
-									<uppercasebox id="primaryID"
+									<space id="space_EIDNumber" spacing="2px"/>
+									<uppercasebox id="eidNumber"
 										width="170px" />
+								</hbox>
+							</row>
+							<row id="row_custCRCPR" visible="false">
+								<label
+									id="label_CoreCustomerDialog_CustCRCPR"
+									value="${c:l('label_CoreCustomerDialog_CustCRCPR.value')}"
+									style="padding-left:12px;" />
+								<hbox>
+									<space spacing="2px" id="space_"
+										sclass="mandatory" />
+									<textbox id="custCPR"
+										readonly="false" width="130px" />
+									<hbox id="hboxCustCR"
+										visible="false">
+										<textbox id="custCR1"
+											width="78px" />
+										<label value="-" />
+										<textbox id="custCR2"
+											width="30px" />
+									</hbox>
 								</hbox>
 							</row>
 							<row>

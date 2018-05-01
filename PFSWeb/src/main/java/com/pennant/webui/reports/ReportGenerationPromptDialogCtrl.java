@@ -1590,7 +1590,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 							aReportFilterFields.setFieldConstraint(
 									aReportFilterFields.getFieldConstraint().replaceAll("^\"|\"$", ""));
 							component.setConstraint(new PTStringValidator(aReportFilterFields.getFieldErrorMessage(),
-									aReportFilterFields.getFieldConstraint()));
+									aReportFilterFields.getFieldConstraint(),aReportFilterFields.isMandatory()));
 						}
 					}
 				}

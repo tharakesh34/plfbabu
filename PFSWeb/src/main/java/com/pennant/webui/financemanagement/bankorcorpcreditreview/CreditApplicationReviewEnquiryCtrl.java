@@ -984,6 +984,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		for(int i =0 ;i<listOfFinCreditRevSubCategory.size();i++){
 			
 			FinCreditRevSubCategory finCreditRevSubCategory =listOfFinCreditRevSubCategory.get(i);
+			if(finCreditRevSubCategory.getSubCategoryCode().equals("TOT_OPR_INM_RTO") || 
+					finCreditRevSubCategory.getSubCategoryCode().equals("GRS_PRFT_TOI_PER_RTO")){
+				System.out.println("TOT_OPR_INM_RTO");
+			}
 			item = new Listitem();
 			item.setStyle("background: none repeat scroll 0 0 #FFFFFF; font-size: 12px;");
 
