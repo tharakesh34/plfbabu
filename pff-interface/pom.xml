@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>com.pennanttech.framework.components</groupId>
 			<artifactId>data-engine</artifactId>
-			<version>3.1.1</version>
+			<version>3.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.pennanttech.pennapps.pff</groupId>
