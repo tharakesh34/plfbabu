@@ -4570,5 +4570,10 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			DEALLOCATE NAMEREADER
 		</sql>
 	</changeSet>
+	<changeSet id="71" author="Vasu">
+		<sql>
+			 Insert into REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) values ('FinanceUserAuthorizationLimit','FinanceUserAuthorizationLimit','listheader_UserID.label,listheader_LimitName.label,listheader_LimitAmount.label,listheader_ExpiryDate.label,listheader_Active.label','usrLogin,UsrFName,limitAmount,expiryDate,active','String,String,BigDecimal,Date,boolean',' ','ReportList05','User Authorization Limits','Administration',1,1000,to_date('01-05-18','DD-MM-RR'),'Approved',' ',' ',' ',' ',' ',0,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
