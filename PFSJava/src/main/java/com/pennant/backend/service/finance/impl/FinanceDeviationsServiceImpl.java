@@ -164,7 +164,8 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		//Checking records to save and Update
 		for (FinanceDeviations newfindev : newlist) {
 			//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
-			if(!StringUtils.equals(newfindev.getApprovalStatus(),PennantConstants.List_Select)) {
+			if (!(StringUtils.isEmpty(newfindev.getApprovalStatus())
+					|| StringUtils.equals(newfindev.getApprovalStatus(), PennantConstants.List_Select))) {
 				continue;
 			}
 			// ### 01-05-2018 - End
@@ -207,7 +208,8 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		//if status is approved then processApproval
 		for (FinanceDeviations financeDeviations : newlist) {
 			
-			if(!StringUtils.equals(financeDeviations.getApprovalStatus(),PennantConstants.List_Select)) { 
+			if (!(StringUtils.isEmpty(financeDeviations.getApprovalStatus())
+					|| StringUtils.equals(financeDeviations.getApprovalStatus(), PennantConstants.List_Select))) {
 				deviationDetailsDAO.save(financeDeviations, "");
 				auditDetails.add(getFinDeviationsAudit(financeDeviations, ++count, PennantConstants.TRAN_ADD));
 
