@@ -342,6 +342,10 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.windowTitle.setValue(Agencies.RCUVAGENCY.getValue());
 		} else if (module.equals(Agencies.TVAGENCY.getKey())) {
 			this.windowTitle.setValue(Agencies.TVAGENCY.getValue());
+		}else if (module.equals(Agencies.DMA.getKey())) {
+			this.windowTitle.setValue(Agencies.DMA.getValue());
+		}else if (module.equals(Agencies.DSA.getKey())) {
+			this.windowTitle.setValue(Agencies.DSA.getValue());
 		}
 	}
 
