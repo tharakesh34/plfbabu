@@ -28,6 +28,8 @@ public class ProductDeviation extends AbstractWorkflowEntity {
 		excludeFields.add("deviationCode");
 		excludeFields.add("deviationDesc");
 		excludeFields.add("severity");
+		excludeFields.add("severityCode");
+		excludeFields.add("severityName");
 
 		return excludeFields;
 	}
