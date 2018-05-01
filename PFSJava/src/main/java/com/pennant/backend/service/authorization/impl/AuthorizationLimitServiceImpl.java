@@ -526,9 +526,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 				}
 				
 				
-				if((detail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD) || detail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL))){
-					detail.setBefImage( getAuthorizationLimitDetailDAO().getAuthorizationLimitDetail(detail.getId(), type.getSuffix()));
-				}
+				detail.setBefImage( getAuthorizationLimitDetailDAO().getAuthorizationLimitDetail(detail.getId(), type.getSuffix()));
 
 				if (approveRec) {
 					detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
