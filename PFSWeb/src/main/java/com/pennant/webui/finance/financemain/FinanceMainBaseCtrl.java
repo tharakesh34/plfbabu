@@ -954,7 +954,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.applicationNo.setMaxlength(LengthConstants.LEN_REF);
 		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
 				LengthConstants.LEN_MASTER_CODE);
-		this.dmaCode.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
+		this.dmaCode.setProperties("DMA", "DealerName", "DealerCity", false,
 				LengthConstants.LEN_MASTER_CODE);
 		this.salesDepartment.setProperties("GeneralDepartment", "GenDepartment", "GenDeptDesc", false,
 				LengthConstants.LEN_MASTER_CODE);
@@ -1073,7 +1073,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.stepPolicy.setFilters(filter);
 
 		this.accountsOfficer.setProperties("SourceOfficer", "DealerName", "DealerCity", false, 8);
-		this.dsaCode.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
+		this.dsaCode.setProperties("DSA", "DealerName", "DealerCity", false, 8);
 
 		// Finance Basic Details Tab ---> 2. Grace Period Details
 
