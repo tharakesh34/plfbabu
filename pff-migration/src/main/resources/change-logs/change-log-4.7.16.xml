@@ -4537,8 +4537,8 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		<comment>Data engine configuration changes for Profectus for mandates and disbursement downloads</comment>
 			<sql>
 				update data_engine_config set name = 'DISB_HDFC_EXPORT' where name = 'DISB_CITI_EXPORT';
-				update data_engine_config set postevent = null
-				update partnerbanks set alwfiledownload = 0
+				update data_engine_config set postevent = null;
+				update partnerbanks set alwfiledownload = 0;
 				update data_engine_config set filesequenceno = 1 where name = 'DISB_HDFC_EXPORT';
 				update data_engine_config set filenameformat = '${ddmm},.${SEQ_DATE_FILE}' where name = 'DISB_HDFC_EXPORT';
 				update data_engine_Config set  fileprefixname = 'PROFECTUSPAY' where name = 'DISB_HDFC_EXPORT';

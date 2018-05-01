@@ -283,6 +283,7 @@
 	  <changeSet id="19" author="SreeKanth" dbms="postgresql">
 	  	<comment> Procedure For Renaming TableName where EXTENDEDFIELDHEADER has Module LOAN</comment>
 	  	<sql splitStatements="false" stripComments="true"> 
+	  		DO
 	  		$do$
 				DECLARE
 				row record;
