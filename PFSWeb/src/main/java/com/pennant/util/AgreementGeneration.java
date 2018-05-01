@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,6 +16,7 @@ import java.util.WeakHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -41,7 +43,10 @@ import com.pennant.app.util.RateUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
+import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -50,16 +55,22 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.AgreementDetail;
 import com.pennant.backend.model.finance.AgreementDetail.CoApplicant;
+import com.pennant.backend.model.finance.AgreementDetail.ContactDetail;
+import com.pennant.backend.model.finance.AgreementDetail.Covenant;
 import com.pennant.backend.model.finance.AgreementDetail.CustomerFinance;
+import com.pennant.backend.model.finance.AgreementDetail.Disbursement;
+import com.pennant.backend.model.finance.AgreementDetail.Document;
+import com.pennant.backend.model.finance.AgreementDetail.EmailDetail;
 import com.pennant.backend.model.finance.AgreementDetail.ExceptionList;
 import com.pennant.backend.model.finance.AgreementDetail.GroupRecommendation;
 import com.pennant.backend.model.finance.AgreementFieldDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetEvaluation;
-import com.pennant.backend.model.finance.FinCollaterals;
+import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -72,11 +83,14 @@ import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.NotesService;
+import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.service.applicationmaster.MMAgreementService;
+import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -108,6 +122,8 @@ public class AgreementGeneration implements Serializable {
 	private CustomerDetailsService customerDetailsService;
 	@Autowired
 	private SearchProcessor searchProcessor;
+	private CollateralSetupService collateralSetupService;
+	private SecurityUserService securityUserService;
 
 	public AgreementGeneration() {
 		super();
@@ -304,7 +320,7 @@ public class AgreementGeneration implements Serializable {
 	 */
 	public AgreementDetail getAggrementData(FinanceDetail detail, String aggModuleDetails, User userDetails) {
 		logger.debug("Entering");
-
+		
 		// Create New Object For The Agreement Detail
 		AgreementDetail agreement = new AgreementDetail();
 
@@ -356,6 +372,11 @@ public class AgreementGeneration implements Serializable {
 					agreement.setCustSalutation(StringUtils.trimToEmpty(customer.getLovDescCustSalutationCodeName()));
 					agreement.setCustGender(StringUtils.trimToEmpty(customer.getLovDescCustGenderCodeName()));
 					agreement.setCustCtgCode(StringUtils.trimToEmpty(customer.getCustCtgCode()));
+					//TODO:: Added as part of CAM
+					agreement.setCustCategory(StringUtils.trimToEmpty(customer.getLovDescCustCtgCodeName()));
+					agreement.setCustType(StringUtils.trimToEmpty(customer.getLovDescCustTypeCodeName()));
+					agreement.setCustMaritalStatus(StringUtils.trimToEmpty(customer.getLovDescCustMaritalStsName()));
+					agreement.setCustFatherName(StringUtils.trimToEmpty(customer.getCustMotherMaiden()));
 
 					// Customer Employment Details
 					if (detail.getCustomerDetails().getCustEmployeeDetail() != null) {
@@ -370,7 +391,7 @@ public class AgreementGeneration implements Serializable {
 					}
 
 					// Customer Phone Numbers
-					if (detail.getCustomerDetails().getCustomerPhoneNumList() != null) {
+					/*if (detail.getCustomerDetails().getCustomerPhoneNumList() != null) {
 						for (CustomerPhoneNumber phoneNumber : detail.getCustomerDetails().getCustomerPhoneNumList()) {
 							if ("HOME".equals(phoneNumber.getPhoneTypeCode())) {
 								agreement.setPhoneHome(phoneNumber.getPhoneCountryCode() + "-"
@@ -385,23 +406,24 @@ public class AgreementGeneration implements Serializable {
 										+ phoneNumber.getPhoneAreaCode() + "-" + phoneNumber.getPhoneNumber());
 							}
 						}
+					}*/
+					if (detail.getCustomerDetails().getCustomerPhoneNumList() != null) {
+						populateContactDetails(detail, agreement);
 					}
 
-					if (detail.getCustomerDetails().getCustomerEMailList() != null
-							&& !detail.getCustomerDetails().getCustomerEMailList().isEmpty()) {
+					//TODO:: Need to do EMail based on priority
+					if (CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerEMailList())) {
+						int highPriorty=0;
+						agreement.setEmailDetails(new ArrayList<>());
 						for (CustomerEMail email : detail.getCustomerDetails().getCustomerEMailList()) {
-							if (PennantConstants.PFF_CUSTCTG_CORP.equals(detail.getCustomerDetails().getCustomer()
-									.getCustCtgCode())) {
-								if ("OFFICE".equals(email.getCustEMailTypeCode())) {
-									agreement.setCustEmail(StringUtils.trimToEmpty(email.getCustEMail()));
-									break;
-								}
-							} else {
-								if ("PERSON1".equals(email.getCustEMailTypeCode())) {
-									agreement.setCustEmail(StringUtils.trimToEmpty(email.getCustEMail()));
-									break;
-								}
+							if(highPriorty<email.getCustEMailPriority()){
+								agreement.setCustEmail(StringUtils.trimToEmpty(email.getCustEMail()));
+								highPriorty=email.getCustEMailPriority();
 							}
+							EmailDetail emailDetails=agreement.new EmailDetail();
+							emailDetails.setEmailType(StringUtils.trimToEmpty(email.getLovDescCustEMailTypeCode()));
+							emailDetails.setEmailValue(StringUtils.trimToEmpty(email.getCustEMail()));
+							agreement.getEmailDetails().add(emailDetails);
 						}
 					}
 					
@@ -447,9 +469,68 @@ public class AgreementGeneration implements Serializable {
 					}
 				}
 			}
-
+			
+			//TODO:: Moratorium
+			if(null!=detail.getFinScheduleData()&&null!=detail.getFinScheduleData().getFinanceType()){
+				String graceAvailable=(detail.getFinScheduleData().getFinanceType().isFInIsAlwGrace())?"Yes":"No";
+				agreement.setGraceAvailable(graceAvailable);
+			}
+			
+			if(null!=detail.getFinScheduleData()&&null!=detail.getFinScheduleData().getFinanceMain()){
+				agreement.setNumOfPayGrace(Integer.toString(detail.getFinScheduleData().getFinanceMain().getGraceTerms()));
+				agreement.setFirstDisbursementAmt(PennantAppUtil.amountFormate(detail.getFinScheduleData().getFinanceMain().getFinAmount(), formatter));
+				agreement.setRepaySplRate(String.valueOf(detail.getFinScheduleData().getFinanceMain().getRepaySpecialRate()));
+				agreement.setRepayMargin(String.valueOf(detail.getFinScheduleData().getFinanceMain().getRepayMargin()));
+			}
+			
+			// ----------------Loan Details
+			if(null!=detail.getFinScheduleData() && null!=detail.getFinScheduleData().getFinanceScheduleDetails()&& null!=detail.getFinScheduleData().getFinanceScheduleDetails().get(0)){
+				agreement.setEffDateFltRate(String.valueOf(detail.getFinScheduleData().getFinanceScheduleDetails().get(0).getCalculatedRate()));
+				
+			}
+			
+			
+			// ----------------Customer Repayment Details
+			Mandate mandate = detail.getMandate();
+			if(null!=mandate){
+				setRepaymentDetails(agreement, mandate);
+			}
+			
+			// ----------------Customer Charges Details
+			if(null!=detail.getFinScheduleData()&&null!=detail.getFinScheduleData().getFinFeeDetailList()){
+				setFeeChargeDetails(agreement, formatter, detail.getFinScheduleData().getFinFeeDetailList());
+			}			
+			
+			// ----------------Disbursement Details
+			List<FinAdvancePayments> advancePaymentsList = detail.getAdvancePaymentsList();
+			if(CollectionUtils.isNotEmpty(advancePaymentsList)){
+				setDisbursementDetails(agreement, advancePaymentsList,formatter);
+			}
+			
+			// ----------------Document Details
+			if(CollectionUtils.isEmpty(agreement.getDocuments())){
+				agreement.setDocuments(new ArrayList<>());
+			}
+			List<DocumentDetails> documentDetailsList = detail.getDocumentDetailsList();
+			if(CollectionUtils.isNotEmpty(documentDetailsList)){
+				setLoanDocuments(agreement, documentDetailsList);
+			}
+			if(null!=detail.getCustomerDetails()){
+				List<CustomerDocument> customerDocuments=detail.getCustomerDetails().getCustomerDocumentsList();
+				if(CollectionUtils.isNotEmpty(customerDocuments)){
+					setCustomerDocuments(agreement, customerDocuments);
+				}
+			}			
+			
+			//------------------Covenants Details
+			List<FinCovenantType> covenantTypeList = detail.getCovenantTypeList();
+			if(CollectionUtils.isNotEmpty(covenantTypeList)){
+				setCovenantDetails(agreement,covenantTypeList);
+			}
+			
+			//TODO:: Need to get collateral Setup, Need details from collateral setup team.
 			// --------------------Collateral Details
-			if (detail.getFinanceCollaterals() != null && !detail.getFinanceCollaterals().isEmpty()) {
+			if (CollectionUtils.isNotEmpty(detail.getCollateralAssignmentList())) {				
 				agreement = getCollateralDetails(agreement, detail, formatter);
 			}
 			if (detail.getFinRepayHeader() != null) {
@@ -525,6 +606,107 @@ public class AgreementGeneration implements Serializable {
 		return agreement;
 	}
 
+	private void setCustomerDocuments(AgreementDetail agreement, List<CustomerDocument> customerDocuments) {
+		customerDocuments.forEach((customerDocument)->{
+			Document document=agreement.new Document();
+			document.setCusDocName(customerDocument.getCustDocCategory()+"-"+customerDocument.getLovDescCustDocCategory());
+			document.setReceiveDate(DateUtility.formatToLongDate(customerDocument.getCustDocRcvdOn()));
+			document.setDocType("CUSTOMER");
+			document.setUserName(document.getUserName());
+			agreement.getDocuments().add(document);
+		});
+	}
+
+	private void populateContactDetails(FinanceDetail detail, AgreementDetail agreement) {
+		agreement.setContactDetails(new ArrayList<>());
+		detail.getCustomerDetails().getCustomerPhoneNumList().forEach((phoneNumber)->{
+			ContactDetail contactDetail=agreement.new ContactDetail();
+			contactDetail.setContactType(phoneNumber.getLovDescPhoneTypeCodeName());
+			contactDetail.setContactValue(phoneNumber.getPhoneNumber());
+			agreement.getContactDetails().add(contactDetail);
+		});
+	}
+
+	//TODO:: Need more details
+	private void setCovenantDetails(AgreementDetail agreement, List<FinCovenantType> covenantTypeList) {
+		agreement.setCovenants(new ArrayList<>());
+		
+		covenantTypeList.forEach((covenantType)->{
+			Covenant covenant=agreement.new Covenant();
+			SecurityUser securityUser = getSecurityUserService().getSecurityUserById(covenantType.getLastMntBy());
+			if(null!=securityUser){
+				covenant.setUserName(securityUser.getUsrLogin());
+			}			
+			covenant.setRaisedDate(DateUtility.formatToLongDate(covenantType.getLastMntOn()));
+			covenant.setCusDocName(covenantType.getCovenantTypeDesc());
+			covenant.setRemarks(covenantType.getDescription());
+			if(covenantType.isAlwPostpone()){
+				covenant.setTargetDate(DateUtility.formatToLongDate(covenantType.getReceivableDate()));
+				covenant.setStatus("Pending");
+			}else if(covenantType.isAlwWaiver()){
+				covenant.setStatus("Waived");
+				covenant.setTargetDate(new String());
+			}else{
+				covenant.setStatus(new String());
+				covenant.setTargetDate(new String());
+			}
+			agreement.getCovenants().add(covenant);
+		});
+	}
+
+	private void setLoanDocuments(AgreementDetail agreement, List<DocumentDetails> documentDetailsList) {
+		documentDetailsList.forEach((documentDetail)->{
+			if(null!=documentDetail && StringUtils.equalsIgnoreCase(documentDetail.getDocModule(), "Finance")){
+				Document document=agreement.new Document();
+				document.setCusDocName(documentDetail.getDocCategory());
+				document.setReceiveDate(DateUtility.formatToLongDate(documentDetail.getDocReceivedDate()));
+				document.setDocType("LOAN");
+				document.setUserName(document.getUserName());
+				agreement.getDocuments().add(document);
+			}
+		});
+	}
+
+	private void setDisbursementDetails(AgreementDetail agreement, List<FinAdvancePayments> advancePaymentsList, int formatter) {
+		agreement.setDisbursements(new ArrayList<>());
+		advancePaymentsList.forEach((advancePayment)->{
+			Disbursement disbursement = agreement.new Disbursement();
+			disbursement.setDisbursementAmt(PennantAppUtil.amountFormate(advancePayment.getAmtToBeReleased(), formatter));
+			disbursement.setAccountHolderName(advancePayment.getBeneficiaryName());
+			disbursement.setDisbursementDate(DateUtility.formatToLongDate(advancePayment.getLlDate()));
+			disbursement.setBankName(advancePayment.getBranchBankName());
+			disbursement.setDisbursementAcct(advancePayment.getBeneficiaryAccNo());
+			disbursement.setIfscCode(advancePayment.getiFSC());
+			disbursement.setPaymentMode(advancePayment.getPaymentType());
+			agreement.getDisbursements().add(disbursement);
+		});
+	}
+
+	private void setFeeChargeDetails(AgreementDetail agreement, int formatter, List<FinFeeDetail> finFeeDetails) {
+		agreement.setCusCharges(new ArrayList<>());
+		if(null!=finFeeDetails&&finFeeDetails.size()>0){
+			finFeeDetails.forEach((finFeeDetail)->{
+				com.pennant.backend.model.finance.AgreementDetail.CusCharge charge = agreement.new CusCharge();
+				charge.setFeeChargeDesc(finFeeDetail.getFeeTypeDesc());
+				charge.setChargeAmt(PennantAppUtil.amountFormate(finFeeDetail.getActualAmount(), formatter));
+				charge.setChargeWaver(PennantAppUtil.amountFormate(finFeeDetail.getWaivedAmount(), formatter));
+				charge.setChargePaid(PennantAppUtil.amountFormate(finFeeDetail.getPaidAmount(), formatter));
+				charge.setRemainingAmount(PennantAppUtil.amountFormate(finFeeDetail.getRemainingFee(), formatter));
+				charge.setFeeTreatment(finFeeDetail.getFeeScheduleMethod());
+				agreement.getCusCharges().add(charge);
+			});
+		}
+	}
+
+	private void setRepaymentDetails(AgreementDetail agreement, Mandate mandate) {
+		agreement.setRepayBankName(mandate.getBankName());
+		agreement.setRepayAcctIfscCode(mandate.getIFSC());
+		agreement.setBranchName(mandate.getBranchDesc());
+		agreement.setRepayAcct(mandate.getAccNumber());
+		agreement.setRepayCustName(mandate.getAccHolderName());
+		agreement.setRepayMode(mandate.getMandateType());
+	}
+
 	private void setCustomerBankInfo(FinanceDetail detail, AgreementDetail agreement) {
 		agreement.setCustomerBankInfos(new ArrayList<com.pennant.backend.model.finance.AgreementDetail.CustomerBankInfo>());
 		if (detail!=null && detail.getCustomerDetails()!=null && detail.getCustomerDetails().getCustomerBankInfoList()!=null) {
@@ -587,7 +769,70 @@ public class AgreementGeneration implements Serializable {
 			});
 		}
 	}
+	
+	private static void sortCustomerPhoneDetails(List<CustomerPhoneNumber> list) {
 
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<CustomerPhoneNumber>() {
+				@Override
+				public int compare(CustomerPhoneNumber detail1, CustomerPhoneNumber detail2) {
+					return detail2.getPhoneTypePriority() - detail1.getPhoneTypePriority();
+				}
+			});
+		}
+	}
+
+	private void setCoapplicantPhoneNumber(CoApplicant coapplicant, List<CustomerPhoneNumber> phoneNumList) {
+		if (phoneNumList != null	&& !phoneNumList.isEmpty()) {
+			if (phoneNumList.size()==1) {
+				setPhoneDetails(coapplicant, phoneNumList.get(0));
+			}else{
+				// sort the address based on priority and consider the top priority 
+				sortCustomerPhoneDetails(phoneNumList);
+				for (CustomerPhoneNumber customerPhoneNumber : phoneNumList) {
+					setPhoneDetails(coapplicant, customerPhoneNumber);
+					break;
+				}
+				
+			}
+		}
+	}
+
+	private void setPhoneDetails(CoApplicant coapplicant, CustomerPhoneNumber customerPhoneNumber) {
+		coapplicant.setCustAddrPhone(StringUtils.trimToEmpty(customerPhoneNumber.getPhoneNumber()));
+	}
+	
+	private void setCoapplicantEMailId(CoApplicant coapplicant, List<CustomerEMail> eMailList) {
+		if (eMailList != null	&& !eMailList.isEmpty()) {
+			if (eMailList.size()==1) {
+				setEMailDetails(coapplicant, eMailList.get(0));
+			}else{
+				// sort the address based on priority and consider the top priority 
+				sortCustomerEMailDetails(eMailList);
+				for (CustomerEMail customerEMail : eMailList) {
+					setEMailDetails(coapplicant, customerEMail);
+					break;
+				}
+				
+			}
+		}
+	}
+
+	private void sortCustomerEMailDetails(List<CustomerEMail> list){
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<CustomerEMail>() {
+				@Override
+				public int compare(CustomerEMail detail1, CustomerEMail detail2) {
+					return detail2.getCustEMailPriority() - detail1.getCustEMailPriority();
+				}
+			});
+		}
+	}
+
+	private void setEMailDetails(CoApplicant coapplicant, CustomerEMail customerEMail) {
+		coapplicant.setCustEmail(customerEMail.getCustEMail());
+		
+	}
 
 	private void setAddressDetails(AgreementDetail agreement, CustomerAddres customerAddres) {
 		agreement.setCustAddrHNbr(customerAddres.getCustAddrHNbr());
@@ -650,11 +895,70 @@ public class AgreementGeneration implements Serializable {
 				if (addlist!=null && !addlist.isEmpty()) {
 					setCoapplicantAddress(coapplicant, addlist);
 				}
+				
+				List<CustomerPhoneNumber> phoneNumList = customerDetails.getCustomerPhoneNumList();
+				if(phoneNumList!=null && !phoneNumList.isEmpty()){
+					setCoapplicantPhoneNumber(coapplicant, phoneNumList);
+				}
+				
+				List<CustomerEMail> eMailList = customerDetails.getCustomerEMailList();
+				if(eMailList!=null && !eMailList.isEmpty()){
+					setCoapplicantEMailId(coapplicant, eMailList);
+				}
+				coapplicant.setApplicantType("Co-Applicant");
 				agreement.getCoApplicants().add(coapplicant);
 			}
-		}else{
+		}
+		
+		if (CollectionUtils.isNotEmpty(detail.getGurantorsDetailList())) {
+			detail.getGurantorsDetailList().forEach((guarantorDetail)->{
+				CoApplicant coapplicant = agreement.new CoApplicant();
+				if(guarantorDetail.getCustID()>0){
+					CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(guarantorDetail.getCustID(), true, "_AView");
+					Customer customer = customerDetails.getCustomer();
+					coapplicant.setCustName(customer.getCustShrtName());
+					//pan number
+					List<CustomerDocument> doclist = customerDetails.getCustomerDocumentsList();
+					coapplicant.setPanNumber(PennantApplicationUtil.getPanNumber(doclist));
+					
+					List<CustomerAddres> addlist = customerDetails.getAddressList();
+					if (addlist!=null && !addlist.isEmpty()) {
+						setCoapplicantAddress(coapplicant, addlist);
+					}
+					
+					List<CustomerPhoneNumber> phoneNumList = customerDetails.getCustomerPhoneNumList();
+					if(phoneNumList!=null && !phoneNumList.isEmpty()){
+						setCoapplicantPhoneNumber(coapplicant, phoneNumList);
+					}
+					
+					List<CustomerEMail> eMailList = customerDetails.getCustomerEMailList();
+					if(eMailList!=null && !eMailList.isEmpty()){
+						setCoapplicantEMailId(coapplicant, eMailList);
+					}
+				}else{
+					coapplicant.setCustName(guarantorDetail.getCustShrtName());
+					CustomerAddres customerAddres =new CustomerAddres();
+					customerAddres.setCustAddrHNbr(guarantorDetail.getAddrHNbr());
+					customerAddres.setCustFlatNbr(guarantorDetail.getFlatNbr());
+					customerAddres.setCustPOBox(guarantorDetail.getPOBox());
+					customerAddres.setCustAddrStreet(guarantorDetail.getAddrStreet());
+					customerAddres.setCustAddrLine1(guarantorDetail.getAddrLine1());
+					customerAddres.setCustAddrLine2(guarantorDetail.getAddrLine2());
+					customerAddres.setCustAddrCity(guarantorDetail.getAddrCity());
+					customerAddres.setCustAddrZIP(guarantorDetail.getAddrZIP());
+					setAddressDetails(coapplicant, customerAddres);
+					coapplicant.setCustAddrPhone(guarantorDetail.getMobileNo());
+					coapplicant.setCustEmail(guarantorDetail.getEmailId());
+				}
+				coapplicant.setApplicantType("Guarantor");
+				agreement.getCoApplicants().add(coapplicant);
+			});
+		}
+		
+		if(CollectionUtils.sizeIsEmpty(agreement.getCoApplicants())){
 			agreement.getCoApplicants().add(agreement.new CoApplicant());
 		}
+		
 	}
 
 	private AgreementDetail getFinRepayHeaderDetails(AgreementDetail agreement, FinRepayHeader finRepayHeader,
@@ -744,7 +1048,7 @@ public class AgreementGeneration implements Serializable {
 	}
 
 	private AgreementDetail getCollateralDetails(AgreementDetail agreement, FinanceDetail detail, int formatter) {
-		List<FinCollaterals> finCollateralslist = detail.getFinanceCollaterals();
+		/*List<FinCollaterals> finCollateralslist = detail.getFinanceCollaterals();
 		agreement.setCollateralData(new ArrayList<AgreementDetail.FinCollaterals>());
 
 		for (FinCollaterals finCollaterals : finCollateralslist) {
@@ -754,6 +1058,30 @@ public class AgreementGeneration implements Serializable {
 			collateralData.setCollateralAmt(PennantAppUtil.amountFormate(finCollaterals.getValue(), formatter));
 			agreement.getCollateralData().add(collateralData);
 
+		}*/
+		
+		//retrieving from CollateralSetup instead of FinanceCollaterals
+		agreement.setCollateralData(new ArrayList<AgreementDetail.FinCollaterals>());
+		List<CollateralAssignment> collateralAssignmentList = detail.getCollateralAssignmentList();
+		if(CollectionUtils.isNotEmpty(collateralAssignmentList)){
+			collateralAssignmentList.forEach((collateralAssignment)->{
+				if(null!=collateralAssignment){
+					CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(collateralAssignment.getCollateralRef(),"", false);
+					if(null!=collateralSetup){
+						com.pennant.backend.model.finance.AgreementDetail.FinCollaterals collateralData = agreement.new FinCollaterals();
+						collateralData.setCollateralType(collateralSetup.getCollateralType());
+						collateralData.setReference(collateralSetup.getCollateralRef());
+						collateralData.setCollateralAmt(PennantAppUtil.amountFormate(collateralSetup.getCollateralValue(),formatter));
+						if(null!=collateralSetup.getCollateralStructure()){
+							collateralData.setColDesc(collateralSetup.getCollateralStructure().getCollateralDesc());
+							collateralData.setColLtv(collateralSetup.getCollateralStructure().getLtvPercentage().toString());
+						}
+						collateralData.setColAddrCity(collateralSetup.getCollateralLoc());
+						collateralData.setCollateralAmt(PennantAppUtil.amountFormate(collateralSetup.getBankValuation(),formatter));			
+						agreement.getCollateralData().add(collateralData);
+					}
+				}
+			});
 		}
 		return agreement;
 	}
@@ -1010,7 +1338,12 @@ public class AgreementGeneration implements Serializable {
 			}else{
 				agreement.setNetRefRateLoan(PennantApplicationUtil.formatRate(main.getRepayProfitRate().doubleValue(), 9));
 			}
+			
+			int totalTerms=main.getNumberOfTerms()+main.getGraceTerms();
+			agreement.setTotalTerms(Integer.toString(totalTerms));
 		
+			//TODO: Need Confirmation
+			agreement.setApplicationNo(main.getApplicationNo());
 
 		} catch (Exception e) {
 			logger.debug(e);
@@ -1535,6 +1868,20 @@ public class AgreementGeneration implements Serializable {
 		this.mMAgreementService = mMAgreementService;
 	}
 
+	public CollateralSetupService getCollateralSetupService() {
+		return collateralSetupService;
+	}
 
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
+	}
+
+	public SecurityUserService getSecurityUserService() {
+		return securityUserService;
+	}
+
+	public void setSecurityUserService(SecurityUserService securityUserService) {
+		this.securityUserService = securityUserService;
+	}
 
 }

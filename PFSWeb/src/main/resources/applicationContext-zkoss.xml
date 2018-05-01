@@ -2053,6 +2053,8 @@
 		<property name="notesService" ref="notesService" />
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="mMAgreementService" ref="mMAgreementService" />
+		<property name="collateralSetupService" ref="collateralSetupService" />
+		<property name="securityUserService" ref="securityUserService" />
 	</bean>
 
 	<!--============ Indicative Term Sheet Detail ============== -->

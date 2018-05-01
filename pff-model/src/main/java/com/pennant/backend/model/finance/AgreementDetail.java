@@ -311,11 +311,18 @@ public class AgreementDetail {
 	private String 	insAmt ="";													    	// Insurance Amount
 	private String 	repayMargin ="";													//  Margin
 	private String 	numOfPayGrace ="";											        //  NumberOfTerms-graceTerms
-	private String finMinRate;
-	private String finMaxRate;
-	private String profitRateType;														//Profit Rate Type
-	private String tenor;
-	private String netRefRateLoan;
+	private String finMinRate ="";
+	private String finMaxRate ="";
+	private String profitRateType ="";														//Profit Rate Type
+	private String tenor ="";
+	private String netRefRateLoan ="";
+	
+	//TODO::Added as part of Comments
+	private String graceAvailable ="";
+	private String totalTerms ="";
+	private String firstDisbursementAmt ="";
+	private String repaySplRate ="";
+	
 	//DDA Fields
 	//===============================
 	private String 	bankName ="";														// DDA Sponsoring Bank
@@ -325,7 +332,7 @@ public class AgreementDetail {
 	private String 	ifscCode ="";													// DDA Purpose Code
 	
 	//Mandate
-	private String				accNumberMandate;
+	private String				accNumberMandate ="";
 
 	
 	//External Fields
@@ -1704,9 +1711,12 @@ private String custAccount ="";
 	//============== Finance Collaterals Details =============//
 	private List<FinCollaterals> collateralData;
 	public class FinCollaterals {
-		private String collateralType;
-		private String reference;
-		private String collateralAmt;
+		private String collateralType ="";
+		private String reference ="";
+		private String collateralAmt ="";
+		private String colDesc ="";
+		private String colAddrCity ="";
+		private String colLtv ="";
 		public String getReference() {
 			return reference;
 		}
@@ -1725,6 +1735,24 @@ private String custAccount ="";
 		}
 		public void setCollateralAmt(String collateralAmt) {
 			this.collateralAmt = collateralAmt;
+		}
+		public String getColDesc() {
+			return colDesc;
+		}
+		public void setColDesc(String colDesc) {
+			this.colDesc = colDesc;
+		}
+		public String getColAddrCity() {
+			return colAddrCity;
+		}
+		public void setColAddrCity(String colAddrCity) {
+			this.colAddrCity = colAddrCity;
+		}
+		public String getColLtv() {
+			return colLtv;
+		}
+		public void setColLtv(String colLtv) {
+			this.colLtv = colLtv;
 		}
 		
 	}
@@ -3783,6 +3811,38 @@ private String custAccount ="";
 		this.numOfPayGrace = numOfPayGrace;
 	}
 
+	public String getGraceAvailable() {
+		return graceAvailable;
+	}
+
+	public void setGraceAvailable(String graceAvailable) {
+		this.graceAvailable = graceAvailable;
+	}
+
+	public String getTotalTerms() {
+		return totalTerms;
+	}
+
+	public void setTotalTerms(String totalTerms) {
+		this.totalTerms = totalTerms;
+	}
+
+	public String getFirstDisbursementAmt() {
+		return firstDisbursementAmt;
+	}
+
+	public void setFirstDisbursementAmt(String firstDisbursementAmt) {
+		this.firstDisbursementAmt = firstDisbursementAmt;
+	}
+
+	public String getRepaySplRate() {
+		return repaySplRate;
+	}
+
+	public void setRepaySplRate(String repaySplRate) {
+		this.repaySplRate = repaySplRate;
+	}
+
 	public String getSecDeposit() {
 		return secDeposit;
 	}
@@ -4181,6 +4241,9 @@ private String custAccount ="";
 		private String lovDescCustAddrCityName ="";
 		private String custAddrZIP ="";
 		private String custAddrPhone ="";
+		private String custEmail="";
+		private String gstNo="";
+		private String applicantType;
 
 		public CoApplicant() {
 			
@@ -4321,6 +4384,30 @@ private String custAccount ="";
 		public void setCustAddrPhone(String custAddrPhone) {
 			this.custAddrPhone = custAddrPhone;
 		}
+
+		public String getCustEmail() {
+			return custEmail;
+		}
+
+		public void setCustEmail(String custEmail) {
+			this.custEmail = custEmail;
+		}
+
+		public String getGstNo() {
+			return gstNo;
+		}
+
+		public void setGstNo(String gstNo) {
+			this.gstNo = gstNo;
+		}
+
+		public String getApplicantType() {
+			return applicantType;
+		}
+
+		public void setApplicantType(String applicantType) {
+			this.applicantType = applicantType;
+		}
 		
 	}
 	private List<CustomerBankInfo> customerBankInfos;
@@ -4366,4 +4453,478 @@ private String custAccount ="";
 	}
 
 
+	//----- New Details Added ---------//
+	
+	private String effDateFltRate ="";
+	
+	public String getEffDateFltRate() {
+		return effDateFltRate;
+	}
+
+	public void setEffDateFltRate(String effDateFltRate) {
+		this.effDateFltRate = effDateFltRate;
+	}
+
+	//----- Loan Details ---------//
+	private String gstNo ="";
+	
+	public String getGstNo() {
+		return gstNo;
+	}
+
+	public void setGstNo(String gstNo) {
+		this.gstNo = gstNo;
+	}
+	
+	//-------- CAM DEtails Added -----------//
+	private String custCategory ="";
+	
+	private String applicationNo ="";
+	
+	private String custType ="";
+	
+	private String custFatherName ="";
+	
+	public String getCustFatherName() {
+		return custFatherName;
+	}
+
+	public void setCustFatherName(String custFatherName) {
+		this.custFatherName = custFatherName;
+	}
+
+	private String custMaritalStatus ="";
+	
+	public String getCustMaritalStatus() {
+		return custMaritalStatus;
+	}
+
+	public void setCustMaritalStatus(String custMaritalStatus) {
+		this.custMaritalStatus = custMaritalStatus;
+	}
+
+	public String getCustType() {
+		return custType;
+	}
+
+	public void setCustType(String custType) {
+		this.custType = custType;
+	}
+
+	public String getCustCategory() {
+		return custCategory;
+	}
+
+	public void setCustCategory(String custCategory) {
+		this.custCategory = custCategory;
+	}
+
+	public String getApplicationNo() {
+		return applicationNo;
+	}
+
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
+	}
+
+	//----- Customer Repayment Bank Details ---------//
+	private String branchName ="";
+	private String repayAcct ="";
+	private String repayCustName ="";
+	private String repayMode ="";
+	private String repayBankName ="";
+	private String repayAcctIfscCode ="";
+
+	public String getBranchName() {
+		return branchName;
+	}
+
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
+	}
+
+	public String getRepayAcct() {
+		return repayAcct;
+	}
+
+	public void setRepayAcct(String repayAcct) {
+		this.repayAcct = repayAcct;
+	}
+
+	public String getRepayCustName() {
+		return repayCustName;
+	}
+
+	public void setRepayCustName(String repayCustName) {
+		this.repayCustName = repayCustName;
+	}
+
+	public String getRepayMode() {
+		return repayMode;
+	}
+
+	public void setRepayMode(String repayMode) {
+		this.repayMode = repayMode;
+	}
+	
+    public String getRepayBankName() {
+		return repayBankName;
+	}
+
+	public void setRepayBankName(String repayBankName) {
+		this.repayBankName = repayBankName;
+	}
+
+	public String getRepayAcctIfscCode() {
+		return repayAcctIfscCode;
+	}
+
+	public void setRepayAcctIfscCode(String repayAcctIfscCode) {
+		this.repayAcctIfscCode = repayAcctIfscCode;
+	}
+
+	//------- Customer Charges -------//
+	private List<CusCharge> cusCharges;
+	
+	public List<CusCharge> getCusCharges() {
+		return cusCharges;
+	}
+
+	public void setCusCharges(List<CusCharge> cusCharges) {
+		this.cusCharges = cusCharges;
+	}
+
+	public class CusCharge{
+		private String feeChargeDesc ="";
+		private String chargeAmt ="";
+		private String chargeWaver ="";
+		private String chargePaid ="";
+		private String remainingAmount ="";
+		private String feeTreatment ="";
+		
+		public CusCharge() {
+		}
+
+		public String getFeeChargeDesc() {
+			return feeChargeDesc;
+		}
+
+		public void setFeeChargeDesc(String feeChargeDesc) {
+			this.feeChargeDesc = feeChargeDesc;
+		}
+
+		public String getChargeAmt() {
+			return chargeAmt;
+		}
+
+		public void setChargeAmt(String chargeAmt) {
+			this.chargeAmt = chargeAmt;
+		}
+
+		public String getChargeWaver() {
+			return chargeWaver;
+		}
+
+		public void setChargeWaver(String chargeWaver) {
+			this.chargeWaver = chargeWaver;
+		}
+
+		public String getChargePaid() {
+			return chargePaid;
+		}
+
+		public void setChargePaid(String chargePaid) {
+			this.chargePaid = chargePaid;
+		}
+
+		public String getRemainingAmount() {
+			return remainingAmount;
+		}
+
+		public void setRemainingAmount(String remainingAmount) {
+			this.remainingAmount = remainingAmount;
+		}
+
+		public String getFeeTreatment() {
+			return feeTreatment;
+		}
+
+		public void setFeeTreatment(String feeTreatment) {
+			this.feeTreatment = feeTreatment;
+		}
+	}
+	
+	
+	//------------- Disbursement Details ------------// 
+	private List<Disbursement> disbursements;
+	
+	public List<Disbursement> getDisbursements() {
+		return disbursements;
+	}
+
+	public void setDisbursements(List<Disbursement> disbursements) {
+		this.disbursements = disbursements;
+	}
+
+	public class Disbursement{
+		private String disbursementAmt ="";
+		private String accountHolderName ="";
+		private String disbursementDate ="";
+		private String bankName ="";
+		private String disbursementAcct ="";
+		private String ifscCode ="";
+		private String paymentMode ="";
+		
+		public Disbursement() {
+		}
+
+		public String getDisbursementAmt() {
+			return disbursementAmt;
+		}
+
+		public void setDisbursementAmt(String disbursementAmt) {
+			this.disbursementAmt = disbursementAmt;
+		}
+
+		public String getAccountHolderName() {
+			return accountHolderName;
+		}
+
+		public void setAccountHolderName(String accountHolderName) {
+			this.accountHolderName = accountHolderName;
+		}
+
+		public String getDisbursementDate() {
+			return disbursementDate;
+		}
+
+		public void setDisbursementDate(String disbursementDate) {
+			this.disbursementDate = disbursementDate;
+		}
+
+		public String getBankName() {
+			return bankName;
+		}
+
+		public void setBankName(String bankName) {
+			this.bankName = bankName;
+		}
+
+		public String getDisbursementAcct() {
+			return disbursementAcct;
+		}
+
+		public void setDisbursementAcct(String disbursementAcct) {
+			this.disbursementAcct = disbursementAcct;
+		}
+
+		public String getIfscCode() {
+			return ifscCode;
+		}
+
+		public void setIfscCode(String ifscCode) {
+			this.ifscCode = ifscCode;
+		}
+
+		public String getPaymentMode() {
+			return paymentMode;
+		}
+
+		public void setPaymentMode(String paymentMode) {
+			this.paymentMode = paymentMode;
+		}
+	}
+	
+	//---------- Dcument details ---------//
+	private List<Document> documents;
+
+	public List<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
+	}
+
+	public class Document{
+		private String cusDocName ="";
+		private String receiveDate ="";
+		private String docType ="";
+		private String userName ="";
+
+		public Document(){}
+
+		public String getCusDocName() {
+			return cusDocName;
+		}
+
+		public void setCusDocName(String cusDocName) {
+			this.cusDocName = cusDocName;
+		}
+
+		public String getReceiveDate() {
+			return receiveDate;
+		}
+
+		public void setReceiveDate(String receiveDate) {
+			this.receiveDate = receiveDate;
+		}
+
+		public String getDocType() {
+			return docType;
+		}
+
+		public void setDocType(String docType) {
+			this.docType = docType;
+		}
+
+		public String getUserName() {
+			return userName;
+		}
+
+		public void setUserName(String userName) {
+			this.userName = userName;
+		}
+	}
+	
+	//---------- Convenant details ---------//
+	private List<Covenant> covenants;
+	
+	public List<Covenant> getCovenants() {
+		return covenants;
+	}
+
+	public void setCovenants(List<Covenant> covenants) {
+		this.covenants = covenants;
+	}
+
+	public class Covenant{
+		private String userName ="";
+		private String raisedDate ="";
+		private String cusDocName ="";
+		private String remarks ="";
+		private String targetDate ="";
+		private String status ="";
+		
+		public Covenant() {
+		}
+
+		public String getUserName() {
+			return userName;
+		}
+
+		public void setUserName(String userName) {
+			this.userName = userName;
+		}
+
+		public String getRaisedDate() {
+			return raisedDate;
+		}
+
+		public void setRaisedDate(String raisedDate) {
+			this.raisedDate = raisedDate;
+		}
+
+		public String getCusDocName() {
+			return cusDocName;
+		}
+
+		public void setCusDocName(String cusDocName) {
+			this.cusDocName = cusDocName;
+		}
+
+		public String getStatus() {
+			return status;
+		}
+
+		public void setStatus(String status) {
+			this.status = status;
+		}
+
+		public String getRemarks() {
+			return remarks;
+		}
+
+		public void setRemarks(String remarks) {
+			this.remarks = remarks;
+		}
+
+		public String getTargetDate() {
+			return targetDate;
+		}
+
+		public void setTargetDate(String targetDate) {
+			this.targetDate = targetDate;
+		}
+	}
+	
+	private List<ContactDetail> contactDetails;
+	
+	public List<ContactDetail> getContactDetails() {
+		return contactDetails;
+	}
+
+	public void setContactDetails(List<ContactDetail> contactDetails) {
+		this.contactDetails = contactDetails;
+	}
+
+	public class ContactDetail{
+		private String contactType ="";
+		private String contactValue ="";
+		
+		public ContactDetail() {
+		}
+
+		public String getContactType() {
+			return contactType;
+		}
+
+		public void setContactType(String contactType) {
+			this.contactType = contactType;
+		}
+
+		public String getContactValue() {
+			return contactValue;
+		}
+
+		public void setContactValue(String contactValue) {
+			this.contactValue = contactValue;
+		}
+	} 
+	
+	private List<EmailDetail> emailDetails;
+	
+	public List<EmailDetail> getEmailDetails() {
+		return emailDetails;
+	}
+
+	public void setEmailDetails(List<EmailDetail> emailDetails) {
+		this.emailDetails = emailDetails;
+	}
+
+	public class EmailDetail{
+
+		public EmailDetail() {
+		}
+		
+		private String emailType ="";
+		
+		private String emailValue ="";
+
+		public String getEmailType() {
+			return emailType;
+		}
+
+		public void setEmailType(String emailType) {
+			this.emailType = emailType;
+		}
+
+		public String getEmailValue() {
+			return emailValue;
+		}
+
+		public void setEmailValue(String emailValue) {
+			this.emailValue = emailValue;
+		}
+	}
 }
