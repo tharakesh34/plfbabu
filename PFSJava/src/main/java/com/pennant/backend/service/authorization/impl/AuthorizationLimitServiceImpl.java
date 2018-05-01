@@ -65,7 +65,6 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.authorization.AuthorizationLimitService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -527,12 +526,11 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 				}
 				
 				
+				if((detail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD) || detail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL))){
+					detail.setBefImage( getAuthorizationLimitDetailDAO().getAuthorizationLimitDetail(detail.getId(), type.getSuffix()));
+				}
 
 				if (approveRec) {
-					if((detail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD) || detail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL))){
-						detail.setBefImage( getAuthorizationLimitDetailDAO().getAuthorizationLimitDetail(detail.getId(), ""));
-					}
-
 					detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					detail.setRecordType(null);
 				}
