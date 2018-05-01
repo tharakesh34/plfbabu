@@ -4575,5 +4575,12 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			 Insert into REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) values ('FinanceUserAuthorizationLimit','FinanceUserAuthorizationLimit','listheader_UserID.label,listheader_LimitName.label,listheader_LimitAmount.label,listheader_ExpiryDate.label,listheader_Active.label','usrLogin,UsrFName,limitAmount,expiryDate,active','String,String,BigDecimal,Date,boolean',' ','ReportList05','User Authorization Limits','Administration',1,1000,to_date('01-05-18','DD-MM-RR'),'Approved',' ',' ',' ',' ',' ',0,0);
 		</sql>
 	</changeSet>
+
+	<changeSet id="72" author="Vinay">
+		<sql>
+			 Update ReportFilterFields set FIELDCONSTRAINT='REGEX_NUMERIC',fielderrormessage='Financial Year' Where FIELDID=2 And REPORTID=(select reportid from reportconfiguration where menuitemcode='menu_Item_InterestStatement');
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 	
