@@ -4546,5 +4546,29 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 				update data_Engine_config set name = 'PROFECTUSMAN' where name = 'MANDATES_EXPORT';	
 			</sql>
 	</changeSet>
+	<changeSet id="70" author="Jayant" dbms="mssql">
+		<sql splitStatements="false" stripComments="true">
+			DECLARE @SUBMODULENAME varchar(100)
+			DECLARE @oldTableName VARCHAR(100)
+			DECLARE @newTableName VARCHAR(100)
+			DECLARE @CNT int
+			DECLARE NAMEREADER CURSOR FAST_FORWARD FOR 
+				SELECT SUBMODULENAME FROM EXTENDEDFIELDHEADER WHERE MODULENAME='LOAN'
+			OPEN NAMEREADER
+				FETCH NEXT FROM NAMEREADER INTO @SUBMODULENAME
+				WHILE @@FETCH_STATUS = 0
+					BEGIN
+						SELECT @CNT=COUNT(*) from INFORMATION_SCHEMA.TABLES where TABLE_NAME='LOAN_'+@SUBMODULENAME+'_ED';
+						IF @CNT>0  OR @CNT IS NOT NULL
+							BREAK
+							SET @oldTableName = 'LOAN_'+@SUBMODULENAME+'_ED'
+							SET @newTableName = 'LOAN_'+@SUBMODULENAME+'_ORG_ED'
+							EXEC sp_rename @oldTableName,@newTableName
+							FETCH NEXT FROM NAMEREADER INTO @SUBMODULENAME
+					END
+			CLOSE NAMEREADER
+			DEALLOCATE NAMEREADER
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
