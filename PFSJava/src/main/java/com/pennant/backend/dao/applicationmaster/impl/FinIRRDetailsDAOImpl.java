@@ -42,16 +42,21 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.FinIRRDetailsDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
@@ -68,6 +73,31 @@ public class FinIRRDetailsDAOImpl extends BasisNextidDaoImpl<FinIRRDetails> impl
 
 	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
+	@Override
+	public List<FinIRRDetails> getFinIRRList(String finReference, String type) {
+		logger.debug(Literal.ENTERING);
+		FinIRRDetails finIRRDetails = new FinIRRDetails();
+		finIRRDetails.setFinReference(finReference);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT IRRID, FinReference, IRR, IRRCode, IrrCodeDesc, ");
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode,  NextRoleCode," );
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" From FinIRRDetails");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference" );
+
+		List<FinIRRDetails> details = new ArrayList<FinIRRDetails>();
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finIRRDetails);
+		RowMapper<FinIRRDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinIRRDetails.class);
+		details = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		
+		logger.debug(Literal.LEAVING);
+		return details;
+	}
+	
 	@Override
 	public String save(FinIRRDetails entity, TableType tableType) {
 		logger.debug(Literal.ENTERING);

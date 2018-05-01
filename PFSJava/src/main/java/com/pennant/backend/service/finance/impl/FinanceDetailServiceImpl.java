@@ -66,6 +66,7 @@ import com.pennant.backend.dao.QueueAssignmentDAO;
 import com.pennant.backend.dao.TATDetailDAO;
 import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.dao.UserActivityLogDAO;
+import com.pennant.backend.dao.applicationmaster.FinIRRDetailsDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
@@ -130,6 +131,7 @@ import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
+import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -294,6 +296,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	private FinTypeExpenseDAO				finTypeExpenseDAO;
 	private FinExpenseDetailsDAO 			finExpenseDetailsDAO;
+	private FinIRRDetailsDAO 				finIRRDetailsDAO;
 
 	@Autowired(required = false)
 	private Crm crm;
@@ -396,6 +399,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		FinanceDetail financeDetail = getFinanceOrgDetails(financeMain, "_TView");
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
+
+		//IRR codes tab
+		scheduleData.setiRRDetails(finIRRDetailsDAO.getFinIRRList(financeMain.getFinReference(), "_View"));
+		
 		financeMain = scheduleData.getFinanceMain();
 
 		// Customer Details			
@@ -2197,6 +2204,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			saveSecondaryAccountList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), isWIF,
 					tableType.getSuffix());
 
+			// Finance IRR Values
+			//=======================================
+			deleteFinIRR(finReference, tableType);
+			saveFinIRR(financeDetail.getFinScheduleData().getiRRDetails(), finReference, tableType); 
+
 			// Plan EMI Holiday Details Deletion, if exists on Old image
 			//=======================================
 			FinanceMain befFinMain = financeDetail.getFinScheduleData().getFinanceMain().getBefImage();
@@ -2212,6 +2224,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			listSave(financeDetail.getFinScheduleData(), tableType.getSuffix(), isWIF, 0);
 			saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), isWIF,
 					tableType.getSuffix());
+			
+			// Finance IRR Values
+			//=======================================
+			saveFinIRR(financeDetail.getFinScheduleData().getiRRDetails(), finReference, tableType); 
 
 			//Secondary account details
 			saveSecondaryAccountList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), isWIF,
@@ -3464,7 +3480,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Schedule Details
 				// =======================================
 				listSave(financeDetail.getFinScheduleData(), "", isWIF, 0);
-
+				
+				// Finance IRR Details
+				//=======================================
+				saveFinIRR(financeDetail.getFinScheduleData().getiRRDetails(), financeMain.getFinReference(), TableType.MAIN_TAB);
+				
 				// BPI Repayment details saving
 				if (repayment != null) {
 					getFinanceRepaymentsDAO().save(repayment, "");
@@ -4150,6 +4170,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetailList.addAll(details);
 				}
 
+				// Delete Finance IRR Values
+				deleteFinIRR(financeMain.getFinReference(), TableType.TEMP_TAB);
+				
 				// Finance Main Details
 				//=======================================
 				getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, true);
@@ -5218,6 +5241,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeDetail
 					.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
 		}
+
+		// Delete Finance IRR values
+		deleteFinIRR(financeMain.getFinReference(), TableType.TEMP_TAB);
 
 		// Delete Tax Details
 		if (financeDetail.getFinanceTaxDetails() != null) {
@@ -9478,6 +9504,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	
 	public void setCreditInformation(CreditInformation creditInformation) {
 		this.creditInformation = creditInformation;
+	}
+
+	public FinIRRDetailsDAO getFinIRRDetailsDAO() {
+		return finIRRDetailsDAO;
+	}
+
+	public void setFinIRRDetailsDAO(FinIRRDetailsDAO finIRRDetailsDAO) {
+		this.finIRRDetailsDAO = finIRRDetailsDAO;
 	}
 
 }
