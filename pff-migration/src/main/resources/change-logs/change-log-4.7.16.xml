@@ -4754,7 +4754,8 @@ UNION ALL
 	<changeSet id="79" author="Manoj">
 		<comment>Data engine configuration set up for profectus</comment>
 		<sql>
-			delete from data_engine_Column where id = select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT');
+			delete from data_engine_column where tableid = (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT'));
+
 			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'CustCif',         			0, 'N', null, null, null, 			null,2,null,null,null,null,'O');
 			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Benficiary_name', 			0, 'N', null, null, null, 			null,3,null,null,null,null,'O');
 			insert into data_engine_column values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'Disbursement_Requests' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'Disbursement_type', 			0, 'N', null, null, null, 			null,4,null,null,null,null,'O');
