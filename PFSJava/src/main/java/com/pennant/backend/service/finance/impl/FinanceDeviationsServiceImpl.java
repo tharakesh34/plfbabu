@@ -374,29 +374,28 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 	public AuditHeader doCheckDeviationApproval(AuditHeader auditHeader) {
 		AuditDetail auditDetail = auditHeader.getAuditDetail();
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		List<FinanceDeviations> list = new ArrayList<>();
-		List<FinanceDeviations> mDeviations = financeDetail.getManualDeviations();
-		
-		if (mDeviations != null && !mDeviations.isEmpty()) {
-			list.addAll(mDeviations);
+
+		// Get the list of finance deviations that were finalized.
+		List<FinanceDeviations> deviations = deviationDetailsDAO
+				.getFinanceDeviations(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), "");
+
+		// Add the pending manual deviations.
+		List<FinanceDeviations> pendingDeviations = financeDetail.getManualDeviations();
+
+		if (pendingDeviations != null && !pendingDeviations.isEmpty()) {
+			deviations.addAll(pendingDeviations);
 		}
-		
-		boolean deviationfound = false;
-		if (list != null && !list.isEmpty()) {
-			for (FinanceDeviations financeDeviations : list) {
-				if (!StringUtils.equalsIgnoreCase(financeDeviations.getApprovalStatus(),
-						PennantConstants.RCD_STATUS_APPROVED)) {
-					deviationfound = true;
-					break;
-				}
+
+		// Check whether any deviations were not approved and add the error.
+		for (FinanceDeviations deviation : deviations) {
+			if (!StringUtils.equalsIgnoreCase(deviation.getApprovalStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
+				auditDetail.setErrorDetail(new ErrorDetail("30901", null));
+				auditHeader.setAuditDetail(auditDetail);
+
+				break;
 			}
 		}
-		
-		if (deviationfound) {
-			auditDetail.setErrorDetail(new ErrorDetail("30901", null));
-			auditHeader.setAuditDetail(auditDetail);
-		}
-		
+
 		return auditHeader;
 	}
 
