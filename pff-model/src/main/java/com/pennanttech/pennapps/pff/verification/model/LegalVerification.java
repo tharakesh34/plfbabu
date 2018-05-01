@@ -30,6 +30,7 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	private int status;
 	private Long reason;
 	private String summaryRemarks;
+	private String verificationFromName;
 
 	private long verificationId;
 	private String reasonCode;
@@ -124,6 +125,14 @@ public class LegalVerification extends AbstractWorkflowEntity {
 
 	public void setSummaryRemarks(String summaryRemarks) {
 		this.summaryRemarks = summaryRemarks;
+	}
+
+	public String getVerificationFromName() {
+		return verificationFromName;
+	}
+
+	public void setVerificationFromName(String verificationFromName) {
+		this.verificationFromName = verificationFromName;
 	}
 
 	public String getCif() {
