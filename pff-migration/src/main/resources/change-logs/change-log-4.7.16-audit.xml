@@ -322,4 +322,8 @@
 		  WHERE a.auditimage = 'W'
 		</createView>
 	</changeSet>
+	
+	<changeSet id="21" author="Vinay">
+		<modifyDataType tableName="AdtIRRFeeTypes" columnName="feepercentage" newDataType="decimal(5,2)"/>
+	</changeSet>
 	</databaseChangeLog>
