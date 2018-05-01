@@ -4595,5 +4595,9 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		</sql>
 	</changeSet>
 	
+	<changeSet id="74" author="Vinay">
+		<modifyDataType tableName="IRRFeeTypes" columnName="feepercentage" newDataType="decimal(5,2)"/>
+		<modifyDataType tableName="IRRFeeTypes_Temp" columnName="feepercentage" newDataType="decimal(5,2)"/>
+	</changeSet>
 </databaseChangeLog>
 	
