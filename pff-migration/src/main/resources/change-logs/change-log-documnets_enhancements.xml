@@ -797,5 +797,21 @@
 		
 		</createView>
 	</changeSet>
+	<changeSet id="11" author="Durgaprasad G">
+		<sql>
+			update BMTDOCUMENTTYPES set PDD=0 where PDD is null;
+			update BMTDOCUMENTTYPES set OTC=0 where OTC is null;
+			update BMTDOCUMENTTYPES set LVReq=0 where LVReq is null;
+			update BMTDOCUMENTTYPES set RCUReq=0 where RCUReq is null;
+		</sql>
+	</changeSet>
+	<changeSet id="12" author="Durgaprasad G">
+		<sql>
+			update BMTDOCUMENTTYPES_Temp set PDD=0 where PDD is null;
+			update BMTDOCUMENTTYPES_Temp set OTC=0 where OTC is null;
+			update BMTDOCUMENTTYPES_Temp set LVReq=0 where LVReq is null;
+			update BMTDOCUMENTTYPES_Temp set RCUReq=0 where RCUReq is null;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 
