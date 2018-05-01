@@ -38,6 +38,14 @@ public class CreditReviewSummaryData {
 		super();
 	}
 	
+	public static BigDecimal formateAmount(BigDecimal amount, int dec) {
+		BigDecimal returnAmount = BigDecimal.ZERO;
+		if (amount != null) {
+			returnAmount = amount.divide(BigDecimal.valueOf(Math.pow(10, dec)));
+		}
+		return returnAmount;
+	}
+	
 	/**
 	 * This method for setting the data or storing the all the data in map.<BR>
 	 * If we call this we will get all the data in map.<BR>
@@ -103,7 +111,7 @@ public class CreditReviewSummaryData {
 					List<FinCreditReviewSummary>	listOfCreditReviewSummary = this.detailsMap.get(year-noOfYears);
 					for(FinCreditReviewSummary finCreditReviewSummary : listOfCreditReviewSummary){
 						engine.put("YM"+finCreditReviewSummary.getSubCategoryCode(), 
-								finCreditReviewSummary.getItemValue() != null ? finCreditReviewSummary.getItemValue() : BigDecimal.ZERO);
+								finCreditReviewSummary.getItemValue() != null ? formateAmount(finCreditReviewSummary.getItemValue(),2) : BigDecimal.ZERO);
 					}
 				} else {
 					for(FinCreditRevSubCategory finCreditRevSubCategory : listOfFinCreditRevSubCategory){
@@ -149,7 +157,7 @@ public class CreditReviewSummaryData {
 									value ="--";
 									logger.error("Exception: ", e);
 								}
-								engine.put("Y"+(noOfYears-j)+creditReviewSummary.getSubCategoryCode(),!("--").equals(value)?new BigDecimal(value):BigDecimal.ZERO);
+								engine.put("Y"+(noOfYears-j)+creditReviewSummary.getSubCategoryCode(),!("--").equals(value)?formateAmount(new BigDecimal(value),2):BigDecimal.ZERO);
 								dataMap.put("Y"+(noOfYears-j)+"_"+creditReviewSummary.getSubCategoryCode(),value);
 								if(noOfYears == j){
 									engine.put("Y"+(noOfYears-j)+"DIVCOUNT",BigDecimal.ONE);

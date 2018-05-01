@@ -282,11 +282,12 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 				auditDetails.addAll(details);
 			}
 		}
-
-		getCreditApplicationReviewDAO().delete(creditReviewDetails, "_Temp");
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(creditReviewDetails, "_Temp", auditHeader.getAuditTranType())));
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(),1, creditReviewDetails.getBefImage(), creditReviewDetails));
+		if(!creditReviewDetails.isNew()){
+			getCreditApplicationReviewDAO().delete(creditReviewDetails, "_Temp");
+			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+			auditHeader.setAuditDetails(getListAuditDetails(listDeletion(creditReviewDetails, "_Temp", auditHeader.getAuditTranType())));
+			auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(),1, creditReviewDetails.getBefImage(), creditReviewDetails));
+		}
 		//getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
@@ -664,7 +665,11 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 				if ("saveOrUpdate".equals(method) && isRcdType) {
 					creditReviewSummaryEntry.setNewRecord(true);
 				}
-
+				
+				if(creditReviewSummaryEntry.getRecordType().isEmpty()){
+					creditReviewSummaryEntry.setWorkflowId(0);
+				}
+				
 				if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
 					if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 						auditTranType = PennantConstants.TRAN_ADD;
@@ -723,6 +728,10 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 				
 				if ("saveOrUpdate".equals(method) && isRcdType) {
 					customerDocument.setNewRecord(true);
+				}
+				
+				if(customerDocument.getRecordType().isEmpty()){
+					customerDocument.setWorkflowId(0);
 				}
 				
 				if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
@@ -785,6 +794,10 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 					finCreditRevSubCategory.setNewRecord(true);
 				}
 				
+				if(finCreditRevSubCategory.getRecordType().isEmpty()){
+					finCreditRevSubCategory.setWorkflowId(0);
+				}
+				
 				if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
 					if (finCreditRevSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 						auditTranType = PennantConstants.TRAN_ADD;
@@ -844,13 +857,23 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 			if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
 			} else if (creditReviewSubCategory.isNewRecord()) {
-				saveRecord = true;
-				if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					creditReviewSubCategory.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					creditReviewSubCategory.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					creditReviewSubCategory.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (approveRec){
+					if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+						saveRecord = true;
+					} else if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+						deleteRecord=true;
+					} else if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+						updateRecord=true;
+					}
+				}else{
+					saveRecord = true;
+					if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+						creditReviewSubCategory.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					} else if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+						creditReviewSubCategory.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					} else if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+						creditReviewSubCategory.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					}
 				}
 			} else if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
@@ -939,13 +962,23 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 			if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
 			} else if (creditReviewSummaryEntry.isNewRecord()) {
-				saveRecord = true;
-				if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					creditReviewSummaryEntry.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					creditReviewSummaryEntry.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					creditReviewSummaryEntry.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (approveRec){
+					if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+						saveRecord = true;
+					} else if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+						deleteRecord=true;
+					} else if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+						updateRecord=true;
+					}
+				}else{
+					saveRecord = true;
+					if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+						creditReviewSummaryEntry.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					} else if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+						creditReviewSummaryEntry.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					} else if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+						creditReviewSummaryEntry.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					}
 				}
 			} else if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
@@ -1030,13 +1063,23 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 			if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
 			} else if (customerDocument.isNewRecord()) {
-				saveRecord = true;
-				if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					customerDocument.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					customerDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					customerDocument.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (approveRec){
+					if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+						saveRecord = true;
+					} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+						deleteRecord=true;
+					} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+						updateRecord=true;
+					}
+				}else{
+					saveRecord = true;
+					if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+						customerDocument.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+						customerDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+						customerDocument.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					}
 				}
 			} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {

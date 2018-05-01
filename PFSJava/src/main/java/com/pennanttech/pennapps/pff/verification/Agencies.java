@@ -26,7 +26,8 @@ import com.pennant.backend.model.ValueLabel;
 public enum Agencies {
 	 
 	FIAGENCY("FIAGENCY", Labels.getLabel("label_Field_Investigation")), LVAGENCY("LVAGENCY", Labels.getLabel("label_Legal_Verification")), RCUVAGENCY(
-			"RCUVAGENCY", Labels.getLabel("label_RCU_Verification")), TVAGENCY("TVAGENCY", Labels.getLabel("label_Technical_Verification"));
+			"RCUVAGENCY", Labels.getLabel("label_RCU_Verification")), TVAGENCY("TVAGENCY", Labels.getLabel("label_Technical_Verification")),
+			DMA("DMA", Labels.getLabel("label_DirectMarketAgent")),DSA("DSA", Labels.getLabel("label_DirectSellingAgent"));
 
 	private final String key;
 	private final String value;

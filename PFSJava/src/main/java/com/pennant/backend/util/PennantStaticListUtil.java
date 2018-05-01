@@ -3256,7 +3256,7 @@ public class PennantStaticListUtil {
 			eligibilityMethod.add(new ValueLabel("GTP", Labels.getLabel("label_EligibilityMethod_GrossTurnover")));
 			eligibilityMethod.add(new ValueLabel("BS", Labels.getLabel("label_EligibilityMethod_BankingSurrogate")));
 			eligibilityMethod.add(new ValueLabel("BT", Labels.getLabel("label_EligibilityMethod_BankingTurnover")));
-			eligibilityMethod.add(new ValueLabel("TL", Labels.getLabel("label_EligibilityMethod_TL")));
+			eligibilityMethod.add(new ValueLabel("TL", Labels.getLabel("label_EligibilityMethod_Turnover")));
 		}
 		return eligibilityMethod;
 	}

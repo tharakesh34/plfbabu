@@ -4416,7 +4416,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		Map<String, String> baseRoleMap = null;
 
 		if ("".equals(nextTaskId)) {
-			nextRoleCode = engine.allFirstTaskOwners(); //getFirstTaskOwner();
+			// nextRoleCode = engine.allFirstTaskOwners();
 		} else {
 			String[] nextTasks = nextTaskId.split(";");
 
