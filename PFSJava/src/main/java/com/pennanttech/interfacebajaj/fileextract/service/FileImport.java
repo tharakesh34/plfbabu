@@ -14,6 +14,8 @@ import javax.sql.DataSource;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -359,4 +361,36 @@ public class FileImport {
 		}
 		return null;
 	}
+	
+	protected String getCellValue(Row row, int pos) {
+		Cell cell = row.getCell(pos);
+		if (cell == null) {
+			return null;
+		}
+
+		CellType type = cell.getCellTypeEnum();
+		if (type == CellType.STRING) {
+			return StringUtils.trimToNull(cell.getStringCellValue());
+		} else if (type == CellType.NUMERIC) {
+			return String.valueOf(cell.getNumericCellValue());
+		} else if (type == CellType.BLANK) {
+			return null;
+		}
+		return null;
+	}
+
+	protected Date getDateValue(Row row, int pos) {
+		Cell cell = row.getCell(pos);
+		if (cell == null) {
+			return null;
+		}
+		CellType type = cell.getCellTypeEnum();
+		if (type == CellType.NUMERIC) {
+			return cell.getDateCellValue();
+		} else if (type == CellType.BLANK) {
+			return null;
+		}
+		return null;
+	}
+
 }

@@ -6,8 +6,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.util.Date;
+import java.sql.Types;
 
 import javax.sql.DataSource;
 
@@ -86,32 +85,32 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			Sheet sheet = null;
 			FileInputStream fis = null;
 
-			try {
-				//rcdLegth = 79;
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setTotalRecords(getTotalRecords());
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStartTime(DateUtility.getSysDate());
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.E.name());
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFileName(getFile().getName());
+		try {
+			// rcdLegth = 79;
+			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setTotalRecords(getTotalRecords());
+			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStartTime(DateUtility.getSysDate());
+			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.E.name());
+			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFileName(getFile().getName());
 
-				// Clearing the data from staging tables
-				clearTables();
-				
-				fis = new FileInputStream(getFile());
-				
-				if (getFile().toString().toLowerCase().endsWith(".xls")) {
-					workbook = new HSSFWorkbook(fis);
-				} else {
-					workbook = new XSSFWorkbook(fis);
-				}
+			// Clearing the data from staging tables
+			clearTables();
 
-				if (workbook != null) {
-					sheet = workbook.getSheetAt(0);
-				}
+			fis = new FileInputStream(getFile());
 
-				Row row = null;
-				for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
-					lineNumber++;
-					row = sheet.getRow(i);
+			if (getFile().toString().toLowerCase().endsWith(".xls")) {
+				workbook = new HSSFWorkbook(fis);
+			} else {
+				workbook = new XSSFWorkbook(fis);
+			}
+
+			if (workbook != null) {
+				sheet = workbook.getSheetAt(0);
+			}
+
+			Row row = null;
+			for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
+				lineNumber++;
+				row = sheet.getRow(i);
 
 				try {
 					if (i == 0 && (row != null && row.getPhysicalNumberOfCells() < 12)) {
@@ -121,32 +120,31 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					if (i == 0) {
 						continue;
 					}
-					
+
 					StringUtils.trimToNull(String.valueOf(row.getCell(0)));
 					if (row.getCell(0) == null) {
 						break;
 					}
-					
-					map = new MapSqlParameterSource();
-					map.addValue("Name", StringUtils.trimToNull(row.getCell(0).getStringCellValue()));
-					map.addValue("Batchid", StringUtils.trimToNull(row.getCell(1).getStringCellValue()));
-					map.addValue("UMRN No.", String.valueOf(row.getCell(2).getNumericCellValue()));
-					map.addValue("AmountCleared", String.valueOf(row.getCell(3).getNumericCellValue()));
-					map.addValue("ClearingDate", DateUtility.getDate(StringUtils.trimToNull(row.getCell(4).getStringCellValue()), "dd/mm/yyyy"));
-					map.addValue("Account Type", StringUtils.trimToNull(row.getCell(5).getStringCellValue()));
-					map.addValue("BFLReferenceNo", StringUtils.trimToNull(row.getCell(6).getStringCellValue()));
-					map.addValue("Payment Due", DateUtility.getDate(StringUtils.trimToNull(row.getCell(7).getStringCellValue()), "dd/mm/yyyy"));
-					map.addValue("AgreementNo", StringUtils.trimToNull(row.getCell(8).getStringCellValue()));
-					map.addValue("Status", StringUtils.trimToNull(row.getCell(9).getStringCellValue()));
-					map.addValue("ReasonCode", String.valueOf(row.getCell(10).getNumericCellValue()));
 
-					if (row.getPhysicalNumberOfCells()>11) {
+					map = new MapSqlParameterSource();
+					map.addValue("BranchCode", getCellValue(row, 6));
+					map.addValue("AgreementNo", getCellValue(row, 8));
+					map.addValue("InstalmentNo", "0");
+					map.addValue("BFLReferenceNo", getCellValue(row, 6));
+					map.addValue("Batchid", getCellValue(row, 1));
+					map.addValue("AmountCleared", getCellValue(row, 3));
+					map.addValue("ClearingDate",getDateValue(row, 4),Types.DATE);
+					map.addValue("Status", getCellValue(row, 9));
+					map.addValue("ReasonCode", getCellValue(row, 10));
+
+					map.addValue("Name", getCellValue(row, 0));
+					map.addValue("UMRNNo", getCellValue(row, 2));
+					map.addValue("AccountType", getCellValue(row, 5));
+					map.addValue("PaymentDue", getDateValue(row, 7),Types.DATE);
+
+					if (row.getPhysicalNumberOfCells() > 11) {
 						map.addValue("Failure reason", StringUtils.trimToNull(row.getCell(11).getStringCellValue()));
 					}
-
-					map.addValue("InstalmentNo", ",,,");
-					map.addValue("BranchCode", StringUtils.trimToNull(row.getCell(6).getStringCellValue()));
-
 				} catch (Exception e) {
 					logger.error("Exception {}", e);
 				}
@@ -203,29 +201,29 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
+	
 	// Validating the mandatory fields
 	private void validateFields(MapSqlParameterSource map) throws Exception {
 
 		// batchReference
-		String batchReference = map.getValue("Batchid").toString();
-		if (StringUtils.trimToNull(batchReference) == null) {
+		Object batchid = map.getValue("Batchid");
+		if (batchid == null) {
 			throw new Exception("Batchid should be mandatory.");
-		} else if (batchReference.length() != 29) {
+		} else if (batchid.toString().length() != 29) {
 			throw new Exception("Batchid length should be 29.");
 		}
 
 		// status
-		String status = map.getValue("Status").toString();
-		if (StringUtils.trimToNull(status) == null) {
+		Object status = map.getValue("Status");
+		if (status == null) {
 			throw new Exception("Status should be mandatory.");
-		} else if (status.length() != 1) {
+		} else if (status.toString().length() != 1) {
 			throw new Exception("Status length should be 1.");
 		}
 
 		// ReasonCode
-		String reasonCode = map.getValue("ReasonCode").toString();
-		if (StringUtils.trimToNull(reasonCode) == null) {
+		Object reasonCode = map.getValue("ReasonCode");
+		if (reasonCode == null) {
 			throw new Exception("ReasonCode should be mandatory.");
 		}
 	}
@@ -762,12 +760,6 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			updatePresentmentResponse(presement_Response,RepayConstants.PRES_DUPLICATE, Labels.getLabel("label_StatusCode_Duplicate"));
 			return;
 		}
-		
-		/*Date processedDate = getLatestProcessedDate(presement_Response);
-		if (processedDate != null && DateUtility.getDaysBetween(DateUtility.getAppDate(),processedDate) > SMTParameterConstants.PRESENTATION_HOLD_DAYS) {
-			updatePresentmentResponse(presement_Response, RepayConstants.PRES_HOLD_DAYS,Labels.getLabel("label_StatusCode_Holddays"));
-			return;
-		}*/
 
 		if (status.equals(CON_RESPONSE_BOUNCE)) {
 
@@ -961,20 +953,6 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		return manualAdvice;
 	}
 
-	private Date getLatestProcessedDate(Presentment presement_Response) throws ParseException {
-		
-		StringBuilder selectSql = new StringBuilder();
-
-		selectSql.append(" SELECT MAX(PROCESSED_DATE) FROM PRESENTMENT_RESPONSE ");
-		selectSql.append(" WHERE BATCHID= :BATCHID");
-
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("BATCHID", presement_Response.getBatchId());
-
-		return jdbcTemplate.queryForObject(selectSql.toString(), paramMap, Date.class);
-		
-	}
-
 	private void updateSuccessResponse(Presentment presement_Response) {
 		successCount++;
 		updatePresentmentDetails(presement_Response.getBatchId(), RepayConstants.PEXC_SUCCESS);
@@ -1128,28 +1106,6 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		}
 		return presentmentDetail;
 	}
-
-	/*private PresentmentHeader getPresentmentHeaderDetails(String batchId) {//FIXME remove comments when validation required
-		logger.debug(Literal.ENTERING);
-
-		PresentmentHeader presentmentHeader = new PresentmentHeader();
-		StringBuffer sql = new StringBuffer();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		sql.append(" SELECT MANDATETYPE,PRESENTMENTDATE FROM PRESENTMENTHEADER T1 ");
-		sql.append(" INNER JOIN PRESENTMENTDETAILS T2 ON T2.PRESENTMENTID=T1.ID");
-		sql.append(" WHERE PRESENTMENTREF= :PRESENTMENTREF");
-
-		source.addValue("PRESENTMENTREF", batchId);
-
-		RowMapper<PresentmentHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PresentmentHeader.class);
-		try {
-			presentmentHeader = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			presentmentHeader = null;
-		}
-		return presentmentHeader;
-	}*/
-
+ 
+	
 }
