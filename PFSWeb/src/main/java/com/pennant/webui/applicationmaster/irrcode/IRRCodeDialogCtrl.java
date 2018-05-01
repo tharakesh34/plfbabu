@@ -385,7 +385,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 				item.appendChild(lc);
 				lc = new Listcell(details.getFeeTypeDesc());
 				item.appendChild(lc);
-				lc = new Listcell(PennantApplicationUtil.amountFormate(details.getFeePercentage(), PennantConstants.defaultCCYDecPos));
+				lc = new Listcell(details.getFeePercentage().toString());
 				lc.setParent(item);
 				lc = new Listcell(details.getRecordStatus());
 				lc.setParent(item);

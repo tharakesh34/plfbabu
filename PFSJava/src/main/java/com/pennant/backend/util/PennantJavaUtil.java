@@ -1686,11 +1686,11 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("DMA", new ModuleMapping("DMA", VehicleDealer.class, new String[] {
 				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF , new String[] {"DealerName","DealerCity" }, 
-				new String[][] { { "DealerType", "0", "DMA" } }, 350));
+				new Object[][] { { "DealerType", "0", "DMA" },{ "Active", "0", 1 } }, 350));
 		
 		ModuleUtil.register("DSA", new ModuleMapping("DSA", VehicleDealer.class, new String[] {
 				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF , new String[] {"DealerName","DealerCity" }, 
-				new String[][] { { "DealerType", "0", "DSA" } }, 350));
+				new Object[][] { { "DealerType", "0", "DSA" },{ "Active", "0", 1 } }, 350));
 		
 		ModuleUtil.register("SourceOfficer", new ModuleMapping("SourceOfficer", VehicleDealer.class, new String[] {
 				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF , new String[] {"DealerName","DealerCity" }, 

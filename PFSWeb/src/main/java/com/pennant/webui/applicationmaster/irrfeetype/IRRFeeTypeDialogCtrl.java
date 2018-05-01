@@ -355,7 +355,7 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 		logger.debug(Literal.ENTERING);
 
 		this.feeTypeID.setValue(aIRRFeeType.getFeeTypeCode());
-		this.feePercentage.setValue(PennantApplicationUtil.formateAmount(aIRRFeeType.getFeePercentage(), PennantConstants.defaultCCYDecPos));
+		this.feePercentage.setValue(aIRRFeeType.getFeePercentage());
 		
 		if (aIRRFeeType.isNewRecord()) {
 			this.feeTypeID.setDescription("");
@@ -390,7 +390,7 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 		}
 		// Fee Percentage
 		try {
-			aIRRFeeType.setFeePercentage(PennantApplicationUtil.unFormateAmount(this.feePercentage.getValue(), PennantConstants.defaultCCYDecPos));
+			aIRRFeeType.setFeePercentage(this.feePercentage.getValue());
 			//aIRRFeeType.setFeePercentage(new BigDecimal(PennantApplicationUtil.formatRate(this.feePercentage.getValue().doubleValue(),2)));
 		} catch (WrongValueException we) {
 			wve.add(we);

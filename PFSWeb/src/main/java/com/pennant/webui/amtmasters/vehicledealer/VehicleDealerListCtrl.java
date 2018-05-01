@@ -31,7 +31,7 @@
  ********************************************************************************************
  * 29-09-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 01-05-2018		Vinay					 0.2   Module code added for individual module  *                                                                                   * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -135,6 +135,11 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 
 	@Override
 	protected void doAddFilters() {
+		if(module.equals("DSA")){
+			super.moduleCode = "DSA";
+		}else if(module.equals("DMA")){
+			super.moduleCode = "DMA";
+		}
 		super.doAddFilters();
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("DealerType", this.module, Filter.OP_EQUAL);
