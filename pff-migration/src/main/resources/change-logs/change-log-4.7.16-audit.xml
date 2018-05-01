@@ -10,6 +10,7 @@
 	<property name="call.substr" value="substring" dbms="postgresql" />
 	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
 	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
 	<property name="call.concatenate" value="+" dbms="mssql" />
 	<property name="call.concatenate" value="||" dbms="oracle" />
 	<property name="call.concatenate" value="||" dbms="postgresql" />
@@ -27,10 +28,10 @@
 	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
 	
 	
-	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+	 <changeSet id="pre_run_for_pgp1" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
-			Set search_path = plfaudit,public,pg_catalog;
+			Set search_path = plfaudit,plf,public,pg_catalog;
 		</sql>
 	</changeSet>
 	
@@ -300,4 +301,25 @@
 				$do$;	
 	  	</sql>
 	  </changeSet>
+	  <changeSet id="20" author="Vinay">
+		<createView viewName="activitylog_view" replaceIfExists="true">
+			SELECT a.auditid,
+		    a.lastmnton AS auditdate,
+		    a.version,
+		    a.rolecode,
+		    a.nextrolecode,
+		    a.recordstatus,
+		    a.taskid,
+		    a.NEXTtaskid,
+		    a.recordtype,
+		    a.workflowid,
+		    a.lastmntby,
+		    a.rcdmaintainsts,
+		    u.usrlogin AS userlogin,
+		    a.finreference
+		   FROM plfaudit.adtfinancemain a
+		     JOIN ${call.auditdb}secusers u ON u.usrid = a.lastmntby
+		  WHERE a.auditimage = 'W'
+		</createView>
+	</changeSet>
 	</databaseChangeLog>
