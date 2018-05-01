@@ -35,6 +35,7 @@ import com.pennant.app.util.SuspensePostingUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
+import com.pennant.backend.dao.applicationmaster.FinIRRDetailsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.collateral.FinAssetTypeDAO;
@@ -96,6 +97,7 @@ import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -146,6 +148,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.core.TableType;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
 	private static final Logger				logger	= Logger.getLogger(GenericFinanceDetailService.class);
@@ -231,7 +234,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinAssetTypeDAO					finAssetTypeDAO;
 	private DisbursementPostings			disbursementPostings;
 	private InstallmentDueService 			installmentDueService;
-
+	private FinIRRDetailsDAO               	finIRRDetailsDAO;
+	
 	// EOD Process Checking
 	private CustomerQueuingDAO				customerQueuingDAO;
 	
@@ -2295,6 +2299,35 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	}
 
 	/**
+	 * Method for Inserting IRR values against Finance
+	 * @param baseIRRFeeTypes
+	 * @param finReference 
+	 * @param tableType
+	 */
+	public void saveFinIRR(List<FinIRRDetails> finIrrDetailsList, String finReference, TableType tableType){
+		logger.debug("Entering");
+		
+		if(finIrrDetailsList != null && !finIrrDetailsList.isEmpty()){
+			for (FinIRRDetails finIrrDetails : finIrrDetailsList) {
+				finIrrDetails.setFinReference(finReference);
+			}
+			getFinIRRDetailsDAO().saveList(finIrrDetailsList, tableType);
+		}
+		logger.debug("Leaving ");
+	}
+	
+	/**
+	 * Method for Inserting IRR values against Finance
+	 * @param baseIRRFeeTypes
+	 * @param tableType
+	 */
+	public void deleteFinIRR(String finReference, TableType tableType){
+		logger.debug("Entering");
+		getFinIRRDetailsDAO().deleteList(finReference, tableType);
+		logger.debug("Leaving ");
+	}
+	
+	/**
 	 * Method for saving List of Fee Charge details
 	 * 
 	 * @param finDetail
@@ -3048,5 +3081,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
+	}
+
+	public FinIRRDetailsDAO getFinIRRDetailsDAO() {
+		return finIRRDetailsDAO;
+	}
+
+	public void setFinIRRDetailsDAO(FinIRRDetailsDAO finIRRDetailsDAO) {
+		this.finIRRDetailsDAO = finIRRDetailsDAO;
 	}
 }

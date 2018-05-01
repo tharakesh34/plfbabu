@@ -62,7 +62,7 @@ public class IRRFeeType extends AbstractWorkflowEntity {
 	private String feeTypeCode;
 	private String feeTypeDesc;
 	private String iRRIDName;
-	private BigDecimal feePercentage;
+	private BigDecimal feePercentage = BigDecimal.ZERO;
 	private boolean newRecord=false;
 	private String lovValue;
 	private IRRFeeType befImage;

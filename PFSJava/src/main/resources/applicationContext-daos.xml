@@ -4143,6 +4143,7 @@
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="finTypeExpenseDAO" ref="finTypeExpenseDAO" />
 		<property name="finExpenseDetailsDAO" ref="finExpenseDetailsDAO" />
+		<property name="finIRRDetailsDAO" ref="finIRRDetailsDAO" />
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
 		<property name="jointAccountDetailService" ref="finJointAccountDetailService" />
@@ -11311,4 +11312,10 @@
        <property name="entityService" ref="entityService" />
        <property name="provinceService" ref="provinceService" />
    </bean>
+   
+   <!-- Finance IRR Details -->
+	<bean id="finIRRDetailsDAO" class="com.pennant.backend.dao.applicationmaster.impl.FinIRRDetailsDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
 </beans>
