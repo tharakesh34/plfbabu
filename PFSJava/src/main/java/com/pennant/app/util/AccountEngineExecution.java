@@ -519,6 +519,12 @@ public class AccountEngineExecution implements Serializable {
 						dataMap.put(feeCode + "_P", BigDecimal.ZERO);
 						dataMap.put(feeCode + "_SCH", BigDecimal.ZERO);
 						dataMap.put(feeCode + "_AF", BigDecimal.ZERO);
+						dataMap.put(feeCode + "_N", BigDecimal.ZERO);
+						//GST
+						dataMap.put(feeCode + "_UGST_N", BigDecimal.ZERO);
+						dataMap.put(feeCode + "_SGST_N", BigDecimal.ZERO);
+						dataMap.put(feeCode + "_IGST_N", BigDecimal.ZERO);
+						dataMap.put(feeCode + "_CGST_N", BigDecimal.ZERO);
 					}
 					String [] payTypes = {"EX_","EA_","PA_","PB_"};
 					String key;

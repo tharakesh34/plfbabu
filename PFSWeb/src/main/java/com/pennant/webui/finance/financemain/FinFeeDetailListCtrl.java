@@ -1783,11 +1783,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				gstDetails.setId(getComponentId(FEE_UNIQUEID_GSTDETAILS, finFeeDetail));
 				lc = new Listcell();
 				lc.appendChild(gstDetails);
-				if (finFeeDetail.isTaxApplicable()) {
-					readOnlyComponent(isReadOnly("FinFeeDetailListCtrl_Adjust"), gstDetails);
-				} else {
-					readOnlyComponent(true, gstDetails);
-				}
+				readOnlyComponent(!finFeeDetail.isTaxApplicable(), gstDetails);
 				lc.setParent(item);
 
 				List<Object> amountBoxlist = new ArrayList<Object>(11);
