@@ -4572,6 +4572,7 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 	</changeSet>
 	 <changeSet id="71" author="Vasu">
 		<sql>
+			 delete from REPORTLIST where code='FinanceUserAuthorizationLimit' and MODULE='FinanceUserAuthorizationLimit' and FIELDLABELS='listheader_UserID.label,listheader_LimitName.label,listheader_LimitAmount.label,listheader_ExpiryDate.label,listheader_Active.label';
 			 Insert into REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) values ('FinanceUserAuthorizationLimit','FinanceUserAuthorizationLimit','listheader_UserID.label,listheader_LimitName.label,listheader_LimitAmount.label,listheader_ExpiryDate.label,listheader_Active.label','usrLogin,UsrFName,limitAmount,expiryDate,active','String,String,BigDecimal,Date,boolean',' ','ReportList05','User Authorization Limits','Administration',1,1000,to_date('01-05-18','DD-MM-RR'),'Approved',' ',' ',' ',' ',' ',0,0);
 		</sql>
 	</changeSet> 
@@ -4594,11 +4595,83 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			
 		</sql>
 	</changeSet>
-	
+	<changeSet id="74.01" author="Prasad">
+	<sql>drop view irrfeetypes_view</sql>
+	</changeSet>
+	<changeSet id="74.02" author="Prasad">
+	<sql>drop view irrfeetypes_aview</sql>
+	</changeSet>
 	 <changeSet id="74" author="Vinay">
 		<modifyDataType tableName="IRRFeeTypes" columnName="feepercentage" newDataType="decimal(5,2)"/>
 		<modifyDataType tableName="IRRFeeTypes_Temp" columnName="feepercentage" newDataType="decimal(5,2)"/>
 	</changeSet> 
+	<changeSet id="74.1" author="Prasad">
+		<createView viewName="irrfeetypes_view" replaceIfExists="true">
+			SELECT t1.irrid,
+    t1.feetypeid,
+    t3.feetypecode,
+    t3.feetypedesc,
+    t1.feepercentage,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM irrfeetypes_temp t1
+     JOIN feetypes t3 ON t1.feetypeid = t3.feetypeid
+UNION ALL
+ SELECT t1.irrid,
+    t1.feetypeid,
+    t3.feetypecode,
+    t3.feetypedesc,
+    t1.feepercentage,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM irrfeetypes t1
+     JOIN feetypes t3 ON t1.feetypeid = t3.feetypeid
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM irrfeetypes_temp
+          WHERE irrfeetypes_temp.irrid = t1.irrid AND irrfeetypes_temp.feetypeid = t1.feetypeid))
+		</createView>
+	</changeSet>
+	
+		<changeSet id="74.2" author="Prasad">
+		<createView viewName="irrfeetypes_aview" replaceIfExists="true">
+				SELECT t1.irrid,
+    t2.irrcode,
+    t2.irrcodedesc,
+    t1.feetypeid,
+    t3.feetypecode,
+    t3.feetypedesc,
+    t1.feepercentage,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM irrfeetypes t1
+     JOIN irrcodes t2 ON t1.irrid = t2.irrid
+     JOIN feetypes t3 ON t1.feetypeid = t3.feetypeid
+		</createView>
+	</changeSet>
 	<changeSet id="75" author="Vijaykumar.l">
 		<sql>
 		 Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage",   "recordstatus","rolecode","nextrolecode","taskid","nexttaskid", "recordtype","workflowid","lastmnton","lastmntby","version") 
