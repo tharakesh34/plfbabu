@@ -1408,6 +1408,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			AuthorizationLimitDetail detail = (AuthorizationLimitDetail) listitem.getAttribute("data");
 			if (StringUtils.trimToEmpty(detail.getRecordType()).equals("")){
 				detail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				detail.setVersion(detail.getVersion() + 1);
 				detail.setNewRecord(true);
 			}else{
 			
@@ -1417,10 +1418,6 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 						logger.debug(Literal.LEAVING);
 						return;
 					}else if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())){
-						
-						// FIX ME 
-						//if there is in any change in amount then set update else delete
-						
 						detail.setRecordType(null);
 					}else{
 						detail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
