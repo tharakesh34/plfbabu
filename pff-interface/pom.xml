@@ -36,21 +36,16 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.common</groupId>
 			<artifactId>zcommon</artifactId>
 			<version>${zk.version}</version>
-		</dependency>
-		
-		
-		
+		</dependency>		
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkplus</artifactId>
@@ -61,8 +56,6 @@
 			<artifactId>zk</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
-		
-		
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc8</artifactId>
@@ -78,7 +71,6 @@
 		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt-spring3</artifactId>
-			<version>1.9.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
