@@ -72,9 +72,6 @@
 							<tab
 								label="${c:l('label_FieldInvestigationDialog_VerificationDetails.value')}"
 								id="verificationDetails" />
-							<!-- <tab
-								label="${c:l('label_FieldInvestigationDialog_Documents.value')}"
-								id="documentDetails" /> -->
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto"

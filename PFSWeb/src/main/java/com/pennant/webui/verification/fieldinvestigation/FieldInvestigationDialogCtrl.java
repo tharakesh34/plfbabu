@@ -40,11 +40,9 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Listbox;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.South;
-import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -152,10 +150,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	protected North north;
 	protected South south;
 
-	protected Space space_Reason;
-	protected Tab documentDetails;
 	private FieldInvestigation fieldInvestigation;
-	protected Listbox listBoxVerificationDocuments;
 	protected Map<String, DocumentDetails> docDetailMap = null;
 	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
 	private transient FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl;

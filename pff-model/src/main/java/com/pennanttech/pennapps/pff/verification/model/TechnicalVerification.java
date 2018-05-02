@@ -385,13 +385,13 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		this.agencyName = agencyName;
 	}
 
-	public String getAgency() {
+	/*public String getAgency() {
 		return agency;
 	}
 
 	public void setAgency(String agency) {
 		this.agency = agency;
-	}
+	}*/
 	
 	public List<DocumentDetails> getDocuments() {
 		return documents;

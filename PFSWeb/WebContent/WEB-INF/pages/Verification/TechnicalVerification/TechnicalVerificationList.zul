@@ -70,10 +70,10 @@
 								</row>
 								
 								<row>
-									<label id="label_FieldInvestigationList_Agency" value="${c:l('label_FieldInvestigationList_Agency.value')}" />
+									<label id="label_TechnicalVerificationList_Agency" value="${c:l('label_TechnicalVerificationList_Agency.value')}" />
 									<listbox id="sortOperator_Agency" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 	   								<extendedcombobox id ="agency" />
-	   								<label id="label_FieldInvestigationList_CreadtedOn" value="${c:l('label_TechnicalVerificationList_CreadtedOn.value')}" />
+	   								<label id="label_TechnicalVerificationList_CreadtedOn" value="${c:l('label_TechnicalVerificationList_CreadtedOn.value')}" />
 									<listbox id="sortOperator_CreadtedOn" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 	   								<datebox id ="CreadtedOn" />
 	   							</row>

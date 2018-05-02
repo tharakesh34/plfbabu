@@ -29,13 +29,16 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	private String agentName;
 	private int status;
 	private Long reason;
-	private String summaryRemarks;
+	private String remarks;
 	private String verificationFromName;
 
 	private long verificationId;
 	private String reasonCode;
 	private String reasonDesc;
 	private Long custId;
+	private String agency;
+	private String agencyName;
+	private Date createdOn;
 
 	private List<DocumentDetails> documents = null;
 	@XmlTransient
@@ -63,6 +66,19 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("reasonCode");
+		excludeFields.add("reasonDesc");
+		excludeFields.add("cif");
+		excludeFields.add("collateralType");
+		excludeFields.add("collateralReference");
+		excludeFields.add("verificationId");
+		excludeFields.add("custId");
+		excludeFields.add("agency");
+		excludeFields.add("agencyName");
+		excludeFields.add("createdOn");
+		excludeFields.add("reasonDesc");excludeFields.add("reasonDesc");
+		excludeFields.add("reasonDesc");
+		excludeFields.add("reasonDesc");
+		excludeFields.add("reasonDesc");
 		excludeFields.add("reasonDesc");
 		return excludeFields;
 	}
@@ -119,12 +135,12 @@ public class LegalVerification extends AbstractWorkflowEntity {
 		this.reason = reason;
 	}
 
-	public String getSummaryRemarks() {
-		return summaryRemarks;
+	public String getRemarks() {
+		return remarks;
 	}
 
-	public void setSummaryRemarks(String summaryRemarks) {
-		this.summaryRemarks = summaryRemarks;
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 
 	public String getVerificationFromName() {
@@ -197,6 +213,30 @@ public class LegalVerification extends AbstractWorkflowEntity {
 
 	public void setCustId(Long custId) {
 		this.custId = custId;
+	}
+
+	public String getAgency() {
+		return agency;
+	}
+
+	public void setAgency(String agency) {
+		this.agency = agency;
+	}
+
+	public String getAgencyName() {
+		return agencyName;
+	}
+
+	public void setAgencyName(String agencyName) {
+		this.agencyName = agencyName;
+	}
+
+	public Date getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
 	}
 
 	public boolean isNewRecord() {

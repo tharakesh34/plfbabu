@@ -388,6 +388,7 @@ import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.StatuReasons;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
+import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 
@@ -2219,6 +2220,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("TVStatusReason", new ModuleMapping("TVStatusReason", ReasonCode.class,
 				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
 				new Object[][] { { "ReasonTypecode", "0", StatuReasons.TVSRES.getKey() }, { "Active", "0", 1 } }, 500));
+		
+		ModuleUtil.register("LegalVerification", new ModuleMapping("LegalVerification", LegalVerification.class,
+				new String[] { "verification_lv", "verification_lv_AView" }, masterWF, null, null, 600));
 		
 		/*Technical Verification*/
 		ModuleUtil.register("TechnicalVerification", new ModuleMapping("TechnicalVerification", TechnicalVerification.class,

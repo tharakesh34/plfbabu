@@ -469,7 +469,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 		
-		// FI Document Details
+		// TV Document Details
 				if (tv.getDocuments() != null && tv.getDocuments().size() > 0) {
 					auditDetailMap.put("DocumentDetails",
 							setDocumentDetailsAuditData(tv, auditTranType, method));
