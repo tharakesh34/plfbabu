@@ -1,5 +1,5 @@
 <?page id="LoginDialog" title="PFF - Login"?>
-<?link rel="shortcut icon" type="image/x-icon" href="/Favicon.png" ?>
+<?link rel="shortcut icon" type="image/x-icon" href="/images/icons/Favicon.png" ?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 <?script type="text/javascript" src="/macros/pennantzk.js.dsp?v=${desktop.webApp.build}"?>
