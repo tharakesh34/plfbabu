@@ -817,9 +817,12 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		// process Extended field details
 		// Get the ExtendedFieldHeader for given module and subModule
+		//### 02-05-2018-Start- story #334 Extended fields for loan servicing
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
 				ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(),
-				financeDetail.getExtendedFieldHeader().getEvent(), "");
+				FinanceConstants.FINSER_EVENT_ORG, "");
+		//### 02-05-2018-END
+
 		financeDetail.setExtendedFieldHeader(extendedFieldHeader);
 
 		List<ExtendedField> extendedFields = financeDetail.getExtendedDetails();

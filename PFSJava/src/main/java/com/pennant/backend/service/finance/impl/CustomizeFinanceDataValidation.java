@@ -28,6 +28,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -109,8 +110,10 @@ public class CustomizeFinanceDataValidation {
 
 		//ExtendedFieldDetails Validation
 		String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
+		//### 02-05-2018-Start- story #334 Extended fields for loan servicing
 		errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
-				ExtendedFieldConstants.MODULE_LOAN, financeDetail.getExtendedFieldHeader().getEvent(), subModule);
+				ExtendedFieldConstants.MODULE_LOAN, subModule,FinanceConstants.FINSER_EVENT_ORG);
+		//### 02-05-2018-End
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;

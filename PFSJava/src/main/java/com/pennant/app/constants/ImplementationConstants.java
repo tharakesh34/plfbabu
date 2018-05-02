@@ -86,7 +86,7 @@ public class ImplementationConstants {
 	public static final String	CLIENT_AHB						= "AHB";
 	public static final String	CLIENT_BFL						= "BFL";
 	public static final String	CLIENT_NAME						= CLIENT_BFL;
-	public static final boolean	CLIENT_NFL						= true;
+	public static final boolean	CLIENT_NFL						= false;
 
 	// Address Type Details
 	public static final boolean	ALLOW_ADDRESSTYPE_PRIORITY		= false;
