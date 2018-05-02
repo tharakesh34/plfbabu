@@ -4370,7 +4370,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (list != null && !list.isEmpty()) {
 				boolean deviationfound = false;
 				for (FinanceDeviations financeDeviations : list) {
-					if (StringUtils.isBlank(financeDeviations.getApprovalStatus())) {
+					if (StringUtils.isBlank(financeDeviations.getApprovalStatus())
+							|| PennantConstants.List_Select.equals(financeDeviations.getApprovalStatus())) {
 						deviationfound = true;
 						break;
 					}
