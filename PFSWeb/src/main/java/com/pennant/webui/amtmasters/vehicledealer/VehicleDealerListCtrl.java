@@ -173,15 +173,12 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 				Operators.STRING);
 		registerField("dealerTelephone", listheader_DealerTelephone, SortOrder.NONE, dealerTelephone, sortOperator_dealerTelephone, Operators.STRING);
 		registerField("email", listheader_Email, SortOrder.NONE, email, sortOperator_email, Operators.STRING);
-		registerField("dealerTelephone", listheader_DealerTelephone, SortOrder.NONE);
 		registerField("dealerFax", listheader_DealerFax, SortOrder.NONE);
 		registerField("dealerProvince", listheader_DealerProvince, SortOrder.NONE, dealerProvince,
 				sortOperator_dealerProvince, Operators.STRING);
 		registerField("dealerCity", listheader_DealerCity, SortOrder.NONE, dealerCity, sortOperator_dealerCity,
 				Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_active, Operators.BOOLEAN);
-
-		SearchFilterControl.renderOperators(this.sortOperator_dealerTelephone, Operators.STRING);
 
 		doSetFieldProperties();
 		// Render the page and display the data.
