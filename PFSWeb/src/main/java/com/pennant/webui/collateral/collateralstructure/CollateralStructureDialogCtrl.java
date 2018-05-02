@@ -107,6 +107,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -1163,7 +1164,9 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			this.maxLtvWaiver.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CollateralStructureDialog_MaxLtvWaiver.value"),
 							2, true, false, 100));
 		}
-
+		if (!this.nextValuationDate.isReadonly()) {
+			this.nextValuationDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"),true));
+		}
 		logger.debug("Leaving");
 	}
 
