@@ -4570,13 +4570,24 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			DEALLOCATE NAMEREADER
 		</sql>
 	</changeSet>
-	 <changeSet id="71" author="Vasu">
+	 <changeSet id="71" author="Vasu" dbms="postgresql">
 		<sql>
 			 delete from REPORTLIST where code='FinanceUserAuthorizationLimit' and MODULE='FinanceUserAuthorizationLimit' and FIELDLABELS='listheader_UserID.label,listheader_LimitName.label,listheader_LimitAmount.label,listheader_ExpiryDate.label,listheader_Active.label';
 			 Insert into REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) values ('FinanceUserAuthorizationLimit','FinanceUserAuthorizationLimit','listheader_UserID.label,listheader_LimitName.label,listheader_LimitAmount.label,listheader_ExpiryDate.label,listheader_Active.label','usrLogin,UsrFName,limitAmount,expiryDate,active','String,String,BigDecimal,Date,boolean',' ','ReportList05','User Authorization Limits','Administration',1,1000,to_date('01-05-18','DD-MM-RR'),'Approved',' ',' ',' ',' ',' ',0,0);
 		</sql>
 	</changeSet> 
-
+	<changeSet id="71" author="Vasu" dbms="oracle">
+		<sql>
+			 delete from REPORTLIST where code='FinanceUserAuthorizationLimit' and MODULE='FinanceUserAuthorizationLimit' and FIELDLABELS='listheader_UserID.label,listheader_LimitName.label,listheader_LimitAmount.label,listheader_ExpiryDate.label,listheader_Active.label';
+			 Insert into REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) values ('FinanceUserAuthorizationLimit','FinanceUserAuthorizationLimit','listheader_UserID.label,listheader_LimitName.label,listheader_LimitAmount.label,listheader_ExpiryDate.label,listheader_Active.label','usrLogin,UsrFName,limitAmount,expiryDate,active','String,String,BigDecimal,Date,boolean',' ','ReportList05','User Authorization Limits','Administration',1,1000,to_date('01-05-18','DD-MM-RR'),'Approved',' ',' ',' ',' ',' ',0,0);
+		</sql>
+	</changeSet> 
+	<changeSet id="71" author="Vasu" dbms="mssql">
+		<sql>
+			 delete from REPORTLIST where code='FinanceUserAuthorizationLimit' and MODULE='FinanceUserAuthorizationLimit' and FIELDLABELS='listheader_UserID.label,listheader_LimitName.label,listheader_LimitAmount.label,listheader_ExpiryDate.label,listheader_Active.label';
+			 Insert into REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) values ('FinanceUserAuthorizationLimit','FinanceUserAuthorizationLimit','listheader_UserID.label,listheader_LimitName.label,listheader_LimitAmount.label,listheader_ExpiryDate.label,listheader_Active.label','usrLogin,UsrFName,limitAmount,expiryDate,active','String,String,BigDecimal,Date,boolean',' ','ReportList05','User Authorization Limits','Administration',1,1000,'','Approved',' ',' ',' ',' ',' ',0,0);
+		</sql>
+	</changeSet> 
 	<changeSet id="72" author="Vinay">
 		<sql>
 			 Update ReportFilterFields set FIELDCONSTRAINT='REGEX_NUMERIC',fielderrormessage='Financial Year' Where FIELDID=2 And REPORTID=(select reportid from reportconfiguration where menuitemcode='menu_Item_InterestStatement');
@@ -4672,13 +4683,24 @@ UNION ALL
      JOIN feetypes t3 ON t1.feetypeid = t3.feetypeid
 		</createView>
 	</changeSet>
-	<changeSet id="75" author="Vijaykumar.l">
+	<changeSet id="75" author="Vijaykumar.l" dbms="postgresql">
 		<sql>
 		 Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage",   "recordstatus","rolecode","nextrolecode","taskid","nexttaskid", "recordtype","workflowid","lastmnton","lastmntby","version") 
            values ('30901','EN','E','The application cannot be submitted to the selected stage with pending/rejected deviations.',null,'Approved',null,null,null,null,null,0,to_timestamp('2018-05-01 00:00:00.0','null'),1000,0);
 		</sql>
 	</changeSet>
-	
+		<changeSet id="75" author="Vijaykumar.l" dbms="mssql">
+		<sql>
+		 Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage",   "recordstatus","rolecode","nextrolecode","taskid","nexttaskid", "recordtype","workflowid","lastmnton","lastmntby","version") 
+           values ('30901','EN','E','The application cannot be submitted to the selected stage with pending/rejected deviations.',null,'Approved',null,null,null,null,null,0,'',1000,0);
+		</sql>
+	</changeSet>
+	<changeSet id="75" author="Vijaykumar.l" dbms="oracle">
+		<sql>
+		 Insert into ERRORDETAILS ("code","language","severity","message","extendedmessage",   "recordstatus","rolecode","nextrolecode","taskid","nexttaskid", "recordtype","workflowid","lastmnton","lastmntby","version") 
+           values ('30901','EN','E','The application cannot be submitted to the selected stage with pending/rejected deviations.',null,'Approved',null,null,null,null,null,0,to_timestamp('2018-05-01 00:00:00.0','null'),1000,0);
+		</sql>
+	</changeSet>
 	<changeSet id="75" author="Vinay">
 	<comment> FinIRRDetails for schedule calculator </comment>
 		<createTable tableName="FinIRRDetails">
