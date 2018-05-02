@@ -1045,4 +1045,29 @@
 		</createView>	
 	</changeSet>
 	
+	<changeSet author="Kesav" id="58">
+		<comment> data type modified from NUMBER(18,0) to decimal(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="UGST_AMT" newDataType="decimal(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="59">
+		<comment> data type modified from NUMBER(18,0) to decimal(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn" columnName="Invoice_Amt" newDataType="decimal(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="60">
+		<comment> data type modified from NUMBER(18,0) to decimal(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="CGST_AMT" newDataType="decimal(18,0)" />
+	</changeSet>
+		
+	<changeSet author="Kesav" id="61">
+		<comment> data type modified from NUMBER(18,0) to decimal(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="SGST_AMT" newDataType="decimal(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="62">
+		<comment> data type modified from NUMBER(18,0) to decimal(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="IGST_AMT" newDataType="decimal(18,0)" />
+	</changeSet>
+	
 </databaseChangeLog>
