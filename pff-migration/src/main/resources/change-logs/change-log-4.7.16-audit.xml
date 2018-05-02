@@ -301,7 +301,7 @@
 				$do$;	
 	  	</sql>
 	  </changeSet>
-	  <changeSet id="20" author="Vinay">
+	  <changeSet id="20" author="Vinay" dbms="postgresql">
 		<createView viewName="activitylog_view" replaceIfExists="true">
 			SELECT a.auditid,
 		    a.lastmnton AS auditdate,
@@ -319,6 +319,48 @@
 		    a.finreference
 		   FROM plfaudit.adtfinancemain a
 		     JOIN ${call.auditdb}secusers u ON u.usrid = a.lastmntby
+		  WHERE a.auditimage = 'W'
+		</createView>
+	</changeSet>
+	<changeSet id="20" author="Vinay" dbms="oracle">
+		<createView viewName="activitylog_view" replaceIfExists="true">
+			SELECT a.auditid,
+		    a.lastmnton AS auditdate,
+		    a.version,
+		    a.rolecode,
+		    a.nextrolecode,
+		    a.recordstatus,
+		    a.taskid,
+		    a.NEXTtaskid,
+		    a.recordtype,
+		    a.workflowid,
+		    a.lastmntby,
+		    a.rcdmaintainsts,
+		    u.usrlogin AS userlogin,
+		    a.finreference
+		   FROM plfaudit.adtfinancemain a
+		     JOIN ${call.auditdb}secusers u ON u.usrid = a.lastmntby
+		  WHERE a.auditimage = 'W'
+		</createView>
+	</changeSet>
+	<changeSet id="20" author="Vinay" dbms="mssql">
+		<createView viewName="activitylog_view" replaceIfExists="true">
+			SELECT a.auditid,
+		    a.lastmnton AS auditdate,
+		    a.version,
+		    a.rolecode,
+		    a.nextrolecode,
+		    a.recordstatus,
+		    a.taskid,
+		    a.NEXTtaskid,
+		    a.recordtype,
+		    a.workflowid,
+		    a.lastmntby,
+		    a.rcdmaintainsts,
+		    u.usrlogin AS userlogin,
+		    a.finreference
+		   FROM adtfinancemain a
+		     JOIN PLFAVANSEQC..secusers u ON u.usrid = a.lastmntby
 		  WHERE a.auditimage = 'W'
 		</createView>
 	</changeSet>
