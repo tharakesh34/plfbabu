@@ -188,12 +188,6 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		return new ExtendedSearchListBox(parent, listCode, null, null).getObject();
 	}
 
-	public static Object show(Component parent, String listCode, int pageCount) {
-		pageSize = pageCount;
-		searchRequired = true;
-		return new ExtendedSearchListBox(parent, listCode, null, null).getObject();
-	}
-
 	/**
 	 * The Call method.
 	 * 
