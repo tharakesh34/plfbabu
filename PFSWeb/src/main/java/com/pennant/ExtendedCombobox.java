@@ -376,12 +376,20 @@ public class ExtendedCombobox extends Hbox {
 		if (getValidateColumns() != null) {
 			String[] searchFieldArray = getValidateColumns();
 			Filter[] filter1 = new Filter[searchFieldArray.length];
+			int i = 0;
+			Object fieldValue;
 
-			for (int i = 0; i < searchFieldArray.length; i++) {
-				filter1[i] = new Filter(searchFieldArray[i], this.textbox.getValue(), Filter.OP_EQUAL);
+			for (String field : searchFieldArray) {
+				if (field.equals(getValueColumn())) {
+					fieldValue = getValueAsObject(textbox.getValue());
+				} else {
+					fieldValue = textbox.getValue();
+				}
 
+				filter1[i++] = new Filter(field, fieldValue, Filter.OP_EQUAL);
 			}
-			this.jdbcSearchObject.addFilterOr(filter1);
+
+			jdbcSearchObject.addFilterOr(filter1);
 		}
 
 		if (whereClause != null) {
@@ -523,17 +531,7 @@ public class ExtendedCombobox extends Hbox {
 	}
 
 	public Object getActualValue() {
-		String value = StringUtils.trimToNull(getValue());
-
-		if (value == null) {
-			return null;
-		}
-
-		if (valueType == Type.LONG) {
-			return Long.valueOf(getValue());
-		} else {
-			return getValue();
-		}
+		return getValueAsObject(getValue());
 	}
 
 	/**
@@ -916,4 +914,21 @@ public class ExtendedCombobox extends Hbox {
 		}
 	}
 
+	public Object getValueAsObject(String value) {
+		value = StringUtils.trimToNull(value);
+
+		if (value == null) {
+			return null;
+		}
+
+		if (valueType == Type.LONG) {
+			if (StringUtils.isNumeric(value)) {
+				return Long.valueOf(value);
+			} else {
+				return null;
+			}
+		} else {
+			return value;
+		}
+	}
 }

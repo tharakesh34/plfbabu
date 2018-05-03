@@ -85,6 +85,7 @@ import org.zkoss.zul.Window;
 import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.ExtendedCombobox.Type;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -367,6 +368,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.mandateRef.setModuleName("Mandate");
 			this.mandateRef.setMandatoryStyle(true);
 			this.mandateRef.setValueColumn("MandateID");
+			mandateRef.setValueType(Type.LONG);
 			this.mandateRef.setDescColumn("MandateRef");
 			this.mandateRef.setDisplayStyle(2);
 			this.mandateRef.setValidateColumns(new String[] { "MandateID" });
