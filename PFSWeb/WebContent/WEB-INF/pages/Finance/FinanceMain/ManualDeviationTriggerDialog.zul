@@ -34,9 +34,7 @@
 					<groupbox id="gb_basicDetails" mold="3d">
 						<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px;">
 							<columns>
-								<column width="200px" />
-								<column />
-								<column />
+								<column width="250px" />
 								<column />
 							</columns>
 							<rows>
@@ -46,7 +44,7 @@
 								<row>
 									<label value="${c:l('label_ManualDeviationTriggerDialog_deviationCode.value')}" />
 									<hbox>
-										<extendedcombobox id="deviationCode" width="155px" />
+										<extendedcombobox id="deviationCode" />
 									</hbox>
 								</row>
 								<row>
