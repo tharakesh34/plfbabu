@@ -135,7 +135,6 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	protected Listbox 		listBoxFieldDet;
 	protected Paging 		pagingFieldDetList;
 	protected Textbox 		fieldList;
-
 	protected Grid 			grid_label;
 
 	// not auto wired vars
@@ -171,6 +170,10 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	private List<ExtendedFieldDetail> extendedFieldDetails;
 	private List<ValueLabel> moduleList = PennantAppUtil.getExtendedModuleList();
 
+	protected Checkbox 		allowInRule; 						// autowired
+	protected Row 			rowfieldAllowInRule;				// autowired
+
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -453,7 +456,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.fieldEditable.setChecked(aExtendedFieldDetail.isEditable());
 		}
 		this.parentTag.setValue(aExtendedFieldDetail.getParentTag());
-
+		this.allowInRule.setChecked(aExtendedFieldDetail.isAllowInRule());
+		
 		logger.debug("Leaving");
 	}
 
@@ -1018,6 +1022,12 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			wve.add(we);
 		}
 
+		try {
+			aExtendedFieldDetail.setAllowInRule(this.allowInRule.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -1308,6 +1318,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.fieldMultilinetxt.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldMultilinetxt"));
 			this.parentTag.setDisabled((isReadOnly("ExtendedFieldDetailDialog_parentTag")));
 			this.fieldEditable.setDisabled(isReadOnly("ExtendedFieldDetailDialog_fieldEditable"));
+			// FIXME vasu if this field alredy assigned to any rule then not allowed to remove selection.
+			
+			readOnlyComponent(isReadOnly("ExtendedFieldDetailDialog_AllowInRule"), this.allowInRule);
 		}
 		
 		boolean isMaintainRcd = false;
@@ -1386,6 +1399,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		this.fieldMaxValue.setReadonly(true);
 		this.fieldUnique.setDisabled(true);
 		this.fieldMultilinetxt.setReadonly(true);
+		readOnlyComponent(true, this.allowInRule);
+		
 		doEdit();
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

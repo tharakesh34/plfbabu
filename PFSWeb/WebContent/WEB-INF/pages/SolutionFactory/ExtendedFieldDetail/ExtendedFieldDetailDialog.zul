@@ -256,6 +256,16 @@
 										checked="true" />
 								</hbox>
 							</row>
+							<row id="rowfieldAllowInRule" visible="true">
+								<label
+									id="label_ExtendedFieldDetailDialog_allowInRule"
+									value="${c:l('label_ExtendedFieldDetailDialog_AllowInRule.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="allowInRule"
+										checked="false" />
+								</hbox>
+							</row>
 							
 						</rows>
 					</grid>
