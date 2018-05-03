@@ -4918,5 +4918,11 @@ UNION ALL
 		   WHERE NOT (EXISTS ( SELECT 1 FROM extendedfielddetail_temp WHERE extendedfielddetail_temp.moduleid = t1.moduleid AND extendedfielddetail_temp.fieldname = t1.fieldname));
 		</createView>
 	</changeSet>
+	<changeSet id="85" author="Jayant">
+		<sql>
+			update extendedfielddetail set allowInRule = 0 where allowInRule is null;
+			update extendedfielddetail_temp set allowInRule = 0 where allowInRule is null;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
