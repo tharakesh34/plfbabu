@@ -448,14 +448,12 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 * Inner ListItemRenderer class.<br>
 	 */
 	final class SearchBoxItemRenderer implements ListitemRenderer<Object> {
-
 		public SearchBoxItemRenderer() {
-
+			//
 		}
 
 		@Override
 		public void render(Listitem item, Object data, int count) throws Exception {
-
 			for (int i = 0; i < fieldString.length; i++) {
 				String fieldValue = "";
 				Date dateFieldValue = new Date();
@@ -526,14 +524,12 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 */
 	@SuppressWarnings("rawtypes")
 	public final class OnPagingEventListener implements EventListener {
-
 		public OnPagingEventListener() {
-
+			//
 		}
 
 		@Override
 		public void onEvent(Event event) throws Exception {
-
 			final PagingEvent pe = (PagingEvent) event;
 			final int pageNo = pe.getActivePage();
 			final int start = pageNo * getPageSize();
@@ -596,9 +592,8 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 */
 	@SuppressWarnings("rawtypes")
 	final class OnSearchListener implements EventListener {
-
 		public OnSearchListener() {
-
+			//
 		}
 
 		@Override
@@ -615,14 +610,12 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 */
 	@SuppressWarnings("rawtypes")
 	final class OnCloseListener implements EventListener {
-
 		public OnCloseListener() {
-
+			//
 		}
 
 		@Override
 		public void onEvent(Event event) throws Exception {
-
 			if (ExtendedSearchListBox.this.listbox.getSelectedItem() != null) {
 				final Listitem li = ExtendedSearchListBox.this.listbox.getSelectedItem();
 				final Object object = li.getAttribute("data");
@@ -635,9 +628,8 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 
 	@SuppressWarnings("rawtypes")
 	final class OnClearListener implements EventListener {
-
 		public OnClearListener() {
-
+			//
 		}
 
 		@Override
@@ -647,18 +639,12 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		}
 	}
 
-	// Setter/Getter
-
 	public Object getObject() {
 		return this.objClass;
 	}
 
 	private void setObject(Object objClass) {
 		this.objClass = objClass;
-	}
-
-	public void setPageSize(int pageSize) {
-		ExtendedSearchListBox.pageSize = pageSize;
 	}
 
 	public int getPageSize() {
@@ -682,14 +668,6 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		return pagedListService;
 	}
 
-	public String[] getFieldString() {
-		return fieldString;
-	}
-
-	public void setFieldString(String[] fieldString) {
-		this.fieldString = fieldString;
-	}
-
 	@SuppressWarnings("rawtypes")
 	public JdbcSearchObject getJdbcSearchObject() {
 		return this.jdbcSearchObject;
@@ -697,7 +675,6 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setJdbcSearchObject(int start) {
-
 		this.jdbcSearchObject = new JdbcSearchObject(getModuleMapping().getModuleClass());
 		this.jdbcSearchObject.setFirstResult(start);
 		this.jdbcSearchObject.setMaxResults(getPageSize());
@@ -714,11 +691,9 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 			Filter filter1;
 
 			for (int i = 0; i < condArray.length; i++) {
-
 				filter1 = new Filter((String) condArray[i][0], condArray[i][2],
 						Integer.parseInt((String) condArray[i][1]));
 				this.jdbcSearchObject.addFilter(filter1);
-
 			}
 		}
 	}
@@ -729,10 +704,10 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 
 	public void setModuleMapping(ModuleMapping moduleMapping) {
 		this.moduleMapping = moduleMapping;
+
 		if (moduleMapping != null) {
 			this.fieldString = moduleMapping.getLovFields();
 			this.setTitle(Labels.getLabel(moduleMapping.getModuleName()));
 		}
-
 	}
 }
