@@ -724,6 +724,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
+			this.south.setVisible(false);
 		}
 
 		if (fromLoanOrg) {

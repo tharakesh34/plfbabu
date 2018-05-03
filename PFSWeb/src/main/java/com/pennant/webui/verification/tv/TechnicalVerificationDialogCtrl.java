@@ -745,6 +745,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
+			this.south.setVisible(false);
 		}
 		
 		if(fromLoanOrg) {
