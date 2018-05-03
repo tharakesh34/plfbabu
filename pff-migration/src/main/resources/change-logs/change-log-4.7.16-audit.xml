@@ -389,4 +389,9 @@
 	<changeSet id="19" author="SrinivasaVarma" dbms="oracle">
 		<addDefaultValue tableName="AdtExtendedFieldDetail" columnName="allowInRule" defaultValue="0"/>
 	</changeSet>
+	<changeSet id="20" author="Jayant">
+		<sql>
+			update adtextendedfielddetail set allowInRule = 0 where allowInRule is null;
+		</sql>
+	</changeSet>
 	</databaseChangeLog>
