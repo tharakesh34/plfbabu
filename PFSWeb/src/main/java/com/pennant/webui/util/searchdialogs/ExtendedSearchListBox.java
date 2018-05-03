@@ -125,6 +125,57 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	}
 
 	/**
+	 * Private Constructor. So it can only be created with the static show() method.<br>
+	 * 
+	 * @param parent
+	 */
+	private ExtendedSearchListBox(Component parent, String listCode, Filter[] filters) {
+		super();
+		this.filters = filters;
+		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
+		setParent(parent);
+		createBox(true);
+	}
+
+	/**
+	 * Private Constructor. So it can only be created with the static show() method.<br>
+	 * 
+	 * @param parent
+	 */
+	private ExtendedSearchListBox(Component parent, String listCode, Filter[] filters, String searchValue) {
+		super();
+		this.filters = filters;
+		this.searchString = searchValue;
+		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
+		setParent(parent);
+		createBox(true);
+	}
+
+	private ExtendedSearchListBox(Component parent, String listCode, Filter[] filters, String searchValue,
+			String whereClause) {
+		super();
+		this.filters = filters;
+		this.searchString = searchValue;
+		this.whereClause = whereClause;
+		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
+		setParent(parent);
+		createBox(true);
+	}
+
+	/**
+	 * Private Constructor. So it can only be created with the static show() method.<br>
+	 * 
+	 * @param parent
+	 */
+	private ExtendedSearchListBox(Component parent, String listCode, List<?> listData, boolean search) {
+		super();
+		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
+		setParent(parent);
+		this.listData = listData;
+		createBox(search);
+	}
+
+	/**
 	 * The Call method.
 	 * 
 	 * @param parent
@@ -143,7 +194,6 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		return new ExtendedSearchListBox(parent, listCode, null, null).getObject();
 	}
 
-	//#######
 	/**
 	 * The Call method.
 	 * 
@@ -207,58 +257,6 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	public static Object show(Component parent, String listCode, Filter[] filters, String searchValue) {
 		searchRequired = true;
 		return new ExtendedSearchListBox(parent, listCode, filters, searchValue).getObject();
-	}
-
-	/**
-	 * Private Constructor. So it can only be created with the static show() method.<br>
-	 * 
-	 * @param parent
-	 */
-	private ExtendedSearchListBox(Component parent, String listCode, Filter[] filters) {
-		super();
-		this.filters = filters;
-		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
-		setParent(parent);
-		createBox(true);
-	}
-
-	//#####################
-	/**
-	 * Private Constructor. So it can only be created with the static show() method.<br>
-	 * 
-	 * @param parent
-	 */
-	private ExtendedSearchListBox(Component parent, String listCode, Filter[] filters, String searchValue) {
-		super();
-		this.filters = filters;
-		this.searchString = searchValue;
-		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
-		setParent(parent);
-		createBox(true);
-	}
-
-	private ExtendedSearchListBox(Component parent, String listCode, Filter[] filters, String searchValue,
-			String whereClause) {
-		super();
-		this.filters = filters;
-		this.searchString = searchValue;
-		this.whereClause = whereClause;
-		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
-		setParent(parent);
-		createBox(true);
-	}
-
-	/**
-	 * Private Constructor. So it can only be created with the static show() method.<br>
-	 * 
-	 * @param parent
-	 */
-	private ExtendedSearchListBox(Component parent, String listCode, List<?> listData, boolean search) {
-		super();
-		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
-		setParent(parent);
-		this.listData = listData;
-		createBox(search);
 	}
 
 	/**
