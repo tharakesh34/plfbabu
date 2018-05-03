@@ -360,6 +360,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Groupbox							gb_rating;																	// autowired
 	protected Groupbox							gb_directorDetails;															// autowired
 
+	protected Tabpanel                          tp_basicDetails;
+	protected Tabpanel 							tp_KYCDetails;
+	protected Tabpanel 							tp_Financials;
+	protected Tabpanel 							tp_directorDetails;
+	protected Tabpanel 						    tp_BankDetails;
+
 	protected Groupbox							gb_Action;
 	protected Groupbox							gb_statusDetails;
 	String										parms[]							= new String[4];
@@ -574,8 +580,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				int divKycHeight = this.borderLayoutHeight - 80;
 				int semiBorderlayoutHeights = divKycHeight / 2;
 				if (isRetailCustomer) {
-					this.divKeyDetails.setHeight(borderLayoutHeight - 130 + "px");
-					this.grid_KYCDetails.setHeight(borderLayoutHeight + "px");
+
+					this.tp_basicDetails.setHeight(borderLayoutHeight - 195 + "px");
+					this.tp_KYCDetails.setHeight(borderLayoutHeight - 195 + "px");
+					this.tp_Financials.setHeight(borderLayoutHeight - 195 + "px");
+					this.tp_BankDetails.setHeight(borderLayoutHeight - 195 + "px");
+					this.tp_directorDetails.setHeight(borderLayoutHeight - 195 + "px");
+
+					// this.divKeyDetails.setHeight(borderLayoutHeight - 130 + "px");
+					// this.grid_KYCDetails.setHeight(borderLayoutHeight + "px");
+
 					this.listBoxCustomerEmploymentDetail.setHeight(semiBorderlayoutHeights - 140 + "px");
 					this.listBoxCustomerDocuments.setHeight(semiBorderlayoutHeights - 60 + "px");
 					this.listBoxCustomerAddress.setHeight(semiBorderlayoutHeights - 90 + "px");
@@ -603,11 +617,18 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				int divKycHeight = this.borderLayoutHeight - 80;
 				int borderlayoutHeights = divKycHeight / 2;
 				if (isRetailCustomer) {
-					this.divKeyDetails.setHeight(borderLayoutHeight - 130 + "px");
+					this.tp_basicDetails.setHeight(borderLayoutHeight - 90 + "px");
+					// this.divKeyDetails.setHeight(borderLayoutHeight - 130 + "px");
 				} else {
 					this.divKeyDetails.setHeight(borderLayoutHeight - 50 + "px");
 					this.listBoxCustomerRating.setHeight(this.borderLayoutHeight - 330 + "px");
 				}
+
+				this.tp_KYCDetails.setHeight(borderLayoutHeight - 90 + "px");
+				this.tp_Financials.setHeight(borderLayoutHeight - 90 + "px");
+				this.tp_BankDetails.setHeight(borderLayoutHeight - 90 + "px");
+				this.tp_directorDetails.setHeight(borderLayoutHeight - 90 + "px");
+
 				this.listBoxCustomerEmploymentDetail
 						.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 10) + "px");
 				this.listBoxCustomerDocuments.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 10) + "px");

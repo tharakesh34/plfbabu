@@ -64,7 +64,7 @@
 			<center border="none">
 				<div width="100%" height="100%">
 					<groupbox id="finBasicdetails"></groupbox>
-					<tabbox width="100%" height="100%">
+					<tabbox width="100%" >
 						<tabs id="tabsIndexCenter">
 							<tab label="${c:l('label_CustomerDialog_BasicDetails.value')}" id="basicDetails" />
 							<tab label="${c:l('label_CustomerDialog_KYCDetails.value')}" id="tabkYCDetails" />
@@ -73,7 +73,7 @@
 							<tab label="${c:l('label_CustomerDialog_BankingDetails.value')}" id="tabbankDetails" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
-							<tabpanel style="overflow:auto" ca:data-scrollable="true">
+							<tabpanel style="overflow:auto" ca:data-scrollable="true" id="tp_basicDetails">
 								<div id="divKeyDetails">
 									<groupbox id="gb_keyDetails">
 										<grid
@@ -425,10 +425,7 @@
 														<combobox id="subCategory" readonly="true" width="155px" />
 													</hbox>
 													<label value="${c:l('label_CustomerDialog_Religion.value')}" />
-													<hbox>
-														<space spacing="2px" />
 														<extendedcombobox id="religion" />
-													</hbox>
 												</row>
 												<row>
 													<label value="${c:l('label_CustomerDialog_Caste.value')}" />
@@ -490,7 +487,7 @@
 								</div>
 							</tabpanel>
 							<tabpanel style="overflow:auto"
-								ca:data-scrollable="true">
+								ca:data-scrollable="true" id="tp_KYCDetails">
 								<groupbox id="gp_CustEmployeeDetails"
 									closable="true">
 									<caption
@@ -900,7 +897,7 @@
 									</rows>
 								</grid>
 							</tabpanel>
-							<tabpanel style="overflow:auto">
+							<tabpanel style="overflow:auto" ca:data-scrollable="true" id="tp_Financials">
 								<groupbox id="gb_incomeDetails">
 									<div sclass="z-toolbar"
 										style="padding:0">
@@ -980,7 +977,7 @@
 									</grid>
 								</groupbox>
 							</tabpanel>
-							<tabpanel id="directorTabPanel">
+							<tabpanel style="overflow:auto" ca:data-scrollable="true" id="tp_directorDetails">
 								<groupbox id="gb_directorDetails"
 									width="100%" height="100%">
 									<div sclass="z-toolbar"
@@ -1047,7 +1044,7 @@
 									</listbox>
 								</groupbox>
 							</tabpanel>
-							<tabpanel style="overflow:auto">
+							<tabpanel style="overflow:auto" ca:data-scrollable="true" id="tp_BankDetails">
 								<grid id="grid_BankDetails"
 									sclass="GridLayoutNoBorder" fixedLayout="true"
 									style="border:0px; padding:0px;">
