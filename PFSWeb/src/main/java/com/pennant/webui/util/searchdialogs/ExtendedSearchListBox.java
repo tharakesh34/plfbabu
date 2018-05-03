@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-
 package com.pennant.webui.util.searchdialogs;
 
 import java.io.Serializable;
@@ -86,15 +85,11 @@ import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
-
 /**
  * This class creates a modal window as a dialog in which the user <br>
- * can search and select a branch object. By onClosing this box <b>returns</b>
- * an object or null. <br>
- * The object can returned by selecting and clicking the OK button or by
- * DoubleClicking on an item from the list.<br>
- * Further the count of results can limited by manipulating the value of a table
- * field for the sql where clause.<br>
+ * can search and select a branch object. By onClosing this box <b>returns</b> an object or null. <br>
+ * The object can returned by selecting and clicking the OK button or by DoubleClicking on an item from the list.<br>
+ * Further the count of results can limited by manipulating the value of a table field for the sql where clause.<br>
  */
 public class ExtendedSearchListBox extends Window implements Serializable {
 
@@ -118,13 +113,13 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	private JdbcSearchObject jdbcSearchObject;
 	private transient PagedListService pagedListService;
 	private String[] fieldString = null;
-	private ModuleMapping moduleMapping=null;
+	private ModuleMapping moduleMapping = null;
 	private Filter[] filters;
 	private List<?> listData = null;
 	private String searchString;
 	private String whereClause = null;
-	private static boolean searchRequired=true;
-	
+	private static boolean searchRequired = true;
+
 	public ExtendedSearchListBox() {
 		super();
 	}
@@ -136,19 +131,18 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 *            The parent component
 	 * @return a BeanObject from the listBox or null.
 	 */
-	
-	public static Object show(Component parent,String listCode) {
-		searchRequired=true;
-		return new ExtendedSearchListBox(parent,listCode,null, null).getObject();
-	}	
-	
-	public static Object show(Component parent,String listCode,int pageCount) {
-		pageSize=pageCount;
-		searchRequired=true;
-		return new ExtendedSearchListBox(parent,listCode,null, null).getObject();
-	}	
-	
-	
+
+	public static Object show(Component parent, String listCode) {
+		searchRequired = true;
+		return new ExtendedSearchListBox(parent, listCode, null, null).getObject();
+	}
+
+	public static Object show(Component parent, String listCode, int pageCount) {
+		pageSize = pageCount;
+		searchRequired = true;
+		return new ExtendedSearchListBox(parent, listCode, null, null).getObject();
+	}
+
 	//#######
 	/**
 	 * The Call method.
@@ -157,110 +151,109 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 *            The parent component
 	 * @return a BeanObject from the listBox or null.
 	 */
-	
-	public static Object show(Component parent,String listCode,String searchValue) {
-		searchRequired=true;
-		return new ExtendedSearchListBox(parent,listCode,null,searchValue).getObject();
-	}	
-	
-	public static Object show(Component parent,String listCode,String searchValue, String whereClause) {
-		searchRequired=true;
-		return new ExtendedSearchListBox(parent,listCode,null,searchValue, whereClause).getObject();
-	}	
-	
-	public static Object show(Component parent,String listCode,String searchValue,Filter[] filters, String whereClause) {
-		searchRequired=true;
-		return new ExtendedSearchListBox(parent,listCode,filters,searchValue, whereClause).getObject();
-	}	
-	
-	/**
-	 * The Call method.
-	 * 
-	 * @param parent
-	 *            The parent component
-	 *            
-	 * @return a BeanObject from the listBox or null.
-	 */
-	public static Object show(Component parent,String listCode, List<?> list) {
-		searchRequired=false;
-		return new ExtendedSearchListBox(parent,listCode,list,false).getObject();
-	}	
-	
-	/**
-	 * The Call method.
-	 * 
-	 * @param parent
-	 *            The parent component
-	 *            
-	 * @return a BeanObject from the listBox or null.
-	 */
-	
-	public static Object show(Component parent,String listCode,Filter[] filters) {
-		searchRequired=true;
-		return new ExtendedSearchListBox(parent,listCode,filters).getObject();
-	}	
-	
-	/**
-	 * The Call method.
-	 * 
-	 * @param parent
-	 *            The parent component
-	 *            
-	 * @return a BeanObject from the listBox or null.
-	 */
-	
-	public static Object show(Component parent,String listCode,Filter[] filters, String searchValue) {
-		searchRequired=true;
-		return new ExtendedSearchListBox(parent,listCode,filters,searchValue).getObject();
+
+	public static Object show(Component parent, String listCode, String searchValue) {
+		searchRequired = true;
+		return new ExtendedSearchListBox(parent, listCode, null, searchValue).getObject();
+	}
+
+	public static Object show(Component parent, String listCode, String searchValue, String whereClause) {
+		searchRequired = true;
+		return new ExtendedSearchListBox(parent, listCode, null, searchValue, whereClause).getObject();
+	}
+
+	public static Object show(Component parent, String listCode, String searchValue, Filter[] filters,
+			String whereClause) {
+		searchRequired = true;
+		return new ExtendedSearchListBox(parent, listCode, filters, searchValue, whereClause).getObject();
 	}
 
 	/**
-	 * Private Constructor. So it can only be created with the static show()
-	 * method.<br>
+	 * The Call method.
+	 * 
+	 * @param parent
+	 *            The parent component
+	 * 
+	 * @return a BeanObject from the listBox or null.
+	 */
+	public static Object show(Component parent, String listCode, List<?> list) {
+		searchRequired = false;
+		return new ExtendedSearchListBox(parent, listCode, list, false).getObject();
+	}
+
+	/**
+	 * The Call method.
+	 * 
+	 * @param parent
+	 *            The parent component
+	 * 
+	 * @return a BeanObject from the listBox or null.
+	 */
+
+	public static Object show(Component parent, String listCode, Filter[] filters) {
+		searchRequired = true;
+		return new ExtendedSearchListBox(parent, listCode, filters).getObject();
+	}
+
+	/**
+	 * The Call method.
+	 * 
+	 * @param parent
+	 *            The parent component
+	 * 
+	 * @return a BeanObject from the listBox or null.
+	 */
+
+	public static Object show(Component parent, String listCode, Filter[] filters, String searchValue) {
+		searchRequired = true;
+		return new ExtendedSearchListBox(parent, listCode, filters, searchValue).getObject();
+	}
+
+	/**
+	 * Private Constructor. So it can only be created with the static show() method.<br>
 	 * 
 	 * @param parent
 	 */
-	private ExtendedSearchListBox(Component parent,String listCode,Filter[] filters) {
+	private ExtendedSearchListBox(Component parent, String listCode, Filter[] filters) {
 		super();
-		this.filters=filters;
+		this.filters = filters;
 		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
 		setParent(parent);
 		createBox(true);
 	}
-	
+
 	//#####################
 	/**
-	 * Private Constructor. So it can only be created with the static show()
-	 * method.<br>
+	 * Private Constructor. So it can only be created with the static show() method.<br>
 	 * 
 	 * @param parent
 	 */
-	private ExtendedSearchListBox(Component parent,String listCode,Filter[] filters,String searchValue) {
+	private ExtendedSearchListBox(Component parent, String listCode, Filter[] filters, String searchValue) {
 		super();
-		this.filters=filters;
+		this.filters = filters;
 		this.searchString = searchValue;
 		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
 		setParent(parent);
 		createBox(true);
 	}
-	
-	private ExtendedSearchListBox(Component parent,String listCode,Filter[] filters,String searchValue, String whereClause) {
+
+	private ExtendedSearchListBox(Component parent, String listCode, Filter[] filters, String searchValue,
+			String whereClause) {
 		super();
-		this.filters=filters;
+		this.filters = filters;
 		this.searchString = searchValue;
 		this.whereClause = whereClause;
 		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
 		setParent(parent);
 		createBox(true);
 	}
-	
+
 	/**
-	 * Private Constructor. So it can only be created with the static show()
-	 * method.<br>
+	 * Private Constructor. So it can only be created with the static show() method.<br>
 	 * 
 	 * @param parent
 	 */
-	private ExtendedSearchListBox(Component parent,String listCode,List<?> listData,boolean search) {
+	private ExtendedSearchListBox(Component parent, String listCode, List<?> listData, boolean search) {
 		super();
 		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
 		setParent(parent);
@@ -273,16 +266,16 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 */
 	@SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
 	private void createBox(boolean doSearch) {
-		logger.debug("Entering"); 
-		
-		if(getModuleMapping().getLovWidth()!=0){
-			this._width=getModuleMapping().getLovWidth();
+		logger.debug("Entering");
+
+		if (getModuleMapping().getLovWidth() != 0) {
+			this._width = getModuleMapping().getLovWidth();
 		}
-		
+
 		// Window
 		this.setWidth(String.valueOf(this._width) + "px");
 		this.setHeight(String.valueOf(this._height) + "px");
-		
+
 		this.setVisible(true);
 		this.setClosable(true);
 
@@ -331,22 +324,22 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		this.listbox.setVisible(true);
 		this.listbox.setSizedByContent(true);
 		this.listbox.setSpan(true);
-		this.listbox.setEmptyMessage(Labels.getLabel("listbox.emptyMessage")); 		
-		
+		this.listbox.setEmptyMessage(Labels.getLabel("listbox.emptyMessage"));
+
 		this.listbox.setParent(divCenter2);
 		this.listbox.setItemRenderer(new SearchBoxItemRenderer());
- 		
+
 		final Listhead listhead = new Listhead();
 		listhead.setParent(this.listbox);
-		
+
 		for (int i = 0; i < this.fieldString.length; i++) {
 			final Listheader listheader = new Listheader();
-			listheader.setSclass("ListHeader"+i);
+			listheader.setSclass("ListHeader" + i);
 			listheader.setParent(listhead);
-			listheader.setLabel(Labels.getLabel("label_"+this.fieldString[i]));
+			listheader.setLabel(Labels.getLabel("label_" + this.fieldString[i]));
 			listheader.setHflex("min");
 		}
-		
+
 		final South south2 = new South();
 		south2.setBorder("none");
 		south2.setHeight("26px");
@@ -365,10 +358,10 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		this._textbox.addEventListener("onOK", new OnSearchListener());
 		this._textbox.setParent(hbox);
 		this._textbox.setFocus(true);
-		if(StringUtils.isNotBlank(this.searchString)){
+		if (StringUtils.isNotBlank(this.searchString)) {
 			this._textbox.setValue(this.searchString);
 		}
-		Space space=new Space();
+		Space space = new Space();
 		space.setWidth("1px");
 		hbox.appendChild(space);
 		// serachButton
@@ -376,14 +369,14 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		this._searchButton.setImage("/images/icons/LOVSearch.png");
 		this._searchButton.addEventListener("onClick", new OnSearchListener());
 		this._searchButton.setParent(hbox);
-		if(searchRequired){
+		if (searchRequired) {
 			hbox.setVisible(true);
 			north2.setVisible(true);
-		}else{
+		} else {
 			hbox.setVisible(false);
 			north2.setVisible(false);
 		}
-		
+
 		final South south = new South();
 		south.setBorder("none");
 		south.setHeight("40px");
@@ -406,56 +399,55 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		btnOK.setParent(divSouth);
 		divSouth.appendChild(new Space());
 		// Button
-		final Button btnClear= new Button();
+		final Button btnClear = new Button();
 		btnClear.setLabel("Clear");
 		btnClear.addEventListener("onClick", new OnClearListener());
 		btnClear.setParent(divSouth);
 
 		/**
 		 * init the model.<br>
-		 * The ResultObject is a helper class that holds the generic list and
-		 * the totalRecord count as int value.
+		 * The ResultObject is a helper class that holds the generic list and the totalRecord count as int value.
 		 */
-		if(doSearch){
+		if (doSearch) {
 			logger.debug("Before fetch jdbc Search");
 			setJdbcSearchObject(0);
-			final String searchText =  ExtendedSearchListBox.this._textbox.getValue();
-			if( StringUtils.isNotBlank(searchText)){
-				
+			final String searchText = ExtendedSearchListBox.this._textbox.getValue();
+			if (StringUtils.isNotBlank(searchText)) {
+
 				Filter[] filters = new Filter[fieldString.length];
-				
+
 				for (int i = 0; i < fieldString.length; i++) {
-					filters[i] = new Filter(fieldString[i], "%" +searchText+"%", Filter.OP_LIKE);
+					filters[i] = new Filter(fieldString[i], "%" + searchText + "%", Filter.OP_LIKE);
 				}
 				this.jdbcSearchObject.addFilterOr(filters);
 			}
 			String[] lovFields = getModuleMapping().getLovFields();
-			if(lovFields != null && lovFields.length > 0){
-				this.jdbcSearchObject.addSort(lovFields[0].trim(), false) ;
-				this.jdbcSearchObject.addSort(lovFields[1].trim(), false) ;
+			if (lovFields != null && lovFields.length > 0) {
+				this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
+				this.jdbcSearchObject.addSort(lovFields[1].trim(), false);
 			}
-			
-			if(whereClause != null){
+
+			if (whereClause != null) {
 				this.jdbcSearchObject.addWhereClause(whereClause);
 			}
 
 			final SearchResult searchResult = getPagedListService().getSRBySearchObject(getJdbcSearchObject());
-			logger.debug("After fetch jdbc Search Count:"+searchResult.getTotalCount());
+			logger.debug("After fetch jdbc Search Count:" + searchResult.getTotalCount());
 
 			this._paging.setTotalSize(searchResult.getTotalCount());
 			setListModelList(new ListModelList(searchResult.getResult()));
-		}else{
+		} else {
 			this._paging.setTotalSize(listData.size());
 			setListModelList(new ListModelList(listData));
 		}
 		this.listbox.setModel(getListModelList());
-		
+
 		try {
 			doModal();
 		} catch (final SuspendNotAllowedException e) {
 			logger.fatal("", e);
 			this.detach();
-		}  	
+		}
 
 		logger.debug("Leaving");
 	}
@@ -464,32 +456,32 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 * Inner ListItemRenderer class.<br>
 	 */
 	final class SearchBoxItemRenderer implements ListitemRenderer<Object> {
-		
+
 		public SearchBoxItemRenderer() {
-			
+
 		}
-		
+
 		@Override
 		public void render(Listitem item, Object data, int count) throws Exception {
-			
+
 			for (int i = 0; i < fieldString.length; i++) {
-				String fieldValue= "";
+				String fieldValue = "";
 				Date dateFieldValue = new Date();
-				String fieldMethod= "get"+fieldString[i].substring(0,1).toUpperCase()+fieldString[i].substring(1);
-				
+				String fieldMethod = "get" + fieldString[i].substring(0, 1).toUpperCase() + fieldString[i].substring(1);
+
 				if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
-					fieldValue  = (String) data.getClass().getMethod(fieldMethod).invoke(data);
-				}else if(data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)){
-					dateFieldValue=(Date) data.getClass().getMethod(fieldMethod).invoke(data);
+					fieldValue = (String) data.getClass().getMethod(fieldMethod).invoke(data);
+				} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
+					dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
 					fieldValue = DateUtility.formatToLongDate(dateFieldValue);
-				}else {
-					fieldValue=data.getClass().getMethod(fieldMethod).invoke(data).toString();
+				} else {
+					fieldValue = data.getClass().getMethod(fieldMethod).invoke(data).toString();
 				}
-				
+
 				if (!searchRequired && i == 0) {
-					fieldValue=PennantApplicationUtil.formatAccountNumber(fieldValue);	
+					fieldValue = PennantApplicationUtil.formatAccountNumber(fieldValue);
 				}
-				
+
 				Listcell lc = new Listcell(fieldValue);
 				lc.setParent(item);
 			}
@@ -507,29 +499,28 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 */
 	public void onDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		if (this.listbox.getSelectedItem() != null) {
-			logger.debug("Selected Iteam :"+this.listbox.getSelectedItem().getValue());
+			logger.debug("Selected Iteam :" + this.listbox.getSelectedItem().getValue());
 			final Listitem li = this.listbox.getSelectedItem();
-			final Object object= li.getAttribute("data");
-			
+			final Object object = li.getAttribute("data");
+
 			final Listcell lc = (Listcell) li.getFirstChild();
 			try {
-				
+
 				@SuppressWarnings("rawtypes")
-				Class[] stringType = { Class.forName( "java.lang.String" ) };
-		        Object[] stringParameter = { lc.getLabel() };
-		        if (object.getClass().getMethod( "setLovValue", stringType)!=null){
-		        	object.getClass().getMethod( "setLovValue", stringType).invoke( object, stringParameter );	
-		        }
-		        
+				Class[] stringType = { Class.forName("java.lang.String") };
+				Object[] stringParameter = { lc.getLabel() };
+				if (object.getClass().getMethod("setLovValue", stringType) != null) {
+					object.getClass().getMethod("setLovValue", stringType).invoke(object, stringParameter);
+				}
 
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 			}
 			setObject(object);
 			this.onClose();
-		}else{
+		} else {
 			logger.debug("Selected Iteam null");
 		}
 		logger.debug("Leaving");
@@ -539,16 +530,15 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 * "onPaging" EventListener for the paging component. <br>
 	 * <br>
 	 * Calculates the next page by currentPage and pageSize values. <br>
-	 * Calls the method for refreshing the data with the new rowStart and
-	 * pageSize. <br>
+	 * Calls the method for refreshing the data with the new rowStart and pageSize. <br>
 	 */
 	@SuppressWarnings("rawtypes")
 	public final class OnPagingEventListener implements EventListener {
-		
+
 		public OnPagingEventListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 
@@ -563,8 +553,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	}
 
 	/**
-	 * Refreshes the list by calling the DAO methode with the modified search
-	 * object. <br>
+	 * Refreshes the list by calling the DAO methode with the modified search object. <br>
 	 * 
 	 * @param so
 	 *            SearchObject, holds the entity and properties to search. <br>
@@ -574,32 +563,32 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	void refreshModel(String searchText, int start) {
 		logger.debug("Entering");
-		
+
 		// clear old data
 		getListModelList().clear();
 
 		setJdbcSearchObject(start);
-		
-		if(StringUtils.isNotBlank(searchText)){
-			
+
+		if (StringUtils.isNotBlank(searchText)) {
+
 			Filter[] filters = new Filter[fieldString.length];
-			
+
 			for (int i = 0; i < fieldString.length; i++) {
-				filters[i] = new Filter(fieldString[i], "%" +searchText+"%", Filter.OP_LIKE);
+				filters[i] = new Filter(fieldString[i], "%" + searchText + "%", Filter.OP_LIKE);
 			}
-			
+
 			this.jdbcSearchObject.addFilterOr(filters);
 		}
 		String[] lovFields = getModuleMapping().getLovFields();
-		if(lovFields != null && lovFields.length > 0){
-			this.jdbcSearchObject.addSort(lovFields[0].trim(), false) ;
-			this.jdbcSearchObject.addSort(lovFields[1].trim(), false) ;
+		if (lovFields != null && lovFields.length > 0) {
+			this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
+			this.jdbcSearchObject.addSort(lovFields[1].trim(), false);
 		}
-		
-		if(whereClause != null){
+
+		if (whereClause != null) {
 			this.jdbcSearchObject.addWhereClause(whereClause);
 		}
-		
+
 		final SearchResult searchResult = getPagedListService().getSRBySearchObject(getJdbcSearchObject());
 		this._paging.setTotalSize(searchResult.getTotalCount());
 
@@ -615,11 +604,11 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 */
 	@SuppressWarnings("rawtypes")
 	final class OnSearchListener implements EventListener {
-		
+
 		public OnSearchListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 			final String searchText = ExtendedSearchListBox.this._textbox.getValue();
@@ -634,18 +623,18 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 */
 	@SuppressWarnings("rawtypes")
 	final class OnCloseListener implements EventListener {
-		
+
 		public OnCloseListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 
 			if (ExtendedSearchListBox.this.listbox.getSelectedItem() != null) {
 				final Listitem li = ExtendedSearchListBox.this.listbox.getSelectedItem();
-				final Object object= li.getAttribute("data");
-				
+				final Object object = li.getAttribute("data");
+
 				setObject(object);
 			}
 			onClose();
@@ -654,18 +643,18 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 
 	@SuppressWarnings("rawtypes")
 	final class OnClearListener implements EventListener {
-		
+
 		public OnClearListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 			setObject(String.valueOf(""));
 			onClose();
 		}
 	}
-	
+
 	// Setter/Getter
 
 	public Object getObject() {
@@ -679,6 +668,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	public void setPageSize(int pageSize) {
 		ExtendedSearchListBox.pageSize = pageSize;
 	}
+
 	public int getPageSize() {
 		return ExtendedSearchListBox.pageSize;
 	}
@@ -687,14 +677,15 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	public void setListModelList(ListModelList listModelList) {
 		this.listModelList = listModelList;
 	}
+
 	@SuppressWarnings("rawtypes")
 	public ListModelList getListModelList() {
 		return this.listModelList;
 	}
 
 	public PagedListService getPagedListService() {
-		if (this.pagedListService==null){
-			this.pagedListService= (PagedListService) SpringUtil.getBean("pagedListService");	
+		if (this.pagedListService == null) {
+			this.pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		}
 		return pagedListService;
 	}
@@ -702,6 +693,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	public String[] getFieldString() {
 		return fieldString;
 	}
+
 	public void setFieldString(String[] fieldString) {
 		this.fieldString = fieldString;
 	}
@@ -710,27 +702,29 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	public JdbcSearchObject getJdbcSearchObject() {
 		return this.jdbcSearchObject;
 	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setJdbcSearchObject(int start) {
 
-		this.jdbcSearchObject = new JdbcSearchObject (getModuleMapping().getModuleClass());
+		this.jdbcSearchObject = new JdbcSearchObject(getModuleMapping().getModuleClass());
 		this.jdbcSearchObject.setFirstResult(start);
 		this.jdbcSearchObject.setMaxResults(getPageSize());
 		this.jdbcSearchObject.addTabelName(getModuleMapping().getLovTableName());
 
-		if (this.filters!=null){
+		if (this.filters != null) {
 			for (int i = 0; i < filters.length; i++) {
 				this.jdbcSearchObject.addFilter(filters[i]);
-			}	
+			}
 		}
 
-		if (getModuleMapping().getLovFilters()!=null){
+		if (getModuleMapping().getLovFilters() != null) {
 			Object[][] condArray = getModuleMapping().getLovFilters();
 			Filter filter1;
 
 			for (int i = 0; i < condArray.length; i++) {
 
-				filter1 = new Filter((String)condArray[i][0], condArray[i][2], Integer.parseInt((String)condArray[i][1]));
+				filter1 = new Filter((String) condArray[i][0], condArray[i][2],
+						Integer.parseInt((String) condArray[i][1]));
 				this.jdbcSearchObject.addFilter(filter1);
 
 			}
@@ -743,10 +737,10 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 
 	public void setModuleMapping(ModuleMapping moduleMapping) {
 		this.moduleMapping = moduleMapping;
-		if (moduleMapping!=null){
-			this.fieldString=moduleMapping.getLovFields();
-			this.setTitle(Labels.getLabel(moduleMapping.getModuleName()));			
+		if (moduleMapping != null) {
+			this.fieldString = moduleMapping.getLovFields();
+			this.setTitle(Labels.getLabel(moduleMapping.getModuleName()));
 		}
-		
+
 	}
 }
