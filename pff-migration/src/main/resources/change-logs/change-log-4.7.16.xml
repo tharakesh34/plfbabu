@@ -4924,5 +4924,18 @@ UNION ALL
 			update extendedfielddetail_temp set allowInRule = 0 where allowInRule is null;
 		</sql>
 	</changeSet>
+	
+		<changeSet id="86" author="Jayant">
+		<sql>
+  		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ExtendedFieldDetailDialog_AllowInRule','ExtendedFieldDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+  	
+  		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),1116,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ExtendedFieldDetailDialog_AllowInRule'),
+		 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+	  	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+		</sql>
+	</changeSet>
+
+
 </databaseChangeLog>
 	
