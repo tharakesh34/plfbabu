@@ -4815,5 +4815,27 @@ UNION ALL
 		WHERE     NOT EXISTS (SELECT 1 FROM FinIRRDetails_Temp WHERE IRRID = T1.IRRID)
 		</createView>
 	</changeSet>
+	<changeSet id="81" author="SrinivasaVarma">
+			<addColumn tableName="ExtendedFieldDetail">
+				<column name="allowInRule" type="Boolean"></column>	
+			</addColumn>
+			<addColumn tableName="ExtendedFieldDetail_Temp">
+				<column name="allowInRule" type="Boolean"></column>	
+			</addColumn>
+	</changeSet>
+	<changeSet id="82" author="SrinivasaVarma" dbms="mssql">
+		<sql>
+			alter table ExtendedFieldDetail add constraint df_extendedfdetl_alwinrule default 0 for allowInRule;
+			alter table ExtendedFieldDetail_Temp add constraint df_extendedfdetl_t_alwinrule default 0 for allowInRule;
+		</sql>	
+	</changeSet>
+	<changeSet id="82" author="SrinivasaVarma" dbms="oracle">
+		<addDefaultValue columnName="ExtendedFieldDetail" tableName="allowInRule" defaultValue="0"/>
+		<addDefaultValue columnName="ExtendedFieldDetail_Temp" tableName="allowInRule" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="82" author="SrinivasaVarma" dbms="postgresql">
+		<addDefaultValue columnName="ExtendedFieldDetail" tableName="allowInRule" defaultValue="0"/>
+		<addDefaultValue columnName="ExtendedFieldDetail_Temp" tableName="allowInRule" defaultValue="0"/>
+	</changeSet>
 </databaseChangeLog>
 	

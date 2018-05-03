@@ -373,4 +373,20 @@
 	<changeSet id="22" author="Vijay" dbms="mssql">
 		<renameColumn tableName="adtFINASSETTYPES" oldColumnName="FINASSETTYPEID" newColumnName="ASSETTYPEID"/>
 	</changeSet>
+	<changeSet id="18" author="SrinivasaVarma">
+			<addColumn tableName="AdtExtendedFieldDetail">
+				<column name="allowInRule" type="Boolean"></column>	
+			</addColumn>
+	</changeSet>
+	<changeSet id="19" author="SrinivasaVarma" dbms="mssql">
+		<sql>
+			alter table AdtExtendedFieldDetail add constraint df_adtextendedfdetl_alwinrule default 0 for allowInRule;
+		</sql>	
+	</changeSet>
+	<changeSet id="19" author="SrinivasaVarma" dbms="postgresql">
+		<addDefaultValue columnName="AdtExtendedFieldDetail" tableName="allowInRule" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="19" author="SrinivasaVarma" dbms="oracle">
+		<addDefaultValue columnName="AdtExtendedFieldDetail" tableName="allowInRule" defaultValue="0"/>
+	</changeSet>
 	</databaseChangeLog>
