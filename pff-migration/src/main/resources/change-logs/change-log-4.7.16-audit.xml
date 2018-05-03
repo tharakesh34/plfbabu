@@ -387,6 +387,6 @@
 		<addDefaultValue columnName="AdtExtendedFieldDetail" tableName="allowInRule" defaultValue="0"/>
 	</changeSet>
 	<changeSet id="19" author="SrinivasaVarma" dbms="oracle">
-		<addDefaultValue columnName="AdtExtendedFieldDetail" tableName="allowInRule" defaultValue="0"/>
+		<addDefaultValue tableName="AdtExtendedFieldDetail" columnName="allowInRule" defaultValue="0"/>
 	</changeSet>
 	</databaseChangeLog>
