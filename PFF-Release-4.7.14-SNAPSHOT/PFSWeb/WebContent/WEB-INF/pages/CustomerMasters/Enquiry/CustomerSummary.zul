@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_CustomerSummary" border="none" apply="${customerSummaryListCtrl}" width="100%">
+			<borderlayout id="borderLayout_AcademicList">
+				<north border="none" size="50%" splittable="true" collapsible="true" open="true" >
+					<borderlayout>
+						<north>
+							<grid>
+								<columns>
+									<column width="150px" />
+									<column />
+								</columns>
+								<rows>
+									<row visible="true">
+										<label value="${c:l('label_CustCIF.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<longbox id="custID" width="150px" maxlength="26" visible="false" />
+											<textbox id="custCIF" width="150px" maxlength="50" style="overflow: hidden;" />
+											<button id="btnSearchCustCIF" image="/images/icons/LOVSearch.png"  />
+											<vbox style="padding-top:3px;">
+												<label id="custShrtName" width="150px" style="padding-left:5px;"/>
+											</vbox>
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</north>
+						<center >
+							<borderlayout>
+								<west size="50%" title="${c:l('title_FinanceDetails')}" splittable="true" collapsible="true">
+									<listbox id="listBoxFinance"
+										  tooltiptext="${c:l('listbox.tooltiptext1')}"
+										multiple="false" fixedLayout="true" sizedByContent="true"
+										span="true" height="200px" emptyMessage="${c:l('listbox.emptyMessage')}">
+										<listhead sizable="true">
+											<listheader
+												id="listheader_FinReference"
+												label="${c:l('listheader_FinReference.label')}" sort="auto"
+												hflex="min" />
+											<listheader
+												id="listheader_FinType"
+												label="${c:l('listheader_FinType.label')}" sort="auto"
+												hflex="min" />
+											<listheader
+												id="listheader_FinCcy"
+												label="${c:l('listheader_FinCcy.label')}" sort="auto"
+												hflex="min" />
+											<listheader
+												id="listheader_ScheduleMethod"
+												label="${c:l('label_ScheduleMethod.value')}" sort="auto"
+												hflex="min" />
+											<listheader
+												id="listheader_ProfitDaysBasis"
+												label="${c:l('label_ProfitDaysBasis.value')}" sort="auto"
+												hflex="min" />
+											<listheader
+												id="listheader_FinBranch"
+												label="${c:l('label_FinBranch.value')}" sort="auto"
+												hflex="min" />
+										</listhead>
+									</listbox>
+								</west>
+								<east size="50%" title="${c:l('title_Collateral')}" splittable="true" collapsible = "true">
+									<listbox id="listBoxCustCollateral" fixedLayout="true"   span="true"   
+									height="150px" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
+										<listhead sizable="true">
+											<listheader label="${c:l('Collateral_Reference')}" sort="auto" hflex="min" />
+											<listheader label="${c:l('Collateral_Type')}" sort="auto" hflex="min" />
+											<listheader label="${c:l('Collateral_Description')}" sort="auto" hflex="min" />
+											<listheader label="${c:l('Collateral_Complete')}" sort="auto" hflex="min" visible="false"/>
+											<listheader label="${c:l('Collateral_Ccy')}" sort="auto" hflex="min" visible="false" />
+											<listheader label="${c:l('Collateral_Expiry')}" sort="auto" hflex="min" />
+											<listheader label="${c:l('Collateral_LastReview')}" sort="auto" hflex="min" />
+											<listheader label="${c:l('Collateral_Value')}" sort="auto" hflex="min" />
+											<listheader label="${c:l('Collateral_BankValuation')}" sort="auto" hflex="min" />
+											<listheader label="${c:l('Collateral_BankMargin')}" sort="auto" hflex="min" />
+											<listheader label="${c:l('Collateral_location')}" sort="auto" hflex="min" visible="false" />
+											<listheader label="${c:l('Collateral_Description')}" sort="auto" hflex="min" visible="false" />
+										</listhead>
+									</listbox>
+								</east>
+							</borderlayout>
+						</center>
+					</borderlayout>
+				</north>
+				<center>
+					<borderlayout>
+						<west size="50%" title="${c:l('title_Commitment')}" splittable="true" collapsible="true" border="none">
+							<listbox id="listBoxCommitment" fixedLayout="true"   span="true" 
+							tooltiptext="${c:l('listbox.tooltiptext')}" height="200px" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
+								<listhead sizable="true">
+									<listheader id="listheader_CmtReference" label="${c:l('listheader_CmtReference.label')}" sort="auto" hflex="min" />
+									<listheader id="listheader_CmtBranch" label="${c:l('listheader_CmtBranch.label')}" sort="auto" hflex="min" visible="false" />
+									<listheader id="listheader_CmtCcy" label="${c:l('listheader_CmtCcy.label')}" sort="auto" hflex="min" visible="false" />
+									<listheader id="listheader_CmtAccount" label="${c:l('listheader_CmtAccount.label')}" sort="auto" hflex="min" />
+									<listheader id="listheader_CmtExpDate" label="${c:l('listheader_CmtExpDate.label')}" sort="auto" hflex="min" />
+									<listheader id="listheader_CmtAmount" label="${c:l('listheader_CmtAmount.label')}" sort="auto" align="right" hflex="min" />
+									<listheader id="listheader_CmtUtilizedAmount" label="${c:l('listheader_CmtUtilizedAmount.label')}" sort="auto" align="right" hflex="min" />
+									<listheader id="listheader_CmtAvailable" label="${c:l('listheader_CmtAvailable.label')}" sort="auto" align="right" hflex="min" />
+									<listheader id="listheader_CmtStartDate" label="${c:l('listheader_CmtStartDate.label')}" sort="auto" hflex="min" visible="false" />
+								</listhead>
+							</listbox>
+						</west>
+						<east size="50%" title="${c:l('title_Limit')}" splittable="true" collapsible = "true" border="none">
+							<listbox id="listBoxCustomerLimit" fixedLayout="true"   span="true"  height="100px" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
+								<listhead sizable="true">
+									<listheader label="${c:l('listheader_CustomerLimitEnquiryList_LimitCategory.label')}" sort="auto" hflex="min" />
+									<listheader label="${c:l('listheader_CustomerLimitEnquiryList_LimitCategoryDesc.label')}" sort="auto" hflex="min" />
+									<!-- <listheader label="${c:l('listheader_CustomerLimitEnquiryList_RiskAmount.label')}" sort="auto" hflex="min" align="right" /> -->
+									<listheader label="${c:l('listheader_CustomerLimitEnquiryList_LimitStatus.label')}" sort="auto" hflex="min" align="right" />
+									<listheader label="${c:l('listheader_CustomerLimitEnquiryList_AvailWeight.label')}" sort="auto" hflex="min" align="right" />
+								</listhead>
+							</listbox>
+						</east>
+					</borderlayout>
+				</center>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

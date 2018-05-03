@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="add.schema" value=" " dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	
+	<changeSet id="1" author="satish">
+			<insert tableName="ErrorDetails">
+			<column name="ErrorCode">60406</column>
+			<column name="ErrorLanguage">EN</column>
+			<column name="ErrorSeverity">E</column>
+			<column name="ErrorMessage">Loan Can't be cancelled since disbursement instructions are paid.</column>
+			<column name="ErrorExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+	
+	</changeSet>
+	
+	<changeSet id="2" author="satish">
+		<createView viewName="PayOrderIssueHeader_View" replaceIfExists="true">
+		SELECT     T1.FinReference,T4.CustCIF,T4.PhoneNumber,T4.CustShrtName,T3.FinType,T3.FinTypeDesc,T3.FinCategory,T4.CustCRCPR,
+			T1.TotalPOAmount,T1.TotalPOCount,
+			T1.IssuedPOAmount,T1.IssuedPOCount,T1.PODueAmount,T1.PODueCount,T2.FinCcy , T2.NumberOfTerms, T2.GraceTerms , T2.FinStartDate , T2.MaturityDate, T2.FinAmount,
+            T2.FeeChargeAmt, T2.DownPaySupl, T2.TotalProfit, T2.EffectiveRateOfReturn , T2.ProfitDaysBasis,T2.CustID,
+			T1.Version,T1.LastMntBy,T1.LastMntOn,T1.RecordStatus,T1.RoleCode,
+			T1.NextRoleCode,T1.TaskId,T1.NextTaskId,T1.RecordType,T1.WorkflowId,T3.AlwMultiPartyDisb,T2.quickDisb,T2.LoanApproved,T2.FinIsActive
+FROM        PayOrderIssueHeader   T1  INNER JOIN
+			(   
+				SELECT FinCcy,FinType,CustID,NumberOfTerms,GraceTerms,FinStartDate,FinReference,1 LoanApproved,
+				MaturityDate,FinAmount,FeeChargeAmt,DownPaySupl,TotalProfit,EffectiveRateOfReturn,ProfitDaysBasis,quickDisb,
+				FinisActive
+				FROM FinanceMain
+			    UNION ALL 
+				SELECT FinCcy,FinType,CustID,NumberOfTerms,GraceTerms,FinStartDate,FinReference,0 LoanApproved,
+				MaturityDate,FinAmount,FeeChargeAmt,DownPaySupl,TotalProfit,EffectiveRateOfReturn,ProfitDaysBasis,quickDisb,
+				FinisActive
+				FROM FinanceMain_Temp 
+				 WHERE NOT EXISTS(
+					SELECT 1 FROM FinanceMain WHERE FinReference = FinanceMain_Temp.finreference
+				 )
+			)  T2 ON T1.FinReference = T2.FinReference INNER JOIN
+			RMTFinanceTypes  T3 ON T2.FinType=T3.FinType INNER JOIN
+            Customers  T4 ON T2.CustID = T4.CustID  
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          PayOrderIssueHeader_Temp
+                            WHERE      FinReference = T1.FinReference)
+		</createView>
+	
+	
+	</changeSet>
+	
+	<changeSet id="3" author="satish" dbms="Oracle">
+	<sql>
+	Update RBFieldDetails set RBFldName=lower(${call.substr}(RBFldName,1,3))${call.concatenate}
+${call.substr}(RBFldName,4,${call.collength}(RBFldName)) where RBFldName like 'FM[_]%';
+
+Update RBFieldDetails set RBFldName=lower(${call.substr}(RBFldName,1,3))${call.concatenate}
+${call.substr}(RBFldName,4,${call.collength}(RBFldName)) where RBFldName like 'FT[_]%';
+
+Update RBFieldDetails set RBFldName=lower(${call.substr}(RBFldName,1,3))${call.concatenate}
+${call.substr}(RBFldName,4,${call.collength}(RBFldName)) where RBFldName like 'CT[_]%';
+	
+	</sql>
+	</changeSet>
+	<changeSet id="3.1" author="satish" dbms="Oracle, postgresql">
+	<sql>
+	Update RBFieldDetails set RBFldName=lower(${call.substr}(RBFldName,1,3))${call.concatenate}
+${call.substr}(RBFldName,4,${call.collength}(RBFldName)) where RBFldName like 'FM_%';
+
+Update RBFieldDetails set RBFldName=lower(${call.substr}(RBFldName,1,3))${call.concatenate}
+${call.substr}(RBFldName,4,${call.collength}(RBFldName)) where RBFldName like 'FT_%';
+
+Update RBFieldDetails set RBFldName=lower(${call.substr}(RBFldName,1,3))${call.concatenate}
+${call.substr}(RBFldName,4,${call.collength}(RBFldName)) where RBFldName like 'CT_%';	
+	</sql>
+	</changeSet>
+	<changeSet id="4" author="satish">
+	<dropNotNullConstraint tableName="LimitGroupLines" columnName="GroupCode" columnDataType="varchar(8)"/>
+	<dropNotNullConstraint tableName="LimitGroupLines" columnName="LimitLine" columnDataType="varchar(8)"/>
+	<dropNotNullConstraint tableName="LimitGroupLines_Temp" columnName="GroupCode" columnDataType="varchar(8)"/>
+	<dropNotNullConstraint tableName="LimitGroupLines_Temp" columnName="LimitLine" columnDataType="varchar(8)"/>
+	</changeSet>
+	
+	<changeSet id="5" author="sreeRavali">
+		<addColumn tableName="FinWriteoffPayment">
+			<column name="SeqNo" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="6" author="sreeRavali">
+		<dropPrimaryKey constraintName="pk_FinWriteoffPayment" tableName="FinWriteoffPayment" />
+	</changeSet>
+	<changeSet id="7" author="sreeRavali">
+	<addDefaultValue columnDataType="bigint" columnName="SeqNo"
+			defaultValueNumeric="0" tableName="FinWriteoffPayment" />
+	</changeSet>
+	<changeSet id="8" author="sreeRavali">
+		<update tableName="FinWriteoffPayment">
+			<column name="SeqNo">1</column>
+		</update>
+	</changeSet>
+	
+	<changeSet id="9" author="sreeRavali">
+		<addNotNullConstraint tableName="FinWriteoffPayment" columnName="SeqNo" columnDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="10" author="sreeRavali">
+		<addPrimaryKey columnNames="FinReference,SeqNo,LinkedTranId" constraintName="pk_FinWriteoffPayment"
+			tableName="FinWriteoffPayment" />
+	</changeSet>
+	
+	<changeSet id="11" author="sreeRavali">
+		<addColumn tableName="FinWriteoffPayment_Temp">
+			<column name="SeqNo" type="bigint"  />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="12" author="sreeRavali">
+		<update tableName="FinWriteoffPayment_Temp">
+			<column name="SeqNo">1</column>
+		</update>
+	</changeSet>
+	
+	<changeSet id="13" author="sreeRavali">
+		<dropPrimaryKey constraintName="pk_FinWriteoffPayment_Temp" tableName="FinWriteoffPayment_Temp" />
+	</changeSet>
+	
+	<changeSet id="14" author="sreeRavali">
+		<addNotNullConstraint tableName="FinWriteoffPayment_Temp" columnName="SeqNo" columnDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="15" author="sreeRavali">
+		<addPrimaryKey columnNames="FinReference,SeqNo,LinkedTranId" constraintName="pk_FinWriteoffPayment_Temp"
+			tableName="FinWriteoffPayment_Temp" />
+	</changeSet>
+	
+	<changeSet id="16" author="siva">
+		<sql>
+			 DELETE from SecGroupRights where RightID = (select rightid from SecRights where RightName = 'button_FinanceMainDialog_btnRecalculate') 
+				AND GrpID = (select GrpID from SecGroups where GrpCode = 'FIN_RMVTERM_MAKER');
+		</sql>
+	</changeSet>
+	<changeSet id="17" author="sreeRavali">
+		<dropPrimaryKey constraintName="pk_FinWriteoffPayment" tableName="FinWriteoffPayment" />
+	</changeSet>
+	<changeSet id="18" author="sreeRavali">
+		<dropPrimaryKey constraintName="pk_FinWriteoffPayment_Temp" tableName="FinWriteoffPayment_Temp" />
+	</changeSet>
+	<changeSet id="19" author="sreeRavali">
+		<addPrimaryKey columnNames="FinReference,SeqNo"
+			constraintName="pk_FinWriteoffPayment" tableName="FinWriteoffPayment" />
+	</changeSet>
+	<changeSet id="20" author="sreeRavali">
+		<addPrimaryKey columnNames="FinReference,SeqNo"
+			constraintName="pk_FinWriteoffPayment_Temp" tableName="FinWriteoffPayment_Temp" />
+	</changeSet>
+	<changeSet id="21" author="Madhubabu">
+	<sql>
+		insert into BMTDocumentTypes values(9999,'Passport',1,1,1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,1,1,1,1);
+		insert into BMTDocumentTypes values(9998,'Passport',1,1,1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,1,1,1,1);
+		update CustomerDocuments set CustDocCategory='9999' where CustDocCategory= '02';
+		update CustomerDocuments set CustDocCategory='9998' where CustDocCategory= '03';
+		delete from BMTDocumentTypes where DocTypeCode='02';
+		insert into BMTDocumentTypes values('02','Passport',1,1,1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,1,1,1,1);
+		delete from BMTDocumentTypes where DocTypeCode='03';
+		insert into BMTDocumentTypes values('03','PAN Card',1,1,1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,1,1,1,1);
+		update CustomerDocuments set CustDocCategory='02' where CustDocCategory= '9999';
+		update CustomerDocuments set CustDocCategory='03' where CustDocCategory= '9998';
+		delete from BMTDocumentTypes where DocTypeCode='9999';
+		delete from BMTDocumentTypes where DocTypeCode='9998';
+		</sql>
+		</changeSet>
+		<changeSet author="Prasad Raju" id="22">
+    <createView replaceIfExists="true" viewName="RPT_soa_customer_view">
+	Select  T1.FinReference,T1.FinPurpose,T1.Finstartdate,t1.FinBranch,T1.FinType,'' Interest_Type,''Linked_Agreement_No,
+		'' Closed_Linked_Agree_No,T.CustFName,T.CustMName,
+		CustLName,T.CustCIF,t.CustID,CustAddrHNbr,CustFlatNbr,CustAddrStreet,
+	CustPOBox,CustAddrCity,CustAddrProvince,CustAddrCountry,''PropertyDetails,''PropertyAddress,PhoneCountryCode,
+	PhoneAreaCode,T.PhoneNumber ,CustEMail,ActiveCnt,CloseCnt,Tot from (
+	Select CustFName,CustMName,CustLName,CustCIF,t1.CustID,CustAddrHNbr,CustFlatNbr,CustAddrStreet,
+	CustPOBox,CustAddrCity,CustAddrProvince,CustAddrCountry,PhoneCountryCode,
+	PhoneAreaCode,T3.PhoneNumber ,CustEMail,ActiveCnt,CloseCnt,ActiveCnt+coalesce(CloseCnt,0) Tot
+	from Customers T1 Left join
+	CustomerAddresses T2 ON t1.CustID =T2.CustID Left join
+	CustomerPhoneNumbers T3 ON t1.CustID =T3.PhoneCustID  Left join
+	CustomerEMails T4 on T4.CustID =T1.CustID  Left join
+	(Select CustID,COUNT(*)ActiveCnt from FinPftDetails
+	where (FinIsActive=1) group by CustID)T5 ON T1.CustID =T5.CustID  Left join
+	(Select CustID,COUNT(*)CloseCnt from FinPftDetails
+	where (FinIsActive!=1)group by CustID)T6 ON T1.CustID =T6.CustID)T Left join
+	FinPftDetails T1 on T.CustID=T1.CustID
+	</createView>
+</changeSet>
+<changeSet author="Prasad Raju" id="23">
+    <createView replaceIfExists="true" viewName="RPT_soa_finsmry_view">
+	Select FinReference,'Instalment Amount' comp,(NSchdPri+NSchdPft)/100 due,
+			(TotalPriBal+TotalPftBal)/100 Receipt from FinPftDetails union all
+	Select FinReference,'Principal Component' comp,	NSchdPri/100 due,
+	TotalPriBal/100 Receipt from FinPftDetails  union all
+	Select FinReference,'Interest Component' comp,NSchdPft/100 due,
+	TotalPftBal/100 Receipt from FinPftDetails  union all
+	Select FinReference,'Late Payment Penalty' comp,0 due,
+	0 Receipt from FinPftDetails union all
+	Select FinReference,'Bounce Charges' comp,0 due,
+	0 Receipt from FinPftDetails union all
+	Select FinReference,'Other Receivables' comp,0 due,
+	0 Receipt from FinPftDetails union all
+	Select FinReference,'Unadjusted Amount' comp,0 due,
+	0 Receipt from FinPftDetails union all
+	Select FinReference,'Other Payables' comp,0 due,
+	0 Receipt from FinPftDetails
+	</createView>
+</changeSet>
+
+<changeSet author="Prasad Raju" id="24">
+    <createView replaceIfExists="true" viewName="RPT_soa_loan_view">
+	Select FM.FinReference,FM.FinCurrAssetValue LoanAmount,
+	   0.00 PLRRate,0.00 Variance,0.00 IRR,FM.RepayProfitRate ROI,
+	   FP.noinst Tenure,TotalPriPaid + TotalPftPaid EMIReceived,
+	   0.00 PreferredCardLimit,LastRpySchPri + LastRpySchPft PrevInstAmt,
+	   FM.RepayRateBasis intRateType,FD.disbdate LastDisbursalDate,
+	   FP.FirstRepayDate FirstDueDate,FP.MaturityDate EndInstallmentDate,
+	   '0.00/ 0' AdvInstAmt,FP.FinIsActive Status,0 FutureInstAmt,
+	   0 FutureInstNo,0 FuturePriComponent,0 Future_inst_comp,FR.PenaltyPaid Charge_coll_cust,
+	   0 Upfront_int_cust,	0 Int_paid_Dealer_upfront,0 Pre_emi_Int_Paid,
+	   '' Repo_Status,'' Repo_Date,''Sale_Date,'' Release_Date,FP.LatestRpyDate Closure_Date
+From FinanceMain FM inner join
+	 FinPftDetails FP on FP.FinReference = FM.FinReference inner join
+	 (Select FinReference,MAX(DisbDate)disbdate from FinDisbursementDetails
+	  group by FinReference) FD on FP.FinReference = FD.FinReference left join
+	  ( Select FinReference,SUM(PenaltyPaid) PenaltyPaid from FinODCRecovery
+	 group by FinReference) FR on FR.FinReference = FD.FinReference
+	</createView>
+</changeSet>
+
+<changeSet author="Prasad Raju" id="25">
+    <createView replaceIfExists="true" viewName="RPT_soa_txndetails_view">
+	Select PostDate,finReference,TranDesc,SUM(PostAmount)DEBITS,0 CREDITS from Postings
+	where DrOrCr='D' group by PostDate,finReference,TranDesc union
+	Select PostDate,finReference,TranDesc,0 DEBITS,SUM(PostAmount) CREDITS from Postings
+	where DrOrCr='C' group by PostDate,finReference,TranDesc
+	</createView>
+</changeSet>
+	<changeSet id="26" author="Prasad Raju">
+		<update tableName="REPORTCONFIGURATION">
+			<column name="REPORTJASPERNAME">soa_header</column>
+			<where>REPORTNAME='Statement Of Account'</where>
+		</update>
+	</changeSet>
+	<changeSet id="27" author="SreeRavali">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('30571','EN','E','Bpi Treatment not applicable for the selected Schedule Dates.','test','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	<changeSet id="28" author="Siva">
+		<sql>
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+			SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='FIN_UNPLANEMIH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinFeeDetailListCtrl_AlwFeeMaintenance'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		</sql>
+</changeSet>
+
+</databaseChangeLog>

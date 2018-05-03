@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CustomerWiseIncome" language="groovy" pageWidth="2227" pageHeight="3240" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="2207" leftMargin="0" rightMargin="20" topMargin="0" bottomMargin="20" isIgnorePagination="true" uuid="94d75d8e-97ff-4cd9-9adc-cc38e21748bb">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["../../StyleSheet/Template.jrtx"]]></template>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="userName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="searchCriteria" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="whereCondition" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="organizationLogo" class="java.lang.String"/>
+	<parameter name="productLogo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select * from RPT_EMRCustwiseIncMonthly_View $P!{whereCondition} Order by Branch,CustomerNo]]>
+	</queryString>
+	<field name="Branch" class="java.lang.String"/>
+	<field name="CustomerNo" class="java.lang.String"/>
+	<field name="CustomerName" class="java.lang.String"/>
+	<field name="CustomerType" class="java.lang.String"/>
+	<field name="AccountType" class="java.lang.String"/>
+	<field name="AnalysisCode" class="java.lang.String"/>
+	<field name="Currency" class="java.lang.String"/>
+	<field name="UnpaidPftAmt" class="java.math.BigDecimal"/>
+	<field name="SchDate_Month" class="java.lang.String"/>
+	<field name="MonthNum" class="java.lang.Integer"/>
+	<field name="YearNum" class="java.lang.Integer"/>
+	<columnHeader>
+		<band height="30">
+			<frame>
+				<reportElement uuid="062791cd-50fa-4068-b111-405816383962" x="0" y="0" width="931" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<image>
+					<reportElement uuid="191dc9c0-d24b-4d40-b0d2-8a4dd0415629" x="0" y="0" width="178" height="30"/>
+					<box>
+						<leftPen lineWidth="0.5"/>
+					</box>
+					<imageExpression><![CDATA[$P{organizationLogo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement uuid="ce8aa4d0-a410-4e32-95a9-39fee0f119cd" style="Title Header" mode="Transparent" x="178" y="0" width="753" height="30"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Customer Wise Income ]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<summary>
+		<band height="50">
+			<crosstab>
+				<reportElement uuid="597c5165-8911-4222-9e52-43e692c18070" style="Crosstab Data Text" x="0" y="0" width="931" height="50"/>
+				<crosstabHeaderCell>
+					<cellContents>
+						<staticText>
+							<reportElement uuid="9b2c7db1-fb6d-4952-8eb2-229172546327" style="Detail Header" mode="Opaque" x="0" y="0" width="100" height="15" backcolor="#FFE2BF"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement/>
+							<text><![CDATA[Year]]></text>
+						</staticText>
+						<staticText>
+							<reportElement uuid="9b2c7db1-fb6d-4952-8eb2-229172546327" style="Detail Header" mode="Opaque" x="100" y="0" width="70" height="15" backcolor="#FFE2BF"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement/>
+							<text><![CDATA[Branch]]></text>
+						</staticText>
+						<staticText>
+							<reportElement uuid="9b2c7db1-fb6d-4952-8eb2-229172546327" style="Detail Header" mode="Opaque" x="170" y="0" width="70" height="15" backcolor="#FFE2BF"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement/>
+							<text><![CDATA[Customer No.]]></text>
+						</staticText>
+						<staticText>
+							<reportElement uuid="9b2c7db1-fb6d-4952-8eb2-229172546327" style="Detail Header" mode="Opaque" x="240" y="0" width="218" height="15" backcolor="#FFE2BF"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement/>
+							<text><![CDATA[Customer Name]]></text>
+						</staticText>
+						<staticText>
+							<reportElement uuid="9b2c7db1-fb6d-4952-8eb2-229172546327" style="Detail Header" mode="Opaque" x="458" y="0" width="228" height="15" backcolor="#FFE2BF"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement/>
+							<text><![CDATA[Customer Type]]></text>
+						</staticText>
+						<staticText>
+							<reportElement uuid="9b2c7db1-fb6d-4952-8eb2-229172546327" style="Detail Header" mode="Opaque" x="686" y="0" width="195" height="15" backcolor="#FFE2BF"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement/>
+							<text><![CDATA[Account Type]]></text>
+						</staticText>
+						<staticText>
+							<reportElement uuid="9b2c7db1-fb6d-4952-8eb2-229172546327" style="Detail Header" mode="Opaque" x="881" y="0" width="100" height="15" backcolor="#FFE2BF"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement/>
+							<text><![CDATA[Analysis Code]]></text>
+						</staticText>
+						<staticText>
+							<reportElement uuid="9b2c7db1-fb6d-4952-8eb2-229172546327" style="Detail Header" mode="Opaque" x="981" y="0" width="100" height="15" backcolor="#FFE2BF"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement/>
+							<text><![CDATA[Currency]]></text>
+						</staticText>
+					</cellContents>
+				</crosstabHeaderCell>
+				<rowGroup name="Year" width="100">
+					<bucket class="java.lang.Integer">
+						<bucketExpression><![CDATA[$F{YearNum}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textField>
+								<reportElement uuid="3df9f993-f25f-4296-9a6a-9c60ae62c531" style="Detail Value" x="0" y="0" width="100" height="15"/>
+								<textElement textAlignment="Left">
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{Year}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="Branch" width="70">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{Branch}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement uuid="3df9f993-f25f-4296-9a6a-9c60ae62c531" style="Detail Value" x="0" y="0" width="70" height="15"/>
+								<textElement textAlignment="Left">
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{Branch}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="CustomerNo" width="70">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{CustomerNo}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement uuid="d65ea1eb-c829-42b9-9cac-608aca1e752d" style="Detail Value" x="0" y="0" width="70" height="15"/>
+								<textElement textAlignment="Left">
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{CustomerNo}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="Customer Name" width="218">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{CustomerName}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textField>
+								<reportElement uuid="90e230b2-560f-4634-b94c-51db46fe786b" style="Detail Value" x="0" y="0" width="218" height="15"/>
+								<textElement textAlignment="Left">
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{Customer Name}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="CustomerType" width="228">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{CustomerType}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textField>
+								<reportElement uuid="90e230b2-560f-4634-b94c-51db46fe786b" style="Detail Value" x="0" y="0" width="228" height="15"/>
+								<textElement textAlignment="Left">
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{CustomerType}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="AccountType" width="195">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{AccountType}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textField>
+								<reportElement uuid="90e230b2-560f-4634-b94c-51db46fe786b" style="Detail Value" x="0" y="0" width="195" height="15"/>
+								<textElement textAlignment="Left">
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{AccountType}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="AnalysisCode" width="100">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{AnalysisCode}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textField>
+								<reportElement uuid="90e230b2-560f-4634-b94c-51db46fe786b" style="Detail Value" x="0" y="0" width="100" height="15"/>
+								<textElement textAlignment="Left">
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{AnalysisCode}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="Currency" width="100">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{Currency}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textField>
+								<reportElement uuid="43de5b6d-24d6-4c37-9729-1201fe25c4bb" style="Detail Value" x="0" y="0" width="100" height="15"/>
+								<textElement textAlignment="Left">
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{Currency}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="SchDate_Month" height="15">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{SchDate_Month}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#FFE2BF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="">
+								<reportElement uuid="b7b0a1dd-f2c9-48b7-980f-a31728133278" style="Detail Header" x="0" y="0" width="143" height="15"/>
+								<textElement/>
+								<textFieldExpression><![CDATA[$V{SchDate_Month}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="UnpaidPftAmtMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{UnpaidPftAmt}]]></measureExpression>
+				</measure>
+				<crosstabCell width="143" height="15">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField pattern="#,##0.00">
+							<reportElement uuid="cb3247ea-40d1-4844-b95d-4deb40d034b9" style="Detail Value" x="0" y="0" width="143" height="15"/>
+							<textElement textAlignment="Right">
+								<paragraph rightIndent="4"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{UnpaidPftAmtMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="Branch">
+					<cellContents backcolor="#BF9360" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement uuid="240d25fb-1a50-4cc1-b94f-2714d7edc726" style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$V{UnpaidPftAmtMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="SchDate_Month">
+					<cellContents backcolor="#FFF3E6" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement uuid="b7f76de7-aa81-4859-adf5-b6b7bb5da6a4" style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$V{UnpaidPftAmtMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Branch" columnTotalGroup="SchDate_Month">
+					<cellContents backcolor="#BF9360" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement uuid="72c71f34-85c4-4c65-956b-632e08b2830d" style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$V{UnpaidPftAmtMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="CustomerNo">
+					<cellContents backcolor="#FFF3E6" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement uuid="50c5e7a6-d353-4b21-8f82-6d9e5c6a9a9a" style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$V{UnpaidPftAmtMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="CustomerNo" columnTotalGroup="SchDate_Month">
+					<cellContents backcolor="#FFF3E6" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement uuid="6b0a9984-1b49-48a8-8fcd-3c45e3a6f558" style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$V{UnpaidPftAmtMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Customer Name">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Customer Name" columnTotalGroup="SchDate_Month">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Year">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Year" columnTotalGroup="SchDate_Month">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="CustomerType">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="CustomerType" columnTotalGroup="SchDate_Month">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="AccountType">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="AccountType" columnTotalGroup="SchDate_Month">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="AnalysisCode">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="AnalysisCode" columnTotalGroup="SchDate_Month">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Currency">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Currency" columnTotalGroup="SchDate_Month">
+					<cellContents/>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</summary>
+</jasperReport>

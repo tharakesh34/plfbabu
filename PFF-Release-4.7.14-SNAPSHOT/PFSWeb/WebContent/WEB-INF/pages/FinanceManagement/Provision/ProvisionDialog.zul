@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_ProvisionDialog" border="normal"
+			apply="${provisionDialogCtrl}" width="100%" height="100%"
+			sizable="false">
+
+			<borderlayout id="borderlayoutProvision">
+				<north>
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								sclass="toolbar-start">
+								<button id="btnNew" 
+									tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnEdit" 
+									tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnDelete" visible="false"
+									tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnSave" 
+									tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnCancel" 
+									tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
+								<button id="btnNotes" 
+									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							</toolbar>
+
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label
+									value="${c:l('window_ProvisionDialog.title')}"
+									sclass="label-heading" />
+							</toolbar>
+
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" visible="false" 
+									label="${c:l('label_Help')}"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnClose" 
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+
+				<center border="none" id="divCenter">
+					<tabbox id="tabBoxIndexCenter" width="99%"
+						height="100%">
+						<tabs id="tabsIndexCenter">
+							<tab id="financeTypeDetailsTab"
+								label="${c:l('ProvisionBasicDetails')}" />
+						</tabs>
+						<tabpanels id="tabpanelsBoxIndexCenter">
+							<tabpanel style="overflow:auto">
+								<div id="basicDetailTabDiv">
+									<groupbox id="gb_basicDetails">
+										<grid
+											sclass="GridLayoutNoBorder" fixedLayout="true"
+											style="border:0px">
+											<columns>
+												<column width="190px" />
+												<column />
+												<column width="190px" />
+												<column />
+											</columns>
+											<rows>
+												<row visible="true">
+													<label
+														id="label_ProvisionDialog_FinReference"
+														value="${c:l('label_ProvisionDialog_FinReference.value')}" />
+													<extendedcombobox
+														id="finReference" />
+													<label
+														id="label_ProvisionDialog_FinBranch"
+														value="${c:l('label_ProvisionDialog_FinBranch.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<textbox
+															id="finBranch" readonly="true"
+															width="72px" />
+													</hbox>
+												</row>
+												<row visible="true">
+													<label
+														id="label_ProvisionDialog_FinType"
+														value="${c:l('label_ProvisionDialog_FinType.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<textbox
+															id="finType" maxlength="8" readonly="true" width="72px" />
+													</hbox>
+													<label
+														id="label_ProvisionDialog_CustID"
+														value="${c:l('label_ProvisionDialog_CustID.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<longbox
+															id="custID" width="150px" maxlength="26" visible="false" />
+														<textbox
+															id="lovDescCustCIF" width="150px" readonly="true" />
+														<label
+															id="custShrtName" width="150px" />
+													</hbox>
+												</row>
+												<row visible="true">
+													<label
+														id="label_ProvisionDialog_PrincipalDue"
+														value="${c:l('label_ProvisionDialog_PrincipalDue.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<decimalbox
+															id="principalDue" readonly="true" width="162px"
+															maxlength="18" />
+													</hbox>
+													<label
+														id="label_ProvisionDialog_ProfitDue"
+														value="${c:l('label_ProvisionDialog_ProfitDue.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<decimalbox
+															id="profitDue" width="162px" readonly="true"
+															maxlength="18" />
+													</hbox>
+												</row>
+												<row visible="true">
+													<label
+														id="label_ProvisionDialog_DueTotal"
+														value="${c:l('label_ProvisionDialog_DueTotal.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<decimalbox
+															id="dueTotal" width="162px" readonly="true"
+															maxlength="18" />
+													</hbox>
+													<label
+														id="label_ProvisionDialog_DueFromDate"
+														value="${c:l('label_ProvisionDialog_DueFromDate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<datebox
+															id="dueFromDate" readonly="true" width="144px"
+															disabled="true" buttonVisible="false" />
+													</hbox>
+												</row>
+												<row visible="true">
+													<label
+														id="label_ProvisionDialog_CalProvisionedAmt"
+														value="${c:l('label_ProvisionDialog_CalProvisionedAmt.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<decimalbox
+															id="calProvisionedAmt" width="162px" readonly="true"
+															maxlength="18" />
+													</hbox>
+													<label
+														id="label_ProvisionDialog_ProvisionedAmt"
+														value="${c:l('label_ProvisionDialog_ProvisionedAmt.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<decimalbox
+															id="provisionedAmt" width="162px" readonly="true"
+															maxlength="18" />
+													</hbox>
+												</row>
+												<row visible="true">
+													<label
+														id="label_ProvisionDialog_UseNFProv"
+														value="${c:l('label_ProvisionDialog_UseNFProv.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="useNFProv" checked="false" />
+													</hbox>
+												</row>
+												<row visible="true">
+													<label
+														id="label_ProvisionDialog_ProvisionAmt"
+														value="${c:l('label_ProvisionDialog_ProvisionAmt.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<decimalbox
+															id="nonFormulaProv" width="162px" maxlength="18" />
+													</hbox>
+												</row>
+												<row visible="true">
+													<label
+														id="label_ProvisionDialog_AutoReleaseNFP"
+														value="${c:l('label_ProvisionDialog_AutoReleaseNFP.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="autoReleaseNFP" checked="false" />
+													</hbox>
+													<label
+														id="label_ProvisionDialog_lastFullyPaidDate"
+														value="${c:l('label_ProvisionDialog_lastFullyPaidDate.value')}"
+														visible="false" />
+													<hbox
+														visible="false">
+														<space
+															spacing="2px" />
+														<datebox
+															id="lastFullyPaidDate" readonly="true" width="144px"
+															disabled="true" buttonVisible="false" />
+													</hbox>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+								</div>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</center>
+				<south sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%"
+						closable="false">
+						<caption label="${c:l('Action')}" />
+						<hbox width="95%">
+							<radiogroup id="userAction" name="action" />
+							<label
+								id="label_ProvisionDialog_RecordStatus"
+								value="${c:l('label_South_RecordStatus.value')}"
+								sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
+
+			</borderlayout>
+		</window>
+	</window>
+</zk>

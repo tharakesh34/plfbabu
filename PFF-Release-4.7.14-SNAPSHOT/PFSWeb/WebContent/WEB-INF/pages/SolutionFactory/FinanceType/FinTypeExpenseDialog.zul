@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_FinTypeExpenseDialog" border="normal"
+		apply="${finTypeExpenseDialogCtrl}" width="80%" height="50%"
+		sizable="false">
+
+		<borderlayout id="borderlayoutFinanceType">
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete" label="Delete"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCaAmortization Requiredncel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_FinTypeExpenseDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" visible="false"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}" label="Help"
+								sclass="z-toolbarbutton" />
+							<button id="btnClose"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false"
+				style="padding:5px;">
+				<groupbox id="gb_ExpenseTypeDetails" closable="false"
+					sclass="gb-dialog">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="220px" />
+							<column />
+							<column width="220px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_FinTypeExpenseDialog_ExpenseTypeCode"
+									value="${c:l('label_FinTypeExpenseDialog_ExpenseTypeCode.value')}" />
+								<extendedcombobox id="expenseType" />
+							</row>
+							<row>
+								<label
+									id="label_FinTypeExpenseDialog_CalculationType"
+									value="${c:l('label_FinTypeExpenseDialog_CalculationType.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="calculationType"
+										readonly="true" />
+								</hbox>
+								<label
+									id="label_FinTypeExpenseDialog_AmtPerc"
+									value="${c:l('label_FinTypeExpenseDialog_AmtPerc.value')}" />
+								<hbox>
+									<currencyBox id="amount"
+										visible="false" />
+									<space id="space_percentage"
+										spacing="2px" sclass="mandatory" visible="false" />
+									<decimalbox id="percentage"
+										visible="false" />
+								</hbox>
+							</row>
+							<row id="row_CalculationOn"
+								visible="false">
+								<label
+									id="label_FinTypeExpenseDialog_CalculationOn"
+									value="${c:l('label_FinTypeExpenseDialog_CalculationOn.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="calculationOn"
+										readonly="true" />
+								</hbox>
+							</row>
+							<row id = "row_AmzTax" >
+								<label
+									id="label_label_FinTypeFeesDialog_AmortReq"
+									value="${c:l('label_ExpenseTypeDialog_AmortReq.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="amortReq" />
+								</hbox>
+								<label
+									id="label_label_FinTypeFeesDialog_TaxApplicable"
+									value="${c:l('label_ExpenseTypeDialog_TaxApplicable.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="taxApplicable" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_FinTypeFeesDialog_Active"
+									value="${c:l('label_FinTypeFeesDialog_Active.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="active" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+			<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%"
+					closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label
+							id="label_FinTypeExpenseDialog_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

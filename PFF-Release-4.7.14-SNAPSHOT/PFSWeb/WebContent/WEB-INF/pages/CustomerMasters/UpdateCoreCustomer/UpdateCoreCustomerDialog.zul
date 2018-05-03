@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_UpdateCoreCustomer" border="normal"
+		apply="${updateCoreCustomerDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+		<borderlayout id="borderlayoutProspectCustomer">
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_UpdateCoreCustomer.title')}"
+								sclass="label-heading" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false">
+				<groupbox sclass="gb-dialog">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="190px" />
+							<column width="300px" />
+							<column width="150px" />
+						</columns>
+						<rows>
+							<row visible="true" id="row_custCIF">
+								<label
+									id="label_FinanceMainDialog_CustID"
+									value="${c:l('label_FinanceMainDialog_CustID.value')}" />
+								<extendedcombobox id="custCIF" />
+								<button id="btnUpdateCustCIF"
+									label="Update" />
+							</row>
+						</rows>
+					</grid>
+					<tabbox width="100%">
+						<tabs>
+							<tab id="exisitngDetailsTab"
+								label="Existing Details" visible="false" />
+							<tab id="newDetailsTab" label="New Details"
+								visible="false" />
+						</tabs>
+						<tabpanels id="tabpanelsBoxIndexCenter">
+							<tabpanel style="overflow:auto">
+								<listbox id="listBoxUpdateCustomer"
+									emptyMessage="${c:l('listbox.emptyMessage')}"
+									tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+									height="100%" multiple="true" checkmark="true" rows="17"
+									visible="false" sizedByContent="true" span="true">
+									<listhead sizable="true">
+										<listheader
+											id="listheader_CustFieldName"
+											label="${c:l('listheader_CustFieldName.label')}" hflex="min" />
+										<listheader
+											id="listheader_CustCoreValue"
+											label="${c:l('listheader_CustCoreValue.label')}" hflex="min" />
+										<listheader
+											id="listheader_CustPFFValue"
+											label="${c:l('listheader_CustPFFValue.label')}" hflex="min" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+							<tabpanel>
+								<listbox id="listBoxNewCustomer"
+									fixedLayout="true"   sizedByContent="true"
+									span="true" emptyMessage="${c:l('listbox.emptyMessage')}"
+									tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+									height="100%" rows="16">
+									<listhead sizable="true">
+										<listheader
+											label="${c:l('listheader_CustFieldName.label')}" hflex="min" />
+										<listheader
+											label="${c:l('listheader_CustCoreValue.label')}" hflex="min" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</groupbox>
+			</center>
+			<south sclass="south-dialog" visible="false">
+				<groupbox id="groupboxWf" width="99%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label
+							id="label_ProspectCustomerDialog_RecordStatus"
+							value="${c:l('label_ProspectCustomerDialog_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

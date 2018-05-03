@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_FinTypeFeesDialog" border="normal"
+		apply="${finTypeFeesDialogCtrl}" width="90%" height="80%"
+		sizable="false">
+
+		<borderlayout id="borderlayoutFinanceType">
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete" label="Delete"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label id="label_Window_Title"
+								value="${c:l('window_FinTypeFeesDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" visible="false"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}" label="Help"
+								sclass="z-toolbarbutton" />
+							<button id="btnClose"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false"
+				style="padding:5px;">
+				<groupbox id="gb_custAccountDetails" closable="false">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="220px" />
+							<column />
+							<column width="220px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label id="label_FinTypeFeesDialog_FeeType"
+									value="${c:l('label_FinTypeFeesDialog_FeeType.value')}" />
+								<hbox>
+									<extendedcombobox id="feeType" />
+								</hbox>
+								<label id="label_FinTypeFeesDialog_FinEvent"
+									value="${c:l('label_FinTypeFeesDialog_FinEvent.value')}" />
+								<hbox>
+									<extendedcombobox id="finEvent" />
+								</hbox>
+							</row>
+							<row>
+								<label id="label_FinTypeFeesDialog_CalculationType"
+									value="${c:l('label_FinTypeFeesDialog_CalculationType.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<combobox id="calculationType" readonly="true" />
+								</hbox>
+								<label id="label_FinTypeFeesDialog_RuleAmtPerc"
+									value="${c:l('label_FinTypeFeesDialog_RuleAmtPerc.value')}" />
+								<hbox>
+									<extendedcombobox id="ruleCode" />
+									<currencyBox id="amount" visible="false" />
+									<space id="space_percentage" spacing="2px" sclass="mandatory" visible="false"/>
+									<decimalbox id="percentage" visible="false" />
+								</hbox>
+							</row>
+							<row id="row_CalculationOn" visible="false">
+								<label id="label_FinTypeFeesDialog_CalculationOn"
+									value="${c:l('label_FinTypeFeesDialog_CalculationOn.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<combobox id="calculationOn" readonly="true" />
+								</hbox>
+							</row>
+							<row id="row_FeeScheduleMethod">
+							<label id="label_FinTypeFeesDialog_FeeScheduleMethod"
+									value="${c:l('label_FinTypeFeesDialog_FeeScheduleMethod.value')}" />
+								<hbox id="hbox_feeScheduleMethod">
+									<space spacing="2px" sclass="mandatory" />
+									<combobox id="feeScheduleMethod" readonly="true" />
+								</hbox>
+								<label id="label_FinTypeFeesDialog_AlwModifyFeeSchdMthd"
+									value="${c:l('label_FinTypeFeesDialog_AlwModifyFeeSchdMthd.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="alwModifyFeeSchdMthd" />
+								</hbox>
+							</row>
+							<row>
+								<label id="label_FinTypeFeesDialog_Order"
+									value="${c:l('label_FinTypeFeesDialog_Order.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<intbox id="feeOrder" />
+								</hbox>
+								<label id="label_FinTypeFeesDialog_AlwModifyFee"
+									value="${c:l('label_FinTypeFeesDialog_AlwModifyFee.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="alwModifyFee" />
+								</hbox>
+							</row>
+							<row>
+								<label id="label_FinTypeFeesDialog_AlwDeviation"
+									value="${c:l('label_FinTypeFeesDialog_AlwDeviation.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="alwDeviation" />
+								</hbox>
+								<label id="label_FinTypeFeesDialog_MaxWaiver"
+									value="${c:l('label_FinTypeFeesDialog_MaxWaiver.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<decimalbox id="maxWaiver" width="120px" />
+								</hbox>
+							</row>
+							<row>
+								<label id="label_FinTypeFeesDialog_Active"
+									value="${c:l('label_FinTypeFeesDialog_Active.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="active" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+			<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%"
+					closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_FinanceTypeDialog_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

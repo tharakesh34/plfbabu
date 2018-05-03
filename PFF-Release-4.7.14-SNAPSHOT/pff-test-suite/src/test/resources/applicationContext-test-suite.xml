@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+	<!-- CONFIG-FILE FOR CONNECTING TO A TEST SUITE DATABASE = -->
+	<bean id="secDataSource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${secjdbc.driverClassName}" />
+		<property name="url" value="${secjdbc.url}" />
+		<property name="username" value="${secjdbc.username}" />
+		<property name="password" value="${secjdbc.password}" />
+		<property name="minIdle" value="0" />
+		<property name="maxIdle" value="8" />
+	</bean>
+	<bean id="dataSource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${pfsjdbc.driverClassName}" />
+		<property name="url" value="${pfsjdbc.url}" />
+		<property name="username" value="${pfsjdbc.username}" />
+		<property name="password" value="${pfsjdbc.password}" />
+		<property name="minIdle" value="0" />
+		<property name="maxIdle" value="8" />
+	</bean>
+	<bean id="auditDataSource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${pfsjdbc.driverClassName}" />
+		<property name="url" value="${auditjdbc.url}" />
+		<property name="username" value="${auditjdbc.username}" />
+		<property name="password" value="${auditjdbc.password}" />
+		<property name="minIdle" value="0" />
+		<property name="maxIdle" value="8" />
+	</bean>
+	<bean id="pfsExtDatasource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${pffextjdbc.driverClassName}" />
+		<property name="url" value="${pffextjdbc.url}" />
+		<property name="username" value="${pffextjdbc.username}" />
+		<property name="password" value="${pffextjdbc.password}" />
+	</bean>
+	
+	<bean id="finOneDataSource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${finOnejdbc.driverClassName}" />
+		<property name="url" value="${finOnejdbc.url}" />
+		<property name="username" value="${finOnejdbc.username}" />
+		<property name="password" value="${finOnejdbc.password}" />
+	</bean>
+
+	<!-- Duplicating from applicationContext-core-interface.xml -->
+	<bean id="coreDBDatasource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${secjdbc.driverClassName}" />
+		<property name="url" value="${secjdbc.url}" />
+		<property name="username" value="${secjdbc.username}" />
+		<property name="password" value="${secjdbc.password}" />
+	</bean>
+</beans>

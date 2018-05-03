@@ -1,0 +1,1093 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	
+	<changeSet id="pre_run_for_pgp" author="Kesav" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<!-- Entity -->
+	<changeSet id="1" author="Kesav">
+		<addColumn tableName="Entity">
+			<column name="GSTINAvailable" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2" author="Kesav">
+		<addColumn tableName="Entity_Temp">
+			<column name="GSTINAvailable" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2.1" author="Kesav" dbms="postgresql">
+		<sql>
+			set search_path=plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	<changeSet id="3" author="Kesav">
+		<comment>gstinAvailable column added for GST changes</comment>
+		<createView viewName="entity_aview" replaceIfExists="true">
+			SELECT  	t1.entitycode,
+					    t1.entitydesc,
+					    t1.pannumber,
+					    t1.entityaddrline1,
+					    t1.entityaddrline2,
+					    t1.entityaddrhnbr,
+					    t1.entityflatnbr,
+					    t1.entityaddrstreet,
+					    t1.entitypobox,
+					    t1.country,
+					    t1.statecode,
+					    t1.citycode,
+					    t1.pincode,
+					    t1.active,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t2.countrydesc AS countryname,
+					    t3.cpprovincename AS provincename,
+					    t4.pccityname AS cityname,
+					    t5.areaname AS pincodename,
+					    t1.cinnumber,
+					    t1.gstinAvailable
+   			FROM 		entity t1
+     		LEFT JOIN	bmtcountries t2 ON t1.country = t2.countrycode
+     		LEFT JOIN 	rmtcountryvsprovince t3 ON t1.statecode = t3.cpprovince AND t1.country = t3.cpcountry
+     		LEFT JOIN 	rmtprovincevscity t4 ON t1.citycode = t4.pccity AND t1.statecode = t4.pcprovince AND t1.country = t4.pccountry
+     		LEFT JOIN 	pincodes t5 ON t1.pincode = t5.pincode AND t1.citycode = t5.city
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="4" author="Kesav">
+		<comment>gstinAvailable column added for GST changes</comment>
+		<createView viewName="entity_view" replaceIfExists="true">
+			 SELECT 	t1.entitycode,
+						t1.entitydesc,
+						t1.pannumber,
+						t1.entityaddrline1,
+						t1.entityaddrline2,
+						t1.entityaddrhnbr,
+						t1.entityflatnbr,
+						t1.entityaddrstreet,
+						t1.entitypobox,
+						t1.country,
+						t1.statecode,
+						t1.citycode,
+						t1.pincode,
+						t1.active,
+						t1.version,
+						t1.lastmntby,
+						t1.lastmnton,
+						t1.recordstatus,
+						t1.rolecode,
+						t1.nextrolecode,
+						t1.taskid,
+						t1.nexttaskid,
+						t1.recordtype,
+						t1.workflowid,
+						t2.countrydesc AS countryname,
+						t3.cpprovincename AS provincename,
+						t4.pccityname AS cityname,
+						t5.areaname AS pincodename,
+						t1.cinnumber,
+						t1.gstinAvailable
+			 FROM 		entity_temp t1
+			 LEFT JOIN 	bmtcountries t2 ON t1.country = t2.countrycode
+			 LEFT JOIN 	rmtcountryvsprovince t3 ON t1.statecode = t3.cpprovince AND t1.country = t3.cpcountry
+			 LEFT JOIN 	rmtprovincevscity t4 ON t1.citycode = t4.pccity AND t1.statecode = t4.pcprovince AND t1.country = t4.pccountry
+			 LEFT JOIN 	pincodes t5 ON t1.pincode = t5.pincode AND t1.citycode = t5.city
+			
+			 UNION ALL
+			 
+			 SELECT 	t1.entitycode,
+						t1.entitydesc,
+						t1.pannumber,
+						t1.entityaddrline1,
+						t1.entityaddrline2,
+						t1.entityaddrhnbr,
+						t1.entityflatnbr,
+						t1.entityaddrstreet,
+						t1.entitypobox,
+						t1.country,
+						t1.statecode,
+						t1.citycode,
+						t1.pincode,
+						t1.active,
+						t1.version,
+						t1.lastmntby,
+						t1.lastmnton,
+						t1.recordstatus,
+						t1.rolecode,
+						t1.nextrolecode,
+						t1.taskid,
+						t1.nexttaskid,
+						t1.recordtype,
+						t1.workflowid,
+						t2.countrydesc AS countryname,
+						t3.cpprovincename AS provincename,
+						t4.pccityname AS cityname,
+						t5.areaname AS pincodename,
+						t1.cinnumber,
+						t1.gstinAvailable
+			 FROM 		entity t1
+			 LEFT JOIN  bmtcountries t2 ON t1.country = t2.countrycode
+			 LEFT JOIN  rmtcountryvsprovince t3 ON t1.statecode = t3.cpprovince AND t1.country = t3.cpcountry
+			 LEFT JOIN  rmtprovincevscity t4 ON t1.citycode = t4.pccity AND t1.statecode = t4.pcprovince AND t1.country = t4.pccountry
+			 LEFT JOIN  pincodes t5 ON t1.pincode = t5.pincode AND t1.citycode = t5.city
+			 WHERE NOT (EXISTS ( SELECT 1 FROM entity_temp WHERE entity_temp.entitycode = t1.entitycode))		
+ 		</createView>
+	</changeSet>
+	
+	<!-- TAXDETAIL -->
+	<changeSet id="5" author="Kesav">
+		<addColumn tableName="TAXDETAIL">
+			<column name="hsnNumber" type="varchar(100)"/>
+			<column name="natureService" type="varchar(100)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="6" author="Kesav">
+		<addColumn tableName="TAXDETAIL_Temp">
+			<column name="hsnNumber" type="varchar(100)"/>
+			<column name="natureService" type="varchar(100)"/>
+		</addColumn>
+	</changeSet>
+	
+	 <changeSet id="7" author="Kesav">
+	 	<comment> hsnNumber, natureService and gstinAvailable columns added for GST changes</comment>
+		<createView viewName="taxdetail_aview" replaceIfExists="true">
+			SELECT t1.id,
+		    t1.country,
+		    t2.countrydesc AS countryname,
+		    t1.statecode,
+		    t3.cpprovincename AS provincename,
+		    t1.entitycode,
+		    t4.entitydesc,
+		    t1.taxcode,
+		    t1.addressline1,
+		    t1.addressline2,
+		    t1.addressline3,
+		    t1.addressline4,
+		    t1.pincode,
+		    t1.citycode,
+		    t6.pccityname AS cityname,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+			t1.hsnNumber,
+			t1.natureService,
+			t4.GstInAvailable
+		   	FROM taxdetail t1
+		    JOIN bmtcountries t2 ON t1.country = t2.countrycode
+		    JOIN rmtcountryvsprovince t3 ON t1.statecode = t3.cpprovince
+		    JOIN entity t4 ON t1.entitycode = t4.entitycode
+		    JOIN pincodes t5 ON t1.pincode = t5.pincode
+		    JOIN rmtprovincevscity t6 ON t1.citycode = t6.pccity		
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="8" author="Kesav">
+		<comment> hsnNumber, natureService and gstinAvailable columns added for GST changes</comment>
+		<createView viewName="taxdetail_view" replaceIfExists="true">
+			SELECT 	t1.id,
+					t1.country,
+					t2.countrydesc AS countryname,
+					t1.statecode,
+					t3.cpprovincename AS provincename,
+					t1.entitycode,
+					t4.entitydesc,
+					t1.taxcode,
+					t1.addressline1,
+					t1.addressline2,
+					t1.addressline3,
+					t1.addressline4,
+					t1.pincode,
+					t1.citycode,
+					t6.pccityname AS cityname,
+					t1.version,
+					t1.lastmntby,
+					t1.lastmnton,
+					t1.recordstatus,
+					t1.rolecode,
+					t1.nextrolecode,
+					t1.taskid,
+					t1.nexttaskid,
+					t1.recordtype,
+					t1.workflowid,
+					t1.hsnNumber,
+					t1.natureService,
+					t4.GstInAvailable
+			FROM 	taxdetail_temp t1
+		    JOIN 	bmtcountries t2 ON t1.country = t2.countrycode
+		    JOIN 	rmtcountryvsprovince t3 ON t1.statecode = t3.cpprovince
+		    JOIN 	entity t4 ON t1.entitycode = t4.entitycode
+		    JOIN 	pincodes t5 ON t1.pincode = t5.pincode
+		    JOIN 	rmtprovincevscity t6 ON t1.citycode = t6.pccity
+			
+			UNION ALL
+			
+			SELECT 	t1.id,
+					t1.country,
+					t2.countrydesc AS countryname,
+					t1.statecode,
+					t3.cpprovincename AS provincename,
+					t1.entitycode,
+					t4.entitydesc,
+					t1.taxcode,
+					t1.addressline1,
+					t1.addressline2,
+					t1.addressline3,
+					t1.addressline4,
+					t1.pincode,
+					t1.citycode,
+					t6.pccityname AS cityname,
+					t1.version,
+					t1.lastmntby,
+					t1.lastmnton,
+					t1.recordstatus,
+					t1.rolecode,
+					t1.nextrolecode,
+					t1.taskid,
+					t1.nexttaskid,
+					t1.recordtype,
+					t1.workflowid,
+					t1.hsnNumber,
+					t1.natureService,
+					t4.GstInAvailable
+			FROM 	taxdetail t1
+		    JOIN 	bmtcountries t2 ON t1.country = t2.countrycode
+		    JOIN 	rmtcountryvsprovince t3 ON t1.statecode = t3.cpprovince
+		    JOIN 	entity t4 ON t1.entitycode = t4.entitycode
+		    JOIN 	pincodes t5 ON t1.pincode = t5.pincode
+		    JOIN 	rmtprovincevscity t6 ON t1.citycode = t6.pccity
+			WHERE NOT (EXISTS ( SELECT 1 FROM taxdetail_temp WHERE taxdetail_temp.id = t1.id))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="9" author="Kesav">
+		<sql>
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CGST' and RBFLDNAME = 'fromStateGstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'SGST' and RBFLDNAME = 'fromStateGstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'UGST' and RBFLDNAME = 'fromStateGstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'IGST' and RBFLDNAME = 'fromStateGstExempted';
+			
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','CGST','fromStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  '); 
+			 Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','IGST','fromStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  '); 
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','SGST','fromStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','UGST','fromStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  ');
+			
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CGST' and RBFLDNAME = 'toStateGstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'SGST' and RBFLDNAME = 'toStateGstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'UGST' and RBFLDNAME = 'toStateGstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'IGST' and RBFLDNAME = 'toStateGstExempted';
+			
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','CGST','toStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  '); 
+			 Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','IGST','toStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  '); 
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','SGST','toStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','UGST','toStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  ');
+			
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CGST' and RBFLDNAME = 'gstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'SGST' and RBFLDNAME = 'gstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'UGST' and RBFLDNAME = 'gstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'IGST' and RBFLDNAME = 'gstExempted';
+			
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','CGST','gstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  '); 
+			 Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','IGST','gstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  '); 
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','SGST','gstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','UGST','gstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  ');		
+		</sql>
+	</changeSet>
+	
+	<changeSet id="10" author="Kesava">
+		<sql>
+			delete from Rules where Rulemodule='GSTRULE' and RULECODE = 'CGST';
+			delete from Rules where Rulemodule='GSTRULE' and RULECODE = 'IGST';
+			delete from Rules where Rulemodule='GSTRULE' and RULECODE = 'SGST';
+			delete from Rules where Rulemodule='GSTRULE' and RULECODE = 'UGST';
+		</sql>
+	</changeSet>
+
+	<changeSet id="11" author="Kesava">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select Max(Ruleid)+1 from rules)"/>
+			<column name="RULEMODULE">GSTRULE</column>
+			<column name="RULEEVENT">CGST</column>
+			<column name="RULECODE">CGST</column>
+			<column name="RULECODEDESC">CGST</column>
+			<column name="WAIVERDECIDER">null</column>
+			<column name="WAIVER">0</column>
+			<column name="WAIVERPERC">null</column>
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) { Result = 9 ; return;} else {Result = 0 ; return;} ]]></column>
+			<column name="ACTUALBLOCK"><![CDATA[(|if|FIELDLIST|fromState| |==|FIELDLIST|toState| |1|0|1|1|1|9| |~(|AND|FIELDLIST|toUnionTerritory| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<column name="SEQORDER">0</column>
+			<column name="RETURNTYPE">D</column>
+			<column name="GROUPID">0</column>
+			<column name="VERSION">5</column>
+			<column name="LASTMNTBY">1000</column>
+			<column name="LASTMNTON" valueDate="current_timestamp"/>
+			<column name="RECORDSTATUS">Approved</column>
+			<column name="ROLECODE">null</column>
+			<column name="NEXTROLECODE">null</column>
+			<column name="TASKID">null</column>
+			<column name="NEXTTASKID">null</column>
+			<column name="RECORDTYPE">null</column>
+			<column name="WORKFLOWID">0</column>
+			<column name="ALLOWDEVIATION">0</column>
+			<column name="DEVIATIONTYPE">#</column>
+			<column name="CALFEEMODIFY">0</column>
+			<column name="FEETOFINANCE">null</column>
+			<column name="REVOLVING">1</column>
+			<column name="FIXEDORVARIABLELIMIT">F</column>
+			<column name="ACTIVE">1</column>
+			<column name="FIELDS">fromState</column>
+			<column name="FEETYPEID">null</column>
+		</insert>
+	</changeSet>
+	<changeSet id="12" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) {
+	Result = 9 ; return;  
+} else {
+	Result = 0 ; return;  
+}]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|fromState| |==|FIELDLIST|toState| |1|0|1|1|1|9| |~(|AND|FIELDLIST|toUnionTerritory| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'CGST' AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="13" author="Kesava">
+		<sql>
+			update SeqRules set SeqNo = (select max(RuleId)+1 from Rules);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="14" author="Kesava">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select Max(Ruleid)+1 from rules)"/>
+			<column name="RULEMODULE">GSTRULE</column>
+			<column name="RULEEVENT">IGST</column>
+			<column name="RULECODE">IGST</column>
+			<column name="RULECODEDESC">IGST</column>
+			<column name="WAIVERDECIDER">null</column>
+			<column name="WAIVER">0</column>
+			<column name="WAIVERPERC">null</column>
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState !== toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) { Result = 18 ; return; } else { Result = 0 ; return; }]]></column>
+			<column name="ACTUALBLOCK"><![CDATA[(|if|FIELDLIST|fromState| |!==|FIELDLIST|toState| |1|0|1|1|1|18| |~(|AND|FIELDLIST|toUnionTerritory| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<column name="SEQORDER">0</column>
+			<column name="RETURNTYPE">D</column>
+			<column name="GROUPID">0</column>
+			<column name="VERSION">5</column>
+			<column name="LASTMNTBY">1000</column>
+			<column name="LASTMNTON" valueDate="current_timestamp"/>
+			<column name="RECORDSTATUS">Approved</column>
+			<column name="ROLECODE">null</column>
+			<column name="NEXTROLECODE">null</column>
+			<column name="TASKID">null</column>
+			<column name="NEXTTASKID">null</column>
+			<column name="RECORDTYPE">null</column>
+			<column name="WORKFLOWID">0</column>
+			<column name="ALLOWDEVIATION">0</column>
+			<column name="DEVIATIONTYPE">#</column>
+			<column name="CALFEEMODIFY">0</column>
+			<column name="FEETOFINANCE">null</column>
+			<column name="REVOLVING">1</column>
+			<column name="FIXEDORVARIABLELIMIT">F</column>
+			<column name="ACTIVE">1</column>
+			<column name="FIELDS">fromState</column>
+			<column name="FEETYPEID">null</column>
+		</insert>
+	</changeSet>
+	<changeSet id="15" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState !== toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) {
+	Result = 18 ; return;  
+} else {
+	Result = 0 ; return;  
+} ]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|fromState| |!==|FIELDLIST|toState| |1|0|1|1|1|18| |~(|AND|FIELDLIST|toUnionTerritory| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'IGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="16" author="Kesava">
+		<sql>
+			update SeqRules set SeqNo = (select max(RuleId)+1 from Rules);
+		</sql>
+	</changeSet>
+
+	<changeSet id="17" author="Kesava">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select Max(Ruleid)+1 from rules)"/>
+			<column name="RULEMODULE">GSTRULE</column>
+			<column name="RULEEVENT">SGST</column>
+			<column name="RULECODE">SGST</column>
+			<column name="RULECODEDESC">SGST</column>
+			<column name="WAIVERDECIDER">null</column>
+			<column name="WAIVER">0</column>
+			<column name="WAIVERPERC">null</column>
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) { Result = 9 ; return; } else { Result = 0 ; return; }]]></column>
+			<column name="ACTUALBLOCK"><![CDATA[(|if|FIELDLIST|fromState| |==|FIELDLIST|toState| |1|0|1|1|1|9| |~(|AND|FIELDLIST|toUnionTerritory| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<column name="SEQORDER">0</column>
+			<column name="RETURNTYPE">D</column>
+			<column name="GROUPID">0</column>
+			<column name="VERSION">3</column>
+			<column name="LASTMNTBY">1000</column>
+			<column name="LASTMNTON" valueDate="current_timestamp"/>
+			<column name="RECORDSTATUS">Approved</column>
+			<column name="ROLECODE">null</column>
+			<column name="NEXTROLECODE">null</column>
+			<column name="TASKID">null</column>
+			<column name="NEXTTASKID">null</column>
+			<column name="RECORDTYPE">null</column>
+			<column name="WORKFLOWID">0</column>
+			<column name="ALLOWDEVIATION">0</column>
+			<column name="DEVIATIONTYPE">#</column>
+			<column name="CALFEEMODIFY">0</column>
+			<column name="FEETOFINANCE">null</column>
+			<column name="REVOLVING">1</column>
+			<column name="FIXEDORVARIABLELIMIT">F</column>
+			<column name="ACTIVE">1</column>
+			<column name="FIELDS">fromState</column>
+			<column name="FEETYPEID">null</column>
+		</insert>
+	</changeSet>
+	<changeSet id="18" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) {
+	Result = 9 ; return;  
+ } else {
+	Result = 0 ; return;  
+ } ]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|fromState| |==|FIELDLIST|toState| |1|0|1|1|1|9| |~(|AND|FIELDLIST|toUnionTerritory| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'SGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="19" author="Kesava">
+		<sql>
+			update SeqRules set SeqNo = (select max(RuleId)+1 from Rules);
+		</sql>
+	</changeSet>
+
+	<changeSet id="20" author="Kesava">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select Max(Ruleid)+1 from rules)"/>
+			<column name="RULEMODULE">GSTRULE</column>
+			<column name="RULEEVENT">UGST</column>
+			<column name="RULECODE">UGST</column>
+			<column name="RULECODEDESC">UGST</column>
+			<column name="WAIVERDECIDER">null</column>
+			<column name="WAIVER">0</column>
+			<column name="WAIVERPERC">null</column>
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (toUnionTerritory == '1' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0')))) { Result = 9 ; return;  } else { Result = 0 ; return; } ]]></column>
+			<column name="ACTUALBLOCK"><![CDATA[(|if|FIELDLIST|toUnionTerritory| |==|STATICTEXT|1| |1|0|1|1|1|9| |~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<column name="SEQORDER">0</column>
+			<column name="RETURNTYPE">D</column>
+			<column name="GROUPID">0</column>
+			<column name="VERSION">4</column>
+			<column name="LASTMNTBY">1000</column>
+			<column name="LASTMNTON" valueDate="current_timestamp"/>
+			<column name="RECORDSTATUS">Approved</column>
+			<column name="ROLECODE">null</column>
+			<column name="NEXTROLECODE">null</column>
+			<column name="TASKID">null</column>
+			<column name="NEXTTASKID">null</column>
+			<column name="RECORDTYPE">null</column>
+			<column name="WORKFLOWID">0</column>
+			<column name="ALLOWDEVIATION">0</column>
+			<column name="DEVIATIONTYPE">#</column>
+			<column name="CALFEEMODIFY">0</column>
+			<column name="FEETOFINANCE">null</column>
+			<column name="REVOLVING">1</column>
+			<column name="FIXEDORVARIABLELIMIT">F</column>
+			<column name="ACTIVE">1</column>
+			<column name="FIELDS">toState</column>
+			<column name="FEETYPEID">null</column>
+		</insert>
+	</changeSet>
+	<changeSet id="21" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (toUnionTerritory == '1' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0')))) {
+	Result = 9 ; return;  
+} else {
+	Result = 0 ; return;  
+}]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|toUnionTerritory| |==|STATICTEXT|1| |1|0|1|1|1|9| |~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'UGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="22" author="Kesava">
+		<sql>
+			update SeqRules set SeqNo = (select max(RuleId)+1 from Rules);
+		</sql>
+	</changeSet>
+	<changeSet id="23" author="Kesava">
+		<update tableName="Rules">			
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) {
+	Result = 9 ; return;  
+} else {
+	Result = 0 ; return;  
+}]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'CGST' AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="24" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState !== toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) {
+	Result = 18 ; return;  
+} else {
+	Result = 0 ; return;  
+} ]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'IGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="25" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) {
+	Result = 9 ; return;  
+ } else {
+	Result = 0 ; return;  
+ } ]]>
+ 		</column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'SGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="26" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (toUnionTerritory == '1' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0')))) {
+	Result = 9 ; return;  
+} else {
+	Result = 0 ; return;  
+}]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'UGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="27" author="Kesava">
+		<sql>
+			Update Entity set GSTINAvailable = 0 where GSTINAvailable is null;
+			Update Entity_Temp set GSTINAvailable = 0 where GSTINAvailable is null;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="28" author="Kesava">
+		<createTable tableName="GST_Invoice_Txn">
+			<column name="InvoiceNo" type="varchar(50)">
+				<constraints primaryKey="true"  nullable="false" />
+			</column>
+			<column name="TransactionID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="InvoiceDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Invoice_Amt" type="NUMBER(19,5)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="CompanyCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CompanyName" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_GSTIN" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_Address1" type="varchar(1000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_Address2" type="varchar(1000)"/>
+			<column name="Company_Address3" type="varchar(1000)"/>
+			<column name="Company_PINCode" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_State_Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_State_Name" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HSNNumber" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NatureService" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PanNumber" type="varchar(10)" />
+			<column name="LoanAccountNo" type="varchar(20)" />
+			<column name="CustomerID" type="varchar(20)" />	<!--  Need to clarity with custCif or CustId-->
+			<column name="CustomerName" type="varchar(150)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustomerGSTIN" type="varchar(100)"/>
+			<column name="CustomerStateCode" type="varchar(2)" />
+			<column name="CustomerStateName" type="varchar(50)" />
+			<column name="CustomerAddress" type="varchar(1000)" />
+			<column name="Invoice_Status" type="varchar(1)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="29" author="Kesava">
+		<createTable tableName="GST_Invoice_Txn_Details">
+			<column name="InvoiceNo" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeDescription" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CGST_RATE" type="NUMBER(5,2)" />
+			<column name="CGST_AMT" type="NUMBER(19,5)" />
+			<column name="SGST_RATE" type="NUMBER(5,2)" />
+			<column name="SGST_AMT" type="NUMBER(19,5)" />
+			<column name="IGST_RATE" type="NUMBER(5,2)" />
+			<column name="IGST_AMT" type="NUMBER(19,5)" />
+			<column name="UGST_RATE" type="NUMBER(5,2)" />
+			<column name="UGST_AMT" type="NUMBER(19,5)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="30" author="Kesav">
+		<createTable tableName="SeqGst_invoice_txn">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="31" author="Kesav">
+		<sql>
+			Insert into SeqGst_invoice_txn values (0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="32" author="Kesav">
+		<sql>
+			delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport');
+			delete from REPORTCONFIGURATION where menuitemcode='menu_Item_GST_InvoiceReport';
+			
+			Insert into REPORTCONFIGURATION 
+			values ((select max(reportid)+1 from REPORTCONFIGURATION),'GST Invoice Report','GST Invoice Report',1,'InvoiceReport','dataSource',1,'menu_Item_GST_InvoiceReport',1,1000,null,null,null,null,null,null,0,current_timestamp,1,1);
+			
+			Insert into REPORTFILTERFIELDS 
+			values ((select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),1,'CustCIF','LOVSEARCH','Customer ID','customerid',null,'Customer','getCustCIF','getCustShrtName',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			
+			Insert into REPORTFILTERFIELDS 
+			values ((select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),2,'FinReference','LOVSEARCH','Loan Reference','loanaccountno',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			
+			Insert into REPORTFILTERFIELDS
+			values ((select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),3,'Invoice Number','TXT','Invoice Number','invoiceno',null,null,null,null,0,20,0,0,3,0,null,null,null,null,250,0,'%',4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			
+			Insert into REPORTFILTERFIELDS 
+			values ((select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),4,'Date','DATERANGE','Date','invoicedate',null,'---Select----',null,null,0,0,0,0,4,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		</sql>
+	</changeSet>
+	
+	
+	 <changeSet id="33" author="Kesav">
+	 	<comment> cgst, sgst, ugst and igst columns added for GST changes</comment>
+		<createView viewName="finfeescheduledetail_aview" replaceIfExists="true">
+			 SELECT t1.feeid,
+				    t1.schdate,
+				    t1.schamount,
+				    t1.paidamount,
+				    t1.osamount,
+				    t1.waiveramount,
+				    t1.writeoffamount,
+				    t2.finreference,
+				    t2.feetypeid,
+				    t2.finevent,
+					t1.cgst,
+				    t1.sgst,
+				    t1.ugst,
+				    t1.igst
+				   FROM finfeescheduledetail t1
+				     JOIN finfeedetail t2 ON t1.feeid = t2.feeid
+     	</createView>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="34">
+		<dropPrimaryKey tableName="GST_Invoice_Txn" constraintName="pk_gst_invoice_txn"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="35">
+		<addPrimaryKey tableName="GST_Invoice_Txn" constraintName="pk_gst_invoice_txn" columnNames="invoiceno"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="36">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="Invoice_Amt" columnDataType="NUMBER(19,5)" />	
+	</changeSet>
+	
+	<changeSet author="Kesav" id="37">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="Company_GSTIN" columnDataType="varchar(100)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="38">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="Company_Address1" columnDataType="varchar(1000)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="39">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="Company_PINCode" columnDataType="varchar(10)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="40">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="Company_State_Code" columnDataType="varchar(8)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="41">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="Company_State_Name" columnDataType="varchar(50)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="42">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="HSNNumber" columnDataType="varchar(100)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="43">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="NatureService" columnDataType="varchar(100)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="44">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="CustomerName" columnDataType="varchar(150)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="45">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="Invoice_Status" columnDataType="varchar(1)" />		
+	</changeSet>
+	
+	<changeSet author="Kesav" id="46">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="CompanyCode" columnDataType="varchar(8)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="47">
+		<comment> Drop Null Constraint</comment>
+		<dropNotNullConstraint tableName="GST_Invoice_Txn" columnName="CompanyName" columnDataType="varchar(50)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="48">
+		<comment> data type modified from varchar(8) to varchar(20)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="FeeCode" newDataType="varchar(20)" />
+	</changeSet> 
+	
+	<changeSet author="Kesav" id="49">
+		<comment> data type modified from NUMBER(19,5) to NUMBER(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="UGST_AMT" newDataType="NUMBER(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="50">
+		<comment> data type modified from NUMBER(19,5) to NUMBER(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn" columnName="Invoice_Amt" newDataType="NUMBER(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="51">
+		<comment> data type modified from NUMBER(19,5) to NUMBER(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="CGST_AMT" newDataType="NUMBER(18,0)" />
+	</changeSet>
+		
+	<changeSet author="Kesav" id="52">
+		<comment> data type modified from NUMBER(19,5) to NUMBER(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="SGST_AMT" newDataType="NUMBER(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="53">
+		<comment> data type modified from NUMBER(19,5) to NUMBER(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="IGST_AMT" newDataType="NUMBER(18,0)" />
+	</changeSet>
+	
+	<changeSet id="54" author="Kesav">
+		<comment>TaxApplicable and TaxComponent columns added for GST changes</comment>
+		<createView viewName="Manualadvise_View" replaceIfExists="true">
+			SELECT t1.adviseid,
+			    t1.advisetype,
+			    t1.finreference,
+			    t1.feetypeid,
+			    t1.sequence,
+			    t1.adviseamount,
+			    t1.paidamount,
+			    t1.waivedamount,
+			    t1.remarks,
+			    t1.valuedate,
+			    t1.postdate,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.feetypedesc,
+			    t2.feetypecode,
+			    t1.bounceid,
+			    t1.receiptid,
+			    t3.bouncecode,
+			    t1.reservedamt,
+			    t1.balanceamt,
+			    t3.reason AS bouncecodedesc,
+			    t2.TaxApplicable,
+			    t2.TaxComponent
+			   FROM manualadvise_temp t1
+			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
+			UNION ALL
+			 SELECT t1.adviseid,
+			    t1.advisetype,
+			    t1.finreference,
+			    t1.feetypeid,
+			    t1.sequence,
+			    t1.adviseamount,
+			    t1.paidamount,
+			    t1.waivedamount,
+			    t1.remarks,
+			    t1.valuedate,
+			    t1.postdate,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.feetypedesc,
+			    t2.feetypecode,
+			    t1.bounceid,
+			    t1.receiptid,
+			    t3.bouncecode,
+			    t1.reservedamt,
+			    t1.balanceamt,
+			    t3.reason AS bouncecodedesc,
+			    t2.TaxApplicable,
+			    t2.TaxComponent
+			   FROM manualadvise t1
+			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM manualadvise_temp
+			          WHERE manualadvise_temp.adviseid = t1.adviseid))			
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="55" author="Kesav">
+		<comment>TaxApplicable and TaxComponent columns added for GST changes</comment>
+		<createView viewName="manualadvise_tview" replaceIfExists="true">
+			SELECT t1.adviseid,
+			    t1.advisetype,
+			    t1.finreference,
+			    t1.feetypeid,
+			    t1.sequence,
+			    t1.adviseamount,
+			    t1.paidamount,
+			    t1.waivedamount,
+			    t1.remarks,
+			    t1.valuedate,
+			    t1.postdate,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.feetypedesc,
+			    t2.feetypecode,
+			    t1.bounceid,
+			    t1.receiptid,
+			    t3.bouncecode,
+			    t1.reservedamt,
+			    t1.balanceamt,
+			    t3.reason AS bouncecodedesc,
+				t2.TaxApplicable,
+			    t2.TaxComponent
+			   FROM manualadvise_temp t1
+			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid			
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="56" author="Kesav">
+		<comment>TaxApplicable and TaxComponent columns added for GST changes</comment>
+		<createView viewName="manualadvise_lview" replaceIfExists="true">
+			SELECT t1.adviseid,
+			    t1.advisetype,
+			    t1.finreference,
+			    t1.feetypeid,
+			    t1.sequence,
+			    t1.adviseamount,
+			    t1.paidamount,
+			    t1.waivedamount,
+			    t1.remarks,
+			    t1.valuedate,
+			    t1.postdate,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.feetypedesc,
+			    t2.feetypecode,
+			    t1.bounceid,
+			    t1.receiptid,
+			    t3.bouncecode,
+			    t1.reservedamt,
+			    t1.balanceamt,
+			    t3.reason AS bouncecodedesc,
+				t2.TaxApplicable,
+			    t2.TaxComponent
+			   FROM manualadvise t1
+			     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid			
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="57" author="Kesav">
+		<comment>TaxApplicable and TaxComponent columns added for GST changes</comment>
+		<createView viewName="manualadvise_aview" replaceIfExists="true">
+			SELECT t1.adviseid,
+			    t1.advisetype,
+			    t1.finreference,
+			    t1.feetypeid,
+			    t1.sequence,
+			    t1.adviseamount,
+			    t1.paidamount,
+			    t1.waivedamount,
+			    t1.remarks,
+			    t1.valuedate,
+			    t1.postdate,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.feetypedesc,
+			    t2.feetypecode,
+			    t1.bounceid,
+			    t1.receiptid,
+			    t3.bouncecode,
+			    t1.reservedamt,
+			    t1.balanceamt,
+			    t3.reason AS bouncecodedesc,
+				t2.TaxApplicable,
+			    t2.TaxComponent
+			   FROM manualadvise t1
+			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid			
+		</createView>	
+	</changeSet>
+	
+	<changeSet author="Kesav" id="58">
+		<comment> data type modified from NUMBER(18,0) to decimal(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="UGST_AMT" newDataType="decimal(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="59">
+		<comment> data type modified from NUMBER(18,0) to decimal(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn" columnName="Invoice_Amt" newDataType="decimal(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="60">
+		<comment> data type modified from NUMBER(18,0) to decimal(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="CGST_AMT" newDataType="decimal(18,0)" />
+	</changeSet>
+		
+	<changeSet author="Kesav" id="61">
+		<comment> data type modified from NUMBER(18,0) to decimal(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="SGST_AMT" newDataType="decimal(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="62">
+		<comment> data type modified from NUMBER(18,0) to decimal(18,0)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="IGST_AMT" newDataType="decimal(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="63">
+		<comment> data type modified from NUMBER(5,2) to decimal(5,2)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="CGST_RATE" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="64">
+		<comment> data type modified from NUMBER(5,2) to decimal(5,2)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="SGST_RATE" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="65">
+		<comment> data type modified from NUMBER(5,2) to decimal(5,2)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="IGST_RATE" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="66">
+		<comment> data type modified from NUMBER(5,2) to decimal(5,2)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="UGST_RATE" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+</databaseChangeLog>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CustomerIdentityList"
+		apply="${customerIdentityListCtrl}" border="none" width="100%">
+
+		<div sclass="z-toolbar" style="padding:0" height="28px">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%" widths="30%,40%,30%">
+
+				<!-- COMMON BUTTONS -->
+				<label value="" />
+
+				<!-- SEARCH AREA -->
+				<toolbar align="center" sclass="toolbar-center">
+					<button
+						id="button_CustomerIdentityList_CustomerIdentitySearchDialog"
+						label="${c:l('label_Filter')}"
+						autodisable="button_CustomerIdentityList_CustomerIdentitySearchDialog,print,
+											 button_CustomerIdentityList_NewCustomerIdentity, btnRefresh, help"
+						tooltiptext="${c:l('button_CustomerIdentityList_CustomerIdentitySearchDialog.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+					<button id="print" label="${c:l('label_Print')}"
+						autodisable="button_CustomerIdentityList_CustomerIdentitySearchDialog,print,
+											 button_CustomerIdentityList_NewCustomerIdentity, btnRefresh, help"
+						tooltiptext="${c:l('print.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end" sclass="toolbar-end">
+					<button
+						id="button_CustomerIdentityList_NewCustomerIdentity"
+						label="${c:l('label_New')}"
+						autodisable="button_CustomerIdentityList_CustomerIdentitySearchDialog,print,
+											 button_CustomerIdentityList_NewCustomerIdentity, btnRefresh, help"
+						tooltiptext="${c:l('button_CustomerIdentityList_NewCustomerIdentity.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+					<button id="btnRefresh"
+						label="${c:l('label_Refresh')}"
+						autodisable="button_CustomerIdentityList_CustomerIdentitySearchDialog,print,
+											 button_CustomerIdentityList_NewCustomerIdentity, btnRefresh, help"
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+					<button id="help" visible="false"
+						label="${c:l('label_Help')}"
+						autodisable="button_CustomerIdentityList_CustomerIdentitySearchDialog,print,
+											 button_CustomerIdentityList_NewCustomerIdentity, btnRefresh, help"
+						tooltiptext="${c:l('help.tooltiptext')}" sclass="z-toolbarbutton" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderLayout_CustomerIdentityList">
+			<north border="none" />
+
+			<center border="none">
+				<div>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true"
+						style="border:0px; padding-left:5px; padding-right:5px;">
+						<columns>
+							<column width="17%" />
+							<column width="5%" />
+							<column width="28%" />
+							<column width="17%" />
+							<column width="5%" />
+							<column width="28%" />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_CustomerIdentitySearch_IdCustCIF"
+									value="${c:l('label_CustomerIdentitySearch_IdCustCIF.value')}" />
+								<listbox id="sortOperator_idCustCIF"
+									width="43px" mold="select" rows="1" />
+								<textbox id="idCustCIF" width="150px"
+									maxlength="19" />
+								<label
+									id="label_CustomerIdentitySearch_IdType"
+									value="${c:l('label_CustomerIdentitySearch_IdType.value')}" />
+								<listbox id="sortOperator_idType"
+									width="43px" mold="select" rows="1" />
+								<textbox id="idType" width="150px"
+									maxlength="8" />
+							</row>
+							<row>
+								<label
+									id="label_CustomerIdentitySearch_IdIssuedBy"
+									value="${c:l('label_CustomerIdentitySearch_IdIssuedBy.value')}" />
+								<listbox id="sortOperator_idIssuedBy"
+									width="43px" mold="select" rows="1" />
+								<textbox id="idIssuedBy" width="150px"
+									maxlength="50" />
+								<label
+									id="label_CustomerIdentitySearch_IdRef"
+									value="${c:l('label_CustomerIdentitySearch_IdRef.value')}" />
+								<listbox id="sortOperator_idRef"
+									width="43px" mold="select" rows="1" />
+								<textbox id="idRef" width="150px"
+									maxlength="50" />
+							</row>
+							<row>
+								<label
+									id="label_CustomerIdentitySearch_IdIssueCountry"
+									value="${c:l('label_CustomerIdentitySearch_IdIssueCountry.value')}" />
+								<listbox
+									id="sortOperator_idIssueCountry" width="43px" mold="select"
+									rows="1" />
+								<textbox id="idIssueCountry"
+									width="150px" maxlength="2" />
+
+							</row>
+
+							<row id="row_AlwWorkflow">
+								<label
+									id="label_CustomerIdentitySearch_RecordStatus"
+									value="${c:l('label_CustomerIdentitySearch_RecordStatus.value')}" />
+								<listbox id="sortOperator_RecordStatus"
+									width="43px" mold="select" rows="1" />
+								<textbox id="recordStatus" width="150px"
+									maxlength="50" />
+								<label
+									id="label_CustomerIdentitySearch_RecordType"
+									value="${c:l('label_CustomerIdentitySearch_RecordType.value')}" />
+								<listbox id="sortOperator_RecordType"
+									width="43px" mold="select" rows="1" />
+								<listbox id="recordType" width="150px"
+									mold="select" />
+							</row>
+						</rows>
+					</grid>
+					<listbox id="listBoxCustomerIdentity"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false"
+						emptyMessage="${c:l('listbox.emptyMessage')}"
+						sizedByContent="true" span="true">
+						<listhead sizable="true">
+							<listheader id="listheader_CustIdCIF"
+								label="${c:l('listheader_CustIdCIF.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_IdType"
+								label="${c:l('listheader_IdType.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_IdIssuedBy"
+								label="${c:l('listheader_IdIssuedBy.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_IdRef"
+								label="${c:l('listheader_IdRef.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_IdIssueCountry"
+								label="${c:l('listheader_IdIssueCountry.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								hflex="min" />
+						</listhead>
+					</listbox>
+				</div>
+			</center>
+			<south border="none">
+				<paging id="pagingCustomerIdentityList" />
+			</south>
+
+		</borderlayout>
+	</window>
+</zk>

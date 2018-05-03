@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- CustomerDocument validations -->
+	<bean class="com.pennant.backend.model.customermasters.CustomerDocument">
+
+		<field name="custDocCategory">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>docCategory is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>docCategory should have maximum 50 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">50</element>
+			</constraint>
+		</field>
+
+
+		<field name="custDocTitle">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>custDocTitle should have maximum 100 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">100</element>
+			</constraint>
+		</field>
+
+		<field name="custDocIssuedCountry">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>custDocIssuedCountry should have maximum 2 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">2</element>
+			</constraint>
+		</field>
+
+	<field name="docPurpose">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>docPurpose should have maximum 50 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">50</element>
+			</constraint>
+		</field>
+
+		<field name="custDocName">
+			<!-- <constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>docName is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint> -->
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>docName should have maximum 100 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">100</element>
+			</constraint>
+		</field>
+
+
+		<field name="custDocType">
+			<!-- <constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>docFormat is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint> -->
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>docFormat should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+		<field name="docUri">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>docRefId should have maximum 2000 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">2000</element>
+			</constraint>
+		</field>
+	</bean>
+</constraint-mappings>

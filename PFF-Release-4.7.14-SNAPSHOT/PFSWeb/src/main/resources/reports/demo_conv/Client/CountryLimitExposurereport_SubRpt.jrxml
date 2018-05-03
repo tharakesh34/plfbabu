@@ -1,0 +1,683 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Country Limit Exposure Report" language="groovy" pageWidth="1145" pageHeight="11111" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1145" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="20" isIgnorePagination="true" uuid="94d75d8e-97ff-4cd9-9adc-cc38e21748bb">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<template><![CDATA["../StyleSheet/Template.jrtx"]]></template>
+	<style name="NegativeValues" mode="Opaque" backcolor="#FFFFFF" fontName="Trebuchet MS" fontSize="10">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{CustOverallAvail}<0]]></conditionExpression>
+			<style forecolor="#E81010"/>
+		</conditionalStyle>
+	</style>
+	<style name="PositiveValues" mode="Opaque" backcolor="#FFFFFF" fontName="Trebuchet MS" fontSize="10">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{GJBAL}>0]]></conditionExpression>
+			<style forecolor="#E81010"/>
+		</conditionalStyle>
+	</style>
+	<style name="NegativeValuesExposure" mode="Opaque" backcolor="#FFFFFF" fontName="Trebuchet MS" fontSize="10">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{CustOverallExposure}<0]]></conditionExpression>
+			<style forecolor="#E81010"/>
+		</conditionalStyle>
+	</style>
+	<style name="NegativeValuesLimit" mode="Opaque" backcolor="#FFFFFF" fontName="Trebuchet MS" fontSize="10">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{CustOverallLimit}<0]]></conditionExpression>
+			<style forecolor="#E81010"/>
+		</conditionalStyle>
+	</style>
+	<style name="HighletExpiryDate" mode="Opaque" backcolor="#FFFFFF" fontName="Trebuchet MS" fontSize="10">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{HPLED}<$F{TDDATE}]]></conditionExpression>
+			<style forecolor="#E81010"/>
+		</conditionalStyle>
+	</style>
+	<style name="HighletCountryExpiryDate" mode="Opaque" backcolor="#FFFFFF" fontName="Trebuchet MS" fontSize="10">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{HHLED}<$F{TDDATE}]]></conditionExpression>
+			<style forecolor="#E81010"/>
+		</conditionalStyle>
+	</style>
+	<style name="OverallCntryLimit" mode="Opaque" backcolor="#FFFFFF" fontName="Trebuchet MS" fontSize="10">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($V{CountryOverallLimitTotal}-$V{CustOverallExposureTotal})<0]]></conditionExpression>
+			<style forecolor="#E81010"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="userName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="searchCriteria" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="whereCondition" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="organizationLogo" class="java.lang.String"/>
+	<parameter name="productLogo" class="java.lang.String"/>
+	<parameter name="unitParam" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select * from (
+	SELECT GFBRNM,GFCPNC, GFCUN, HPCCY, T1.HHAMA, T1.HHRAM,T1.HHAAM ,
+	GFCNAR, HPLED ,C8CED,C7CNM,
+	C8SEI CcyIsReceprocal,C8SPT  CcySpotRate,C8PWD CcyMinorCcyUnits,
+	(Select C8SPT from KFIL$P!{unitParam}.C8PF where C8CCY='USD')TargetCcySpotRate,
+	(SELECT T4PDAT FROM KFIL$P!{unitParam}.T4PF)TdDate,GJBAL,T2.HHAMA OverallCntryLimit,
+	T2.HHRAM OverallCntryLimitExp,T2.HHCCY OverallLimitCCY,T2.HHLED
+	 FROM KFIL$P!{unitParam}.HP10LF INNER JOIN
+	  KFIL$P!{unitParam}.HH10LF T1 ON HPCUS = T1.HHCUS INNER JOIN
+	  KFIL$P!{unitParam}.GF01LF ON HPCUS = GFCUS LEFT JOIN
+	  KFIL$P!{unitParam}.HH10LF T2 ON T2.HHCNA = GFCNAR and T2.HHLC='LG999'
+	  INNER JOIN KFIL$P!{unitParam}.C8PF ON C8CCY = HPCCY INNER JOIN
+
+	  KFIL$P!{unitParam}.C7PF ON C7CNA = GFCNAR LEFT JOIN
+	 (Select GJANF,SUM(((GJBAL*(1/(Select C8SPT from
+	 KFIL$P!{unitParam}.C8PF where C8CCY='USD'))*100)
+	  /((CASE WHEN C8SEI='Y' THEN 1/C8SPT
+	  ELSE C8SPT END) * C8PWD)))GJBAL
+	   from KFIL$P!{unitParam}.GJPF,KFIL$P!{unitParam}.C8PF where C8CCY = GJCCY
+	   AND GJBAL!=0 Group By GJANF)T ON T.GJANF = GFCUS
+	WHERE  T1.HHLC = 'LG999'
+	AND GFCUZ='N'  And GFCUC = 'N'
+	UNION
+
+	Select GFBRNM,GFCPNC,GFCUN,P21CCY,0 HHAMA,HHRAM,0
+	HHAAM ,GFCNAR,0 HPLED,C8CED,C7CNM,
+	C8SEI CcyIsReceprocal,C8SPT  CcySpotRate,C8PWD CcyMinorCcyUnits,
+	(Select C8SPT from KFIL$P!{unitParam}.C8PF where C8CCY='USD')TargetCcySpotRate,
+	(SELECT T4PDAT FROM KFIL$P!{unitParam}.T4PF)TdDate,GJBAL,0 OverallCntryLimit,
+	0 OverallCntryLimitExp,'USD' OverallLimitCCY,0 HHLED  from (
+	SELECT GFBRNM,GFCPNC,GFCUN,P21CCY,GFCNAR,SUM(P21FINAMT-P21TPPRI)HHRAM
+	FROM   PFFDTASIT.PTPFF21P INNER JOIN
+		   KFIL$P!{unitParam}.GFPF ON P21CPNC=GFCPNC
+	where
+	GFCUZ='N'  And GFCUC = 'N'  AND
+	P21CPNC not in(Select HPCUS from KFIL$P!{unitParam}.HP10LF) Group By GFBRNM,GFCPNC,GFCUN,
+	P21CCY,GFCNAR)T INNER JOIN
+	   KFIL$P!{unitParam}.C8PF ON C8CCY = P21CCY INNER JOIN
+	   KFIL$P!{unitParam}.C7PF ON C7CNA = GFCNAR LEFT JOIN (Select GJANF,
+	   SUM(((GJBAL*(1/(Select C8SPT from KFIL$P!{unitParam}.C8PF where C8CCY='USD'))*100)/
+	   ((CASE WHEN C8SEI='Y' THEN 1/C8SPT ELSE C8SPT END) * C8PWD)))GJBAL
+	   from KFIL$P!{unitParam}.GJPF,KFIL$P!{unitParam}.C8PF
+	where C8CCY = GJCCY AND GJBAL!=0 Group By GJANF)T1
+	ON T1.GJANF = GFCPNC)T ORDER BY GFCNAR,GFBRNM,GFCPNC
+	with ur FOR READ ONLY]]>
+	</queryString>
+	<field name="GFBRNM" class="java.lang.String"/>
+	<field name="GFCPNC" class="java.lang.String"/>
+	<field name="GFCUN" class="java.lang.String"/>
+	<field name="HPCCY" class="java.lang.String"/>
+	<field name="HHAMA" class="java.math.BigDecimal"/>
+	<field name="HHRAM" class="java.math.BigDecimal"/>
+	<field name="HHAAM" class="java.math.BigDecimal"/>
+	<field name="GFCNAR" class="java.lang.String"/>
+	<field name="HPLED" class="java.math.BigDecimal"/>
+	<field name="C8CED" class="java.lang.String"/>
+	<field name="C7CNM" class="java.lang.String"/>
+	<field name="CCYISRECEPROCAL" class="java.lang.String"/>
+	<field name="CCYSPOTRATE" class="java.math.BigDecimal"/>
+	<field name="CCYMINORCCYUNITS" class="java.math.BigDecimal"/>
+	<field name="TARGETCCYSPOTRATE" class="java.math.BigDecimal"/>
+	<field name="TDDATE" class="java.math.BigDecimal"/>
+	<field name="GJBAL" class="java.math.BigDecimal"/>
+	<field name="OVERALLCNTRYLIMIT" class="java.math.BigDecimal"/>
+	<field name="OVERALLCNTRYLIMITEXP" class="java.math.BigDecimal"/>
+	<field name="OVERALLLIMITCCY" class="java.lang.String"/>
+	<field name="HHLED" class="java.math.BigDecimal"/>
+	<variable name="ConvertExpiryDate" class="java.lang.String">
+		<variableExpression><![CDATA[$F{HPLED}==0?" ":(
+(($F{HPLED}+19000000).toString()).substring(6,8)+"-"+
+((($F{HPLED}+19000000).toString()).substring(4,6)=="01"?"JAN":
+(($F{HPLED}+19000000).toString()).substring(4,6)=="02"?"FEB":
+(($F{HPLED}+19000000).toString()).substring(4,6)=="03"?"MAR":
+(($F{HPLED}+19000000).toString()).substring(4,6)=="04"?"APR":
+(($F{HPLED}+19000000).toString()).substring(4,6)=="05"?"MAY":
+(($F{HPLED}+19000000).toString()).substring(4,6)=="06"?"JUN":
+(($F{HPLED}+19000000).toString()).substring(4,6)=="07"?"JUL":
+(($F{HPLED}+19000000).toString()).substring(4,6)=="08"?"AUG":
+(($F{HPLED}+19000000).toString()).substring(4,6)=="09"?"SEP":
+(($F{HPLED}+19000000).toString()).substring(4,6)=="10"?"OCT":
+(($F{HPLED}+19000000).toString()).substring(4,6)=="11"?"NOV":
+(($F{HPLED}+19000000).toString()).substring(4,6)=="12"?"DEC":"") +"-"+(($F{HPLED}+19000000).toString()).substring(0,4))]]></variableExpression>
+	</variable>
+	<variable name="CustOverallAvail" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[(($F{HHAAM}*(1/$F{TARGETCCYSPOTRATE})*100)/(($F{CCYISRECEPROCAL}=="Y"? 1/$F{CCYSPOTRATE}:$F{CCYSPOTRATE}) * $F{CCYMINORCCYUNITS}))/100]]></variableExpression>
+	</variable>
+	<variable name="CustOverallExposure" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[(($F{HHRAM}*(1/$F{TARGETCCYSPOTRATE})*100)/(($F{CCYISRECEPROCAL}=="Y"? 1/$F{CCYSPOTRATE}:$F{CCYSPOTRATE}) * $F{CCYMINORCCYUNITS}))/100]]></variableExpression>
+	</variable>
+	<variable name="CustOverallLimit" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[(($F{HHAMA}*(1/$F{TARGETCCYSPOTRATE})*100)/(($F{CCYISRECEPROCAL}=="Y"? 1/$F{CCYSPOTRATE}:$F{CCYSPOTRATE}) * $F{CCYMINORCCYUNITS}))/100]]></variableExpression>
+	</variable>
+	<variable name="CustOverallAvailTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="country" calculation="Sum">
+		<variableExpression><![CDATA[(($F{HHAAM}*(1/$F{TARGETCCYSPOTRATE})*100)/(($F{CCYISRECEPROCAL}=="Y"? 1/$F{CCYSPOTRATE}:$F{CCYSPOTRATE}) * $F{CCYMINORCCYUNITS}))/100]]></variableExpression>
+	</variable>
+	<variable name="CustOverallExposureTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="country" calculation="Sum">
+		<variableExpression><![CDATA[(($F{HHRAM}*(1/$F{TARGETCCYSPOTRATE})*100)/(($F{CCYISRECEPROCAL}=="Y"? 1/$F{CCYSPOTRATE}:$F{CCYSPOTRATE}) * $F{CCYMINORCCYUNITS}))/100]]></variableExpression>
+	</variable>
+	<variable name="CustOverallLimitTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="country" calculation="Sum">
+		<variableExpression><![CDATA[(($F{HHAMA}*(1/$F{TARGETCCYSPOTRATE})*100)/(($F{CCYISRECEPROCAL}=="Y"? 1/$F{CCYSPOTRATE}:$F{CCYSPOTRATE}) * $F{CCYMINORCCYUNITS}))/100]]></variableExpression>
+	</variable>
+	<variable name="VarNastroBal" class="java.math.BigDecimal" resetType="Group" resetGroup="country" calculation="Sum">
+		<variableExpression><![CDATA[$F{GJBAL}]]></variableExpression>
+	</variable>
+	<variable name="CountryOverallLimitTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="country">
+		<variableExpression><![CDATA[$F{OVERALLCNTRYLIMIT}/100]]></variableExpression>
+	</variable>
+	<variable name="CountryOverallLimitExpoTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="country">
+		<variableExpression><![CDATA[$F{OVERALLCNTRYLIMITEXP}/100]]></variableExpression>
+	</variable>
+	<variable name="ContryExpiryDate" class="java.lang.String">
+		<variableExpression><![CDATA[$F{HHLED}==0?" ":(
+(($F{HHLED}+19000000).toString()).substring(6,8)+"-"+
+((($F{HHLED}+19000000).toString()).substring(4,6)=="01"?"JAN":
+(($F{HHLED}+19000000).toString()).substring(4,6)=="02"?"FEB":
+(($F{HHLED}+19000000).toString()).substring(4,6)=="03"?"MAR":
+(($F{HHLED}+19000000).toString()).substring(4,6)=="04"?"APR":
+(($F{HHLED}+19000000).toString()).substring(4,6)=="05"?"MAY":
+(($F{HHLED}+19000000).toString()).substring(4,6)=="06"?"JUN":
+(($F{HHLED}+19000000).toString()).substring(4,6)=="07"?"JUL":
+(($F{HHLED}+19000000).toString()).substring(4,6)=="08"?"AUG":
+(($F{HHLED}+19000000).toString()).substring(4,6)=="09"?"SEP":
+(($F{HHLED}+19000000).toString()).substring(4,6)=="10"?"OCT":
+(($F{HHLED}+19000000).toString()).substring(4,6)=="11"?"NOV":
+(($F{HHLED}+19000000).toString()).substring(4,6)=="12"?"DEC":"") +"-"+(($F{HHLED}+19000000).toString()).substring(0,4))]]></variableExpression>
+	</variable>
+	<group name="country">
+		<groupExpression><![CDATA[$F{GFCNAR}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<frame>
+					<reportElement uuid="2375b4ec-3bac-4c49-aba8-1132712cfe60" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="0" width="1145" height="15" forecolor="#FFFFFF" backcolor="#697E72"/>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="8e60470e-4c21-4775-8a83-9fb63d2095f6" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="1145" height="15" forecolor="#FFFFFF"/>
+						<box>
+							<topPen lineWidth="0.5" lineColor="#666666"/>
+							<bottomPen lineWidth="0.5" lineColor="#666666"/>
+							<rightPen lineWidth="0.5" lineColor="#666666"/>
+						</box>
+						<textElement textAlignment="Left" verticalAlignment="Middle">
+							<paragraph leftIndent="3"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Country Name : "+ $F{GFCNAR}+" -"+$F{C7CNM}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50">
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" mode="Transparent" x="0" y="35" width="1145" height="15"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.0" lineColor="#666666"/>
+						<leftPen lineWidth="0.0" lineColor="#666666"/>
+						<bottomPen lineWidth="0.0" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<frame>
+					<reportElement uuid="200389d1-1d80-484d-9c62-f2cf58d58ed6" x="0" y="0" width="1145" height="20"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<staticText>
+						<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" mode="Transparent" x="0" y="0" width="438" height="20">
+							<property name="net.sf.jasperreports.export.xls.row.outline.level.1" value="End"/>
+						</reportElement>
+						<box>
+							<pen lineColor="#666666"/>
+							<topPen lineWidth="0.0" lineColor="#666666"/>
+							<leftPen lineWidth="0.0" lineColor="#666666"/>
+							<bottomPen lineWidth="0.0" lineColor="#666666"/>
+							<rightPen lineWidth="0.5" lineColor="#666666"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font isBold="true"/>
+							<paragraph leftIndent="2"/>
+						</textElement>
+						<text><![CDATA[Country Totals]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="country" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="438" y="0" width="122" height="20"/>
+						<box>
+							<topPen lineWidth="0.0" lineColor="#666666"/>
+							<bottomPen lineWidth="0.0" lineColor="#666666"/>
+							<rightPen lineWidth="0.5" lineColor="#666666"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle">
+							<font isBold="true"/>
+							<paragraph leftIndent="3" rightIndent="4"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{CountryOverallLimitTotal}]]></textFieldExpression>
+						<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="country" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="560" y="0" width="102" height="20"/>
+						<box>
+							<topPen lineWidth="0.0" lineColor="#666666"/>
+							<bottomPen lineWidth="0.0" lineColor="#666666"/>
+							<rightPen lineWidth="0.5" lineColor="#666666"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle">
+							<font isBold="true"/>
+							<paragraph leftIndent="3" rightIndent="4"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{CustOverallExposureTotal}]]></textFieldExpression>
+						<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+					</textField>
+					<textField evaluationTime="Group" evaluationGroup="country" pattern="" isBlankWhenNull="false">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="OverallCntryLimit" positionType="Float" stretchType="RelativeToTallestObject" x="662" y="0" width="107" height="20"/>
+						<box>
+							<topPen lineWidth="0.0" lineColor="#666666"/>
+							<bottomPen lineWidth="0.0" lineColor="#666666"/>
+							<rightPen lineWidth="0.5" lineColor="#666666"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font isBold="true"/>
+							<paragraph leftIndent="3" rightIndent="4"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{CountryOverallLimitTotal}-$V{CustOverallExposureTotal}]]></textFieldExpression>
+						<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+					</textField>
+					<textField evaluationTime="Group" evaluationGroup="country" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="934" y="0" width="102" height="20"/>
+						<box>
+							<topPen lineWidth="0.0" lineColor="#666666"/>
+							<leftPen lineWidth="0.5" lineColor="#666666"/>
+							<bottomPen lineWidth="0.0" lineColor="#666666"/>
+							<rightPen lineWidth="0.5" lineColor="#666666"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font isBold="true"/>
+							<paragraph leftIndent="3"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{VarNastroBal}/100]]></textFieldExpression>
+						<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+					</textField>
+					<textField evaluationTime="Group" evaluationGroup="country" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="HighletCountryExpiryDate" positionType="Float" stretchType="RelativeToTallestObject" x="769" y="0" width="86" height="20"/>
+						<box>
+							<topPen lineWidth="0.0" lineColor="#666666"/>
+							<bottomPen lineWidth="0.0" lineColor="#666666"/>
+							<rightPen lineWidth="0.5" lineColor="#666666"/>
+						</box>
+						<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+							<font isBold="true"/>
+							<paragraph leftIndent="3" rightIndent="4"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{ContryExpiryDate}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupFooter>
+	</group>
+	<columnHeader>
+		<band height="60">
+			<frame>
+				<reportElement uuid="062791cd-50fa-4068-b111-405816383962" x="0" y="0" width="1145" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<image>
+					<reportElement uuid="191dc9c0-d24b-4d40-b0d2-8a4dd0415629" x="0" y="0" width="109" height="30"/>
+					<box>
+						<leftPen lineWidth="0.5"/>
+					</box>
+					<imageExpression><![CDATA[$P{organizationLogo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement uuid="ce8aa4d0-a410-4e32-95a9-39fee0f119cd" style="Title Header" mode="Transparent" x="109" y="0" width="825" height="30"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Country Limit Exposure]]></text>
+				</staticText>
+				<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
+					<reportElement uuid="1f7805f9-bffb-4b7f-ba5c-c66399b6e28d" style="Footer Info" x="1036" y="0" width="109" height="30"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" x="934" y="0" width="102" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.0" lineColor="#666666"/>
+						<leftPen lineWidth="0.0" lineColor="#666666"/>
+						<bottomPen lineWidth="0.0" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<paragraph rightIndent="3"/>
+					</textElement>
+					<text><![CDATA[Date :]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="2375b4ec-3bac-4c49-aba8-1132712cfe60" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="30" width="1145" height="30" backcolor="#FFCC99">
+					<property name="net.sf.jasperreports.export.xls.row.outline.level.1" value="Body"/>
+				</reportElement>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" mode="Transparent" x="161" y="0" width="237" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Customer Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" mode="Transparent" x="398" y="0" width="40" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[CCY]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" mode="Transparent" x="769" y="0" width="86" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Expiry Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" mode="Transparent" x="855" y="0" width="79" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[RIA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" mode="Transparent" x="934" y="0" width="102" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[NOSTRO Balance (USD)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="1928be5d-009a-4861-b038-d91851f3bca5" style="Detail Header" mode="Transparent" x="0" y="0" width="109" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Branch Id]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" mode="Transparent" x="438" y="0" width="122" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Customer Overall Limit (USD)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" mode="Transparent" x="560" y="0" width="102" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Customer Overall Exposure (USD)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" mode="Transparent" x="662" y="0" width="107" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Customer Overall Availability ( USD)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" mode="Transparent" x="1036" y="0" width="109" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[VOSTRO Balance]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="1928be5d-009a-4861-b038-d91851f3bca5" style="Detail Header" mode="Transparent" x="109" y="0" width="52" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[CIF No]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<frame>
+				<reportElement uuid="6357e981-933d-4235-835d-698636072ec5" x="0" y="0" width="1145" height="15"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="8e60470e-4c21-4775-8a83-9fb63d2095f6" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="161" y="0" width="237" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GFCUN}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="8e60470e-4c21-4775-8a83-9fb63d2095f6" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="398" y="0" width="40" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{HPCCY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="HighletExpiryDate" positionType="Float" stretchType="RelativeToTallestObject" x="769" y="0" width="86" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{ConvertExpiryDate}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="c061094d-4125-4d64-9431-c309ad559f5c" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="109" height="15">
+						<property name="net.sf.jasperreports.export.xls.row.outline.level.1" value="Body"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GFBRNM}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="NegativeValuesLimit" positionType="Float" stretchType="RelativeToTallestObject" x="438" y="0" width="122" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Right">
+						<paragraph leftIndent="3" rightIndent="4"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CustOverallLimit}]]></textFieldExpression>
+					<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="NegativeValuesExposure" positionType="Float" stretchType="RelativeToTallestObject" x="560" y="0" width="102" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Right">
+						<paragraph leftIndent="3" rightIndent="4"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CustOverallExposure}]]></textFieldExpression>
+					<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="NegativeValues" positionType="Float" stretchType="RelativeToTallestObject" x="662" y="0" width="107" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Right" markup="none">
+						<paragraph leftIndent="3" rightIndent="4"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CustOverallAvail}]]></textFieldExpression>
+					<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" mode="Transparent" x="855" y="0" width="79" height="15"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" mode="Transparent" x="1036" y="0" width="109" height="15"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="c061094d-4125-4d64-9431-c309ad559f5c" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="109" y="0" width="52" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GFCPNC}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="PositiveValues" positionType="Float" stretchType="RelativeToTallestObject" x="934" y="0" width="102" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Right" markup="none">
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GJBAL}/100]]></textFieldExpression>
+					<patternExpression><![CDATA["#,##0.00"]]></patternExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

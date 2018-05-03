@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- CustomerPhoneNumber Validations -->
+	<bean class="com.pennant.backend.model.customermasters.CustomerPhoneNumber">
+
+		<field name="phoneTypeCode">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>phoneTypeCode is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>phoneTypeCode should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+		<!-- <field name="phoneCountryCode">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>phoneCountryCode is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>phoneCountryCode should have maximum 3 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">3</element>
+			</constraint>
+		</field>
+
+		<field name="phoneAreaCode">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>phoneAreaCode is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>phoneAreaCode should have maximum 3 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">3</element>
+			</constraint>
+		</field> -->
+
+		<field name="phoneNumber">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>phoneNumber is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint>
+			<!-- <constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>phoneNumber should have maximum 10 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">10</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>phoneNumber should be 10 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="min">10</element>
+			</constraint> -->
+		</field>
+
+	<field name="phoneTypePriority">
+		<constraint annotation="javax.validation.constraints.DecimalMin">
+			<message>priority should be Positive</message>
+			<groups>
+				<value>com.pennant.validation.SaveValidationGroup</value>
+				<value>com.pennant.validation.UpdateValidationGroup</value>
+			</groups>
+			<element name="value">1</element>
+		</constraint>
+		<constraint annotation="javax.validation.constraints.DecimalMax">
+			<message>priority allow 3 digits only</message>
+			<groups>
+				<value>com.pennant.validation.SaveValidationGroup</value>
+			</groups>
+			<element name="value">999</element>
+		</constraint>
+	</field> 
+
+	</bean>
+</constraint-mappings>
+		
+		
+		

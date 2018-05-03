@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_FeeTypeDialog" border="normal"
+			apply="${feeTypeDialogCtrl}" width="100%" height="100%"
+			sizable="false">
+
+			<borderlayout id="borderlayoutFeeType">
+				<north>
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								style="float:left; border-style: none;">
+								<button id="btnNew" visible="false"
+									tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"/>
+								<button id="btnEdit" visible="false"
+									tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnDelete" visible="false"
+									tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"/>
+								<button id="btnSave" visible="false"
+									tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"/>
+								<button id="btnCancel" visible="false"
+									tooltiptext="${c:l('btnCancel.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"/>
+								<button id="btnNotes" visible="false"
+									tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"/>
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								style="toolbar-center">
+								<label
+									value="${c:l('window_FeeTypeDialog.title')}"
+									sclass="label-heading" />
+							</toolbar>
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end"
+								style="float:right; border-style: none;">
+								<button id="btnHelp" label="${c:l('label_Help')}" visible="false"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnClose"
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none" autoscroll="false">
+					<groupbox id="gb_basicDetails" sclass="gb-dialog">
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="45%" />
+							</columns>
+							<rows>
+								<row id="row0">
+									<label id="label_FeeTypeCode"
+										value="${c:l('label_FeeTypeDialog_FeeTypeCode.value')}" />
+									<hbox id="hlayout_FeeTypeCode">
+										<space id="space_FeeTypeCode"
+											spacing="2px" sclass="mandatory" />
+										<uppercasebox id="feeTypeCode"
+											maxlength="8" width="72px" />
+									</hbox>
+									<label id="label_FeeTypeDesc"
+										value="${c:l('label_FeeTypeDialog_FeeTypeDesc.value')}" />
+									<hbox id="hlayout_FeeTypeDesc">
+										<space id="space_FeeTypeDesc"
+											spacing="2px" sclass="mandatory" />
+										<textbox id="feeTypeDesc"
+											maxlength="35" width="200px" />
+									</hbox>
+								</row>
+								<row id="row1">
+									<label id="label_AccountingSetID"
+										value="${c:l('label_FeeTypeDialog_AccountingSetID.value')}" />
+									<hbox
+										id="hlayout_AccountingSetID">
+										<extendedcombobox
+											id="accountingSetID" width="200px" />
+									</hbox>
+									<label id="label_HostFeeTypeCode"
+										value="${c:l('label_FeeTypeDialog_HostFeeTypeCode.value')}" />
+									<hbox id="hlayout_HostFeeTypeCode"
+										visible="true">
+										<space
+											id="space_HostFeeTypeCode" spacing="2px"/>
+										<textbox id="hostFeeTypeCode"
+											width="200px" maxlength="50" />
+									</hbox>
+								</row>
+								<row id="row2">
+									<label id="label_ManualAdvice"
+										value="${c:l('label_FeeTypeDialog_ManualAdvice.value')}" />
+									<hbox id="hlayout_ManualAdvice">
+										<space id="space_ManualAdvice"
+											spacing="2px" />
+										<checkbox id="manualAdvice" />
+									</hbox>
+									<label id="label_AdviseType"
+										value="${c:l('label_FeeTypeDialog_AdviseType.value')}"
+										visible="true" />
+									<hbox id="hlayout_AdviseType" visible="true">
+										<space id="space_AdviseType" spacing="2px"
+											sclass="mandatory" />
+										<combobox id="adviseType"
+											width="120px" />
+									</hbox>
+								</row>
+								<row id="row3">
+									<label id="label_AmortzReq"
+										value="${c:l('label_FeeTypeDialog_AmortzReq.value')}" />
+									<hbox id="hlayout_AmortzReq">
+										<space id="space_AmortzReq"
+											spacing="2px" />
+										<checkbox id="amortzReq" />
+									</hbox>
+								</row>
+								<row id="row6">
+									<label id="label_TaxApplicable"
+										value="${c:l('label_FeeTypeDialog_TaxApplicable.value')}" />
+									<hbox id="hlayout_TaxApplicable">
+										<space id="space_TaxApplicable"
+											spacing="2px" />
+										<checkbox id="taxApplicable" />
+									</hbox>
+									<label id="label_TaxComponent"
+										value="${c:l('label_FeeTypeDialog_TaxComponent.value')}"
+										visible="true" />
+									<hbox id="hlayout_TaxComponent" visible="true">
+										<space id="space_TaxComponent" spacing="2px"
+											sclass="mandatory" />
+										<combobox id="taxComponent"
+											width="140px" />
+									</hbox>
+								</row>
+								<row id="row5">
+									<label id="label_Active"
+										value="${c:l('label_FeeTypeDialog_Active.value')}" />
+									<hbox id="hlayout_Active">
+										<space id="space_Active"
+											spacing="2px" />
+										<checkbox id="active" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</center>
+				<south sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%">
+						<caption label="${c:l('Action')}" />
+						<radiogroup id="userAction" name="action" />
+						<label id="label_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

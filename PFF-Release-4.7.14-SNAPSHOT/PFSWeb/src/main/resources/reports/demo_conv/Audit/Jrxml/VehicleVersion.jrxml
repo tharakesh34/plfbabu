@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="VehicleVersion Audit Report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="aed9f2ca-018a-46ae-9e83-e254cd7df4d6">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["../StyleSheet/Template.jrtx"]]></template>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="userName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fromDate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="toDate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="whereCondition" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="organizationLogo" class="java.lang.String"/>
+	<parameter name="productLogo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from [AdtVehicleVersion_View]
+ $P!{whereCondition} order by AuditDateTime DESC]]>
+	</queryString>
+	<field name="AuditId" class="java.lang.Long"/>
+	<field name="AuditDateTime" class="java.sql.Timestamp"/>
+	<field name="AuditDate" class="java.lang.String"/>
+	<field name="AuditTime" class="java.lang.String"/>
+	<field name="AuditSeq" class="java.lang.Integer"/>
+	<field name="AuditUsrId" class="java.lang.Long"/>
+	<field name="AuditUserName" class="java.lang.String"/>
+	<field name="AuditTranType" class="java.lang.String"/>
+	<field name="AftVehicleVersionId" class="java.lang.Long"/>
+	<field name="AftVehicleModelId" class="java.lang.Long"/>
+	<field name="AftVehicleVersionCode" class="java.lang.String"/>
+	<field name="BefVehicleVersionId" class="java.lang.Long"/>
+	<field name="BefVehicleModelId" class="java.lang.Long"/>
+	<field name="BefVehicleVersionCode" class="java.lang.String"/>
+	<group name="GRPAuditDate" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{AuditDate}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<frame>
+					<reportElement uuid="f6bc69e8-8bbc-48a9-8730-08cbb46300ac" mode="Opaque" x="0" y="0" width="802" height="15" forecolor="#B89F7D" backcolor="#F2EBDF"/>
+					<staticText>
+						<reportElement uuid="72c19306-acaf-4ba3-b2e1-63ce8a9a0006" style="Group Header" x="2" y="0" width="38" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle"/>
+						<text><![CDATA[Date :]]></text>
+					</staticText>
+					<textField pattern="dd-MMM-yyyy">
+						<reportElement uuid="bdd05bae-5e41-4bdc-95c0-3660472487cd" style="Group Value" x="40" y="0" width="760" height="15" forecolor="#000000"/>
+						<textElement/>
+						<textFieldExpression><![CDATA[$F{AuditDate}==null?"":$F{AuditDate}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement uuid="8640d5ce-8b74-4c9b-a320-88ec7b33276b" style="Group Header" mode="Opaque" x="0" y="15" width="802" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#CCCCCC">
+						<printWhenExpression><![CDATA[$F{AuditDate}==null]]></printWhenExpression>
+					</reportElement>
+					<textField isBlankWhenNull="true">
+						<reportElement uuid="501c3de3-a466-4d48-a888-fa9655e955df" style="Group Header" mode="Opaque" x="0" y="0" width="802" height="15" backcolor="#B69898"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle"/>
+						<textFieldExpression><![CDATA[$F{AuditDate}==null?" No records found " :" "]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="94">
+			<rectangle>
+				<reportElement uuid="6fa0f3ed-e6fd-43a1-81d6-1852e630b553" x="0" y="0" width="802" height="55"/>
+			</rectangle>
+			<frame>
+				<reportElement uuid="73328ab3-130f-4e66-aa6f-b59e85c2a419" x="0" y="10" width="802" height="35"/>
+				<image>
+					<reportElement uuid="3b960d63-aee2-4b0f-a57a-289597ef2fed" x="18" y="0" width="200" height="35"/>
+					<imageExpression><![CDATA[$P{organizationLogo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement uuid="f53b3557-4f6b-4ef1-b68d-07a8d28d849f" style="Title Header" x="168" y="0" width="483" height="35"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Vehicle Version Audit Details]]></text>
+				</staticText>
+			</frame>
+			<rectangle>
+				<reportElement uuid="0f0601b8-d655-4729-80db-0cabfca987e7" x="0" y="55" width="802" height="17" backcolor="#E1B778"/>
+			</rectangle>
+			<frame>
+				<reportElement uuid="594aacfe-2ef1-4096-b1e0-05df54bbad14" x="2" y="55" width="802" height="15"/>
+				<staticText>
+					<reportElement uuid="a31dd0e8-2ab7-4fd8-8233-5b265ac585d6" style="Title Description header" x="0" y="0" width="70" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Description :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="3f960bf7-81f9-4b3e-829e-0b6eae34abda" style="Title Description" x="70" y="0" width="276" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[This report will display the Vehicle Version audit details from]]></text>
+				</staticText>
+				<textField pattern="dd-MMM-yyyy">
+					<reportElement uuid="c2b0af47-3798-43ae-a35e-8d3c0d0d98ed" style="Title Description" x="340" y="0" width="61" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{fromDate}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="f6257702-52ed-454e-8c43-3e6c713f9546" style="Title Description" x="401" y="0" width="11" height="15"/>
+					<textElement/>
+					<text><![CDATA[to]]></text>
+				</staticText>
+				<textField pattern="dd-MMM-yyyy">
+					<reportElement uuid="7d15ccbc-856e-4d47-b4fa-76f0be0bf3f4" style="Title Description" x="412" y="0" width="73" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{toDate}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="276111e6-ec96-4fe1-b7b4-f7eba11b6d28" x="2" y="77" width="802" height="16"/>
+				<staticText>
+					<reportElement uuid="74460c5d-36b5-48d3-853b-a8161287fe53" style="Title Description header" x="195" y="0" width="293" height="13"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Before Image]]></text>
+				</staticText>
+				<line>
+					<reportElement uuid="4cc8b628-3a8a-417e-86c3-eae96988322c" x="195" y="14" width="68" height="1"/>
+				</line>
+				<staticText>
+					<reportElement uuid="8483846d-9ac3-44a0-b08a-212142b3bebe" style="Title Description header" x="498" y="0" width="300" height="13"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[After Image]]></text>
+				</staticText>
+				<line>
+					<reportElement uuid="939a8240-d45d-47a6-be9c-9117632be62e" x="498" y="14" width="59" height="1"/>
+				</line>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="67" splitType="Stretch">
+			<frame>
+				<reportElement uuid="08088cbe-cac7-4a6c-a814-359159bdb0bb" mode="Opaque" x="0" y="0" width="802" height="15" backcolor="#F0F0F0"/>
+				<textField>
+					<reportElement uuid="74996632-5f89-49f3-a84b-269c23700200" x="8" y="0" width="30" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$V{GRPAuditDate_COUNT}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="69d753e5-67ec-4a5a-8eac-c26957b5eb9b" style="Detail Header" x="38" y="0" width="34" height="15"/>
+					<textElement/>
+					<text><![CDATA[User :]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="d1fe8fab-3e4f-4808-8cd2-0e764cd4b73b" style="Detail Value" x="70" y="0" width="377" height="15" forecolor="#000000"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{AuditUserName}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="cac94e7b-4d27-4312-a498-57870d782dd6" style="Detail Header" x="575" y="0" width="35" height="15" forecolor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Time :]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="0d972a81-6979-4a2a-a9f6-abd66c6a0f17" style="Detail Value" x="610" y="0" width="60" height="15" forecolor="#000000"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{AuditTime}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="8d01c906-8ff9-42d7-a33f-b1f21d73a537" style="Detail Header" x="670" y="0" width="60" height="15" forecolor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Operation :]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="faa0f06c-9631-401f-b875-7b7d52061037" style="Detail Value" x="730" y="0" width="60" height="15" forecolor="#000000"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{AuditTranType}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="74a5ad3b-b736-47a9-b6fb-2d045b5723cd" positionType="Float" stretchType="RelativeToTallestObject" x="2" y="15" width="802" height="15"/>
+				<staticText>
+					<reportElement uuid="922cf721-e3c0-471f-9387-d4e9639ceb7a" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="38" y="0" width="139" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Vehicle Version Id]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="1af654a5-71bb-4eab-9a3d-51577c0bdd28" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="195" y="0" width="170" height="15"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{BefVehicleVersionId}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="0175f085-7585-45b2-b1b2-5f1301af71dc" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="497" y="0" width="170" height="15"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{AftVehicleVersionId}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="922cf721-e3c0-471f-9387-d4e9639ceb7a" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="177" y="0" width="3" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="b6abcf7e-054e-48f8-8302-e2d56ea033cf" positionType="Float" stretchType="RelativeToTallestObject" x="2" y="30" width="802" height="15"/>
+				<staticText>
+					<reportElement uuid="06037c35-95df-4a59-8323-b8822b5fc763" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="38" y="0" width="139" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Vehicle Model Id]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="2275a2b7-3f2d-4bc7-9421-0745a88a21c6" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="195" y="0" width="170" height="15"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{BefVehicleModelId}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="7d518cf2-f526-4795-85cd-793454f9888d" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="498" y="0" width="170" height="15"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{AftVehicleModelId}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="922cf721-e3c0-471f-9387-d4e9639ceb7a" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="177" y="0" width="3" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="3989a8af-f9e3-453a-90b9-ef2f6037c3e9" positionType="Float" stretchType="RelativeToTallestObject" x="2" y="45" width="802" height="15" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{BefVehicleVersionCode}!=$F{AftVehicleVersionCode}]]></printWhenExpression>
+				</reportElement>
+				<staticText>
+					<reportElement uuid="6a533de7-e7ea-4633-969a-b35087aaa2aa" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="38" y="0" width="139" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Vehicle Version Code]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="4d3549a6-60b5-42b3-9c7f-3afadd9344e2" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="195" y="0" width="293" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{BefVehicleVersionCode}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="dcb13f43-caaf-4fbb-baa0-088407aeff0c" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="498" y="0" width="290" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{AftVehicleVersionCode}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="922cf721-e3c0-471f-9387-d4e9639ceb7a" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="177" y="0" width="3" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<frame>
+				<reportElement uuid="9923d8a7-b616-4ac4-b0f5-d406c0a248f2" mode="Opaque" x="0" y="0" width="802" height="15" backcolor="#E1B778"/>
+				<staticText>
+					<reportElement uuid="6bfd2a47-d9f4-440f-80d2-02976547f090" style="Footer Info" x="2" y="0" width="50" height="15"/>
+					<textElement/>
+					<text><![CDATA[Printed By :]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="0e8c50dd-5643-440a-903a-c8c0cd3b394d" style="Footer Info" x="51" y="0" width="280" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{userName}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement uuid="9869a184-7a24-450c-aed4-4f26251b7d1d" style="Footer Info" x="151" y="0" width="500" height="15"/>
+					<staticText>
+						<reportElement uuid="8fe6a66b-8e5d-4ea7-a2b8-af0936a07608" style="Footer Info" x="3" y="0" width="250" height="15"/>
+						<textElement textAlignment="Right"/>
+						<text><![CDATA[Date :]]></text>
+					</staticText>
+					<textField pattern="dd/MM/yyyy h.mm a">
+						<reportElement uuid="295f2791-4e9c-4e65-9283-5648d8e86c5d" style="Footer Info" x="253" y="0" width="247" height="15"/>
+						<textElement verticalAlignment="Middle"/>
+						<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+					</textField>
+				</frame>
+				<textField>
+					<reportElement uuid="33262683-ae79-4625-be72-d870758401f4" style="Footer Info" x="651" y="0" width="120" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement uuid="bf271da4-0802-4141-b0b6-37b4ff455679" style="Footer Info" x="770" y="0" width="30" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement uuid="7a1f32e3-cac7-45ab-b69c-0bec59ef713a" style="Generated By" x="0" y="15" width="802" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Report Generated by pennApps PFS]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

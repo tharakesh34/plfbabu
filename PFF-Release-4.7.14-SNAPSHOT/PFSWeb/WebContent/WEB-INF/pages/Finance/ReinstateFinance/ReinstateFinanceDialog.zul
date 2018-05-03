@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_ReinstateFinanceDialog" border="normal"
+		apply="${reinstateFinanceDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+
+		<borderlayout id="borderlayoutReinstateFinance">
+			<north>
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label id ="label_ReinstateFinanceDialog"
+								value="${c:l('window_ReinstateFinanceDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" visible="false"
+								label="${c:l('label_Help')}"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnClose"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+
+
+			</north>
+			<center border="none" autoscroll="false">
+
+				<groupbox id="gb_basicDetails" sclass="gb-dialog">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="225px" />
+							<column />
+							<column width="220px" />
+							<column />
+						</columns>
+						<rows>
+							<row visible="true">
+								<label
+									id="label_ReinstateFinanceDialog_FinReference"
+									value="${c:l('label_ReinstateFinanceDialog_FinReference.value')}" />
+								<hbox>
+									<extendedcombobox id="finReference" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+					<groupbox id="gb_financeDetails"
+						sclass="gb-dialog" visible="false">
+						<caption
+							label="${c:l('gp_ReinstateFinanceDetails')}">
+						</caption>
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="220px" />
+								<column />
+								<column width="220px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_ReinstateFinanceDialog_CustCIF"
+										value="${c:l('label_ReinstateFinanceDialog_CustCIF.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="custCIF" />
+										<label id="custShortName" style="margin-left:10px;display:inline-block;padding-top:4px;"/>
+									</hbox>
+									<label
+										id="label_ReinstateFinanceDialog_FinType"
+										value="${c:l('label_ReinstateFinanceDialog_FinType.value')}" />
+									<extendedcombobox id="finType" />
+								</row>
+								<row>
+									<label
+										id="label_ReinstateFinanceDialog_FinBranch"
+										value="${c:l('label_ReinstateFinanceDialog_FinBranch.value')}" />
+									<extendedcombobox id="finBranch" />
+									<label
+										id="label_ReinstateFinanceDialog_FinCcy"
+										value="${c:l('label_ReinstateFinanceDialog_FinCcy.value')}" />
+									<extendedcombobox id="finCcy" />
+								</row>
+								<row>
+									<label
+										id="label_ReinstateFinanceDialog_FinAmount"
+										value="${c:l('label_ReinstateFinanceDialog_FinAmount.value')}" />
+									<currencyBox id="finAmount" />
+									<label
+										id="label_ReinstateFinanceDialog_TotDownpayment"
+										value="${c:l('label_ReinstateFinanceDialog_TotDownpayment.value')}" />
+									<currencyBox id="totDownpayment" />
+								</row>
+								<row>
+									<label
+										id="label_ReinstateFinanceDialog_FinStartDate"
+										value="${c:l('label_ReinstateFinanceDialog_FinStartDate.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<datebox id="finStartDate"
+											width="120px" />
+									</hbox>
+									<label
+										id="label_ReinstateFinanceDialog_MaturityDate"
+										value="${c:l('label_ReinstateFinanceDialog_MaturityDate.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<datebox id="maturityDate"
+											width="120px" />
+									</hbox>
+								</row>
+								<row>
+									<label
+										id="label_ReinstateFinanceDialog_TotProfit"
+										value="${c:l('label_ReinstateFinanceDialog_TotProfit.value')}" />
+									<currencyBox id="totProfit" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_RejectDetails"
+						sclass="gb-dialog" visible="false">
+						<caption
+							label="${c:l('gp_RejectFinanceDetails')}">
+						</caption>
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="220px" />
+								<column />
+								<column width="220px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_ReinstateFinanceDialog_RejectedBy"
+										value="${c:l('label_ReinstateFinanceDialog_RejectedBy.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="rejectedBy" />
+									</hbox>
+									<label
+										id="label_ReinstateFinanceDialog_RejectedOn"
+										value="${c:l('label_ReinstateFinanceDialog_RejectedOn.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<datebox id="rejectedOn" />
+									</hbox>
+								</row>
+								<row>
+									<label
+										id="label_ReinstateFinanceDialog_RejectSts"
+										value="${c:l('label_ReinstateFinanceDialog_RejectSts.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="rejectSts"
+											multiline="true" rows="4" style="overflow:auto;"  width="260px"/>
+									</hbox>
+									<label
+										id="label_ReinstateFinanceDialog_RejectRemarks"
+										value="${c:l('label_ReinstateFinanceDialog_RejectRemarks.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="rejectRemarks"
+											multiline="true" rows="4" style="overflow:auto;"  width="260px"/>
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</groupbox>
+			</center>
+			<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%"
+					closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label
+							id="label_ReinstateFinanceDialog_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+
+		</borderlayout>
+
+	</window>
+</zk>

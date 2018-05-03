@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:lang="http://www.springframework.org/schema/lang" xsi:schemaLocation="http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
+	<import resource="launch-context.xml" />
+	<import resource="eod-batch-config-db.xml" />
+	<import resource="eod-batch-config-beans.xml" />
+	<import resource="eod-batch-config-tasklet.xml" />
+	<import resource="eod-batch-config-service.xml" />
+	<!-- _____________________________________________ JOB FLOW DEFINITION _________________________________________ -->
+	<!-- The job definition for the PLF End of Day -->
+	<job id="plfEodJob" xmlns="http://www.springframework.org/schema/batch" incrementer="PFSJobParametersIncrementer">
+		<listeners>
+			<listener ref="eodJobListener" />
+		</listeners>
+		<step id="beforeEOD">
+			<tasklet ref="beforeEODTaskLet" />
+			<next on="*" to="prepareCustomerQueue" />
+			<fail on="FAILED" />
+		</step>
+		<step id="prepareCustomerQueue">
+			<tasklet ref="prepareCustomerQueueTaskLet" />
+			<next on="*" to="masterStep" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="masterStep">
+			<partition step="microEOD" partitioner="partitioningMaster">
+				<handler task-executor="taskExecutor" />
+			</partition>
+			<next on="*" to="accountsUpdate" />
+			<fail on="FAILED" />
+		</step>
+
+		<!-- <decision id="microEODDecision" decider="microEODDecider"> <next on="UNKNOWN" to="masterStep" /> <next on="*" to="snapShotPreparation" /> <fail on="FAILED" /> </decision> -->
+
+		<step id="accountsUpdate">
+			<tasklet ref="accountsUpdateTaskLet" />
+			<next on="*" to="datesUpdate" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="datesUpdate">
+			<tasklet ref="datesUpdateTaskLet" />
+			<!-- <next on="*" to="posidex" /> -->
+			<fail on="FAILED" />
+			<end on="*" exit-code="COMPLETED" />
+		</step>
+		
+<!-- 		<step id="posidex">
+			<tasklet ref="posidexTaskLet">
+				<transaction-attributes propagation="NEVER" />
+			</tasklet>
+			<next on="*" to="dataMart" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="dataMart">
+			<tasklet ref="dataMartTaskLet">
+				<transaction-attributes propagation="NEVER" />
+			</tasklet>
+			<next on="*" to="endOfMonthDecider" />
+			<fail on="FAILED" />
+		</step> -->
+		
+		<!-- End Of Month Decision For Month End process -->
+<!-- 		<decision id="endOfMonthDecider" decider="endOfMonthDecider">
+			<next on="EndOfMonth" to="controlDump" />
+			<end on="NotEndOfMonth" exit-code="COMPLETED" />
+			<fail on="FAILED" />
+		</decision> -->
+		
+
+<!-- 		<step id="alm">
+			<tasklet ref="almTaskLet" />
+			<next on="*" to="controlDump" />
+			<fail on="FAILED" />
+		</step> -->
+		
+<!-- 		<step id="controlDump">
+			<tasklet ref="controlDumpTaskLet">
+				<transaction-attributes propagation="NEVER" />
+			</tasklet>
+			<next on="*" to="trailBalance" />
+			<fail on="FAILED" />
+		</step> -->
+		
+		<!-- <step id="trailBalance">
+			<tasklet ref="trailBalanceTaskLet" />
+			<next on="*" to="sapGL" />
+			<fail on="FAILED" />
+		</step> -->
+		
+		<!-- <step id="sapGL">
+			<tasklet ref="sapGLTaskLet" />
+			<next on="*" to="alm" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="alm">
+			<tasklet ref="almTaskLet" />
+			<next on="*" to="cibil" />
+			<fail on="FAILED" />
+		</step> -->
+		
+<!-- 		<step id="cibil">
+			<tasklet ref="cibilTaskLet" />
+			<next on="*" to="gstTaxDownload" />
+			<fail on="FAILED" />
+		</step>
+		 -->
+<!-- 		<step id="gstTaxDownload">
+			<tasklet ref="gstTaxDownloadTaskLet" />
+			<next on="*" to="dmLoanDetailsMonthly" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="dmLoanDetailsMonthly">
+			<tasklet ref="DM_LOAN_DETAILS_MONTHLY"/>
+			<next on="*" to="dmLoanBalancesMonthly" />
+			<fail on="FAILED" />
+		</step> -->
+
+<!-- 		<step id="dataMart">
+			<tasklet ref="dataMartTaskLet">
+				<transaction-attributes propagation="NEVER" />
+			</tasklet>
+		<step id="dmLoanBalancesMonthly">
+			<tasklet ref="DM_LOAN_BALANCES_MONTHLY" />
+			<next on="*" to="dmDisbDetailsMonthly" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="dmDisbDetailsMonthly">
+			<tasklet ref="DM_DISB_DETAILS_MONTHLY" />
+			<next on="*" to="snapShotPreparation" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="snapShotPreparation">
+			<tasklet ref="snapShotPreparationTaskLet" />
+			<end on="*" exit-code="COMPLETED" />
+			<fail on="FAILED" />
+		</step> -->
+
+		<!-- Next Business Date Updation -->
+		<!-- <step id="nextBussDateUpdation"> <tasklet ref="nextBussDateUpdationTaskLet" /> <next on="*" to="removeMaintenance" /> <fail on="FAILED" /> </step> -->
+		<!-- Value Date Updation -->
+		<!-- <step id="valueDateUpdation"> <tasklet ref="valueDateUpdationTasklet" /> <next on="*" to="commencementPostings" /> <fail on="FAILED" /> </step> -->
+		<!-- <step id="notification"> <tasklet ref="notificationTasklet" /> <next on="*" to="archiveDocument" /> <fail on="FAILED" /> </step> -->
+		<!-- <step id="sendMail"> <tasklet ref="sendMailTaskLet" /> <next on="*" to="snapShotPreparation" /> <fail on="FAILED" /> </step> -->
+		<!-- -->
+		<!-- Limit Decision For loop -->
+		<!-- -->
+	</job>
+	<step id="microEOD" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="microEODTaskLet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
+
+	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor">
+		<property name="ConcurrencyLimit" value="100"></property>
+	</bean>
+	<bean id="partitioningMaster" class="com.pennant.backend.endofday.tasklet.PartitioningMaster">
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+	</bean>
+
+
+</beans>

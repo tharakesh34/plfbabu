@@ -1,0 +1,198 @@
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client"
+	xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<style>
+			.CodeMirror-line-numbers {
+			width: 2.2em;
+			color: #aaa;
+			background-color: #eee; 
+			text-align: right; 
+			padding-right: .3em;
+			font-size: 10pt; 
+			font-family: monospace; 
+			padding-top: .4em;
+			line-height: normal; 
+		}
+	</style>
+	<window>
+		<window id="window_NotificationsDialog" border="normal"
+			apply="${notificationsDialogCtrl}" width="100%" height="100%"
+			sizable="false">
+			<borderlayout id="borderlayoutRule">
+				<north>
+					<div sclass="z-toolbar">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								sclass="toolbar-start">
+								<button id="btnNew"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnNew.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+								<button id="btnEdit"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+								<button id="btnDelete"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+								<button id="btnSave"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnSave.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+								<button id="btnCancel"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnCancel.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+								<button id="btnNotes"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+									sclass="z-toolbarbutton" />
+								<button id="btnValidate"
+									tooltiptext="${c:l('button_Validation.tooltiptext')}"
+									label="${c:l('label_Validate')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate"
+									sclass="z-toolbarbutton">
+								</button>
+								<button id="btnSimulation"
+									label="${c:l('label_Simulate')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnSimulation.tooltiptext')}"
+									w:onClick="validateJs(true,false);" sclass="z-toolbarbutton" />
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label id="label_RuleTitle"
+									value="${c:l('window_NotificationsDialog.title')}"
+									sclass="label-heading" />
+							</toolbar>
+
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" visible="false"
+									label="${c:l('label_Help')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+								<button id="btnClose"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none" autoscroll="false">
+					<div>
+						<groupbox id="gb_template" mold="3d">
+							<grid id="grid_basicDetail"
+								sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="border:0px">
+								<columns>
+									<column width="15%" />
+									<column width="35%" />
+									<column width="15%" />
+									<column width="35%" />
+								</columns>
+								<rows>
+									<row id="row0">
+										<label id="label_RuleCode"
+											value="${c:l('label_NotificationsDialog_RuleCode.value')}" />
+										<hlayout
+											id="hlayout_RuleCode">
+											<space id="space_RuleCode"
+												spacing="2px" sclass="mandatory" />
+											<textbox id="ruleCode"
+												maxlength="8" width="150px" />
+										</hlayout>
+										<label id="label_RuleModule"
+											value="${c:l('label_NotificationsDialog_RuleModule.value')}" />
+										<hlayout
+											id="hlayout_RuleModule">
+											<space id="space_RuleModule"
+												spacing="2px" sclass="mandatory" />
+											<combobox id="ruleModule"
+												width="150px" />
+										</hlayout>
+									</row>
+									<row id="row1">
+										<label id="label_RuleCodeDesc"
+											value="${c:l('label_NotificationsDialog_RuleCodeDesc.value')}" />
+										<hlayout
+											id="hlayout_RuleCodeDesc">
+											<space
+												id="space_RuleCodeDesc" spacing="2px" sclass="mandatory" />
+											<textbox id="ruleCodeDesc"
+												maxlength="50" width="150px" />
+										</hlayout>
+										<label id="label_TemplateType"
+											value="${c:l('label_NotificationsDialog_TemplateType.value')}" />
+										<hlayout
+											id="hlayout_TemplateType">
+											<space
+												id="space_TemplateType" spacing="2px" sclass="mandatory" />
+											<combobox id="templateType"
+												width="150px" />
+										</hlayout>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<separator />
+
+						<tabbox id="tabBoxNotifications" width="100%"
+							height="100%">
+							<tabs id="tabsIndexCenterHeader">
+								<tab id="tab_ruleTemplate"
+									label="${c:l('tab_ruleTemplate.value')}" />
+								<tab id="tab_ruleReciepent"
+									label="${c:l('tab_ruleReciepent.value')}" />
+								<tab id="tab_ruleAttachment"
+									label="${c:l('tab_ruleAttachment.value')}" />
+							</tabs>
+							<tabpanels
+								id="tabpanelsBoxNotificationsr">
+								<tabpanel id="tabPanel_ruleTemplate"
+									style="overflow:auto">
+									<javaScriptBuilder
+										id="ruleTemplate" />
+								</tabpanel>
+								<tabpanel id="tabPanel_ruleReciepent"
+									style="overflow:auto">
+									<javaScriptBuilder
+										id="ruleReciepent" />
+								</tabpanel>
+								<tabpanel id="tabPanel_ruleAttachment"
+									style="overflow:auto">
+									<javaScriptBuilder
+										id="ruleAttachment" />
+								</tabpanel>
+							</tabpanels>
+						</tabbox>
+					</div>
+				</center>
+				<south sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%"
+						height="100%">
+						<caption label="${c:l('Action')}" />
+						<hbox width="75%">
+							<radiogroup id="userAction" name="action" />
+							<label id="label_RecordStatus"
+								value="${c:l('label_South_RecordStatus.value')}"
+								sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_StepPolicyList" apply="${stepPolicyListCtrl}"
+		border="none" width="100%">
+		<div sclass="z-toolbar" style="padding:0px" height="28px">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%" widths="30%,40%,30%">
+
+				<!-- COMMON BUTTONS -->
+				<label value="" />
+
+				<!-- SEARCH AREA -->
+				<toolbar align="center" sclass="toolbar-center">
+					<button
+						id="button_StepPolicyList_StepPolicySearchDialog"
+						label="${c:l('label_Filter')}"
+						autodisable="button_StepPolicyList_StepPolicySearchDialog,print,button_StepPolicyList_NewStepPolicy,btnRefresh,help"
+						tooltiptext="${c:l('button_StepPolicyList_StepPolicySearchDialog.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+					<button id="print" label="${c:l('label_Print')}"
+						autodisable="button_StepPolicyList_StepPolicySearchDialog,print,button_StepPolicyList_NewStepPolicy,btnRefresh,help"
+						tooltiptext="${c:l('button_StepPolicyList_PrintList.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end" sclass="toolbar-end">
+					<button id="button_StepPolicyList_NewStepPolicy"
+						label="${c:l('label_New')}"
+						autodisable="button_StepPolicyList_StepPolicySearchDialog,print,button_StepPolicyList_NewStepPolicy,btnRefresh,help"
+						tooltiptext="${c:l('button_StepPolicyList_NewStepPolicy.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+					<button id="btnRefresh"
+						label="${c:l('label_Refresh')}"
+						autodisable="button_StepPolicyList_StepPolicySearchDialog,print,button_StepPolicyList_NewStepPolicy,btnRefresh,help"
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+					<button id="help" visible="false"
+						label="${c:l('label_Help')}"
+						autodisable="button_StepPolicyList_StepPolicySearchDialog,print,button_StepPolicyList_NewStepPolicy,btnRefresh,help"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+				</toolbar>
+			</hbox>
+		</div>
+		<borderlayout id="borderLayout_StepPolicyList">
+			<north border="none" />
+			<center border="none">
+				<div>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true"
+						style="border:0px; padding-left:5px; padding-right:5px;">
+						<columns>
+							<column width="15%" />
+							<column width="5%" />
+							<column width="30%" />
+							<column width="15%" />
+							<column width="5%" />
+							<column width="30%" />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_StepPolicySearch_PolicyCode"
+									value="${c:l('label_StepPolicySearch_PolicyCode.value')}" />
+								<listbox id="sortOperator_policyCode"
+									width="43px" mold="select" rows="1" />
+								<textbox id="policyCode" width="100px"
+									maxlength="8" />
+								<label
+									id="label_StepPolicySearch_PolicyDesc"
+									value="${c:l('label_StepPolicySearch_PolicyDesc.value')}" />
+								<listbox id="sortOperator_policyDesc"
+									width="43px" mold="select" rows="1" />
+								<textbox id="policyDesc" width="200px"
+									maxlength="50" />
+							</row>
+							<row id="row_AlwWorkflow">
+								<label
+									id="label_StepPolicySearch_RecordStatus"
+									value="${c:l('label_StepPolicySearch_RecordStatus.value')}" />
+								<listbox id="sortOperator_RecordStatus"
+									width="43px" mold="select" rows="1" />
+								<textbox id="recordStatus" width="100px"
+									maxlength="50" />
+								<label
+									id="label_StepPolicySearch_RecordType"
+									value="${c:l('label_StepPolicySearch_RecordType.value')}" />
+								<listbox id="sortOperator_RecordType"
+									width="43px" mold="select" rows="1" />
+								<listbox id="recordType" width="100px"
+									mold="select" />
+							</row>
+						</rows>
+					</grid>
+					<listbox id="listBoxStepPolicy" fixedLayout="true"
+						span="true" emptyMessage="${c:l('listbox.emptyMessage')}"
+						tooltiptext="${c:l('listbox.tooltiptext')}" sizedByContent="true"
+						width="100%" height="100%" multiple="false">
+						<listhead sizable="true">
+							<listheader id="listheader_PolicyCode"
+								label="${c:l('listheader_PolicyCode.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_PolicyDesc"
+								label="${c:l('listheader_PolicyDesc.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_Steps"
+								label="${c:l('listheader_Steps.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_TenorSplit"
+								label="${c:l('listheader_TenorSplit.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RateStepMargin"
+								label="${c:l('listheader_RateStepMargin.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_EMISteps"
+								label="${c:l('listheader_EMISteps.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								hflex="min" />
+						</listhead>
+					</listbox>
+				</div>
+			</center>
+			<south border="none">
+				<paging id="pagingStepPolicyList" />
+			</south>
+		</borderlayout>
+	</window>
+</zk>

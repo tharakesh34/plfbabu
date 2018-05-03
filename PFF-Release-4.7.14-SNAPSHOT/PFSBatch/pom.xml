@@ -1,0 +1,80 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.pennanttech.pennapps.pff</groupId>
+		<artifactId>pff-aggregator</artifactId>
+		<version>4.7.14-SNAPSHOT</version>
+		<relativePath>../pff-aggregator/pom.xml</relativePath>
+	</parent>
+	
+	<groupId>${pff.groupId}</groupId>
+	<artifactId>PFSBatch</artifactId>
+	<version>${pff.version}</version>
+	<packaging>jar</packaging>
+
+	<dependencies>
+			
+		<!-- Module Dependencies -->
+		<dependency>
+			<groupId>${pff.groupId}</groupId>
+			<artifactId>PFSJava</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${pff.groupId}</groupId>
+			<artifactId>PLFInterface</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	 	<dependency>
+			<groupId>${pff.groupId}</groupId>
+			<artifactId>pff-interface-bajaj</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+				
+		<!-- Spring Framework -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<!-- uk.com.robust-it -->		
+		<dependency>
+			<groupId>uk.com.robust-it</groupId>
+			<artifactId>cloning</artifactId>
+			<version>1.7.9</version>
+		</dependency>
+		
+		<!-- org.aspectj -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.6.8</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+	</build>
+</project>

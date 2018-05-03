@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- LimitHeader validations -->
+
+	<bean class="com.pennant.backend.model.limit.LimitHeader">
+
+		<field name="headerId">
+			<constraint annotation="javax.validation.constraints.Min">
+				<message>limitId is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">1</element>
+
+			</constraint>
+			<constraint annotation="javax.validation.constraints.Max">
+				<message>limitId Applicable only for update limit</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="value">-1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>limitId allow 19 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="value">9999999999999999999</element>
+			</constraint>
+		</field>
+
+		<field name="custCIF">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>cif should have maximum 12 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">12</element>
+			</constraint>
+		</field>
+
+		<field name="custGrpCode">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>customerGroup should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+		<field name="limitStructureCode">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>limitStructureCode is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>limitStructureCode should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+
+		<field name="limitCcy">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>currency is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>currency should have maximum 3 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="max">3</element>
+			</constraint>
+		</field>
+
+
+		<field name="limitSetupRemarks">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>remarks should have maximum 1000 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">1000</element>
+			</constraint>
+		</field>
+	<field name="validateLimitHeader">
+		<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+			<message>cif and customerGroup are mutually exclusive</message>
+			<groups>
+				<value>com.pennant.validation.SaveValidationGroup</value>
+				<value>com.pennant.validation.UpdateValidationGroup</value>
+				<value>com.pennant.validation.LimitSetupGroup</value>
+			</groups>
+			<element name="lang">javascript</element>
+			<element name="script">
+				if (_this.custCIF != null &amp;&amp; _this.custCIF != "" ){
+				if(_this.custGrpCode != null &amp;&amp; _this.custGrpCode != "" ){
+				false;
+				} else {
+				true
+				}
+				} else if(_this.custGrpCode != null &amp;&amp; _this.custGrpCode !=	"" ){
+				if(_this.custCIF != null &amp;&amp; _this.custCIF != "" ){
+				false
+				} else {
+				true
+				}
+				} else {
+				false;
+				}
+
+			</element>
+		</constraint>
+	</field>
+
+            <field name="customerLimitDetailsList">
+			<valid />
+		</field>
+	</bean>
+</constraint-mappings>

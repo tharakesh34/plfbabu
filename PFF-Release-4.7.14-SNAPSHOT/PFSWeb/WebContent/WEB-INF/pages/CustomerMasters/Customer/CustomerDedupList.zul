@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CustomerDedupList"
+		title="${c:l('window_CustomerDedupList.title')}" border="none"
+		apply="${customerDedupListCtrl}" closable="true" width="800px">
+
+		<!-- COMMON BUTTONS -->
+				<toolbar align="start" sclass="toolbar-start">
+					<button id="btnCancel"   image="/images/icons/btn_cancel2_16x16.gif"
+						  tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
+					 <button id="btnSave"   image="/images/icons/btn_save2_16x16.gif"
+     					  tooltiptext="${c:l('btnSave.tooltiptext')}" sclass="z-toolbarbutton" />						
+				</toolbar>
+	
+
+
+		<borderlayout id="borderLayout_CustomerDedupList">
+			<north border="none" />
+			<center border="none" flex="true">
+				<panel id="panel_CustomerDedupList" border="none">
+					<panelchildren style="padding: 5px">
+						<listbox id="listBoxCustomerDedup"   emptyMessage="${c:l('listbox.emptyMessage')}"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false" sizedByContent="true" span="true">
+							<listhead sizable="true">								
+								<listheader id="listheader_CustCIF"
+									label="${c:l('listheader_CustCIF.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_CustFName"
+									label="${c:l('listheader_CustFName.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_CustLName"
+									label="${c:l('listheader_CustLName.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_CustShrtName"
+									label="${c:l('listheader_CustShrtName.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_CustDOB"
+									label="${c:l('listheader_CustDOB.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_CustNationality"
+									label="${c:l('listheader_custNationality.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_CustPassportNo"
+									label="${c:l('listheader_custPassportNo.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_CustVisaNum"
+									label="${c:l('listheader_custVisaNum.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</panelchildren>
+				</panel>
+			</center>
+			<south border="none">
+				<paging id="pagingCustomerDedupList"   />
+			</south>
+
+		</borderlayout>
+	</window>
+</zk>

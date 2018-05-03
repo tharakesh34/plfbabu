@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	
+		<window id="window_FinTypeExpenseList" border="none"
+			apply="${finTypeExpenseListCtrl}" width="100%" height="auto"
+			sizable="false">
+			<div sclass="z-toolbar" style="padding:0">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					style=" padding:0px;" height="100%" width="100%"
+					widths="35%,30%,35%">
+					<toolbar align="end"
+						style="float:right; border-style: none; padding:0px;"
+						height="100%">
+						<button id="btnNew_FinTypeExpenseList_ExpenseType"
+							label="${c:l('label_New')}"
+							tooltiptext="${c:l('btnNew_FinTypeExpenseList_ExpenseType.tooltiptext')}"
+							autodisable="btnNew_FinTypeExpenseList_ExpenseType" />
+					</toolbar>
+				</hbox>
+			</div>
+			<listbox id="listBoxFinTypeExpenseList"
+				fixedLayout="true" sizedByContent="true"
+				tooltiptext="${c:l('listbox.tooltiptext')}"
+				emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false"
+				span="true" style="border:none;">
+				<listhead sizable="true">
+					<listheader
+						id="listheader_FinTypeExpenseList_ExpenseTypeCode"
+						label="${c:l('listheader_FinTypeExpenseList_ExpenseTypeCode.label')}"
+						sort="false" hflex="min" />
+					<listheader
+						id="listheader_FinTypeExpenseList_ExpenseTypeDesc"
+						label="${c:l('listheader_FinTypeExpenseList_ExpenseTypeDesc.label')}"
+						sort="false" hflex="min" />
+					<listheader
+						id="listheader_FinTypeExpenseList_CalculationType"
+						label="${c:l('listheader_FinTypeExpenseList_CalculationType.label')}"
+						sort="false" hflex="min" />
+					<listheader
+						id="listheader_FinTypeExpenseList_AmountPercentage"
+						label="${c:l('listheader_FinTypeExpenseList_AmountPercentage.label')}"
+						sort="false" hflex="min" style="text-align:right;" />
+					<listheader id="listheader_FinTypeExpenseList_Active"
+						label="${c:l('listheader_FinTypeExpenseList_Active.label')}"
+						sort="false" hflex="min" />
+				</listhead>
+			</listbox>
+		</window>
+</zk>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_EntityDialog" border="normal"
+		apply="${entityDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+
+		<borderlayout id="borderlayoutEntity">
+			<north>
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start"
+							style="float:left; border-style: none;">
+							<button id="btnNew"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes" visible="false"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							style="toolbar-center">
+							<label
+								value="${c:l('window_EntityDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end"
+							style="float:right; border-style: none;">
+							<button id="btnClose"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false">
+				<groupbox id="gb_basicDetails" sclass="gb-dialog">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="15%" />
+							<column width="35%" />
+							<column width="15%" />
+							<column width="35%" />
+						</columns>
+						<rows>
+							<row id="row0">
+								<label id="label_EntityCode"
+									value="${c:l('label_EntityDialog_EntityCode.value')}"
+									sclass="mandatory" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<uppercasebox id="entityCode"
+										maxlength="8" width="120px" />
+								</hbox>
+								<label id="label_EntityDesc"
+									value="${c:l('label_EntityDialog_EntityDesc.value')}"
+									sclass="mandatory" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="entityDesc"
+										maxlength="50" width="300px" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_EntityDialog_EntityAddrHNbr"
+									value="${c:l('label_EntityDialog_EntityAddrHNbr.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="entityAddrHNbr"
+										width="180px" />
+								</hbox>
+								<label
+									id="label_EntityDialog_EntityFlatNbr"
+									value="${c:l('label_EntityDialog_EntityFlatNbr.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="entityFlatNbr"
+										width="180px" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_EntityDialog_EntityAddrStreet"
+									value="${c:l('label_EntityDialog_EntityAddrStreet.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="entityAddrStreet"
+										width="180px" />
+								</hbox>
+								<label
+									id="label_EntityDialog_EntityAddrLine1"
+									value="${c:l('label_EntityDialog_EntityAddrLine1.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="entityAddrLine1"
+										maxlength="50" width="180px" />
+								</hbox>
+							</row>
+							<row visible="true">
+
+								<label
+									id="label_EntityDialog_EntityAddrLine2"
+									value="${c:l('label_EntityDialog_EntityAddrLine2.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="entityAddrLine2"
+										maxlength="50" width="180px" />
+								</hbox>
+								
+								<label
+									id="label_EntityDialog_EntityPOBox"
+									value="${c:l('label_EntityDialog_EntityPOBox.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="entityPOBox"
+										maxlength="8" width="180px" />
+								</hbox>
+								
+							</row>
+							<row id="row1">
+								<label id="label_PANNumber"
+									value="${c:l('label_EntityDialog_PANNumber.value')}"
+									sclass="mandatory" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<uppercasebox id="pANNumber"
+										maxlength="10" width="120px" />
+								</hbox>
+								<label id="label_Country"
+									value="${c:l('label_EntityDialog_Country.value')}" />
+								<extendedcombobox id="country" />
+							</row>
+							<row id="row2">
+								<label id="label_StateCode"
+									value="${c:l('label_EntityDialog_StateCode.value')}" />
+								<extendedcombobox id="stateCode" />
+								<label id="label_CityCode"
+									value="${c:l('label_EntityDialog_CityCode.value')}" />
+								<extendedcombobox id="cityCode" />
+							</row>
+							<row id="row3">
+								<label id="label_PinCode"
+									value="${c:l('label_EntityDialog_PinCode.value')}" />
+								<extendedcombobox id="pinCode" />
+								<label
+									id="label_EntityDialog_CINNumber"
+									value="${c:l('label_EntityDialog_CINNumber.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory"   />
+									<uppercasebox id="cINNumber" width="180px" />
+								</hbox>
+							</row>
+							<row>
+								<label id="label_GSTINAvailable" value="${c:l('label_EntityDialog_GSTINAvailable.value')}" />
+								<checkbox id="gstinAvailable" checked="false" />
+							</row>
+							<row>
+								<label id="label_Active" value="${c:l('label_EntityDialog_Active.value')}" />
+								<checkbox id="active" checked="false" />
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+			<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

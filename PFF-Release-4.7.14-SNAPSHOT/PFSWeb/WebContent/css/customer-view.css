@@ -1,0 +1,229 @@
+.z-tabs {
+	background: #f3f3f3;
+	padding-top: 25px;
+}
+
+.z-tabbox-top>.z-tabs .z-tab {
+	display: inline-block;
+	border-bottom-width: 0;
+	padding: 16px 70px;
+	border: 0.1px solid lightgrey;
+	background: white;
+	padding-top: 21px;
+	border: 1px solid #d7d7d7;
+}
+
+.z-tab-selected .z-tab-text {
+	font-weight: normal;
+	color: #f39a36;
+	cursor: default;
+	text-align: left;
+	width: 135px;
+	font-size: 15px;
+	border-bottom: 1px solid #f39a36;
+	padding-bottom: 8px;
+}
+
+.z-tab-text {
+	font-style: normal;
+	color: #b3b3b3;
+	/* display: block; */
+	overflow: hidden;
+	white-space: nowrap;
+	text-align: left;
+	width: 135px;
+	font-family: Roboto;
+	font-size: 15px;
+	display: flex;
+	align-items: flex-end;
+}
+
+.z-tab-text img {
+	margin-right: 5px;
+}
+
+.z-tabbox-top>.z-tabpanels>.z-tabpanel {
+	border-top-width: 1px;
+	padding: 0px;
+}
+
+.z-tabpanel {
+	border-style: none;
+}
+
+.maintitle {
+	font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	font-weight: bold;
+	color: #444444;
+}
+
+.profileheadsection {
+	font-family: Roboto, Verdana, Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-weight: normal;
+	color: #555753;
+}
+
+.z-vbox {
+	width: 100%;
+}
+
+.kycheads {
+	font-family: Roboto;
+	font-size: 16px;
+	font-weight: normal;
+	color: #f39a36;
+}
+
+.kycgrid {
+	border: 1px solid #d7d7d7;
+	border-radius: 7px;
+	box-shadow: 1px 1px 1px 1px #e6e6e6;
+}
+
+.customername {
+	font-size: 18px;
+	font-family: Roboto;
+	font-weight: normal;
+	color: #444444;
+	padding-left: 7px;
+}
+
+.customernamee {
+	font-size: 20px;
+	font-family: Roboto;
+	font-weight: normal;
+	color: #444444;
+	padding-left: 7px;
+}
+
+.z-progressmeter-image {
+	height: 5px;
+	background: #f39a36;
+	position: absolute;
+}
+
+.progressmeter {
+	height: 5px;
+}
+
+.z-window-content {
+	background: #f3f3f3;
+}
+
+.labelfont {
+	color: #b3b3b3;
+	font-family: Roboto, Verdana, Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
+	padding-left: 20px;
+	padding-top: 10px;
+}
+
+.labelfonts {
+	color: #b3b3b3;
+	font-family: Roboto, Verdana, Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
+	padding-left: 29px;
+	padding-top: 10px;
+}
+
+.buttonsdiv {
+	border: 1px solid #d7d7d7;
+	background: #e6e6e6;
+}
+
+.finlistheader {
+	border: none;
+	background: #f39a36;
+}
+
+.listheader-content {
+	background: #f3f3f3;
+	border: none;
+}
+
+.easthlayout {
+	padding-top: 20px;
+	padding-left: 20px;
+	padding-bottom: 13px;
+}
+
+.labelweight {
+	font-size: 18px;
+	font-family: Roboto;
+	font-weight: normal;
+	padding-left: 20px;
+}
+
+.labelweights {
+	font-size: 18px;
+	font-family: Roboto;
+	font-weight: normal;
+	padding-left: 29px;
+}
+
+.z-vbox-separator {
+	height: 0em;
+}
+
+.z-listitem {
+	background: #fff;
+}
+
+.labelweightt {
+	font-size: 17px;
+	font-family: Roboto;
+	font-weight: normal;
+	padding-left: 20px;
+}
+
+.profile-div {
+	padding-top: 6px;
+	padding-left: 4px;
+}
+
+.z-listitem:nth-child(odd) .z-listcell-content, .z-listitem:nth-child(odd) .z-listgroup-content
+	{
+	padding-top: 4px;
+	margin-left: -5.6px;
+}
+
+.z-listitem:nth-child(even) .z-listcell-content, .z-listitem:nth-child(even) .z-listgroup-content
+	{
+	padding-top: 4px;
+	margin-left: -5.6px;
+}
+
+.z-vlayout-inner {
+	position: relative;
+	margin-bottom: 2px;
+}
+
+.special-menubar {
+	/* border: 3px solid #f4f3f3; */
+	background-color: #f4f3f3;
+	background: orange;
+}
+
+.z-menu-selected>.z-menu-content, .z-menu-selected .z-menu-icon {
+	color: #fff;
+	background: none !important;
+}
+
+.z-menu-hover>.z-menu-content, .z-menu-hover .z-menu-icon {
+	color: #fff;
+	background: none !important;
+}
+.z-separator-vertical, .z-separator-vertical-bar {
+    display: inline-block;
+    width: 4px;
+    overflow: hidden;
+}
+.circular--square {
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+}

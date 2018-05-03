@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_PoliceCaseList" apply="${policeCaseListCtrl}"
+			border="none" width="100%">
+
+			<div sclass="z-toolbar" style="padding:0px" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%" widths="30%,40%,30%">
+
+					<!-- COMMON BUTTONS -->
+					<label value="" />
+
+					<!-- SEARCH AREA -->
+					<toolbar align="center" sclass="toolbar-center">
+						<button
+							id="button_PoliceCaseList_PoliceCaseSearchDialog"
+							label="${c:l('label_Filter')}"
+							autodisable="button_PoliceCaseList_PoliceCaseSearchDialog,,
+											  button_PoliceCaseList_NewPoliceCase,btnRefresh,help"
+							tooltiptext="${c:l('button_PoliceCaseList_PoliceCaseSearchDialog.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="print" label="${c:l('label_Print')}"
+							autodisable="button_PoliceCaseList_PoliceCaseSearchDialog,print,
+											  button_PoliceCaseList_NewPoliceCase,btnRefresh,help"
+							tooltiptext="${c:l('button_PoliceCaseList_PrintList.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="button_PoliceCaseList_NewPoliceCase"
+							label="${c:l('label_New')}"
+							autodisable="button_PoliceCaseList_PoliceCaseSearchDialog,,
+											  button_PoliceCaseList_NewPoliceCase,btnRefresh,help"
+							tooltiptext="${c:l('button_PoliceCaseList_NewPoliceCase.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="btnRefresh"
+							label="${c:l('label_Refresh')}"
+							autodisable="button_PoliceCaseList_PoliceCaseSearchDialog,,
+											  button_PoliceCaseList_NewPoliceCase,btnRefresh,help"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="help" visible="false"
+							label="${c:l('label_Help')}"
+							autodisable="button_PoliceCaseList_PoliceCaseSearchDialog,,
+											  button_PoliceCaseList_NewPoliceCase,btnRefresh,help"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<borderlayout id="borderLayout_PoliceCaseList">
+				<north border="none" />
+				<center border="none">
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_PoliceCaseSearch_PoliceCaseCode"
+										value="${c:l('label_PoliceCaseSearch_CustCIF.value')}" />
+									<listbox
+										id="sortOperator_policeCaseCustCIF" width="43px" mold="select"
+										rows="1" />
+									<textbox id="policeCaseCustCIF"
+										width="170px" />
+									<label
+										id="label_PoliceCaseSearch_PoliceCaseDOB"
+										value="${c:l('label_PoliceCaseSearch_PoliceCaseDOB.value')}" />
+									<listbox
+										id="sortOperator_policeCaseCustDOB" width="43px" mold="select"
+										rows="1" />
+									<datebox id="policeCaseCustDOB"
+										width="170px" />
+								</row>
+								<row>
+									<label
+										id="label_PoliceCaseSearch_CustFName"
+										value="${c:l('label_PoliceCaseSearch_CustFName.value')}" />
+									<listbox id="sortOperator_custFName"
+										width="43px" mold="select" rows="1" />
+									<textbox id="policeCaseCustFName"
+										width="170px" />
+									<label
+										id="label_PoliceCaseSearch_CustLName"
+										value="${c:l('label_PoliceCaseSearch_CustLName.value')}" />
+									<listbox id="sortOperator_custLName"
+										width="43px" mold="select" rows="1" />
+									<textbox id="policeCaseCustLName"
+										width="170px" />
+								</row>
+								<row>
+									<label
+										id="label_PoliceCaseSearch_EIDNumber"
+										value="${c:l('label_PoliceCaseSearch_EIDNumber.value')}" />
+									<listbox
+										id="sortOperator_policeCaseCustEidNumber" width="43px"
+										mold="select" rows="1" />
+									<textbox
+										id="policeCaseCustEIDNumber" width="170px" />
+									<label
+										id="label_PoliceCaseSearch_Passport"
+										value="${c:l('label_PoliceCaseSearch_Passport.value')}" />
+									<listbox
+										id="sortOperator_policeCaseCustPassport" width="43px"
+										mold="select" rows="1" />
+									<textbox id="policeCaseCustPassPort"
+										width="170px" />
+								</row>
+								<row>
+									<label
+										id="label_PoliceCaseSearch__MobileNumber"
+										value="${c:l('label_PoliceCaseSearch_MobileNumber.value')}" />
+									<listbox
+										id="sortOperator_custMobileNumber" width="43px" mold="select"
+										rows="1" />
+									<hbox>
+										<textbox id="phoneCountryCode"
+											width="40px" />
+										<label value="-"
+											style="display:inline-block;padding-top:4px;" />
+										<textbox id="phoneAreaCode"
+											width="40px" />
+										<label value="-"
+											style="display:inline-block;padding-top:4px;" />
+										<textbox
+											id="policeCaseCustMobileNumber" width="70px" />
+									</hbox>
+									<label
+										id="label_PoliceCaseSearch_Nationality"
+										value="${c:l('label_PoliceCaseSearch_Nationality.value')}" />
+									<listbox
+										id="sortOperator_custNationality" width="43px" mold="select"
+										rows="1" />
+									<textbox
+										id="policeCaseCustNationality" width="170px" />
+
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_PoliceCaseSearch_RecordStatus"
+										value="${c:l('label_PoliceCaseSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_RecordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="170px" />
+									<label
+										id="label_PoliceCaseSearch_RecordType"
+										value="${c:l('label_PoliceCaseSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_RecordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="170px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxPoliceCase"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false" sizedByContent="true" span="true"
+							emptyMessage="${c:l('listbox.emptyMessage')}">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_PoliceCaseCustCIF"
+									label="${c:l('listheader_CustCIF.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_PoliceCaseDOB"
+									label="${c:l('listheader_CustDOB.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_PoliceCaseCustFName"
+									label="${c:l('listheader_CustFName.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_PoliceCaseCustLName"
+									label="${c:l('listheader_CustLName.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_PoliceCaseCustEIDNumber"
+									label="${c:l('listheader_CustCRCPR.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_PoliceCaseCustPassport"
+									label="${c:l('listheader_CustPassportNo.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_PoliceCaseCustMobileNumber"
+									label="${c:l('listheader_CustMobileNumber.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_PoliceCaseCustNationality"
+									label="${c:l('listheader_CustNationality.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
+				</center>
+				<south border="none">
+					<paging id="pagingPoliceCaseList" />
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

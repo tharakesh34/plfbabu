@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_FeeDetailList" border="normal" width="100%"
+		height="100%" apply="${finFeeDetailListCtrl}" sizable="false">
+		<borderlayout id="borderlayoutFeeDetails">
+			<center border="none" autoscroll="true">
+				<groupbox style="border:none;">
+					<groupbox style="border:none;"
+						id="finBasicdetails">
+					</groupbox>
+					<groupbox style="border:none;">
+						<caption label="${c:l('gp_FeesDetails')}">
+						</caption>
+						<listbox id="listBoxFeeDetail"    width = "100%"  style="overflow:auto;">  
+							<listhead sizable="true">
+								<listheader
+									id="listheader_FeeDetailList_FeeType"
+									label="${c:l('listheader_FeeDetailList_FeeType.label')}"
+									sort="false" style="font-size: 11px;" width = "150px" />
+								<listheader
+									id="listheader_FeeDetailList_CalculatedAmount"
+									label="${c:l('listheader_FeeDetailList_CalculatedAmount.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>
+								<listheader
+									id="listheader_FeeDetailList_ActualAmount"
+									label="${c:l('listheader_FeeDetailList_ActualAmount.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>
+								<listheader
+									id="listheader_FeeDetailList_WaivedAmount"
+									label="${c:l('listheader_FeeDetailList_WaivedAmount.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>
+									
+								<listheader
+									id="listheader_FeeDetailList_NetFeeAmount"
+									label="${c:l('listheader_FeeDetailList_NetFeeAmount.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>
+								<listheader
+									id="listheader_FeeDetailList_NetFeeGSTAmount"
+									label="${c:l('listheader_FeeDetailList_NetFeeGSTAmount.label')}"
+									sort="false"  style="font-size: 11px;" width = "100px"/>
+								<listheader
+									id="listheader_FeeDetailList_TotalNetFeeAmount"
+									label="${c:l('listheader_FeeDetailList_TotalNetFeeAmount.label')}"
+									sort="false"  style="font-size: 11px;" width = "100px"/>
+									
+								<listheader
+									id="listheader_FeeDetailList_PaidAmount"
+									label="${c:l('listheader_FeeDetailList_PaidAmount.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>
+									
+								<listheader
+									id="listheader_FeeDetailList_PaidGST"
+									label="${c:l('listheader_FeeDetailList_PaidGST.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>
+								<listheader
+									id="listheader_FeeDetailList_TotalPaidAmount"
+									label="${c:l('listheader_FeeDetailList_TotalPaidAmount.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>
+									
+								<listheader
+									id="listheader_FeeDetailList_RemainingFee"
+									label="${c:l('listheader_FeeDetailList_RemainingFee.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>	
+									
+								<listheader
+									id="listheader_FeeDetailList_RemainingGST"
+									label="${c:l('listheader_FeeDetailList_RemainingGST.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>	
+								<listheader
+									id="listheader_FeeDetailList_TotalRemaining"
+									label="${c:l('listheader_FeeDetailList_TotalRemaining.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>	
+																		
+								<listheader
+									id="listheader_FeeDetailList_PaymentRef"
+									label="${c:l('listheader_FeeDetailList_PaymentRef.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>
+								<listheader
+									id="listheader_FeeDetailList_FeeScheduleMethod"
+									label="${c:l('listheader_FeeDetailList_FeeScheduleMethod.label')}"
+									sort="false" style="font-size: 11px;" width = "150px"/>
+								<listheader
+									id="listheader_FeeDetailList_Terms"
+									label="${c:l('listheader_FeeDetailList_Terms.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>
+								<listheader
+									id="listheader_FeeDetailList_Adjust"
+									label="${c:l('listheader_FeeDetailList_Adjustments.label')}" 
+									sort="false" style="font-size: 11px;" width = "100px"/>
+								<listheader
+									id="listheader_FeeDetailList_GSTDetails"
+									label="${c:l('listheader_FeeDetailList_GSTDetails.label')}" 
+									sort="false" style="font-size: 11px;" width = "100px"/>
+							</listhead>
+						</listbox>
+					</groupbox>
+					<groupbox id="gb_InsuranceDetails" visible="false" >
+							<caption
+								label="${c:l('label_FeeDetailList_InsuranceDetails')}" />
+							<div sclass="z-toolbar" style="padding:0">
+								<hbox pack="stretch"
+									sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+									height="100%" width="100%">
+									<toolbar align="start"
+										style="border:none;">
+									</toolbar>
+									<toolbar align="end"
+										style="float:right; border-style: none; padding:0px;"
+										height="100%">
+										<button
+											id="btnNew_FeeDetailList_FinInsurance" label="${c:l('label_New')}"
+											tooltiptext="${c:l('btnNew_FinMainInsurance.tooltiptext')}"
+											autodisable="btnNew_FeeDetailList_FinInsurance" />
+									</toolbar>
+								</hbox>
+							</div>
+							<listbox id="listBoxInsuranceDetails" 
+								span="true" sizedByContent="true"
+								tooltiptext="${c:l('listbox.tooltiptext')}" multiple="false"
+								emptyMessage="${c:l('listbox.emptyMessage')}">
+								<listhead sizable="true">
+									<listheader
+										id="listheader_FeeDetailList_Insurance_InsuranceType"
+										label="${c:l('listheader_FeeDetailList_Insurance_InsuranceType.label')}"
+										sort="false" hflex="min" />
+									<listheader
+										id="listheader_FeeDetailList_Insurance_InsuranceDesc"
+										label="${c:l('listheader_FeeDetailList_Insurance_InsuranceDesc.label')}"
+										sort="false" hflex="min" />
+									<listheader
+										id="listheader_FeeDetailList_Insurance_PolicyType"
+										label="${c:l('listheader_FeeDetailList_Insurance_PolicyType.label')}"
+										sort="false" hflex="min" />
+									<listheader
+										id="listheader_FeeDetailList_Insurance_PolicyDesc"
+										label="${c:l('listheader_FeeDetailList_Insurance_PolicyDesc.label')}"
+										sort="false" hflex="min" />
+									<listheader
+										id="listheader_FeeDetailList_Insurance_Reference"
+										label="${c:l('listheader_FeeDetailList_Insurance_Reference.label')}"
+										sort="false" hflex="min" />
+									<listheader
+										id="listheader_FeeDetailList_Insurance_InsuranceRequired"
+										label="${c:l('listheader_FeeDetailList_Insurance_InsuranceRequired.label')}"
+										sort="false" hflex="min" />
+									<listheader
+										id="listheader_FeeDetailList_Insurance_ProviderName"
+										label="${c:l('listheader_FeeDetailList_Insurance_ProviderName.label')}"
+										sort="false" hflex="min" />
+									<listheader
+										id="listheader_FeeDetailList_Insurance_PaymentMethod"
+										label="${c:l('listheader_FeeDetailList_Insurance_PaymentMethod.label')}"
+										sort="false" hflex="min" />
+									<listheader visible="false" style="text-align:right;"
+										id="listheader_FeeDetailList_Insurance_insRate"
+										label="${c:l('listheader_FeeDetailList_Insurance_insRate.label')}"
+										sort="false" hflex="min" />
+									<listheader visible="false"
+										id="listheader_FeeDetailDialog_Insurance_WaiverReason"
+										label="${c:l('listheader_FeeDetailList_Insurance_WaiverReason.label')}"
+										sort="false" hflex="min" />
+									<listheader visible="false"
+										id="listheader_FeeDetailDialog_Insurance_Frequency"
+										label="${c:l('listheader_FeeDetailList_Insurance_Frequency.label')}"
+										sort="false" hflex="min" />
+									<listheader
+										id="listheader_FeeDetailDialog_Insurance_Amount" style="text-align:right;"
+										label="${c:l('listheader_FeeDetailList_Insurance_Amount.label')}"
+										sort="false" hflex="min" />
+									<listheader visible="false"
+										id="listheader_FeeDetailDialog_RecordStatus"
+										label="${c:l('listheader_RecordStatus.label')}" sort="false"
+										hflex="min" />
+									<listheader
+										id="listheader_FeeDetailDialog_RecordType"
+										label="${c:l('listheader_RecordType.label')}" sort="false"
+										hflex="min" />
+								</listhead>
+							</listbox>
+						</groupbox>
+					<groupbox id="gb_PaymentDetails" style="border:none;">
+						<caption
+							label="${c:l('gp_FeesPaymentDetails')}">
+						</caption>
+						<div sclass="z-toolbar" height="28px">
+							<hbox pack="stretch"
+								sclass="hboxRemoveWhiteStrips" width="100%"
+								widths="30%,40%,30%">
+
+								<!-- COMMON BUTTONS -->
+								<toolbar align="start"
+									sclass="toolbar-start" width="300px">
+									<hbox align="center"
+										style="padding: 0px">
+										<label
+											id="label_AdvancePayments_Title" value=""
+											style="font-weight:bold; font-size: 11px;" />
+									</hbox>
+								</toolbar>
+								<!-- SEARCH AREA -->
+								<toolbar align="center"
+									sclass="toolbar-center" />
+
+								<!-- CRUD BUTTONS -->
+								<toolbar align="end"
+									sclass="toolbar-end">
+									<button id="btnNew_NewPaymentDetail"
+										visible="false" label="${c:l('label_New')}"
+										tooltiptext="${c:l('button_FeeDetailList_NewPaymentDetail.tooltiptext')}"
+										sclass="z-toolbarbutton" />
+								</toolbar>
+							</hbox>
+						</div>
+						<listbox id="listBoxPaymentDetails"
+							fixedLayout="true" sizedByContent="true" span="true"
+							emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
+							multiple="false" ca:data-scrollable="true">
+							<listhead sizable="false">
+								<listheader
+									id="listheader_FeeDetailList_PaymentReference"
+									label="${c:l('listheader_FeeDetailList_PaymentReference.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_FeeDetailList_PaymentMethod"
+									label="${c:l('listheader_FeeDetailList_PaymentMethod.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_FeeDetailList_PaymentAmount"
+									label="${c:l('listheader_FeeDetailList_PaymentAmount.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_FeeDetailList_ValueDate"
+									label="${c:l('listheader_FeeDetailList_ValueDate.label')}"
+									sort="false" hflex="min" />
+							</listhead>
+						</listbox>
+					</groupbox>
+					<separator/>
+					<div id="div_AutoAllocate" sclass="z-toolbar">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+							<toolbar align="start"
+								sclass="toolbar-start" />
+							<toolbar align="center"
+								sclass="toolbar-center" />
+							<toolbar align="start"
+								sclass="toolbar-end">
+								<button id="btn_autoAllocate"
+									label="${c:l('label_Allocate')}"
+									tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+					<groupbox id="gb_FinFeeReceipts"
+						style="border:none;">
+						<caption
+							label="${c:l('gp_ReceiptFeesDetails')}">
+						</caption>
+						<listbox id="listBoxFinFeeReceipts"
+							fixedLayout="false" span="true"
+							emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false"
+							ca:data-scrollable="true" sizedByContent="true">
+							<listhead sizable="false">
+								<listheader
+									id="listheader_FeeDetailList_ReceiptType"
+									label="${c:l('listheader_FeeDetailList_ReceiptType.label')}"
+									sort="false" />
+								<listheader
+									id="listheader_FeeDetailList_Reference"
+									label="${c:l('listheader_FeeDetailList_Reference.label')}"
+									sort="false" />
+								<listheader
+									id="listheader_FeeDetailList_ReceiptAmount"
+									label="${c:l('listheader_FeeDetailList_ReceiptAmount.label')}"
+									sort="false" align="right"/>
+								<listheader
+									id="listheader_FeeDetailList_ReceiptFeeType"
+									label="${c:l('listheader_FeeDetailList_FeeType.label')}"
+									sort="false" />
+								<listheader
+									id="listheader_FeeDetailList_ReceiptPaidAmount"
+									label="${c:l('listheader_FeeDetailList_PaidAmount.label')}"
+									sort="false" align="right"/>
+								<listheader
+									id="listheader_FeeDetailList_Balance"
+									label="${c:l('listheader_FeeDetailList_Balance.label')}"
+									sort="false" align="right"/>
+							</listhead>
+						</listbox>
+					</groupbox>
+				</groupbox>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

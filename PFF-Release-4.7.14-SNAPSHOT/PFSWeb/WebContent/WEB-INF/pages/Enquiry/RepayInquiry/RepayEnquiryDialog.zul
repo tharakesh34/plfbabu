@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_RepayEnquiryDialog" border="none"
+			width="100%" height="100%" sizable="false"
+			apply="${repayEnquiryDialogCtrl}" style="padding-top:10px" >
+
+			<borderlayout id="borderlayout_RepayEnquiry">
+				<center border="none" autoscroll="true">
+					<listbox id="listBox_RepayEnquiry"  
+						emptyMessage="${c:l('listbox.emptyMessage')}" width="99%" multiple="false"
+						sizedByContent="true" span="true">
+
+						<listhead sizable="true">
+							<listheader id="listheader_RepayDate"
+								label="${c:l('listheader_RepayEnquiryDialog_RepayDate.label')}"
+								hflex="min" />
+							<listheader id="listheader_FinRepayFor"
+								label="${c:l('listheader_RepayEnquiryDialog_FinRepayFor.label')}"
+								hflex="min" />
+							<listheader id="listheader_SchdPft"
+								sort="false"
+								label="${c:l('listheader_RepayEnquiryDialog_SchdPft.label')}"
+								hflex="min" />
+							<listheader id="listheader_FinSchdPri"
+								sort="false"
+								label="${c:l('listheader_RepayEnquiryDialog_FinSchdPri.label')}"
+								hflex="min" />
+							<listheader id="listheader_TotalSchd"
+								sort="false"
+								label="${c:l('listheader_RepayEnquiryDialog_TotalSchd.label')}"
+								hflex="min" />
+							<listheader id="listheader_Balance"
+								sort="false"
+								label="${c:l('listheader_RepayEnquiryDialog_Balance.label')}"
+								hflex="min" />
+						</listhead>
+					</listbox>
+				</center>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

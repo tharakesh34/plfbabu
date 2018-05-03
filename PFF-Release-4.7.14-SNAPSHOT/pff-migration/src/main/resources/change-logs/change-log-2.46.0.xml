@@ -1,0 +1,1007 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+		
+<changeSet id="01" author="DurgaPrasad G">			
+	<createTable tableName="DATA_ENGINE_PROCESS_LOG">
+		<column name="ID" type="bigint">
+		 	<constraints primaryKey="true" nullable="false" />
+		 </column>
+		 <column name="REFID" type="bigint"/>
+		 <column name="REFNO" type="varchar(50)"/>
+		  <column name="CATEGORY" type="char(10)">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="STATUS" type="char(1)">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="REASON" type="varchar(1000)"/>
+		  <column name="FILEID" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="PROCESSEDON" type="datetime">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="PROCESSEDBY" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="VALUEDATE" type="datetime">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="AddField1" type="varchar(1000)"/>
+		  <column name="AddField2" type="varchar(1000)"/>
+		  <column name="AddField3" type="varchar(1000)"/>
+		  <column name="AddField4" type="varchar(1000)"/>
+		  <column name="AddField5" type="datetime"/>
+		  <column name="AddField6" type="datetime"/>
+		  <column name="AddField7" type="datetime"/>
+		  <column name="AddField8" type="datetime"/>
+	</createTable>
+</changeSet>
+
+<changeSet id="02" author="DurgaPrasad G">
+		<addForeignKeyConstraint constraintName="FK_DEPL_ID"
+			referencedTableName="DATA_ENGINE_STATUS" referencedColumnNames="ID"
+			baseTableName="DATA_ENGINE_PROCESS_LOG" baseColumnNames="FILEID" />
+</changeSet>
+
+
+<changeSet  id="03" author="DurgaPrasad G">
+    <renameColumn   newColumnName="REFERENCECOLUMN"  oldColumnName="PARENTNAME"  tableName="DATA_ENGINE_COLUMN"/>
+</changeSet>
+
+<changeSet  id="04" author="Pruthvi">
+<createTable tableName="DEDUP_EOD_CUST_DEMO_DTL">	
+			
+			<column name="BATCHID" type="decimal(12,0)">
+				<constraints nullable="false" />
+			</column>
+			 <column name="CUSTOMERNO" type="decimal(8,0)"/>
+	        <column name="SOURCESYSID" type="varchar(5)"/>
+			<column name="FIRSTNAME" type="varchar(90)"/>
+			<column name="MIDDLENAME" type="varchar(90)"/>
+			<column name="LASTNAME" type="varchar(90)"/>
+			<column name="DOB" type="datetime"/>
+			<column name="PAN" type="varchar(30)"/>
+			<column name="DRIVINGLICENSENUMBER" type="varchar(45)"/>
+			<column name="VOTERID" type="varchar(20)"/>
+			<column name="DATEOFINCORPORATION" type="datetime"/>
+			<column name="TANNO" type="varchar(15)"/>					
+			<column name="PROCESSTYPE" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="APPLICANTTYPE" type="varchar(1)">
+				<constraints nullable="false" />
+			</column>
+			 <column name="EMPOYERNAME" type="varchar(105)"/>
+			<column name="FATHERNAME" type="varchar(105)"/>
+			<column name="PASSPORTNO" type="varchar(45)"/>
+			<column name="ACCOUNTNUMBER" type="varchar(20)"/>
+			<column name="CREDITCARDNUMBER" type="varchar(60)"/>
+			<column name="PROCESSFLAG" type="varchar(1)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ERRORCODE" type="varchar(1)"/>
+			<column name="ERRORDESC" type="varchar(100)"/>
+			<column name="CUSTOMERID" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="SOURCESYSTEM" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="PSXBATCHID" type="decimal(18,0)"/>
+			<column name="UCINFLAG" type="varchar(10)"/>
+			<column name="EODBATCHID" type="decimal(18,0)"/>
+			<column name="INSERTTS" type="datetime">
+			<constraints nullable="false" />
+			</column>			
+			 <column name="GENDER" type="varchar(20)"/>
+			<column name="AADHARNO" type="varchar(12)"/>
+			<column name="CIN" type="varchar(100)"/>
+			<column name="DIN" type="varchar(20)"/>
+			<column name="REGISTRATIONNO" type="varchar(20)"/>
+			<column name="CANUMBER" type="varchar(100)"/>
+			<column name="SEGMENT" type="varchar(5)">
+			<constraints nullable="false" />
+			</column>
+			</createTable>
+		
+
+<createTable tableName="DEDUP_EOD_CUST_ADDR_DTL">		
+			<column name="BATCHID" type="decimal(12,0)">
+			<constraints nullable="false" />
+			</column>
+			<column name="CUSTOMERNO" type="decimal(8,0)"/>
+			<column name="SOURCESYSID" type="varchar(5)">
+			<constraints nullable="false" />
+			</column>
+			<column name="SEGMENT" type="varchar(5)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ADDRESSTYPE" type="varchar(24)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ADDRESS1" type="varchar(255)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ADDRESS2" type="varchar(255)"/>
+			<column name="ADDRESS3" type="varchar(255)"/>
+			
+			<column name="STATE" type="varchar(100)">
+			<constraints nullable="false" />
+			</column>
+			<column name="CITY" type="varchar(105)">
+			<constraints nullable="false" />
+			</column>
+			<column name="PIN" type="varchar(24)">
+			<constraints nullable="false" />
+			</column>
+			
+			<column name="LANDLINE1" type="varchar(48)"/>
+			<column name="LANDLINE2" type="varchar(48)"/>
+			<column name="MOBILE" type="varchar(105)"/>
+			<column name="AREA" type="varchar(120)"/>
+			
+			<column name="LANDMARK" type="varchar(105)"/>
+			<column name="STD" type="varchar(48)"/>
+			<column name="PROCESSTYPE" type="varchar(2)"/>
+			<column name="EMAIL" type="varchar(105)"/>
+			
+			<column name="PROCESSFLAG" type="varchar(1)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ERRORCODE" type="varchar(1)"/>
+			<column name="ERRORDESC" type="varchar(100)"/>
+			<column name="CUSTOMERID" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="SOURCESYSTEM" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="PSXBATCHID" type="decimal(18,0)"/>
+			<column name="EODBATCHID" type="decimal(18,0)"/>
+			
+</createTable>	
+
+
+<createTable tableName="PUSH_PULL_CONTROL_T">	
+<column name="BATCHID" type="decimal(12,0)">
+			<constraints nullable="false" />
+			</column>
+			<column name="STATUS" type="varchar(1)">
+			<constraints nullable="false" />
+			</column>
+			<column name="INSERTTIMESTAMP" type="datetime">
+			<constraints nullable="false" />
+			</column>
+			<column name="COMPLETIONTIMESTAMP" type="datetime"/>
+			<column name="ERRDESCRIPTION" type="varchar(500)"/>
+			<column name="ERRORCODE" type="varchar(500)"/>
+</createTable>	
+
+<createTable tableName="DEDUP_EOD_CUST_LOAN_DTL">	
+
+<column name="BATCHID" type="decimal(12,0)">
+			<constraints nullable="false" />
+			</column>
+			<column name="CUSTOMERNO" type="decimal(8,0)"/>
+			<column name="SOURCESYSID" type="varchar(5)">
+			<constraints nullable="false" />
+			</column>
+			<column name="SEGMENT" type="varchar(5)">
+			<constraints nullable="false" />
+			</column>
+			<column name="DEALID" type="varchar(20)"/>
+			<column name="LANNO" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="CUSTOMERTYPE" type="varchar(1)">
+			<constraints nullable="false" />
+			</column>
+			<column name="APPLNNO" type="decimal(10,0)">
+			<constraints nullable="false" />
+			</column>
+			<column name="PRODUCTCODE" type="varchar(10)">
+			<constraints nullable="false" />
+			</column>
+			<column name="PROCESSTYPE" type="varchar(2)">
+			<constraints nullable="false" />
+			</column>
+			<column name="PROCESSFLAG" type="varchar(1)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ERRORCODE" type="varchar(1)"/>
+			<column name="ERRORDESC" type="varchar(100)"/>
+			<column name="PSXBATCHID" type="decimal(18,0)"/>
+			<column name="PSXID" type="decimal(12,0)"/>
+			<column name="CUSTOMERID" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="SOURCESYSTEM" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="EODBATCHID" type="decimal(18,0)"/>
+</createTable>	
+
+
+<createTable tableName="DEDUP_EOD_CUST_REP_DTL">
+<column name="BATCHID" type="decimal(12,0)">
+			<constraints nullable="false" />
+			</column>
+			<column name="SOURCESYSID" type="varchar(5)">
+			<constraints nullable="false" />
+			</column>
+			<column name="CUSTOMERID" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="FILLERSTRING1" type="varchar(255)">
+			<constraints nullable="false" />
+			</column>
+			<column name="FILLERSTRING2" type="varchar(255)"/>
+			<column name="FILLERSTRING3" type="varchar(255)"/>
+			<column name="FILLERSTRING4" type="varchar(255)"/>
+			<column name="FILLERSTRING5" type="varchar(255)"/>
+			<column name="FILLERDATE1" type="datetime"/>
+			<column name="FILLERDATE2" type="datetime"/>
+			
+			<column name="FILLERNUMBER1" type="decimal(16,0)"/>
+			<column name="FILLERNUMBER2" type="decimal(16,0)"/>
+			<column name="FILLERNUMBER3" type="decimal(16,0)"/>
+			<column name="FILLERNUMBER4" type="decimal(16,0)"/>
+			<column name="FILLERNUMBER5" type="decimal(16,0)"/>
+			
+			<column name="PSXBATCHID" type="decimal(18,0)"/>
+			<column name="PSXID" type="decimal(12,0)"/>
+			<column name="SOURCESYSTEM" type="varchar(20)"/>
+			<column name="EODBATCHID" type="decimal(18,0)"/>
+			<column name="FILLERSTRING6" type="varchar(255)"/>
+			<column name="FILLERSTRING7" type="varchar(255)"/>
+			<column name="FILLERSTRING8" type="varchar(255)"/>
+			<column name="PROCESSTYPE" type="varchar(2)"/>
+			<column name="FILLERSTRING9" type="varchar(255)"/>
+
+</createTable>	
+
+<createTable tableName="POSIDEXCUSTUPDATE">
+<column name="CUSTOMERNO" type="decimal(8,0)"/>
+<column name="DATASOURCE" type="varchar(3)"/>
+<column name="UCINNO" type="varchar(20)">
+<constraints nullable="false" />
+			</column>
+<column name="SEGMENT" type="varchar(5)">
+<constraints nullable="false" />
+			</column>
+<column name="BATCHID" type="varchar(12)"/>
+<column name="BASETYPEFLAG" type="varchar(20)">
+<constraints nullable="false" />
+			</column>
+<column name="PSXBATCHID" type="decimal(18,0)"/>
+<column name="PROCESSEDFLAG" type="varchar(1)">
+<constraints nullable="false" />
+			</column>
+<column name="CUSTOMERID" type="varchar(20)"/>
+<column name="SOURCESYSID" type="decimal"/>
+</createTable>
+</changeSet>
+
+<changeSet  id="06.1" author="Pruthvi">
+<createTable tableName="Disbursement_Payment_Details">
+<column name="HeaderBatchID" type="decimal(10,0)">
+<constraints nullable="false" />
+			</column>
+<column name="DisbursementReference" type="decimal(10,0)">
+<constraints nullable="false" />
+			</column>
+			<column name="PaymentType" type="varchar(8)"/>
+			<column name="BankCode" type="varchar(8)"/>
+			<column name="DisbursementAmount" type="decimal(18,0)">
+<constraints nullable="false" />
+			</column>
+			<column name="InstrumentNumber" type="varchar(12)"/>
+				<column name="TransactionDate" type="datetime">
+<constraints nullable="false" />
+			</column>
+			<column name="BankReferenceNumber" type="varchar(50)">
+<constraints nullable="false" />
+			</column>
+			<column name="OtherReferenceNumber" type="varchar(50)"/>
+			<column name="TransactionStatus" type="varchar(1)"/>
+			<column name="RejectReason" type="varchar(100)"/>
+			<column name="BeneficaryCode" type="varchar(14)"/>
+			<column name="BeneficaryAccountNo" type="varchar(25)"/>
+			<column name="BeneficaryName" type="varchar(200)"/>
+			<column name="PaymentRemarks1" type="varchar(30)"/>
+			<column name="PaymentRemarks2" type="varchar(30)"/>
+			<column name="PaymentRemarks3" type="varchar(30)"/>
+			<column name="PaymentRemarks4" type="varchar(30)"/>
+			<column name="IFSCCode" type="varchar(15)"/>
+			<column name="MICRCode" type="varchar(15)"/>
+			<column name="PLFStatus" type="varchar(1)"/>
+			<column name="PLFRejectReason" type="varchar(100)"/>
+</createTable>
+
+<createTable tableName="Interface_Header">
+	<column name="HeaderID" type="decimal(10,0)">
+<constraints nullable="false" />
+			</column>
+				<column name="InterfaceCategory" type="varchar(1)">
+<constraints nullable="false" />
+			</column>
+				<column name="InterfaceType" type="varchar(20)">
+<constraints nullable="false" />
+			</column>
+				<column name="FileName" type="varchar(50)">
+<constraints nullable="false" />
+			</column>
+				<column name="ConfigID" type="bigint">
+<constraints nullable="false" />
+			</column>
+			<column name="Status" type="varchar(1)"/>
+			<column name="NoofRecordsProcessed" type="decimal(20,0)"/>
+			<column name="InputTime" type="datetime"/>
+			<column name="ProcessedTime" type="datetime"/>
+
+</createTable>
+</changeSet>
+
+<changeSet  id="06" author="Pruthvi" dbms="mssql">
+<createView viewName="INT_ALM_VIEW" replaceIfExists="true">
+select Right(F.FinReference,8) AGREEMENTID,F.ApplicationNo AGREEMENTNO,F.FinType PRODUCTFLAG,'' NPA_STAGEID ,
+(FP.TotalPriBal+Fp.TotalPftBal)/CcyMinorCcyUnits INSTLAMT,FP.TotalPriBal/CcyMinorCcyUnits PRINCOMP,Fp.TotalPftBal/CcyMinorCcyUnits INTCOMP,Fp.FirstRepayDate DUEDATE,
+Fp.AccruePft/CcyMinorCcyUnits ACCRUEDAMT,'' ACCRUEDON,Fp.AccruePft/CcyMinorCcyUnits CUMULATIVE_ACCRUAL_AMT,'N' ADVFLAG
+from FinanceMain F
+Inner join FinPftDetails FP on Fp.FinReference=F.FinReference
+Inner Join RMTCurrencies RC on RC.CcyCode=F.FinCcy
+</createView>
+</changeSet>
+<changeSet  id="06" author="Pruthvi" dbms="oracle">
+<createView viewName="INT_ALM_VIEW" replaceIfExists="true">
+select substr(F.FinReference,length(F.FinReference)-7,length(F.FinReference)) AGREEMENTID,F.ApplicationNo AGREEMENTNO,F.FinType PRODUCTFLAG,'' NPA_STAGEID ,
+(FP.TotalPriBal+Fp.TotalPftBal)/CcyMinorCcyUnits INSTLAMT,FP.TotalPriBal/CcyMinorCcyUnits PRINCOMP,Fp.TotalPftBal/CcyMinorCcyUnits INTCOMP,Fp.FirstRepayDate DUEDATE,
+Fp.AccruePft/CcyMinorCcyUnits ACCRUEDAMT,'' ACCRUEDON,Fp.AccruePft/CcyMinorCcyUnits CUMULATIVE_ACCRUAL_AMT,'N' ADVFLAG
+from FinanceMain F
+Inner join FinPftDetails FP on Fp.FinReference=F.FinReference
+Inner Join RMTCurrencies RC on RC.CcyCode=F.FinCcy
+</createView>
+</changeSet>
+<changeSet id="07" author="Madhubabu" dbms="mssql">
+<sql>
+	alter table finadvancepayments add paymentid bigint	
+</sql>
+</changeSet>
+<changeSet id="07.1" author="Madhubabu" dbms="mssql">
+<sql splitStatements="false">
+Update finadvancepayments set paymentid = row_num from (	
+	Select ROW_NUMBER () over(order by finreference,Paymentseq)row_num,finreference,Paymentseq from finadvancepayments)T
+	where T.finreference = finadvancepayments.finreference and T.Paymentseq=finadvancepayments.Paymentseq;
+	
+	alter table finadvancepayments alter column paymentid bigint not null;
+	
+	Declare @ex bigint;
+			Set  @ex =(Select MAX(paymentid)+1  from finadvancepayments);	
+		CREATE TABLE SEQADVPAYMENT(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		Exec('DBCC CHECKIDENT(''SEQADVPAYMENT'', RESEED,'+@ex+' )');
+		</sql>
+</changeSet>
+<changeSet id="07" author="Madhubabu" dbms="postgresql">
+		<sql>
+			 alter table finadvancepayments add paymentid bigint;
+	
+	Update finadvancepayments set paymentid = row_num from (	
+	Select ROW_NUMBER () over(order by finreference,Paymentseq)row_num,finreference,Paymentseq from finadvancepayments)T
+	where T.finreference = finadvancepayments.finreference and T.Paymentseq=finadvancepayments.Paymentseq;
+		</sql>
+	</changeSet>
+	<changeSet id="07.01" author="Madhubabu" dbms="postgresql">
+		<sql>
+
+	alter table finadvancepayments alter column paymentid set not null;
+		</sql>
+	</changeSet>
+		<changeSet id="07.1" author="Madhubabu" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			
+			  Select MAX(paymentid)+1 from finadvancepayments into ex;
+			 execute 'CREATE SEQUENCE SEQADVPAYMENT START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+     	</sql>
+     	</changeSet>
+     	
+	
+	<changeSet id="07" author="Madhubabu" dbms="oracle">
+		<sql>
+			 alter table finadvancepayments add paymentid number(19,0);
+	
+		Update finadvancepayments m set paymentid = (Select row_num from ((Select ROW_NUMBER () over(order by finreference,Paymentseq)row_num,finreference,Paymentseq from finadvancepayments)) T
+	where T.finreference = m.finreference and T.Paymentseq=m.Paymentseq) where exists (select 1 from finadvancepayments T
+  where T.finreference = m.finreference and T.Paymentseq=m.Paymentseq);
+	
+	alter table finadvancepayments modify paymentid not null;
+		</sql>
+	</changeSet>
+		<changeSet id="07.1" author="Madhubabu" dbms="oracle">	
+   		<sql splitStatements="false">   			
+			 declare ex integer;
+			 begin
+			
+			  Select MAX(paymentid)+1 into ex from finadvancepayments;
+			 execute immediate 'CREATE SEQUENCE SEQADVPAYMENT START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+			 end;  			
+     	</sql>
+     	</changeSet>
+     	
+     	 	  	
+<changeSet id="08" author="DurgaPrasad G" dbms="oracle">	
+   		<sql splitStatements="false">
+     		 begin
+         	 execute immediate 'CREATE SEQUENCE PosidexUpdateSeq START WITH 1 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	 </sql>
+ </changeSet>
+ 
+ <changeSet id="09" author="DurgaPrasad G" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 begin
+			 execute 'CREATE SEQUENCE PosidexUpdateSeq START  1 INCREMENT BY 1 ';  
+			 end;  
+			$$;
+	    </sql>
+ </changeSet>
+ 
+ <changeSet id="10" author="DurgaPrasad G" dbms="mssql">
+		<sql splitStatements="false">
+			CREATE TABLE PosidexUpdateSeq(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		</sql>
+</changeSet>
+
+<changeSet  id="11" author="DurgaPrasad G">
+   <dropTable tableName="DATA_ENGINE_EXECUTION_FIELDS"/>
+</changeSet>
+     
+  
+ <changeSet id="12" author="DurgaPrasad G">
+	<dropTable tableName="DATA_ENGINE_PROCESS_LOG" />
+</changeSet>
+		
+<changeSet id="13" author="DurgaPrasad G">			
+	<createTable tableName="DATA_ENGINE_PROCESS_LOG">
+		<column name="ID" type="bigint">
+		 	<constraints primaryKey="true" nullable="false" />
+		 </column>
+		 <column name="SEQNO" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="FILEID" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="REFID" type="bigint"/>
+		 <column name="REFNO" type="varchar(50)"/>
+		  <column name="CATEGORY" type="char(10)">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="STATUS" type="char(1)">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="REASON" type="varchar(1000)"/>
+		  <column name="PROCESSEDON" type="datetime">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="PROCESSEDBY" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="VALUEDATE" type="datetime">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="AddField1" type="varchar(1000)"/>
+		  <column name="AddField2" type="varchar(1000)"/>
+		  <column name="AddField3" type="varchar(1000)"/>
+		  <column name="AddField4" type="varchar(1000)"/>
+		  <column name="AddField5" type="datetime"/>
+		  <column name="AddField6" type="datetime"/>
+		  <column name="AddField7" type="datetime"/>
+		  <column name="AddField8" type="datetime"/>
+	</createTable>
+</changeSet>
+
+<changeSet id="14" author="DurgaPrasad G">
+		<addForeignKeyConstraint constraintName="FK_DEPL_ID"
+			referencedTableName="DATA_ENGINE_STATUS" referencedColumnNames="ID"
+			baseTableName="DATA_ENGINE_PROCESS_LOG" baseColumnNames="FILEID" />
+</changeSet>
+<changeSet id="15" author="Madhubabu" dbms="mssql, postgresql">
+<sql>
+	delete from finadvancepayments_temp;
+	alter table finadvancepayments_temp add paymentid bigint not null;	
+</sql>
+</changeSet>
+
+  <changeSet id="15" author="Madhubabu" dbms="oracle">
+<sql>
+	delete from finadvancepayments_temp;
+	alter table finadvancepayments_temp add paymentid number(19,0);
+	alter table finadvancepayments_temp modify paymentid not null;
+</sql>
+</changeSet> 
+<changeSet id="16" author="Irfan">
+	<createView viewName="RejectFinanceMain_View" replaceIfExists="true">
+	Select F.FinReference, T.FinCategory LovDescProductCodeName , C.CustCIF LovDescCustCIF,
+	F.FinType, F.FinBranch, F.FinStartDate, F.MaturityDate, F.NumberOfTerms, F.FinCcy, F.FinAmount,
+	(F.FinAmount-F.DownPayment+F.FeeChargeAmt+F.InsuranceAmt) FinancingAmount ,
+	(F.FinAmount-F.DownPayment+F.FeeChargeAmt+F.InsuranceAmt-F.FinRepaymentAmount) CurFinAmount,
+	F.FeeChargeAmt, F.InsuranceAmt, F.DownPayment, F.FinCurrAssetValue   from RejectFinanceMain F LEFT OUTER JOIN
+	Customers C ON F.CustID = C.CustID  LEFT OUTER JOIN
+	RMTFinanceTypes T ON F.FinType = T.FinType  
+	</createView>
+	</changeSet>
+	<changeSet  id="17" author="Madhubabu">
+<createView viewName="FinAdvancePayments_View" replaceIfExists="true">
+SELECT   T1.FinReference,T1.paymentId, T1.PaymentSeq, T1.PaymentDetail, T1.AmtToBeReleased, T1.LiabilityHoldName,
+         T1.BeneficiaryName, T1.BeneficiaryAccNo, T1.Description, T1.PaymentType, T1.LLReferenceNo,
+         T1.LLDate, T1.CustContribution, T1.SellerContribution, T1.Remarks,T1.DisbDate,T1.DisbSeq,
+         T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.BankCode,T1.PayableLoc,T1.PrintingLoc,
+		 T1.ValueDate,T1.BankBranchID,T1.PhoneCountryCode,T1.PhoneAreaCode,T1.PhoneNumber,T1.ClearingDate,T1.Status,T1.Active,
+		 T1.InputDate,T1.DisbCCy,T1.POIssued,
+		 T3.BankCode BranchBankCode,T31.BankName BranchBankName,T3.BranchCode,T3.BranchDesc,T3.IFSC,T3.City, 
+		 T4.BankName	     
+		 FROM  FinAdvancePayments_Temp T1 LEFT OUTER JOIN
+		 BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+		 BMTBankDetail T31 ON T31.BankCode=T3.BankCode LEFT OUTER JOIN		 
+		BMTBankDetail T4  ON T1.BankCode=T4.BankCode
+		
+UNION ALL
+SELECT   T1.FinReference,T1.paymentId, T1.PaymentSeq, T1.PaymentDetail, T1.AmtToBeReleased, T1.LiabilityHoldName,
+         T1.BeneficiaryName, T1.BeneficiaryAccNo, T1.Description, T1.PaymentType, T1.LLReferenceNo,
+         T1.LLDate, T1.CustContribution, T1.SellerContribution, T1.Remarks,T1.DisbDate,T1.DisbSeq,
+         T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.BankCode,T1.PayableLoc,T1.PrintingLoc,
+		 T1.ValueDate,T1.BankBranchID,T1.PhoneCountryCode,T1.PhoneAreaCode,T1.PhoneNumber,T1.ClearingDate,T1.Status,T1.Active,
+		 T1.InputDate,T1.DisbCCy,T1.POIssued,
+		 T3.BankCode BranchBankCode,T31.BankName BranchBankName,T3.BranchCode,T3.BranchDesc,T3.IFSC,T3.City, 
+		 T4.BankName	 	
+		 FROM  FinAdvancePayments T1  LEFT OUTER JOIN
+		 BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+		 BMTBankDetail T31 ON T31.BankCode=T3.BankCode LEFT OUTER JOIN		 
+		BMTBankDetail T4  ON T1.BankCode=T4.BankCode
+		
+WHERE NOT EXISTS 
+                 (SELECT 1 FROM  FinAdvancePayments_Temp WHERE FinReference = T1.FinReference and PaymentSeq = T1.PaymentSeq)
+</createView>
+</changeSet>
+<changeSet  id="18" author="Madhubabu">
+<createView viewName="FinAdvancePayments_TView" replaceIfExists="true">
+SELECT   T1.FinReference,T1.PaymentId, T1.PaymentSeq, T1.PaymentDetail, T1.AmtToBeReleased, T1.LiabilityHoldName,
+         T1.BeneficiaryName, T1.BeneficiaryAccNo, T1.Description, T1.PaymentType, T1.LLReferenceNo,
+         T1.LLDate, T1.CustContribution, T1.SellerContribution, T1.Remarks,T1.DisbDate,T1.DisbSeq,
+         T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.BankCode,T1.PayableLoc,T1.PrintingLoc,
+		 T1.ValueDate,T1.BankBranchID,T1.PhoneCountryCode,T1.PhoneAreaCode,T1.PhoneNumber,T1.ClearingDate,T1.Status,T1.Active,
+		 T1.InputDate,T1.DisbCCy,T1.POIssued,
+		 T3.BankCode BranchBankCode,T31.BankName BranchBankName,T3.BranchCode,T3.BranchDesc,T3.IFSC,T3.City, 
+		 T4.BankName	     
+		 FROM FinAdvancePayments_Temp T1 LEFT OUTER JOIN
+		 BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+		 BMTBankDetail T31 ON T31.BankCode=T3.BankCode LEFT OUTER JOIN		 
+		BMTBankDetail T4  ON T1.BankCode=T4.BankCode
+</createView>
+</changeSet>
+<changeSet  id="19" author="Madhubabu">
+<createView viewName="FinAdvancePayments_AView" replaceIfExists="true">
+SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtToBeReleased, T1.LiabilityHoldName,
+         T1.BeneficiaryName, T1.BeneficiaryAccNo, T1.Description, T1.PaymentType, T1.LLReferenceNo,
+         T1.LLDate, T1.CustContribution, T1.SellerContribution, T1.Remarks,T1.DisbDate,T1.DisbSeq,
+         T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.BankCode,T1.PayableLoc,T1.PrintingLoc,
+		 T1.ValueDate,T1.BankBranchID,T1.PhoneCountryCode,T1.PhoneAreaCode,T1.PhoneNumber,T1.ClearingDate,T1.Status,T1.Active,
+		 T1.InputDate,T1.DisbCCy,T1.POIssued,
+		 T3.BankCode BranchBankCode,T31.BankName BranchBankName,T3.BranchCode,T3.BranchDesc,T3.IFSC,T3.City, 
+		 T4.BankName	     
+		 FROM  FinAdvancePayments T1 LEFT OUTER JOIN
+		 BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+		 BMTBankDetail T31 ON T31.BankCode=T3.BankCode LEFT OUTER JOIN		 
+		BMTBankDetail T4  ON T1.BankCode=T4.BankCode
+</createView>
+</changeSet>
+<changeSet id="20" author="pruthvi">
+<renameColumn 
+            newColumnName="ID"
+            oldColumnName="HeaderID"
+            tableName="Interface_Header"/>
+</changeSet>
+<changeSet id="21" author="pruthvi">
+<addColumn tableName="Interface_Header">
+			<column name="Category" type="char(1)" />
+			</addColumn>
+</changeSet>
+
+<changeSet id="22" author="pruthvi">
+	<addPrimaryKey columnNames="ID" constraintName="pk_Interface_Header"
+			tableName="Interface_Header" />
+</changeSet>
+<changeSet id="23" author="pruthvi">
+<renameColumn 
+            newColumnName="ID"
+            oldColumnName="HeaderBatchID"
+            tableName="Disbursement_Payment_Details"/>
+</changeSet>
+<changeSet id="24" author="pruthvi">
+<addColumn tableName="Disbursement_Payment_Details">
+			<column name="SeqNo" type="decimal(10,0)" />
+			<column name="HeaderID" type="decimal(10,0)" />
+			</addColumn>
+</changeSet>
+<changeSet id="25" author="pruthvi">
+		<addPrimaryKey columnNames="ID" constraintName="pk_Disbursement_Payment_Dtls"
+			tableName="Disbursement_Payment_Details" />
+</changeSet>
+<changeSet id="26" author="pruthvi">
+<addForeignKeyConstraint constraintName="FK_P_S"
+			referencedTableName="Interface_Header" referencedColumnNames="ID"
+			baseTableName="Disbursement_Payment_Details" baseColumnNames="HeaderID" />
+</changeSet>
+<changeSet id="27" author="pruthvi">
+ <dropTable tableName="Disbursement_Payment_Details" />
+ <dropTable tableName="Interface_Header" />
+ </changeSet>
+ 
+ <changeSet id="28" author="pruthvi">
+ <createTable tableName="Interface_Header">
+		<column name="ID" type="bigint">
+		<constraints nullable="false" />
+			</column>
+				<column name="Category" type="varchar(1)">
+			<constraints nullable="false" />
+			</column>
+				<column name="InterfaceType" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+				<column name="FileName" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+				<column name="ConfigID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="varchar(1)"/>
+			<column name="TotalCount" type="bigint"/>
+			<column name="NoofRecordsProcessed" type="bigint"/>
+			<column name="InputTime" type="datetime"/>
+			<column name="ProcessedTime" type="datetime"/>
+</createTable>
+ </changeSet>
+  <changeSet id="29" author="pruthvi">
+  <createTable tableName="Disbursement_Payment_Details">
+            <column name="ID" type="bigint">
+            <constraints nullable="false" />
+			</column>
+			<column name="SeqNo" type="int">
+            <constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint">
+            <constraints nullable="false" />
+			</column>
+            <column name="DisbursementReference" type="bigint">
+            <constraints nullable="false" />
+			</column>
+			<column name="PaymentType" type="varchar(8)"/>
+			<column name="BankCode" type="varchar(8)"/>
+			<column name="DisbursementAmount" type="decimal(18,0)">
+			<constraints nullable="false" />
+			</column>
+			<column name="InstrumentNumber" type="varchar(12)"/>
+				<column name="TransactionDate" type="datetime">
+			<constraints nullable="false" />
+			</column>
+			<column name="BankReferenceNumber" type="varchar(50)">
+			<constraints nullable="false" />
+			</column>
+			<column name="OtherReferenceNumber" type="varchar(50)"/>
+			<column name="TransactionStatus" type="varchar(1)"/>
+			<column name="RejectReason" type="varchar(100)"/>
+			<column name="BeneficaryCode" type="varchar(14)"/>
+			<column name="BeneficaryAccountNo" type="varchar(25)"/>
+			<column name="BeneficaryName" type="varchar(200)"/>
+			<column name="PaymentRemarks1" type="varchar(50)"/>
+			<column name="PaymentRemarks2" type="varchar(50)"/>
+			<column name="PaymentRemarks3" type="varchar(50)"/>
+			<column name="PaymentRemarks4" type="varchar(50)"/>
+			<column name="IFSCCode" type="varchar(15)"/>
+			<column name="MICRCode" type="varchar(15)"/>
+			<column name="PLFStatus" type="varchar(1)"/>
+			<column name="PLFRejectReason" type="varchar(100)"/>
+</createTable>
+ </changeSet>
+ <changeSet id="30" author="pruthvi">
+		<addPrimaryKey columnNames="ID" constraintName="pk_Disbursement_Payment_Dtls"
+			tableName="Disbursement_Payment_Details" />
+</changeSet>
+<changeSet id="31" author="pruthvi">
+	<addPrimaryKey columnNames="ID" constraintName="pk_Interface_Header"
+			tableName="Interface_Header" />
+</changeSet>
+ <changeSet id="32" author="pruthvi">
+<addForeignKeyConstraint constraintName="FK_Disb_Payment_Dtls"
+			referencedTableName="Interface_Header" referencedColumnNames="ID"
+			baseTableName="Disbursement_Payment_Details" baseColumnNames="HeaderID" />
+</changeSet>
+
+
+<changeSet id="34" author="DurgaPrasad G" dbms="oracle">	
+   		<sql splitStatements="false">
+     		 begin
+         	 execute immediate 'CREATE SEQUENCE DISB_PAY_DET_SEQ START WITH 1 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	 </sql>
+ </changeSet>
+ 
+ <changeSet id="35" author="DurgaPrasad G" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 begin
+			 execute 'CREATE SEQUENCE DISB_PAY_DET_SEQ START  1 INCREMENT BY 1 ';  
+			 end;  
+			$$;
+	    </sql>
+ </changeSet>
+ 
+ <changeSet id="36" author="DurgaPrasad G" dbms="mssql">
+		<sql splitStatements="false">
+			CREATE TABLE DISB_PAY_DET_SEQ(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		</sql>
+</changeSet>
+
+<changeSet id="37" author="DurgaPrasad G" dbms="oracle">	
+   		<sql splitStatements="false">
+     		 begin
+         	 execute immediate 'CREATE SEQUENCE INTERFACE_HEADER_SEQ START WITH 1 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	 </sql>
+ </changeSet>
+ 
+ <changeSet id="38" author="DurgaPrasad G" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 begin
+			 execute 'CREATE SEQUENCE INTERFACE_HEADER_SEQ START  1 INCREMENT BY 1 ';  
+			 end;  
+			$$;
+	    </sql>
+ </changeSet>
+ 
+ <changeSet id="39" author="DurgaPrasad G" dbms="mssql">
+		<sql splitStatements="false">
+			CREATE TABLE INTERFACE_HEADER_SEQ(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		</sql>
+</changeSet>
+
+
+ <changeSet id="40" author="DurgaPrasad G">
+	<dropTable tableName="DATA_ENGINE_PROCESS_LOG" />
+</changeSet>
+		
+<changeSet id="41" author="DurgaPrasad G">			
+	<createTable tableName="DATA_ENGINE_PROCESS_LOG">
+		<column name="ID" type="bigint">
+		 	<constraints primaryKey="true" nullable="false" />
+		 </column>
+		 <column name="SEQNO" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="FILEID" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="REFID1" type="bigint"/>
+		 <column name="REFID2" type="bigint"/>
+		 <column name="REFNO1" type="varchar(50)"/>
+		 <column name="REFNO2" type="varchar(50)"/>
+		  <column name="CATEGORY" type="char(10)">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="STATUS" type="char(1)">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="REMARKS" type="varchar(1000)"/>
+		 <column name="VALUEDATE" type="datetime">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="AddField1" type="varchar(1000)"/>
+		  <column name="AddField2" type="varchar(1000)"/>
+		  <column name="AddField3" type="varchar(1000)"/>
+		  <column name="AddField4" type="varchar(1000)"/>
+		  <column name="AddField5" type="datetime"/>
+		  <column name="AddField6" type="datetime"/>
+		  <column name="AddField7" type="datetime"/>
+		  <column name="AddField8" type="datetime"/>
+	</createTable>
+</changeSet>
+
+<changeSet id="42" author="DurgaPrasad G">
+		<addForeignKeyConstraint constraintName="FK_DEPL_ID"
+			referencedTableName="DATA_ENGINE_STATUS" referencedColumnNames="ID"
+			baseTableName="DATA_ENGINE_PROCESS_LOG" baseColumnNames="FILEID" />
+</changeSet>
+
+
+<changeSet  id="43" author="DurgaPrasad G">
+    <renameColumn   newColumnName="HEADERTABLE"  oldColumnName="PREPAREXML"  tableName="DATA_ENGINE_TABLE"/>
+</changeSet>
+
+<changeSet id="44" author="DurgaPrasad G">
+		<dropColumn columnName="XMLFIELD" tableName="DATA_ENGINE_TABLE" />
+</changeSet>
+<changeSet id="45" author="satish">
+<sql>
+delete from SMTHolidayMaster;
+delete from SMTWeekendMaster;
+
+</sql>
+</changeSet>
+<changeSet author="Irfan" id="46">
+	<addColumn tableName="RejectFinanceMain">
+		<column name="RejectStatus" type="varchar(8)"/>
+		<column name="RejectReason" type="varchar(1000)"/>
+	</addColumn>
+</changeSet>
+<changeSet author="pruthvi" id="47">
+<sql>
+update reportlist set formatreq='0' where code='ReturnedChequeDetails';
+</sql>
+</changeSet>
+<changeSet id="48"  author="Siva" >
+	<sql>
+			delete from ErrorDetails where ErrorCode = '60203';
+		INSERT INTO ErrorDetails VALUES('60203','EN','E','Customer Records in EOD execution process. Not allowed to Maintain this Customer Record.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+</changeSet>
+<changeSet id="49"  author="pruthvi" >
+<sql>
+INSERT INTO ReportList  VALUES 
+(N'SponsorBank', N'SponsorBank', 
+N'listheader_SponsorBankCode.label,listheader_SponsorBankName.label,listheader_BankBranchCode.label,listheader_RecordStatus.label,listheader_RecordType.label', 
+N'sponsorBankCode,sponsorBankName,bankBranchCode,recordStatus,recordType', 
+N'String,String,String,String,String', N'', N'ReportList05', N'Sponsor Bank', N'Application Masters', 3, 1001, CURRENT_TIMESTAMP, 
+N'Approved', N'', N'', N'', N'', N'', 0, 0);
+</sql>
+</changeSet>
+
+<changeSet id="50" author="Durgaprasad G">
+		<addColumn tableName="DISBURSEMENT_PAYMENT_DETAILS">
+			<column name="InputTime"  type="datetime" />
+			<column name="ProcessedTime"  type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="51" author="Durgaprasad G">
+		<dropColumn columnName="SeqNo" tableName="DISBURSEMENT_PAYMENT_DETAILS" />
+	</changeSet>
+	<changeSet id="52" author="satish">
+		<createView replaceIfExists="true" viewName="Mandates_View">
+SELECT		T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active, 0 useExisting,T1.OrgReference
+FROM    	Mandates_Temp T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode 
+            
+UNION ALL
+
+SELECT		T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active,1 useExisting,T1.OrgReference
+FROM    	Mandates T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode 
+			WHERE     NOT EXISTS (SELECT 1 FROM Mandates_TEMP WHERE MandateID = T1.MandateID)
+		</createView>
+		<createView replaceIfExists="true" viewName="Mandates_TView">
+SELECT		T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active, 0 useExisting,T1.OrgReference
+FROM    	Mandates_Temp  T1 INNER JOIN
+			Customers  T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches  T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail  T4  ON T3.BankCode=T4.BankCode 
+		</createView>
+		<createView replaceIfExists="true" viewName="Mandates_AView">
+SELECT		T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active, 1 useExisting,T1.OrgReference
+FROM    	Mandates  T1 INNER JOIN
+			Customers  T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches  T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail  T4  ON T3.BankCode=T4.BankCode 
+		</createView>
+	</changeSet>
+	<changeSet id="53" author="Siva">
+		<createView viewName="CUSTOMERDIRECTORDETAIL_VIEW" replaceIfExists="true">
+ SELECT	  T1.DirectorId, T1.CustID, T1.FirstName, T1.MiddleName, T1.LastName, T1.ShortName, 
+                      T1.CustGenderCode, T1.CustSalutationCode, T1.SharePerc, T1.CustAddrHNbr, T1.CustFlatNbr, T1.CustAddrStreet, T1.CustAddrLine1, T1.CustAddrLine2, T1.CustPOBox, 
+                      T1.CustAddrCity, T1.CustAddrProvince, T1.CustAddrCountry, T1.CustAddrZIP, T1.CustAddrPhone, T1.CustAddrFrom, T1.Shareholder, T1.Director, T1.Designation, 
+                      T1.IDType, T1.IDReference, T1.Nationality, T1.DOB, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T5.PCCityName lovDescCustAddrCityName, 
+                      T6.CPProvinceName lovDescCustAddrProvinceName, T7.CountryDesc lovDescCustAddrCountryName, T3.GenderDesc lovDescCustGenderCodeName, 
+                      T4.SaluationDesc lovDescCustSalutationCodeName, T8.DesgDesc lovDescDesignationName, T9.CountryDesc lovDescNationalityName, 
+                      T10.DocTypeDesc lovDescCustDocCategoryName,COALESCE(T10.DocIdNumMand,0) IDReferenceMand
+			FROM         CustomerDirectorDetail_TEMP T1 LEFT OUTER JOIN
+                       BMTGenders T3 ON T1.CustGenderCode = T3.GenderCode LEFT OUTER JOIN
+                       BMTSalutations T4 ON T1.CustSalutationCode = T4.SalutationCode LEFT OUTER JOIN
+                       RMTProvinceVsCity T5 ON T1.CustAddrCountry = T5.PCCountry AND T1.CustAddrProvince = T5.PCProvince AND T1.CustAddrCity = T5.PCCity LEFT OUTER JOIN
+                       RMTCountryVsProvince T6 ON T1.CustAddrCountry = T6.CPCountry AND T1.CustAddrProvince = T6.CPProvince INNER JOIN
+                       BMTCountries T7 ON T1.CustAddrCountry = T7.CountryCode LEFT OUTER JOIN
+                       BMTDesignations T8 ON T1.Designation = T8.DesgCode LEFT OUTER JOIN
+                       BMTCountries T9 ON T1.Nationality = T9.CountryCode LEFT OUTER JOIN
+                       BMTDocumentTypes T10 ON T1.IDType = T10.DocTypeCode
+		UNION ALL
+		SELECT     T1.DirectorId, T1.CustID, T1.FirstName, T1.MiddleName, T1.LastName, T1.ShortName, 
+                      T1.CustGenderCode, T1.CustSalutationCode, T1.SharePerc, T1.CustAddrHNbr, T1.CustFlatNbr, T1.CustAddrStreet, T1.CustAddrLine1, T1.CustAddrLine2, T1.CustPOBox, 
+                      T1.CustAddrCity, T1.CustAddrProvince, T1.CustAddrCountry, T1.CustAddrZIP, T1.CustAddrPhone, T1.CustAddrFrom, T1.Shareholder, T1.Director, T1.Designation, 
+                      T1.IDType, T1.IDReference, T1.Nationality, T1.DOB, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T5.PCCityName lovDescCustAddrCityName, 
+                      T6.CPProvinceName lovDescCustAddrProvinceName, T7.CountryDesc lovDescCustAddrCountryName, T3.GenderDesc lovDescCustGenderCodeName, 
+                      T4.SaluationDesc lovDescCustSalutationCodeName, T8.DesgDesc lovDescDesignationName, T9.CountryDesc lovDescNationalityName, 
+                      T10.DocTypeDesc lovDescCustDocCategoryName,COALESCE(T10.DocIdNumMand,0) IDReferenceMand
+		FROM         CustomerDirectorDetail T1 LEFT OUTER JOIN
+                       BMTGenders T3 ON T1.CustGenderCode = T3.GenderCode LEFT OUTER JOIN
+                       BMTSalutations T4 ON T1.CustSalutationCode = T4.SalutationCode LEFT OUTER JOIN
+                       RMTProvinceVsCity T5 ON T1.CustAddrCountry = T5.PCCountry AND T1.CustAddrProvince = T5.PCProvince AND T1.CustAddrCity = T5.PCCity LEFT OUTER JOIN
+                       RMTCountryVsProvince T6 ON T1.CustAddrCountry = T6.CPCountry AND T1.CustAddrProvince = T6.CPProvince INNER JOIN
+                       BMTCountries T7 ON T1.CustAddrCountry = T7.CountryCode LEFT OUTER JOIN
+                       BMTDesignations T8 ON T1.Designation = T8.DesgCode LEFT OUTER JOIN
+                       BMTCountries T9 ON T1.Nationality = T9.CountryCode LEFT OUTER JOIN
+                       BMTDocumentTypes T10 ON T1.IDType = T10.DocTypeCode
+		WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          CustomerDirectorDetail_TEMP
+                            WHERE      DirectorId = T1.DirectorId AND CustID = T1.CustID)
+                       </createView>     
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- LimitTransactionDetail validations -->
+	<bean class="com.pennant.backend.model.limit.LimitTransactionDetail">
+		<field name="custCIF">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>Cif is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>cif should have maximum 12 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="max">12</element>
+			</constraint>
+		</field>
+
+		<field name="custGrpCode">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>customerGroup should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+		<field name="referenceCode">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>referenceCode is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>referenceCode should have maximum 1 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="max">1</element>
+			</constraint>
+		</field>
+
+
+		<field name="referenceNumber">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>ReferenceNumber is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>referenceNumber should have maximum 20 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="max">20</element>
+			</constraint>
+		</field>
+
+		<field name="limitCurrency">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>Currency is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>Currency should have maximum 3 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="max">3</element>
+			</constraint>
+		</field>
+
+		<field name="limitAmount">
+			<constraint annotation="javax.validation.constraints.Min">
+				<message>Amount should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>Amount allow 21 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="value">999999999999999999999</element>
+			</constraint>
+		</field>
+<!-- 
+      <field name="validateLimitTransactionDetail">
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>cif and customerGroup are mutually exclusive</message>
+				<groups>
+				<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+	            if (_this.custCIF != null &amp;&amp; _this.custCIF != "" ){
+                 if(_this.custGrpCode != null &amp;&amp; _this.custGrpCode != "" ){
+                   false;
+                } else {
+                   true
+                 }
+		        } else if(_this.custGrpCode != null &amp;&amp; _this.custGrpCode != ""  ){
+               if(_this.custCIF != null &amp;&amp; _this.custCIF != "" ){
+                 false	           
+               } else {
+                 true
+                }
+		      } 
+	           
+				</element>
+			</constraint>
+		</field> -->
+
+
+
+	</bean>
+</constraint-mappings>
+		

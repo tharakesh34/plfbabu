@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- Customer validations -->
+	<bean class="com.pennant.backend.model.customermasters.Customer">
+
+		<field name="custFName">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>firstName  should have maximum 50 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">50</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.Pattern">
+			<message>firstName  invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
+			</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
+			</constraint> 
+		</field>
+
+
+		<field name="custMName">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>middleName should have maximum 50 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">50</element>
+			</constraint>
+		<constraint annotation="javax.validation.constraints.Pattern">
+			<message>middleName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
+			</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
+			</constraint> 
+		</field>
+
+
+		<field name="custLName">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>lastName should have maximum 50 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">50</element>
+			</constraint>
+		 <constraint annotation="javax.validation.constraints.Pattern">
+			<message>lastName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
+			</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
+			</constraint> 
+			
+		</field>
+
+		<field name="custSalutationCode">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>salutation should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+		<field name="custShrtName">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>shortName should have maximum 50 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">50</element>
+			</constraint>
+			 <constraint annotation="javax.validation.constraints.Pattern">
+			<message>shortName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
+			</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
+			</constraint> 
+		</field>
+
+		<field name="custMotherMaiden">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>motherName should have maximum 50 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">50</element>
+			</constraint>
+		<constraint annotation="javax.validation.constraints.Pattern">
+			<message>motherName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
+			</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
+			</constraint> 
+		</field>
+		<field name="custFNameLclLng">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>fatherName should have maximum 50 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">50</element>
+			</constraint>
+		<constraint annotation="javax.validation.constraints.Pattern">
+			<message>fatherName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
+			</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
+			</constraint> 
+		</field>
+
+		<field name="custLng">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>language should have maximum 2 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">2</element>
+			</constraint>
+		</field>
+
+		<field name="custDOB">
+			<constraint annotation="javax.validation.constraints.NotNull">
+				<message>dateofBirth is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+			</constraint>
+		</field>
+
+		<field name="custCOB">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>countryofBirth should have maximum 2 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">2</element>
+			</constraint>
+		</field>
+
+		<field name="custNationality">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>nationality should have maximum 2 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">2</element>
+			</constraint>
+		</field>
+
+
+		<field name="custGenderCode">
+
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>gender should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+
+		<field name="custMaritalSts">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>maritalStatus should have maximum 15 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">15</element>
+			</constraint>
+		</field>
+
+		<field name="noOfDependents">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>numofDependents allow 3 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="value">999</element>
+			</constraint>
+		</field>
+
+		<field name="custTypeCode">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>type is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>type should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+		<field name="custSector">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>sector is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>sector should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+		<field name="custSubSector">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>subSector should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+		<field name="custSegment">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>segment should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+		<field name="custSubSegment">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>subsegment should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+		<field name="custIndustry">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>industry is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>industry should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+		<field name="custGroupID">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>groupID allow 19 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="value">99999999999999999</element>
+			</constraint>
+		</field>
+
+		<field name="custParentCountry">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>parentCountry should have maximum 2 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">2</element>
+			</constraint>
+		</field>
+
+		<field name="custRiskCountry">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>riskCountry should have maximum 2 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">2</element>
+			</constraint>
+		</field>
+
+		<field name="custStaffID">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>staffID should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+		<field name="custEmpSts">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>employmentStatus should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+		<field name="custDSA">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>saleAgent should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+		<field name="custDSADept">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>saleAgentDept should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+		<field name="customer">
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>staffID Applicable if the customer is staff.</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.PersionalInfoGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.custIsStaff) {
+					if (_this.custStaffID
+					!= null &amp;&amp; _this.custStaffID != "") {
+					true;
+					} else{
+					false;
+					}
+					}else {
+					if (_this.custStaffID != null &amp;&amp; _this.custStaffID
+					!= "") {
+					false;
+					} else{
+					true;
+					}
+					}
+
+				</element>
+			</constraint>
+		</field>
+
+	</bean>
+</constraint-mappings>
+		

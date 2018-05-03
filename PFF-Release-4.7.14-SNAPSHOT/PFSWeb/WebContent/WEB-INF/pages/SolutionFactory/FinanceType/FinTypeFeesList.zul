@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_FinTypeFeesList" border="normal" width="100%"
+		height="100%" apply="${finTypeFeesListCtrl}" sizable="false">
+		<borderlayout id="borderlayoutFinTypeFeesList">
+			<center border="none" autoscroll="true">
+				<tabbox width="100%">
+					<tabs>
+						<tab id="feeOriginationTab"
+							label="${c:l('tab_FinTypeFeesList_Origination.label')}" />
+						<tab id="feeServicingTab"
+							label="${c:l('tab_FinTypeFeesList_Servicing.label')}" />
+					</tabs>
+					<tabpanels>
+						<!-- Origination TabPanel -->
+						<!-- <tabpanel style="overflow:auto" ca:data-scrollable="true"> -->
+						<tabpanel style="overflow:auto">
+							<groupbox id="gb_FinTypeFeesList_Org"
+								width="100%" height="100%">
+								<div sclass="z-toolbar"
+									style="padding:0">
+									<hbox pack="stretch"
+										sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+										height="100%" width="100%">
+										<toolbar align="end"
+											style="float:right; border-style: none; padding:0px;"
+											height="100%">
+											<button
+												id="btnNew_FinTypeFeesList_Origination"
+												label="${c:l('label_New')}"
+												tooltiptext="${c:l('btnNew_FinTypeFeesList_Origination.tooltiptext')}"
+												autodisable="btnNew_FinTypeFeesList_Origination" />
+										</toolbar>
+									</hbox>
+								</div>
+								<listbox
+									id="listBoxFinTypeFeesListOrigination" fixedLayout="true"
+									height="100px" sizedByContent="true"
+									tooltiptext="${c:l('listbox.tooltiptext')}"
+									emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false"
+									span="true">
+									<listhead sizable="true">
+										<listheader
+											id="listheader_FinTypeFeesList_Org_FeeOrder"
+											label="${c:l('listheader_FinTypeFeesList_FeeOrder.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_FinTypeFeesList_Org_FeeType"
+											label="${c:l('listheader_FinTypeFeesList_FeeType.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_FinTypeFeesList_Org_CalculationType"
+											label="${c:l('listheader_FinTypeFeesList_CalculationType.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_FinTypeFeesList_Org_FeeSchduleMethod"
+											label="${c:l('listheader_FinTypeFeesList_FeeSchduleMethod.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_FinTypeFeesList_Org_MaxWaiver" align="right"
+											label="${c:l('listheader_FinTypeFeesList_MaxWaiver.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_FinTypeFeesList_Org_ModifyFee"
+											label="${c:l('listheader_FinTypeFeesList_ModifyFee.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_FinTypeFeesList_Org_AlwDeviation"
+											label="${c:l('listheader_FinTypeFeesList_AllowDeviation.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											label="${c:l('listheader_RecordStatus.label')}" sort="false"
+											hflex="min"/>
+										<listheader
+											label="${c:l('listheader_RecordType.label')}" sort="false"
+											hflex="min" />
+									</listhead>
+								</listbox>
+							</groupbox>
+						</tabpanel>
+						<!-- <tabpanel style="overflow:auto" ca:data-scrollable="true"> -->
+						<!--  Serviceing Tabpanel -->
+						<tabpanel style="overflow:auto">
+							<groupbox id="gb_FinTypeFeesList_Servicing"
+								width="100%" height="100%">
+								<div sclass="z-toolbar"
+									style="padding:0">
+									<hbox pack="stretch"
+										sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+										height="100%" width="100%">
+										<toolbar align="end"
+											style="float:right; border-style: none; padding:0px;"
+											height="100%">
+											<button
+												id="btnNew_FinTypeFeesList_Servicing"
+												label="${c:l('label_New')}"
+												tooltiptext="${c:l('btnNew_FinTypeFeesList_Servicing.tooltiptext')}"
+												autodisable="btnNew_FinTypeFeesList_Servicing" />
+										</toolbar>
+									</hbox>
+								</div>
+								<listbox
+									id="listBoxFinTypeFeesListServicing" fixedLayout="true"
+									height="100px" sizedByContent="true"
+									tooltiptext="${c:l('listbox.tooltiptext')}"
+									emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false"
+									span="true">
+									<listhead sizable="true">
+										<listheader
+											id="listheader_FinTypeFeesList_Serv_FeeOrder"
+											label="${c:l('listheader_FinTypeFeesList_FeeOrder.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_FinTypeFeesList_Serv_FeeType"
+											label="${c:l('listheader_FinTypeFeesList_FeeType.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_FinTypeFeesList_Serv_CalculationType"
+											label="${c:l('listheader_FinTypeFeesList_CalculationType.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_FinTypeFeesList_Serv_MaxWaiver"
+											label="${c:l('listheader_FinTypeFeesList_MaxWaiver.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_FinTypeFeesList_Serv_ModifyFee"
+											label="${c:l('listheader_FinTypeFeesList_ModifyFee.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_FinTypeFeesList_Serv_AlwDeviation"
+											label="${c:l('listheader_FinTypeFeesList_AllowDeviation.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											label="${c:l('listheader_RecordStatus.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											label="${c:l('listheader_RecordType.label')}" sort="false"
+											hflex="min" />
+									</listhead>
+								</listbox>
+							</groupbox>
+						</tabpanel>
+					</tabpanels>
+				</tabbox>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

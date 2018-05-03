@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- Customer validations -->
+	<bean class="com.pennant.backend.model.fees.FeePostings">
+
+		<field name="feeTyeCode">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>FeeType Code is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>FeeType Code should have maximum 20 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="max">20</element>
+			</constraint>
+		</field>
+
+		<field name="currency">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>Ccy should have maximum 3 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="max">3</element>
+			</constraint>
+		</field>
+
+		<field name="validateFeePostings">
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>90242%%PartnerBankId</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.partnerBankId !=null &amp;&amp; _this.partnerBankId != "") {
+					true;
+					} else {
+					false
+					}
+				</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>90242%%amount</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.postingAmount !=null &amp;&amp; _this.postingAmount != "") {
+					true;
+					} else {
+					false
+					}
+				</element>
+			</constraint>
+			</field>
+	</bean>
+</constraint-mappings>

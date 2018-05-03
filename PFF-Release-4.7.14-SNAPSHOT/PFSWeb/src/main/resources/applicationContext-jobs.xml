@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+	<!-- ******************************************************************************* -->
+	<!-- ********************* Job Definitions & Declarations ************************** -->
+	<!-- ******************************************************************************* -->
+
+	<bean id="hostStatusJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean"
+		p:jobClass="com.pennant.app.util.HostStatusUtil" p:name="HOSTSTATUS">
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="hostStatusEnquiryService" value-ref="hostStatusEnquiryService" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="financePriorityJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean"
+		p:jobClass="com.pennant.app.util.FinancePriorityUpdation" p:name="TASKPRIORITY">
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="financeDetailService" value-ref="financeDetailService" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="tatPriorityJobSchedular" class="org.springframework.scheduling.quartz.JobDetailBean"
+		p:jobClass="com.pennant.app.job.process.PriorityNotificationProcess" p:name="TATPRIORITY">
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="financeMainDAO" value-ref="financeMainDAO" />
+				<entry key="notificationsDAO" value-ref="notificationsDAO" />
+				<entry key="mailLogDAO" value-ref="mailLogDAO" />
+				<entry key="mailUtil" value-ref="mailUtil" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="tatGrcEndJobSchedular" class="org.springframework.scheduling.quartz.JobDetailBean"
+		p:jobClass="com.pennant.app.job.process.GraceEndNotificationProcess" p:name="TATGRACEDAYS">
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="financeMainDAO" value-ref="financeMainDAO" />
+				<entry key="notificationsDAO" value-ref="notificationsDAO" />
+				<entry key="mailLogDAO" value-ref="mailLogDAO" />
+				<entry key="mailUtil" value-ref="mailUtil" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="tatNotification" class="org.springframework.scheduling.quartz.JobDetailBean"
+		p:jobClass="com.pennant.app.job.process.TatNotificationProcess" p:name="TATNOTIFCN">
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="financeMainDAO" value-ref="financeMainDAO" />
+				<entry key="notificationsDAO" value-ref="notificationsDAO" />
+				<entry key="mailLogDAO" value-ref="mailLogDAO" />
+				<entry key="mailUtil" value-ref="mailUtil" />
+				<entry key="tatDetailDAO" value-ref="tatDetailDAO" />
+				<entry key="DedupParmDAO" value-ref="dedupParmDAO" />
+				<entry key="securityUserDAO" value-ref="securityUserDAO" />
+				<entry key="eventManager" value-ref="eventManager" />
+			</map>
+		</property>
+	</bean>
+	
+	<!-- DDA Payments Initiation Job -->
+	<bean id="ddaPaymentInitJobSchedular" class="org.springframework.scheduling.quartz.JobDetailBean"
+		p:jobClass="com.pennant.app.job.ddapayments.DDAPaymentInitiationProcess" p:name="DDAPAYINT">
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="financeMainDAO" value-ref="financeMainDAO"/>
+				<entry key="financeMainExtDAO" value-ref="financeMainExtDAO"/>
+				<entry key="ddaPaymentInitiateDAO" value-ref="ddaPaymentInitiateDAO"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- DDA Payments Response Job -->
+	<bean id="ddaPaymentResJobSchedular" class="org.springframework.scheduling.quartz.JobDetailBean"
+		p:jobClass="com.pennant.app.job.ddapayments.DDAPaymentResponseProcess" p:name="DDARESINT">
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="financeMainDAO" value-ref="financeMainDAO"/>
+				<entry key="ddaPaymentResponseDAO" value-ref="ddaPaymentResponseDAO"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- Closed Facility Response Job -->
+	<bean id="closedFacilityJobSchedular" class="org.springframework.scheduling.quartz.JobDetailBean"
+		p:jobClass="com.pennant.app.job.process.ClosedFacilityProcess" p:name="CLSFACILITY">
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="custLimitIntefaceService" value-ref="custLimitIntefaceService"/>
+			</map>
+		</property>
+	</bean>
+
+	<!-- ******************************************************************************* -->
+	<!-- ********************* Trigger Definitions & Declarations ********************** -->
+	<!-- ******************************************************************************* -->
+
+	<bean id="hostStatusJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
+		p:jobDetail-ref="hostStatusJobScheduler" p:startDelay="10000"
+		p:cronExpression="0 0/1 * * * ?" />
+		
+	<bean id="financePriorityJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
+		p:jobDetail-ref="financePriorityJobScheduler" p:startDelay="10000"
+		p:cronExpression="0 0/15 8-22 ? * *" />
+	
+	<bean id="tatPriorityJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
+		p:jobDetail-ref="tatPriorityJobSchedular" p:startDelay="10000"
+		p:cronExpression="0 0/20 * * * ?"  />
+	
+	<bean id="tatGrcEndJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
+		p:jobDetail-ref="tatGrcEndJobSchedular" p:startDelay="10000"
+		p:cronExpression="0 0/3 * * * ?"  />
+		
+	<bean id="tatNotificationTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
+		p:jobDetail-ref="tatNotification" p:startDelay="10000"
+		p:cronExpression="0 0/1 * * * ?"  />
+	
+	<bean id="ddaPaymentInitJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
+		p:jobDetail-ref="ddaPaymentInitJobSchedular" p:startDelay="10000"
+		p:cronExpression="0 0/3 * * * ?"  />
+	
+	<bean id="ddaPaymentResJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
+		p:jobDetail-ref="ddaPaymentResJobSchedular" p:startDelay="10000"
+		p:cronExpression="0 0/3 * * * ?"  />
+	
+	<bean id="closedFacilityJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
+		p:jobDetail-ref="closedFacilityJobSchedular" p:startDelay="10000"
+		p:cronExpression="0 0/3 * * * ?"  />
+	
+	<bean id="autoHuntingTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
+		p:jobDetail-ref="autoHuntingJobSchedular" p:startDelay="1000"
+		p:cronExpression="0/5 * * * * ?"  />
+
+	<!-- ******************************************************************************* -->
+	<!-- ********************* Scheduler Factory Bean Definition ********************** -->
+	<!-- ******************************************************************************* -->
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+		p:waitForJobsToCompleteOnShutdown="false" p:autoStartup="true">
+		<property name="triggers">
+			<list>
+				<!-- <ref bean="financePriorityJobTrigger" /> --> 
+				<!-- <ref bean="tatPriorityJobTrigger" />
+				<ref bean="tatGrcEndJobTrigger" /> 
+				<ref bean="tatNotificationTrigger" /> -->
+				<!-- <ref bean="ddaPaymentInitJobTrigger" /> --> 
+				<!-- <ref bean="ddaPaymentResJobTrigger" /> -->
+				<!-- <ref bean="closedFacilityJobTrigger" /> -->
+				<!-- <ref bean="autoHuntingTrigger" /> -->
+
+			</list>
+		</property>
+
+		<property name="quartzProperties">
+			<props>
+				<prop key="org.quartz.scheduler.instanceName">PFF_SCHEDULER</prop>
+				<prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
+				<prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+				<prop key="org.quartz.jobStore.class">org.quartz.simpl.RAMJobStore</prop>
+				<prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool</prop>
+				<prop key="org.quartz.threadPool.threadCount">3</prop>
+				<prop key="org.quartz.jobStore.misfireThreshold">600000</prop>
+			</props>
+		</property>
+	</bean>
+</beans>

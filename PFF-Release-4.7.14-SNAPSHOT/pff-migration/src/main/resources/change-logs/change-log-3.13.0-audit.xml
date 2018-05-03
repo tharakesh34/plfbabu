@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+<property name="call.concatenate" value="+" dbms="mssql" />
+<property name="call.concatenate" value="||" dbms="oracle" />
+<property name="call.maindb" value="PLF.." dbms="mssql"/>
+<property name="call.maindb" value="PLF." dbms="oracle"/>
+
+
+<changeSet id="01" author="Durgaprasad G">
+  <addColumn tableName="ADTSECUSERS">
+   <column name="AUTHTYPE" type="CHAR(3)"/>
+  </addColumn>
+</changeSet>
+
+<changeSet id="02" author="Durgaprasad G">
+	<modifyDataType tableName="ADTSECUSERS" columnName="AUTHTYPE" newDataType="CHAR(4)"/>
+</changeSet>
+
+<changeSet id="03" author="Durgaprasad G" dbms="oracle">
+ <dropNotNullConstraint tableName="ADTSECUSERS" columnName="USRPWD"/>
+</changeSet>
+<changeSet id="03" author="Durgaprasad G" dbms="mssql">
+ <dropNotNullConstraint tableName="ADTSECUSERS" columnName="USRPWD" columnDataType="varchar(100)"/>
+</changeSet>
+<changeSet id="04" author="Irfan">
+	<addColumn tableName="ADTRMTACCOUNTTYPES">
+		<column name="gSTApplicable" type="char(1)"/>
+		<column name="hSNNumber" type="varchar(50)"/>
+		<column name="natureService" type="varchar(50)"/>
+		<column name="revChrgApplicable" type="char(1)"/>
+	</addColumn>
+</changeSet>
+</databaseChangeLog>

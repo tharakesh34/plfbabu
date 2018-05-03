@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Repayment Details Report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="eb1be5fb-926c-44c3-90b7-86516e995dbd">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["../StyleSheet/Template.jrtx"]]></template>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="schedule_datasource" class="java.lang.Object"/>
+	<parameter name="chart_datas" class="java.lang.Object"/>
+	<parameter name="userName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="whereCondition" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="organizationLogo" class="java.lang.String"/>
+	<parameter name="productLogo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="finReference" class="java.lang.String"/>
+	<field name="lovDescFinTypeName" class="java.lang.String"/>
+	<field name="lovDescScheduleMethodName" class="java.lang.String"/>
+	<field name="lovDescFinBranchName" class="java.lang.String"/>
+	<field name="finIsActive" class="java.lang.String"/>
+	<field name="lovDescFinCcyName" class="java.lang.String"/>
+	<field name="lovDescProfitDaysBasisName" class="java.lang.String"/>
+	<field name="lovDescCustCIF" class="java.lang.String"/>
+	<field name="finType" class="java.lang.String"/>
+	<field name="finCcy" class="java.lang.String"/>
+	<field name="finBranch" class="java.lang.String"/>
+	<field name="profitDaysBasis" class="java.lang.String"/>
+	<group name="FinRef">
+		<groupExpression><![CDATA[$F{finReference}]]></groupExpression>
+		<groupHeader>
+			<band height="80">
+				<frame>
+					<reportElement uuid="afe877d2-d746-4c49-a657-d52889e48e35" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="802" height="14" isRemoveLineWhenBlank="true" backcolor="#DAD3C4"/>
+					<staticText>
+						<reportElement uuid="67c9045c-eb7d-4a20-8d3d-80df3c4e9ff8" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="8" y="0" width="210" height="14"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[Repayment Enquiry]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement uuid="a598a15f-bc47-4512-8bfe-dd304fe59e15" x="0" y="15" width="802" height="15" isRemoveLineWhenBlank="true"/>
+					<staticText>
+						<reportElement uuid="8257b6ba-cf55-443a-b45e-669cafa26a74" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="110" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[Loan Reference]]></text>
+					</staticText>
+					<staticText>
+						<reportElement uuid="86a3ff59-08db-4526-8eea-f24e25ac7414" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="135" y="0" width="5" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="b408097b-775b-4fdf-8670-8855ccfb6c09" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="145" y="0" width="255" height="15"/>
+						<textElement/>
+						<textFieldExpression><![CDATA[$F{finReference}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement uuid="76869e49-17be-40bd-9514-c5796af54baa" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="415" y="0" width="110" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[Loan Status]]></text>
+					</staticText>
+					<staticText>
+						<reportElement uuid="f73c463a-63ed-4ad9-ab6f-598acf96b6f3" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="530" y="0" width="5" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="b22c4c57-dd86-4b91-8260-5af68c5e8bda" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="540" y="0" width="255" height="15"/>
+						<textElement/>
+						<textFieldExpression><![CDATA[$F{finIsActive}=='true'?'Active':'Inactive']]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement uuid="90ff3a92-4ff5-4153-bd93-c4925054a79e" x="0" y="30" width="802" height="15" isRemoveLineWhenBlank="true"/>
+					<staticText>
+						<reportElement uuid="487b365b-d8ff-407e-901c-4629e9a8cbb0" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="110" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[Loan Type]]></text>
+					</staticText>
+					<staticText>
+						<reportElement uuid="865e5a25-ec7b-4126-a4e0-5ea270019768" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="135" y="0" width="5" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="a35f0046-af1a-41da-af85-a3640e138ac3" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="145" y="0" width="255" height="15"/>
+						<textElement/>
+						<textFieldExpression><![CDATA[$F{finType}==null?" ":$F{finType}+' - '+$F{lovDescFinTypeName}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement uuid="477690db-15d9-4fbc-ac6d-2ac9eb558f79" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="415" y="0" width="110" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[Currency]]></text>
+					</staticText>
+					<staticText>
+						<reportElement uuid="59971641-4642-4dbd-87db-d2b91f822bee" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="530" y="0" width="5" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="013e4d21-35bc-4829-8985-25d3e2644ed0" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="540" y="0" width="255" height="15"/>
+						<textElement/>
+						<textFieldExpression><![CDATA[$F{finCcy}==null?" ":$F{finCcy}+' - '+$F{lovDescFinCcyName}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement uuid="ab04e2cb-a2ac-491f-bf26-7f914ff1d37b" x="0" y="45" width="802" height="15" isRemoveLineWhenBlank="true"/>
+					<staticText>
+						<reportElement uuid="de39411f-0c81-43f6-bd3a-fcbbeca0e6b7" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="110" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[Schedule Method]]></text>
+					</staticText>
+					<staticText>
+						<reportElement uuid="e80844f5-0ee2-47ea-aec8-959ceac76ad5" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="135" y="0" width="5" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="47bbc9d5-fd51-4a40-9738-3895a5f8b05e" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="145" y="0" width="255" height="15"/>
+						<textElement/>
+						<textFieldExpression><![CDATA[$F{lovDescScheduleMethodName}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement uuid="6d2421a5-0f0c-42d9-bfff-c58a080c1365" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="415" y="0" width="110" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[Interest Days Basis]]></text>
+					</staticText>
+					<staticText>
+						<reportElement uuid="56057a3e-2dad-4b4c-bc2d-97c9cd16866e" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="530" y="0" width="5" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="ff1b7cb7-ca3c-4125-b1b2-8cb2621cd25a" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="540" y="0" width="255" height="15"/>
+						<textElement/>
+						<textFieldExpression><![CDATA[$F{profitDaysBasis}==null?" ":$F{profitDaysBasis}+' - '+$F{lovDescProfitDaysBasisName}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement uuid="51571d78-9c3a-4bfc-b824-131150235f06" x="0" y="60" width="802" height="15" isRemoveLineWhenBlank="true"/>
+					<staticText>
+						<reportElement uuid="0f84d4d1-2e87-4cd3-adcd-3f405cf9ffd2" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="110" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[Branch]]></text>
+					</staticText>
+					<staticText>
+						<reportElement uuid="3984ae17-e1e5-4020-b29c-d0c851c672c1" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="135" y="0" width="5" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="14ddc17c-7a56-4b53-8a76-b28390a60086" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="145" y="0" width="255" height="15"/>
+						<textElement/>
+						<textFieldExpression><![CDATA[$F{finBranch}==null?" ":$F{finBranch}+' - '+$F{lovDescFinBranchName}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement uuid="296b6efc-8a17-4774-9642-6834d751e970" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="415" y="0" width="110" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[Customer ID]]></text>
+					</staticText>
+					<staticText>
+						<reportElement uuid="ab9faaf6-8aa0-47cb-b13d-aeaf926e748f" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="530" y="0" width="5" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="ce57f906-0943-4550-be52-00748790f761" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="540" y="0" width="255" height="15"/>
+						<textElement/>
+						<textFieldExpression><![CDATA[$F{lovDescCustCIF}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="76">
+			<rectangle>
+				<reportElement uuid="e55f77ab-e77c-4775-b368-0b5efb2be06d" x="0" y="0" width="802" height="55"/>
+			</rectangle>
+			<frame>
+				<reportElement uuid="06c782d4-dcb7-408a-8835-00f3c707a655" x="0" y="10" width="802" height="35"/>
+				<image>
+					<reportElement uuid="c4810d67-394a-46fd-ae1f-7f3dc1c52d21" x="18" y="0" width="200" height="35"/>
+					<imageExpression><![CDATA[$P{productLogo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement uuid="45e8d4eb-fc4c-46fc-9622-e8ead25fe6b7" style="Title Header" x="168" y="0" width="402" height="35"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Repayment Details]]></text>
+				</staticText>
+				<image hAlign="Right">
+					<reportElement uuid="5808e299-3aac-4f22-a4cf-b9af0d0039f0" x="582" y="0" width="200" height="35"/>
+					<imageExpression><![CDATA[$P{organizationLogo}]]></imageExpression>
+				</image>
+			</frame>
+			<rectangle>
+				<reportElement uuid="87d352b5-0b3b-45f5-8b85-ab82adde2d3a" x="0" y="55" width="802" height="17" backcolor="#E1B778"/>
+			</rectangle>
+			<frame>
+				<reportElement uuid="eb75b9bd-9551-419e-81c9-a973fc6da21c" x="2" y="55" width="802" height="15"/>
+				<staticText>
+					<reportElement uuid="370d3569-afd2-46a0-80b7-b82c9c134f85" style="Title Description header" x="0" y="0" width="70" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Description :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="04b23729-e01b-4c69-be0f-6f3fb5af9ac8" style="Title Description" x="70" y="0" width="345" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[This report will display the Repayment details .]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<subreport>
+				<reportElement uuid="a11f5859-c1ca-46a8-9d35-5fe952e8b729" x="0" y="0" width="51" height="20"/>
+				<dataSourceExpression><![CDATA[$P{schedule_datasource}]]></dataSourceExpression>
+				<subreportExpression><![CDATA["Sub_RepaymentDetail.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<frame>
+				<reportElement uuid="2eba7917-edbd-4090-8ab6-7c28a51785ea" mode="Opaque" x="0" y="0" width="802" height="15" backcolor="#E1B778"/>
+				<staticText>
+					<reportElement uuid="f5a77a99-785d-4282-9120-2b2c562a16d4" style="Footer Info" x="2" y="0" width="50" height="15"/>
+					<textElement/>
+					<text><![CDATA[Printed By :]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="35f2bfb9-8b56-4ed9-9b7e-e14127578443" style="Footer Info" x="51" y="0" width="280" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{userName}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement uuid="06820722-c284-424d-885d-8fd1e5451f0f" style="Footer Info" x="151" y="0" width="500" height="15"/>
+					<staticText>
+						<reportElement uuid="85514b25-4c99-4090-9dcc-f885a87b6506" style="Footer Info" x="3" y="0" width="250" height="15"/>
+						<textElement textAlignment="Right"/>
+						<text><![CDATA[Date :]]></text>
+					</staticText>
+					<textField pattern="dd/MM/yyyy h.mm a">
+						<reportElement uuid="ba3ce48b-59d0-4a78-878d-9aa364360347" style="Footer Info" x="253" y="0" width="247" height="15"/>
+						<textElement verticalAlignment="Middle"/>
+						<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+					</textField>
+				</frame>
+				<textField>
+					<reportElement uuid="d8fc228b-d796-437e-bb5a-09e28ee6732c" style="Footer Info" x="651" y="0" width="120" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement uuid="11393a1c-fa1b-47cb-9155-49c180fd5965" style="Footer Info" x="770" y="0" width="30" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement uuid="4f1ac6eb-cc5d-4a3a-bb89-c6caef227598" style="Generated By" x="0" y="15" width="802" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Report Generated by penApps PFS]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

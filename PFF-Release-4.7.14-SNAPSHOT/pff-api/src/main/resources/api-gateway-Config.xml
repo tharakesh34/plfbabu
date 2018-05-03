@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:cxf="http://cxf.apache.org/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://cxf.apache.org/core 
+	http://cxf.apache.org/schemas/core.xsd  
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://cxf.apache.org/jaxws 
+	http://cxf.apache.org/schemas/jaxws.xsd
+	http://cxf.apache.org/jaxrs 
+	http://cxf.apache.org/schemas/jaxrs.xsd
+    http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- these are included in the dependency jar -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+
+	<context:component-scan base-package="com.pennanttech" />
+	
+	<!-- Process annotations on registered beans like @Autowired... -->
+	<context:annotation-config />
+
+
+	<bean id="logInterceptor" class="com.pennanttech.security.LogRequestInterceptor" />
+	<bean id="logOutInterceptor" class="com.pennanttech.security.LogResponseInterceptor" />
+	<bean id="faultHandler" class="com.pennant.ws.exception.ExceptionHandler" />
+	<bean id="unknownPropertyExceptionHandler" class="com.pennanttech.cxf.mapper.UnrecognizedPropertyExceptionMapper" />
+	<bean id="invalidPropertyExceptionHandler" class="com.pennanttech.cxf.mapper.JsonMappingExceptionMapper" />
+	<bean id="parseExceptionHandler" class="com.pennanttech.cxf.mapper.ParseExceptionMapper" />
+	<bean id="restInHeaderInterceptor" class="com.pennanttech.interceptor.RestInHeaderInterceptor" />
+	<bean id="restOutHeaderInterceptor" class="com.pennanttech.interceptor.RestOutHeaderInterceptor" />
+
+	<cxf:bus>
+		<cxf:inInterceptors>
+			<ref bean="logInterceptor" />
+		</cxf:inInterceptors>
+		<cxf:outInterceptors>
+			<ref bean="logOutInterceptor" />
+		</cxf:outInterceptors>
+	</cxf:bus>
+
+	<!-- JSON Provider Configuration -->
+	<bean id="jacksonMapper" class="com.pennant.app.util.CustomObjectMapper" />
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider">
+		<property name="mapper">
+			<ref bean="jacksonMapper" />
+		</property>
+	</bean>
+
+	<!-- rest container -->
+	<bean id="wsCustomerService" class="com.pennanttech.service.impl.CustomerWebServiceImpl" />
+
+	<jaxrs:server id="customerRESTService" address="/customerRest">
+		<jaxrs:serviceBeans>
+			<ref bean="wsCustomerService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<!-- soap container -->
+	<jaxws:endpoint id="customerSOAPService" implementor="#wsCustomerService"
+		address="/customerSoap" publish="false"/>
+
+	<!-- Loan Schedule Service -->
+	<bean id="wsFinanceSchedule" class="com.pennanttech.service.impl.FinanceScheduleWebServiceImpl" />
+	<!-- Rest container -->
+	<jaxrs:server id="finScheduleRestService" address="/financeScheduleRest">
+		<jaxrs:serviceBeans>
+			<ref bean="wsFinanceSchedule" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<!-- soap container -->
+	<jaxws:endpoint id="finScheduleSoapService" implementor="#wsFinanceSchedule"
+		address="/financeScheduleSoap" publish="false"/>
+
+	<!-- Loan Services gateway -->
+	<!-- rest container -->
+	<bean id="wsFinInstructionService" class="com.pennanttech.service.impl.FinInstructionServiceImpl" />
+	<jaxrs:server id="finInstructionRESTService" address="/finInstructionRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsFinInstructionService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<!-- soap container -->
+	<jaxws:endpoint id="finInstructionSOAPService"
+		implementor="#wsFinInstructionService" address="/finInstructionSoap" publish="false"/>
+
+	<!-- FinanceType API gateway -->
+	<bean id="wsFinanceTypeService" class="com.pennanttech.service.impl.FinanceTypeWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="financeTypeRestService" address="/financeTypeRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsFinanceTypeService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="financeTypeSoapService" implementor="#wsFinanceTypeService"
+		address="/financeTypeSoap" publish="false"/>
+
+	<!-- Promotion API gateway -->
+	<bean id="wsPromotionTypeService"
+		class="com.pennanttech.service.impl.PromotionTypeWebServiceImpl" />
+	<!-- Rest container -->
+	<jaxrs:server id="promotionTypeRestService" address="/promotionTypeRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsPromotionTypeService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<!-- Soap container -->
+	<jaxws:endpoint id="promotionTypeSoapService"
+		implementor="#wsPromotionTypeService" address="/promotionTypeSoap" publish="false"/>
+
+	<!-- Finance/Loan API gateway -->
+	<bean id="wsCreateFinanceService"
+		class="com.pennanttech.service.impl.CreateFinanceWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="createFinanceRestService" address="/createFinanceRest">
+		<jaxrs:serviceBeans>
+			<ref bean="wsCreateFinanceService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="createFinanceSoapService"
+		implementor="#wsCreateFinanceService" address="/createFinanceSoap" publish="false"/>
+
+	<!-- Mandate API gateway -->
+	<bean id="wsMandateServices" class="com.pennanttech.service.impl.MandateWebServiceImpl" />
+
+	<!-- rest container -->
+	<jaxrs:server id="mandateRestService" address="/mandateRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsMandateServices" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="mandateSoapService" implementor="#mandateService"
+		address="/mandateSoap" publish="false"/>
+
+	<!-- Limits API gateway -->
+	<bean id="wsLimitService" class="com.pennanttech.service.impl.LimitWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="limitRestService" address="/limitRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsLimitService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="limitSoapService" implementor="#wsLimitService"
+		address="/limitSoap" publish="false"/>
+
+	<!-- Beneficiary API gateway -->
+	<bean id="wsBeneficiaryService" class="com.pennanttech.service.impl.BeneficiaryWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="beneficiaryRestService" address="/beneficiaryRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsBeneficiaryService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="beneficiarySoapService" implementor="#wsBeneficiaryService"
+		address="/beneficiarySoap" publish="false">
+	</jaxws:endpoint>
+
+	<!-- Collateral API gateway -->
+	<bean id="wsCollateralService" class="com.pennanttech.service.impl.CollateralWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="collateralRestService" address="/collateralRest">
+		<jaxrs:serviceBeans>
+			<ref bean="wsCollateralService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="collateralSoapService" implementor="#wsCollateralService"
+		address="/collateralSoap" publish="false"/>
+
+	<!-- FinFlag API gateway -->
+	<bean id="wsFinanceFlagsService" class="com.pennanttech.service.impl.FinanceFlagsWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="flagRestService" address="/flagRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsFinanceFlagsService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="flagSoapService" implementor="#wsFinanceFlagsService"
+		address="/flagSoap" publish="false"/>
+
+	<!-- Rest container for SecRoles -->
+	<bean id="wsSecRolessService" class="com.pennanttech.service.impl.SecRolesWebServiceImpl" />
+
+	<jaxrs:server id="secRolesRestService" address="/secRolesRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsSecRolessService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<!-- SOAP container for SecRoles -->
+	<jaxws:endpoint id="secRolesSoapService" implementor="#wsSecRolessService"
+		address="/secRolesSoap" publish="false"/>
+		
+		<!-- rest container -->
+	<bean id="wsWorkFlowService" class="com.pennanttech.service.impl.WorkFlowWebServiceImpl" />
+
+	<jaxrs:server id="workFlowRESTService" address="/workFlowRest">
+		<jaxrs:serviceBeans>
+			<ref bean="wsWorkFlowService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<!-- soap container -->
+	<jaxws:endpoint id="workFlowSOAPService" implementor="#wsWorkFlowService"
+		address="/workFlowSoap" publish="false"/>
+		
+	<!-- Statement API gateway -->
+	<bean id="wsStatementService" class="com.pennanttech.service.impl.FinStatementWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="statementRestService" address="/statementRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsStatementService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="statementSoapService" implementor="#wsStatementService"
+		address="/statementSoap" publish="false"/>
+
+<!-- VAS API gateway -->
+	<bean id="wsVASService" class="com.pennanttech.service.impl.VASWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="vasRestService" address="/vasRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsVASService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="vasSoapService" implementor="#wsVASService"
+		address="/vasSoap" publish="false"/>
+
+	<!-- Fee Posting API gateway -->
+	<bean id="wsFeePostingService" class="com.pennanttech.service.impl.FeePostingWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="feePostingRestService" address="/feePostingRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsFeePostingService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="feePostingSoapService" implementor="#wsFeePostingService"
+		address="/feePostingSoap" publish="false"/>
+		
+	<!-- GET System Date API gateway -->
+	<bean id="wsSystemDateService" class="com.pennanttech.service.impl.SystemDateWebServiceImpl"/>
+	<!-- rest container -->
+	<jaxrs:server id="systemDateRestService" address="/systemDateRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsSystemDateService"/>
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider"/>
+			<ref bean="faultHandler"/>
+			<ref bean="invalidPropertyExceptionHandler"/>
+			<ref bean="unknownPropertyExceptionHandler"/>
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler"/>
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor"/>
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor"/>
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+	<!-- SOAP container -->
+	<jaxws:endpoint id="systemDateSoapService" implementor="#wsSystemDateService"
+		address="/systemDateSoap" publish="false"/>
+
+	<!-- ExtendedFieldDetail API gateway -->
+	<!-- rest container -->
+	<bean id="wsExtendedFieldDetailService"
+		class="com.pennanttech.service.impl.ExtendedFieldDetailWebServiceImpl" />
+
+	<jaxrs:server id="extendedFieldDetailRestService" address="/extendedFieldDetailRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsExtendedFieldDetailService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<!-- soap container -->
+	<jaxws:endpoint id="extendedFieldDetailSoapService" implementor="#wsExtendedFieldDetailService"
+	 address="/extendedFieldDetailSoap" publish="false" />	
+		
+
+</beans>

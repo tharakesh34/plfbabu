@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.maindb" value="PLF.." dbms="mssql" />
+	<property name="call.maindb" value="PLF." dbms="oracle" />
+
+	<changeSet id="01" author="Vijay">
+		<modifyDataType tableName="ADTWORKFLOWDETAILS"
+			columnName="WORKFLOWDESC" newDataType="VARCHAR2(200)" />
+	</changeSet>
+	<changeSet id="02" author="Madhubabu">
+		<createTable tableName="ADTFeePostings">
+			<column name="PostId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PostAgainst" type="nchar(10)" />
+			<column name="Reference" type="varchar(20)" />
+			<column name="FeeTyeCode" type="char(10)" />
+			<column name="PostingAmount" type="decimal(18,0)" />
+			<column name="PostDate" type="datetime" />
+			<column name="ValueDate" type="datetime" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Remarks" type="nvarchar(200)" />
+			<column name="PartnerBankId" type="NUMBER(19,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+
+		</createTable>
+	</changeSet>
+
+	<changeSet id="03" author="Madhubabu">
+		<dropTable tableName="ADTFeePostings" />
+	</changeSet>
+
+	<changeSet id="04" author="Madhubabu">
+		<createTable tableName="ADTFeePostings">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PostId" type="bigint" />
+			<column name="PostAgainst" type="nchar(10)" />
+			<column name="Reference" type="varchar(20)" />
+			<column name="FeeTyeCode" type="char(10)" />
+			<column name="PostingAmount" type="decimal(18,0)" />
+			<column name="PostDate" type="datetime" />
+			<column name="ValueDate" type="datetime" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Remarks" type="nvarchar(200)" />
+			<column name="PartnerBankId" type="NUMBER(19,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+
+		</createTable>
+	</changeSet>
+	<changeSet id="05" author="Surekha">
+		<modifyDataType tableName="AdtRMTTRANSACTIONENTRY"
+			columnName="ACCOUNTTYPE" newDataType="VARCHAR(15)" />
+	</changeSet>
+	<changeSet id="06" author="Surekha">
+		<modifyDataType tableName="AdtRMTFINANCETYPES"
+			columnName="FINACTYPE" newDataType="VARCHAR(15)" />
+		<modifyDataType tableName="AdtRMTFINANCETYPES"
+			columnName="FINCONTINGENTACTYPE" newDataType="VARCHAR(15)" />
+		<modifyDataType tableName="AdtRMTFINANCETYPES"
+			columnName="FINBANKCONTINGENTACTYPE" newDataType="VARCHAR(15)" />
+		<modifyDataType tableName="AdtRMTFINANCETYPES"
+			columnName="FINPROVISIONACTYPE" newDataType="VARCHAR(15)" />
+		<modifyDataType tableName="AdtRMTFINANCETYPES"
+			columnName="FINSUSPACTYPE" newDataType="VARCHAR(15)" />
+	</changeSet>
+	<changeSet id="07" author="Surekha">
+		<modifyDataType tableName="AdtACCOUNTS" columnName="ACTYPE"
+			newDataType="VARCHAR(15)" />
+	</changeSet>
+	<changeSet id="08" author="Surekha">
+		<modifyDataType tableName="AdtRMTFINANCETYPES"
+			columnName="PFTPAYACTYPE" newDataType="VARCHAR(15)" />
+	</changeSet>
+	<changeSet id="09" author="ahmad">
+	<createTable tableName="ADTLocality">
+			<column name="AuditId" type="bigint"/>
+			<column name="AuditDate" type="datetime"/>
+			<column name="AuditSeq" type="number(10,0)"/>
+			<column name="AuditImage" type="char(1)"/>
+			<column name="id" type="bigint"/>
+			<column name="name" type="varchar2(8)"/>
+			<column name="city" type="varchar2(20)" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+	</createTable>
+</changeSet>
+	<changeSet id="10" author="ahmad" dbms="oracle">
+		<createView viewName="AdtLocality_View" replaceIfExists="true">
+			SELECT     TH.AuditId, TH.AuditDate  AuditDateTime, TH.AuditDate AuditDate,  TH.AuditDate AuditTime, 
+            coalesce(AFT.AuditSeq, BEF.AuditSeq)  AuditSeq, TH.AuditUsrId, FN_CustomerName(T1.UsrFName, T1.UsrMName, 
+                      T1.UsrLName)   AuditUserName,FN_TranType(TH.AuditTranType)  AuditTranType, 
+                      Aft.id  Aftid, Aft.name  Aftname, Aft.city  Aftcity, 
+                      Bef.id  Befid, Bef.name  Befname, Bef.city  Befcity 
+			FROM         AuditHeader  TH INNER JOIN
+                      SecUsers_View  T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
+                      ADTLocality  AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
+                      ADTLocality  BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
+                      WHERE     (TH.AuditTranType != 'W')AND(TH.AuditModule ='Locality')
+	</createView>
+	</changeSet>
+	<changeSet id="10" author="ahmad" dbms="mssql">
+		<createView viewName="AdtLocality_View" replaceIfExists="true">
+			SELECT     TH.AuditId, TH.AuditDate  AuditDateTime, TH.AuditDate AuditDate,  TH.AuditDate AuditTime, 
+            coalesce(AFT.AuditSeq, BEF.AuditSeq)  AuditSeq, TH.AuditUsrId, dbo.FN_CustomerName(T1.UsrFName, T1.UsrMName, 
+                      T1.UsrLName)   AuditUserName,dbo.FN_TranType(TH.AuditTranType)  AuditTranType, 
+                      Aft.id  Aftid, Aft.name  Aftname, Aft.city  Aftcity, 
+                      Bef.id  Befid, Bef.name  Befname, Bef.city  Befcity 
+			FROM         AuditHeader  TH INNER JOIN
+                      SecUsers_View  T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
+                      ADTLocality  AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
+                      ADTLocality  BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
+                      WHERE     (TH.AuditTranType != 'W')AND(TH.AuditModule ='Locality')
+	</createView>
+	</changeSet>
+</databaseChangeLog>

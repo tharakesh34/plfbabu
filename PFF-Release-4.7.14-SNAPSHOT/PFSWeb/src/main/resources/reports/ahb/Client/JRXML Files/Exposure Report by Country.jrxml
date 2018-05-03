@@ -1,0 +1,679 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Exposure Report by Country" language="groovy" pageWidth="842" pageHeight="595" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="94d75d8e-97ff-4cd9-9adc-cc38e21748bb">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["../StyleSheet/Template.jrtx"]]></template>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="userName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="searchCriteria" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="whereCondition" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="organizationLogo" class="java.lang.String"/>
+	<parameter name="appCcy" class="java.lang.String"/>
+	<parameter name="appDate" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[SELECT * FROM RPT_InvestmentReport_View
+$P!{whereCondition}  ORDER BY  Country ,FinType,BranchCode,Currency]]>
+	</queryString>
+	<field name="Finance Type" class="java.lang.String"/>
+	<field name="FinType" class="java.lang.String"/>
+	<field name="Country" class="java.lang.String"/>
+	<field name="Country1" class="java.lang.String"/>
+	<field name="Finance Branch" class="java.lang.String"/>
+	<field name="BranchCode" class="java.lang.String"/>
+	<field name="Currency" class="java.lang.String"/>
+	<field name="ColumnValue" class="java.lang.String"/>
+	<field name="Measure" class="java.math.BigDecimal"/>
+	<group name="Country">
+		<groupExpression><![CDATA[$P{appCcy}]]></groupExpression>
+		<groupFooter>
+			<band height="50">
+				<crosstab>
+					<reportElement uuid="c22fa21b-d1e8-4cef-b9fb-5aff024554ce" x="0" y="0" width="802" height="50" isPrintWhenDetailOverflows="true"/>
+					<crosstabHeaderCell>
+						<cellContents>
+							<staticText>
+								<reportElement uuid="49ac5565-5c59-4967-adbb-171e627b6798" style="Crosstab Data Text" mode="Opaque" x="361" y="0" width="100" height="30" backcolor="#E6DBCF"/>
+								<box>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle"/>
+								<text><![CDATA[Currency]]></text>
+							</staticText>
+							<staticText>
+								<reportElement uuid="49ac5565-5c59-4967-adbb-171e627b6798" style="Crosstab Data Text" mode="Opaque" x="207" y="0" width="154" height="30" backcolor="#E6DBCF"/>
+								<box>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle"/>
+								<text><![CDATA[Branch]]></text>
+							</staticText>
+							<staticText>
+								<reportElement uuid="49ac5565-5c59-4967-adbb-171e627b6798" style="Crosstab Data Text" mode="Opaque" x="109" y="0" width="98" height="30" backcolor="#E6DBCF"/>
+								<box>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle"/>
+								<text><![CDATA[Finance Type]]></text>
+							</staticText>
+							<staticText>
+								<reportElement uuid="49ac5565-5c59-4967-adbb-171e627b6798" style="Crosstab Data Text" mode="Opaque" x="0" y="0" width="109" height="30" backcolor="#E6DBCF"/>
+								<box>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle"/>
+								<text><![CDATA[Country]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabHeaderCell>
+					<rowGroup name="Country" width="109" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{Country}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#E6DBCF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement uuid="7d204bb0-629a-46bb-a17d-7e21e58254a6" style="Crosstab Data Text" x="0" y="0" width="109" height="100"/>
+									<textElement textAlignment="Left">
+										<paragraph leftIndent="3"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{Country}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#D0CAC2" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<staticText>
+									<reportElement uuid="47db11d0-e3d7-423e-a37b-ab8d9eb979d5" x="0" y="0" width="461" height="25" forecolor="#000000"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Total Country]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="Finance Type" width="98" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{Finance Type}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#E6DBCF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement uuid="5de7a4ca-b886-4994-8dde-d705470500b5" style="Crosstab Data Text" x="0" y="0" width="98" height="75"/>
+									<textElement textAlignment="Left">
+										<paragraph leftIndent="3"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{Finance Type}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#ECE8E5" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<staticText>
+									<reportElement uuid="74e75789-d7a9-4ca1-adff-3fd3b45c4b4a" x="0" y="0" width="352" height="25"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Total Finance Type]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="Branch" width="154" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{Finance Branch}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#E6DBCF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement uuid="cbba3b57-9978-4fb7-b773-918be612e7ff" style="Crosstab Data Text" x="0" y="0" width="154" height="50"/>
+									<textElement textAlignment="Left">
+										<paragraph leftIndent="3"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{Branch}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#ECE8E5" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<staticText>
+									<reportElement uuid="74e75789-d7a9-4ca1-adff-3fd3b45c4b4a" x="0" y="0" width="254" height="25"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Total Branch]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="Currency" width="100" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{Currency}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents>
+								<textField>
+									<reportElement uuid="209f2ad9-0772-465b-83d0-51824b648c43" style="Crosstab Data Text" x="0" y="0" width="100" height="25"/>
+									<box>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement textAlignment="Left">
+										<paragraph leftIndent="3"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{Currency}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#ECE8E5" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<staticText>
+									<reportElement uuid="74e75789-d7a9-4ca1-adff-3fd3b45c4b4a" x="0" y="0" width="100" height="25"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Total Currency]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="ColumnValue" height="30" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{ColumnValue}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#E6DBCF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement uuid="ee281a65-c707-42e5-9eda-fa8d759b0f60" style="Crosstab Data Text" x="0" y="0" width="169" height="30"/>
+									<textElement verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$V{ColumnValue}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents backcolor="#D0CAC2" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<staticText>
+									<reportElement uuid="07b9962f-4414-4578-8e5c-b48b81406049" mode="Transparent" x="0" y="0" width="170" height="30" forecolor="#000000"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Total]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="MeasureMeasure" class="java.math.BigDecimal" calculation="Sum">
+						<measureExpression><![CDATA[$F{Measure}]]></measureExpression>
+					</measure>
+					<crosstabCell width="169" height="25">
+						<cellContents>
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0.000">
+								<reportElement uuid="82f79db2-bd55-4108-bb07-1548d4729a99" style="Crosstab Data Text" x="0" y="0" width="169" height="25"/>
+								<textElement textAlignment="Right">
+									<paragraph rightIndent="3"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{MeasureMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="169" height="25" rowTotalGroup="Country">
+						<cellContents backcolor="#D0CAC2" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0.000" isBlankWhenNull="true">
+								<reportElement uuid="4ac3d525-9a88-44a9-9c54-9fa4d210c25e" style="Crosstab Data Text" x="0" y="0" width="169" height="25" forecolor="#000000"/>
+								<textElement textAlignment="Right">
+									<paragraph rightIndent="3"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{MeasureMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="170" height="25" columnTotalGroup="ColumnValue">
+						<cellContents backcolor="#ECE8E5" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0.000">
+								<reportElement uuid="e8b4df57-4107-44f1-bca1-691ebaf7bc93" style="Crosstab Data Text" x="0" y="0" width="170" height="25"/>
+								<textElement textAlignment="Right">
+									<paragraph rightIndent="3"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{MeasureMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="170" rowTotalGroup="Country" columnTotalGroup="ColumnValue">
+						<cellContents backcolor="#D0CAC2" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0.000">
+								<reportElement uuid="0151d83c-dc84-49f8-b497-316ae5d5022e" style="Crosstab Data Text" x="0" y="0" width="170" height="25" forecolor="#000000"/>
+								<textElement textAlignment="Right">
+									<paragraph rightIndent="3"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{MeasureMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="169" height="25" rowTotalGroup="Finance Type">
+						<cellContents backcolor="#E6DBCF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0.000">
+								<reportElement uuid="6ee83b5a-1771-46c6-999e-e53b5d155afd" style="Crosstab Data Text" x="0" y="0" width="169" height="25"/>
+								<textElement textAlignment="Right">
+									<paragraph rightIndent="3"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{MeasureMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="170" rowTotalGroup="Finance Type" columnTotalGroup="ColumnValue">
+						<cellContents backcolor="#ECE8E5" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0.000">
+								<reportElement uuid="06915dcb-e192-4126-8241-7b7d69dbfadd" style="Crosstab Data Text" x="0" y="0" width="170" height="25"/>
+								<textElement textAlignment="Right">
+									<paragraph rightIndent="3"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{MeasureMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="169" height="25" rowTotalGroup="Branch">
+						<cellContents backcolor="#E6DBCF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0.000">
+								<reportElement uuid="82f79db2-bd55-4108-bb07-1548d4729a99" style="Crosstab Data Text" x="0" y="0" width="169" height="25"/>
+								<textElement textAlignment="Right">
+									<paragraph rightIndent="3"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{MeasureMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="170" height="25" rowTotalGroup="Branch" columnTotalGroup="ColumnValue">
+						<cellContents backcolor="#ECE8E5" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0.000">
+								<reportElement uuid="e8b4df57-4107-44f1-bca1-691ebaf7bc93" style="Crosstab Data Text" x="0" y="0" width="170" height="25"/>
+								<textElement textAlignment="Right">
+									<paragraph rightIndent="3"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{MeasureMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="169" height="25" rowTotalGroup="Currency">
+						<cellContents backcolor="#E6DBCF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0.000">
+								<reportElement uuid="82f79db2-bd55-4108-bb07-1548d4729a99" style="Crosstab Data Text" x="0" y="0" width="169" height="25"/>
+								<textElement textAlignment="Right">
+									<paragraph rightIndent="3"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{MeasureMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="170" height="25" rowTotalGroup="Currency" columnTotalGroup="ColumnValue">
+						<cellContents backcolor="#ECE8E5" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField pattern="#,##0.000">
+								<reportElement uuid="e8b4df57-4107-44f1-bca1-691ebaf7bc93" style="Crosstab Data Text" x="0" y="0" width="170" height="25"/>
+								<textElement textAlignment="Right">
+									<paragraph rightIndent="3"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{MeasureMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+				</crosstab>
+			</band>
+		</groupFooter>
+	</group>
+	<columnHeader>
+		<band height="129">
+			<rectangle>
+				<reportElement uuid="b7f7af08-9bf4-409c-938c-c8a4317a3ace" x="0" y="55" width="802" height="20" backcolor="#E1B778"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="0950e380-f0fa-4e8f-b085-1651baae4772" x="0" y="0" width="802" height="55"/>
+			</rectangle>
+			<frame>
+				<reportElement uuid="062791cd-50fa-4068-b111-405816383962" x="0" y="10" width="802" height="45"/>
+				<image>
+					<reportElement uuid="191dc9c0-d24b-4d40-b0d2-8a4dd0415629" x="18" y="0" width="146" height="35"/>
+					<imageExpression><![CDATA[$P{organizationLogo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement uuid="ce8aa4d0-a410-4e32-95a9-39fee0f119cd" style="Title Header" x="164" y="0" width="466" height="35"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Exposure by Country]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="630" y="0" width="92" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<text><![CDATA[Application Date :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="630" y="15" width="92" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<text><![CDATA[Default Currency :]]></text>
+				</staticText>
+				<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
+					<reportElement uuid="0d26725b-94b7-427a-9237-7551d50e456f" style="Detail Value" x="722" y="0" width="78" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{appDate}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="0d26725b-94b7-427a-9237-7551d50e456f" style="Detail Value" x="722" y="15" width="78" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{appCcy}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="edacad44-77c5-49f4-812a-f58644756f9e" x="0" y="55" width="802" height="15"/>
+				<staticText>
+					<reportElement uuid="9b77a10b-92ef-4888-893e-ec05276658bc" style="Title Description header" x="0" y="0" width="73" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Description :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="bf059788-4468-4585-b6a2-1015318ee95c" style="Title Description" x="77" y="0" width="723" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[This report will display the Exposure by Country details with below report selection]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="ef627e63-8085-4829-90ed-346e833cf62e" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="78" width="802" height="18" isRemoveLineWhenBlank="true" backcolor="#F0F0F0">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<staticText>
+					<reportElement uuid="bd6e56f6-d800-4825-bae4-25c73f68212c" style="Title Description header" x="0" y="2" width="99" height="16"/>
+					<box>
+						<topPen lineWidth="0.0" lineColor="#666666"/>
+						<leftPen lineWidth="0.0" lineColor="#666666"/>
+						<bottomPen lineWidth="0.0" lineColor="#666666"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Report Selection :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="cb7c3728-0044-453a-8808-812ae69d1aad" style="Title Description" positionType="Float" stretchType="RelativeToTallestObject" x="99" y="2" width="651" height="16"/>
+					<box>
+						<topPen lineWidth="0.0" lineColor="#666666"/>
+						<bottomPen lineWidth="0.0" lineColor="#666666"/>
+						<rightPen lineWidth="0.0" lineColor="#666666"/>
+					</box>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{searchCriteria}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="b6cf17a5-ef6a-402a-b509-375947409d15" positionType="FixRelativeToBottom" x="0" y="114" width="802" height="15"/>
+				<textField isStretchWithOverflow="true" pattern="dd-MMM-yy" isBlankWhenNull="true">
+					<reportElement uuid="8e60470e-4c21-4775-8a83-9fb63d2095f6" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="725" y="0" width="25" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineColor="#666666"/>
+						<leftPen lineWidth="0.0" lineColor="#666666"/>
+						<bottomPen lineWidth="0.0" lineColor="#666666"/>
+						<rightPen lineWidth="0.0" lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{appCcy}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="500" y="0" width="230" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<text><![CDATA[The Total Amounts are in the Default Currency]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="5f45dd80-06fe-4399-9342-a1db8151db13" style="Group Header" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="96" width="802" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#CCCCCC">
+					<printWhenExpression><![CDATA[$F{Country}==null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5" lineColor="#666666"/>
+					<leftPen lineWidth="0.5" lineColor="#666666"/>
+					<bottomPen lineWidth="0.5" lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineColor="#666666"/>
+				</box>
+				<textField>
+					<reportElement uuid="d94d04ca-6284-4b09-a8ca-251f0a34b41a" style="Group Header" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="0" width="802" height="15" backcolor="#B69898"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{Country}==null?" No Records Found " :" "]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</columnHeader>
+	<pageFooter>
+		<band height="31" splitType="Stretch">
+			<frame>
+				<reportElement uuid="e5b0ea51-0c57-4895-924c-66f66dc65576" mode="Opaque" x="0" y="0" width="802" height="15" backcolor="#E1B778"/>
+				<staticText>
+					<reportElement uuid="e2bfd7d8-eb09-46e2-a48d-18c4106a21f7" style="Footer Info" x="2" y="0" width="50" height="15"/>
+					<textElement/>
+					<text><![CDATA[Printed By :]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="0d26725b-94b7-427a-9237-7551d50e456f" style="Footer Info" x="51" y="0" width="308" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{userName}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement uuid="da9c203b-5aba-4cf6-a4b5-fc0918f6e365" style="Footer Info" x="151" y="0" width="500" height="15"/>
+					<staticText>
+						<reportElement uuid="2fa52993-1872-4e7c-836e-49802ea59665" style="Footer Info" x="3" y="0" width="250" height="15"/>
+						<textElement textAlignment="Right"/>
+						<text><![CDATA[Date :]]></text>
+					</staticText>
+					<textField pattern="dd/MM/yyyy h.mm a">
+						<reportElement uuid="592ba544-e4f2-4b2d-8c2b-1df99829819e" style="Footer Info" x="253" y="0" width="247" height="15"/>
+						<textElement verticalAlignment="Middle"/>
+						<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+					</textField>
+				</frame>
+				<textField>
+					<reportElement uuid="fb1be053-8f46-464b-9404-56d2374ce8d2" style="Footer Info" x="651" y="0" width="120" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement uuid="1add4587-8edb-40fd-ad8b-6fc7bf2d4994" style="Footer Info" x="770" y="0" width="30" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement uuid="02193518-fd20-463b-a160-35ac4cdb602d" style="Generated By" x="0" y="15" width="802" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Report Generated by pennApps PFS]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<noData>
+		<band height="111">
+			<rectangle>
+				<reportElement uuid="b7f7af08-9bf4-409c-938c-c8a4317a3ace" x="0" y="55" width="802" height="20" backcolor="#E1B778"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="0950e380-f0fa-4e8f-b085-1651baae4772" x="0" y="0" width="802" height="55"/>
+			</rectangle>
+			<frame>
+				<reportElement uuid="5f45dd80-06fe-4399-9342-a1db8151db13" style="Group Header" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="96" width="802" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#CCCCCC">
+					<printWhenExpression><![CDATA[$F{Country}==null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5" lineColor="#666666"/>
+					<leftPen lineWidth="0.5" lineColor="#666666"/>
+					<bottomPen lineWidth="0.5" lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineColor="#666666"/>
+				</box>
+				<staticText>
+					<reportElement uuid="794acfbc-4f2f-49d3-9ea1-1bd8a98e2177" style="Group Header" mode="Opaque" x="0" y="0" width="802" height="15" backcolor="#B69898"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[No Records Found ]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="ef627e63-8085-4829-90ed-346e833cf62e" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="78" width="802" height="18" isRemoveLineWhenBlank="true" backcolor="#F0F0F0">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<staticText>
+					<reportElement uuid="bd6e56f6-d800-4825-bae4-25c73f68212c" style="Title Description header" x="0" y="2" width="99" height="16"/>
+					<box>
+						<topPen lineWidth="0.0" lineColor="#666666"/>
+						<leftPen lineWidth="0.0" lineColor="#666666"/>
+						<bottomPen lineWidth="0.0" lineColor="#666666"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Report Selection :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="cb7c3728-0044-453a-8808-812ae69d1aad" style="Title Description" positionType="Float" stretchType="RelativeToTallestObject" x="99" y="2" width="651" height="16"/>
+					<box>
+						<topPen lineWidth="0.0" lineColor="#666666"/>
+						<bottomPen lineWidth="0.0" lineColor="#666666"/>
+						<rightPen lineWidth="0.0" lineColor="#666666"/>
+					</box>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{searchCriteria}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="edacad44-77c5-49f4-812a-f58644756f9e" x="0" y="55" width="802" height="15"/>
+				<staticText>
+					<reportElement uuid="9b77a10b-92ef-4888-893e-ec05276658bc" style="Title Description header" x="0" y="0" width="73" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Description :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="bf059788-4468-4585-b6a2-1015318ee95c" style="Title Description" x="77" y="0" width="723" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[This report will display the Exposure by Country details with below report selection]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="062791cd-50fa-4068-b111-405816383962" x="0" y="10" width="802" height="45"/>
+				<image>
+					<reportElement uuid="191dc9c0-d24b-4d40-b0d2-8a4dd0415629" x="18" y="0" width="146" height="35"/>
+					<imageExpression><![CDATA[$P{organizationLogo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement uuid="ce8aa4d0-a410-4e32-95a9-39fee0f119cd" style="Title Header" x="164" y="0" width="466" height="35"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Exposure by Country]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="630" y="0" width="92" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<text><![CDATA[Application Date :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="630" y="15" width="92" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<text><![CDATA[Default Currency :]]></text>
+				</staticText>
+				<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
+					<reportElement uuid="0d26725b-94b7-427a-9237-7551d50e456f" style="Detail Value" x="722" y="0" width="78" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{appDate}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="0d26725b-94b7-427a-9237-7551d50e456f" style="Detail Value" x="722" y="15" width="78" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{appCcy}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</noData>
+</jasperReport>

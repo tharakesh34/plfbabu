@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+<property name="call.concatenate" value="+" dbms="mssql" />
+<property name="call.concatenate" value="||" dbms="oracle" />
+<property name="call.maindb" value="PLF.." dbms="mssql"/>
+<property name="call.maindb" value="PLF." dbms="oracle"/>
+<changeSet id="01" author="Satya">
+	<createTable tableName="AdtBuilderProjcet">
+		<column name="AuditId" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="AuditDate" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="AuditSeq" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="AuditImage" type="varchar(20)">
+			<constraints nullable="false" />
+		</column>
+		<column name="ID" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="NAME" type="varchar(50)">
+			<constraints nullable="false" />
+		</column>
+		<column name="BUILDERID" type="bigint" />
+			
+                       <column name="APFNO" type="varchar(20)" />
+			
+		<column name="Version" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="varchar(50)" />
+		<column name="RoleCode" type="varchar(100)" />
+		<column name="NextRoleCode" type="varchar(200)" />
+		<column name="TaskId" type="varchar(50)" />
+		<column name="NextTaskId" type="varchar(200)" />
+		<column name="RecordType" type="varchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+</changeSet>
+	<changeSet id="02" author="Satya">
+		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
+			constraintName="PK_AdtBuilderProjcet" tableName="AdtBuilderProjcet" />
+	</changeSet>
+	<changeSet id="03" author="SreeRavali">
+		<createTable tableName="ADTRestructure">
+			<column name="FinReference" type="nvarchar(20)"/>
+			<column name="NoofInstalments" type="int" />
+			<column name="PaymentAmount" type="decimal(18,0)" />
+			<column name="ScheduleMethod" type="varchar(10)" />
+			<column name="InterestRateType" type="varchar(8)" />
+			<column name="RepayProfitRate" type="decimal(13,9)" />
+			<column name="RepayBaseRate" type="varchar(8)" />
+			<column name="RepaySpecialRate" type="varchar(8)" />
+			<column name="RepayMargin" type="decimal(13,9)" />
+			<column name="CapitalizeODCharges" type="boolean" />
+			<column name="CapitalizeODInterest" type="boolean" />
+			<column name="RepayFrq" type="varchar(5)" />
+			<column name="NextRepayDate" type="datetime" />
+			<column name="RepayPftFrq" type="varchar(5)" />
+			<column name="NextRepayPftDate" type="datetime" />
+			<column name="RepayRvwFrq" type="varchar(5)" />
+			<column name="NextRepayRvwDate" type="datetime"/>
+			<column name="RepayCpzFrq" type="varchar(5)" />
+			<column name="NextRepayCpzDate" type="datetime"  />
+		    <column name="MaturityDate" type="datetime" />
+			<column name="PayInterestonFrq" type="boolean" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+			<column name="OldFinRef" type="varchar(20)" />
+			<column name="FinType" type="varChar(8)" />
+			<column name="FinCategory" type="varchar(8)" />
+			<column name="FinCcy" type="char(3)" />
+			<column name="FinBranch" type="varchar(12)" />
+			<column name="CustCIF" type="varchar(20)" />
+		<column name="FinStartDate" type="datetime" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="04" author="SreeRavali">
+		<dropTable tableName="ADTRestructure" />
+	</changeSet>
+
+	<changeSet id="05" author="SreeRavali">
+		<createTable tableName="ADTRestructure">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="nvarchar(20)"/>
+			<column name="NoofInstalments" type="int" />
+			<column name="PaymentAmount" type="decimal(18,0)" />
+			<column name="ScheduleMethod" type="varchar(10)" />
+			<column name="InterestRateType" type="varchar(8)" />
+			<column name="RepayProfitRate" type="decimal(13,9)" />
+			<column name="RepayBaseRate" type="varchar(8)" />
+			<column name="RepaySpecialRate" type="varchar(8)" />
+			<column name="RepayMargin" type="decimal(13,9)" />
+			<column name="CapitalizeODCharges" type="boolean" />
+			<column name="CapitalizeODInterest" type="boolean" />
+			<column name="RepayFrq" type="varchar(5)" />
+			<column name="NextRepayDate" type="datetime" />
+			<column name="RepayPftFrq" type="varchar(5)" />
+			<column name="NextRepayPftDate" type="datetime" />
+			<column name="RepayRvwFrq" type="varchar(5)" />
+			<column name="NextRepayRvwDate" type="datetime"/>
+			<column name="RepayCpzFrq" type="varchar(5)" />
+			<column name="NextRepayCpzDate" type="datetime"  />
+		    <column name="MaturityDate" type="datetime" />
+			<column name="PayInterestonFrq" type="boolean" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+			<column name="OldFinRef" type="varchar(20)" />
+			<column name="FinType" type="varChar(8)" />
+			<column name="FinCategory" type="varchar(8)" />
+			<column name="FinCcy" type="char(3)" />
+			<column name="FinBranch" type="varchar(12)" />
+			<column name="CustCIF" type="varchar(20)" />
+		<column name="FinStartDate" type="datetime" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="06" author="Durgaprasad G">
+        <createTable tableName="AdtPaymentHeader">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentId" type="bigint"/>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentAmount" type="decimal(18,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="07" author="Durgaprasad G">
+		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
+			constraintName="PK_AdtPaymentHeader" tableName="AdtPaymentHeader" />
+	</changeSet>
+	
+	
+	<changeSet id="08" author="Durgaprasad G">
+		<createTable tableName="AdtPaymentDeatils">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentDetailId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AmountType" type="char(1)" />
+			<column name="Amount" type="decimal(18,2)"  />
+			<column name="Reference" type="bigint" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="09" author="Durgaprasad G">
+		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
+			constraintName="PK_AdtPaymentDeatils" tableName="AdtPaymentDeatils" />
+	</changeSet>
+
+   <changeSet id="10" author="Durgaprasad G" dbms="oracle">
+		<createTable tableName="AdtPaymentInstructions">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentInstructionId" type="bigint">
+			    <constraints nullable="false" />
+			</column>
+			<column name="PaymentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentType" type="char(1)" />
+			<column name="PaymentAmount" type="decimal(18,2)"  />
+			<column name="Remarks" type="varchar(100)"  />
+			<column name="BankCode" type="varchar(8)"  />
+			<column name="FavourName" type="varchar(200)"  />
+			<column name="FavourNumber" type="nvarchar(100)"  />
+			<column name="PayableLoc" type="nvarchar(50)"  />
+			<column name="PrintingLoc" type="nvarchar(50)"  />
+			<column name="ValueDate" type="datetime"  />
+			<column name="PostDate" type="datetime"  />
+			<column name="BankBranchID" type="bigInt"  />
+			<column name="AcctHolderName" type="nvarchar(200)"  />
+			<column name="AccountNo" type="varchar(100)"  />
+			<column name="PhoneCountryCode" type="varchar(5)"  />
+			<column name="PhoneNumber" type="varchar(12)"  />
+			<column name="Clearingdate" type="datetime"  />
+			<column name="Active" type="Char(1)"  />
+			<column name="PaymentCCy" type="varchar(3)"  />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="10" author="Durgaprasad G" dbms="mssql">
+		<createTable tableName="AdtPaymentInstructions">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentInstructionId" type="bigint">
+			    <constraints nullable="false" />
+			</column>
+			<column name="PaymentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentType" type="char(1)" />
+			<column name="PaymentAmount" type="decimal(18,2)"  />
+			<column name="Remarks" type="varchar(100)"  />
+			<column name="BankCode" type="varchar(8)"  />
+			<column name="FavourName" type="varchar(200)"  />
+			<column name="FavourNumber" type="nvarchar(100)"  />
+			<column name="PayableLoc" type="nvarchar(50)"  />
+			<column name="PrintingLoc" type="nvarchar(50)"  />
+			<column name="ValueDate" type="datetime"  />
+			<column name="PostDate" type="datetime"  />
+			<column name="BankBranchID" type="bigInt"  />
+			<column name="AcctHolderName" type="nvarchar(200)"  />
+			<column name="AccountNo" type="varchar(100)"  />
+			<column name="PhoneCountryCode" type="varchar(5)"  />
+			<column name="PhoneNumber" type="varchar(12)"  />
+			<column name="Clearingdate" type="datetime"  />
+			<column name="Active" type="Char(1)"  />
+			<column name="PaymentCCy" type="varchar(3)"  />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet> 
+	<changeSet id="10.1" author="Jayant" dbms="mssql">
+	    <sql>
+	        alter table AdtPaymentInstructions add constraint DF_ADTPAYMTINST_VER default 0 for Version;
+	    </sql>
+	</changeSet>
+	<changeSet id="11" author="Durgaprasad G">
+		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
+			constraintName="PK_AdtPaymentInstructions" tableName="AdtPaymentInstructions" />
+	</changeSet>
+	<changeSet id="12" author="Manoj.p">
+		<modifyDataType tableName="ADTMandates" columnName="REASON"
+			newDataType="nvarchar(500)" />
+	</changeSet>
+	
+</databaseChangeLog>

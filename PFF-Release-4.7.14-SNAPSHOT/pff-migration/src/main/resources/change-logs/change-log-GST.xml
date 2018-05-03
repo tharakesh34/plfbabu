@@ -1,0 +1,1262 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<!-- Fee Types -->
+	<changeSet id="1" author="Kesav">
+		<addColumn tableName="FeeTypes">
+			<column name="TaxComponent" type="Char(1)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2" author="Kesav">
+		<addColumn tableName="FeeTypes_Temp">
+		<column name="TaxComponent" type="Char(1)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2.1" author="Kesav" dbms="postgresql">
+	<sql>
+	set search_path=plf,public,pg_catalog;
+	</sql>
+	</changeSet>
+	<changeSet id="3" author="Kesav">
+		<createView viewName="FEETYPES_VIEW" replaceIfExists="true">
+			SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId, T1.HostFeeTypeCode, T1.TaxApplicable, T1.TaxComponent,			
+						T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						T2.AccountSetCode, T2.AccountSetCodeName			
+			FROM    	FeeTypes_Temp  T1  
+			LEFT JOIN 	RmtAccountingSet T2 ON T1.AccountSetId = T2.ACCOUNTSETID
+
+			UNION ALL
+			
+			SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId, T1.HostFeeTypeCode, T1.TaxApplicable, T1.TaxComponent,			
+						T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						T2.AccountSetCode, T2.AccountSetCodeName			
+			FROM    	FeeTypes  T1  
+			LEFT JOIN 	RmtAccountingSet T2 ON T1.AccountSetId = T2.ACCOUNTSETID
+			
+			WHERE     	NOT EXISTS (SELECT 1 FROM FeeTypes_TEMP WHERE FeeTypeID = T1.FeeTypeID)
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="4" author="Kesav">
+		<createView viewName="FEETYPES_TVIEW" replaceIfExists="true">
+			SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId, T1.HostFeeTypeCode, T1.TaxApplicable, T1.TaxComponent,			
+						T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						T2.AccountSetCode, T2.AccountSetCodeName			
+			FROM    	FeeTypes_Temp  T1  
+			LEFT JOIN 	RmtAccountingSet T2 ON T1.AccountSetId = T2.ACCOUNTSETID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="5" author="Kesav">
+		<createView viewName="FEETYPES_AVIEW" replaceIfExists="true">
+			SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId, T1.HostFeeTypeCode, T1.TaxApplicable, T1.TaxComponent,			
+						T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						T2.AccountSetCode, T2.AccountSetCodeName			
+			FROM    	FeeTypes  T1  
+			LEFT JOIN 	RmtAccountingSet T2 ON T1.AccountSetId = T2.ACCOUNTSETID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="6" author="Kesav">
+		<sql>
+			Update FeeTypes set TaxApplicable = 0;
+			Update FeeTypes_Temp set TaxApplicable = 0;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="7" author="Kesav">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FeeTypeDialog_TaxComponent','FeeTypeDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FeeTypeDialog_TaxApplicable','FeeTypeDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEETYPE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeTypeDialog_TaxComponent'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEETYPE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeTypeDialog_TaxApplicable'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		</sql>
+	</changeSet>
+	
+	<!-- FinTaxDetails -->
+	<changeSet id="8" author="Kesav">
+		<createTable tableName="FinTaxDetails">
+			<column name="FinTaxID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FeeID" type="bigint"/>
+			<column name="PaidCGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="PaidIGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="PaidUGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="PaidSGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="PaidTGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NETCGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NETIGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NETUGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NETSGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NETTGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemFeeCGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemFeeIGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemFeeUGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemFeeSGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemFeeTGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="ActualCGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="ActualIGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="ActualUGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="ActualSGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="ActualTGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="Version" type="NUMBER(10,0)" defaultValue="0" />	
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" defaultValue="0" />			
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="9" author="Kesav">
+		<createTable tableName="FinTaxDetails_Temp">
+			<column name="FinTaxID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FeeID" type="bigint"/>
+			<column name="PaidCGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="PaidIGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="PaidUGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="PaidSGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="PaidTGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NETCGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NETIGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NETUGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NETSGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NETTGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemFeeCGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemFeeIGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemFeeUGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemFeeSGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemFeeTGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="ActualCGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="ActualIGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="ActualUGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="ActualSGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="ActualTGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="Version" type="NUMBER(10,0)" defaultValue="0" />	
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" defaultValue="0" />
+		</createTable>
+	</changeSet>		
+	
+	<changeSet id="10" author="Kesav">
+		<createView viewName="FINTAXDETAILS_TVIEW" replaceIfExists="true">
+			SELECT  T1.FINTAXID, T1.FEEID, T1.PAIDCGST, T1.PAIDIGST, T1.PAIDUGST, T1.PAIDSGST, T1.PAIDTGST, T1.NETCGST, T1.NETIGST, T1.NETUGST, T1.NETSGST,
+					T1.NETTGST, T1.REMFEECGST, T1.REMFEEIGST, T1.REMFEEUGST, T1.REMFEESGST, T1.REMFEETGST, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+          			T1.ActualCGST, T1.ActualIGST, T1.ActualUGST, T1.ActualSGST, T1.ActualTGST
+			FROM    FinTaxDetails_Temp T1 LEFT JOIN 
+					FinFeeDetail T2 ON T1.FEEID = T2.FeeTypeID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="11" author="Kesav">
+		<createView viewName="FINTAXDETAILS_AVIEW" replaceIfExists="true">
+			SELECT  T1.FINTAXID, T1.FEEID, T1.PAIDCGST, T1.PAIDIGST, T1.PAIDUGST, T1.PAIDSGST, T1.PAIDTGST, T1.NETCGST, T1.NETIGST, T1.NETUGST, T1.NETSGST,
+					T1.NETTGST, T1.REMFEECGST, T1.REMFEEIGST, T1.REMFEEUGST, T1.REMFEESGST, T1.REMFEETGST, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+          			T1.ActualCGST, T1.ActualIGST, T1.ActualUGST, T1.ActualSGST, T1.ActualTGST
+			FROM    FinTaxDetails T1 LEFT JOIN 
+					FinFeeDetail T2 ON T1.FEEID = T2.FeeTypeID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="12" author="Kesav">
+		<createView viewName="FINTAXDETAILS_VIEW" replaceIfExists="true">
+			SELECT  T1.FINTAXID, T1.FEEID, T1.PAIDCGST, T1.PAIDIGST, T1.PAIDUGST, T1.PAIDSGST, T1.PAIDTGST, T1.NETCGST, T1.NETIGST, T1.NETUGST, T1.NETSGST,
+					T1.NETTGST, T1.REMFEECGST, T1.REMFEEIGST, T1.REMFEEUGST, T1.REMFEESGST, T1.REMFEETGST, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+          			T1.ActualCGST, T1.ActualIGST, T1.ActualUGST, T1.ActualSGST, T1.ActualTGST
+			FROM    FinTaxDetails_Temp T1 LEFT JOIN 
+					FinFeeDetail T2 ON T1.FEEID = T2.FeeTypeID
+			
+			UNION ALL
+			
+			SELECT  T1.FINTAXID, T1.FEEID, T1.PAIDCGST, T1.PAIDIGST, T1.PAIDUGST, T1.PAIDSGST, T1.PAIDTGST, T1.NETCGST, T1.NETIGST, T1.NETUGST, T1.NETSGST,
+					T1.NETTGST, T1.REMFEECGST, T1.REMFEEIGST, T1.REMFEEUGST, T1.REMFEESGST, T1.REMFEETGST, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+          			T1.ActualCGST, T1.ActualIGST, T1.ActualUGST, T1.ActualSGST, T1.ActualTGST
+			FROM    FinTaxDetails T1 LEFT JOIN 
+					FinFeeDetail T2 ON T1.FEEID = T2.FeeTypeID
+			WHERE   NOT EXISTS (SELECT 1 FROM FinTaxDetails_Temp WHERE FeeID = T1.FeeID AND FINTAXID = T1.FINTAXID)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="13" author="Kesav" dbms="oracle">
+		<sql splitStatements="false">
+			begin
+			execute immediate 'CREATE SEQUENCE SEQFINTAXDETAILS START WITH 1
+			INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';
+			end;
+		</sql>
+	</changeSet>
+
+	<changeSet id="14" author="Kesav" dbms="postgresql">
+		<sql splitStatements="false">
+			do $$
+			begin
+			execute 'CREATE SEQUENCE SEQFINTAXDETAILS START 1 INCREMENT BY 1';
+			end;
+			$$;
+		</sql>
+	</changeSet>
+
+	<changeSet id="15" author="Kesav" dbms="mssql">
+		<sql splitStatements="false">
+			CREATE TABLE SEQFINTAXDETAILS(SeqNo bigint IDENTITY(1,1) NOT NULL, Value int NOT NULL);
+		</sql>
+	</changeSet>
+	
+	<!-- FinFeeDetail -->
+	<changeSet id="16" author="Kesav">
+		<addColumn tableName="FINFEEDETAIL">
+			<column name="PaidAmountOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="PaidAmountGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NetAmountOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NetAmountGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NetAmount" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemainingFeeOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemainingFeeGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="TaxApplicable" type="boolean" />
+			<column name="TaxComponent" type="Char(1)"/>
+			<column name="ActualAmountOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="ActualAmountGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="FeeAmz" type="NUMBER(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="17" author="Kesav">
+		<addColumn tableName="FINFEEDETAIL_TEMP">
+			<column name="PaidAmountOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="PaidAmountGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NetAmountOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NetAmountGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NetAmount" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemainingFeeOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemainingFeeGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="TaxApplicable" type="boolean" />
+			<column name="TaxComponent" type="Char(1)"/>
+			<column name="ActualAmountOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="ActualAmountGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="FeeAmz" type="NUMBER(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+		
+	<changeSet id="18" author="Kesav">
+		<sql>
+			Update FINFEEDETAIL Set PaidAmountOriginal = 0 where PaidAmountOriginal is null;
+			Update FINFEEDETAIL Set PaidAmountGST = 0 where PaidAmountGST is null;
+			Update FINFEEDETAIL Set NetAmountOriginal = 0 where NetAmountOriginal is null;
+			Update FINFEEDETAIL Set NetAmountGST = 0 where NetAmountGST is null;
+			Update FINFEEDETAIL Set NetAmount = 0 where NetAmount is null;
+			Update FINFEEDETAIL Set RemainingFeeOriginal = 0 where RemainingFeeOriginal is null;
+			Update FINFEEDETAIL Set RemainingFeeGST = 0 where RemainingFeeGST is null;
+			Update FINFEEDETAIL Set ActualAmountOriginal = 0 where ActualAmountOriginal is null;
+			Update FINFEEDETAIL Set ActualAmountGST = 0 where ActualAmountGST is null;
+			Update FinFeeDetail set TaxApplicable = 0 where TaxApplicable is null;			
+		</sql>
+		<sql>
+			Update FINFEEDETAIL_TEMP Set PaidAmountOriginal = 0 where PaidAmountOriginal is null;
+			Update FINFEEDETAIL_TEMP Set PaidAmountGST = 0 where PaidAmountGST is null;
+			Update FINFEEDETAIL_TEMP Set NetAmountOriginal = 0 where NetAmountOriginal is null;
+			Update FINFEEDETAIL_TEMP Set NetAmountGST = 0 where NetAmountGST is null;
+			Update FINFEEDETAIL_TEMP Set NetAmount = 0 where NetAmount is null;
+			Update FINFEEDETAIL_TEMP Set RemainingFeeOriginal = 0 where RemainingFeeOriginal is null;
+			Update FINFEEDETAIL_TEMP Set RemainingFeeGST = 0 where RemainingFeeGST is null;
+			Update FINFEEDETAIL_TEMP Set ActualAmountOriginal = 0 where ActualAmountOriginal is null;
+			Update FINFEEDETAIL_TEMP Set ActualAmountGST = 0 where ActualAmountGST is null;
+			Update FINFEEDETAIL_TEMP set TaxApplicable = 0 where TaxApplicable is null;	
+		</sql>
+	</changeSet>
+			
+	<changeSet id="19" author="Kesav">
+		<createView viewName="FINFEEDETAIL_TVIEW" replaceIfExists="true">
+			SELECT  	T1.FeeID, T1.FinReference, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeSeq, T1.FeeOrder, T1.CalculatedAmount, T1.ActualAmount, T1.WaivedAmount, 
+						T1.PaidAmount, T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType, T1.RuleCode, T1.FixedAmount, T1.Percentage, T1.CalculateOn,
+						T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.VasReference, T1.Status, T1.TaxApplicable, T1.TaxComponent, T1.PaidAmountOriginal, T1.PaidAmountGST,
+						T1.NetAmountOriginal, T1.NetAmountGST, T1.NetAmount, T1.RemainingFeeOriginal, T1.RemainingFeeGST, T1.ActualAmountOriginal,T1.ActualAmountGST, T1.FeeAmz, 
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						T2.FeeTypeCode, T2.FeeTypeDesc
+			FROM    	FinFeeDetail_Temp T1 
+			LEFT JOIN 	FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="20" author="Kesav">
+		<createView viewName="FINFEEDETAIL_VIEW" replaceIfExists="true">
+			SELECT  	T1.FeeID, T1.FinReference, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeSeq, T1.FeeOrder, T1.CalculatedAmount, T1.ActualAmount, T1.WaivedAmount, 
+						T1.PaidAmount, T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType, T1.RuleCode, T1.FixedAmount, T1.Percentage, T1.CalculateOn,
+						T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.VasReference, T1.Status, T1.TaxApplicable, T1.TaxComponent, T1.PaidAmountOriginal, T1.PaidAmountGST,
+						T1.NetAmountOriginal, T1.NetAmountGST, T1.NetAmount, T1.RemainingFeeOriginal, T1.RemainingFeeGST, T1.ActualAmountOriginal,T1.ActualAmountGST, T1.FeeAmz, 
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						T2.FeeTypeCode, T2.FeeTypeDesc
+			FROM    	FinFeeDetail_Temp T1 
+			LEFT JOIN 	FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID
+			
+			UNION ALL
+			
+			SELECT  	T1.FeeID, T1.FinReference, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeSeq, T1.FeeOrder, T1.CalculatedAmount, T1.ActualAmount, T1.WaivedAmount, 
+						T1.PaidAmount, T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType, T1.RuleCode, T1.FixedAmount, T1.Percentage, T1.CalculateOn,
+						T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.VasReference, T1.Status, T1.TaxApplicable, T1.TaxComponent, T1.PaidAmountOriginal, T1.PaidAmountGST,
+						T1.NetAmountOriginal, T1.NetAmountGST, T1.NetAmount, T1.RemainingFeeOriginal, T1.RemainingFeeGST, T1.ActualAmountOriginal,T1.ActualAmountGST, T1.FeeAmz, 
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						T2.FeeTypeCode, T2.FeeTypeDesc
+			FROM    	FinFeeDetail T1 
+			LEFT JOIN 	FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID
+			
+			WHERE     	NOT EXISTS (SELECT 1 FROM FinFeeDetail_Temp WHERE FeeID = T1.FeeID)
+		</createView>
+	</changeSet>
+		
+	<!-- WIFFINFEEDETAIL -->
+	<changeSet id="21" author="Kesav">
+		<addColumn tableName="WIFFINFEEDETAIL">
+			<column name="PaidAmountOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="PaidAmountGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NetAmountOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NetAmountGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NetAmount" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemainingFeeOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemainingFeeGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="TaxApplicable" type="boolean" />
+			<column name="TaxComponent" type="Char(1)"/>
+			<column name="ActualAmountOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="ActualAmountGST" type="NUMBER(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="22" author="Kesav">
+		<addColumn tableName="WIFFINFEEDETAIL_TEMP">
+			<column name="PaidAmountOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="PaidAmountGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NetAmountOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NetAmountGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="NetAmount" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemainingFeeOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="RemainingFeeGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="TaxApplicable" type="boolean" />
+			<column name="TaxComponent" type="Char(1)"/>
+			<column name="ActualAmountOriginal" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="ActualAmountGST" type="NUMBER(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="23" author="Kesav">
+		<sql>
+			Update WIFFINFEEDETAIL Set PaidAmountOriginal = 0 where PaidAmountOriginal is null;
+			Update WIFFINFEEDETAIL Set PaidAmountGST = 0 where PaidAmountGST is null;
+			Update WIFFINFEEDETAIL Set NetAmountOriginal = 0 where NetAmountOriginal is null;
+			Update WIFFINFEEDETAIL Set NetAmountGST = 0 where NetAmountGST is null;
+			Update WIFFINFEEDETAIL Set NetAmount = 0 where NetAmount is null;
+			Update WIFFINFEEDETAIL Set RemainingFeeOriginal = 0 where RemainingFeeOriginal is null;
+			Update WIFFINFEEDETAIL Set RemainingFeeGST = 0 where RemainingFeeGST is null;
+			Update WIFFINFEEDETAIL Set ActualAmountOriginal = 0 where ActualAmountOriginal is null;
+			Update WIFFINFEEDETAIL Set ActualAmountGST = 0 where ActualAmountGST is null;
+			Update WIFFinFeeDetail set TaxApplicable = 0 where TaxApplicable is null;
+		</sql>
+		<sql>
+			Update WIFFINFEEDETAIL_TEMP Set PaidAmountOriginal = 0 where PaidAmountOriginal is null;
+			Update WIFFINFEEDETAIL_TEMP Set PaidAmountGST = 0 where PaidAmountGST is null;
+			Update WIFFINFEEDETAIL_TEMP Set NetAmountOriginal = 0 where NetAmountOriginal is null;
+			Update WIFFINFEEDETAIL_TEMP Set NetAmountGST = 0 where NetAmountGST is null;
+			Update WIFFINFEEDETAIL_TEMP Set NetAmount = 0 where NetAmount is null;
+			Update WIFFINFEEDETAIL_TEMP Set RemainingFeeOriginal = 0 where RemainingFeeOriginal is null;
+			Update WIFFINFEEDETAIL_TEMP Set RemainingFeeGST = 0 where RemainingFeeGST is null;
+			Update WIFFINFEEDETAIL_TEMP Set ActualAmountOriginal = 0 where ActualAmountOriginal is null;
+			Update WIFFINFEEDETAIL_TEMP Set ActualAmountGST = 0 where ActualAmountGST is null;
+			Update WIFFinFeeDetail_temp set TaxApplicable = 0 where TaxApplicable is null;
+		</sql>
+	</changeSet>
+	
+<!-- Need to check -->	
+	<changeSet id="24" author="Kesav">
+		<createView viewName="WIFFINFEEDETAIL_VIEW" replaceIfExists="true">
+			SELECT  	T1.FeeID, T1.FinReference, T1.FeeSeq, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeOrder, T1.CalculatedAmount, T1.ActualAmount, T1.WaivedAmount,
+						T1.PaidAmount, T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType, T1.RuleCode, T1.FixedAmount, T1.Percentage, T1.CalculateOn,
+						T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.VasReference, T1.Status, T1.TaxApplicable, T1.TaxComponent, T1.PaidAmountOriginal, T1.PaidAmountGST,
+						T1.NetAmountOriginal, T1.NetAmountGST, T1.NetAmount, T1.RemainingFeeOriginal, T1.RemainingFeeGST, T1.ActualAmountOriginal, T1.ActualAmountGST,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						T2.FeeTypeCode, T2.FeeTypeDesc
+			FROM    	WIFFinFeeDetail_Temp T1 
+			LEFT JOIN 	FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID
+			
+			UNION ALL
+			
+			SELECT  	T1.FeeID, T1.FinReference, T1.FeeSeq, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeOrder, T1.CalculatedAmount, T1.ActualAmount, T1.WaivedAmount,
+						T1.PaidAmount, T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType, T1.RuleCode, T1.FixedAmount, T1.Percentage, T1.CalculateOn,
+						T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.VasReference, T1.Status, T1.TaxApplicable, T1.TaxComponent, T1.PaidAmountOriginal, T1.PaidAmountGST,
+						T1.NetAmountOriginal, T1.NetAmountGST, T1.NetAmount, T1.RemainingFeeOriginal, T1.RemainingFeeGST, T1.ActualAmountOriginal, T1.ActualAmountGST,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						T2.FeeTypeCode, T2.FeeTypeDesc
+			FROM      	WIFFinFeeDetail T1 
+			LEFT JOIN	FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID
+			WHERE     	NOT EXISTS (SELECT 1 FROM WIFFinFeeDetail_Temp
+									WHERE FinReference = T1.FinReference AND OriginationFee = T1.OriginationFee AND FinEvent = T1.FinEvent AND FeeTypeID = T1.FeeTypeID)
+		</createView>
+	</changeSet>
+	
+	<!-- Fin Type Fees -->	
+	<changeSet id="25" author="Kesav">
+		<createView viewName="FinTypeFees_View" replaceIfExists="true">
+			SELECT     		T1.FinType, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeOrder, T1.FeeScheduleMethod, T1.CalculationType, T1.RuleCode, T1.Amount,
+							T1.Percentage, T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.Active, T1.Version, T1.LastMntBy,
+							T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ModuleId,
+							T2.FeeTypeCode, T2.FeeTypeDesc, T2.TaxApplicable, T2.TaxComponent, 
+							T3.RuleCodeDesc RuleDesc
+			FROM       		FinTypeFees_Temp T1 
+			INNER JOIN		FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID 
+			LEFT OUTER JOIN	Rules T3 ON T1.RuleCode = T3.RuleCode AND T3.RuleModule='FEES' AND T1.FinEvent = T3.RuleEvent
+			
+			UNION ALL
+			
+			SELECT     		T1.FinType, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeOrder, T1.FeeScheduleMethod, T1.CalculationType, T1.RuleCode, T1.Amount,
+							T1.Percentage, T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.Active, T1.Version, T1.LastMntBy,
+							T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ModuleId,
+							T2.FeeTypeCode, T2.FeeTypeDesc, T2.TaxApplicable, T2.TaxComponent, 
+							T3.RuleCodeDesc RuleDesc
+			FROM       		FinTypeFees T1 
+			INNER JOIN		FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID 
+			LEFT OUTER JOIN	Rules T3 ON T1.RuleCode = T3.RuleCode AND T3.RuleModule='FEES' AND T1.FinEvent = T3.RuleEvent
+			
+			WHERE     		NOT EXISTS (SELECT 1 FROM FinTypeFees_Temp
+										WHERE  FinType = T1.FinType AND FinEvent = T1.FinEvent AND FeeTypeID = T1.FeeTypeID AND OriginationFee = T1.OriginationFee)
+		</createView>
+	</changeSet>
+	<!-- Need to check -->
+	<changeSet id="26" author="Kesav">
+		<createView viewName="FINTYPEFEES_AVIEW" replaceIfExists="true">
+			SELECT     		T1.FinType, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeOrder, T1.FeeScheduleMethod, T1.CalculationType, T1.RuleCode, T1.Amount,
+							T1.Percentage, T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.Active, T1.Version, T1.LastMntBy,
+							T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ModuleId,
+							T2.FeeTypeCode, T2.FeeTypeDesc, T2.TaxApplicable, T2.TaxComponent, 
+							T3.RuleCodeDesc RuleDesc
+			FROM       		FinTypeFees T1 
+			INNER JOIN		FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID 
+			LEFT OUTER JOIN	Rules T3 ON T1.RuleCode = T3.RuleCode AND T3.RuleModule='FEES' AND T1.FinEvent = T3.RuleEvent
+		</createView>
+	</changeSet>
+	
+	<!-- FinFeeScheduleDetail -->
+	<changeSet id="27" author="Kesav">
+		<addColumn tableName="FinFeeScheduleDetail">
+			<column name="CGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="IGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="SGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="UGST" type="NUMBER(18,0)" defaultValue="0" />
+		</addColumn>
+		<addColumn tableName="FinFeeScheduleDetail_TEMP">
+			<column name="CGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="IGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="SGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="UGST" type="NUMBER(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="28" author="Kesav">
+		<sql>
+			Update FinFeeScheduleDetail set CGST = 0 where CGST is null;
+			Update FinFeeScheduleDetail set IGST = 0 where IGST is null;
+			Update FinFeeScheduleDetail set SGST = 0 where SGST is null;
+			Update FinFeeScheduleDetail set UGST = 0 where UGST is null;
+			
+			Update FinFeeScheduleDetail_TEMP set CGST = 0 where CGST is null;
+			Update FinFeeScheduleDetail_TEMP set IGST = 0 where IGST is null;
+			Update FinFeeScheduleDetail_TEMP set SGST = 0 where SGST is null;
+			Update FinFeeScheduleDetail_TEMP set UGST = 0 where UGST is null;			
+		</sql>
+	</changeSet>
+		
+	<changeSet id="29" author="Kesav">
+		<createView viewName="FINFEESCHEDULEDETAIL_TVIEW" replaceIfExists="true">
+			SELECT     	T1.FeeID, T1.SchDate, T1.SchAmount, T1.PaidAmount, T1.OSAmount, T1.WaiverAmount, T1.WriteoffAmount, T1.CGST, T1.SGST, T1.UGST, T1.IGST,
+						T2.FinReference, T2.FeeTypeID, T2.FinEvent
+			FROM       	FinFeeScheduleDetail_Temp T1
+			Inner Join 	FinFeeDetail_Temp T2 On T1.FeeID = T2.FeeID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="30" author="Kesav">
+		<createView viewName="FINFEESCHEDULEDETAIL_VIEW" replaceIfExists="true">
+			SELECT     	T1.FeeID, T1.SchDate, T1.SchAmount, T1.PaidAmount, T1.OSAmount, T1.WaiverAmount, T1.WriteoffAmount, T1.CGST, T1.SGST, T1.UGST, T1.IGST,
+						T2.FinReference, T2.FeeTypeID, T2.FinEvent
+			FROM       	FinFeeScheduleDetail_Temp T1
+			Inner Join 	FinFeeDetail_Temp T2 On T1.FeeID = T2.FeeID
+			
+			UNION ALL
+			
+			SELECT     	T1.FeeID, T1.SchDate, T1.SchAmount, T1.PaidAmount, T1.OSAmount, T1.WaiverAmount, T1.WriteoffAmount, T1.CGST, T1.SGST, T1.UGST, T1.IGST,
+						T2.FinReference, T2.FeeTypeID, T2.FinEvent
+			FROM       	FinFeeScheduleDetail T1
+			Inner Join 	FinFeeDetail_Temp T2 On T1.FeeID = T2.FeeID
+			
+			WHERE     	NOT EXISTS (SELECT 1 FROM FinFeeScheduleDetail_Temp WHERE FeeID = T1.FeeID AND SchDate = T1.SchDate)
+		</createView>
+	</changeSet>
+	
+	<!-- WIFFinFeeScheduleDetail -->
+	<changeSet id="31" author="Kesav">
+		<addColumn tableName="WIFFinFeeScheduleDetail">
+			<column name="CGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="IGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="SGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="UGST" type="NUMBER(18,0)" defaultValue="0" />
+		</addColumn>
+		<addColumn tableName="WIFFinFeeScheduleDetail_TEMP">
+			<column name="CGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="IGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="SGST" type="NUMBER(18,0)" defaultValue="0" />
+			<column name="UGST" type="NUMBER(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="32" author="Kesav">
+		<sql>
+			Update WIFFinFeeScheduleDetail set CGST = 0 where CGST is null;
+			Update WIFFinFeeScheduleDetail set IGST = 0 where IGST is null;
+			Update WIFFinFeeScheduleDetail set SGST = 0 where SGST is null;
+			Update WIFFinFeeScheduleDetail set UGST = 0 where UGST is null;
+			
+			Update WIFFinFeeScheduleDetail_TEMP set CGST = 0 where CGST is null;
+			Update WIFFinFeeScheduleDetail_TEMP set IGST = 0 where IGST is null;
+			Update WIFFinFeeScheduleDetail_TEMP set SGST = 0 where SGST is null;
+			Update WIFFinFeeScheduleDetail_TEMP set UGST = 0 where UGST is null;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="33" author="Kesav">
+		<createView viewName="WIFFINFEESCHEDULEDETAIL_VIEW" replaceIfExists="true">
+			SELECT     T1.FeeID, T1.SchDate, T1.SchAmount, T1.PaidAmount, T1.OSAmount, T1.WaiverAmount, T1.WriteoffAmount, T1.CGST, T1.SGST, T1.UGST, T1.IGST
+			FROM       WIFFinFeeScheduleDetail_Temp T1
+			
+			UNION ALL
+			
+			SELECT    T1.FeeID, T1.SchDate, T1.SchAmount, T1.PaidAmount, T1.OSAmount, T1.WaiverAmount, T1.WriteoffAmount, T1.CGST, T1.SGST, T1.UGST, T1.IGST
+			FROM      WIFFinFeeScheduleDetail T1
+			
+			WHERE     NOT EXISTS (SELECT 1 FROM WIFFinFeeScheduleDetail_Temp WHERE FeeID = T1.FeeID AND SchDate = T1.SchDate)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="34" author="Kesav">
+		<addColumn tableName="FINSCHEDULEDETAILS">
+			<column name="FeeTax" type="NUMBER(18,0)" defaultValue="0" />
+		</addColumn>
+		<addColumn tableName="FINSCHEDULEDETAILS_LOG">
+			<column name="FeeTax" type="NUMBER(18,0)" defaultValue="0" />
+		</addColumn>
+		</changeSet>
+		<changeSet id="34.1" author="Kesav">
+		<addColumn tableName="FINSCHEDULEDETAILS_TEMP">
+			<column name="FeeTax" type="NUMBER(18,0)" defaultValue="0" />
+		</addColumn>
+		<addColumn tableName="FINSCHEDULEDETAILS_PA">
+			<column name="FeeTax" type="NUMBER(18,0)" defaultValue="0" />
+		</addColumn>
+		</changeSet>
+		<changeSet id="34.2" author="Kesav">
+		<addColumn tableName="REJECTFINSCHEDULEDETAILS">
+			<column name="FeeTax" type="NUMBER(18,0)" defaultValue="0" />
+		</addColumn>
+		<addColumn tableName="WIFFINSCHEDULEDETAILS">
+			<column name="FeeTax" type="NUMBER(18,0)" defaultValue="0" />
+		</addColumn>
+		</changeSet>
+		<changeSet id="34.3" author="Kesav">
+		<addColumn tableName="WIFFINSCHEDULEDETAILS_TEMP">
+			<column name="FeeTax" type="NUMBER(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="36.1" author="Kesav" dbms="postgresql">
+	<sql>
+	set search_path=plf,public,pg_catalog;
+	</sql>
+	</changeSet>
+	
+	<changeSet id="36" author="Kesav">
+		<createView viewName="FINSCHEDULEDETAILS_AVIEW" replaceIfExists="true">
+			SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+					   T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+					   T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+					   T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+					   T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+					   T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.EarlyPaidBal, T1.EarlyPaid, T1.RefundOrWaiver, T1.WriteoffPrincipal, 
+					   T1.WriteoffProfit, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+					   T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+					   T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+					   T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate,T1.PresentmentId,
+					   T1.PartialPaidAmt, T1.FeeTax	
+			FROM       FinScheduleDetails  T1	
+		</createView>
+	</changeSet>
+	
+	<changeSet id="37" author="Kesav">
+		<createView viewName="FINSCHEDULEDETAILS_TVIEW" replaceIfExists="true">
+			SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+					   T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+					   T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+					   T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+					   T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+					   T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.EarlyPaidBal, T1.EarlyPaid, T1.RefundOrWaiver, T1.WriteoffPrincipal, 
+					   T1.WriteoffProfit, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+					   T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+					   T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+					   T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate,T1.PresentmentId,
+					   T1.PartialPaidAmt, T1.FeeTax		
+			FROM       FinScheduleDetails_Temp  T1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="38" author="Kesav">
+		<createView viewName="FINSCHEDULEDETAILS_VIEW" replaceIfExists="true">
+			SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+					   T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+					   T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+					   T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+					   T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+					   T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.EarlyPaidBal, T1.EarlyPaid, T1.RefundOrWaiver, T1.WriteoffPrincipal, 
+					   T1.WriteoffProfit, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+					   T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+					   T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+					   T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate,T1.PresentmentId,
+					   T1.PartialPaidAmt, T1.FeeTax	
+			FROM       FinScheduleDetails_Temp  T1
+		
+			UNION ALL
+		
+			SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+					   T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+					   T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+					   T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+					   T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+					   T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.EarlyPaidBal, T1.EarlyPaid, T1.RefundOrWaiver, T1.WriteoffPrincipal, 
+					   T1.WriteoffProfit, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+					   T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+					   T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+					   T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate,T1.PresentmentId,
+					   T1.PartialPaidAmt, T1.FeeTax	
+			FROM       FinScheduleDetails  T1
+		
+			WHERE      NOT EXISTS (SELECT 1 FROM FinScheduleDetails_Temp  WHERE FinReference = T1.FinReference)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="39" author="Kesav">
+		<createView viewName="WIFFINSCHEDULEDETAILS_TVIEW" replaceIfExists="true">
+			SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+					   T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+					   T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+					   T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+					   T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate,  
+					   T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+					   T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+					   T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+					   T1.PftDaysBasis,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate, T1.FeeTax
+			FROM       WIFFinScheduleDetails_Temp T1
+
+		</createView>
+	</changeSet>
+	
+	<changeSet id="40" author="Kesav">
+		<createView viewName="WIFFINSCHEDULEDETAILS_VIEW" replaceIfExists="true">
+			SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+					   T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+					   T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+					   T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+					   T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+					   T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+					   T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+					   T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+					   T1.PftDaysBasis,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate, T1.FeeTax
+		
+			FROM       WIFFinScheduleDetails_Temp T1
+			
+			UNION ALL
+					
+			SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+					   T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+					   T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+					   T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+					   T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+					   T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+					   T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+					   T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+					   T1.PftDaysBasis,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate, T1.FeeTax
+		
+			FROM       WIFFinScheduleDetails T1
+			
+			WHERE     NOT EXISTS (SELECT 1 FROM WIFFinScheduleDetails_Temp WHERE FinReference = T1.FinReference)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="41" author="Kesav">
+		<sql>
+			delete from RBFIELDDETAILS WHERE RBModule = 'SUBHEAD' and RbFldName = 'fromState';
+			delete from RBFIELDDETAILS WHERE RBModule = 'SUBHEAD' and RbFldName = 'toState';
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('SUBHEAD','SUBHEAD','fromState','From State','nvarchar',50,'0','1',' ','static',' ');
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('SUBHEAD','SUBHEAD','toState','To State','nvarchar',50,'0','1',' ','static',' ');
+	
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'IGST' and RbFldName = 'fromState';
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'IGST' and RbFldName = 'toState';
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','IGST','fromState','From State','nvarchar',50,'0','1',' ','static',' ');
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','IGST','toState','To State','nvarchar',50,'0','1',' ','static',' ');
+	
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'CGST' and RbFldName = 'fromState';
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'CGST' and RbFldName = 'toState';
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','CGST','fromState','From State','nvarchar',50,'0','1',' ','static',' ');
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','CGST','toState','To State','nvarchar',50,'0','1',' ','static',' ');
+	
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'SGST' and RbFldName = 'fromState';
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'SGST' and RbFldName = 'toState';
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','SGST','fromState','From State','nvarchar',50,'0','1',' ','static',' ');
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','SGST','toState','To State','nvarchar',50,'0','1',' ','static',' ');
+	
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'UGST' and RbFldName = 'fromState';
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'UGST' and RbFldName = 'toState';
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','UGST','fromState','From State','nvarchar',50,'0','1',' ','static',' ');
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','UGST','toState','To State','nvarchar',50,'0','1',' ','static',' ');
+		</sql>
+	</changeSet>
+	
+	<changeSet id="42" author="Kesav">
+		<sql>
+			INSERT INTO RMTACCOUNTTYPES VALUES('BNKIMD','Bank IMD Intermediary A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('IACRNPA','Interest Accrual on NPA Accounts','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('IACRNRM','Interest Accrued A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('IRCV','Interest Receivable GL for Loan A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('PRCV','Principal Receivable GL for Loan A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('PRD','Product GL for Loan A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('FINCAMZ',' Fee Income Amortisation A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('CGST','CGST Payable A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('DDIMD','DD Intermediary A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('EXCESS','Excess Money A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('IMPS','Fund transfer through IMPS','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('NEFT','Fund transfer through NEFT','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('RTGS','Fund transfer through RTGS','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('IGST','IGST Payable A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('INTIMD','Initial Money Intermediary A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('SGST','SGST Payable A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('SUBVENT','Subvention A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('DBNCEINC','Dummy Bounce Charge Income A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('DBNCERCB','Dummy Bounce Charge Receivable A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('DOTHINC','Dummy Other Charges Income A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('DOTHRCB','Dummy Other Charges Receivable A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('DPNLINC','Dummy Penal Interest A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('DPNLRCB','Dummy Penal Interest Receivable A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('BNCINC','Income – Bounce Charges Income A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('FEEINC','Income - Fee Income A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('NPAINC','Income – Interest Income on NPA A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('OTHINC','Income – Other Charges Income A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('PNLINC','Income – Penal Interest Income A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('RBIMD','Manual Advice Intermediary A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('STMDTY','Stamp Duty Recovery A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');
+			INSERT INTO RMTACCOUNTTYPES VALUES('INTSUBVNT','Income – Interest Subvention A/c','L','',1,0,'',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'',0,0,1,4,1,1,'','',0,'','','TRN');	
+		</sql>
+	</changeSet>
+		<changeSet id="43.3" author="Kesav" dbms="postgresql">
+	<sql>
+	set search_path=plf,public,pg_catalog;
+	</sql>
+	</changeSet>
+	<changeSet id="43" author="Kesav">
+		<sql>
+			UPDATE SEQRMTAccountingSet  SET SeqNo = (Select MAX(AccountSetid) FROM RMTAccountingSet );
+
+			DELETE FROM RMTTRANSACTIONENTRY WHERE ACCOUNTSETID IN (Select AccountSetId from RMTAccountingSet WHERE AccountSetCode ='FEEONBRD' AND EVentCode = 'STAGE'); DELETE FROM RMTACCOUNTINGSET WHERE AccountSetCode = 'FEEONBRD' AND EventCode = 'STAGE'; 
+			INSERT INTO RMTAccountingSet VALUES ((Select MAX(AccountSetid)+1 FROM RMTAccountingSet ), N'STAGE', N'FEEONBRD', N'Prior to onboarding of loan', 0, 0, 1, 1001, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 10, N'Bank IMD Intermediary A/c', N'D', 0, N'BNKIMD', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=PROCFEE_N + PROCFEE_CGST + PROCFEE_SGST + PROCFEE_IGST;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 20, N'Initial Money Intermediary A/c', N'C', 0, N'INTIMD', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_N;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 30, N'CGST Payable A/c', N'C', 0, N'CGST', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_CGST;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 40, N'SGST Payable A/c', N'C', 0, N'SGST', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_SGST;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 50, N'IGST Payable A/c', N'C', 0, N'IGST', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_IGST;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			
+			DELETE FROM RMTTRANSACTIONENTRY WHERE ACCOUNTSETID IN (Select AccountSetId from RMTAccountingSet WHERE AccountSetCode ='FEESANC' AND EVentCode = 'STAGE'); DELETE FROM RMTACCOUNTINGSET WHERE AccountSetCode = 'FEESANC' AND EventCode = 'STAGE'; 
+			INSERT INTO RMTAccountingSet VALUES ((Select MAX(AccountSetid)+1 FROM RMTAccountingSet ), N'STAGE', N'FEESANC', N'Sanction of Loan', 0, 0, 1, 1001, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 10, N'Initial Money Intermediary A/c', N'D', 0, N'INTIMD', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=PROCFEE_N;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 20, N' Fee Income Amortisation A/c', N'C', 0, N'FINCAMZ', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_N;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			
+			DELETE FROM RMTTRANSACTIONENTRY WHERE ACCOUNTSETID IN (Select AccountSetId from RMTAccountingSet WHERE AccountSetCode ='FEEREJCT' AND EVentCode = 'STAGE'); DELETE FROM RMTACCOUNTINGSET WHERE AccountSetCode = 'FEEREJCT' AND EventCode = 'STAGE'; 
+			INSERT INTO RMTAccountingSet VALUES ((Select MAX(AccountSetid)+1 FROM RMTAccountingSet ), N'STAGE', N'FEEREJCT', N'Rejection of Loan Application', 0, 0, 1, 1001, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 10, N'Initial Money Intermediary A/c', N'D', 0, N'INTIMD', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=PROCFEE_N;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 20, N'Income - Fee Income A/c', N'C', 0, N'FEEINC', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_N - PROCFEE_P;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 30, N'Bank IMD Intermediary A/c', N'C', 0, N'BNKIMD', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_P;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			
+			
+			UPDATE SEQRMTAccountingSet  SET SeqNo = (Select MAX(AccountSetid) FROM RMTAccountingSet );
+			DELETE FROM RMTTRANSACTIONENTRY WHERE ACCOUNTSETID IN (Select AccountSetId from RMTAccountingSet WHERE AccountSetCode ='LOANBRD' AND EVentCode = 'ADDDBSP');
+			 DELETE FROM RMTACCOUNTINGSET WHERE AccountSetCode = 'LOANBRD' AND EventCode = 'ADDDBSP'; 
+			INSERT INTO RMTAccountingSet VALUES ((Select MAX(AccountSetid)+1 FROM RMTAccountingSet ), N'ADDDBSP', N'LOANBRD', N'Accounting entries at the time of On Boarding of L', 0, 0, 1, 1001, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 10, N'Product GL for Loan A/c', N'D', 0, N'PRD', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=ae_disburse+ ae_addFeeToFinance;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 20, N'Disbursal A/c', N'C', 0, N'DISB', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse+ ae_addFeeToFinance;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 30, N'Disbursal A/c', N'D', 0, N'DISB', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=PROCFEE_N + PROCFEE_CGST + PROCFEE_SGST + PROCFEE_IGST;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 40, N' Fee Income Amortisation A/c', N'C', 0, N'FINCAMZ', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_N - PROCFEE_P;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 50, N'Income - Fee Income A/c', N'C', 0, N'FEEINC', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_P;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 60, N'CGST Payable A/c', N'C', 0, N'CGST', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_CGST;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 70, N'SGST Payable A/c', N'C', 0, N'SGST', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_SGST;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 80, N'IGST Payable A/c', N'C', 0, N'IGST', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_IGST;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 90, N'Disbursal A/c', N'D', 0, N'DISB', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=ae_downpay;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 100, N'Product GL for Loan A/c', N'C', 0, N'PRD', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_downpay;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 110, N'Disbursal A/c', N'D', 0, N'DISB', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=ae_subVentionAmount;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 120, N'Subvention A/c', N'C', 0, N'SUBVENT', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_subVentionAmount;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 130, N'Disbursal A/c', N'D', 0, N'DISB', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=ae_disburse+ ae_addFeeToFinance - (PROCFEE_N + PROCFEE_CGST + PROCFEE_SGST + PROCFEE_IGST) - ae_downpay - ae_subVentionAmount;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 140, N'DD Intermediary A/c', N'C', 0, N'DDIMD', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse+ ae_addFeeToFinance - (PROCFEE_N + PROCFEE_CGST + PROCFEE_SGST + PROCFEE_IGST) - ae_downpay - ae_subVentionAmount;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 150, N'Fund transfer through IMPS', N'C', 0, N'IMPS', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse+ ae_addFeeToFinance - (PROCFEE_N + PROCFEE_CGST + PROCFEE_SGST + PROCFEE_IGST) - ae_downpay - ae_subVentionAmount;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 160, N'Fund transfer through NEFT', N'C', 0, N'NEFT', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse+ ae_addFeeToFinance - (PROCFEE_N + PROCFEE_CGST + PROCFEE_SGST + PROCFEE_IGST) - ae_downpay - ae_subVentionAmount;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 170, N'Fund transfer through RTGS', N'C', 0, N'RTGS', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse+ ae_addFeeToFinance - (PROCFEE_N + PROCFEE_CGST + PROCFEE_SGST + PROCFEE_IGST) - ae_downpay - ae_subVentionAmount;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			
+			
+			UPDATE SEQRMTAccountingSet  SET SeqNo = (Select MAX(AccountSetid) FROM RMTAccountingSet );
+			DELETE FROM RMTTRANSACTIONENTRY WHERE ACCOUNTSETID IN (Select AccountSetId from RMTAccountingSet WHERE AccountSetCode ='LOANBRD' AND EVentCode = 'ADDDBSF'); DELETE FROM RMTACCOUNTINGSET WHERE AccountSetCode = 'LOANBRD' AND EventCode = 'ADDDBSF'; 
+			INSERT INTO RMTAccountingSet VALUES ((Select MAX(AccountSetid)+1 FROM RMTAccountingSet ), N'ADDDBSF', N'LOANBRD', N'Accounting entries at the time of On Boarding of L', 0, 0, 1, 1001, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 10, N'Product GL for Loan A/c', N'D', 0, N'PRD', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=ae_disburse+ ae_addFeeToFinance;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 20, N'Disbursal A/c', N'C', 0, N'DISB', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse+ ae_addFeeToFinance;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 30, N'Disbursal A/c', N'D', 0, N'DISB', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=PROCFEE_N + PROCFEE_CGST + PROCFEE_SGST + PROCFEE_IGST;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 40, N' Fee Income Amortisation A/c', N'C', 0, N'FINCAMZ', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_N - PROCFEE_P;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 50, N'Income - Fee Income A/c', N'C', 0, N'FEEINC', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_P;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 60, N'CGST Payable A/c', N'C', 0, N'CGST', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_CGST;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 70, N'SGST Payable A/c', N'C', 0, N'SGST', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_SGST;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 80, N'IGST Payable A/c', N'C', 0, N'IGST', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=PROCFEE_IGST;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 90, N'Disbursal A/c', N'D', 0, N'DISB', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=ae_downpay;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 100, N'Product GL for Loan A/c', N'C', 0, N'PRD', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_downpay;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 110, N'Disbursal A/c', N'D', 0, N'DISB', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=ae_subVentionAmount;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 120, N'Subvention A/c', N'C', 0, N'SUBVENT', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_subVentionAmount;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 130, N'Disbursal A/c', N'D', 0, N'DISB', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=ae_disburse+ ae_addFeeToFinance - (PROCFEE_N + PROCFEE_CGST + PROCFEE_SGST + PROCFEE_IGST) - ae_downpay - ae_subVentionAmount;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 140, N'DD Intermediary A/c', N'C', 0, N'DDIMD', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse+ ae_addFeeToFinance - (PROCFEE_N + PROCFEE_CGST + PROCFEE_SGST + PROCFEE_IGST) - ae_downpay - ae_subVentionAmount;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 150, N'Fund transfer through IMPS', N'C', 0, N'IMPS', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse+ ae_addFeeToFinance - (PROCFEE_N + PROCFEE_CGST + PROCFEE_SGST + PROCFEE_IGST) - ae_downpay - ae_subVentionAmount;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 160, N'Fund transfer through NEFT', N'C', 0, N'NEFT', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse+ ae_addFeeToFinance - (PROCFEE_N + PROCFEE_CGST + PROCFEE_SGST + PROCFEE_IGST) - ae_downpay - ae_subVentionAmount;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 170, N'Fund transfer through RTGS', N'C', 0, N'RTGS', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse+ ae_addFeeToFinance - (PROCFEE_N + PROCFEE_CGST + PROCFEE_SGST + PROCFEE_IGST) - ae_downpay - ae_subVentionAmount;', NULL, N'PROCFEE', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			
+			UPDATE SEQRMTAccountingSet  SET SeqNo = (Select MAX(AccountSetid) FROM RMTAccountingSet );
+			DELETE FROM RMTTRANSACTIONENTRY WHERE ACCOUNTSETID IN (Select AccountSetId from RMTAccountingSet WHERE AccountSetCode ='LOANBRD' AND EVentCode = 'ADDDBSN'); DELETE FROM RMTACCOUNTINGSET WHERE AccountSetCode = 'LOANBRD' AND EventCode = 'ADDDBSN'; 
+			INSERT INTO RMTAccountingSet VALUES ((Select MAX(AccountSetid)+1 FROM RMTAccountingSet ), N'ADDDBSN', N'LOANBRD', N'Accounting entries at the time of additional Disb', 0, 0, 1, 1001, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 10, N'Product GL for Loan A/c', N'D', 0, N'PRD', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=ae_disburse;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 20, N'Disbursal A/c', N'C', 0, N'DISB', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse - ae_subVentionAmount;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 30, N'Subvention A/c', N'C', 0, N'SUBVENT', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_subVentionAmount;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 40, N'Disbursal A/c', N'D', 0, N'DISB', N'', N'BUILD', N'GLCCODE', N'010', N'510', N'Result=ae_disburse - ae_subVentionAmount;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 50, N'DD Intermediary A/c', N'C', 0, N'DDIMD', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse - ae_subVentionAmount;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 60, N'Fund transfer through IMPS', N'C', 0, N'IMPS', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse - ae_subVentionAmount;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 70, N'Fund transfer through NEFT', N'C', 0, N'NEFT', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse - ae_subVentionAmount;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 80, N'Fund transfer through RTGS', N'C', 0, N'RTGS', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse - ae_subVentionAmount;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			INSERT INTO RMTTransactionEntry VALUES ((Select MAX(AccountSetid) FROM RMTAccountingSet ), 90, N'Excess Money A/c', N'C', 0, N'EXCESS', N'', N'BUILD', N'GLCCODE', N'510', N'010', N'Result=ae_disburse - ae_subVentionAmount;', NULL, N'', N'D', 0, 0, 1, 0, CURRENT_TIMESTAMP, N'Approved', N'', N'', N'', N'', N'', 0, N'E', 0);
+			
+			UPDATE SEQRMTAccountingSet  SET SeqNo = (Select MAX(AccountSetid) FROM RMTAccountingSet );
+		</sql>
+	</changeSet>
+	
+	<changeSet id="44" author="Kesav">
+		<sql>
+			INSERT INTO RBFIELDDETAILS VALUES('ELGRULE', 'ELGRULE', 'maturityAge', 'Age @ Maturity' , 'decimal', 3,1,1,'', 'static,global,calvalue', '');
+		</sql>
+	</changeSet>
+
+	<changeSet id="45" author="Kesava">
+		<sql>
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'IGST' and RbFldName = 'unionTerritory';
+			
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','IGST','unionTerritory','From State','nvarchar',50,'0','1',' ','static',' ');
+			
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'CGST' and RbFldName = 'unionTerritory';
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','CGST','unionTerritory','From State','nvarchar',50,'0','1',' ','static',' ');
+			
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'SGST' and RbFldName = 'unionTerritory';
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','SGST','unionTerritory','From State','nvarchar',50,'0','1',' ','static',' ');
+			
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'UGST' and RbFldName = 'unionTerritory';
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','UGST','unionTerritory','From State','nvarchar',50,'0','1',' ','static',' ');
+		</sql>
+	</changeSet>
+	
+	<changeSet id="46" author="Kesava">
+		<sql>
+			UPDATE RMTCOUNTRYVSPROVINCE SET UNIONTERRITORY = 1 where CPPROVINCENAME = 'DELHI';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="47" author="Kesava">
+		<sql>
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'IGST' and RbFldName = 'unionTerritory';
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'CGST' and RbFldName = 'unionTerritory';
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'SGST' and RbFldName = 'unionTerritory';
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'UGST' and RbFldName = 'unionTerritory';
+			
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'IGST' and RbFldName = 'fromUnionTerritory';
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'IGST' and RbFldName = 'toUnionTerritory';
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','IGST','fromUnionTerritory','From State','nvarchar',50,'0','1',' ','static',' ');
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','IGST','toUnionTerritory','To State','nvarchar',50,'0','1',' ','static',' ');
+			
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'CGST' and RbFldName = 'fromUnionTerritory';
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'CGST' and RbFldName = 'toUnionTerritory';
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','CGST','fromUnionTerritory','From State','nvarchar',50,'0','1',' ','static',' ');
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','CGST','toUnionTerritory','To State','nvarchar',50,'0','1',' ','static',' ');
+			
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'SGST' and RbFldName = 'fromUnionTerritory';
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'SGST' and RbFldName = 'toUnionTerritory';
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','SGST','fromUnionTerritory','From State','nvarchar',50,'0','1',' ','static',' ');
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','SGST','toUnionTerritory','To State','nvarchar',50,'0','1',' ','static',' ');
+			
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'UGST' and RbFldName = 'fromUnionTerritory';
+			delete from RBFIELDDETAILS WHERE RBModule = 'GSTRULE' and RBEVENT = 'UGST' and RbFldName = 'toUnionTerritory';
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','UGST','fromUnionTerritory','From State','nvarchar',50,'0','1',' ','static',' ');
+			Insert into RbFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','UGST','toUnionTerritory','To State','nvarchar',50,'0','1',' ','static',' ');
+		</sql>
+	</changeSet>
+	
+	<changeSet id="48" author="Kesav">
+		<sql>
+			INSERT INTO BMTAEEVENTS values('FEEAMZ','Fee Amortization',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,1,1,1);
+			INSERT INTO BMTAMOUNTCODES VALUES('FEEAMZ',0,'feeAmz','Fee Amortization',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="49" author="Kesava">
+		<sql>
+			delete from Rules where RuleModule='GSTRULE' and RULECODE = 'CGST';
+			delete from Rules where RuleModule='GSTRULE' and RULECODE = 'IGST';
+			delete from Rules where RuleModule='GSTRULE' and RULECODE = 'SGST';
+			delete from Rules where RuleModule='GSTRULE' and RULECODE = 'UGST';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="50" author="Kesava">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select Max(Ruleid)+1 from rules)"/>
+			<column name="RuleModule">GSTRULE</column>
+			<column name="RULEEVENT">CGST</column>
+			<column name="RULECODE">CGST</column>
+			<column name="RULECODEDESC">CGST</column>
+			<column name="WAIVERDECIDER">null</column>
+			<column name="WAIVER">0</column>
+			<column name="WAIVERPERC">null</column>
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == '12') {Result = 4 ; return; } else {Result = 4 ; return; }]]></column>
+			<column name="ACTUALBLOCK"><![CDATA[(|if|FIELDLIST|fromState| |==|STATICTEXT|12| |1|0|1|1|1|4| |~)|~(|else|0|0|0|1|1|4| |~)|]]></column>
+			<column name="SEQORDER">0</column>
+			<column name="RETURNTYPE">D</column>
+			<column name="GROUPID">0</column>
+			<column name="VERSION">5</column>
+			<column name="LASTMNTBY">1000</column>
+			<column name="LASTMNTON" valueDate="current_timestamp"/>
+			<column name="RECORDSTATUS">Approved</column>
+			<column name="ROLECODE">null</column>
+			<column name="NEXTROLECODE">null</column>
+			<column name="TASKID">null</column>
+			<column name="NEXTTASKID">null</column>
+			<column name="RECORDTYPE">null</column>
+			<column name="WORKFLOWID">0</column>
+			<column name="ALLOWDEVIATION">0</column>
+			<column name="DEVIATIONTYPE">#</column>
+			<column name="CALFEEMODIFY">0</column>
+			<column name="FEETOFINANCE">null</column>
+			<column name="REVOLVING">1</column>
+			<column name="FIXEDORVARIABLELIMIT">F</column>
+			<column name="ACTIVE">1</column>
+			<column name="FIELDS">fromState</column>
+			<column name="FEETYPEID">null</column>
+		</insert>
+	</changeSet>
+	
+	<changeSet id="51" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == '12') {Result = 4 ; return; } else {Result = 4 ; return; }]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|fromState| |==|STATICTEXT|12| |1|0|1|1|1|4| |~)|~(|else|0|0|0|1|1|4| |~)|]]></column>
+			<where> RuleModule='GSTRULE' and RULECODE = 'CGST' AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="52" author="Kesava">
+		<sql>
+			update SeqRules set SeqNo = (select max(RuleId)+1 from Rules);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="53" author="Kesava">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select Max(Ruleid)+1 from rules)"/>
+			<column name="RuleModule">GSTRULE</column>
+			<column name="RULEEVENT">IGST</column>
+			<column name="RULECODE">IGST</column>
+			<column name="RULECODEDESC">IGST</column>
+			<column name="WAIVERDECIDER">null</column>
+			<column name="WAIVER">0</column>
+			<column name="WAIVERPERC">null</column>
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == '12') {Result = 4 ; return; } else { Result = 4 ; return; }]]></column>
+			<column name="ACTUALBLOCK"><![CDATA[(|if|FIELDLIST|fromState| |==|STATICTEXT|12| |1|0|1|1|1|4| |~)|~(|else|0|0|0|1|1|4| |~)|]]></column>
+			<column name="SEQORDER">0</column>
+			<column name="RETURNTYPE">D</column>
+			<column name="GROUPID">0</column>
+			<column name="VERSION">5</column>
+			<column name="LASTMNTBY">1000</column>
+			<column name="LASTMNTON" valueDate="current_timestamp"/>
+			<column name="RECORDSTATUS">Approved</column>
+			<column name="ROLECODE">null</column>
+			<column name="NEXTROLECODE">null</column>
+			<column name="TASKID">null</column>
+			<column name="NEXTTASKID">null</column>
+			<column name="RECORDTYPE">null</column>
+			<column name="WORKFLOWID">0</column>
+			<column name="ALLOWDEVIATION">0</column>
+			<column name="DEVIATIONTYPE">#</column>
+			<column name="CALFEEMODIFY">0</column>
+			<column name="FEETOFINANCE">null</column>
+			<column name="REVOLVING">1</column>
+			<column name="FIXEDORVARIABLELIMIT">F</column>
+			<column name="ACTIVE">1</column>
+			<column name="FIELDS">fromState</column>
+			<column name="FEETYPEID">null</column>
+		</insert>
+	</changeSet>
+	
+	<changeSet id="54" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == '12') {Result = 4 ; return; } else { Result = 4 ; return; }]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|fromState| |==|STATICTEXT|12| |1|0|1|1|1|4| |~)|~(|else|0|0|0|1|1|4| |~)|]]></column>
+			<where> RuleModule='GSTRULE' and RULECODE = 'IGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="55" author="Kesava">
+		<sql>
+			update SeqRules set SeqNo = (select max(RuleId)+1 from Rules);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="56" author="Kesava">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select Max(Ruleid)+1 from rules)"/>
+			<column name="RuleModule">GSTRULE</column>
+			<column name="RULEEVENT">SGST</column>
+			<column name="RULECODE">SGST</column>
+			<column name="RULECODEDESC">SGST</column>
+			<column name="WAIVERDECIDER">null</column>
+			<column name="WAIVER">0</column>
+			<column name="WAIVERPERC">null</column>
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == '12') {Result = 5 ; return; } else { Result = 5 ; return; }]]></column>
+			<column name="ACTUALBLOCK"><![CDATA[(|if|FIELDLIST|fromState| |==|STATICTEXT|12| |1|0|1|1|1|5| |~)|~(|else|0|0|0|1|1|5| |~)|]]></column>
+			<column name="SEQORDER">0</column>
+			<column name="RETURNTYPE">D</column>
+			<column name="GROUPID">0</column>
+			<column name="VERSION">3</column>
+			<column name="LASTMNTBY">1000</column>
+			<column name="LASTMNTON" valueDate="current_timestamp"/>
+			<column name="RECORDSTATUS">Approved</column>
+			<column name="ROLECODE">null</column>
+			<column name="NEXTROLECODE">null</column>
+			<column name="TASKID">null</column>
+			<column name="NEXTTASKID">null</column>
+			<column name="RECORDTYPE">null</column>
+			<column name="WORKFLOWID">0</column>
+			<column name="ALLOWDEVIATION">0</column>
+			<column name="DEVIATIONTYPE">#</column>
+			<column name="CALFEEMODIFY">0</column>
+			<column name="FEETOFINANCE">null</column>
+			<column name="REVOLVING">1</column>
+			<column name="FIXEDORVARIABLELIMIT">F</column>
+			<column name="ACTIVE">1</column>
+			<column name="FIELDS">fromState</column>
+			<column name="FEETYPEID">null</column>
+		</insert>
+	</changeSet>
+	
+	<changeSet id="57" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == '12') {Result = 5 ; return; } else { Result = 5 ; return; }]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|fromState| |==|STATICTEXT|12| |1|0|1|1|1|5| |~)|~(|else|0|0|0|1|1|5| |~)|]]></column>
+			<where> RuleModule='GSTRULE' and RULECODE = 'SGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="58" author="Kesava">
+		<sql>
+			update SeqRules set SeqNo = (select max(RuleId)+1 from Rules);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="59" author="Kesava">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select Max(Ruleid)+1 from rules)"/>
+			<column name="RuleModule">GSTRULE</column>
+			<column name="RULEEVENT">UGST</column>
+			<column name="RULECODE">UGST</column>
+			<column name="RULECODEDESC">UGST</column>
+			<column name="WAIVERDECIDER">null</column>
+			<column name="WAIVER">0</column>
+			<column name="WAIVERPERC">null</column>
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (toState == '12') {Result = 5 ; return; } else {Result = 5 ; return; }]]></column>
+			<column name="ACTUALBLOCK"><![CDATA[(|if|FIELDLIST|toState| |==|STATICTEXT|12| |1|0|1|1|1|5| |~)|~(|else|0|0|0|1|1|5| |~)|]]></column>
+			<column name="SEQORDER">0</column>
+			<column name="RETURNTYPE">D</column>
+			<column name="GROUPID">0</column>
+			<column name="VERSION">4</column>
+			<column name="LASTMNTBY">1000</column>
+			<column name="LASTMNTON" valueDate="current_timestamp"/>
+			<column name="RECORDSTATUS">Approved</column>
+			<column name="ROLECODE">null</column>
+			<column name="NEXTROLECODE">null</column>
+			<column name="TASKID">null</column>
+			<column name="NEXTTASKID">null</column>
+			<column name="RECORDTYPE">null</column>
+			<column name="WORKFLOWID">0</column>
+			<column name="ALLOWDEVIATION">0</column>
+			<column name="DEVIATIONTYPE">#</column>
+			<column name="CALFEEMODIFY">0</column>
+			<column name="FEETOFINANCE">null</column>
+			<column name="REVOLVING">1</column>
+			<column name="FIXEDORVARIABLELIMIT">F</column>
+			<column name="ACTIVE">1</column>
+			<column name="FIELDS">toState</column>
+			<column name="FEETYPEID">null</column>
+		</insert>
+	</changeSet>
+	
+	<changeSet id="60" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (toState == '12') {Result = 5 ; return; } else {Result = 5 ; return; }]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|toState| |==|STATICTEXT|12| |1|0|1|1|1|5| |~)|~(|else|0|0|0|1|1|5| |~)|]]></column>
+			<where> RuleModule='GSTRULE' and RULECODE = 'UGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="61" author="Kesava">
+		<sql>
+			update SeqRules set SeqNo = (select max(RuleId)+1 from Rules);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="62" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == '12') {Result = 4 ; return; } else {Result = 4 ; return; }]]></column>
+			<where> RuleModule='GSTRULE' and RULECODE = 'CGST' AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="63" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == '12') {Result = 4 ; return; } else { Result = 4 ; return; }]]></column>
+			<where> RuleModule='GSTRULE' and RULECODE = 'IGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="64" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == '12') {Result = 5 ; return; } else { Result = 5 ; return; }]]></column>
+			<where> RuleModule='GSTRULE' and RULECODE = 'SGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="65" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[if (toState == '12') {Result = 5 ; return; } else {Result = 5 ; return; }]]></column>
+			<where> RuleModule='GSTRULE' and RULECODE = 'UGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="66" author="Kesav">
+		<createView viewName="FINTAXDETAILS_TVIEW" replaceIfExists="true">
+			SELECT  T1.FINTAXID, T1.FEEID, T1.PAIDCGST, T1.PAIDIGST, T1.PAIDUGST, T1.PAIDSGST, T1.PAIDTGST, T1.NETCGST, T1.NETIGST, T1.NETUGST, T1.NETSGST,
+					T1.NETTGST, T1.REMFEECGST, T1.REMFEEIGST, T1.REMFEEUGST, T1.REMFEESGST, T1.REMFEETGST, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+          			T1.ActualCGST, T1.ActualIGST, T1.ActualUGST, T1.ActualSGST, T1.ActualTGST
+			FROM    FINTAXDETAILS_TEMP T1 LEFT JOIN 
+					FINFEEDetail T2 ON T1.FEEID = T2.FEEID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="67" author="Kesav">
+		<createView viewName="FINTAXDETAILS_AVIEW" replaceIfExists="true">
+			SELECT  T1.FINTAXID, T1.FEEID, T1.PAIDCGST, T1.PAIDIGST, T1.PAIDUGST, T1.PAIDSGST, T1.PAIDTGST, T1.NETCGST, T1.NETIGST, T1.NETUGST, T1.NETSGST,
+					T1.NETTGST, T1.REMFEECGST, T1.REMFEEIGST, T1.REMFEEUGST, T1.REMFEESGST, T1.REMFEETGST, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+          			T1.ActualCGST, T1.ActualIGST, T1.ActualUGST, T1.ActualSGST, T1.ActualTGST
+			FROM    FINTAXDETAILS T1 LEFT JOIN 
+					FINFEEDetail T2 ON T1.FEEID = T2.FEEID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="68" author="Kesav">
+		<createView viewName="FINTAXDETAILS_VIEW" replaceIfExists="true">
+			SELECT  T1.FINTAXID, T1.FEEID, T1.PAIDCGST, T1.PAIDIGST, T1.PAIDUGST, T1.PAIDSGST, T1.PAIDTGST, T1.NETCGST, T1.NETIGST, T1.NETUGST, T1.NETSGST,
+					T1.NETTGST, T1.REMFEECGST, T1.REMFEEIGST, T1.REMFEEUGST, T1.REMFEESGST, T1.REMFEETGST, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+          			T1.ActualCGST, T1.ActualIGST, T1.ActualUGST, T1.ActualSGST, T1.ActualTGST
+			FROM    FINTAXDETAILS_TEMP T1 LEFT JOIN 
+					FINFEEDetail T2 ON T1.FEEID = T2.FEEID
+			UNION ALL
+					SELECT  T1.FINTAXID, T1.FEEID, T1.PAIDCGST, T1.PAIDIGST, T1.PAIDUGST, T1.PAIDSGST, T1.PAIDTGST, T1.NETCGST, T1.NETIGST, T1.NETUGST, T1.NETSGST,
+					T1.NETTGST, T1.REMFEECGST, T1.REMFEEIGST, T1.REMFEEUGST, T1.REMFEESGST, T1.REMFEETGST, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+          			T1.ActualCGST, T1.ActualIGST, T1.ActualUGST, T1.ActualSGST, T1.ActualTGST
+			FROM    FINTAXDETAILS T1 LEFT JOIN 
+					FINFEEDetail T2 ON T1.FEEID = T2.FEEID
+			WHERE     	NOT EXISTS
+                          (SELECT     1
+                            FROM          FINTAXDETAILS_TEMP
+                            WHERE      FeeID = T1.FeeID AND FINTAXID = T1.FINTAXID)
+		</createView>
+	</changeSet>
+
+</databaseChangeLog>

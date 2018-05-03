@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CustomerBalanceSheetList"
+		apply="${customerBalanceSheetListCtrl}" border="none" width="100%">
+		<div sclass="z-toolbar" style="padding:0px" height="28px">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%" widths="30%,40%,30%">
+
+				<!-- COMMON BUTTONS -->
+				<label value="" />
+
+				<!-- SEARCH AREA -->
+				<toolbar align="center" sclass="toolbar-center">
+					<button
+						id="button_CustomerBalanceSheetList_CustomerBalanceSheetSearchDialog"
+						label="${c:l('label_Filter')}"
+						autodisable="button_CustomerBalanceSheetList_CustomerBalanceSheetSearchDialog,print,button_CustomerBalanceSheetList_NewCustomerBalanceSheet,btnRefresh,help"
+						tooltiptext="${c:l('button_CustomerBalanceSheetList_CustomerBalanceSheetSearchDialog.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+					<button id="print" label="${c:l('label_Print')}"
+						autodisable="button_CustomerBalanceSheetList_CustomerBalanceSheetSearchDialog,print,button_CustomerBalanceSheetList_NewCustomerBalanceSheet,btnRefresh,help"
+						tooltiptext="${c:l('print.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end" sclass="toolbar-end">
+					<button
+						id="button_CustomerBalanceSheetList_NewCustomerBalanceSheet"
+						label="${c:l('label_New')}"
+						autodisable="button_CustomerBalanceSheetList_CustomerBalanceSheetSearchDialog,print,button_CustomerBalanceSheetList_NewCustomerBalanceSheet,btnRefresh,help"
+						tooltiptext="${c:l('button_CustomerBalanceSheetList_NewCustomerBalanceSheet.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+					<button id="btnRefresh"
+						label="${c:l('label_Refresh')}"
+						autodisable="button_CustomerBalanceSheetList_CustomerBalanceSheetSearchDialog,print,button_CustomerBalanceSheetList_NewCustomerBalanceSheet,btnRefresh,help"
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+					<button id="help" visible="false"
+						label="${c:l('label_Help')}"
+						autodisable="button_CustomerBalanceSheetList_CustomerBalanceSheetSearchDialog,print,button_CustomerBalanceSheetList_NewCustomerBalanceSheet,btnRefresh,help"
+						tooltiptext="${c:l('help.tooltiptext')}" sclass="z-toolbarbutton" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderLayout_CustomerBalanceSheetList">
+			<north border="none" />
+
+			<center border="none">
+				<div>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true">
+						<columns>
+							<column width="130px" />
+							<column width="50px" />
+							<column />
+							<column width="130px" />
+							<column width="50px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_CustomerBalanceSheetSearch_FinancialYear"
+									value="${c:l('label_CustomerBalanceSheetSearch_FinancialYear.value')}" />
+								<listbox id="sortOperator_financialYear"
+									width="43px" mold="select" rows="1" />
+								<textbox id="financialYear" width="63px"
+									maxlength="7" />
+
+								<label
+									id="label_CustomerBalanceSheetSearch_TotalAssets"
+									value="${c:l('label_CustomerBalanceSheetSearch_TotalAssets.value')}" />
+								<listbox id="sortOperator_totalAssets"
+									width="43px" mold="select" rows="1" />
+								<decimalbox id="totalAssets"
+									width="162px" maxlength="18" />
+							</row>
+
+							<row>
+								<label
+									id="label_CustomerBalanceSheetSearch_TotalLiabilities"
+									value="${c:l('label_CustomerBalanceSheetSearch_TotalLiabilities.value')}" />
+								<listbox
+									id="sortOperator_totalLiabilities" width="43px" mold="select"
+									rows="1" />
+								<decimalbox id="totalLiabilities"
+									width="162px" maxlength="18" />
+
+								<label
+									id="label_CustomerBalanceSheetSearch_NetProfit"
+									value="${c:l('label_CustomerBalanceSheetSearch_NetProfit.value')}" />
+								<listbox id="sortOperator_netProfit"
+									width="43px" mold="select" rows="1" />
+								<decimalbox id="netProfit" width="162px"
+									maxlength="18" />
+							</row>
+							<row id="row_AlwWorkflow">
+								<label
+									id="label_CustomerBalanceSheetSearch_RecordStatus"
+									value="${c:l('label_CustomerBalanceSheetSearch_RecordStatus.value')}" />
+								<listbox id="sortOperator_RecordStatus"
+									width="43px" mold="select" rows="1" />
+								<textbox id="recordStatus" width="100px"
+									maxlength="50" />
+
+								<label
+									id="label_CustomerBalanceSheetSearch_RecordType"
+									value="${c:l('label_CustomerBalanceSheetSearch_RecordType.value')}" />
+								<listbox id="sortOperator_RecordType"
+									width="43px" mold="select" rows="1" />
+								<listbox id="recordType" width="100px"
+									mold="select" />
+							</row>
+						</rows>
+					</grid>
+					<listbox id="listBoxCustomerBalanceSheet"
+						emptyMessage="${c:l('listbox.emptyMessage')}"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false" sizedByContent="true"
+						span="true">
+						<listhead sizable="true">
+							<listheader id="listheader_FinancialYear"
+								label="${c:l('listheader_FinancialYear.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_TotalAssets"
+								label="${c:l('listheader_TotalAssets.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_TotalLiabilities"
+								label="${c:l('listheader_TotalLiabilities.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_NetProfit"
+								label="${c:l('listheader_NetProfit.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								hflex="min" />
+						</listhead>
+					</listbox>
+				</div>
+			</center>
+
+			<south border="none">
+				<paging id="pagingCustomerBalanceSheetList" />
+			</south>
+
+		</borderlayout>
+	</window>
+</zk>

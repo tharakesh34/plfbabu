@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="window_FinTypePartnerBankList"
+		apply="${finTypePartnerBankListCtrl}" border="none" width="100%"
+		height="100%">
+		<borderlayout id="borderLayout_FinTypePartnerBankList">
+			<center border="none" autoscroll="true">
+				<groupbox id="gb_FinTypePartnerBankList" width="100%"
+					height="100%">
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+							height="100%" width="100%">
+							<toolbar align="start"
+								style="border:none;">
+							</toolbar>
+							<toolbar align="end"
+								style="float:right; border-style: none; padding:0px;"
+								height="100%">
+								<button
+									id="button_FinTypePartnerBankList_NewFinTypePartnerBank"
+									label="${c:l('label_New')}"
+									autodisable="print,button_FinTypePartnerBankList_NewFinTypePartnerBank"
+									tooltiptext="${c:l('button_FinTypePartnerBankList_NewFinTypePartnerBank.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+					<listbox id="listBoxFinTypePartnerBank"
+						emptyMessage="${c:l('listbox.emptyMessage')}"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false" sizedByContent="true"
+						span="true">
+						<listhead sizable="true">
+							<listheader id="listheader_Purpose"
+								label="${c:l('listheader_Purpose.label')}" sort="false"
+								hflex="min" />
+							<listheader id="listheader_PaymentMode"
+								label="${c:l('listheader_PaymentMode.label')}" sort="false"
+								hflex="min" />
+							<listheader id="listheader_PartnerBankID"
+								label="${c:l('listheader_PartnerBankID.label')}" sort="false"
+								hflex="min" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('label.RecordStatus')}" sort="false" hflex="min" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('label.RecordType')}" sort="false" hflex="min" />
+						</listhead>
+					</listbox>
+				</groupbox>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

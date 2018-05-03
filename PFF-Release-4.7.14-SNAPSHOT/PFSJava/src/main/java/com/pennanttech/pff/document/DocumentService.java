@@ -1,0 +1,14 @@
+package com.pennanttech.pff.document;
+
+import java.util.List;
+
+import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+
+public interface DocumentService {
+
+	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
+	List<ErrorDetail> validateFinanceDocuments(FinanceDetail financeDetail);
+}

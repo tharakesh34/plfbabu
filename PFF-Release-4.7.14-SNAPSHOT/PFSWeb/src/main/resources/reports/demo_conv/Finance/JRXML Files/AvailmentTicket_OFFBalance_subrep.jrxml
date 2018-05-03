@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AvailmentTicket_OFFBalance_subrep" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="10" uuid="f20e4722-07f4-497b-8038-cb5f17e20dad">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["../StyleSheet/Template.jrtx"]]></template>
+	<field name="accountNum" class="java.lang.String"/>
+	<field name="acType" class="java.lang.String"/>
+	<field name="accountDesc" class="java.lang.String"/>
+	<field name="accountCcy" class="java.lang.String"/>
+	<field name="acBalance" class="java.lang.String"/>
+	<field name="acBalBHD" class="java.lang.String"/>
+	<field name="convertCcy" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="33">
+			<frame>
+				<reportElement uuid="8cb26101-960a-4b56-842e-3d58b62595db" x="0" y="0" width="802" height="15"/>
+				<staticText>
+					<reportElement uuid="296f6c8d-31f3-4ab9-95b1-f1614fdbcfd3" style="Detail Header" x="0" y="0" width="802" height="15"/>
+					<textElement>
+						<font isBold="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[OFF Balance : Customer Account]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="05ed66bc-3bf6-4b4d-9e4f-598c74877761" x="0" y="18" width="802" height="15"/>
+				<staticText>
+					<reportElement uuid="777d7368-d1fe-46d5-913c-ca4efd11ec85" style="Detail Header" x="0" y="0" width="122" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Account ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="5d83fe70-5a85-4c71-af9a-9278baf0bd7f" style="Detail Header" x="135" y="0" width="50" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Type]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="fc212a34-4426-4bbd-a168-36b2a454abed" style="Detail Header" x="191" y="0" width="201" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Type Description]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="848ace87-3ecb-4f82-9d70-7951eb47df35" style="Detail Header" x="402" y="0" width="100" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Currency]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ccfc1993-2c46-4483-a8c0-1ac59f48042a" style="Detail Header" x="526" y="0" width="105" height="15"/>
+					<textElement textAlignment="Right">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Balance]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="b3effe2b-749c-488a-ba0f-941a640ab677" style="Detail Header" x="648" y="0" width="110" height="15"/>
+					<textElement textAlignment="Right" markup="styled">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{convertCcy}==null?" ":"Equivalent "+$F{convertCcy}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<line>
+				<reportElement uuid="525f21cb-a8d0-4ad8-b6b1-6f63571f01a3" x="0" y="16" width="802" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<frame>
+				<reportElement uuid="67c3c9d7-bd80-4d9e-a6af-36f6f3c59c17" x="0" y="0" width="802" height="15"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="4e76807b-24d6-4edc-8af7-173274924fd1" style="Detail Value" x="0" y="0" width="122" height="15"/>
+					<textElement markup="styled">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{accountNum}.equals("Total")?
+"<style isBold='true' pdfFontName='Helvetica-Bold'>" + $F{accountNum} + "</style>" :$F{accountNum})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="1d0b7d07-721d-4699-a09c-62fcfe8bb07c" style="Detail Value" x="135" y="0" width="50" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{acType}==null?" ":$F{acType}+" "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="3aadbc96-9ab4-406f-9b40-888dd95f2455" style="Detail Value" x="191" y="0" width="201" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{accountDesc}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="7f64f418-7d89-43ca-81fb-d60458711180" style="Detail Value" x="402" y="0" width="100" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{accountCcy}+" "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="0f328625-149a-4150-a53e-140296f213b9" style="Detail Value" x="526" y="0" width="105" height="15"/>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{acBalance}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="ec89ee42-a724-4160-8c46-1fdcffacafb2" style="Detail Value" x="648" y="0" width="110" height="15"/>
+					<textElement textAlignment="Right" markup="styled">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{accountNum}.equals("Total")?
+"<style isBold='true' pdfFontName='Helvetica-Bold'>" + $F{acBalBHD} + "</style>" :$F{acBalBHD})]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

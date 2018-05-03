@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_EODConfigList" apply="${eODConfigListCtrl}"
+			border="none" width="100%">
+			<div sclass="z-toolbar" style="padding:0px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%" widths="30%,40%,30%">
+
+					<!-- COMMON BUTTONS -->
+					<label value="" />
+					<!-- SEARCH AREA -->
+					<toolbar align="center" style="toolbar-center">
+						<button
+							id="button_EODConfigList_EODConfigSearch"
+							label="${c:l('label_Filter')}"
+							autodisable="button_EODConfigList_EODConfigSearch,print,button_EODConfigList_NewEODConfig,btnRefresh,help"
+							tooltiptext="${c:l('button_EODConfigList_EODConfigSearch.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="print" label="${c:l('label_Print')}"
+							autodisable="button_EODConfigList_EODConfigSearch,print,button_EODConfigList_NewEODConfig,btnRefresh,help"
+							tooltiptext="${c:l('button_EODConfigList_PrintList.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" style="border-style: none;">
+						<button id="button_EODConfigList_NewEODConfig"
+							label="${c:l('label_New')}"
+							autodisable="button_EODConfigList_EODConfigSearch,print,button_EODConfigList_NewEODConfig,btnRefresh,help"
+							tooltiptext="${c:l('button_EODConfigList_NewEODConfig.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="btnRefresh"
+							label="${c:l('label_Refresh')}"
+							autodisable="button_EODConfigList_EODConfigSearch,print,button_EODConfigList_NewEODConfig,btnRefresh,help"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="help" label="${c:l('label_Help')}"
+							visible="false"
+							autodisable="button_EODConfigList_EODConfigSearch,print,button_EODConfigList_NewEODConfig,btnRefresh,help"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+					</toolbar>
+				</hbox>
+			</div>
+			<borderlayout id="borderLayout_EODConfigList">
+				<north border="none" />
+				<center border="none">
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="15%" />
+								<column width="5%" />
+								<column width="30%" />
+								<column width="15%" />
+								<column width="5%" />
+								<column width="30%" />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_EODConfigList_ExtMnthRequired"
+										value="${c:l('label_EODConfigList_ExtMnthRequired.value')}" />
+									<listbox
+										id="sortOperator_ExtMnthRequired" width="43px" mold="select"
+										rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<checkbox id="extMnthRequired"
+										checked="false" />
+									<label
+										id="label_EODConfigList_MnthExtTo"
+										value="${c:l('label_EODConfigList_MnthExtTo.value')}" />
+									<listbox id="sortOperator_MnthExtTo"
+										width="43px" mold="select" rows="1"
+										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<datebox id="mnthExtTo" />
+								</row>
+
+								<row>
+									<label
+										id="label_EODConfigList_RecordStatus"
+										value="${c:l('label_EODConfigList_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_RecordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_EODConfigList_RecordType"
+										value="${c:l('label_EODConfigList_RecordType.value')}" />
+									<listbox
+										id="sortOperator_RecordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+
+						<listbox id="listBoxEODConfig"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false" sizedByContent="true"
+							span="true">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_ExtMnthRequired"
+									label="${c:l('listheader_ExtMnthRequired.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_MnthExtTo"
+									label="${c:l('listheader_MnthExtTo.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
+				</center>
+
+				<south border="none">
+					<paging id="pagingEODConfigList" height="35px" />
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

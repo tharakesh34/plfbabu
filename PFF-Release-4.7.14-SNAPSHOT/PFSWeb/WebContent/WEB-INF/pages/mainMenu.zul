@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="mainMenuWindow" border="none" contentStyle="padding:0px"
+		vflex="1" use="com.pennant.common.menu.MainMenuCtrl">
+		<style src="/css/main-menu.css" />
+		<groupbox mold="3d" height="100%" closable="false"
+			contentStyle="background-color: white; padding:0px !important;">
+			<caption label="${c:l('main_menu_title')}" />
+			<borderlayout>
+				<north border="none">
+					<hbox style="backgound-color: white; margin:4px;">
+						<image id="expandAll"
+							src="/images/icons/open4.png" tooltiptext="${c:l('expand_all')}" />
+						<space width="0px" />
+						<image id="collapseAll"
+							src="/images/icons/close4.png"
+							tooltiptext="${c:l('collapse_all')}" />
+						<space width="8px" />
+						<textbox id="menuSearch"
+							placeholder="${c:l('search_menu')}" tabindex="1" width="125px" />
+						<space width="0px" />
+						<button id="search" label="Go" tabindex="2" />
+					</hbox>
+				</north>
+				<center border="none">
+					<groupbox mold="3d" height="100%" closable="false"
+						contentStyle="background-color: white; overflow:auto; padding:0px !important;">
+						<tree id="mainMenu" sizedByContent="true"
+							style="border: none;" />
+					</groupbox>
+				</center>
+			</borderlayout>
+		</groupbox>
+	</window>
+</zk>

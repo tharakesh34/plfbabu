@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_documentDetailDialog" border="none"
+			apply="${facilityDocumentDetailDialogCtrl}" width="100%" height="100%"
+			sizable="false" >
+
+			<borderlayout id="borderlayoutDocumentDetail">
+				<center border="none" autoscroll="false">
+					<groupbox style="border:none;">
+						<div sclass="z-toolbar" style="padding:0"
+							>
+							<hbox pack="stretch"
+								sclass="hboxRemoveWhiteStrips"  width="100%"
+								style=" padding:0px;" widths="35%,30%,35%">
+								<toolbar align="start"
+									sclass="toolbar-start"
+									width="300px" >
+								</toolbar>
+								<toolbar align="center"
+									sclass="toolbar-center"
+									>
+								</toolbar>
+								<toolbar align="end"
+									sclass="toolbar-end">
+									<button id="btnNew_DocumentDetails"
+										 label="${c:l('label_New')}"
+										tooltiptext="${c:l('button_FinanceCheckListList_NewFinanceCheckList.tooltiptext')}"
+										autodisable="btnNew_DocumentDetails"  sclass="z-toolbarbutton"/>
+								</toolbar>
+								<space width="2px" />
+							</hbox>
+						</div>
+
+						<listbox id="listBoxDocumentDetails"
+							fixedLayout="true" sizedByContent="true" span="true"
+							emptyMessage="${c:l('listbox.emptyMessage')}"  
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							multiple="false">
+							<listhead sizable="false">
+								<listheader id="listheader_DocType"
+									label="${c:l('listheader_DocType.label')}" sort="false"
+									hflex="min" />
+								<listheader id="listheader_DocumnetName"
+									label="${c:l('listheader_DocumnetName.label')}" sort="false"
+									hflex="min" />
+								<listheader
+									label="${c:l('listheader_RecordStatus.label')}" sort="false"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</groupbox>
+				</center>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

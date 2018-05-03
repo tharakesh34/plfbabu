@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet author="Veeravenkata" id="1">
+		<addColumn tableName="AdtLimitDetails">
+			<column name="NonRvlUtilised" type="decimal(21, 0)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2" author="Veeravenkata">
+		<sql>
+			Update AdtLimitDetails set NonRvlUtilised = 0 Where NonRvlUtilised IS NULL;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="3" author="somasekhar">
+		<addColumn tableName="adtFINASSETTYPES">
+			<column name="assetTypeId" type="bigint"></column>
+		</addColumn>
+    </changeSet>
+
+    <changeSet id="4" author="somasekhar">
+    	<addColumn tableName="Adtcustomeraddresses">
+			<column name="custAddressId" type="bigint"></column>
+		</addColumn>
+   </changeSet>
+   
+   <changeSet id="5" author="Somasekhar" >
+		<addColumn tableName="ADTFINGUARANTORSDETAILS">
+			<column name="GuarantorGenderCode" type="varchar(8)" />
+		</addColumn>
+   </changeSet>	 
+	
+ 
+</databaseChangeLog>

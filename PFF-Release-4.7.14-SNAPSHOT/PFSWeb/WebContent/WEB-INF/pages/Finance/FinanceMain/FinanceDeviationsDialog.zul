@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_FinanceDeviationsDialog" border="none" apply="${financeDeviationsDialogCtrl}" width="100%" height="100%" sizable="false">
+			<borderlayout id="borderlayoutDeviationDetail">
+				<north>
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+							<toolbar align="start" sclass="toolbar-start">
+								<button id="btnSave" label="${c:l('label_Save')}" />
+							</toolbar>
+							<toolbar align="center" sclass="toolbar-center">
+								<label value="${c:l('window_deviationDetailDialog.title')}" sclass="label-heading" />
+							</toolbar>
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnClose" label="${c:l('label_Close')}" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none">
+					<tabbox>
+						<tabs>
+							<tab label="Finance Details" />
+							<tab label="Deviations" id="tabDeviation" />
+						</tabs>
+						<tabpanels>
+							<tabpanel style="overflow:auto" id="creditApprovalTabpanel">
+							
+							</tabpanel>
+							<!-- Tab 2 -->
+							<tabpanel>
+								<groupbox style="border:none;">
+									<groupbox id="finBasicdetails" zclass="null"></groupbox>
+									<groupbox>
+										<caption label="${c:l('tab_AutoDeviations.title')}"></caption>
+										<listbox id="listBoxDeviationDetails" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}"   width="100%" multiple="false">
+											<listhead sizable="false">
+												<!-- <listheader label="${c:l('listheader_Module.label')}" sort="false" width="6%" /> -->
+												<listheader label="${c:l('listheader_DeviationCode.label')}" sort="false" width="14%" />
+												<listheader label="${c:l('listheader_DeviationType.label')}" sort="false" width="10%" visible="false" />
+												<listheader label="${c:l('listheader_DeviationValue.label')}" sort="false" width="10%" />
+												<listheader label="${c:l('listheader_UserRole.label')}" sort="false" width="10%" visible="false" />
+												<listheader label="${c:l('listheader_DelegationRole.label')}" sort="false" width="10%" />
+												<listheader label="${c:l('listheader_DeviationDate.label')}" sort="false" width="10%" visible="false" />
+												<listheader label="${c:l('listheader_ApprovalStatus.label')}" sort="false" width="10%" />
+												<listheader label="${c:l('listheader_ApproverRemarks.label')}" sort="false" width="6%" />
+												<listheader label="${c:l('listheader_DeviationUserID.label')}" sort="false" width="10%" visible="false" />
+												<listheader label="${c:l('listheader_DeligatedUserID.label')}" sort="false" width="10%" visible="false" />
+											</listhead>
+										</listbox>
+									</groupbox>
+									<groupbox>
+										<caption label="${c:l('tab_ManualDeviations.title')} "></caption>
+										<listbox id="listBoxManualDeviations" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}"   width="100%" multiple="false">
+											<listhead sizable="false">
+												<listheader label="${c:l('listheader_DeviationCode.label')}" sort="false" width="14%" />
+												<listheader label="${c:l('listheader_Severity.label')}" sort="false" width="10%"  />
+												<listheader label="${c:l('listheader_DeviationUserID.label')}" sort="false" width="10%"  />
+												<listheader label="${c:l('listheader_DeviationDate.label')}" sort="false" width="10%"  />
+												<listheader label="${c:l('listheader_DelegationRole.label')}" sort="false" width="10%" />
+												<listheader label="${c:l('listheader_ApprovalStatus.label')}" sort="false" width="10%" />
+												<listheader label="${c:l('listheader_ApproverRemarks.label')}" sort="false" width="6%" />
+												<listheader label="${c:l('listheader_UserRole.label')}" sort="false" width="10%" visible="false" />
+												<listheader label="${c:l('listheader_DeligatedUserID.label')}" sort="false" width="10%" visible="false" />
+												<listheader label="${c:l('listheader_DeviationType.label')}" sort="false" width="10%" visible="false" />
+												<listheader label="${c:l('listheader_DeviationValue.label')}" sort="false" width="10%" visible="false"/>
+											</listhead>
+										</listbox>
+									</groupbox>
+								</groupbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</center>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+<!-- FinODPenaltyRate validations -->
+<bean class="com.pennant.backend.model.finance.FinODPenaltyRate"
+		ignore-annotations="false">
+		
+		
+		<field name="oDChargeCalOn">
+		<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>oDChargeCalOn should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.UpdateLoanPenaltyDetailGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+			</field>
+		<field name="oDGraceDays">
+			<constraint annotation="javax.validation.constraints.Max">
+				<message>oDGraceDays allow 3 digits only</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.UpdateLoanPenaltyDetailGroup</value>
+				</groups>
+				<element name="value">999</element>
+			</constraint>
+		</field> 
+		 <field name="oDChargeType">
+		<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>odChargeType should have maximum 1 characters</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.UpdateLoanPenaltyDetailGroup</value>
+				</groups>
+				<element name="max">1</element>
+			</constraint>
+		</field> 
+		 <field name="oDChargeAmtOrPerc">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>odChargeAmtOrPerc allow 18 digits only</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.UpdateLoanPenaltyDetailGroup</value>
+				</groups>
+				<element name="value">999999999999999999</element>
+			</constraint>
+		</field>
+		 <field name="oDMaxWaiverPerc">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>odMaxWaiverPerc allow 3 digits only</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.UpdateLoanPenaltyDetailGroup</value>
+				</groups>
+				<element name="value">999</element>
+			</constraint>
+		</field> 
+		 <field name="validateFinODPenaltyRate">
+	 <!-- <constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>odGraceDays should be positive. </message>
+				<groups>
+					<value>com.pennant.validation.UpdateLoanPenaltyDetailGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.applyODPenalty) {
+							if (_this.ODGraceDays >= 0) {
+								true;
+							} else {
+								false;
+							}
+						} else {
+							false;
+						}
+				</element>
+			</constraint>   -->
+			
+		<!-- 	<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>applyODPenalty Specified odChargeType is Mandatory   </message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.oDChargeType != null &amp;&amp; _this.oDChargeType != "" ) {
+						if (_this.applyODPenalty) {
+										true;
+								} else {
+										false;
+										}
+								} else {
+					if (_this.applyODPenalty) {
+								false;
+							} else {
+										true;
+									}
+												}
+				</element>
+			</constraint>
+			
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>applyODPenalty Specified odChargeType is Mandatory   </message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.oDChargeType != null &amp;&amp; _this.oDChargeType != "" ) {
+						if (_this.applyODPenalty) {
+										true;
+								} else {
+										false;
+										}
+								} else {
+					if (_this.applyODPenalty) {
+								false;
+							} else {
+										true;
+									}
+												}
+				</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>applyODPenalty Specified odChargeAmtOrPerc is positive </message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.oDChargeAmtOrPerc > 0 ) {
+						if (_this.applyODPenalty) {
+										true;
+								} else {
+										false;
+										}
+								} else {
+					if (_this.applyODPenalty) {
+								false;
+							} else {
+										true;
+									}
+												}
+				</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>applyODPenalty,odAllowWaiver Specified odMaxWaiverPerc is positive </message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.oDChargeAmtOrPerc > 0 ) {
+						if (_this.applyODPenalty &amp;&amp; _this.oDAllowWaiver) {
+										true;
+								} else {
+										false;
+										}
+								} else {
+					if (_this.applyODPenalty &amp;&amp; _this.oDAllowWaiver) {
+								false;
+							} else {
+										true;
+									}
+												}
+				</element>
+			</constraint> -->
+			</field>
+			
+</bean>
+</constraint-mappings>

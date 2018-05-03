@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+<!-- FinanceDisbursement validations -->
+
+	<bean class="com.pennant.backend.model.finance.FinanceDisbursement"
+		ignore-annotations="false">
+		<field name="disbDate">
+			<constraint annotation="javax.validation.constraints.NotNull">
+			<message>disbDate is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
+				</groups>
+			</constraint>
+		</field>
+		<!-- <field name="feeChargeAmt">
+			<constraint annotation="javax.validation.constraints.Min">
+			<message>feeChargeAmt should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+		</field> -->
+		<field name="disbAmount">
+			<constraint annotation="javax.validation.constraints.Min">
+			<message>disbAmount should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>disbAmount allow 18 digits only</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
+				</groups>
+				<element name="value">999999999999999999</element>
+			</constraint>
+		
+		</field>
+		<field name="disbType">
+<!-- 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>disbType is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+				</groups>
+			</constraint> -->
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>disbType should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+	</bean>
+	</constraint-mappings>

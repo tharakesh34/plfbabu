@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<style>
+		div.z-column-cnt { padding: 3px; } div.z-column-cnt,
+		div.z-row-cnt { color: #000000;
+		font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif;
+		font-size: 11px; font-weight: bold; }
+	</style>
+
+	<window id="window_FeeReceiptDialog" border="normal" width="100%"
+		height="100%" sizable="false" apply="${feeReceiptDialogCtrl}">
+
+		<div sclass="z-toolbar" style="padding:0">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%" widths="35%,30%,35%">
+
+				<!-- COMMON BUTTONS -->
+				<toolbar align="start" sclass="toolbar-start">
+					<button id="btnReceipt"
+						label="${c:l('btnReceipt.label')}"
+						tooltiptext="${c:l('btnReceipt.tooltiptext')}"
+						autodisable="btnReceipt,btnNotes,btnHelp,btnClose,btnPrint"
+						sclass="z-toolbarbutton" />
+					<button id="btnNotes"
+						label="${c:l('btnNotes.label')}"
+						tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+						autodisable="btnReceipt,btnNotes,btnHelp,btnClose,btnPrint"
+						sclass="z-toolbarbutton" />
+					<button id="btnPrint" label="${c:l('label_Print')}"
+						autodisable="btnReceipt,btnNotes,btnHelp,btnClose,btnPrint"
+						tooltiptext="${c:l('btnPrint.tooltiptext')}" visible="false"
+						sclass="z-toolbarbutton" />
+				</toolbar>
+
+				<!-- SEARCH AREA -->
+				<toolbar align="center" sclass="toolbar-center">
+					<label id="windowTitle"
+						value="${c:l('window_FeeReceiptDialog.title')}"
+						sclass="label-heading" />
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end" sclass="toolbar-end">
+					<button id="btnHelp" visible="false"
+						label="${c:l('label_Help')}"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						autodisable="btnReceipt,btnNotes,btnHelp,btnClose,btnPrint"
+						sclass="z-toolbarbutton" />
+					<button id="btnClose"
+						label="${c:l('btnClose.label')}"
+						tooltiptext="${c:l('btnClose.tooltiptext')}"
+						autodisable="btnReceipt,btnNotes,btnHelp,btnClose,btnPrint"
+						sclass="z-toolbarbutton" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderlayout_FeeReceipt">
+			<center border="none">
+				<tabbox id="tabBoxIndexCenter" width="99%"
+					height="100%">
+					<tabs id="tabsIndexCenter">
+						<tab id="receiptDetailsTab"
+							label="${c:l('label_FeeReceiptDialog_FeeReceipts')}" />
+					</tabs>
+					<tabpanels id="tabpanelsBoxIndexCenter">
+						<tabpanel style="overflow:auto" ca:data-scrollable="true">
+							<groupbox style="border:0px;">
+								<grid sclass="GridLayoutNoBorder"
+									fixedLayout="true" style="border:0px" width="100%">
+									<columns>
+										<column width="200px" />
+										<column />
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label
+												value="${c:l('label_FeeReceiptDialog_FinReference.value')}" />
+											<extendedcombobox
+												id="finReference" />
+											<label
+												value="${c:l('label_FeeReceiptDialog_FinType.value')}" />
+											<extendedcombobox
+												id="finType" />
+										</row>
+										<row>
+											<label
+												value="${c:l('label_FeeReceiptDialog_FinCcy.value')}" />
+											<extendedcombobox
+												id="finCcy" />
+											<label
+												value="${c:l('label_FeeReceiptDialog_FinBranch.value')}" />
+											<extendedcombobox
+												id="finBranch" />
+										</row>
+										<row>
+											<label
+												value="${c:l('label_FeeReceiptDialog_CustID.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="custCIF"
+													width="144px" readonly="true" />
+											</hbox>
+											<label
+												value="${c:l('label_FeeReceiptDialog_CustName.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="custName"
+													width="144px" readonly="true" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox id="gb_FeeDetail"
+								style="border:0px;" visible="false">
+								<listbox id="listBoxFeeDetail"
+									fixedLayout="false" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false"
+									sizedByContent="true">
+									<listhead sizable="false">
+										<listheader
+											id="listheader_FeeDetailList_FeeType"
+											label="${c:l('listheader_FeeDetailList_FeeType.label')}"
+											sort="false" />
+										<listheader
+											id="listheader_FeeDetailList_CalculatedAmount" align="right"
+											label="${c:l('listheader_FeeDetailList_CalculatedAmount.label')}"
+											sort="false" />
+										<listheader
+											id="listheader_FeeDetailList_ActualAmount" align="right"
+											label="${c:l('listheader_FeeDetailList_ActualAmount.label')}"
+											sort="false" />
+										<listheader
+											id="listheader_FeeDetailList_WaivedAmount" align="right"
+											label="${c:l('listheader_FeeDetailList_WaivedAmount.label')}"
+											sort="false" />
+										<listheader
+											id="listheader_FeeDetailList_PaidAmount" align="right"
+											label="${c:l('listheader_FeeDetailList_PaidAmount.label')}"
+											sort="false" />
+										<listheader
+											id="listheader_FeeDetailList_RemainingFee" align="right"
+											label="${c:l('listheader_FeeDetailList_RemainingFee.label')}"
+											sort="false" />
+									</listhead>
+								</listbox>
+							</groupbox>
+							<groupbox>
+								<caption
+									label="${c:l('label_FeeReceiptDialog_ReceiptDetail')}" />
+								<grid fixedLayout="true"
+									sclass="GridLayoutNoBorder" style="border:0px;">
+									<columns>
+										<column width="200px" />
+										<column />
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										<row visible="false">
+											<label
+												value="${c:l('label_FeeReceiptDialog_ReceiptPurpose.value')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="mandatory" />
+												<combobox
+													id="receiptPurpose" width="180px" readonly="true" />
+											</hbox>
+											<label
+												value="${c:l('label_FeeReceiptDialog_AllocationMethod.value')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="mandatory" />
+												<combobox
+													id="allocationMethod" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_FeeReceiptDialog_ReceiptMode.value')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="mandatory" />
+												<combobox
+													id="receiptMode" width="180px" readonly="true" />
+											</hbox>
+											<label
+												value="${c:l('label_FeeReceiptDialog_ReceiptAmount.value')}" />
+											<currencyBox
+												id="receiptAmount" />
+										</row>
+										<row visible="false">
+											<label
+												value="${c:l('label_FeeReceiptDialog_ExcessAdjustTo.value')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="mandatory" />
+												<combobox
+													id="excessAdjustTo" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row id="row_RealizationDate">
+												<label
+													id="label_FeeReceiptDialog_RealizationDate"
+													value="${c:l('label_FeeReceiptDialog_RealizationDate.value')}" />
+												<hbox
+													id="hbox_FeeReceiptDialog_RealizationDate">
+													<space spacing="2px"
+														sclass="mandatory" />
+													<datebox
+														id="realizationDate" width="100px" />
+												</hbox>
+											</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox id="gb_ReceiptDetails"
+								visible="false">
+								<caption id="caption_receiptDetail" />
+								<grid fixedLayout="true"
+									sclass="GridLayoutNoBorder" style="border:0px;">
+									<columns>
+										<column width="200px" />
+										<column />
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										<row id="row_favourNo"
+											visible="false">
+											<label
+												id="label_FeeReceiptDialog_favourNo"
+												value="${c:l('label_FeeReceiptDialog_favourNo.value')}" />
+											<hbox
+												id="hbox_FeeReceiptDialog_favourNo">
+												<space spacing="2px"
+													sclass="mandatory" />
+												<uppercasebox
+													id="favourNo" width="180px" />
+											</hbox>
+											<label
+												id="label_FeeReceiptDialog_ValueDate"
+												value="${c:l('label_FeeReceiptDialog_ValueDate.value')}" />
+											<hbox
+												id="hbox_FeeReceiptDialog_ValueDate">
+												<space spacing="2px"
+													sclass="mandatory" />
+												<datebox id="valueDate"
+													width="100px" />
+											</hbox>
+										</row>
+										<row id="row_BankCode"
+											visible="false">
+											<label
+												id="label_FeeReceiptDialog_BankCode"
+												value="${c:l('label_FeeReceiptDialog_BankCode.value')}" />
+											<extendedcombobox
+												id="bankCode" />
+											<label
+												id="label_FeeReceiptDialog_favourName"
+												value="${c:l('label_FeeReceiptDialog_favourName.value')}" />
+											<hbox
+												id="hbox_FeeReceiptDialog_favourName">
+												<space spacing="2px"
+													sclass="mandatory" />
+												<textbox id="favourName"
+													width="180px" />
+											</hbox>
+										</row>
+										<row id="row_DepositDate"
+											visible="false">
+											<label
+												id="label_FeeReceiptDialog_DepositDate"
+												value="${c:l('label_FeeReceiptDialog_DepositDate.value')}" />
+											<hbox
+												id="hbox_FeeReceiptDialog_DepositDate">
+												<space spacing="2px"
+													sclass="mandatory" />
+												<datebox
+													id="depositDate" width="100px" />
+											</hbox>
+											<label
+												id="label_FeeReceiptDialog_depositNo" visible="false"
+												value="${c:l('label_FeeReceiptDialog_depositNo.value')}" />
+											<hbox
+												id="hbox_FeeReceiptDialog_depositNo" visible="false">
+												<space spacing="2px"
+													sclass="mandatory" />
+												<uppercasebox
+													id="depositNo" width="180px" />
+											</hbox>
+										</row>
+										<row id="row_PaymentRef"
+											visible="false">
+											<label
+												id="label_FeeReceiptDialog_tranReference"
+												value="${c:l('label_FeeReceiptDialog_tranReference.value')}" />
+											<hbox
+												id="hbox_FeeReceiptDialog_tranReference">
+												<space spacing="2px"
+													sclass="mandatory" />
+												<uppercasebox
+													id="transactionRef" width="180px" />
+											</hbox>
+										</row>
+										<row id="row_ChequeAcNo"
+											visible="false">
+											<label
+												id="label_FeeReceiptDialog_ChequeAccountNo"
+												value="${c:l('label_FeeReceiptDialog_ChequeAccountNo.value')}" />
+											<accountSelectionBox
+												id="chequeAcNo" width="180px" />
+										</row>
+										<row id="row_fundingAcNo"
+											visible="false">
+											<label
+												id="label_FeeReceiptDialog_FundingAccount"
+												value="${c:l('label_FeeReceiptDialog_FundingAccount.value')}" />
+											<extendedcombobox
+												id="fundingAccount" width="180px" />
+											<label
+												id="label_FeeReceiptDialog_ReceivedDate"
+												value="${c:l('label_FeeReceiptDialog_ReceivedDate.value')}" />
+											<hbox
+												id="hbox_FeeReceiptDialog_ReceivedDate">
+												<space spacing="2px"
+													sclass="mandatory" />
+												<datebox
+													id="receivedDate" width="100px" />
+											</hbox>
+										</row>
+										<row id="row_remarks"
+											visible="false">
+											<label
+												id="label_FeeReceiptDialog_paymentReference"
+												value="${c:l('label_FeeReceiptDialog_paymentReference.value')}" />
+											<hbox
+												id="hbox_FeeReceiptDialog_paymentReference">
+												<space spacing="2px"/>
+												<uppercasebox
+													id="paymentRef" width="180px" />
+											</hbox>
+											<label
+												id="label_FeeReceiptDialog_Remarks"
+												value="${c:l('label_FeeReceiptDialog_Remarks.value')}" />
+											<hbox
+												id="hbox_FeeReceiptDialog_Remarks">
+												<space spacing="2px"
+													sclass="mandatory" />
+												<textbox id="remarks"
+													width="180px" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+						</tabpanel>
+					</tabpanels>
+				</tabbox>
+			</center>
+			<south id="south" sclass="south-dialog">
+				<groupbox id="groupboxWf" width="98%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_FeeReceiptDialog_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

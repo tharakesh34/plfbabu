@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+		<window id="window_FinCovenantTypeList" border="normal" width="100%" height="100%"
+			apply="${covenantDetailListCtrl}" sizable="false">
+
+			<borderlayout id="borderlayoutAdvancePayDetails">
+				<north>
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								sclass="toolbar-start">
+								<button id="btnNew" visible="false"
+									 tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnEdit" visible="false"
+									 tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnDelete" visible="false"
+									 tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnSave" visible="false"
+									 tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnCancel" visible="false"
+									 tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
+								<button id="btnNotes" visible="false"
+									 tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label
+									value="${c:l('window_FinCovenantTypeDialog.title')}"
+									sclass="label-heading" />
+							</toolbar>
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" visible="false" 
+									label = "${c:l('label_Help')}"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnClose" 
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none" autoscroll="false">
+					<groupbox style="border:none;">
+						<groupbox style="border:none;"
+							id="finBasicdetails">
+						</groupbox>
+						<div sclass="z-toolbar" height="28px">
+							<hbox pack="stretch"
+								sclass="hboxRemoveWhiteStrips" width="100%"
+								widths="30%,40%,30%">
+
+								<!-- COMMON BUTTONS -->
+								<toolbar align="start"
+									sclass="toolbar-start" width="300px">
+									<hbox align="center"
+										style="padding: 0px">
+										<label
+											value="${c:l('window_FinCovenantTypeList.title')}"
+											style="font-weight:bold; font-size: 11px;" />
+									</hbox>
+								</toolbar>
+								<!-- SEARCH AREA -->
+								<toolbar align="center"
+									sclass="toolbar-center" />
+
+								<!-- CRUD BUTTONS -->
+								<toolbar align="end"
+									sclass="toolbar-end">
+									<button
+										id="btnNew_NewFinCovenantType" visible="false"
+										label="${c:l('label_New')}"
+										tooltiptext="${c:l('button_FinCovenantTypeList_NewFinCovenantType.tooltiptext')}"
+										sclass="z-toolbarbutton" />
+								</toolbar>
+							</hbox>
+						</div>
+						<listbox id="listBoxFinCovenantType"
+							fixedLayout="true" sizedByContent="true" span="true"
+							emptyMessage="${c:l('listbox.emptyMessage')}"  
+							width="100%" multiple="false">
+							<listhead sizable="false">
+								<listheader
+									id="listheader_FinCovenantType_CovenantType"
+									label="${c:l('listheader_FinCovenantType_CovenantType.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_FinCovenantType_MandRole"
+									label="${c:l('listheader_FinCovenantType_MandRole.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_FinCovenantType_AlwWaiver"  
+									label="${c:l('listheader_FinCovenantType_AlwWaiver.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_FinCovenantType_AlwPostpone"  
+									label="${c:l('listheader_FinCovenantType_AlwPostpone.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_FinCovenantType_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="false"
+									hflex="min" visible="false" />
+								<listheader
+									id="listheader_FinCovenantType_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="false"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</groupbox>
+				</center>
+				<south id="south" sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%"
+					closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_RecordStatus" value="${c:l('label_RecordStatus')}" sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+			</borderlayout>
+		</window>
+</zk>

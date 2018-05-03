@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_MMAgreementDialog" border="normal"
+			width="100%" height="100%" sizable="false"
+			apply="${mMAgreementsDialogCtrl}">
+
+			<borderlayout id="borderlayoutMMAgreement">
+				<north>
+					<div sclass="z-toolbar">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								sclass="toolbar-start">
+								<button id="btnNew"
+									tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnEdit"
+									tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnDelete"
+									tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnSave"
+									tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="print"
+									label="${c:l('label_Print')}"
+									tooltiptext="${c:l('btnPrint.tooltiptext')}" />
+								<button id="btnCancel"
+									tooltiptext="${c:l('btnCancel.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnNotes"
+									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label
+									value="${c:l('window_MMAgreementDialog.title')}"
+									sclass="label-heading" />
+							</toolbar>
+
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" visible="false"
+									label="${c:l('label_Help')}"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnClose"
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+
+				<center border="none">
+					<div width="100%" height="100%">
+						<groupbox id="gb_basicDetails">
+							<caption
+								label="${c:l('gp_basicDetails')}">
+							</caption>
+							<grid id="grid_basicDetails"
+								sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="border:0px">
+								<columns>
+									<column width="220px" />
+									<column />
+									<column width="220px" />
+									<column />
+								</columns>
+								<rows>
+
+									<row>
+										<label
+											id="label_MMAgreementDialog_MMAReference"
+											value="${c:l('label_MMAgreementDialog_MMAReference.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<textbox id="mMAReference"
+												width="200px" />
+										</hbox>
+										<label
+											id="label_MMAgreementDialog_CustCIF"
+											value="${c:l('label_MMAgreementDialog_CustCIF.value')}" />
+										<hbox>
+											<extendedcombobox
+												id="custCIF" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_MMAgreementDialog_Product"
+											value="${c:l('label_MMAgreementDialog_Product.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<combobox id="product"
+												width="275px" />
+										</hbox>
+										<label
+											id="label_MMAgreementDialog_AgreeName"
+											value="${c:l('label_MMAgreementDialog_AgreeName.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<combobox id="agreeName"
+												width="275px" />
+										</hbox>
+									</row>
+									<row>
+									<label
+											id="label_MMAgreementDialog_Date"
+											value="${c:l('label_MMAgreementDialog_Date.value')}" />
+										<hbox>
+											<space spacing="2px" sclass="mandatory"/>
+											<datebox id="contractDate"
+												width="120px" />
+										</hbox>
+										<label
+											id="label_MMAgreementDialog_ContractAmt"
+											value="${c:l('label_MMAgreementDialog_ContractAmt.value')}" />
+										<currencyBox id="contractAmt" />
+									</row>
+									<row visible="false">
+										<label
+											id="label_MMAgreementDialog_MMAgreeType"
+											value="${c:l('label_MMAgreementDialog_MMAgreeType.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<combobox id="mMAgreeType"
+												width="275px" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_MMAgreementDialog_PurchRegOffice"
+											value="${c:l('label_MMAgreementDialog_PurchRegOffice.value')}" />
+										<hbox>
+											<extendedcombobox
+												id="purchRegOffice" />
+										</hbox>
+									</row>
+									<row visible="false">
+									<label
+											id="label_MMAgreementDialog_AssetValue"
+											value="${c:l('label_MMAgreementDialog_AssetValue.value')}" />
+										<currencyBox id="assetValue" />
+									</row>
+									<row>
+										<label
+											id="label_MMAgreementDialog_Dealer"
+											value="${c:l('label_MMAgreementDialog_Dealer.value')}" />
+										<extendedcombobox
+											id="dealer" />
+										<label
+											id="label_MMAgreementDialog_AssetDesc"
+											value="${c:l('label_MMAgreementDialog_AssetDesc.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="assetDesc"
+												width="200px" />
+										</hbox>
+									</row>
+									<row visible="false">
+									<label
+											id="label_MMAgreementDialog_Attention"
+											value="${c:l('label_MMAgreementDialog_Attention.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="attention"
+												width="200px" />
+										</hbox>
+									</row>
+									<row visible="false">
+										<label
+											id="label_MMAgreementDialog_Country"
+											value="${c:l('label_MMAgreementDialog_Country.value')}" />
+										<extendedcombobox id="country" />
+										<label
+											id="label_MMAgreementDialog_Province"
+											value="${c:l('label_MMAgreementDialog_Province.value')}" />
+										<extendedcombobox id="province" />
+									</row>
+									<row visible="false">
+										<label
+											id="label_MMAgreementDialog_City"
+											value="${c:l('label_MMAgreementDialog_City.value')}" />
+										<hbox id="hbox_City"
+											spacing="2px">
+											<extendedcombobox id="city" />
+										</hbox>
+										
+
+									</row>
+									<row visible="false">
+										<label
+											id="label_MMAgreementDialog_CustPOBox"
+											value="${c:l('label_MMAgreementDialog_CustPOBox.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="custPOBox"
+												width="200px" />
+										</hbox>
+									</row>
+									<row visible="false">
+										<label
+											id="label_MMAgreementDialog_sharePerc"
+											value="${c:l('label_MMAgreementDialog_sharePerc.value')}" />
+										<currencyBox id="sharePerc" />
+									</row>
+									<row>
+										<label
+											id="label_MMAgreementDialog_Purchaddress"
+											value="${c:l('label_MMAgreementDialog_Purchaddress.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="purchaddress"
+												width="200px" multiline="true" />
+										</hbox>
+										<label
+											id="label_MMAgreementDialog_fax"
+											value="${c:l('label_MMAgreementDialog_fax.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="faxCountryCode"
+												width="45px" />
+											<label value="-"
+												style="display:inline-block;padding-top:4px;" />
+											<textbox id="faxAreaCode"
+												width="45px" />
+											<label value="-"
+												style="display:inline-block;padding-top:4px;" />
+											<textbox id="fax"
+												width="90px" />
+										</hbox>
+									</row>
+									<row visible="false">
+									<label
+											id="label_MMAgreementDialog_TitleNo"
+											value="${c:l('label_MMAgreementDialog_TitleNo.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="titleNo"
+												width="200px" maxlength="200" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_MMAgreementDialog_FOL_Reference"
+											value="${c:l('label_MMAgreementDialog_FOL_Reference.value')}" />
+										<extendedcombobox
+											id="folReference" />
+										<label
+											id="label_FacilityDetailDialog_FacilityLimit"
+											value="${c:l('label_MMAgreementDialog_FacilityLimit.value')}" />
+										<hbox>
+											<currencyBox
+												id="facilityLimit" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_MMAgreementDialog_fOLIssueDate"
+											value="${c:l('label_MMAgreementDialog_fOLIssueDate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox id="fOLIssueDate"
+												width="120px" />
+										</hbox>
+										<label
+											id="label_MMAgreementDialog_maturityDate"
+											value="${c:l('label_MMAgreementDialog_maturityDate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox id="maturityDate"
+												width="120px" />
+										</hbox>
+
+									</row>
+									<row>
+										<label
+											id="label_MMAgreementDialog_Rate"
+											value="${c:l('label_MMAgreementDialog_Rate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="rate"
+												width="200px" maxlength="15" />
+										</hbox>
+
+										<label
+											id="label_MMAgreementDialog_ProfitRate"
+											value="${c:l('label_MMAgreementDialog_ProfitRate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="profitRate"
+												width="200px" maxlength="15" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_FacilityDetailDialog_MinAmount"
+											value="${c:l('label_MMAgreementDialog_MinAmount.value')}" />
+										<hbox>
+											<currencyBox id="minAmount" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_MMAgreementDialog_FinGrcBaseRate"
+											value="${c:l('label_MMAgreementDialog_FinGrcBaseRate.value')}" />
+										<ratebox id="rateCode"/>
+									</row>
+									<row>
+										<label
+											id="label_MMAgreementDialog_minRate"
+											value="${c:l('label_MMAgreementDialog_minRate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="minRate"
+												width="200px" maxlength="15" />
+										</hbox>
+										<label
+											id="label_MMAgreementDialog_LatePayRate"
+											value="${c:l('label_MMAgreementDialog_LatePayRate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="latePayRate"
+												width="200px" maxlength="15" />
+										</hbox>
+
+									</row>
+									<row visible="true">
+										<label
+											id="label_MMAgreementDialog_NumberOfTerms"
+											value="${c:l('label_MMAgreementDialog_NumberOfTerms.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<intbox id="numberOfTerms"
+												width="45px" maxlength="3" style="text-align:right" />
+										</hbox>
+
+										<label
+											id="label_MMAgreementDialog_ProfitPeriod"
+											value="${c:l('label_MMAgreementDialog_ProfitPeriod.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<intbox id="profitPeriod"
+												width="45px" maxlength="3" style="text-align:right" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_MMAgreementDialog_FacilityOfferLetterDate"
+											value="${c:l('label_MMAgreementDialog_FacOfferLetterDate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox
+												id="facOfferLetterDate" width="120px" />
+										</hbox>
+
+										<label
+											id="label_MMAgreementDialog_Availability_PeriodInDays"
+											value="${c:l('label_MMAgreementDialog_Availability_PeriodInDays.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<intbox id="avlPerDays"
+												width="45px" style="text-align:right" />
+										</hbox>
+									</row>
+
+									<row>
+										<label
+											id="label_MMAgreementDialog_maxCapProfitRate"
+											value="${c:l('label_MMAgreementDialog_maxCapProfitRate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="maxCapProfitRate" width="200px" maxlength="15" />
+										</hbox>
+										<label
+											id="label_MMAgreementDialog_MinimumCapRate"
+											value="${c:l('label_MMAgreementDialog_MinimumCapRate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="minCapRate"
+												width="200px" maxlength="15" />
+										</hbox>
+									</row>
+									<row visible="true">
+									<label
+											id="label_MMAgreementDialog_CustAccount"
+											value="${c:l('label_MMAgreementDialog_CustAccount.value')}" />
+										<hbox>
+											<accountSelectionBox
+												id="custAccount" />
+										</hbox>
+										
+
+										<label
+											id="label_MMAgreementDialog_PrimaryRelationshipOfficer"
+											value="${c:l('label_MMAgreementDialog_PrimaryRelationshipOfficer.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox
+												id="pmaryRelOfficer" width="200px" />
+										</hbox>
+									</row>
+									<row visible="false">
+										<label
+											id="label_MMAgreementDialog_NumberOfContracts"
+											value="${c:l('label_MMAgreementDialog_NumberOfContracts.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<intbox id="numOfContracts"
+												width="45px" maxlength="3" style="text-align:right" />
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</div>
+				</center>
+				<south sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%"
+						visible="false">
+						<caption label="${c:l('Action')}" />
+						<hbox width="75%">
+							<radiogroup id="userAction" name="action" />
+							<label
+								id="label_MMAgreementDialog_RecordStatus"
+								value="${c:l('label_South_RecordStatus.value')}"
+								sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
+
+			</borderlayout>
+		</window>
+	</window>
+</zk>

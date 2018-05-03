@@ -1,0 +1,1436 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	
+	<changeSet id="1" author="Kesav">
+		<createView viewName="FinFeeReceipts_View" replaceIfExists="true">
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts_Temp  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		      
+		      UNION ALL
+		      
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		      
+		      WHERE     (NOT EXISTS  (SELECT  1 FROM FinFeeReceipts_Temp WHERE (Id = T1.Id)))
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="2" author="Kesav">
+		<createView viewName="FinFeeReceipts_TView" replaceIfExists="true">
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts_Temp  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="3" author="Kesav">
+		<createView viewName="FinFeeReceipts_TView" replaceIfExists="true">
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="4" author="Kesav">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust');
+			Delete from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust';
+			
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'FinFeeDetailListCtrl_Adjust', 'FinFeeDetailListCtrl', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_WRM'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_RECEIPT_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_UNPLANEMIH_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>		
+	</changeSet>
+	
+	<changeSet id="5" author="Kesav">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave');
+			Delete from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_FinFeeReceiptDialog_btnSave', 'FinFeeReceiptDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_WRM'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_RECEIPT_MAKER'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_UNPLANEMIH_MAKER'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount');
+			Delete from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'FinFeeReceiptDialog_paidAmount', 'FinFeeReceiptDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_WRM'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_RECEIPT_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_UNPLANEMIH_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>		
+	</changeSet>
+	
+	<changeSet id="6" author="Kesav">
+		<sql>
+			Delete from ErrorDetails where errorCode = '65018';
+			INSERT INTO ErrorDetails VALUES('65018','EN','E','Fee Type {0} paid amount should be equal to receipt fee type {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+
+			Delete from ErrorDetails where errorCode = '65019';
+			INSERT INTO ErrorDetails VALUES('65019','EN','E','Receipt Fee Details should me mandatory for Fee Type : {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>		
+	</changeSet>
+	
+	<changeSet id="7" author="Vinay">
+		<addColumn tableName="BMTBankDetail">
+			<column name="BankShortCode" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="8" author="Vinay">
+		<addColumn tableName="BMTBankDetail_Temp">
+			<column name="BankShortCode" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="9" author="Vinay">
+	<createView viewName="BMTBANKDETAIL_VIEW" replaceIfExists="true">
+		SELECT BankCode, BankName, BankShortCode, Active	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+			RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail_TEMP
+				UNION ALL
+				SELECT	BankCode, BankName, BankShortCode, Active				
+							, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+							RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail
+				WHERE     NOT EXISTS (SELECT 1 FROM BMTBankDetail_TEMP WHERE BankCode = BMTBankDetail.BankCode)
+	</createView>
+	</changeSet>
+	
+	<changeSet id="10" author="Vinay">
+	<createView viewName="BMTBANKDETAIL_AVIEW" replaceIfExists="true">
+				SELECT BankCode, BankName, BankShortCode, Active	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+			RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail
+	</createView>
+	</changeSet>
+	
+	<changeSet id="11" author="Vinay">
+		<sql>
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'BankDetailDialog_bankShortCode', 'BankDetailDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BANKDETAIL_MAKER'), (Select RightID from SecRights where RightName = 'BankDetailDialog_bankShortCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		</sql>
+		</changeSet>	
+		
+	<changeSet id="12" author="Kesav">
+		<createView viewName="FinFeeReceipts_TView" replaceIfExists="true">
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts_Temp  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		</createView>	
+	</changeSet>
+			
+	<changeSet id="13" author="Kesav">
+		<createView viewName="FinFeeReceipts_AView" replaceIfExists="true">
+		      		SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+			                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+			                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+			                  T4.RECEIPTMODE ReceiptType
+			      FROM    	  FinFeeReceipts  T1 
+			      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+			      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+			      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		</createView>	
+	</changeSet>
+	<changeSet id="14" author="Irfan">
+	<sql>
+		update FinanceMain set DueBucket=0 where DueBucket is null;
+	</sql>
+	</changeSet>
+		<changeSet id="15" author="Srikanth">
+	<sql>
+			Delete from ErrorDetails Where ErrorCode in('90330','90331','90332','90334','90333');
+ 			INSERT INTO ErrorDetails VALUES('90330','EN','E','The amount is not sufficient to foreclose the loan.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('90331','EN','E','Insufficient Receipt amounts. Not allowed to calculate the payment schedules.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('90332','EN','E','Not allowed to do Partial Settlement due to not having additional Balance after allocations.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('90334','EN','E','{0} should not be before on customer date of birth.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+ 			INSERT INTO ErrorDetails VALUES('90333','EN','E','Mandate type: {0} not allowed for this bankcode/IfscCode.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
+	<changeSet id="16" author="murthy.y" dbms="oracle">
+		<createView viewName="INT_CF_CONTROL_VIEW" replaceIfExists="true">
+			 	SELECT 
+				PD.PFTACCRUED/100 ACCRUED_AMOUNT,
+				COALESCE(EA.AMOUNT,0)/100 ADVANCE_EMI,
+				0 ADVANCE_EMI_BILLED,
+				SUBSTR(FM.FINREFERENCE, 7, LENGTH(FM.FINREFERENCE)) AGREEMENTID,
+				FM.FINAPPROVEDDATE AGREEMENTDATE,
+				FM.FINREFERENCE  AGREEMENTNO,
+				FM.FINAMOUNT/100 AMTFIN,
+				FM.FINASSETVALUE/100 ASSETCOST,
+				'' ASSETDESC,
+				TOTALPFTSCHD-TOTALPFTPAID-PFTACCRUED/100 BALANCE_UMFC,
+				0 BOUNCE_CHARGES_DUE,
+				0 BOUNCE_CHARGES_RECEIVED,
+				LB.BANKREFNO BRANCHID,
+				LB.BRANCHDESC BRANCH_NAME, 
+				PS.REPAYAMOUNT BULK_REFUND,
+				0 CHASISNUM,
+				0 CLOSED_CAN_ADV_EMI,
+				0 CLOS_CAN_ADV_EMI_INTCOMP,
+				0 CLOS_CAN_ADV_EMI_PRINCOMP,
+				FM. MATURITYDATE CLOSUREDATE,
+				FM.DUEBUCKET/100 CURRENT_BUCKET,
+				LC.CUSTID CUSTOMERID,
+				LC.CUSTSHRTNAME CUSTOMERNAME,
+				FM.DUEBUCKET  DERIVED_BUCKET,
+				DD.DISBDATE DISBURSALDATE,
+				DD.DISBAMOUNT/100 DISBURSED_AMOUNT,
+				CASE WHEN FM.FINASSETVALUE = FINCURRASSETVALUE THEN 'FD' ELSE 'PD' END DISB_STATUS,
+				PD.CURODDAYS DPD,
+				CASE WHEN FM.EFFECTIVERATEOFRETURN > 999 THEN 999 ELSE FM.EFFECTIVERATEOFRETURN END FLAT_RATE,
+				(PD.ODPRINCIPAL+PD.ODPROFIT)/100 EMI_DUE,
+				PFT.WAIVEDAMOUNT EMI_INTEREST_WAIVED,
+				0 PRINCIPAL_AT_TERM,
+				0 EMI_IN_ADVANCE_BILLED,
+				0 EMI_IN_ADVANCE_RECEIVED_MAKER,
+				EA.BALANCEAMT EMI_IN_ADVANCE_UNBILLED,
+				0 EMI_IN_ADV_BILLED_INTCOMP,
+				0 EMI_IN_ADV_BILLED_PRINCOMP,
+				0 EMI_IN_ADV_UNBILLED_INTCOMP,
+				0 EMI_IN_ADV_UNBILLED_PRINCOMP,
+				PD.TOTALPFTBAL + PD.TOTALPRIBAL/100 EMI_OS,
+				PRI.WAIVEDAMOUNT/100 EMI_PRINCIPAL_WAIVED,
+				PD.TOTALPFTPAID+PD.TOTALPRIPAID/100 EMI_RECEIVED,
+				'' ENGINENUM,
+				PD.FIRSTREPAYDATE FIRST_DUE_DATE,
+				OD.FINODSCHDDATE FIRST_REPAYDUE_DATE,
+				CASE WHEN FM.REPAYPROFITRATE > 999 THEN 999 ELSE  FM.REPAYPROFITRATE END EFFECTIVE_RATE ,
+				FD.PAIDAMOUNT/100 FORECLOSURE_CHARGES_DUE,
+				0 FORECLOSURE_CHARGES_RECEIVED,
+				SUBSTR(AP.PAYMENTTYPE,0,1) INSTRUMENT,
+				0 INSUR_PAID,
+				0 INSUR_PAYABLE,
+				0 INSUR_RECEIVABLE,
+				0 INSUR_RECEIVED,
+				0 INSUR_RENEW_CHARGE,
+				0 INSUR_RENEW_CHARGE_RECD,
+				PD.TOTALPFTBAL/100 INTEREST_BALANCE,
+				PD.TDSCHDPFTBAL/100  INTEREST_DUE,
+				PD.TOTALPFTBAL/100  INTEREST_OS,
+				PD.TOTALPFTPAID/100  INTEREST_RECEIVED,
+				0 INVOICEAMT,
+				FM.FIRSTREPAY/100 LOAN_EMI,
+				CASE FM.FINISACTIVE WHEN 1 THEN 'A' ELSE 'C' END LOAN_STATUS,
+				'' LOCAL_OUTSTATION_FLAG,
+				CHRG.TOTPENALTYBAL/100 LPP_CHARGES_RECEIVABLE,
+				CHRG.TOTPENALTYPAID/100 LPP_CHARGES_RECEIVED,
+				'' MAKE,
+				FM.MATURITYDATE MATURITY_DATE,
+				0 MIGRATED_ADVANCE_EMI,
+				0 MIGRATED_ADVANCE_EMI_BILLED,
+				0 MIGRATED_ADVANCE_EMI_UNBILLED,
+				0 MIG_ADV_EMI_BILLED_INTCOMP,
+				0 MIG_ADV_EMI_BILLED_PRINCOMP,
+				0 MIG_ADV_EMI_UNBILLED_INTCOMP,
+				0 MIG_ADV_EMI_UNBILLED_PRINCOMP,
+				0 MIG_DIFFERENCE_PAID,
+				0 MIG_DIFFERENCE_PAYABLE,
+				0 MIG_DIFFERENCE_RECEIVABLE,
+				0 MIG_DIFFERENCE_RECEIVED,
+				EAE.AMOUNT/100 NET_EXCESS_ADJUSTED,
+				EAE.UTILISEDAMT/100 NET_EXCESS_RECEIVED,
+				ECAE.NO_OF_ADVANCE_EMIS NO_OF_ADVANCE_EMIS,
+				(PD.NOINST - PD.NOPAIDINST)  NO_OF_EMI_OS, 
+				(PD.NOINST - PD.NOPAIDINST - PD.NOODINST) NO_OF_UNBILLED_EMI,
+				CASE WHEN FM.CLOSINGSTATUS='W' THEN 'WRITEOFF' ELSE 'REGULAR' END NPA_STAGEID,
+				0 PDC_SWAP_CHARGES_RECEIVABLE,
+				0 PDC_SWAP_CHARGES_RECEIVED,
+				0 PRINCIPAL_BALANCE,
+				PD.ODPRINCIPAL/100 PRINCIPAL_DUE,
+				PD.TOTALPRIBAL/100 PRINCIPAL_OS,
+				PD.TOTALPRIPAID/100 PRINCIPAL_RECEIVED,
+				PRI.WAIVEDAMOUNT/100 PRINCIPAL_WAIVED,
+				FT.FINCATEGORY PRODUCTFLAG,
+				'' REGDNUM,
+				0 REPO_CHARGES_RECEIVABLE,
+				0 REPO_CHARGES_RECEIVED,
+				'' REPO_DATE,
+				'' ROUNDING_DIFF_RECEIVABLE,
+				'' ROUNDING_DIFF_RECEIVED,
+				ROUND(MONTHS_BETWEEN (FM.MATURITYDATE, FM.FINSTARTDATE)) SANCTIONED_TENURE,
+				COALESCE(PR.PROMOTIONCODE, '0') SCHEMEID, 
+				FT.FINTYPEDESC SCHEME_NAME,
+				0 SECURITY_DEPOSIT,
+				0 SECURITY_DEPOSIT_ADJUSTED,
+				0 SOH_BALANCE,
+				0 SOLD_SEIZE_PAID,
+				0 SOLD_SEIZE_PAYABLE,
+				0 SOLD_SEIZE_RECEIVABLE,
+				0 SOLD_SEIZE_RECEIVED,
+				'' SUPPLIERDESC,
+				PD.TOTALPFTBAL/100 TOTAL_INTEREST,
+				(WD.WRITTENOFFPRI+WD.WRITTENOFFPFT)/100 WRITEOFF_DUE,
+				WP.WRITEOFFPAYAMOUNT/100 WRITEOFF_RECEIVED,
+        		FM.LASTREPAYDATE
+				FROM FINANCEMAIN FM 
+				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE 
+				LEFT JOIN PROMOTIONS PR ON  PR.FINTYPE = FT.FINTYPE
+				LEFT JOIN FINEXCESSAMOUNT EA ON EA.FINREFERENCE = FM.FINREFERENCE AND EA.AMOUNTTYPE = 'A'
+				LEFT JOIN FINEXCESSAMOUNT EAE ON EAE.FINREFERENCE = FM.FINREFERENCE AND EAE.AMOUNTTYPE = 'E'
+				LEFT JOIN (SELECT COUNT(*) NO_OF_ADVANCE_EMIS, T2.FINREFERENCE  FROM FINEXCESSMOVEMENT T1 INNER JOIN FINEXCESSAMOUNT T2 ON T1.EXCESSID = T2.EXCESSID
+				WHERE  TRANTYPE = 'C' AND AMOUNTTYPE = 'A'
+				GROUP BY T2.FINREFERENCE) ECAE ON ECAE.FINREFERENCE = FM.FINREFERENCE
+				INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE 
+				INNER JOIN CUSTOMERS LC ON LC.CUSTID = FM.CUSTID
+				INNER JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FM.FINBRANCH
+				LEFT JOIN (SELECT FINREFERENCE, SUM(REPAYAMOUNT) REPAYAMOUNT FROM FINREPAYHEADER WHERE FINEVENT= 'PartialSettlement' GROUP BY FINREFERENCE) PS ON PS.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(REPAYAMOUNT) REPAYAMOUNT FROM FINREPAYHEADER WHERE FINEVENT= 'EarlySettlement' GROUP BY FINREFERENCE) ES ON ES.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINDISBURSEMENTDETAILS DD ON DD.FINREFERENCE = FM.FINREFERENCE AND DISBDATE = FM.FINSTARTDATE AND DD.DISBSEQ = 1 
+				LEFT JOIN FINADVANCEPAYMENTS AP ON AP.FINREFERENCE = FM.FINREFERENCE AND AP.DISBSEQ = DD.DISBSEQ 
+				LEFT JOIN (SELECT REFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT FROM RECEIPTALLOCATIONDETAIL PFT LEFT JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID  = PFT.RECEIPTID AND RH.ALLOCATIONTYPE = 'PRI' GROUP BY REFERENCE) PRI ON PRI.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT REFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT FROM RECEIPTALLOCATIONDETAIL PFT LEFT JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID  = PFT.RECEIPTID AND RH.ALLOCATIONTYPE = 'PFT' GROUP BY REFERENCE) PFT ON PFT.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(TOTPENALTYBAL) TOTPENALTYBAL, SUM(TOTPENALTYPAID) TOTPENALTYPAID FROM FINODDETAILS GROUP BY FINREFERENCE) CHRG ON CHRG.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(PAIDAMOUNT) PAIDAMOUNT FROM FINFEEDETAIL WHERE FINEVENT= 'EarlySettlement' GROUP BY FINREFERENCE) FD ON FD.FINREFERENCE = FM.FINREFERENCE 
+				LEFT JOIN FINWRITEOFFDETAIL WD ON WD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(WRITEOFFPAYAMOUNT)  WRITEOFFPAYAMOUNT FROM FINWRITEOFFPAYMENT GROUP BY FINREFERENCE) WP ON WP.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, MIN(FINODSCHDDATE) FINODSCHDDATE FROM FINODDETAILS group by FINREFERENCE) OD ON OD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINPROVISIONS PR ON PR.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN NPABUCKETS NPB ON NPB.BUCKETID = PR.NPABUCKETID
+		</createView>
+	</changeSet>
+	<changeSet id="16" author="murthy.y" dbms="mssql">
+		<createView viewName="INT_CF_CONTROL_VIEW" replaceIfExists="true">
+			 	SELECT 
+				PD.PFTACCRUED/100 ACCRUED_AMOUNT,
+				COALESCE(EA.AMOUNT,0)/100 ADVANCE_EMI,
+				0 ADVANCE_EMI_BILLED,
+				SUBSTRING(FM.FINREFERENCE, 7, LEN(FM.FINREFERENCE)) AGREEMENTID,
+				FM.FINAPPROVEDDATE AGREEMENTDATE,
+				FM.FINREFERENCE  AGREEMENTNO,
+				FM.FINAMOUNT/100 AMTFIN,
+				FM.FINASSETVALUE/100 ASSETCOST,
+				'' ASSETDESC,
+				TOTALPFTSCHD-TOTALPFTPAID-PFTACCRUED/100 BALANCE_UMFC,
+				0 BOUNCE_CHARGES_DUE,
+				0 BOUNCE_CHARGES_RECEIVED,
+				LB.BANKREFNO BRANCHID,
+				LB.BRANCHDESC BRANCH_NAME, 
+				PS.REPAYAMOUNT BULK_REFUND,
+				0 CHASISNUM,
+				0 CLOSED_CAN_ADV_EMI,
+				0 CLOS_CAN_ADV_EMI_INTCOMP,
+				0 CLOS_CAN_ADV_EMI_PRINCOMP,
+				FM. MATURITYDATE CLOSUREDATE,
+				FM.DUEBUCKET/100 CURRENT_BUCKET,
+				LC.CUSTID CUSTOMERID,
+				LC.CUSTSHRTNAME CUSTOMERNAME,
+				FM.DUEBUCKET  DERIVED_BUCKET,
+				DD.DISBDATE DISBURSALDATE,
+				DD.DISBAMOUNT/100 DISBURSED_AMOUNT,
+				CASE WHEN FM.FINASSETVALUE = FINCURRASSETVALUE THEN 'FD' ELSE 'PD' END DISB_STATUS,
+				PD.CURODDAYS DPD,
+				CASE WHEN FM.EFFECTIVERATEOFRETURN > 999 THEN 999 ELSE FM.EFFECTIVERATEOFRETURN END FLAT_RATE,
+				(PD.ODPRINCIPAL+PD.ODPROFIT)/100 EMI_DUE,
+				PFT.WAIVEDAMOUNT EMI_INTEREST_WAIVED,
+				0 PRINCIPAL_AT_TERM,
+				0 EMI_IN_ADVANCE_BILLED,
+				0 EMI_IN_ADVANCE_RECEIVED_MAKER,
+				EA.BALANCEAMT EMI_IN_ADVANCE_UNBILLED,
+				0 EMI_IN_ADV_BILLED_INTCOMP,
+				0 EMI_IN_ADV_BILLED_PRINCOMP,
+				0 EMI_IN_ADV_UNBILLED_INTCOMP,
+				0 EMI_IN_ADV_UNBILLED_PRINCOMP,
+				PD.TOTALPFTBAL + PD.TOTALPRIBAL/100 EMI_OS,
+				PRI.WAIVEDAMOUNT/100 EMI_PRINCIPAL_WAIVED,
+				PD.TOTALPFTPAID+PD.TOTALPRIPAID/100 EMI_RECEIVED,
+				'' ENGINENUM,
+				PD.FIRSTREPAYDATE FIRST_DUE_DATE,
+				OD.FINODSCHDDATE FIRST_REPAYDUE_DATE,
+				CASE WHEN FM.REPAYPROFITRATE > 999 THEN 999 ELSE  FM.REPAYPROFITRATE END EFFECTIVE_RATE ,
+				FD.PAIDAMOUNT/100 FORECLOSURE_CHARGES_DUE,
+				0 FORECLOSURE_CHARGES_RECEIVED,
+				SUBSTRING(AP.PAYMENTTYPE,0,1) INSTRUMENT,
+				0 INSUR_PAID,
+				0 INSUR_PAYABLE,
+				0 INSUR_RECEIVABLE,
+				0 INSUR_RECEIVED,
+				0 INSUR_RENEW_CHARGE,
+				0 INSUR_RENEW_CHARGE_RECD,
+				PD.TOTALPFTBAL/100 INTEREST_BALANCE,
+				PD.TDSCHDPFTBAL/100  INTEREST_DUE,
+				PD.TOTALPFTBAL/100  INTEREST_OS,
+				PD.TOTALPFTPAID/100  INTEREST_RECEIVED,
+				0 INVOICEAMT,
+				FM.FIRSTREPAY/100 LOAN_EMI,
+				CASE FM.FINISACTIVE WHEN 1 THEN 'A' ELSE 'C' END LOAN_STATUS,
+				'' LOCAL_OUTSTATION_FLAG,
+				CHRG.TOTPENALTYBAL/100 LPP_CHARGES_RECEIVABLE,
+				CHRG.TOTPENALTYPAID/100 LPP_CHARGES_RECEIVED,
+				'' MAKE,
+				FM.MATURITYDATE MATURITY_DATE,
+				0 MIGRATED_ADVANCE_EMI,
+				0 MIGRATED_ADVANCE_EMI_BILLED,
+				0 MIGRATED_ADVANCE_EMI_UNBILLED,
+				0 MIG_ADV_EMI_BILLED_INTCOMP,
+				0 MIG_ADV_EMI_BILLED_PRINCOMP,
+				0 MIG_ADV_EMI_UNBILLED_INTCOMP,
+				0 MIG_ADV_EMI_UNBILLED_PRINCOMP,
+				0 MIG_DIFFERENCE_PAID,
+				0 MIG_DIFFERENCE_PAYABLE,
+				0 MIG_DIFFERENCE_RECEIVABLE,
+				0 MIG_DIFFERENCE_RECEIVED,
+				EAE.AMOUNT/100 NET_EXCESS_ADJUSTED,
+				EAE.UTILISEDAMT/100 NET_EXCESS_RECEIVED,
+				ECAE.NO_OF_ADVANCE_EMIS NO_OF_ADVANCE_EMIS,
+				(PD.NOINST - PD.NOPAIDINST)  NO_OF_EMI_OS, 
+				(PD.NOINST - PD.NOPAIDINST - PD.NOODINST) NO_OF_UNBILLED_EMI,
+				CASE WHEN FM.CLOSINGSTATUS='W' THEN 'WRITEOFF' ELSE 'REGULAR' END NPA_STAGEID,
+				0 PDC_SWAP_CHARGES_RECEIVABLE,
+				0 PDC_SWAP_CHARGES_RECEIVED,
+				0 PRINCIPAL_BALANCE,
+				PD.ODPRINCIPAL/100 PRINCIPAL_DUE,
+				PD.TOTALPRIBAL/100 PRINCIPAL_OS,
+				PD.TOTALPRIPAID/100 PRINCIPAL_RECEIVED,
+				PRI.WAIVEDAMOUNT/100 PRINCIPAL_WAIVED,
+				FT.FINCATEGORY PRODUCTFLAG,
+				'' REGDNUM,
+				0 REPO_CHARGES_RECEIVABLE,
+				0 REPO_CHARGES_RECEIVED,
+				'' REPO_DATE,
+				'' ROUNDING_DIFF_RECEIVABLE,
+				'' ROUNDING_DIFF_RECEIVED,
+				ROUND(DATEDIFF (mm,FM.MATURITYDATE, FM.FINSTARTDATE),2) SANCTIONED_TENURE,
+				COALESCE(PR.PROMOTIONCODE, '0') SCHEMEID, 
+				FT.FINTYPEDESC SCHEME_NAME,
+				0 SECURITY_DEPOSIT,
+				0 SECURITY_DEPOSIT_ADJUSTED,
+				0 SOH_BALANCE,
+				0 SOLD_SEIZE_PAID,
+				0 SOLD_SEIZE_PAYABLE,
+				0 SOLD_SEIZE_RECEIVABLE,
+				0 SOLD_SEIZE_RECEIVED,
+				'' SUPPLIERDESC,
+				PD.TOTALPFTBAL/100 TOTAL_INTEREST,
+				(WD.WRITTENOFFPRI+WD.WRITTENOFFPFT)/100 WRITEOFF_DUE,
+				WP.WRITEOFFPAYAMOUNT/100 WRITEOFF_RECEIVED,
+        		FM.LASTREPAYDATE
+				FROM FINANCEMAIN FM 
+				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE 
+				LEFT JOIN PROMOTIONS PR ON  PR.FINTYPE = FT.FINTYPE
+				LEFT JOIN FINEXCESSAMOUNT EA ON EA.FINREFERENCE = FM.FINREFERENCE AND EA.AMOUNTTYPE = 'A'
+				LEFT JOIN FINEXCESSAMOUNT EAE ON EAE.FINREFERENCE = FM.FINREFERENCE AND EAE.AMOUNTTYPE = 'E'
+				LEFT JOIN (SELECT COUNT(*) NO_OF_ADVANCE_EMIS, T2.FINREFERENCE  FROM FINEXCESSMOVEMENT T1 INNER JOIN FINEXCESSAMOUNT T2 ON T1.EXCESSID = T2.EXCESSID
+				WHERE  TRANTYPE = 'C' AND AMOUNTTYPE = 'A'
+				GROUP BY T2.FINREFERENCE) ECAE ON ECAE.FINREFERENCE = FM.FINREFERENCE
+				INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE 
+				INNER JOIN CUSTOMERS LC ON LC.CUSTID = FM.CUSTID
+				INNER JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FM.FINBRANCH
+				LEFT JOIN (SELECT FINREFERENCE, SUM(REPAYAMOUNT) REPAYAMOUNT FROM FINREPAYHEADER WHERE FINEVENT= 'PartialSettlement' GROUP BY FINREFERENCE) PS ON PS.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(REPAYAMOUNT) REPAYAMOUNT FROM FINREPAYHEADER WHERE FINEVENT= 'EarlySettlement' GROUP BY FINREFERENCE) ES ON ES.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINDISBURSEMENTDETAILS DD ON DD.FINREFERENCE = FM.FINREFERENCE AND DISBDATE = FM.FINSTARTDATE AND DD.DISBSEQ = 1 
+				LEFT JOIN FINADVANCEPAYMENTS AP ON AP.FINREFERENCE = FM.FINREFERENCE AND AP.DISBSEQ = DD.DISBSEQ 
+				LEFT JOIN (SELECT REFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT FROM RECEIPTALLOCATIONDETAIL PFT LEFT JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID  = PFT.RECEIPTID AND RH.ALLOCATIONTYPE = 'PRI' GROUP BY REFERENCE) PRI ON PRI.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT REFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT FROM RECEIPTALLOCATIONDETAIL PFT LEFT JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID  = PFT.RECEIPTID AND RH.ALLOCATIONTYPE = 'PFT' GROUP BY REFERENCE) PFT ON PFT.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(TOTPENALTYBAL) TOTPENALTYBAL, SUM(TOTPENALTYPAID) TOTPENALTYPAID FROM FINODDETAILS GROUP BY FINREFERENCE) CHRG ON CHRG.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(PAIDAMOUNT) PAIDAMOUNT FROM FINFEEDETAIL WHERE FINEVENT= 'EarlySettlement' GROUP BY FINREFERENCE) FD ON FD.FINREFERENCE = FM.FINREFERENCE 
+				LEFT JOIN FINWRITEOFFDETAIL WD ON WD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(WRITEOFFPAYAMOUNT)  WRITEOFFPAYAMOUNT FROM FINWRITEOFFPAYMENT GROUP BY FINREFERENCE) WP ON WP.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, MIN(FINODSCHDDATE) FINODSCHDDATE FROM FINODDETAILS group by FINREFERENCE) OD ON OD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINPROVISIONS FPR ON FPR.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN NPABUCKETS NPB ON NPB.BUCKETID = FPR.NPABUCKETID
+		</createView>
+	</changeSet>
+	<changeSet id="17" author="Manoj.P">
+			<modifyDataType tableName="MANDATE_REQUESTS" columnName="BANK_CODE" newDataType="varchar(20)" />
+			<modifyDataType tableName="MANDATE_RESPONSE" columnName="BANK_CODE " newDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="18" author="Manoj.P" dbms="oracle">
+		<sql>
+			UPDATE BMTBANKDETAIL SET BANKSHORTCODE = RTRIM(LTRIM(SUBSTR(BANKNAME, 1, 10)));
+		</sql>
+	</changeSet>
+	<changeSet id="18" author="Manoj.P" dbms="mssql">
+		<sql>
+			UPDATE BMTBANKDETAIL SET BANKSHORTCODE = RTRIM(LTRIM(SUBSTRING(BANKNAME, 1, 10)));
+		</sql>
+	</changeSet>
+	
+	<changeSet id="19" author="Manoj.P" dbms="oracle">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+			SELECT M.MANDATEID, 
+			BD.BANKSHORTCODE BANKCODE,
+			BD.BANKNAME,
+			case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
+			  case when LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
+			CUST.CUSTCIF,
+			CUST.CUSTSHRTNAME,
+			FT.FINTYPEDESC FINTYPE ,
+			FIN.FINREFERENCE ,
+			(SELECT SUM(MAX(FSD.REPAYAMOUNT+FSD.FEESCHD)) FROM FINSCHEDULEDETAILS FSD INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE =FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID GROUP BY FM.FINREFERENCE) CUST_EMI,
+			(SELECT MAX(REPAYAMOUNT+FEESCHD) FROM FINSCHEDULEDETAILS WHERE FINREFERENCE =FIN.FINREFERENCE AND REPAYONSCHDATE =1)/CCYMINORCCYUNITS EMI,
+			  CASE M.OPENMANDATE
+			    WHEN 1
+			    THEN 'New Open ECS'
+			    ELSE 'No Open ECS'
+			  END OPENMANDATE,
+			M.ACCNUMBER,
+			M.ACCTYPE,
+			M.ACCHOLDERNAME,
+			BB.MICR,
+			(SELECT MIN(FIRSTREPAYDATE) FIRSTDUEDATE FROM FINPFTDETAILS WHERE FINREFERENCE=FIN.FINREFERENCE) FIRSTDUEDATE,
+			(SELECT MAX(MATURITYDATE) EMIENDDATE FROM FINPFTDETAILS WHERE FINREFERENCE=FIN.FINREFERENCE) EMIENDDATE,
+			 COALESCE (M.MAXLIMIT, 0)/CCYMINORCCYUNITS MAXLIMIT, 
+			    (SELECT SUM(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID) AND REPAYONSCHDATE =1
+			  )/CCYMINORCCYUNITS DEBITAMOUNT,
+			  M.STARTDATE,
+			  M.EXPIRYDATE,
+			  FIN.APPLICATIONNO,
+			  M.MANDATETYPE,
+			  M.STATUS,
+			  M.INPUTDATE,
+			  M.RECORDSTATUS,
+			  M.RECORDTYPE,
+			    M.MANDATECCY,
+			  COALESCE (CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS
+			FROM MANDATES M
+			INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+			INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE 
+			INNER JOIN CUSTOMERS CUST   ON CUST.CUSTID = M.CUSTID
+			  INNER JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH 
+			  LEFT OUTER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
+			LEFT OUTER JOIN FINANCEMAIN FIN ON M.ORGREFERENCE=FIN.FINREFERENCE
+			  LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH 
+			LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE =FT.FINTYPE 
+			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS)
+			
+		</createView>
+	</changeSet>
+		<changeSet id="19" author="Manoj.P" dbms="mssql">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+			SELECT M.MANDATEID, 
+			BD.BANKSHORTCODE BANKCODE,
+			BD.BANKNAME,
+			case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
+			  case when LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
+			CUST.CUSTCIF,
+			CUST.CUSTSHRTNAME,
+			FT.FINTYPEDESC FINTYPE ,
+			FIN.FINREFERENCE ,
+			(SELECT SUM(MAX(FSD.REPAYAMOUNT+FSD.FEESCHD)) FROM FINSCHEDULEDETAILS FSD INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE =FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID GROUP BY FM.FINREFERENCE) CUST_EMI,
+			(SELECT MAX(REPAYAMOUNT+FEESCHD) FROM FINSCHEDULEDETAILS WHERE FINREFERENCE =FIN.FINREFERENCE AND REPAYONSCHDATE =1)/CCYMINORCCYUNITS EMI,
+			  CASE M.OPENMANDATE
+			    WHEN 1
+			    THEN 'New Open ECS'
+			    ELSE 'No Open ECS'
+			  END OPENMANDATE,
+			M.ACCNUMBER,
+			M.ACCTYPE,
+			M.ACCHOLDERNAME,
+			BB.MICR,
+			(SELECT MIN(FIRSTREPAYDATE) FIRSTDUEDATE FROM FINPFTDETAILS WHERE FINREFERENCE=FIN.FINREFERENCE) FIRSTDUEDATE,
+			(SELECT MAX(MATURITYDATE) EMIENDDATE FROM FINPFTDETAILS WHERE FINREFERENCE=FIN.FINREFERENCE) EMIENDDATE,
+			 COALESCE (M.MAXLIMIT, 0)/CCYMINORCCYUNITS MAXLIMIT, 
+			    (SELECT SUM(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID) AND REPAYONSCHDATE =1
+			  )/CCYMINORCCYUNITS DEBITAMOUNT,
+			  M.STARTDATE,
+			  M.EXPIRYDATE,
+			  FIN.APPLICATIONNO,
+			  M.MANDATETYPE,
+			  M.STATUS,
+			  M.INPUTDATE,
+			  M.RECORDSTATUS,
+			  M.RECORDTYPE,
+			    M.MANDATECCY,
+			  COALESCE (CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS
+			FROM MANDATES M
+			INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+			INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE 
+			INNER JOIN CUSTOMERS CUST   ON CUST.CUSTID = M.CUSTID
+			  INNER JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH 
+			  LEFT OUTER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
+			LEFT OUTER JOIN FINANCEMAIN FIN ON M.ORGREFERENCE=FIN.FINREFERENCE
+			  LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH 
+			LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE =FT.FINTYPE 
+			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS)
+			
+		</createView>
+	</changeSet> 
+	<changeSet id="20" author="Siva">
+		<createView viewName="FINODCRECOVERY_VIEW" replaceIfExists="true">
+			 SELECT   T1.FinReference, T1.SchDate FinODSchdDate, T1.SchdFor FinODFor, T3.ValueDate MovementDate, T1.RepaySchID SeqNo, T1.DaysLate ODDays, 
+  (T1.PrincipalSchdBal + T1.ProfitSchdBal) FinCurODAmt, T1.PrincipalSchdBal FinCurODPri, T1.ProfitSchdBal FinCurODPft, 
+                      T5.ODChargeType PenaltyType, T5.ODChargeCalOn PenaltyCalOn, T5.ODChargeAmtOrPerc PenaltyAmtPerc, T1.PenaltyAmt Penalty, 
+                      T1.MaxWaiver, T1.WaivedAmt, T1.PenaltyPayNow PenaltyPaid,(T1.PenaltyAmt -T1.PenaltyPayNow - T1.WaivedAmt)  PenaltyBal, 0 RcdCanDel, 
+                      T4.CustCIF lovDescCustCIF, T4.CustShrtName lovDescCustShrtName
+                      , T2.FinStartDate lovDescFinStartDate, T2.MaturityDate lovDescMaturityDate, T2.FinAmount lovDescFinAmount
+                      , T2.FinAmount-T2.FinRepaymentAmount lovDescCurFinAmt,T2.FinCcy
+					  , FinCurODPri LovDescCurSchPriDue
+					  , FinCurODPft LovDescCurSchPftDue
+					  , T5.TotPenaltyAmt LovDescTotOvrDueChrg
+					  , TotWaived LovDescTotOvrDueChrgWaived
+					  , TotPenaltyPaid LovDescTotOvrDueChrgPaid
+FROM          FinRepayScheduleDetail T1 INNER JOIN
+                       FinanceMain T2 ON T1.FinReference = T2.FinReference INNER JOIN
+                       Customers T4 on T4.CustID=T2.CustID INNER JOIN
+                       FinRepayHeader T3 ON T1.RepayID = T3.RepayID INNER JOIN
+                       FINODDetails T5 ON T1.FinReference = T5.FinReference AND T1.SchDate  = T5.FinODSchdDate			
+		</createView>
+	</changeSet>
+	
+	<changeSet id="21" author="Durgaprasad g">
+	  <modifyDataType tableName="PAYMENTINSTRUCTIONS" columnName="FAVOURNUMBER" newDataType="varchar(100)"/>
+	  <modifyDataType tableName="PAYMENTINSTRUCTIONS" columnName="PAYABLELOC" newDataType="varchar(50)"/>
+	  <modifyDataType tableName="PAYMENTINSTRUCTIONS" columnName="PRINTINGLOC" newDataType="varchar(50)"/>
+	  <modifyDataType tableName="PAYMENTINSTRUCTIONS" columnName="ACCTHOLDERNAME" newDataType="varchar(200)"/>
+	</changeSet>
+	<changeSet id="22" author="Durgaprasad g">
+	  <modifyDataType tableName="PAYMENTINSTRUCTIONS_TEMP" columnName="FAVOURNUMBER" newDataType="varchar(100)"/>
+	  <modifyDataType tableName="PAYMENTINSTRUCTIONS_TEMP" columnName="PAYABLELOC" newDataType="varchar(50)"/>
+	  <modifyDataType tableName="PAYMENTINSTRUCTIONS_TEMP" columnName="PRINTINGLOC" newDataType="varchar(50)"/>
+	  <modifyDataType tableName="PAYMENTINSTRUCTIONS_TEMP" columnName="ACCTHOLDERNAME" newDataType="varchar(200)"/>
+	</changeSet>
+	
+	<changeSet id="23" author="Kesav">
+		<createView viewName="FinFeeReceipts_View" replaceIfExists="true">
+			  SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts_Temp  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		      
+		      UNION ALL
+		      
+		      SELECT	    T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		      
+		      WHERE     (NOT EXISTS  (SELECT  1 FROM FinFeeReceipts_Temp WHERE (Id = T1.Id)))
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="24" author="Kesav">
+		<createView viewName="FinFeeReceipts_TView" replaceIfExists="true">
+				SELECT	    T1.Id, T1.FEEID, T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  	T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+		                  	T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  	T4.RECEIPTMODE ReceiptType
+		      	FROM    	FinFeeReceipts_Temp  T1 
+		      	Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      	Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      	Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="25" author="Kesav">
+		<createView viewName="FinFeeReceipts_AView" replaceIfExists="true">
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		</createView>	
+	</changeSet>
+	<changeSet id="26" author="Irfan">
+	<createView viewName="ManualAdviseMovements_View" replaceIfExists="true">
+		Select T1.MovementID, T1.AdviseID, T1.MovementDate, T1.MovementAmount, T1.PaidAmount,  T1.WaivedAmount, T1.Status, T1.ReceiptID, T1.ReceiptSeqID ,T3.FeeTypeCode
+		 From ManualAdviseMovements_Temp T1 INNER JOIN
+			  Manualadvise  T2 ON T1.AdviseID = T2.AdviseID INNER JOIN
+			  FEETYPES T3 ON T2.FeeTypeID = T3.FeeTypeID
+
+UNION ALL
+
+Select T1.MovementID, T1.AdviseID, T1.MovementDate, T1.MovementAmount, T1.PaidAmount,  T1.WaivedAmount, T1.Status, T1.ReceiptID, T1.ReceiptSeqID ,T3.FeeTypeCode
+		 From ManualAdviseMovements T1 INNER JOIN
+			  Manualadvise  T2 ON T1.AdviseID = T2.AdviseID INNER JOIN
+			   FEETYPES T3 ON T2.FeeTypeID = T3.FeeTypeID
+		 
+WHERE     	NOT EXISTS (SELECT 1 FROM ManualAdviseMovements_Temp WHERE MovementID = T1.MovementID)
+	</createView>
+	
+	</changeSet>
+	<changeSet id="27" author="Srikanth">
+	<sql>
+	 Delete from ErrorDetails Where ErrorCode in('90326','90327','90328','90259','90335','90336');
+	 INSERT INTO ErrorDetails VALUES('90326','EN','E','VAS fees should be provided in the request with feeCode as"{VASProduct}".','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 INSERT INTO ErrorDetails VALUES('90327','EN','E','VAS fees not applicable for this loan.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 INSERT INTO ErrorDetails VALUES('90328','EN','E','VAS recording and VAS fees mismatch in the request.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 INSERT INTO ErrorDetails VALUES('90259','EN','E','Negative values are not allowed for feeCode:{0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 INSERT INTO ErrorDetails VALUES('90335','EN','E','Request should contain any one of cif/collateralRef/finReference.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 INSERT INTO ErrorDetails VALUES('90336','EN','E','cif,collateralRef,finReference are mutually exclusive..','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
+	<changeSet id="28" author="Irfan">
+		<dropView viewName="ManualAdviseMovements_View" />
+	</changeSet>
+	<changeSet id="29" author="Irfan">
+	<createView viewName="ManualAdviseMovements_TView" replaceIfExists="true">
+		Select T1.MovementID, T1.AdviseID, T1.MovementDate, T1.MovementAmount, T1.PaidAmount,  T1.WaivedAmount, T1.Status, T1.ReceiptID, T1.ReceiptSeqID ,T3.FeeTypeCode
+		 From ManualAdviseMovements_Temp T1 INNER JOIN
+			  Manualadvise  T2 ON T1.AdviseID = T2.AdviseID INNER JOIN
+			  FEETYPES T3 ON T2.FeeTypeID = T3.FeeTypeID
+	
+	</createView>
+	</changeSet>
+	
+	<changeSet id="30" author="Manoj.P" dbms="oracle">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+			SELECT   
+			   FA. PAYMENTID,
+			   FA.FINREFERENCE,
+			   CASE WHEN FA.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN FA.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN FA.PAYMENTTYPE = 'DD' THEN 'D' WHEN FA.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  FA.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+			   FA.AMTTOBERELEASED/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+			   FA.DISBDATE,
+         FA.LLDATE,
+			   FA.PAYABLELOC,
+			   FA.PRINTINGLOC,
+			   CU.CUSTCIF,            
+			   CU.CUSTSHRTNAME,     
+			  '' AS CUSTOMER_MOBILE,
+			   CE.CUSTEMAIL       CUSTOMER_EMAIL,
+			   CS.CPPROVINCENAME  CUSTOMER_STATE,
+			   CC.PCCITYNAME      CUSTOMER_CITY,
+			   ''                 CUSTOMER_ADDRESS1,
+			   ''                 CUSTOMER_ADDRESS2,
+			   ''                 CUSTOMER_ADDRESS3,
+			   ''                 CUSTOMER_ADDRESS4,
+			   ''                 CUSTOMER_ADDRESS5,
+         BD.BANKNAME BANKNAME,
+        BB.BRANCHCODE,
+        BB.BRANCHDESC BRANCHDESC,
+			  PBD.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+			  PBD.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+			   BB.MICR             MICR_CODE,
+			   BB.IFSC             IFSC_CODE,
+			   FA.BENEFICIARYACCNO,
+			   CASE WHEN FA.PAYMENTTYPE = 'CHEQUE' OR  FA.PAYMENTTYPE = 'DD' THEN FA.LIABILITYHOLDNAME ELSE FA.BENEFICIARYNAME END BENEFICIARYNAME,
+			   FA.PHONECOUNTRYCODE||FA.PHONEAREACODE||FA.PHONENUMBER AS BENEFICIARY_MOBILE, 
+			   BCE.CUSTEMAIL        BENFICIRY_EMAIL,
+			   BRS.CPPROVINCENAME  BENFICIARY_STATE,
+			   BRC.PCCITYNAME      BENFICIARY_CITY,
+			   ''                  BENFICIARY_ADDRESS1,
+			   ''                  BENFICIARY_ADDRESS2,
+			   ''                  BENFICIARY_ADDRESS3,
+			   ''                  BENFICIARY_ADDRESS4,
+			   ''                  BENFICIARY_ADDRESS5,
+			   ''				           PAYMENT_DETAIL1,
+			   ''                  PAYMENT_DETAIL2,
+			   ''                  PAYMENT_DETAIL3,
+			   ''                  PAYMENT_DETAIL4,
+			   ''                  PAYMENT_DETAIL5,
+			   ''                  PAYMENT_DETAIL6,
+			   ''                  PAYMENT_DETAIL7,     
+			   FA.STATUS           STATUS,
+			   FA.DESCRIPTION      REMARKS,
+			     FA.PAYMENTTYPE      PAYMENTTYPE,
+			     FM.FINTYPE,
+			     PB.PARTNERBANKID,
+			     PB.PARTNERBANKCODE,
+			     FA.INPUTDATE,
+			     PB.ALWFILEDOWNLOAD,
+           PB.FILENAME,
+			     FM.FINISACTIVE
+			   FROM FINADVANCEPAYMENTS FA
+			   INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = FA.FINREFERENCE
+			   INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+			   INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FA.DISBCCY
+         INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+			   LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 3
+			   LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+			   LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+			   LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE  
+			   LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = FA.BANKBRANCHID
+			   LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+         LEFT JOIN  (select PB.PARTNERBANKID, PBD.BANKNAME, PBB.BRANCHDESC, PBBRC.PCCITYNAME, PBBRS.CPPROVINCENAME from PARTNERBANKS PB INNER JOIN BANKBRANCHES PBB ON PBB.BANKBRANCHID = PB.BANKBRANCHCODE INNER JOIN BMTBANKDETAIL PBD ON PBD.BANKCODE = PBB.BANKCODE LEFT JOIN RMTPROVINCEVSCITY PBBRC ON PBBRC.PCCITY = PBB.CITY LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS ON PBBRS.CPPROVINCE = PBBRC.PCPROVINCE ) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
+			   LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = FA.BANKBRANCHID AND BR.ACCNUMBER = FA.BENEFICIARYACCNO
+			   LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+			   LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 3
+			   LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+			   LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+			   LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+			   WHERE STATUS='APPROVED' AND PAYMENTID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+		</createView>
+	</changeSet>
+	<changeSet id="30" author="Manoj.P" dbms="mssql">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+			SELECT   
+			   FA. PAYMENTID,
+			   FA.FINREFERENCE,
+			   CASE WHEN FA.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN FA.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN FA.PAYMENTTYPE = 'DD' THEN 'D' WHEN FA.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  FA.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+			   FA.AMTTOBERELEASED/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+			   FA.DISBDATE,
+         FA.LLDATE,
+			   FA.PAYABLELOC,
+			   FA.PRINTINGLOC,
+			   CU.CUSTCIF,            
+			   CU.CUSTSHRTNAME,     
+			  '' AS CUSTOMER_MOBILE,
+			   CE.CUSTEMAIL       CUSTOMER_EMAIL,
+			   CS.CPPROVINCENAME  CUSTOMER_STATE,
+			   CC.PCCITYNAME      CUSTOMER_CITY,
+			   ''                 CUSTOMER_ADDRESS1,
+			   ''                 CUSTOMER_ADDRESS2,
+			   ''                 CUSTOMER_ADDRESS3,
+			   ''                 CUSTOMER_ADDRESS4,
+			   ''                 CUSTOMER_ADDRESS5,
+         BD.BANKNAME BANKNAME,
+        BB.BRANCHCODE,
+        BB.BRANCHDESC BRANCHDESC,
+			  PBD.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+			  PBD.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+			   BB.MICR             MICR_CODE,
+			   BB.IFSC             IFSC_CODE,
+			   FA.BENEFICIARYACCNO,
+			   CASE WHEN FA.PAYMENTTYPE = 'CHEQUE' OR  FA.PAYMENTTYPE = 'DD' THEN FA.LIABILITYHOLDNAME ELSE FA.BENEFICIARYNAME END BENEFICIARYNAME,
+			   FA.PHONECOUNTRYCODE+FA.PHONEAREACODE+FA.PHONENUMBER AS BENEFICIARY_MOBILE, 
+			   BCE.CUSTEMAIL        BENFICIRY_EMAIL,
+			   BRS.CPPROVINCENAME  BENFICIARY_STATE,
+			   BRC.PCCITYNAME      BENFICIARY_CITY,
+			   ''                  BENFICIARY_ADDRESS1,
+			   ''                  BENFICIARY_ADDRESS2,
+			   ''                  BENFICIARY_ADDRESS3,
+			   ''                  BENFICIARY_ADDRESS4,
+			   ''                  BENFICIARY_ADDRESS5,
+			   ''				           PAYMENT_DETAIL1,
+			   ''                  PAYMENT_DETAIL2,
+			   ''                  PAYMENT_DETAIL3,
+			   ''                  PAYMENT_DETAIL4,
+			   ''                  PAYMENT_DETAIL5,
+			   ''                  PAYMENT_DETAIL6,
+			   ''                  PAYMENT_DETAIL7,     
+			   FA.STATUS           STATUS,
+			   FA.DESCRIPTION      REMARKS,
+			     FA.PAYMENTTYPE      PAYMENTTYPE,
+			     FM.FINTYPE,
+			     PB.PARTNERBANKID,
+			     PB.PARTNERBANKCODE,
+			     FA.INPUTDATE,
+			     PB.ALWFILEDOWNLOAD,
+           PB.FILENAME,
+			     FM.FINISACTIVE
+			   FROM FINADVANCEPAYMENTS FA
+			   INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = FA.FINREFERENCE
+			   INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+			   INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FA.DISBCCY
+         INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+			   LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 3
+			   LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+			   LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+			   LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE  
+			   LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = FA.BANKBRANCHID
+			   LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+         LEFT JOIN  (select PB.PARTNERBANKID, PBD.BANKNAME, PBB.BRANCHDESC, PBBRC.PCCITYNAME, PBBRS.CPPROVINCENAME from PARTNERBANKS PB INNER JOIN BANKBRANCHES PBB ON PBB.BANKBRANCHID = PB.BANKBRANCHCODE INNER JOIN BMTBANKDETAIL PBD ON PBD.BANKCODE = PBB.BANKCODE LEFT JOIN RMTPROVINCEVSCITY PBBRC ON PBBRC.PCCITY = PBB.CITY LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS ON PBBRS.CPPROVINCE = PBBRC.PCPROVINCE ) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
+			   LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = FA.BANKBRANCHID AND BR.ACCNUMBER = FA.BENEFICIARYACCNO
+			   LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+			   LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 3
+			   LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+			   LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+			   LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+			   WHERE STATUS='APPROVED' AND PAYMENTID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+		</createView>
+	</changeSet>
+	<changeSet id="31" author="Siva">
+		<createView viewName="ReceiptAllocationDetail_AView" replaceIfExists="true">
+			select T1.ReceiptID, T1.AllocationID, T1.AllocationType, T1.AllocationTo, T1.PaidAmount,
+T1.WaivedAmount, coalesce(T3.FeeTypeDesc, T5.FeeTypeDesc) TypeDesc  from ReceiptAllocationDetail T1  
+LEFT JOIN FinFeeDetail T2 ON T1.AllocationTo = T2.FeeID AND T1.AllocationType = 'FEE'
+LEFT JOIN FeeTypes T3 ON T2.FeeTypeId = T3.FeeTypeId 
+LEFT JOIN ManualAdvise T4 ON T1.AllocationTo = T4.AdviseID AND T1.AllocationType = 'MANADV'
+LEFT JOIN FeeTypes T5 ON T4.FeeTypeId = T5.FeeTypeId 
+		</createView>
+	</changeSet>
+	
+	
+	<changeSet id="31" author="Manoj.P" dbms="oracle">
+		<createView viewName="INT_CF_CONTROL_VIEW" replaceIfExists="true">
+		SELECT 
+				PD.PFTACCRUED/100 ACCRUED_AMOUNT,
+				COALESCE(EA.AMOUNT,0)/100 ADVANCE_EMI,
+				0 ADVANCE_EMI_BILLED,
+				SUBSTR(FM.FINREFERENCE, 7, LENGTH(FM.FINREFERENCE)) AGREEMENTID,
+				FM.FINAPPROVEDDATE AGREEMENTDATE,
+				FM.FINREFERENCE  AGREEMENTNO,
+				FM.FINAMOUNT/100 AMTFIN,
+				FM.FINASSETVALUE/100 ASSETCOST,
+				'' ASSETDESC,
+				TOTALPFTSCHD-TOTALPFTPAID-PFTACCRUED/100 BALANCE_UMFC,
+				0 BOUNCE_CHARGES_DUE,
+				0 BOUNCE_CHARGES_RECEIVED,
+				LB.BANKREFNO BRANCHID,
+				LB.BRANCHDESC BRANCH_NAME, 
+				PS.REPAYAMOUNT BULK_REFUND,
+				0 CHASISNUM,
+				0 CLOSED_CAN_ADV_EMI,
+				0 CLOS_CAN_ADV_EMI_INTCOMP,
+				0 CLOS_CAN_ADV_EMI_PRINCOMP,
+				FM. MATURITYDATE CLOSUREDATE,
+				FM.DUEBUCKET/100 CURRENT_BUCKET,
+				LC.CUSTID CUSTOMERID,
+				LC.CUSTSHRTNAME CUSTOMERNAME,
+				FM.DUEBUCKET  DERIVED_BUCKET,
+				DD.DISBDATE DISBURSALDATE,
+				DD.DISBAMOUNT/100 DISBURSED_AMOUNT,
+				CASE WHEN FM.FINASSETVALUE = FINCURRASSETVALUE THEN 'FD' ELSE 'PD' END DISB_STATUS,
+				PD.CURODDAYS DPD,
+				CASE WHEN FM.EFFECTIVERATEOFRETURN > 999 THEN 999 ELSE FM.EFFECTIVERATEOFRETURN END FLAT_RATE,
+				(PD.ODPRINCIPAL+PD.ODPROFIT)/100 EMI_DUE,
+				PFT.WAIVEDAMOUNT EMI_INTEREST_WAIVED,
+				0 PRINCIPAL_AT_TERM,
+				0 EMI_IN_ADVANCE_BILLED,
+				0 EMI_IN_ADVANCE_RECEIVED_MAKER,
+				EA.BALANCEAMT EMI_IN_ADVANCE_UNBILLED,
+				0 EMI_IN_ADV_BILLED_INTCOMP,
+				0 EMI_IN_ADV_BILLED_PRINCOMP,
+				0 EMI_IN_ADV_UNBILLED_INTCOMP,
+				0 EMI_IN_ADV_UNBILLED_PRINCOMP,
+				PD.TOTALPFTBAL + PD.TOTALPRIBAL/100 EMI_OS,
+				PRI.WAIVEDAMOUNT/100 EMI_PRINCIPAL_WAIVED,
+				PD.TOTALPFTPAID+PD.TOTALPRIPAID/100 EMI_RECEIVED,
+				'' ENGINENUM,
+				PD.FIRSTREPAYDATE FIRST_DUE_DATE,
+				OD.FINODSCHDDATE FIRST_REPAYDUE_DATE,
+				CASE WHEN FM.REPAYPROFITRATE > 999 THEN 999 ELSE  FM.REPAYPROFITRATE END EFFECTIVE_RATE ,
+				FD.PAIDAMOUNT/100 FORECLOSURE_CHARGES_DUE,
+				0 FORECLOSURE_CHARGES_RECEIVED,
+				CASE WHEN M.MANDATETYPE = 'ECS' THEN 'E' WHEN M.MANDATETYPE = 'DDM' THEN 'A' WHEN M.MANDATETYPE = 'NACH' THEN 'Z' ELSE 'C' END INSTRUMENT,
+				0 INSUR_PAID,
+				0 INSUR_PAYABLE,
+				0 INSUR_RECEIVABLE,
+				0 INSUR_RECEIVED,
+				0 INSUR_RENEW_CHARGE,
+				0 INSUR_RENEW_CHARGE_RECD,
+				PD.TOTALPFTBAL/100 INTEREST_BALANCE,
+				PD.TDSCHDPFTBAL/100  INTEREST_DUE,
+				PD.TOTALPFTBAL/100  INTEREST_OS,
+				PD.TOTALPFTPAID/100  INTEREST_RECEIVED,
+				0 INVOICEAMT,
+				FM.FIRSTREPAY/100 LOAN_EMI,
+				CASE FM.FINISACTIVE WHEN 1 THEN 'A' ELSE 'C' END LOAN_STATUS,
+				'' LOCAL_OUTSTATION_FLAG,
+				CHRG.TOTPENALTYBAL/100 LPP_CHARGES_RECEIVABLE,
+				CHRG.TOTPENALTYPAID/100 LPP_CHARGES_RECEIVED,
+				'' MAKE,
+				FM.MATURITYDATE MATURITY_DATE,
+				0 MIGRATED_ADVANCE_EMI,
+				0 MIGRATED_ADVANCE_EMI_BILLED,
+				0 MIGRATED_ADVANCE_EMI_UNBILLED,
+				0 MIG_ADV_EMI_BILLED_INTCOMP,
+				0 MIG_ADV_EMI_BILLED_PRINCOMP,
+				0 MIG_ADV_EMI_UNBILLED_INTCOMP,
+				0 MIG_ADV_EMI_UNBILLED_PRINCOMP,
+				0 MIG_DIFFERENCE_PAID,
+				0 MIG_DIFFERENCE_PAYABLE,
+				0 MIG_DIFFERENCE_RECEIVABLE,
+				0 MIG_DIFFERENCE_RECEIVED,
+				EAE.AMOUNT/100 NET_EXCESS_ADJUSTED,
+				EAE.UTILISEDAMT/100 NET_EXCESS_RECEIVED,
+				ECAE.NO_OF_ADVANCE_EMIS NO_OF_ADVANCE_EMIS,
+				(PD.NOINST - PD.NOPAIDINST)  NO_OF_EMI_OS, 
+				(PD.NOINST - PD.NOPAIDINST - PD.NOODINST) NO_OF_UNBILLED_EMI,
+				CASE WHEN FM.CLOSINGSTATUS='W' THEN 'WRITEOFF' ELSE 'REGULAR' END NPA_STAGEID,
+				0 PDC_SWAP_CHARGES_RECEIVABLE,
+				0 PDC_SWAP_CHARGES_RECEIVED,
+				0 PRINCIPAL_BALANCE,
+				PD.ODPRINCIPAL/100 PRINCIPAL_DUE,
+				PD.TOTALPRIBAL/100 PRINCIPAL_OS,
+				PD.TOTALPRIPAID/100 PRINCIPAL_RECEIVED,
+				PRI.WAIVEDAMOUNT/100 PRINCIPAL_WAIVED,
+				FT.FINCATEGORY PRODUCTFLAG,
+				'' REGDNUM,
+				0 REPO_CHARGES_RECEIVABLE,
+				0 REPO_CHARGES_RECEIVED,
+				'' REPO_DATE,
+				'' ROUNDING_DIFF_RECEIVABLE,
+				'' ROUNDING_DIFF_RECEIVED,
+				ROUND(MONTHS_BETWEEN (FM.MATURITYDATE, FM.FINSTARTDATE)) SANCTIONED_TENURE,
+				FT.ID SCHEMEID, 
+				FT.FINTYPEDESC SCHEME_NAME,
+				0 SECURITY_DEPOSIT,
+				0 SECURITY_DEPOSIT_ADJUSTED,
+				0 SOH_BALANCE,
+				0 SOLD_SEIZE_PAID,
+				0 SOLD_SEIZE_PAYABLE,
+				0 SOLD_SEIZE_RECEIVABLE,
+				0 SOLD_SEIZE_RECEIVED,
+				'' SUPPLIERDESC,
+				PD.TOTALPFTBAL/100 TOTAL_INTEREST,
+				(WD.WRITTENOFFPRI+WD.WRITTENOFFPFT)/100 WRITEOFF_DUE,
+				WP.WRITEOFFPAYAMOUNT/100 WRITEOFF_RECEIVED,
+        FM.LASTREPAYDATE
+				FROM FINANCEMAIN FM 
+				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE 
+				LEFT JOIN FINEXCESSAMOUNT EA ON EA.FINREFERENCE = FM.FINREFERENCE AND EA.AMOUNTTYPE = 'A'
+				LEFT JOIN FINEXCESSAMOUNT EAE ON EAE.FINREFERENCE = FM.FINREFERENCE AND EAE.AMOUNTTYPE = 'E'
+				LEFT JOIN (SELECT COUNT(*) NO_OF_ADVANCE_EMIS, T2.FINREFERENCE  FROM FINEXCESSMOVEMENT T1 INNER JOIN FINEXCESSAMOUNT T2 ON T1.EXCESSID = T2.EXCESSID
+				WHERE  TRANTYPE = 'C' AND AMOUNTTYPE = 'A'
+				GROUP BY T2.FINREFERENCE) ECAE ON ECAE.FINREFERENCE = FM.FINREFERENCE
+				INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE 
+				INNER JOIN CUSTOMERS LC ON LC.CUSTID = FM.CUSTID
+				INNER JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FM.FINBRANCH
+				LEFT JOIN (SELECT FINREFERENCE, SUM(REPAYAMOUNT) REPAYAMOUNT FROM FINREPAYHEADER WHERE FINEVENT= 'PartialSettlement' GROUP BY FINREFERENCE) PS ON PS.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(REPAYAMOUNT) REPAYAMOUNT FROM FINREPAYHEADER WHERE FINEVENT= 'EarlySettlement' GROUP BY FINREFERENCE) ES ON ES.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINDISBURSEMENTDETAILS DD ON DD.FINREFERENCE = FM.FINREFERENCE AND DISBDATE = FM.FINSTARTDATE AND DD.DISBSEQ = 1 
+				LEFT JOIN MANDATES M ON M.ORGREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT REFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT FROM RECEIPTALLOCATIONDETAIL PFT LEFT JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID  = PFT.RECEIPTID AND RH.ALLOCATIONTYPE = 'PRI' GROUP BY REFERENCE) PRI ON PRI.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT REFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT FROM RECEIPTALLOCATIONDETAIL PFT LEFT JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID  = PFT.RECEIPTID AND RH.ALLOCATIONTYPE = 'PFT' GROUP BY REFERENCE) PFT ON PFT.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(TOTPENALTYBAL) TOTPENALTYBAL, SUM(TOTPENALTYPAID) TOTPENALTYPAID FROM FINODDETAILS GROUP BY FINREFERENCE) CHRG ON CHRG.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(PAIDAMOUNT) PAIDAMOUNT FROM FINFEEDETAIL WHERE FINEVENT= 'EarlySettlement' GROUP BY FINREFERENCE) FD ON FD.FINREFERENCE = FM.FINREFERENCE 
+				LEFT JOIN FINWRITEOFFDETAIL WD ON WD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(WRITEOFFPAYAMOUNT)  WRITEOFFPAYAMOUNT FROM FINWRITEOFFPAYMENT GROUP BY FINREFERENCE) WP ON WP.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, MIN(FINODSCHDDATE) FINODSCHDDATE FROM FINODDETAILS group by FINREFERENCE) OD ON OD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINPROVISIONS PR ON PR.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN NPABUCKETS NPB ON NPB.BUCKETID = PR.NPABUCKETID
+		</createView>
+	</changeSet>
+	<changeSet id="31" author="Manoj.P" dbms="mssql">
+		<createView viewName="INT_CF_CONTROL_VIEW" replaceIfExists="true">
+		SELECT 
+				PD.PFTACCRUED/100 ACCRUED_AMOUNT,
+				COALESCE(EA.AMOUNT,0)/100 ADVANCE_EMI,
+				0 ADVANCE_EMI_BILLED,
+				SUBSTRING(FM.FINREFERENCE, 7, LEN(FM.FINREFERENCE)) AGREEMENTID,
+				FM.FINAPPROVEDDATE AGREEMENTDATE,
+				FM.FINREFERENCE  AGREEMENTNO,
+				FM.FINAMOUNT/100 AMTFIN,
+				FM.FINASSETVALUE/100 ASSETCOST,
+				'' ASSETDESC,
+				TOTALPFTSCHD-TOTALPFTPAID-PFTACCRUED/100 BALANCE_UMFC,
+				0 BOUNCE_CHARGES_DUE,
+				0 BOUNCE_CHARGES_RECEIVED,
+				LB.BANKREFNO BRANCHID,
+				LB.BRANCHDESC BRANCH_NAME, 
+				PS.REPAYAMOUNT BULK_REFUND,
+				0 CHASISNUM,
+				0 CLOSED_CAN_ADV_EMI,
+				0 CLOS_CAN_ADV_EMI_INTCOMP,
+				0 CLOS_CAN_ADV_EMI_PRINCOMP,
+				FM. MATURITYDATE CLOSUREDATE,
+				FM.DUEBUCKET/100 CURRENT_BUCKET,
+				LC.CUSTID CUSTOMERID,
+				LC.CUSTSHRTNAME CUSTOMERNAME,
+				FM.DUEBUCKET  DERIVED_BUCKET,
+				DD.DISBDATE DISBURSALDATE,
+				DD.DISBAMOUNT/100 DISBURSED_AMOUNT,
+				CASE WHEN FM.FINASSETVALUE = FINCURRASSETVALUE THEN 'FD' ELSE 'PD' END DISB_STATUS,
+				PD.CURODDAYS DPD,
+				CASE WHEN FM.EFFECTIVERATEOFRETURN > 999 THEN 999 ELSE FM.EFFECTIVERATEOFRETURN END FLAT_RATE,
+				(PD.ODPRINCIPAL+PD.ODPROFIT)/100 EMI_DUE,
+				PFT.WAIVEDAMOUNT EMI_INTEREST_WAIVED,
+				0 PRINCIPAL_AT_TERM,
+				0 EMI_IN_ADVANCE_BILLED,
+				0 EMI_IN_ADVANCE_RECEIVED_MAKER,
+				EA.BALANCEAMT EMI_IN_ADVANCE_UNBILLED,
+				0 EMI_IN_ADV_BILLED_INTCOMP,
+				0 EMI_IN_ADV_BILLED_PRINCOMP,
+				0 EMI_IN_ADV_UNBILLED_INTCOMP,
+				0 EMI_IN_ADV_UNBILLED_PRINCOMP,
+				PD.TOTALPFTBAL + PD.TOTALPRIBAL/100 EMI_OS,
+				PRI.WAIVEDAMOUNT/100 EMI_PRINCIPAL_WAIVED,
+				PD.TOTALPFTPAID+PD.TOTALPRIPAID/100 EMI_RECEIVED,
+				'' ENGINENUM,
+				PD.FIRSTREPAYDATE FIRST_DUE_DATE,
+				OD.FINODSCHDDATE FIRST_REPAYDUE_DATE,
+				CASE WHEN FM.REPAYPROFITRATE > 999 THEN 999 ELSE  FM.REPAYPROFITRATE END EFFECTIVE_RATE ,
+				FD.PAIDAMOUNT/100 FORECLOSURE_CHARGES_DUE,
+				0 FORECLOSURE_CHARGES_RECEIVED,
+				CASE WHEN M.MANDATETYPE = 'ECS' THEN 'E' WHEN M.MANDATETYPE = 'DDM' THEN 'A' WHEN M.MANDATETYPE = 'NACH' THEN 'Z' ELSE 'C' END INSTRUMENT,
+				0 INSUR_PAID,
+				0 INSUR_PAYABLE,
+				0 INSUR_RECEIVABLE,
+				0 INSUR_RECEIVED,
+				0 INSUR_RENEW_CHARGE,
+				0 INSUR_RENEW_CHARGE_RECD,
+				PD.TOTALPFTBAL/100 INTEREST_BALANCE,
+				PD.TDSCHDPFTBAL/100  INTEREST_DUE,
+				PD.TOTALPFTBAL/100  INTEREST_OS,
+				PD.TOTALPFTPAID/100  INTEREST_RECEIVED,
+				0 INVOICEAMT,
+				FM.FIRSTREPAY/100 LOAN_EMI,
+				CASE FM.FINISACTIVE WHEN 1 THEN 'A' ELSE 'C' END LOAN_STATUS,
+				'' LOCAL_OUTSTATION_FLAG,
+				CHRG.TOTPENALTYBAL/100 LPP_CHARGES_RECEIVABLE,
+				CHRG.TOTPENALTYPAID/100 LPP_CHARGES_RECEIVED,
+				'' MAKE,
+				FM.MATURITYDATE MATURITY_DATE,
+				0 MIGRATED_ADVANCE_EMI,
+				0 MIGRATED_ADVANCE_EMI_BILLED,
+				0 MIGRATED_ADVANCE_EMI_UNBILLED,
+				0 MIG_ADV_EMI_BILLED_INTCOMP,
+				0 MIG_ADV_EMI_BILLED_PRINCOMP,
+				0 MIG_ADV_EMI_UNBILLED_INTCOMP,
+				0 MIG_ADV_EMI_UNBILLED_PRINCOMP,
+				0 MIG_DIFFERENCE_PAID,
+				0 MIG_DIFFERENCE_PAYABLE,
+				0 MIG_DIFFERENCE_RECEIVABLE,
+				0 MIG_DIFFERENCE_RECEIVED,
+				EAE.AMOUNT/100 NET_EXCESS_ADJUSTED,
+				EAE.UTILISEDAMT/100 NET_EXCESS_RECEIVED,
+				ECAE.NO_OF_ADVANCE_EMIS NO_OF_ADVANCE_EMIS,
+				(PD.NOINST - PD.NOPAIDINST)  NO_OF_EMI_OS, 
+				(PD.NOINST - PD.NOPAIDINST - PD.NOODINST) NO_OF_UNBILLED_EMI,
+				CASE WHEN FM.CLOSINGSTATUS='W' THEN 'WRITEOFF' ELSE 'REGULAR' END NPA_STAGEID,
+				0 PDC_SWAP_CHARGES_RECEIVABLE,
+				0 PDC_SWAP_CHARGES_RECEIVED,
+				0 PRINCIPAL_BALANCE,
+				PD.ODPRINCIPAL/100 PRINCIPAL_DUE,
+				PD.TOTALPRIBAL/100 PRINCIPAL_OS,
+				PD.TOTALPRIPAID/100 PRINCIPAL_RECEIVED,
+				PRI.WAIVEDAMOUNT/100 PRINCIPAL_WAIVED,
+				FT.FINCATEGORY PRODUCTFLAG,
+				'' REGDNUM,
+				0 REPO_CHARGES_RECEIVABLE,
+				0 REPO_CHARGES_RECEIVED,
+				'' REPO_DATE,
+				'' ROUNDING_DIFF_RECEIVABLE,
+				'' ROUNDING_DIFF_RECEIVED,
+				ROUND(DATEDIFF (mm,FM.MATURITYDATE, FM.FINSTARTDATE),2) SANCTIONED_TENURE,
+				FT.ID SCHEMEID, 
+				FT.FINTYPEDESC SCHEME_NAME,
+				0 SECURITY_DEPOSIT,
+				0 SECURITY_DEPOSIT_ADJUSTED,
+				0 SOH_BALANCE,
+				0 SOLD_SEIZE_PAID,
+				0 SOLD_SEIZE_PAYABLE,
+				0 SOLD_SEIZE_RECEIVABLE,
+				0 SOLD_SEIZE_RECEIVED,
+				'' SUPPLIERDESC,
+				PD.TOTALPFTBAL/100 TOTAL_INTEREST,
+				(WD.WRITTENOFFPRI+WD.WRITTENOFFPFT)/100 WRITEOFF_DUE,
+				WP.WRITEOFFPAYAMOUNT/100 WRITEOFF_RECEIVED,
+        FM.LASTREPAYDATE
+				FROM FINANCEMAIN FM 
+				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE 
+				LEFT JOIN FINEXCESSAMOUNT EA ON EA.FINREFERENCE = FM.FINREFERENCE AND EA.AMOUNTTYPE = 'A'
+				LEFT JOIN FINEXCESSAMOUNT EAE ON EAE.FINREFERENCE = FM.FINREFERENCE AND EAE.AMOUNTTYPE = 'E'
+				LEFT JOIN (SELECT COUNT(*) NO_OF_ADVANCE_EMIS, T2.FINREFERENCE  FROM FINEXCESSMOVEMENT T1 INNER JOIN FINEXCESSAMOUNT T2 ON T1.EXCESSID = T2.EXCESSID
+				WHERE  TRANTYPE = 'C' AND AMOUNTTYPE = 'A'
+				GROUP BY T2.FINREFERENCE) ECAE ON ECAE.FINREFERENCE = FM.FINREFERENCE
+				INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE 
+				INNER JOIN CUSTOMERS LC ON LC.CUSTID = FM.CUSTID
+				INNER JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FM.FINBRANCH
+				LEFT JOIN (SELECT FINREFERENCE, SUM(REPAYAMOUNT) REPAYAMOUNT FROM FINREPAYHEADER WHERE FINEVENT= 'PartialSettlement' GROUP BY FINREFERENCE) PS ON PS.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(REPAYAMOUNT) REPAYAMOUNT FROM FINREPAYHEADER WHERE FINEVENT= 'EarlySettlement' GROUP BY FINREFERENCE) ES ON ES.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINDISBURSEMENTDETAILS DD ON DD.FINREFERENCE = FM.FINREFERENCE AND DISBDATE = FM.FINSTARTDATE AND DD.DISBSEQ = 1 
+				LEFT JOIN MANDATES M ON M.ORGREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT REFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT FROM RECEIPTALLOCATIONDETAIL PFT LEFT JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID  = PFT.RECEIPTID AND RH.ALLOCATIONTYPE = 'PRI' GROUP BY REFERENCE) PRI ON PRI.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT REFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT FROM RECEIPTALLOCATIONDETAIL PFT LEFT JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID  = PFT.RECEIPTID AND RH.ALLOCATIONTYPE = 'PFT' GROUP BY REFERENCE) PFT ON PFT.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(TOTPENALTYBAL) TOTPENALTYBAL, SUM(TOTPENALTYPAID) TOTPENALTYPAID FROM FINODDETAILS GROUP BY FINREFERENCE) CHRG ON CHRG.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(PAIDAMOUNT) PAIDAMOUNT FROM FINFEEDETAIL WHERE FINEVENT= 'EarlySettlement' GROUP BY FINREFERENCE) FD ON FD.FINREFERENCE = FM.FINREFERENCE 
+				LEFT JOIN FINWRITEOFFDETAIL WD ON WD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(WRITEOFFPAYAMOUNT)  WRITEOFFPAYAMOUNT FROM FINWRITEOFFPAYMENT GROUP BY FINREFERENCE) WP ON WP.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, MIN(FINODSCHDDATE) FINODSCHDDATE FROM FINODDETAILS group by FINREFERENCE) OD ON OD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINPROVISIONS FPR ON FPR.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN NPABUCKETS NPB ON NPB.BUCKETID = FPR.NPABUCKETID
+		</createView>
+	</changeSet>
+	<changeSet id="32" author="Manoj.P">
+		<sql>
+			 UPDATE BMTBankDetail set BANKSHORTCODE = NULL WHERE BANKSHORTCODE IN (
+			select BANKSHORTCODE from BMTBankDetail group by BANKSHORTCODE having count(*) > 1);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="33" author="Durgaprasad G">
+	 <addColumn tableName="PAYMENTHEADER">
+	   <column name="linkedTranId" type="bigint"/>
+	 </addColumn>
+	 <addColumn tableName="PAYMENTHEADER_TEMP">
+	   <column name="linkedTranId" type="bigint"/>
+	 </addColumn>
+	
+	</changeSet>
+	
+	<changeSet id="34" author="Durgaprasad G">
+	<createView viewName="FINTYPEPARTNERBANKS_AVIEW" replaceIfExists="true">
+		  SELECT	 T1.ID, T1.FinType, T1.Purpose, T1.PaymentMode, T1.PartnerBankID	, T1.Version , 
+					 T1.LASTMNTBY, T1.LASTMNTON,T1.RECORDSTATUS, T1.ROLECODE, T1.NEXTROLECODE, T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID,
+					 T2.PARTNERBANKCODE, T2.PARTNERBANKNAME, T2.ACTIVE, T2.ACCOUNTNO, T2.ACTYPE ACCOUNTTYPE
+			FROM     FINTYPEPARTNERBANKS  T1  LEFT JOIN PartnerBanks T2  ON T1.PartnerBankID =  T2.PartnerBankID
+	</createView>
+	</changeSet>
+	
+	<changeSet id="35" author="Durgaprasad G">
+	<createView viewName="PAYMENTINSTRUCTIONS_VIEW" replaceIfExists="true">
+		SELECT	 T1.PAYMENTINSTRUCTIONID, T1.PAYMENTID, T1.PAYMENTTYPE, T1.PAYMENTAMOUNT, T1.REMARKS, T1.PARTNERBANKID,
+					 T1.IssuingBank, T1.FavourName, T1.FavourNumber, T1.PayableLoc, T1.PrintingLoc, T1.ValueDate, T1.PostDate,
+					 T1.BankBranchID, T1.AcctHolderName, T1.AccountNo, T1.PhoneCountryCode, T1.PhoneNumber, 
+					 T1.Clearingdate, T1.Active, T1.PaymentCCy,
+					 T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+					 T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID, T1.Status,
+					 T5.PARTNERBANKCODE, T5.PARTNERBANKNAME,
+					 T3.BANKCODE BRANCHBANKCODE,T3.BRANCHCODE BANKBRANCHCODE, T3.IFSC BANKBRANCHIFSC, T3.CITY,
+					 T4.BANKNAME ISSUINGBANKNAME, T6.PcCityName PCCityName, T3.BranchDesc, T2.BankName,
+					 T5.ACCOUNTNO partnerBankAc, T5.ACTYPE partnerBankAcType
+					 FROM     PaymentInstructions_Temp  T1 LEFT OUTER JOIN
+					 BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID  LEFT OUTER JOIN
+					 BMTBANKDETAIL T2 ON T2.BANKCODE = T3.BANKCODE LEFT OUTER JOIN		 
+					 BMTBANKDETAIL T4  ON T1.ISSUINGBANK = T4.BANKCODE	LEFT OUTER JOIN
+					 PARTNERBANKS T5 ON T5.PARTNERBANKID=T1.PARTNERBANKID LEFT OUTER JOIN
+					 RMTPROVINCEVSCITY T6 ON T6.PCCITY = T3.CITY   
+			UNION ALL
+					SELECT	 T1.PAYMENTINSTRUCTIONID, T1.PAYMENTID, T1.PAYMENTTYPE, T1.PAYMENTAMOUNT, T1.REMARKS, T1.PARTNERBANKID,
+					 T1.IssuingBank, T1.FavourName, T1.FavourNumber, T1.PayableLoc, T1.PrintingLoc, T1.ValueDate, T1.PostDate,
+					 T1.BankBranchID, T1.AcctHolderName, T1.AccountNo, T1.PhoneCountryCode, T1.PhoneNumber, 
+					 T1.Clearingdate, T1.Active, T1.PaymentCCy,
+					 T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+					 T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID, T1.Status,
+					 T5.PARTNERBANKCODE, T5.PARTNERBANKNAME,
+					 T3.BANKCODE BRANCHBANKCODE,T3.BRANCHCODE BANKBRANCHCODE, T3.IFSC BANKBRANCHIFSC, T3.CITY,
+					 T4.BANKNAME ISSUINGBANKNAME, 
+					 T6.PcCityName PCCityName, T3.BranchDesc, T2.BankName,
+					 T5.ACCOUNTNO PartnerBankAc, T5.ACTYPE PartnerBankAcType
+					 FROM  PaymentInstructions  T1 LEFT OUTER JOIN
+					 BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID  LEFT OUTER JOIN
+					 BMTBANKDETAIL T2 ON T2.BANKCODE = T3.BANKCODE LEFT OUTER JOIN		 
+					 BMTBANKDETAIL T4  ON T1.ISSUINGBANK = T4.BANKCODE	LEFT OUTER JOIN
+					 PARTNERBANKS T5 ON T5.PARTNERBANKID=T1.PARTNERBANKID LEFT OUTER JOIN
+					 RMTPROVINCEVSCITY T6 ON T6.PCCITY = T3.CITY 
+					WHERE NOT EXISTS ( SELECT 1  FROM PaymentInstructions_Temp WHERE PaymentInstructionId = T1.PaymentInstructionId)
+	</createView>
+	</changeSet>
+	
+	<changeSet id="36" author="Durgaprasad G">
+	 <createView viewName="PAYMENTINSTRUCTIONS_AVIEW" replaceIfExists="true">
+	    SELECT	 T1.PAYMENTINSTRUCTIONID, T1.PAYMENTID, T1.PAYMENTTYPE, T1.PAYMENTAMOUNT, T1.REMARKS, T1.PARTNERBANKID,
+				 T1.IssuingBank, T1.FavourName, T1.FavourNumber, T1.PayableLoc, T1.PrintingLoc, T1.ValueDate, T1.PostDate,
+				 T1.BankBranchID, T1.AcctHolderName, T1.AccountNo, T1.PhoneCountryCode, T1.PhoneNumber, 
+				 T1.Clearingdate, T1.Active, T1.PaymentCCy,
+				 T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+				 T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID,  T1.Status,
+				 T5.PARTNERBANKCODE, T5.PARTNERBANKNAME,
+				 T3.BANKCODE BRANCHBANKCODE,T3.BRANCHCODE BANKBRANCHCODE, T3.IFSC BANKBRANCHIFSC, T3.CITY,
+				 T4.BANKNAME ISSUINGBANKNAME, 
+				 T6.PcCityName PCCityName, T3.BranchDesc, T2.BankName, T5.ACCOUNTNO partnerBankAc, T5.ACTYPE partnerBankAcType
+				 FROM  PaymentInstructions  T1 LEFT OUTER JOIN
+				 BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID  LEFT OUTER JOIN
+				 BMTBANKDETAIL T2 ON T2.BANKCODE = T3.BANKCODE LEFT OUTER JOIN		 
+				 BMTBANKDETAIL T4  ON T1.ISSUINGBANK = T4.BANKCODE	LEFT OUTER JOIN
+				 PARTNERBANKS T5 ON T5.PARTNERBANKID=T1.PARTNERBANKID LEFT OUTER JOIN
+				 RMTPROVINCEVSCITY T6 ON T6.PCCITY = T3.CITY
+	 </createView>
+	
+	</changeSet>
+	
+	<changeSet id="37" author="Durgaprasad G">
+	 <sql>
+		DELETE from BMTAmountCodes Where allowedevent = 'PAYMTINS' AND amountCode = 'pi_payableAdvice';
+		DELETE from BMTAmountCodes Where allowedevent = 'PAYMTINS' AND amountCode = 'pi_excessAmount';
+		DELETE from BMTAmountCodes Where allowedevent = 'PAYMTINS' AND amountCode = 'pi_emiInAdvance';
+		DELETE from BMTAmountCodes Where allowedevent = 'PAYMTINS' AND amountCode = 'pi_paymentAmount';
+		
+		Insert into BMTAmountCodes Values ('PAYMTINS','0','pi_payableAdvice', 'Payable advise Amount', '1', 1, 1005, Current_TimeStamp, 'Approved', null, null, null, null, null, 0 ); 
+		Insert into BMTAmountCodes Values ('PAYMTINS','0','pi_excessAmount', 'Excess Amount', '1', 1, 1005,  Current_TimeStamp, 'Approved', null, null, null, null, null, 0 ); 
+		Insert into BMTAmountCodes Values ('PAYMTINS','0','pi_emiInAdvance', 'EMI in Advance Amount', '1', 1, 1005, Current_TimeStamp, 'Approved', null, null, null, null, null, 0 ); 
+		Insert into BMTAmountCodes Values ('PAYMTINS','0','pi_paymentAmount', 'Payment Amount', '1', 1, 1005, Current_TimeStamp, 'Approved', null, null, null, null, null, 0 ); 
+	 </sql>
+	</changeSet>
+	
+	<changeSet id="38" author="Durgaprasad G">
+	 <sql>
+	 delete from SMTPARAMETERS where sysparmcode='ROUND_LASTSCHD';
+	  INSERT INTO SMTPARAMETERS VALUES ('ROUND_LASTSCHD', 'Round Last Schedule also 0/1', 'int ', '1',  '1', '4', '0',null, null, '0: Do not round 1: Round as per Loan Type', '1', '1000',  CURRENT_TIMESTAMP, 'Approved', null,null,null,null,null, '0');
+	 </sql>
+	 </changeSet>
+	
+	<changeSet id="39" author="Manoj.P">
+		<sql>
+			 update data_engine_config set FILENAMEFORMAT = '${PARTNER_BANK_CODE}, ${ddMMYYYYHHmmss}' where NAME IN ('DISB_OTHER_CHEQUE_DD_EXPORT', 'DISB_OTHER_NEFT_RTGS_EXPORT');
+		</sql>
+	</changeSet>
+	
+	<changeSet id="40" author="Siva">
+		<sql>
+						
+			DELETE FROM SECGROUPRIGHTS WHERE GRPID = (Select GRPID FROM SECGROUPS WHERE GRPCODE = 'FEERECEIPT_MAKER') AND RIGHTID = (Select RIGHTID FROM SecRIGHTS WHERE RIGHTNAME = 'FeeReceiptDialog_depositDate');
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FeeReceiptDialog_realizationDate','FeeReceiptDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'FEEDEPOSIT_MAKER', 'Fee Receipt Deposit Maker','FINANCE', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'FEEDEPOSIT_APPROVER', 'Fee Receipt Deposit Approver','FINANCE', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'FEERECEIPTREALIZE_MAKER', 'Fee Receipt Realization Maker','FINANCE', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'FEERECEIPTREALIZE_APPROVER', 'Fee Receipt Realization Approver','FINANCE', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FEEDEPOSIT_MAKER', 'Fee Receipt Deposit Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FEEDEPOSIT_APPROVER', 'Fee Receipt Deposit Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FEERECEIPTREALIZE_MAKER', 'Fee Receipt Realization Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FEERECEIPTREALIZE_APPROVER', 'Fee Receipt Realization Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='DPM'), (Select  RoleID  From SecRoles Where RoleCd='FEEDEPOSIT_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='DPA'), (Select  RoleID  From SecRoles Where RoleCd='FEEDEPOSIT_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='RRLM'), (Select  RoleID  From SecRoles Where RoleCd='FEERECEIPTREALIZE_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='RRLA'), (Select  RoleID  From SecRoles Where RoleCd='FEERECEIPTREALIZE_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FEEDEPOSIT_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='FEEDEPOSIT_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FEEDEPOSIT_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='FEEDEPOSIT_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FEERECEIPTREALIZE_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='FEERECEIPTREALIZE_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FEERECEIPTREALIZE_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='FEERECEIPTREALIZE_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEEDEPOSIT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FeeReceiptDialog_btnReceipt'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEEDEPOSIT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEEDEPOSIT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_FeeReceipts'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEEDEPOSIT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeReceiptDialog_depositDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEEDEPOSIT_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FeeReceiptDialog_btnReceipt'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEEDEPOSIT_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEEDEPOSIT_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_FeeReceipts'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEERECEIPTREALIZE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FeeReceiptDialog_btnReceipt'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEERECEIPTREALIZE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEERECEIPTREALIZE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_FeeReceipts'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEERECEIPTREALIZE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeReceiptDialog_realizationDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEERECEIPTREALIZE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FeeReceiptDialog_btnReceipt'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEERECEIPTREALIZE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEERECEIPTREALIZE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_FeeReceipts'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+		</sql>
+	</changeSet>
+	<changeSet author="Pruthvi" id="41">
+<sql>
+update WorkFlowDetails set workflowactive='0' where workflowtype='FEERECEIPT_PROCESS';
+	</sql>
+	</changeSet>
+	
+<changeSet author="Jayant" id="42">
+		<insert tableName="WorkFlowDetails">
+			<column name="WorkFlowId"
+				valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowType">FEERECEIPT_PROCESS</column>
+			<column name="WorkFlowSubType">Fee Receipt Workflow Process</column>
+			<column name="WorkFlowDesc">Fee Receipt Workflow Process</column>
+			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowRoles">FEERECEIPT_MAKER;FEERECEIPT_APPROVER;FEEDEPOSIT_MAKER;FEEDEPOSIT_APPROVER;FEERECEIPTREALIZE_MAKER;FEERECEIPTREALIZE_APPROVER</column>
+			<column name="FirstTaskOwner">FEERECEIPT_MAKER</column>
+			<column name="WorkFlowActive">1</column>
+			<column name="Version">0</column>
+			<column name="LastMntBy">1000</column>
+			<column name="LastMntOn">12-JUN-2017</column>
+			<column name="RecordStatus">Null</column>
+			<column name="RoleCode">Null</column>
+			<column name="NextRoleCode">Null</column>
+			<column name="TaskId">Null</column>
+			<column name="NextTaskId">Null</column>
+			<column name="RecordType">NULL</column>
+		</insert>
+</changeSet>
+
+<changeSet id="43" author="Jayant">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":"CCMS_MSTGRP1","properties":{"name":"Fee Receipt Process Detail\n","documentation":"","auditing":"","monitoring":"","executable":"true","package":"","vardefs":"","imports":"","id":"FEERECEIPT_PROCESS","version":"","author":"","language":"English","namespaces":"","targetnamespace":"http://www.omg.org/bpmn20","expressionlanguage":"http://www.w3.org/1999/XPath","typelanguage":"http://www.w3.org/2001/XMLSchema","creationdate":"","modificationdate":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"_FF9D4911-C022-42B0-B00A-9C353226F4A7","properties":{"name":"Start","documentation":"","auditing":"","monitoring":"","dataoutputassociations":"","dataoutput":"","outputset":"","bgcolor":"#C5F970","trigger":"None"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"_5EE9B2AF-F8EA-432C-BB52-88124AA2A117"}],"bounds":{"lowerRight":{"x":60,"y":138},"upperLeft":{"x":30,"y":108}},"dockers":[]},{"resourceId":"_7B64C6C5-337C-44C2-98C6-A723EC862BFF","properties":{"name":"Fee Receipt Maker","documentation":"","auditing":"","monitoring":"","categories":"","startquantity":1,"completionquantity":1,"isforcompensation":false,"assignments":"","callacitivity":"","tasktype":"User","implementation":"webService","resources":"","messageref":"","operationref":"","instantiate":"","script":"","script_language":"","inmessagetype":"","outmessagetype":"","servicename":"","namespace":"","operation":"","porttype":"","wsdlurl":"","bgcolor":"#FF6600","looptype":"None","testbefore":"","loopcondition":"","loopmaximum":"","loopcardinality":"","loopdatainput":"","loopdataoutput":"","inputdataitem":"","outputdataitem":"","behavior":"all","complexbehaviordefinition":"","completioncondition":"","onebehavioreventref":"signal","nonebehavioreventref":"signal","properties":"","datainputset":"","dataoutputset":"","ruleflowgroup":"","onentryactions":"scope=Own","onexitactions":"","taskname":"","actors":"FEERECEIPT_MAKER"},"stencil":{"id":"Task"},"childShapes":[],"outgoing":[{"resourceId":"_B4A70293-13FD-44EB-A4C3-78A38AC643B9"},{"resourceId":"_9305AD0C-8EA2-46BB-AD97-8B650D65B67D"}],"bounds":{"lowerRight":{"x":190,"y":163},"upperLeft":{"x":90,"y":83}},"dockers":[]},{"resourceId":"_5EE9B2AF-F8EA-432C-BB52-88124AA2A117","properties":{"name":"","documentation":"","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_7B64C6C5-337C-44C2-98C6-A723EC862BFF"}],"bounds":{"lowerRight":{"x":89.2734375,"y":123},"upperLeft":{"x":60.84375,"y":123}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"_7B64C6C5-337C-44C2-98C6-A723EC862BFF"}},{"resourceId":"_77E97F8E-6071-449B-9BD7-4B0F3A5A657A","properties":{"name":"Fee Receipt Approver","documentation":"","auditing":"","monitoring":"","categories":"","startquantity":1,"completionquantity":1,"isforcompensation":"","assignments":"","callacitivity":"","tasktype":"User","implementation":"webService","resources":"","messageref":"","operationref":"","instantiate":"","script":"","script_language":"","inmessagetype":"","outmessagetype":"","servicename":"","namespace":"","operation":"","porttype":"","wsdlurl":"","bgcolor":"#FF6600","looptype":"None","testbefore":"","loopcondition":"","loopmaximum":"","loopcardinality":"","loopdatainput":"","loopdataoutput":"","inputdataitem":"","outputdataitem":"","behavior":"all","complexbehaviordefinition":"","completioncondition":"","onebehavioreventref":"signal","nonebehavioreventref":"signal","properties":"","datainputset":"","dataoutputset":"","ruleflowgroup":"","onentryactions":"show_tabs=Accounting","onexitactions":"","taskname":"","actors":"FEERECEIPT_APPROVER"},"stencil":{"id":"Task"},"childShapes":[],"outgoing":[{"resourceId":"_00E367A7-32B3-4238-95E1-394CAF4A448E"}],"bounds":{"lowerRight":{"x":640,"y":163},"upperLeft":{"x":540,"y":83}},"dockers":[]},{"resourceId":"_9305AD0C-8EA2-46BB-AD97-8B650D65B67D","properties":{"name":"Submit","documentation":"Submit=Submitted","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Submitted'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_AB8F675B-702B-49EB-ABD2-0F901B4EC5B5"}],"bounds":{"lowerRight":{"x":329.76562782100575,"y":123.45074970978861},"upperLeft":{"x":190.33593467899422,"y":123.11956279021139}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"_AB8F675B-702B-49EB-ABD2-0F901B4EC5B5"}},{"resourceId":"_C0021C4A-21DA-4AB3-83DF-43DE36042CD0","properties":{"name":"","documentation":"","auditing":"","monitoring":"","categories":"","assignments":"","pool":"","lanes":"","gates":"","gates_outgoingsequenceflow":"","gates_assignments":"","bgcolor":"#ffffff","gatewaytype":"XOR","xortype":"Data","markervisible":"true","defaultgate":"","gate_outgoingsequenceflow":"","gate_assignments":""},"stencil":{"id":"Exclusive_Databased_Gateway"},"childShapes":[],"outgoing":[{"resourceId":"_0C53F5CF-91B6-48EF-AA7A-0FFB1BDC9D56"},{"resourceId":"_2AE689CD-94CB-4752-9CE3-748559E63D53"},{"resourceId":"_A96EF8F0-08CB-4FD7-8DAC-5CF5E6E1F059"}],"bounds":{"lowerRight":{"x":745,"y":143},"upperLeft":{"x":705,"y":103}},"dockers":[]},{"resourceId":"_00E367A7-32B3-4238-95E1-394CAF4A448E","properties":{"name":"","documentation":"","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_C0021C4A-21DA-4AB3-83DF-43DE36042CD0"}],"bounds":{"lowerRight":{"x":704.3867255581166,"y":123.42209123822184},"upperLeft":{"x":640.7538994418834,"y":123.18728376177816}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"_C0021C4A-21DA-4AB3-83DF-43DE36042CD0"}},{"resourceId":"_DD6234E6-F810-4F4B-BD18-D36A2B5A4618","properties":{"name":"Complete Process","documentation":"","auditing":"","monitoring":"","categories":"","startquantity":1,"completionquantity":1,"isforcompensation":"","assignments":"","callacitivity":"","tasktype":"Service","implementation":"webService","resources":"","messageref":" ","operationref":"","instantiate":"","script":"","script_language":"","inmessagetype":"","outmessagetype":"","servicename":"","namespace":"","operation":"doApprove","porttype":"","wsdlurl":"","bgcolor":"#ffffcc","looptype":"None","testbefore":"","loopcondition":"","loopmaximum":"","loopcardinality":"","loopdatainput":"","loopdataoutput":"","inputdataitem":"","outputdataitem":"","behavior":"all","complexbehaviordefinition":"","completioncondition":"","onebehavioreventref":"signal","nonebehavioreventref":"signal","properties":"","datainputset":"","dataoutputset":"","ruleflowgroup":"","onentryactions":"","onexitactions":"","taskname":"","actors":""},"stencil":{"id":"Task"},"childShapes":[],"outgoing":[{"resourceId":"_A921FE66-42C4-42CC-BB5C-15ABAA47A008"}],"bounds":{"lowerRight":{"x":1084,"y":163},"upperLeft":{"x":984,"y":83}},"dockers":[]},{"resourceId":"_0C53F5CF-91B6-48EF-AA7A-0FFB1BDC9D56","properties":{"name":"Approve","documentation":"Approve=Approved","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Approved'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_DD6234E6-F810-4F4B-BD18-D36A2B5A4618"}],"bounds":{"lowerRight":{"x":983.5917981884055,"y":123.46712925658574},"upperLeft":{"x":745.7812486865945,"y":123.08169886841426}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"_DD6234E6-F810-4F4B-BD18-D36A2B5A4618"}},{"resourceId":"_73682DD6-4D65-497A-BAA5-B80623CB6C01","properties":{"name":"Approved","documentation":"","auditing":"","monitoring":"","datainputassociations":"","datainput":"","inputset":"","bgcolor":"#F47677","trigger":"None"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":1288,"y":137},"upperLeft":{"x":1260,"y":109}},"dockers":[]},{"resourceId":"_A921FE66-42C4-42CC-BB5C-15ABAA47A008","properties":{"name":"","documentation":"","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_73682DD6-4D65-497A-BAA5-B80623CB6C01"}],"bounds":{"lowerRight":{"x":1259.875,"y":123},"upperLeft":{"x":1084.6875,"y":123}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"_73682DD6-4D65-497A-BAA5-B80623CB6C01"}},{"resourceId":"_2AE689CD-94CB-4752-9CE3-748559E63D53","properties":{"name":"Resubmit","documentation":"Resubmit=Resubmitted","auditing":"Notes","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Resubmitted'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_7B64C6C5-337C-44C2-98C6-A723EC862BFF"}],"bounds":{"lowerRight":{"x":725.5,"y":102.53125},"upperLeft":{"x":140,"y":17}},"dockers":[{"x":20.5,"y":20.5},{"x":725.5,"y":17},{"x":140,"y":17},{"x":50,"y":40}],"target":{"resourceId":"_7B64C6C5-337C-44C2-98C6-A723EC862BFF"}},{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0","properties":{"name":"Cancel Process","documentation":"","auditing":"","monitoring":"","categories":"","startquantity":1,"completionquantity":1,"isforcompensation":"","assignments":"","callacitivity":"","tasktype":"Service","implementation":"webService","resources":"","messageref":"","operationref":"","instantiate":"","script":"","script_language":"","inmessagetype":"","outmessagetype":"","servicename":"","namespace":"","operation":"doReject","porttype":"","wsdlurl":"","bgcolor":"#ffffcc","looptype":"None","testbefore":"","loopcondition":"","loopmaximum":"","loopcardinality":"","loopdatainput":"","loopdataoutput":"","inputdataitem":"","outputdataitem":"","behavior":"all","complexbehaviordefinition":"","completioncondition":"","onebehavioreventref":"signal","nonebehavioreventref":"signal","properties":"","datainputset":"","dataoutputset":"","ruleflowgroup":"","onentryactions":"","onexitactions":"","taskname":"","actors":""},"stencil":{"id":"Task"},"childShapes":[],"outgoing":[{"resourceId":"_DAFA463C-32E5-4B16-BC89-284B69E70681"}],"bounds":{"lowerRight":{"x":775,"y":290},"upperLeft":{"x":675,"y":210}},"dockers":[]},{"resourceId":"_A96EF8F0-08CB-4FD7-8DAC-5CF5E6E1F059","properties":{"name":"Reject","documentation":"Reject=Rejected","auditing":"Notes","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Rejected'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"}],"bounds":{"lowerRight":{"x":725.4218287117047,"y":209.46875781130998},"upperLeft":{"x":725.1602025382953,"y":143.27733593869002}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"}},{"resourceId":"_87A46993-91DA-47E0-811B-2F196FBAD6AA","properties":{"name":"Rejected","documentation":"","auditing":"","monitoring":"","datainputassociations":"","datainput":"","inputset":"","bgcolor":"#F47677","trigger":"None"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":649,"y":343},"upperLeft":{"x":621,"y":315}},"dockers":[]},{"resourceId":"_DAFA463C-32E5-4B16-BC89-284B69E70681","properties":{"name":"","documentation":"","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_87A46993-91DA-47E0-811B-2F196FBAD6AA"}],"bounds":{"lowerRight":{"x":725,"y":329},"upperLeft":{"x":649.359375,"y":290.5}},"dockers":[{"x":50,"y":40},{"x":725,"y":329},{"x":14,"y":14}],"target":{"resourceId":"_87A46993-91DA-47E0-811B-2F196FBAD6AA"}},{"resourceId":"_5F5413A7-D079-4061-A500-66B805CEF038","properties":{"name":"Fee Deposit Maker","documentation":"","auditing":"","monitoring":"","categories":"","startquantity":1,"completionquantity":1,"isforcompensation":"","assignments":"","callacitivity":"","tasktype":"User","implementation":"webService","resources":"","messageref":"","operationref":"","instantiate":"","script":"","script_language":"","inmessagetype":"","outmessagetype":"","servicename":"","namespace":"","operation":"","porttype":"","wsdlurl":"","bgcolor":"#FF6600","looptype":"None","testbefore":"","loopcondition":"","loopmaximum":"","loopcardinality":"","loopdatainput":"","loopdataoutput":"","inputdataitem":"","outputdataitem":"","behavior":"all","complexbehaviordefinition":"","completioncondition":"","onebehavioreventref":"signal","nonebehavioreventref":"signal","properties":"","datainputset":"","dataoutputset":"","ruleflowgroup":"","onentryactions":"scope=Own","onexitactions":"","taskname":"","actors":"FEEDEPOSIT_MAKER"},"stencil":{"id":"Task"},"childShapes":[],"outgoing":[{"resourceId":"_1A0972CB-1741-433E-A3FE-77569D3EB20D"},{"resourceId":"_35B25356-FC7E-4293-8C1B-C161F416565E"},{"resourceId":"_875A1CB8-F079-4E62-8E17-DCC7048BD3D9"}],"bounds":{"lowerRight":{"x":595,"y":429},"upperLeft":{"x":495,"y":349}},"dockers":[]},{"resourceId":"_4E6D290F-61AB-4F56-BCC1-BCD92F55AD05","properties":{"name":"Fee Deposit Approver","documentation":"","auditing":"","monitoring":"","categories":"","startquantity":1,"completionquantity":1,"isforcompensation":"","assignments":"","callacitivity":"","tasktype":"User","implementation":"webService","resources":"","messageref":"","operationref":"","instantiate":"","script":"","script_language":"","inmessagetype":"","outmessagetype":"","servicename":"","namespace":"","operation":"","porttype":"","wsdlurl":"","bgcolor":"#FF6600","looptype":"None","testbefore":"","loopcondition":"","loopmaximum":"","loopcardinality":"","loopdatainput":"","loopdataoutput":"","inputdataitem":"","outputdataitem":"","behavior":"all","complexbehaviordefinition":"","completioncondition":"","onebehavioreventref":"signal","nonebehavioreventref":"signal","properties":"","datainputset":"","dataoutputset":"","ruleflowgroup":"","onentryactions":"show_tabs=Accounting","onexitactions":"","taskname":"","actors":"FEEDEPOSIT_APPROVER"},"stencil":{"id":"Task"},"childShapes":[],"outgoing":[{"resourceId":"_AB3C7C10-B7CD-422F-9D03-C19E0DE24CD5"}],"bounds":{"lowerRight":{"x":820,"y":429},"upperLeft":{"x":720,"y":349}},"dockers":[]},{"resourceId":"_1A0972CB-1741-433E-A3FE-77569D3EB20D","properties":{"name":"Submit","documentation":"Submit=Submitted","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Submitted'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_4E6D290F-61AB-4F56-BCC1-BCD92F55AD05"}],"bounds":{"lowerRight":{"x":719.78125,"y":389},"upperLeft":{"x":595.21875,"y":389}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"_4E6D290F-61AB-4F56-BCC1-BCD92F55AD05"}},{"resourceId":"_35B25356-FC7E-4293-8C1B-C161F416565E","properties":{"name":"Reject","documentation":"Reject=Rejected","auditing":"Notes","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Rejected'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"}],"bounds":{"lowerRight":{"x":674.78125,"y":348.90625},"upperLeft":{"x":545,"y":250}},"dockers":[{"x":50,"y":40},{"x":545,"y":250},{"x":50,"y":40}],"target":{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"}},{"resourceId":"_CDBBE246-EF44-40AB-99BF-3B06873BDB20","properties":{"name":"Reject","documentation":"Reject=Rejected","auditing":"Notes","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Rejected'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"}],"bounds":{"lowerRight":{"x":905.5,"y":334.71875},"upperLeft":{"x":775.35546875,"y":250}},"dockers":[{"x":20.5,"y":20.5},{"x":905.5,"y":250},{"x":50,"y":40}],"target":{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"}},{"resourceId":"_1CA63148-6545-4CC3-86CB-04EB05AF10F2","properties":{"name":"Resubmit","documentation":"Resubmit=Resubmitted","auditing":"Notes","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Resubmitted'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_5F5413A7-D079-4061-A500-66B805CEF038"}],"bounds":{"lowerRight":{"x":905.5,"y":460},"upperLeft":{"x":545,"y":375.27734375}},"dockers":[{"x":20.5,"y":20.5},{"x":905.5,"y":460},{"x":545,"y":460},{"x":50,"y":40}],"target":{"resourceId":"_5F5413A7-D079-4061-A500-66B805CEF038"}},{"resourceId":"_0B1F68C3-79C5-49D1-94D9-B7E4F87EA54D","properties":{"name":"","documentation":"","auditing":"","monitoring":"","categories":"","assignments":"","pool":"","lanes":"","gates":"","gates_outgoingsequenceflow":"","gates_assignments":"","bgcolor":"#ffffff","gatewaytype":"XOR","xortype":"Data","markervisible":"true","defaultgate":"","gate_outgoingsequenceflow":"","gate_assignments":""},"stencil":{"id":"Exclusive_Databased_Gateway"},"childShapes":[],"outgoing":[{"resourceId":"_CDBBE246-EF44-40AB-99BF-3B06873BDB20"},{"resourceId":"_1CA63148-6545-4CC3-86CB-04EB05AF10F2"},{"resourceId":"_B45C7840-78FD-44C5-99DC-B28B27DAB528"}],"bounds":{"lowerRight":{"x":925,"y":375},"upperLeft":{"x":885,"y":335}},"dockers":[]},{"resourceId":"_AB3C7C10-B7CD-422F-9D03-C19E0DE24CD5","properties":{"name":"","documentation":"","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_0B1F68C3-79C5-49D1-94D9-B7E4F87EA54D"}],"bounds":{"lowerRight":{"x":885.1328125,"y":389},"upperLeft":{"x":820.62890625,"y":355}},"dockers":[{"x":50,"y":40},{"x":852.5,"y":389},{"x":852.5,"y":355},{"x":20,"y":20}],"target":{"resourceId":"_0B1F68C3-79C5-49D1-94D9-B7E4F87EA54D"}},{"resourceId":"_AB8F675B-702B-49EB-ABD2-0F901B4EC5B5","properties":{"name":"","documentation":"","auditing":"","monitoring":"","categories":"","assignments":"","pool":"","lanes":"","gates":"","gates_outgoingsequenceflow":"","gates_assignments":"","bgcolor":"#ffffff","gatewaytype":"XOR","xortype":"Data","markervisible":"true","defaultgate":"","gate_outgoingsequenceflow":"","gate_assignments":""},"stencil":{"id":"Exclusive_Databased_Gateway"},"childShapes":[],"outgoing":[{"resourceId":"_C2820306-3E6C-4BD7-A4F6-099893B15468"},{"resourceId":"_E46247E5-509B-4142-A14A-5ABED0386711"}],"bounds":{"lowerRight":{"x":370,"y":143},"upperLeft":{"x":330,"y":103}},"dockers":[]},{"resourceId":"_9209E0A4-14BC-4840-AE5E-AF2425159AD0","properties":{"name":"Cancel Process","documentation":"","auditing":"","monitoring":"","categories":"","startquantity":1,"completionquantity":1,"isforcompensation":"","assignments":"","callacitivity":"","tasktype":"Service","implementation":"webService","resources":"","messageref":"","operationref":"","instantiate":"","script":"","script_language":"","inmessagetype":"","outmessagetype":"","servicename":"","namespace":"","operation":"doReject","porttype":"","wsdlurl":"","bgcolor":"#ffffcc","looptype":"None","testbefore":"","loopcondition":"","loopmaximum":"","loopcardinality":"","loopdatainput":"","loopdataoutput":"","inputdataitem":"","outputdataitem":"","behavior":"all","complexbehaviordefinition":"","completioncondition":"","onebehavioreventref":"signal","nonebehavioreventref":"signal","properties":"","datainputset":"","dataoutputset":"","ruleflowgroup":"","onentryactions":"","onexitactions":"","taskname":"","actors":""},"stencil":{"id":"Task"},"childShapes":[],"outgoing":[{"resourceId":"_B600CB2F-1566-41FD-BB42-8CC730387820"}],"bounds":{"lowerRight":{"x":190,"y":320},"upperLeft":{"x":90,"y":240}},"dockers":[]},{"resourceId":"_46DBB075-601A-48C5-80F6-7A3C9575CEF5","properties":{"name":"Rejected","documentation":"","auditing":"","monitoring":"","datainputassociations":"","datainput":"","inputset":"","bgcolor":"#F47677","trigger":"None"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":154,"y":403},"upperLeft":{"x":126,"y":375}},"dockers":[]},{"resourceId":"_B600CB2F-1566-41FD-BB42-8CC730387820","properties":{"name":"","documentation":"","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_46DBB075-601A-48C5-80F6-7A3C9575CEF5"}],"bounds":{"lowerRight":{"x":140,"y":374.375},"upperLeft":{"x":140,"y":320.171875}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"_46DBB075-601A-48C5-80F6-7A3C9575CEF5"}},{"resourceId":"_B4A70293-13FD-44EB-A4C3-78A38AC643B9","properties":{"name":"Cancel","documentation":"Cancel=Cancelled","auditing":"Notes","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Cancelled'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_9209E0A4-14BC-4840-AE5E-AF2425159AD0"}],"bounds":{"lowerRight":{"x":140,"y":239.66015625},"upperLeft":{"x":140,"y":163.435546875}},"dockers":[{"x":50,"y":40},{"x":50,"y":48.5}],"target":{"resourceId":"_9209E0A4-14BC-4840-AE5E-AF2425159AD0"}},{"resourceId":"_C2820306-3E6C-4BD7-A4F6-099893B15468","properties":{"name":"Cheque / DD","documentation":"","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"vo.receiptMode == 'DD' || vo.receiptMode == 'CHEQUE'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_5F5413A7-D079-4061-A500-66B805CEF038"}],"bounds":{"lowerRight":{"x":495,"y":369},"upperLeft":{"x":350.5,"y":143.6796875}},"dockers":[{"x":20.5,"y":20.5},{"x":350.5,"y":369},{"x":1,"y":20}],"target":{"resourceId":"_5F5413A7-D079-4061-A500-66B805CEF038"}},{"resourceId":"_E46247E5-509B-4142-A14A-5ABED0386711","properties":{"name":"Others than Cheque && DD","documentation":"","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"vo.receiptMode != 'DD' &amp;&amp; vo.receiptMode != 'CHEQUE'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_77E97F8E-6071-449B-9BD7-4B0F3A5A657A"}],"bounds":{"lowerRight":{"x":539.4160178042024,"y":123.45884982187727},"upperLeft":{"x":370.21093532079766,"y":123.10560330312273}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"_77E97F8E-6071-449B-9BD7-4B0F3A5A657A"}},{"resourceId":"_875A1CB8-F079-4E62-8E17-DCC7048BD3D9","properties":{"name":"Resubmit","documentation":"Resubmit=Resubmitted","auditing":"Notes","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Resubmitted'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_7B64C6C5-337C-44C2-98C6-A723EC862BFF"}],"bounds":{"lowerRight":{"x":495,"y":409},"upperLeft":{"x":165,"y":163.9375}},"dockers":[{"x":1,"y":60},{"x":209,"y":409},{"x":209,"y":222},{"x":165,"y":222},{"x":75,"y":79}],"target":{"resourceId":"_7B64C6C5-337C-44C2-98C6-A723EC862BFF"}},{"resourceId":"_CB84B893-830F-4960-8640-208225B444FB","properties":{"name":"Fee Realization Maker","documentation":"","auditing":"","monitoring":"","categories":"","startquantity":1,"completionquantity":1,"isforcompensation":"","assignments":"","callacitivity":"","tasktype":"User","implementation":"webService","resources":"","messageref":"","operationref":"","instantiate":"","script":"","script_language":"","inmessagetype":"","outmessagetype":"","servicename":"","namespace":"","operation":"","porttype":"","wsdlurl":"","bgcolor":"#FF6600","looptype":"None","testbefore":"","loopcondition":"","loopmaximum":"","loopcardinality":"","loopdatainput":"","loopdataoutput":"","inputdataitem":"","outputdataitem":"","behavior":"all","complexbehaviordefinition":"","completioncondition":"","onebehavioreventref":"signal","nonebehavioreventref":"signal","properties":"","datainputset":"","dataoutputset":"","ruleflowgroup":"","onentryactions":"scope=Own","onexitactions":"","taskname":"","actors":"FEERECEIPTREALIZE_MAKER"},"stencil":{"id":"Task"},"childShapes":[],"outgoing":[{"resourceId":"_14D53AA8-7D4D-4DF1-A796-C911759AFE82"},{"resourceId":"_94D56E95-3CAA-42C4-8793-99B5680F600E"},{"resourceId":"_5DD316D3-913F-4600-9D37-0CEAA3FEBA43"}],"bounds":{"lowerRight":{"x":1135,"y":395},"upperLeft":{"x":1035,"y":315}},"dockers":[]},{"resourceId":"_5A09A264-B5C4-4355-8EC5-B6DC47E7A1A9","properties":{"name":"Fee Realization Approver","documentation":"","auditing":"","monitoring":"","categories":"","startquantity":1,"completionquantity":1,"isforcompensation":"","assignments":"","callacitivity":"","tasktype":"User","implementation":"webService","resources":"","messageref":"","operationref":"","instantiate":"","script":"","script_language":"","inmessagetype":"","outmessagetype":"","servicename":"","namespace":"","operation":"","porttype":"","wsdlurl":"","bgcolor":"#FF6600","looptype":"None","testbefore":"","loopcondition":"","loopmaximum":"","loopcardinality":"","loopdatainput":"","loopdataoutput":"","inputdataitem":"","outputdataitem":"","behavior":"all","complexbehaviordefinition":"","completioncondition":"","onebehavioreventref":"signal","nonebehavioreventref":"signal","properties":"","datainputset":"","dataoutputset":"","ruleflowgroup":"","onentryactions":"show_tabs=Accounting","onexitactions":"","taskname":"","actors":"FEERECEIPTREALIZE_APPROVER"},"stencil":{"id":"Task"},"childShapes":[],"outgoing":[{"resourceId":"_179060F8-FE71-4B6D-8DF9-B700C2446E31"}],"bounds":{"lowerRight":{"x":1450,"y":395},"upperLeft":{"x":1350,"y":315}},"dockers":[]},{"resourceId":"_14D53AA8-7D4D-4DF1-A796-C911759AFE82","properties":{"name":"Submit","documentation":"Submit=Submitted","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Submitted'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_5A09A264-B5C4-4355-8EC5-B6DC47E7A1A9"}],"bounds":{"lowerRight":{"x":1349.78125,"y":355},"upperLeft":{"x":1135.21875,"y":355}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"_5A09A264-B5C4-4355-8EC5-B6DC47E7A1A9"}},{"resourceId":"_4121FF63-DD77-4FFB-9923-36E39DD6622D","properties":{"name":"Resubmit","documentation":"Resubmit=Resubmitted","auditing":"Notes","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Resubmitted'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_CB84B893-830F-4960-8640-208225B444FB"}],"bounds":{"lowerRight":{"x":1505.5,"y":452},"upperLeft":{"x":1110,"y":375.34765625}},"dockers":[{"x":20.5,"y":20.5},{"x":1505.5,"y":452},{"x":1110,"y":452},{"x":75,"y":1}],"target":{"resourceId":"_CB84B893-830F-4960-8640-208225B444FB"}},{"resourceId":"_94D56E95-3CAA-42C4-8793-99B5680F600E","properties":{"name":"Resubmit","documentation":"Resubmit=Resubmitted","auditing":"Notes","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Resubmitted'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_5F5413A7-D079-4061-A500-66B805CEF038"}],"bounds":{"lowerRight":{"x":1060,"y":465},"upperLeft":{"x":545,"y":395.5546875}},"dockers":[{"x":25,"y":79},{"x":1060,"y":465},{"x":545,"y":465},{"x":50,"y":40}],"target":{"resourceId":"_5F5413A7-D079-4061-A500-66B805CEF038"}},{"resourceId":"_7E5B6958-654D-4FEE-84F4-6421844F8D1F","properties":{"name":"Reject","documentation":"Reject=Rejected","auditing":"Notes","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Rejected'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"}],"bounds":{"lowerRight":{"x":1505.5,"y":334.71875},"upperLeft":{"x":775.54345703125,"y":250}},"dockers":[{"x":20.5,"y":20.5},{"x":1505.5,"y":250},{"x":50,"y":40}],"target":{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"}},{"resourceId":"_5DD316D3-913F-4600-9D37-0CEAA3FEBA43","properties":{"name":"Reject","documentation":"Reject=Rejected","auditing":"Notes","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Rejected'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"}],"bounds":{"lowerRight":{"x":1085,"y":314.625},"upperLeft":{"x":775.21875,"y":250}},"dockers":[{"x":50,"y":40},{"x":1085,"y":250},{"x":50,"y":40}],"target":{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"}},{"resourceId":"_921EB85C-0D30-4933-9BA8-E25DC6108252","properties":{"name":"Approve","documentation":"Approve=Approved","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Approved'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_DD6234E6-F810-4F4B-BD18-D36A2B5A4618"}],"bounds":{"lowerRight":{"x":1562,"y":355.5},"upperLeft":{"x":1034,"y":163.84375}},"dockers":[{"x":20.5,"y":20.5},{"x":1562,"y":355.5},{"x":1562,"y":225},{"x":1034,"y":225},{"x":50,"y":40}],"target":{"resourceId":"_DD6234E6-F810-4F4B-BD18-D36A2B5A4618"}},{"resourceId":"_262A1962-825F-4C56-88B3-206A2B80569F","properties":{"name":"","documentation":"","auditing":"","monitoring":"","categories":"","assignments":"","pool":"","lanes":"","gates":"","gates_outgoingsequenceflow":"","gates_assignments":"","bgcolor":"#ffffff","gatewaytype":"XOR","xortype":"Data","markervisible":"true","defaultgate":"","gate_outgoingsequenceflow":"","gate_assignments":""},"stencil":{"id":"Exclusive_Databased_Gateway"},"childShapes":[],"outgoing":[{"resourceId":"_921EB85C-0D30-4933-9BA8-E25DC6108252"},{"resourceId":"_7E5B6958-654D-4FEE-84F4-6421844F8D1F"},{"resourceId":"_4121FF63-DD77-4FFB-9923-36E39DD6622D"}],"bounds":{"lowerRight":{"x":1525,"y":375},"upperLeft":{"x":1485,"y":335}},"dockers":[]},{"resourceId":"_179060F8-FE71-4B6D-8DF9-B700C2446E31","properties":{"name":"","documentation":"","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_262A1962-825F-4C56-88B3-206A2B80569F"}],"bounds":{"lowerRight":{"x":1485.1328125,"y":355},"upperLeft":{"x":1450.21875,"y":355}},"dockers":[{"x":50,"y":40},{"x":20,"y":20}],"target":{"resourceId":"_262A1962-825F-4C56-88B3-206A2B80569F"}},{"resourceId":"_B45C7840-78FD-44C5-99DC-B28B27DAB528","properties":{"name":"Submit","documentation":"Submit=Submitted","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Submitted'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_CB84B893-830F-4960-8640-208225B444FB"}],"bounds":{"lowerRight":{"x":1034.9179726295251,"y":355.44448012048616},"upperLeft":{"x":925.4316367454747,"y":355.13950425451384}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"_CB84B893-830F-4960-8640-208225B444FB"}}],"bounds":{"lowerRight":{"x":3000,"y":2000},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"bpmn2.0pbpm","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<bpmn2:definitions xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns="http://www.omg.org/bpmn20" xmlns:drools="http://www.jboss.org/drools" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="_w9U4UU94EeejkoE4T2mR4w" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd" targetNamespace="http://www.omg.org/bpmn20"><bpmn2:itemDefinition id="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618_InMessageType" /><bpmn2:itemDefinition id="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0_InMessageType" /><bpmn2:itemDefinition id="_9209E0A4-14BC-4840-AE5E-AF2425159AD0_InMessageType" /><bpmn2:message id="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618_InMessage" itemRef="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618_InMessageType" /><bpmn2:message id="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0_InMessage" itemRef="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0_InMessageType" /><bpmn2:message id="_9209E0A4-14BC-4840-AE5E-AF2425159AD0_InMessage" itemRef="_9209E0A4-14BC-4840-AE5E-AF2425159AD0_InMessageType" /><bpmn2:interface id="_w9eCjE94EeejkoE4T2mR4w"><bpmn2:operation id="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618_ServiceOperation" name="doApprove"><bpmn2:inMessageRef>_DD6234E6-F810-4F4B-BD18-D36A2B5A4618_InMessage</bpmn2:inMessageRef></bpmn2:operation></bpmn2:interface><bpmn2:interface id="_w9eCjU94EeejkoE4T2mR4w"><bpmn2:operation id="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0_ServiceOperation" name="doReject"><bpmn2:inMessageRef>_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0_InMessage</bpmn2:inMessageRef></bpmn2:operation></bpmn2:interface><bpmn2:interface id="_w9eCjk94EeejkoE4T2mR4w"><bpmn2:operation id="_9209E0A4-14BC-4840-AE5E-AF2425159AD0_ServiceOperation" name="doReject"><bpmn2:inMessageRef>_9209E0A4-14BC-4840-AE5E-AF2425159AD0_InMessage</bpmn2:inMessageRef></bpmn2:operation></bpmn2:interface><bpmn2:process id="FEERECEIPT_PROCESS" name="Fee Receipt Process Detail " isExecutable="true"><bpmn2:startEvent id="_FF9D4911-C022-42B0-B00A-9C353226F4A7" drools:bgcolor="#C5F970" name="Start"><bpmn2:outgoing>_5EE9B2AF-F8EA-432C-BB52-88124AA2A117</bpmn2:outgoing></bpmn2:startEvent><bpmn2:userTask id="_7B64C6C5-337C-44C2-98C6-A723EC862BFF" drools:bgcolor="#FF6600" name="Fee Receipt Maker"><bpmn2:extensionElements><drools:onEntry-script scriptFormat="http://www.java.com/java"><drools:script>scope=Own</drools:script></drools:onEntry-script></bpmn2:extensionElements><bpmn2:incoming>_875A1CB8-F079-4E62-8E17-DCC7048BD3D9</bpmn2:incoming><bpmn2:incoming>_5EE9B2AF-F8EA-432C-BB52-88124AA2A117</bpmn2:incoming><bpmn2:incoming>_2AE689CD-94CB-4752-9CE3-748559E63D53</bpmn2:incoming><bpmn2:outgoing>_B4A70293-13FD-44EB-A4C3-78A38AC643B9</bpmn2:outgoing><bpmn2:outgoing>_9305AD0C-8EA2-46BB-AD97-8B650D65B67D</bpmn2:outgoing><bpmn2:potentialOwner id="_w9eCQE94EeejkoE4T2mR4w"><bpmn2:resourceAssignmentExpression id="_w9eCQU94EeejkoE4T2mR4w"><bpmn2:formalExpression id="_w9eCQk94EeejkoE4T2mR4w">FEERECEIPT_MAKER</bpmn2:formalExpression></bpmn2:resourceAssignmentExpression></bpmn2:potentialOwner></bpmn2:userTask><bpmn2:sequenceFlow id="_5EE9B2AF-F8EA-432C-BB52-88124AA2A117" sourceRef="_FF9D4911-C022-42B0-B00A-9C353226F4A7" targetRef="_7B64C6C5-337C-44C2-98C6-A723EC862BFF" /><bpmn2:userTask id="_77E97F8E-6071-449B-9BD7-4B0F3A5A657A" drools:bgcolor="#FF6600" name="Fee Receipt Approver"><bpmn2:extensionElements><drools:onEntry-script scriptFormat="http://www.java.com/java"><drools:script>show_tabs=Accounting</drools:script></drools:onEntry-script></bpmn2:extensionElements><bpmn2:incoming>_E46247E5-509B-4142-A14A-5ABED0386711</bpmn2:incoming><bpmn2:outgoing>_00E367A7-32B3-4238-95E1-394CAF4A448E</bpmn2:outgoing><bpmn2:potentialOwner id="_w9eCQ094EeejkoE4T2mR4w"><bpmn2:resourceAssignmentExpression id="_w9eCRE94EeejkoE4T2mR4w"><bpmn2:formalExpression id="_w9eCRU94EeejkoE4T2mR4w">FEERECEIPT_APPROVER</bpmn2:formalExpression></bpmn2:resourceAssignmentExpression></bpmn2:potentialOwner></bpmn2:userTask><bpmn2:sequenceFlow id="_9305AD0C-8EA2-46BB-AD97-8B650D65B67D" name="Submit" sourceRef="_7B64C6C5-337C-44C2-98C6-A723EC862BFF" targetRef="_AB8F675B-702B-49EB-ABD2-0F901B4EC5B5"><bpmn2:documentation id="_w9eCRk94EeejkoE4T2mR4w">Submit=Submitted</bpmn2:documentation><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCR094EeejkoE4T2mR4w">vo.recordStatus == 'Submitted'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:exclusiveGateway id="_C0021C4A-21DA-4AB3-83DF-43DE36042CD0" drools:bgcolor="#ffffff" drools:dg="" name="" gatewayDirection="Diverging"><bpmn2:incoming>_00E367A7-32B3-4238-95E1-394CAF4A448E</bpmn2:incoming><bpmn2:outgoing>_0C53F5CF-91B6-48EF-AA7A-0FFB1BDC9D56</bpmn2:outgoing><bpmn2:outgoing>_2AE689CD-94CB-4752-9CE3-748559E63D53</bpmn2:outgoing><bpmn2:outgoing>_A96EF8F0-08CB-4FD7-8DAC-5CF5E6E1F059</bpmn2:outgoing></bpmn2:exclusiveGateway><bpmn2:sequenceFlow id="_00E367A7-32B3-4238-95E1-394CAF4A448E" sourceRef="_77E97F8E-6071-449B-9BD7-4B0F3A5A657A" targetRef="_C0021C4A-21DA-4AB3-83DF-43DE36042CD0" /><bpmn2:serviceTask id="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618" drools:bgcolor="#ffffcc" drools:servicetaskoperation="doApprove" name="Complete Process" operationRef="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618_ServiceOperation"><bpmn2:incoming>_0C53F5CF-91B6-48EF-AA7A-0FFB1BDC9D56</bpmn2:incoming><bpmn2:incoming>_921EB85C-0D30-4933-9BA8-E25DC6108252</bpmn2:incoming><bpmn2:outgoing>_A921FE66-42C4-42CC-BB5C-15ABAA47A008</bpmn2:outgoing></bpmn2:serviceTask><bpmn2:sequenceFlow id="_0C53F5CF-91B6-48EF-AA7A-0FFB1BDC9D56" name="Approve" sourceRef="_C0021C4A-21DA-4AB3-83DF-43DE36042CD0" targetRef="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618"><bpmn2:documentation id="_w9eCSE94EeejkoE4T2mR4w">Approve=Approved</bpmn2:documentation><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCSU94EeejkoE4T2mR4w">vo.recordStatus == 'Approved'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:endEvent id="_73682DD6-4D65-497A-BAA5-B80623CB6C01" drools:bgcolor="#F47677" name="Approved"><bpmn2:incoming>_A921FE66-42C4-42CC-BB5C-15ABAA47A008</bpmn2:incoming></bpmn2:endEvent><bpmn2:sequenceFlow id="_A921FE66-42C4-42CC-BB5C-15ABAA47A008" sourceRef="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618" targetRef="_73682DD6-4D65-497A-BAA5-B80623CB6C01" /><bpmn2:sequenceFlow id="_2AE689CD-94CB-4752-9CE3-748559E63D53" name="Resubmit" sourceRef="_C0021C4A-21DA-4AB3-83DF-43DE36042CD0" targetRef="_7B64C6C5-337C-44C2-98C6-A723EC862BFF"><bpmn2:documentation id="_w9eCSk94EeejkoE4T2mR4w">Resubmit=Resubmitted</bpmn2:documentation><bpmn2:auditing id="_w9eCS094EeejkoE4T2mR4w"><bpmn2:documentation id="_w9eCTE94EeejkoE4T2mR4w">Notes</bpmn2:documentation></bpmn2:auditing><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCTU94EeejkoE4T2mR4w">vo.recordStatus == 'Resubmitted'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:serviceTask id="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0" drools:bgcolor="#ffffcc" drools:servicetaskoperation="doReject" name="Cancel Process" operationRef="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0_ServiceOperation"><bpmn2:incoming>_A96EF8F0-08CB-4FD7-8DAC-5CF5E6E1F059</bpmn2:incoming><bpmn2:incoming>_7E5B6958-654D-4FEE-84F4-6421844F8D1F</bpmn2:incoming><bpmn2:incoming>_CDBBE246-EF44-40AB-99BF-3B06873BDB20</bpmn2:incoming><bpmn2:incoming>_35B25356-FC7E-4293-8C1B-C161F416565E</bpmn2:incoming><bpmn2:incoming>_5DD316D3-913F-4600-9D37-0CEAA3FEBA43</bpmn2:incoming><bpmn2:outgoing>_DAFA463C-32E5-4B16-BC89-284B69E70681</bpmn2:outgoing></bpmn2:serviceTask><bpmn2:sequenceFlow id="_A96EF8F0-08CB-4FD7-8DAC-5CF5E6E1F059" name="Reject" sourceRef="_C0021C4A-21DA-4AB3-83DF-43DE36042CD0" targetRef="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"><bpmn2:documentation id="_w9eCTk94EeejkoE4T2mR4w">Reject=Rejected</bpmn2:documentation><bpmn2:auditing id="_w9eCT094EeejkoE4T2mR4w"><bpmn2:documentation id="_w9eCUE94EeejkoE4T2mR4w">Notes</bpmn2:documentation></bpmn2:auditing><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCUU94EeejkoE4T2mR4w">vo.recordStatus == 'Rejected'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:endEvent id="_87A46993-91DA-47E0-811B-2F196FBAD6AA" drools:bgcolor="#F47677" name="Rejected"><bpmn2:incoming>_DAFA463C-32E5-4B16-BC89-284B69E70681</bpmn2:incoming></bpmn2:endEvent><bpmn2:sequenceFlow id="_DAFA463C-32E5-4B16-BC89-284B69E70681" sourceRef="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0" targetRef="_87A46993-91DA-47E0-811B-2F196FBAD6AA" /><bpmn2:userTask id="_5F5413A7-D079-4061-A500-66B805CEF038" drools:bgcolor="#FF6600" name="Fee Deposit Maker"><bpmn2:extensionElements><drools:onEntry-script scriptFormat="http://www.java.com/java"><drools:script>scope=Own</drools:script></drools:onEntry-script></bpmn2:extensionElements><bpmn2:incoming>_94D56E95-3CAA-42C4-8793-99B5680F600E</bpmn2:incoming><bpmn2:incoming>_C2820306-3E6C-4BD7-A4F6-099893B15468</bpmn2:incoming><bpmn2:incoming>_1CA63148-6545-4CC3-86CB-04EB05AF10F2</bpmn2:incoming><bpmn2:outgoing>_1A0972CB-1741-433E-A3FE-77569D3EB20D</bpmn2:outgoing><bpmn2:outgoing>_35B25356-FC7E-4293-8C1B-C161F416565E</bpmn2:outgoing><bpmn2:outgoing>_875A1CB8-F079-4E62-8E17-DCC7048BD3D9</bpmn2:outgoing><bpmn2:potentialOwner id="_w9eCUk94EeejkoE4T2mR4w"><bpmn2:resourceAssignmentExpression id="_w9eCU094EeejkoE4T2mR4w"><bpmn2:formalExpression id="_w9eCVE94EeejkoE4T2mR4w">FEEDEPOSIT_MAKER</bpmn2:formalExpression></bpmn2:resourceAssignmentExpression></bpmn2:potentialOwner></bpmn2:userTask><bpmn2:userTask id="_4E6D290F-61AB-4F56-BCC1-BCD92F55AD05" drools:bgcolor="#FF6600" name="Fee Deposit Approver"><bpmn2:extensionElements><drools:onEntry-script scriptFormat="http://www.java.com/java"><drools:script>show_tabs=Accounting</drools:script></drools:onEntry-script></bpmn2:extensionElements><bpmn2:incoming>_1A0972CB-1741-433E-A3FE-77569D3EB20D</bpmn2:incoming><bpmn2:outgoing>_AB3C7C10-B7CD-422F-9D03-C19E0DE24CD5</bpmn2:outgoing><bpmn2:potentialOwner id="_w9eCVU94EeejkoE4T2mR4w"><bpmn2:resourceAssignmentExpression id="_w9eCVk94EeejkoE4T2mR4w"><bpmn2:formalExpression id="_w9eCV094EeejkoE4T2mR4w">FEEDEPOSIT_APPROVER</bpmn2:formalExpression></bpmn2:resourceAssignmentExpression></bpmn2:potentialOwner></bpmn2:userTask><bpmn2:sequenceFlow id="_1A0972CB-1741-433E-A3FE-77569D3EB20D" name="Submit" sourceRef="_5F5413A7-D079-4061-A500-66B805CEF038" targetRef="_4E6D290F-61AB-4F56-BCC1-BCD92F55AD05"><bpmn2:documentation id="_w9eCWE94EeejkoE4T2mR4w">Submit=Submitted</bpmn2:documentation><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCWU94EeejkoE4T2mR4w">vo.recordStatus == 'Submitted'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequenceFlow id="_35B25356-FC7E-4293-8C1B-C161F416565E" name="Reject" sourceRef="_5F5413A7-D079-4061-A500-66B805CEF038" targetRef="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"><bpmn2:documentation id="_w9eCWk94EeejkoE4T2mR4w">Reject=Rejected</bpmn2:documentation><bpmn2:auditing id="_w9eCW094EeejkoE4T2mR4w"><bpmn2:documentation id="_w9eCXE94EeejkoE4T2mR4w">Notes</bpmn2:documentation></bpmn2:auditing><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCXU94EeejkoE4T2mR4w">vo.recordStatus == 'Rejected'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequenceFlow id="_CDBBE246-EF44-40AB-99BF-3B06873BDB20" name="Reject" sourceRef="_0B1F68C3-79C5-49D1-94D9-B7E4F87EA54D" targetRef="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"><bpmn2:documentation id="_w9eCXk94EeejkoE4T2mR4w">Reject=Rejected</bpmn2:documentation><bpmn2:auditing id="_w9eCX094EeejkoE4T2mR4w"><bpmn2:documentation id="_w9eCYE94EeejkoE4T2mR4w">Notes</bpmn2:documentation></bpmn2:auditing><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCYU94EeejkoE4T2mR4w">vo.recordStatus == 'Rejected'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequenceFlow id="_1CA63148-6545-4CC3-86CB-04EB05AF10F2" name="Resubmit" sourceRef="_0B1F68C3-79C5-49D1-94D9-B7E4F87EA54D" targetRef="_5F5413A7-D079-4061-A500-66B805CEF038"><bpmn2:documentation id="_w9eCYk94EeejkoE4T2mR4w">Resubmit=Resubmitted</bpmn2:documentation><bpmn2:auditing id="_w9eCY094EeejkoE4T2mR4w"><bpmn2:documentation id="_w9eCZE94EeejkoE4T2mR4w">Notes</bpmn2:documentation></bpmn2:auditing><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCZU94EeejkoE4T2mR4w">vo.recordStatus == 'Resubmitted'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:exclusiveGateway id="_0B1F68C3-79C5-49D1-94D9-B7E4F87EA54D" drools:bgcolor="#ffffff" drools:dg="" name="" gatewayDirection="Diverging"><bpmn2:incoming>_AB3C7C10-B7CD-422F-9D03-C19E0DE24CD5</bpmn2:incoming><bpmn2:outgoing>_CDBBE246-EF44-40AB-99BF-3B06873BDB20</bpmn2:outgoing><bpmn2:outgoing>_1CA63148-6545-4CC3-86CB-04EB05AF10F2</bpmn2:outgoing><bpmn2:outgoing>_B45C7840-78FD-44C5-99DC-B28B27DAB528</bpmn2:outgoing></bpmn2:exclusiveGateway><bpmn2:sequenceFlow id="_AB3C7C10-B7CD-422F-9D03-C19E0DE24CD5" sourceRef="_4E6D290F-61AB-4F56-BCC1-BCD92F55AD05" targetRef="_0B1F68C3-79C5-49D1-94D9-B7E4F87EA54D" /><bpmn2:exclusiveGateway id="_AB8F675B-702B-49EB-ABD2-0F901B4EC5B5" drools:bgcolor="#ffffff" drools:dg="" name="" gatewayDirection="Diverging"><bpmn2:incoming>_9305AD0C-8EA2-46BB-AD97-8B650D65B67D</bpmn2:incoming><bpmn2:outgoing>_C2820306-3E6C-4BD7-A4F6-099893B15468</bpmn2:outgoing><bpmn2:outgoing>_E46247E5-509B-4142-A14A-5ABED0386711</bpmn2:outgoing></bpmn2:exclusiveGateway><bpmn2:serviceTask id="_9209E0A4-14BC-4840-AE5E-AF2425159AD0" drools:bgcolor="#ffffcc" drools:servicetaskoperation="doReject" name="Cancel Process" operationRef="_9209E0A4-14BC-4840-AE5E-AF2425159AD0_ServiceOperation"><bpmn2:incoming>_B4A70293-13FD-44EB-A4C3-78A38AC643B9</bpmn2:incoming><bpmn2:outgoing>_B600CB2F-1566-41FD-BB42-8CC730387820</bpmn2:outgoing></bpmn2:serviceTask><bpmn2:endEvent id="_46DBB075-601A-48C5-80F6-7A3C9575CEF5" drools:bgcolor="#F47677" name="Rejected"><bpmn2:incoming>_B600CB2F-1566-41FD-BB42-8CC730387820</bpmn2:incoming></bpmn2:endEvent><bpmn2:sequenceFlow id="_B600CB2F-1566-41FD-BB42-8CC730387820" sourceRef="_9209E0A4-14BC-4840-AE5E-AF2425159AD0" targetRef="_46DBB075-601A-48C5-80F6-7A3C9575CEF5" /><bpmn2:sequenceFlow id="_B4A70293-13FD-44EB-A4C3-78A38AC643B9" name="Cancel" sourceRef="_7B64C6C5-337C-44C2-98C6-A723EC862BFF" targetRef="_9209E0A4-14BC-4840-AE5E-AF2425159AD0"><bpmn2:documentation id="_w9eCZk94EeejkoE4T2mR4w">Cancel=Cancelled</bpmn2:documentation><bpmn2:auditing id="_w9eCZ094EeejkoE4T2mR4w"><bpmn2:documentation id="_w9eCaE94EeejkoE4T2mR4w">Notes</bpmn2:documentation></bpmn2:auditing><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCaU94EeejkoE4T2mR4w">vo.recordStatus == 'Cancelled'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequenceFlow id="_C2820306-3E6C-4BD7-A4F6-099893B15468" name="Cheque / DD" sourceRef="_AB8F675B-702B-49EB-ABD2-0F901B4EC5B5" targetRef="_5F5413A7-D079-4061-A500-66B805CEF038"><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCak94EeejkoE4T2mR4w">vo.receiptMode == 'DD' || vo.receiptMode == 'CHEQUE'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequenceFlow id="_E46247E5-509B-4142-A14A-5ABED0386711" name="Others than Cheque &amp;&amp; DD" sourceRef="_AB8F675B-702B-49EB-ABD2-0F901B4EC5B5" targetRef="_77E97F8E-6071-449B-9BD7-4B0F3A5A657A"><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCa094EeejkoE4T2mR4w">vo.receiptMode != 'DD' &amp;amp;&amp;amp; vo.receiptMode != 'CHEQUE'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequenceFlow id="_875A1CB8-F079-4E62-8E17-DCC7048BD3D9" name="Resubmit" sourceRef="_5F5413A7-D079-4061-A500-66B805CEF038" targetRef="_7B64C6C5-337C-44C2-98C6-A723EC862BFF"><bpmn2:documentation id="_w9eCbE94EeejkoE4T2mR4w">Resubmit=Resubmitted</bpmn2:documentation><bpmn2:auditing id="_w9eCbU94EeejkoE4T2mR4w"><bpmn2:documentation id="_w9eCbk94EeejkoE4T2mR4w">Notes</bpmn2:documentation></bpmn2:auditing><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCb094EeejkoE4T2mR4w">vo.recordStatus == 'Resubmitted'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:userTask id="_CB84B893-830F-4960-8640-208225B444FB" drools:bgcolor="#FF6600" name="Fee Realization Maker"><bpmn2:extensionElements><drools:onEntry-script scriptFormat="http://www.java.com/java"><drools:script>scope=Own</drools:script></drools:onEntry-script></bpmn2:extensionElements><bpmn2:incoming>_B45C7840-78FD-44C5-99DC-B28B27DAB528</bpmn2:incoming><bpmn2:incoming>_4121FF63-DD77-4FFB-9923-36E39DD6622D</bpmn2:incoming><bpmn2:outgoing>_14D53AA8-7D4D-4DF1-A796-C911759AFE82</bpmn2:outgoing><bpmn2:outgoing>_94D56E95-3CAA-42C4-8793-99B5680F600E</bpmn2:outgoing><bpmn2:outgoing>_5DD316D3-913F-4600-9D37-0CEAA3FEBA43</bpmn2:outgoing><bpmn2:potentialOwner id="_w9eCcE94EeejkoE4T2mR4w"><bpmn2:resourceAssignmentExpression id="_w9eCcU94EeejkoE4T2mR4w"><bpmn2:formalExpression id="_w9eCck94EeejkoE4T2mR4w">FEERECEIPTREALIZE_MAKER</bpmn2:formalExpression></bpmn2:resourceAssignmentExpression></bpmn2:potentialOwner></bpmn2:userTask><bpmn2:userTask id="_5A09A264-B5C4-4355-8EC5-B6DC47E7A1A9" drools:bgcolor="#FF6600" name="Fee Realization Approver"><bpmn2:extensionElements><drools:onEntry-script scriptFormat="http://www.java.com/java"><drools:script>show_tabs=Accounting</drools:script></drools:onEntry-script></bpmn2:extensionElements><bpmn2:incoming>_14D53AA8-7D4D-4DF1-A796-C911759AFE82</bpmn2:incoming><bpmn2:outgoing>_179060F8-FE71-4B6D-8DF9-B700C2446E31</bpmn2:outgoing><bpmn2:potentialOwner id="_w9eCc094EeejkoE4T2mR4w"><bpmn2:resourceAssignmentExpression id="_w9eCdE94EeejkoE4T2mR4w"><bpmn2:formalExpression id="_w9eCdU94EeejkoE4T2mR4w">FEERECEIPTREALIZE_APPROVER</bpmn2:formalExpression></bpmn2:resourceAssignmentExpression></bpmn2:potentialOwner></bpmn2:userTask><bpmn2:sequenceFlow id="_14D53AA8-7D4D-4DF1-A796-C911759AFE82" name="Submit" sourceRef="_CB84B893-830F-4960-8640-208225B444FB" targetRef="_5A09A264-B5C4-4355-8EC5-B6DC47E7A1A9"><bpmn2:documentation id="_w9eCdk94EeejkoE4T2mR4w">Submit=Submitted</bpmn2:documentation><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCd094EeejkoE4T2mR4w">vo.recordStatus == 'Submitted'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequenceFlow id="_4121FF63-DD77-4FFB-9923-36E39DD6622D" name="Resubmit" sourceRef="_262A1962-825F-4C56-88B3-206A2B80569F" targetRef="_CB84B893-830F-4960-8640-208225B444FB"><bpmn2:documentation id="_w9eCeE94EeejkoE4T2mR4w">Resubmit=Resubmitted</bpmn2:documentation><bpmn2:auditing id="_w9eCeU94EeejkoE4T2mR4w"><bpmn2:documentation id="_w9eCek94EeejkoE4T2mR4w">Notes</bpmn2:documentation></bpmn2:auditing><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCe094EeejkoE4T2mR4w">vo.recordStatus == 'Resubmitted'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequenceFlow id="_94D56E95-3CAA-42C4-8793-99B5680F600E" name="Resubmit" sourceRef="_CB84B893-830F-4960-8640-208225B444FB" targetRef="_5F5413A7-D079-4061-A500-66B805CEF038"><bpmn2:documentation id="_w9eCfE94EeejkoE4T2mR4w">Resubmit=Resubmitted</bpmn2:documentation><bpmn2:auditing id="_w9eCfU94EeejkoE4T2mR4w"><bpmn2:documentation id="_w9eCfk94EeejkoE4T2mR4w">Notes</bpmn2:documentation></bpmn2:auditing><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCf094EeejkoE4T2mR4w">vo.recordStatus == 'Resubmitted'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequenceFlow id="_7E5B6958-654D-4FEE-84F4-6421844F8D1F" name="Reject" sourceRef="_262A1962-825F-4C56-88B3-206A2B80569F" targetRef="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"><bpmn2:documentation id="_w9eCgE94EeejkoE4T2mR4w">Reject=Rejected</bpmn2:documentation><bpmn2:auditing id="_w9eCgU94EeejkoE4T2mR4w"><bpmn2:documentation id="_w9eCgk94EeejkoE4T2mR4w">Notes</bpmn2:documentation></bpmn2:auditing><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCg094EeejkoE4T2mR4w">vo.recordStatus == 'Rejected'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequenceFlow id="_5DD316D3-913F-4600-9D37-0CEAA3FEBA43" name="Reject" sourceRef="_CB84B893-830F-4960-8640-208225B444FB" targetRef="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"><bpmn2:documentation id="_w9eChE94EeejkoE4T2mR4w">Reject=Rejected</bpmn2:documentation><bpmn2:auditing id="_w9eChU94EeejkoE4T2mR4w"><bpmn2:documentation id="_w9eChk94EeejkoE4T2mR4w">Notes</bpmn2:documentation></bpmn2:auditing><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCh094EeejkoE4T2mR4w">vo.recordStatus == 'Rejected'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequenceFlow id="_921EB85C-0D30-4933-9BA8-E25DC6108252" name="Approve" sourceRef="_262A1962-825F-4C56-88B3-206A2B80569F" targetRef="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618"><bpmn2:documentation id="_w9eCiE94EeejkoE4T2mR4w">Approve=Approved</bpmn2:documentation><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCiU94EeejkoE4T2mR4w">vo.recordStatus == 'Approved'</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:exclusiveGateway id="_262A1962-825F-4C56-88B3-206A2B80569F" drools:bgcolor="#ffffff" drools:dg="" name="" gatewayDirection="Diverging"><bpmn2:incoming>_179060F8-FE71-4B6D-8DF9-B700C2446E31</bpmn2:incoming><bpmn2:outgoing>_921EB85C-0D30-4933-9BA8-E25DC6108252</bpmn2:outgoing><bpmn2:outgoing>_7E5B6958-654D-4FEE-84F4-6421844F8D1F</bpmn2:outgoing><bpmn2:outgoing>_4121FF63-DD77-4FFB-9923-36E39DD6622D</bpmn2:outgoing></bpmn2:exclusiveGateway><bpmn2:sequenceFlow id="_179060F8-FE71-4B6D-8DF9-B700C2446E31" sourceRef="_5A09A264-B5C4-4355-8EC5-B6DC47E7A1A9" targetRef="_262A1962-825F-4C56-88B3-206A2B80569F" /><bpmn2:sequenceFlow id="_B45C7840-78FD-44C5-99DC-B28B27DAB528" name="Submit" sourceRef="_0B1F68C3-79C5-49D1-94D9-B7E4F87EA54D" targetRef="_CB84B893-830F-4960-8640-208225B444FB"><bpmn2:documentation id="_w9eCik94EeejkoE4T2mR4w">Submit=Submitted</bpmn2:documentation><bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_w9eCi094EeejkoE4T2mR4w">vo.recordStatus == 'Submitted'</bpmn2:conditionExpression></bpmn2:sequenceFlow></bpmn2:process><bpmndi:BPMNDiagram id="_w9eCj094EeejkoE4T2mR4w"><bpmndi:BPMNPlane id="_w9eCkE94EeejkoE4T2mR4w" bpmnElement="FEERECEIPT_PROCESS"><bpmndi:BPMNShape id="_w9eCkU94EeejkoE4T2mR4w" bpmnElement="_FF9D4911-C022-42B0-B00A-9C353226F4A7"><dc:Bounds height="30.0" width="30.0" x="30.0" y="108.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="_w9eCkk94EeejkoE4T2mR4w" bpmnElement="_7B64C6C5-337C-44C2-98C6-A723EC862BFF"><dc:Bounds height="80.0" width="100.0" x="90.0" y="83.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id="_w9eCk094EeejkoE4T2mR4w" bpmnElement="_5EE9B2AF-F8EA-432C-BB52-88124AA2A117"><di:waypoint xsi:type="dc:Point" x="45.0" y="123.0" /><di:waypoint xsi:type="dc:Point" x="140.0" y="123.0" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id="_w9eClE94EeejkoE4T2mR4w" bpmnElement="_77E97F8E-6071-449B-9BD7-4B0F3A5A657A"><dc:Bounds height="80.0" width="100.0" x="540.0" y="83.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id="_w9eClU94EeejkoE4T2mR4w" bpmnElement="_9305AD0C-8EA2-46BB-AD97-8B650D65B67D"><di:waypoint xsi:type="dc:Point" x="140.0" y="123.0" /><di:waypoint xsi:type="dc:Point" x="350.0" y="123.0" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id="_w9eClk94EeejkoE4T2mR4w" bpmnElement="_C0021C4A-21DA-4AB3-83DF-43DE36042CD0"><dc:Bounds height="40.0" width="40.0" x="705.0" y="103.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id="_w9eCl094EeejkoE4T2mR4w" bpmnElement="_00E367A7-32B3-4238-95E1-394CAF4A448E"><di:waypoint xsi:type="dc:Point" x="590.0" y="123.0" /><di:waypoint xsi:type="dc:Point" x="725.0" y="123.0" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id="_w9eCmE94EeejkoE4T2mR4w" bpmnElement="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618"><dc:Bounds height="80.0" width="100.0" x="984.0" y="83.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id="_w9eCmU94EeejkoE4T2mR4w" bpmnElement="_0C53F5CF-91B6-48EF-AA7A-0FFB1BDC9D56"><di:waypoint xsi:type="dc:Point" x="725.0" y="123.0" /><di:waypoint xsi:type="dc:Point" x="1034.0" y="123.0" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id="_w9eCmk94EeejkoE4T2mR4w" bpmnElement="_73682DD6-4D65-497A-BAA5-B80623CB6C01"><dc:Bounds height="28.0" width="28.0" x="1260.0" y="109.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id="_w9eCm094EeejkoE4T2mR4w" bpmnElement="_A921FE66-42C4-42CC-BB5C-15ABAA47A008"><di:waypoint xsi:type="dc:Point" x="1034.0" y="123.0" /><di:waypoint xsi:type="dc:Point" x="1274.0" y="123.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="_w9eCnE94EeejkoE4T2mR4w" bpmnElement="_2AE689CD-94CB-4752-9CE3-748559E63D53"><di:waypoint xsi:type="dc:Point" x="725.0" y="123.0" /><di:waypoint xsi:type="dc:Point" x="725.0" y="17.0" /><di:waypoint xsi:type="dc:Point" x="140.0" y="17.0" /><di:waypoint xsi:type="dc:Point" x="140.0" y="123.0" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id="_w9eCnU94EeejkoE4T2mR4w" bpmnElement="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"><dc:Bounds height="80.0" width="100.0" x="675.0" y="210.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id="_w9eCnk94EeejkoE4T2mR4w" bpmnElement="_A96EF8F0-08CB-4FD7-8DAC-5CF5E6E1F059"><di:waypoint xsi:type="dc:Point" x="725.0" y="123.0" /><di:waypoint xsi:type="dc:Point" x="725.0" y="250.0" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id="_w9eCn094EeejkoE4T2mR4w" bpmnElement="_87A46993-91DA-47E0-811B-2F196FBAD6AA"><dc:Bounds height="28.0" width="28.0" x="621.0" y="315.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id="_w9eCoE94EeejkoE4T2mR4w" bpmnElement="_DAFA463C-32E5-4B16-BC89-284B69E70681"><di:waypoint xsi:type="dc:Point" x="725.0" y="250.0" /><di:waypoint xsi:type="dc:Point" x="725.0" y="329.0" /><di:waypoint xsi:type="dc:Point" x="635.0" y="329.0" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id="_w9eCoU94EeejkoE4T2mR4w" bpmnElement="_5F5413A7-D079-4061-A500-66B805CEF038"><dc:Bounds height="80.0" width="100.0" x="495.0" y="349.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="_w9eCok94EeejkoE4T2mR4w" bpmnElement="_4E6D290F-61AB-4F56-BCC1-BCD92F55AD05"><dc:Bounds height="80.0" width="100.0" x="720.0" y="349.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id="_w9eCo094EeejkoE4T2mR4w" bpmnElement="_1A0972CB-1741-433E-A3FE-77569D3EB20D"><di:waypoint xsi:type="dc:Point" x="545.0" y="389.0" /><di:waypoint xsi:type="dc:Point" x="770.0" y="389.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="_w9eCpE94EeejkoE4T2mR4w" bpmnElement="_35B25356-FC7E-4293-8C1B-C161F416565E"><di:waypoint xsi:type="dc:Point" x="545.0" y="389.0" /><di:waypoint xsi:type="dc:Point" x="545.0" y="250.0" /><di:waypoint xsi:type="dc:Point" x="725.0" y="250.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="_w9eCpU94EeejkoE4T2mR4w" bpmnElement="_CDBBE246-EF44-40AB-99BF-3B06873BDB20"><di:waypoint xsi:type="dc:Point" x="905.0" y="355.0" /><di:waypoint xsi:type="dc:Point" x="905.0" y="250.0" /><di:waypoint xsi:type="dc:Point" x="725.0" y="250.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="_w9eCpk94EeejkoE4T2mR4w" bpmnElement="_1CA63148-6545-4CC3-86CB-04EB05AF10F2"><di:waypoint xsi:type="dc:Point" x="905.0" y="355.0" /><di:waypoint xsi:type="dc:Point" x="905.0" y="460.0" /><di:waypoint xsi:type="dc:Point" x="545.0" y="460.0" /><di:waypoint xsi:type="dc:Point" x="545.0" y="389.0" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id="_w9eCp094EeejkoE4T2mR4w" bpmnElement="_0B1F68C3-79C5-49D1-94D9-B7E4F87EA54D"><dc:Bounds height="40.0" width="40.0" x="885.0" y="335.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id="_w9eCqE94EeejkoE4T2mR4w" bpmnElement="_AB3C7C10-B7CD-422F-9D03-C19E0DE24CD5"><di:waypoint xsi:type="dc:Point" x="770.0" y="389.0" /><di:waypoint xsi:type="dc:Point" x="852.0" y="389.0" /><di:waypoint xsi:type="dc:Point" x="852.0" y="355.0" /><di:waypoint xsi:type="dc:Point" x="905.0" y="355.0" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id="_w9eCqU94EeejkoE4T2mR4w" bpmnElement="_AB8F675B-702B-49EB-ABD2-0F901B4EC5B5"><dc:Bounds height="40.0" width="40.0" x="330.0" y="103.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="_w9eCqk94EeejkoE4T2mR4w" bpmnElement="_9209E0A4-14BC-4840-AE5E-AF2425159AD0"><dc:Bounds height="80.0" width="100.0" x="90.0" y="240.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="_w9eCq094EeejkoE4T2mR4w" bpmnElement="_46DBB075-601A-48C5-80F6-7A3C9575CEF5"><dc:Bounds height="28.0" width="28.0" x="126.0" y="375.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id="_w9eCrE94EeejkoE4T2mR4w" bpmnElement="_B600CB2F-1566-41FD-BB42-8CC730387820"><di:waypoint xsi:type="dc:Point" x="140.0" y="280.0" /><di:waypoint xsi:type="dc:Point" x="140.0" y="389.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="_w9eCrU94EeejkoE4T2mR4w" bpmnElement="_B4A70293-13FD-44EB-A4C3-78A38AC643B9"><di:waypoint xsi:type="dc:Point" x="140.0" y="123.0" /><di:waypoint xsi:type="dc:Point" x="140.0" y="280.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="_w9eCrk94EeejkoE4T2mR4w" bpmnElement="_C2820306-3E6C-4BD7-A4F6-099893B15468"><di:waypoint xsi:type="dc:Point" x="350.0" y="123.0" /><di:waypoint xsi:type="dc:Point" x="350.0" y="369.0" /><di:waypoint xsi:type="dc:Point" x="545.0" y="389.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="_w9eCr094EeejkoE4T2mR4w" bpmnElement="_E46247E5-509B-4142-A14A-5ABED0386711"><di:waypoint xsi:type="dc:Point" x="350.0" y="123.0" /><di:waypoint xsi:type="dc:Point" x="590.0" y="123.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="_w9eCsE94EeejkoE4T2mR4w" bpmnElement="_875A1CB8-F079-4E62-8E17-DCC7048BD3D9"><di:waypoint xsi:type="dc:Point" x="545.0" y="389.0" /><di:waypoint xsi:type="dc:Point" x="209.0" y="409.0" /><di:waypoint xsi:type="dc:Point" x="209.0" y="222.0" /><di:waypoint xsi:type="dc:Point" x="165.0" y="222.0" /><di:waypoint xsi:type="dc:Point" x="140.0" y="123.0" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id="_w9eCsU94EeejkoE4T2mR4w" bpmnElement="_CB84B893-830F-4960-8640-208225B444FB"><dc:Bounds height="80.0" width="100.0" x="1035.0" y="315.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="_w9eCsk94EeejkoE4T2mR4w" bpmnElement="_5A09A264-B5C4-4355-8EC5-B6DC47E7A1A9"><dc:Bounds height="80.0" width="100.0" x="1350.0" y="315.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id="_w9eCs094EeejkoE4T2mR4w" bpmnElement="_14D53AA8-7D4D-4DF1-A796-C911759AFE82"><di:waypoint xsi:type="dc:Point" x="1085.0" y="355.0" /><di:waypoint xsi:type="dc:Point" x="1400.0" y="355.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="_w9eCtE94EeejkoE4T2mR4w" bpmnElement="_4121FF63-DD77-4FFB-9923-36E39DD6622D"><di:waypoint xsi:type="dc:Point" x="1505.0" y="355.0" /><di:waypoint xsi:type="dc:Point" x="1505.0" y="452.0" /><di:waypoint xsi:type="dc:Point" x="1110.0" y="452.0" /><di:waypoint xsi:type="dc:Point" x="1085.0" y="355.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="_w9eCtU94EeejkoE4T2mR4w" bpmnElement="_94D56E95-3CAA-42C4-8793-99B5680F600E"><di:waypoint xsi:type="dc:Point" x="1085.0" y="355.0" /><di:waypoint xsi:type="dc:Point" x="1060.0" y="465.0" /><di:waypoint xsi:type="dc:Point" x="545.0" y="465.0" /><di:waypoint xsi:type="dc:Point" x="545.0" y="389.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="_w9eCtk94EeejkoE4T2mR4w" bpmnElement="_7E5B6958-654D-4FEE-84F4-6421844F8D1F"><di:waypoint xsi:type="dc:Point" x="1505.0" y="355.0" /><di:waypoint xsi:type="dc:Point" x="1505.0" y="250.0" /><di:waypoint xsi:type="dc:Point" x="725.0" y="250.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="_w9eCt094EeejkoE4T2mR4w" bpmnElement="_5DD316D3-913F-4600-9D37-0CEAA3FEBA43"><di:waypoint xsi:type="dc:Point" x="1085.0" y="355.0" /><di:waypoint xsi:type="dc:Point" x="1085.0" y="250.0" /><di:waypoint xsi:type="dc:Point" x="725.0" y="250.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="_w9eCuE94EeejkoE4T2mR4w" bpmnElement="_921EB85C-0D30-4933-9BA8-E25DC6108252"><di:waypoint xsi:type="dc:Point" x="1505.0" y="355.0" /><di:waypoint xsi:type="dc:Point" x="1562.0" y="355.0" /><di:waypoint xsi:type="dc:Point" x="1562.0" y="225.0" /><di:waypoint xsi:type="dc:Point" x="1034.0" y="225.0" /><di:waypoint xsi:type="dc:Point" x="1034.0" y="123.0" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id="_w9eCuU94EeejkoE4T2mR4w" bpmnElement="_262A1962-825F-4C56-88B3-206A2B80569F"><dc:Bounds height="40.0" width="40.0" x="1485.0" y="335.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id="_w9eCuk94EeejkoE4T2mR4w" bpmnElement="_179060F8-FE71-4B6D-8DF9-B700C2446E31"><di:waypoint xsi:type="dc:Point" x="1400.0" y="355.0" /><di:waypoint xsi:type="dc:Point" x="1505.0" y="355.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="_w9eCu094EeejkoE4T2mR4w" bpmnElement="_B45C7840-78FD-44C5-99DC-B28B27DAB528"><di:waypoint xsi:type="dc:Point" x="905.0" y="355.0" /><di:waypoint xsi:type="dc:Point" x="1085.0" y="355.0" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram><bpmn2:relationship id="_w9eCvE94EeejkoE4T2mR4w" type="jBPMProcessSimulation"><bpmn2:extensionElements><drools:ProcessAnalysisData><drools:Scenario xsi:type="drools:Scenario" id="default" name="Simulationscenario"><drools:ScenarioParameters xsi:type="drools:ScenarioParameters_._type" /><drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618" id="_w9eCvU94EeejkoE4T2mR4w"><drools:CostParameters xsi:type="drools:CostParameters" /></drools:ElementParameters><drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0" id="_w9eCvk94EeejkoE4T2mR4w"><drools:CostParameters xsi:type="drools:CostParameters" /></drools:ElementParameters><drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_5F5413A7-D079-4061-A500-66B805CEF038" id="_w9eCv094EeejkoE4T2mR4w"><drools:ResourceParameters xsi:type="drools:ResourceParameters" /><drools:CostParameters xsi:type="drools:CostParameters" /></drools:ElementParameters><drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_9209E0A4-14BC-4840-AE5E-AF2425159AD0" id="_w9eCwE94EeejkoE4T2mR4w"><drools:CostParameters xsi:type="drools:CostParameters" /></drools:ElementParameters><drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_4E6D290F-61AB-4F56-BCC1-BCD92F55AD05" id="_w9eCwU94EeejkoE4T2mR4w"><drools:ResourceParameters xsi:type="drools:ResourceParameters" /><drools:CostParameters xsi:type="drools:CostParameters" /></drools:ElementParameters><drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_77E97F8E-6071-449B-9BD7-4B0F3A5A657A" id="_w9eCwk94EeejkoE4T2mR4w"><drools:ResourceParameters xsi:type="drools:ResourceParameters" /><drools:CostParameters xsi:type="drools:CostParameters" /></drools:ElementParameters><drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_5A09A264-B5C4-4355-8EC5-B6DC47E7A1A9" id="_w9eCw094EeejkoE4T2mR4w"><drools:ResourceParameters xsi:type="drools:ResourceParameters" /><drools:CostParameters xsi:type="drools:CostParameters" /></drools:ElementParameters><drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_CB84B893-830F-4960-8640-208225B444FB" id="_w9eCxE94EeejkoE4T2mR4w"><drools:ResourceParameters xsi:type="drools:ResourceParameters" /><drools:CostParameters xsi:type="drools:CostParameters" /></drools:ElementParameters><drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_7B64C6C5-337C-44C2-98C6-A723EC862BFF" id="_w9eCxU94EeejkoE4T2mR4w"><drools:ResourceParameters xsi:type="drools:ResourceParameters" /><drools:CostParameters xsi:type="drools:CostParameters" /></drools:ElementParameters></drools:Scenario></drools:ProcessAnalysisData></bpmn2:extensionElements><bpmn2:source>_w9U4UU94EeejkoE4T2mR4w</bpmn2:source><bpmn2:target>_w9U4UU94EeejkoE4T2mR4w</bpmn2:target></bpmn2:relationship></bpmn2:definitions>]]></column>
+			<where>workflowtype='FEERECEIPT_PROCESS' and workflowactive=1</where>
+		</update>
+	</changeSet>
+<changeSet id="44" author="Pruthvi">
+	<sql>
+		UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
+	</sql>
+</changeSet>
+	
+</databaseChangeLog>

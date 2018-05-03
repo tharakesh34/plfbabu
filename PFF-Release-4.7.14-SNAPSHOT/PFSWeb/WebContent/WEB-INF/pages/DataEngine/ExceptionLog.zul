@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	
+	<window id="window_ExceptionLog" apply="${exceptionLogCtrl}" border="normal" width="70%" height="80%" sizable="true" mode="modal">
+	<borderlayout id="borderLayout_ExceptionLog">
+		<north>
+			<div sclass="z-toolbar" style="padding:0px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+					<toolbar align="start" sclass="toolbar-start"/>
+					<toolbar align="center" sclass="toolbar-center">
+						<label value="Exception Log" sclass="label-heading" />
+					</toolbar>
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="btnClose" tooltiptext="Close"  label="CLOSE" sclass="z-toolbarbutton"/>
+					</toolbar>
+				</hbox>
+			</div>
+		</north>
+		<center border="none">
+			<listbox id="listBox_ExceptionLog" span="true" tooltiptext="listbox Exception Log"  multiple="false" mold="paging" autopaging="true" vflex="true">
+				<listhead sizable="true">
+					<listheader id="listheader_Id" label="ID" hflex="min" />
+					<listheader id="listheader_KeyId" label="Reference" hflex="min" />
+					<listheader id="listheader_Status" label="Status" hflex="min" />
+					<listheader id="Reason" label="Reason" hflex="min" />
+				</listhead>
+			</listbox>
+		</center>
+		</borderlayout>
+	</window>
+</zk>

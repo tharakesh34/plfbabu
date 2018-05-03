@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_QueryDialog"  border="normal"
+			apply="${queryDialogCtrl}" width="100%" height="100%"
+			sizable="false">
+			<borderlayout id="borderlayoutQuery">
+			 <north>
+			  <div sclass="z-toolbar" style="padding:0">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%" widths="35%,30%,35%">
+
+					<!-- COMMON BUTTONS -->
+					<toolbar align="start" sclass="toolbar-start">
+
+						<button id="btnNew" visible="false"
+							 tooltiptext="${c:l('btnNew.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+						<button id="btnEdit" visible="false"
+							 tooltiptext="${c:l('btnEdit.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+						<button id="btnDelete" visible="false"
+							 tooltiptext="${c:l('btnDelete.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+						<button id="btnSave" visible="false"
+							 tooltiptext="${c:l('btnSave.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+						<button id="btnCancel" visible="false"
+							 tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="btnNotes" visible="false"
+							 tooltiptext="${c:l('btnNotes.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+						<button id="btnValidate" visible="true" label = "VALIDATE" 
+							 tooltiptext="${c:l('btnSave.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+						<button id="btnSimulate" visible="true" label = "SIMULATE"  
+							 tooltiptext="${c:l('btnSave.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					</toolbar>
+					<!-- SEARCH AREA -->
+					<toolbar align="center" sclass="toolbar-center">
+						<label id="label_QueryTitle"
+							value="${c:l('window_QueryDialog.title')}"
+							sclass="label-heading" />
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="btnHelp" visible="false" 
+							label = "HELP"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+						<button id="btnClose" 
+							tooltiptext="${c:l('btnClose.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					</toolbar>
+				</hbox>
+			</div>
+           </north>
+				<center border="none" autoscroll="true">
+					<groupbox id="gb_basicDetails" mold="3d">
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
+							</columns>
+							<rows>
+								<row id="row0">
+									<label id="label_QueryCode"
+										value="${c:l('label_QueryDialog_QueryCode.value')}" />
+									<hlayout id="hlayout_QueryCode">
+										<space id="space_QueryCode"
+											spacing="2px" />
+										<textbox id="queryCode"
+											maxlength="50" width="150px" />
+									</hlayout>
+									<label id="label_QueryModule"
+										value="${c:l('label_QueryDialog_QueryModule.value')}" />
+									<hlayout id="hlayout_QueryModule">
+										<space id="space_QueryModule"
+											spacing="2px" />
+										<combobox id="cb_queryModule"
+											width="150px" />
+									</hlayout>
+								</row>
+								<row id="row1">
+									<label id="label_QueryDesc"
+										value="${c:l('label_QueryDialog_QueryDesc.value')}" />
+									<hlayout id="hlayout_QueryDesc">
+										<space id="space_QueryDesc"
+											spacing="2px" />
+										<textbox id="queryDesc"
+											maxlength="100" width="150px" />
+									</hlayout>
+									<!-- 							<label id = "label_SqlQuery" value="${c:l('label_QueryDialog_SqlQuery.value')}" />
+										<hlayout id= "hlayout_SqlQuery" >
+										<space id="space_SqlQuery"  spacing="2px"/>
+										<textbox id = "sqlQuery" maxlength="2147483647" multiline="true" rows="4" width="80%" />
+										</hlayout>
+										</row>
+										<row id ="row2" >
+										<label id = "label_ActualBlock" value="${c:l('label_QueryDialog_ActualBlock.value')}" />
+										<hlayout id= "hlayout_ActualBlock" >
+										<space id="space_ActualBlock"  spacing="2px"/>
+										<textbox id = "actualBlock" maxlength="2147483647" multiline="true" rows="4" width="80%" />
+										</hlayout> -->
+									<label id="label_SubQuery"
+										value="${c:l('label_QueryDialog_SubQuery.value')}" />
+									<hlayout id="hlayout_SubQuery" visible="false">
+										<space id="space_SubQuery"
+											spacing="2px" />
+										<checkbox id="subQuery"
+											checked="false" />
+									</hlayout>
+								</row>
+								<row id="row3">
+									<label id="label_Active"
+										value="${c:l('label_QueryDialog_Active.value')}" />
+									<hlayout id="hlayout_Active">
+										<space id="space_Active"
+											spacing="2px" />
+										<checkbox id="active"
+											checked="true" />
+									</hlayout>
+								</row>
+ 
+							</rows>
+						</grid>
+ 						<queryBuilder id="Sql_Query" />
+					</groupbox>
+					
+				</center>
+				<south sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%"
+						height="100%">
+						<caption label="${c:l('Action')}" />
+						<hbox width="75%">
+							<radiogroup id="userAction" name="action" />
+							<label id="label_RecordStatus"
+								value="${c:l('label_South_RecordStatus.value')}"
+								sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Addtional Charts" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="4fe86419-c967-4c8c-b111-b73f9e40a352">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["../../StyleSheet/Template_Analytic.jrtx"]]></template>
+	<subDataset name="Currencies" uuid="66b322f2-91ca-4612-9fb4-a07f670ce978">
+		<queryString>
+			<![CDATA[Select Label Category,'' Series,Value,CASE WHEN Leng=1 THEN Convert(Varchar,Label1)
+				  WHEN Leng>=2 and 	Leng<=3 THEN Convert(Varchar,Convert(decimal(18,1),Round((Label1/1000),1)))+'K'
+				  WHEN Leng>=4 and 	Leng<=9 THEN Convert(Varchar,Convert(decimal(18,1),Round((Label1/1000000),1)))+'M'
+				  WHEN Leng>=10 and Leng<=12 THEN Convert(Varchar,Convert(decimal(18,1),Round((Label1/1000000000),1)))+'B'
+				  WHEN Leng>=13 and Leng<=20 THEN Convert(Varchar,Convert(decimal(18,1),Round((Label1/1000000000000),1)))+'T' ELSE  Convert(Varchar,Label1) END LabelExp from (
+		Select Label,Convert(Decimal(18,3),Value/1000000) as Value,Convert(Decimal(18,0),Value)Label1,LEN(Convert(Decimal(18,0),Value))Leng from (
+		Select FinCcy Label, SUM(dbo.[UDF_ConvertCurrency](TotalpriSchd,T1.FinCcy,'AED')) Value
+    from FinPftDetails T1 With(NoLock) INner join RMTCurrencies With(NoLock) On CCYCOde=FinCCY
+    Where FinIsActive=1 Group by FinCcy,CcyMinorCcyUnits)T)T1
+Order by Category]]>
+		</queryString>
+		<field name="Category" class="java.lang.String"/>
+		<field name="Series" class="java.lang.String"/>
+		<field name="Value" class="java.math.BigDecimal"/>
+		<field name="LabelExp" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="ProfitRecivables" uuid="55b55234-4c3d-4544-8d62-3aebb837face">
+		<queryString>
+			<![CDATA[SELECT Right(REPLACE(CONVERT(CHAR(15), T1.[Series], 106),' ','-'),8) Series,ISNULL(T2.Value,0)Value
+                  FROM (VALUES(0),(1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11))a(N)
+                  CROSS APPLY (VALUES(DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) + a.N, 0)))T1([Series])
+	LEFT OUTER JOIN (
+  Select convert(Datetime,left(convert(varchar,schdate,112),6) + '01') schdate,
+		 SUM(dbo.[UDF_ConvertCurrency]((T1.profitschd),T2.FinCCY,'AED')) Value
+  from   FinScheduleDetails T1 With(NoLock) inner join
+   FinanceMain T2 With(NoLock) on T1.FinReference=T2.FinReference where T2.FinisActive=1
+   Group BY convert(datetime,left(convert(varchar,schdate,112),6) + '01'))T2 ON T1.Series=T2.schdate]]>
+		</queryString>
+		<field name="Series" class="java.lang.String"/>
+		<field name="Value" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="Finance Status By Products" uuid="e5067993-2f88-401f-a911-93df13042c2f">
+		<queryString>
+			<![CDATA[SELECT   FinStatus,T3.CustStsDescription Catogery,T2.FinCategory Series,COUNT(T1.FinReference) Value
+  FROM      FinanceMain T1 With(NoLock) INNER JOIN
+        RMTFinanceTypes T2 With(NoLock) ON T2.FinType=T1.FinType  INNER JOIN
+        BMTCustStatusCodes AS T3 With(NoLock) ON FinStatus = T3.CustStsCode
+  WHERE     T1.FinIsActive='1' AND FinStatus IS NOT NULL and FinStatus!='M0'
+  GROUP BY  FinStatus,T2.FinCategory, T3.CustStsDescription
+  ORDER BY FinStatus,Catogery, series]]>
+		</queryString>
+		<field name="FinStatus" class="java.lang.String"/>
+		<field name="Catogery" class="java.lang.String"/>
+		<field name="Series" class="java.lang.String"/>
+		<field name="Value" class="java.lang.Integer"/>
+	</subDataset>
+	<subDataset name="NPLDeals" uuid="b83bcddd-27c8-45a0-86b9-fa7e28981090">
+		<queryString>
+			<![CDATA[SELECT    T5.ProductCode Label,COUNT(T2.FinReference) Value
+  FROM      FinanceMain T1 With(NoLock) INNER JOIN
+        FinSuspHead T2 With(NoLock) ON T1.FinReference = T2.FinReference INNER JOIN
+        RMTFinanceTypes T4 With(NoLock) ON T4.FinType=T1.FinType INNER JOIN
+        RMTProductAssets T5 With(NoLock) ON T5.AssetID=T4.FinAssetType
+  WHERE    T1.FinIsActive='1' and FinIsINSusp='1'
+  GROUP BY T5.ProductCode]]>
+		</queryString>
+		<field name="Label" class="java.lang.String"/>
+		<field name="Value" class="java.lang.Integer"/>
+	</subDataset>
+	<parameter name="organizationLogo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select   'Dummy' DmyGrpHeader]]>
+	</queryString>
+	<field name="DmyGrpHeader" class="java.lang.String"/>
+	<group name="DmyGrpHeader">
+		<groupExpression><![CDATA[$F{DmyGrpHeader}]]></groupExpression>
+		<groupFooter>
+			<band height="175">
+				<frame>
+					<reportElement uuid="6e97eb3c-541a-49ea-b2a2-edd7d4a27de9" x="0" y="0" width="802" height="10"/>
+				</frame>
+				<frame>
+					<reportElement uuid="e35fd9a6-2e62-4e38-9999-12493169ca6d" style="Title Description header" mode="Opaque" x="0" y="10" width="802" height="165" backcolor="#FFFFFF"/>
+					<barChart>
+						<chart>
+							<reportElement uuid="3dfd0b2a-6d53-4419-9cd1-f23c933b1c86" style="Charts" x="0" y="15" width="802" height="150"/>
+							<chartTitle position="Top"/>
+							<chartSubtitle/>
+							<chartLegend position="Right"/>
+						</chart>
+						<categoryDataset>
+							<dataset>
+								<datasetRun subDataset="Finance Status By Products" uuid="a53e5fcd-e73d-4b91-9bba-6c3fea4a810e">
+									<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+								</datasetRun>
+							</dataset>
+							<categorySeries>
+								<seriesExpression><![CDATA[$F{Series}]]></seriesExpression>
+								<categoryExpression><![CDATA[$F{FinStatus}]]></categoryExpression>
+								<valueExpression><![CDATA[$F{Value}]]></valueExpression>
+							</categorySeries>
+						</categoryDataset>
+						<barPlot isShowLabels="false" isShowTickLabels="true" isShowTickMarks="true">
+							<plot labelRotation="0.0">
+								<seriesColor seriesOrder="0" color="#88C42E"/>
+								<seriesColor seriesOrder="1" color="#E85A0E"/>
+								<seriesColor seriesOrder="2" color="#1284D7"/>
+								<seriesColor seriesOrder="3" color="#D50622"/>
+								<seriesColor seriesOrder="4" color="#8F08D4"/>
+								<seriesColor seriesOrder="5" color="#0DC4DD"/>
+								<seriesColor seriesOrder="6" color="#DB03C6"/>
+								<seriesColor seriesOrder="7" color="#0ADFAF"/>
+								<seriesColor seriesOrder="8" color="#F1C40D"/>
+								<seriesColor seriesOrder="9" color="#590711"/>
+								<seriesColor seriesOrder="10" color="#CCCC05"/>
+								<seriesColor seriesOrder="11" color="#073359"/>
+								<seriesColor seriesOrder="12" color="#147E8C"/>
+							</plot>
+							<itemLabel color="#2D4B7A">
+								<font size="8" isItalic="true" isPdfEmbedded="true"/>
+							</itemLabel>
+							<valueAxisFormat>
+								<axisFormat verticalTickLabels="false">
+									<labelFont>
+										<font fontName="SansSerif" size="36"/>
+									</labelFont>
+								</axisFormat>
+							</valueAxisFormat>
+						</barPlot>
+					</barChart>
+					<staticText>
+						<reportElement uuid="9883e27d-500d-4d3f-8267-168f7e5dba27" style="Title Description header" x="0" y="0" width="802" height="15"/>
+						<textElement>
+							<paragraph leftIndent="4"/>
+						</textElement>
+						<text><![CDATA[Finance Status By Products]]></text>
+					</staticText>
+				</frame>
+			</band>
+			<band height="135">
+				<frame>
+					<reportElement uuid="6e97eb3c-541a-49ea-b2a2-edd7d4a27de9" x="0" y="0" width="802" height="10"/>
+				</frame>
+				<frame>
+					<reportElement uuid="e35fd9a6-2e62-4e38-9999-12493169ca6d" style="Title Description header" mode="Opaque" x="0" y="10" width="802" height="125" backcolor="#FFFFFF"/>
+					<staticText>
+						<reportElement uuid="9883e27d-500d-4d3f-8267-168f7e5dba27" style="Title Description header" x="0" y="0" width="802" height="15"/>
+						<textElement>
+							<paragraph leftIndent="4"/>
+						</textElement>
+						<text><![CDATA[Profit Receivables (BHD) in next 12 Months ]]></text>
+					</staticText>
+					<lineChart>
+						<chart isShowLegend="false">
+							<reportElement uuid="6b7ed385-46dc-4d0f-bf41-6384d9ba9086" style="Charts" mode="Opaque" x="0" y="15" width="802" height="110"/>
+							<chartTitle/>
+							<chartSubtitle/>
+							<chartLegend/>
+						</chart>
+						<categoryDataset>
+							<dataset>
+								<datasetRun subDataset="ProfitRecivables" uuid="acac4b8e-f341-4d39-ac03-9fb8f2ebb0b5">
+									<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+								</datasetRun>
+							</dataset>
+							<categorySeries>
+								<seriesExpression><![CDATA["Dummy Series"]]></seriesExpression>
+								<categoryExpression><![CDATA[$F{Series}]]></categoryExpression>
+								<valueExpression><![CDATA[$F{Value}]]></valueExpression>
+							</categorySeries>
+						</categoryDataset>
+						<linePlot>
+							<plot labelRotation="25.0">
+								<seriesColor seriesOrder="0" color="#6E0D1A"/>
+							</plot>
+						</linePlot>
+					</lineChart>
+				</frame>
+			</band>
+			<band height="165">
+				<frame>
+					<reportElement uuid="6e97eb3c-541a-49ea-b2a2-edd7d4a27de9" x="0" y="0" width="802" height="10"/>
+				</frame>
+				<frame>
+					<reportElement uuid="e35fd9a6-2e62-4e38-9999-12493169ca6d" style="Title Description header" mode="Opaque" x="0" y="10" width="390" height="155" backcolor="#FFFFFF"/>
+					<staticText>
+						<reportElement uuid="9883e27d-500d-4d3f-8267-168f7e5dba27" style="Title Description header" x="0" y="0" width="390" height="15"/>
+						<textElement>
+							<paragraph leftIndent="4"/>
+						</textElement>
+						<text><![CDATA[NPL Deals by Products]]></text>
+					</staticText>
+					<pie3DChart>
+						<chart>
+							<reportElement uuid="472506b0-34ca-4f77-ace4-0a30ad14cefe" style="Charts" x="0" y="15" width="390" height="140"/>
+							<chartTitle/>
+							<chartSubtitle/>
+							<chartLegend position="Right"/>
+						</chart>
+						<pieDataset>
+							<dataset>
+								<datasetRun subDataset="NPLDeals" uuid="d1ed2975-396d-4679-acb2-3b548d318edf">
+									<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+								</datasetRun>
+							</dataset>
+							<keyExpression><![CDATA[$F{Label}]]></keyExpression>
+							<valueExpression><![CDATA[$F{Value}]]></valueExpression>
+						</pieDataset>
+						<pie3DPlot isShowLabels="true" labelFormat="{1}">
+							<plot>
+								<seriesColor seriesOrder="0" color="#61DD9C"/>
+								<seriesColor seriesOrder="1" color="#85DB04"/>
+								<seriesColor seriesOrder="2" color="#882711"/>
+								<seriesColor seriesOrder="3" color="#495E88"/>
+								<seriesColor seriesOrder="4" color="#F56315"/>
+								<seriesColor seriesOrder="5" color="#1284D7"/>
+								<seriesColor seriesOrder="6" color="#800080"/>
+								<seriesColor seriesOrder="7" color="#147E8C"/>
+								<seriesColor seriesOrder="8" color="#017E7E"/>
+								<seriesColor seriesOrder="9" color="#073359"/>
+								<seriesColor seriesOrder="10" color="#9C5416"/>
+								<seriesColor seriesOrder="11" color="#5C148C"/>
+								<seriesColor seriesOrder="12" color="#ADAD3B"/>
+							</plot>
+							<itemLabel/>
+						</pie3DPlot>
+					</pie3DChart>
+				</frame>
+				<frame>
+					<reportElement uuid="e35fd9a6-2e62-4e38-9999-12493169ca6d" style="Title Description header" mode="Opaque" x="412" y="10" width="390" height="155" backcolor="#FFFFFF"/>
+					<staticText>
+						<reportElement uuid="9883e27d-500d-4d3f-8267-168f7e5dba27" style="Title Description header" x="0" y="0" width="390" height="15"/>
+						<textElement>
+							<paragraph leftIndent="4"/>
+						</textElement>
+						<text><![CDATA[Finance Amount (AED) in Millions By Currency]]></text>
+					</staticText>
+					<barChart>
+						<chart isShowLegend="false">
+							<reportElement uuid="3dfd0b2a-6d53-4419-9cd1-f23c933b1c86" style="Charts" x="0" y="15" width="390" height="140"/>
+							<chartTitle position="Top"/>
+							<chartSubtitle/>
+							<chartLegend position="Bottom"/>
+						</chart>
+						<categoryDataset>
+							<dataset>
+								<datasetRun subDataset="Currencies" uuid="ac193952-07af-4a03-b394-f005ab8bb47f">
+									<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+								</datasetRun>
+							</dataset>
+							<categorySeries>
+								<seriesExpression><![CDATA[$F{Series}]]></seriesExpression>
+								<categoryExpression><![CDATA[$F{Category}]]></categoryExpression>
+								<valueExpression><![CDATA[$F{Value}]]></valueExpression>
+								<labelExpression><![CDATA[$F{LabelExp}]]></labelExpression>
+							</categorySeries>
+						</categoryDataset>
+						<barPlot isShowLabels="true" isShowTickLabels="true" isShowTickMarks="true">
+							<plot labelRotation="0.0">
+								<seriesColor seriesOrder="0" color="#097CD1"/>
+								<seriesColor seriesOrder="1" color="#126018"/>
+								<seriesColor seriesOrder="2" color="#6E0D1A"/>
+								<seriesColor seriesOrder="3" color="#9C5416"/>
+								<seriesColor seriesOrder="4" color="#147E8C"/>
+								<seriesColor seriesOrder="5" color="#5C148C"/>
+								<seriesColor seriesOrder="6" color="#ADAD3B"/>
+							</plot>
+							<itemLabel color="#2D4B7A">
+								<font size="8" isItalic="true" isPdfEmbedded="true"/>
+							</itemLabel>
+							<valueAxisFormat>
+								<axisFormat verticalTickLabels="false">
+									<labelFont>
+										<font fontName="SansSerif" size="36"/>
+									</labelFont>
+								</axisFormat>
+							</valueAxisFormat>
+						</barPlot>
+					</barChart>
+				</frame>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="43" splitType="Stretch">
+			<frame>
+				<reportElement uuid="7ba36d77-24f9-4087-b34b-9c53112cceb0" x="0" y="0" width="802" height="43"/>
+				<image hAlign="Left">
+					<reportElement uuid="191dc9c0-d24b-4d40-b0d2-8a4dd0415629" x="668" y="0" width="134" height="43"/>
+					<imageExpression><![CDATA[$P{organizationLogo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement uuid="ce8aa4d0-a410-4e32-95a9-39fee0f119cd" style="Title Header" x="0" y="18" width="668" height="25"/>
+					<box>
+						<bottomPen lineWidth="1.5" lineColor="#654402"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Addtional Information]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+</jasperReport>

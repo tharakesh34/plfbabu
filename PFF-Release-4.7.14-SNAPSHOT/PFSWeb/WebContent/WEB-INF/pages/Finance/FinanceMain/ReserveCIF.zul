@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_ReserveCIFDialog" border="normal"
+		apply="${reserveCIFDialogCtrl}" width="500px" height="150px"
+		sizable="false" closable="true">
+
+
+		<borderlayout id="borderlayoutReserveCIF">
+			<north>
+
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="25%,50%,25%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label id="label_WindowTitle"
+								value="${c:l('window_ReserveCIFDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnReserveCIFClose1"
+								visible="false" label="${c:l('label_btnReserveCIFClose.value')}"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+
+			<center border="none" autoscroll="false">
+				<groupbox id="gb_CreateCIF" height="110px"
+					style="border:1px solid #F38C60;">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column />
+							<column />
+						</columns>
+						<rows>
+							<row id="row_createCIF1" spans="2">
+								<hbox spacing="75px" align="center">
+									<label
+										id="label_ReserveCIFDialog_CustCIF"
+										value="${c:l('label_ReserveCIFDialog_CustCIF.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<textbox id="custCIF"
+											maxlength="7" width="125px" />
+									</hbox>
+								</hbox>
+							</row>
+							<row id="row_createCIF2" spans="2">
+								<label id="label_ReserveCIFDialog_Error"
+									width="180px" style="font-weight:bold;color:#F20C0C;" />
+							</row>
+							<row id="row_createCIF3" >
+								<hbox>
+									<space width="150px" />
+									<button id="btnProceed"
+										style="float:center;"
+										label="${c:l('label_ReserveCIFDialog_btnProceed.value')}"
+										tooltiptext="${c:l('label_ReserveCIFDialog_btnProceed.tooltiptext')}" />
+								</hbox>
+								<button id="createBtnClose"
+									style="float:center;"
+									label="close"
+									tooltiptext="${c:l('label_ReserveCIFDialog_btnProceed.tooltiptext')}" onClick="window_ReserveCIFDialog.detach()"/>
+							</row>
+							<row>
+								<separator />
+							</row>
+							<row id="row_CreateAcc1" spans="2">
+								<label
+									id="label_ReserveCIFDialog_CreateAccount"
+									value="${c:l('label_ReserveCIFDialog_CreateAccount.value')}" />
+							</row>
+							<row>
+								<separator />
+							</row>
+							<row id="row_CreateAcc2">
+								<hbox>
+									<space width="160px" />
+									<button id="btnRetry"
+										style="float:center;"
+										label="${c:l('label_ReserveCIFDialog_btnRetry.value')}"
+										sclass="z-toolbarbutton"
+										tooltiptext="${c:l('label_ReserveCIFDialog_btnProceed.tooltiptext')}" />
+								</hbox>
+								<button id="btnReserveCIFClose"
+									label="${c:l('label_btnReserveCIFClose.value')}"
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

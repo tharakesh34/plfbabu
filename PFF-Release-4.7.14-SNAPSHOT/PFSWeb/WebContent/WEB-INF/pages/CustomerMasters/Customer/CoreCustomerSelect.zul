@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CoreCustomer" apply="${coreCustomerSelectCtrl}"
+		width="50%" height="30%">
+
+		<borderlayout id="borderLayout_CoreCustomer">
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+						<toolbar align="start" sclass="toolbar-start">
+							<label value="${c:l('Customer')}"
+								sclass="label-heading" />
+						</toolbar>
+						<toolbar align="center"
+							sclass="toolbar-center">
+						</toolbar>
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnClose" label="Close"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none">
+				<groupbox>
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px; padding:0px;">
+						<columns>
+							<column width="250px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<cell colspan="2">
+									<radiogroup>
+										<radio id="exsiting"
+											label="${c:l('label_CoreCustomerDialog_Existing.value')}"
+											selected="true">
+										</radio>
+										<radio id="prospect"
+											label="${c:l('label_CoreCustomerDialog_Prospect.value')}">
+										</radio>
+									</radiogroup>
+								</cell>
+							</row>
+							<row id="row_CustCIF">
+								<label
+									id="label_CoreCustomerDialog_CustID"
+									value="${c:l('label_CoreCustomerDialog_CoreCustID.value')}"
+									style="padding-left:12px;" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custCIF" width="108px"
+										maxlength="6" />
+								</hbox>
+							</row>
+							<row id="row_custCtgType" visible="false">
+								<label
+									id="label_CoreCustomerDialog_CustType"
+									value="${c:l('label_CoreCustomerDialog_CustType.value')}"
+									style="padding-left:12px;" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="custCtgType"
+										readonly="true" width="108px" />
+								</hbox>
+							</row>
+							<row id="row_custCountry" visible="false">
+								<label
+									id="label_CoreCustomerDialog_CustNationality"
+									value="${c:l('label_CoreCustomerDialog_CustNationality.value')}"
+									style="padding-left:12px;" />
+								<extendedcombobox id="custNationality" />
+							</row>
+							<row id="row_PrimaryID" visible="false">
+								<label
+									id="label_CoreCustomerDialog_PrimaryID"
+									value="${c:l('label_CoreCustomerDialog_PrimaryID.value')}"
+									style="padding-left:12px;" />
+								<hbox>
+									<space id="space_PrimaryID" spacing="2px"/>
+									<uppercasebox id="primaryID"
+										width="170px" />
+								</hbox>
+							</row>
+							<row>
+								<label />
+								<button id="btnSearchCustFetch"
+									label="Proceed" style="font-weight:bold;align:center;"
+									image="/images/icons/LOVSearch.png" />
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+			<south border="none" />
+		</borderlayout>
+	</window>
+</zk>

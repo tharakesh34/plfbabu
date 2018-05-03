@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_DisbursementsInstructionsDialog" border="normal" apply="${paymentInstructionDialogCtrl}" width="100%" height="100%" sizable="false">
+			<borderlayout>
+			 <north visible="false">
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start" sclass="toolbar-start"/>
+							<!-- SEARCH AREA -->
+							<toolbar align="center" sclass="toolbar-center"/>
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnHelp,btnClose" sclass="z-toolbarbutton" visible="false"/>
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none">
+					<div>
+						<groupbox id="gb_basicDetails" mold="3d">
+							<grid id="searchGrid" 	sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px;">
+								<columns>
+									<column width="200px" />
+									<column />
+									<column width="175px" />
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<label value="${c:l('label_DisbInstructionsDialog_DisbDate.value')}" />
+										<hbox id="hbox_llDate">
+											<space spacing="2px" sclass="mandatory" />
+											<datebox id="postDate" width="150px" />
+										</hbox>
+										
+										<label value="${c:l('label_DisbInstructionsDialog_DisbType.value')}" />
+										<hbox>
+											<space spacing="2px" sclass="mandatory" />
+											<combobox id="paymentType" width="150px" />
+										</hbox>
+									</row>
+									
+									<row>
+										<label value="${c:l('label_DisbInstructionsDialog_DisbAmount.value')}" />
+										<hbox>
+											<currencyBox id="paymentAmount"/>
+										</hbox>
+									</row>
+									
+									<row> 
+										<label value="${c:l('label_DisbInstructionsDialog_Partnerbank.value')}" />
+										<extendedcombobox id="partnerBankID" />
+										
+										<label value="${c:l('label_DisbInstructionsDialog_Remarks.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="remarks"  rows="2" cols="2" width="150px"/>
+										</hbox>
+									</row>
+									
+									<row>
+										<label value="${c:l('label_DisbInstructionsDialog_TranReference.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="tranReference" width="150px" readonly="true" />
+										</hbox>
+										<label value="${c:l('label_DisbInstructionsDialog_Status.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="status" width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row>
+									 <label value="${c:l('label_DisbInstructionsDialog_RejectReason.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="rejectReason" width="250px" readonly="true" />
+										</hbox>
+									</row>
+										
+								</rows>
+							</grid>
+						</groupbox>
+						
+						<groupbox id="gb_ChequeDetails" visible="false">
+							<caption id="caption_FinAdvancePaymentsDialog_ChequeDetails" />
+							<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
+								<columns>
+									<column width="200px" />
+									<column />
+									<column width="175px" />
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<label value="${c:l('label_DisbInstructionsDialog_IssuingBank.value')}" />
+										<extendedcombobox id="issuingBank"/>
+										
+										<label value="${c:l('label_DisbInstructionsDialog_FavouringName.value')}" />
+										<hbox>
+											<space spacing="2px" sclass="mandatory" />
+											<textbox id="favouringName" />
+										</hbox>
+									</row>
+									
+									<row>
+										<label value="${c:l('label_DisbInstructionsDialog_PayableLoc.value')}" />
+										<hbox>
+											<space spacing="2px" sclass="mandatory" />
+											<textbox id="payableLoc"/>
+										</hbox>
+										
+										<label value="${c:l('label_DisbInstructionsDialog_PrintingLoc.value')}" />
+										<hbox>
+											<space spacing="2px" id="madndatory_PrintingLoc"/>
+											<textbox id="printingLoc" />
+										</hbox>
+									</row>
+									
+									<row>
+										<label value="${c:l('label_DisbInstructionsDialog_ValueDate.value')}" />
+										<hbox>
+											<space spacing="2px" sclass="mandatory" />
+											<datebox id="valueDate" />
+										</hbox>
+										
+										<label value="${c:l('label_DisbInstructionsDialog_ChequeOrDDumber.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="chequeOrDDumber" />
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						
+						<groupbox id="gb_NeftDetails" visible="false">
+							<caption id="caption_FinAdvancePaymentsDialog_NeftDetails" />
+							<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
+								<columns>
+									<column width="200px" />
+									<column />
+									<column width="175px" />
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<label id="label_BankBranchID" value="${c:l('label_DisbInstructionsDialog_IFSC.value')}" />
+										<extendedcombobox id="bankBranchID" />
+										
+										<label value="${c:l('label_DisbInstructionsDialog_Bank.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="bank" readonly="true" />
+										</hbox>
+									</row>
+									
+									<row>
+										<label value="${c:l('label_DisbInstructionsDialog_Branch.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="branch" readonly="true" />
+										</hbox>
+										
+										<label value="${c:l('label_DisbInstructionsDialog_City.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="city" readonly="true" />
+										</hbox>
+									</row>
+									
+									<row>
+										<label value="${c:l('label_DisbInstructionsDialog_AccountNumber.value')}" />
+										<hbox>
+											<space spacing="2px" sclass="mandatory" />
+											<textbox id="acctNumber" />
+										</hbox>
+										
+										<label value="${c:l('label_DisbInstructionsDialog_AccountHolderName.value')}" />
+										<hbox>
+											<space spacing="2px" sclass="mandatory" />
+											<textbox id="acctHolderName" />
+										</hbox>
+									</row>
+									
+									<row>
+										<label value="${c:l('label_DisbInstructionsDialog_PhoneNumber.value')}" />
+										<hbox>
+											<space spacing="2px" sclass="mandatory" id="contactNumber" />
+											<textbox id="phoneNumber" />
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</div>
+				</center>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

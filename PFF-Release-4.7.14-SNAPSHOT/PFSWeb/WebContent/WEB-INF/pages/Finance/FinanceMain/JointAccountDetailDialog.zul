@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_JointAccountDetailDialog" border="none" apply="${jointAccountDetailDialogCtrl}" width="100%" height="100%" sizable="false">
+			<borderlayout id="borderlayoutFinanceMain" width="100%">
+				<center border="none">
+					<div id="divCenter">
+						<groupbox id="finBasicdetails" zclass="null">
+						</groupbox>
+						<groupbox id="gb_JointAccountDetails">
+							<caption label="Co-Applicant Details" />
+							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" height="99%">
+								<rows>
+									<row align="Right">
+										<button id="btnAddJointDetails" height="10px" label="Add" tooltiptext="Add Joint Account Details" autodisable="btnAddJointDetails,btnAddGurantorDetails" visible="false"/>
+									</row>
+									<row>
+										<listbox id="listBoxJountAccountDetails" fixedLayout="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('label_Generate_Report.tooltip')}" multiple="true"   width="99.8%" sizedByContent="true">
+											<listhead sizable="false">
+												<listheader id="listheader_JointCif" label="${c:l('listheader_Joint_CIF.label')}" sort="auto" hflex="min" />
+												<listheader id="listheader_JointCustName" sort="auto" label="${c:l('listheader_Joint_CIFName.label')}" hflex="min" />
+												<listheader id="listheader_AutoritySignatory" label="${c:l('listheader_Autority_Signatory.label')}" sort="auto" hflex="min" />
+												<listheader id="listheader_JointExposurePrimary" label="${c:l('listheader_Joint_PrimaryExposure.label')}" sort="auto" hflex="min" />
+												<listheader id="listheader_JointExposureSecondary" sort="auto" label="${c:l('listheader_Joint_SecondaryExposure.label')}" hflex="min" />
+												<listheader id="listheader_JointExposureGuarantor" sort="auto" label="${c:l('listheader_Joint_GuarantorExposure.label')}" hflex="min" />
+												<listheader id="listheader_JointStatus" label="${c:l('listheader_Joint_Status.label')}" sort="auto" hflex="min" />
+												<listheader id="listheader_JointWorstStatus" sort="auto" label="${c:l('listheader_Joint_WorstStatus.label')}" hflex="min" />
+											</listhead>
+										</listbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<space height="5px" />
+						<groupbox id="gb_GurantorsDetails">
+							<caption label="Guarantors Details" />
+							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+								<rows>
+									<row align="Right">
+										<button id="btnAddGurantorDetails" height="10px" label="Add" tooltiptext="Add Gurantor Details" autodisable="btnAddJointDetails,btnAddGurantorDetails" visible="false"/>
+									</row>
+									<row>
+										<listbox id="listBoxGurantorsDetail" fixedLayout="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('label_Generate_Report.tooltip')}" multiple="true"   width="99.8%" sizedByContent="true">
+											<listhead sizable="false">
+												<listheader id="listheader_GurantorId" label="${c:l('listheader_Guarantor_ID.label')}" sort="auto" hflex="min" />
+												<listheader id="listheader_GurantorName" sort="auto" label="${c:l('listheader_Guarantor_Name.label')}" hflex="min" />
+												<listheader id="listheader_GurantorType" label="${c:l('listheader_Guarantor_IDType.label')}" sort="auto" hflex="min" />
+												<listheader id="listheader_GurantorPercentage" sort="auto" label="${c:l('listheader_Guarantor_Percentage.label')}" hflex="min" align="right"/>
+												<listheader id="listheader_GurantorExposurePrimary" label="${c:l('listheader_Guarantor_ExposurePrimary.label')}" sort="auto" hflex="min" align="right"/>
+												<listheader id="listheader_GurantorExposureSecondary" sort="auto" label="${c:l('listheader_Guarantor_ExposureSecondary.label')}" hflex="min" align="right"/>
+												<listheader id="listheader_GurantorExposureGuarantor" label="${c:l('listheader_Guarantor_ExposureGuarantor.label')}" sort="auto" hflex="min" align="right"/>
+												<listheader id="listheader_GurantorStatus" sort="auto" label="${c:l('listheader_Guarantor_Status.label')}" hflex="min" />
+												<listheader id="listheader_GurantorWorstStatus" sort="auto" label="${c:l('listheader_Guarantor_WorstStatus.label')}" hflex="min" />
+												<listheader id="listheader_GurantorContact" sort="auto" label="${c:l('listheader_Guarantor_Contact.label')}" hflex="min" />
+												<listheader id="listheader_GurantorIDProof" sort="auto" label="${c:l('listheader_Guarantor_IDProof.label')}" hflex="min" />
+											</listhead>
+										</listbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</div>
+				</center>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

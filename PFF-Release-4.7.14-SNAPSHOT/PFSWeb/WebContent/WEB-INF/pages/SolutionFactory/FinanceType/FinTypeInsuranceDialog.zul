@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_FinTypeInsurnaceDialog" border="normal"
+		apply="${finTypeInsuranceDialogCtrl}" width="50%" height="45%"
+		sizable="false">
+
+		<borderlayout id="borderlayoutFinanceType">
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete" label="Delete"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_FinanceTypeInsuranceDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" visible="false"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}" label="Help"
+								sclass="z-toolbarbutton" />
+							<button id="btnClose"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false"
+				style="padding:5px;">
+				<groupbox id="gb_custAccountDetails" closable="false">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="200px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_FinTypeInsuranceDialog_FinanceType"
+									value="${c:l('label_FinTypeInsuranceDialog_FinanceType.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="financeType"
+										readonly="true" width="180px" />
+									<label id="label_finTypeDesc" 
+										style="margin-left:10px;display:inline-block;padding-top:3px;"/>
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_FinTypeInsuranceDialog_InsuranceType"
+									value="${c:l('label_FinTypeInsuranceDialog_InsuranceType.value')}" />
+								<extendedcombobox id="insuranceType" />
+							</row>
+							<row id="row_PolicyType" visible="true">
+								<label
+									id="label_FinTypeInsuranceDialog_PolicyType"
+									value="${c:l('label_FinTypeInsuranceDialog_PolicyType.value')}" />
+								<extendedcombobox id="policyType" />
+							</row>
+							<row>
+								<label
+									id="label_FinTypeInsuranceDialog_PaymentType"
+									value="${c:l('label_FinTypeInsuranceDialog_PaymentType.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="paymentType"
+										width="180px" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_FinTypeInsuranceDialog_CalcType"
+									value="${c:l('label_FinTypeInsuranceDialog_CalcType.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="calcType"
+										width="180px" />
+								</hbox>
+							</row>
+							<row id="row_Rule" visible="false">
+								<label
+									id="label_FinTypeInsuranceDialog_AmountRule"
+									value="${c:l('label_FinTypeInsuranceDialog_AmountRule.value')}" />
+								<extendedcombobox id="amountRule" />
+							</row>
+							<row id="row_ConstAmount" visible="false">
+								<label
+									id="label_FinTypeInsuranceDialog_ConstAmount"
+									value="${c:l('label_FinTypeInsuranceDialog_ConstAmount.value')}" />
+								<currencyBox id="constAmount" />
+							</row>
+							<row id="row_CalculaedOn" visible="false">
+								<label
+									id="label_FinTypeInsuranceDialog_CalculateOn"
+									value="${c:l('label_FinTypeInsuranceDialog_CalculateOn.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="calculateOn"
+										width="180px" />
+								</hbox>
+							</row>
+							<row id="row_Percentage" visible="false">
+								<label
+									id="label_FinTypeInsuranceDialog_Percentage"
+									value="${c:l('label_FinTypeInsuranceDialog_Percentage.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<decimalbox id="percentage"
+										width="90px" />
+								</hbox>
+							</row>
+							<row id="row_AlwRateChange" visible="false">
+								<label
+									id="label_FinTypeInsuranceDialog_AllowRateChange"
+									value="${c:l('label_FinTypeInsuranceDialog_AllowRateChange.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="alwChange" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_FinTypeInsuranceDialog_Mandatory"
+									value="${c:l('label_FinTypeInsuranceDialog_Mandatory.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="mandatory" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+			<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%"
+					closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_FacilityDialog" border="normal" apply="${facilityDialogCtrl}" width="100%" height="100%" sizable="false">
+			<borderlayout id="borderlayoutFacility">
+				<north>
+					<div sclass="z-toolbar">
+						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start" sclass="toolbar-start">
+								<button id="btnNew" visible="false"  tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnEdit" visible="false"  tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnDelete" visible="false"  tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnSave" visible="false"  tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnCancel" visible="false"  tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
+								<button id="btnNotes" visible="false"  tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center" sclass="toolbar-center">
+								<label value="${c:l('window_FacilityDialog.title')}" sclass="label-heading" />
+							</toolbar>
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" visible="false"  label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnClose"  tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none" autoscroll="true">
+					<tabbox id="tabBoxIndexCenter" width="99%" height="100%">
+						<tabs id="tabsIndexCenter">
+							<tab label="Customer Overview" id="customerOverview" />
+							<tab label="Addtional Details" id="addtionalDetails" />
+						</tabs>
+						<tabpanels id="tabpanelsIndexCenter">
+							<tabpanel style="overflow:auto">
+								<div id="basicDetailTabDiv">
+									<groupbox id="gb_basicDetails" closable="false">
+										<caption label="${c:l('Caption_CustomerInformation')}"></caption>
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+											<columns>
+												<column width="15%" />
+												<column width="35%" />
+												<column width="15%" />
+												<column width="35%" />
+											</columns>
+											<rows>
+												<row id="row0">
+													<label id="label_CustID" value="${c:l('label_FacilityDialog_CustID.value')}" />
+													<hlayout id="hlayout_CustID">
+														<space id="space_CustID" spacing="2px" />
+														<textbox id="custID" width="200px" disabled="true" />
+													</hlayout>
+													<label id="label_CAFReference" value="${c:l('label_FacilityDialog_CAFReference.value')}" />
+													<hlayout id="hlayout_CAFReference">
+														<space id="space_CAFReference" spacing="2px" />
+														<textbox id="cAFReference" maxlength="50" width="150px" disabled="true" />
+													</hlayout>
+												</row>
+												<row id="row1">
+													<label id="label_StartDate" value="${c:l('label_FacilityDialog_StartDate.value')}" />
+													<hlayout id="hlayout_StartDate">
+														<space id="space_StartDate" spacing="2px" />
+														<datebox id="startDate" width="120px" disabled="true" />
+													</hlayout>
+													<label id="label_PresentingUnit" value="${c:l('label_FacilityDialog_PresentingUnit.value')}" />
+													<hlayout id="hlayout_PresentingUnit">
+														<space id="space_PresentingUnit" spacing="2px" />
+														<textbox id="presentingUnit" maxlength="50" width="200px" disabled="true" />
+													</hlayout>
+												</row>
+												<row id="row2">
+													<label id="label_CountryOfDomicile" value="${c:l('label_FacilityDialog_CountryOfDomicile.value')}" />
+													<extendedcombobox id="countryOfDomicile" />
+													<label id="label_DeadLine" value="${c:l('label_FacilityDialog_DeadLine.value')}" />
+													<hlayout id="hlayout_DeadLine">
+														<space id="space_DeadLine" spacing="2px" />
+														<datebox id="deadLine" width="120px" />
+													</hlayout>
+												</row>
+												<row id="row3">
+													<label id="label_CountryOfRisk" value="${c:l('label_FacilityDialog_CountryOfRisk.value')}" />
+													<extendedcombobox id="countryOfRisk" />
+													<label value="${c:l('label_FacilityDialog_Levelofapproval.value')}"></label>
+													<hlayout>
+														<space width="2px" />
+														<combobox id="levelOfApproval"  readonly="true" width="250px"/>
+													</hlayout>
+												</row>
+												<row>
+													<label id="label_EstablishedDate" value="${c:l('label_FacilityDialog_EstablishedDate.value')}" />
+													<hlayout id="hlayout_EstablishedDate">
+														<space id="space_EstablishedDate" spacing="2px" />
+														<datebox id="establishedDate" width="120px" />
+													</hlayout>
+													<label value="${c:l('label_FacilityDialog_CountryLimitAdeq.value')}"></label>
+													<hlayout>
+														<space width="2px" />
+														<textbox id="countryLimitAdeq"  ></textbox>
+													</hlayout>
+												</row>
+												<row id="row4">
+													<label id="label_NatureOfBusiness" value="${c:l('label_FacilityDialog_NatureOfBusiness.value')}" />
+													<extendedcombobox id="natureOfBusiness" />
+													<label value="${c:l('label_FacilityDialog_ReviewCenter.value')}"></label>
+													<hlayout>
+														<space width="2px" />
+														<textbox id="reviewCenter" ></textbox>
+													</hlayout>
+												</row>
+												<row id="row5">
+													<label id="label_SICCode" value="${c:l('label_FacilityDialog_SICCode.value')}" />
+													<extendedcombobox id="sICCode" />
+													<label id="label_CountryManager" value="${c:l('label_FacilityDialog_CountryManager.value')}" />
+													<extendedcombobox id="countryManager" />
+												</row>
+												<row id="row6">
+													<label id="label_CustomerRiskType" value="${c:l('label_FacilityDialog_CustomerRiskType.value')}" />
+													<extendedcombobox id="customerRiskType" />
+													<label id="label_RelationshipManager" value="${c:l('label_FacilityDialog_RelationshipManager.value')}" />
+													<hlayout id="hlayout_RelationshipManager">
+														<space id="space_RelationshipManager" spacing="2px" />
+														<textbox id="relationshipManager" maxlength="50" width="200px" />
+													</hlayout>
+												</row>
+												<row>
+													<label value="${c:l('label_FacilityDialog_ConnectedCustomer.value')}" />
+													<hlayout>
+														<space width="2px" />
+														<textbox id="connectedCustomer" disabled="true" visible="false"/>
+														<checkbox id="customerConnected" label="${c:l('label_FacilityDialog_CustomerConnected.value')}" disabled="true"/>
+														<checkbox id="customerRelated" label="${c:l('label_FacilityDialog_CustomerRelated.value')}" disabled="true"/>
+														
+													</hlayout>
+													<label value="${c:l('label_FacilityDialog_AIBRelation.value')}" />
+													<hlayout>
+														<space width="2px" />
+														<hlayout>
+														<datebox id="aIBRelation" disabled="true" width="120px" />
+														<textbox id = "txb_aibRelation" readonly = "true" visible = "false"/>
+														</hlayout>
+													</hlayout>
+												</row>
+												<row id="row7">
+													<label id="label_CustomerGroup" value="${c:l('label_FacilityDialog_CustomerGroup.value')}" />
+													<extendedcombobox id="customerGroup" />
+													<label id="label_NextReviewDate" value="${c:l('label_FacilityDialog_NextReviewDate.value')}" />
+													<hlayout id="hlayout_NextReviewDate">
+														<space id="space_NextReviewDate" spacing="2px" />
+														<datebox id="nextReviewDate" width="120px" />
+													</hlayout>
+												</row>
+												<row>
+													<label id="label_antiMoneyLaunderClear"  value="${c:l('label_FacilityDialog_antiMoneyLaunderClear.value')}" />
+													<hlayout  id="hlayout_antiMoneyLaunderClear">
+														<space width="2px" />
+														<textbox id="antiMoneyLaunderClear"  width="200px"/>
+													</hlayout>
+													<label value="${c:l('label_FacilityDialog_interim.value')}" />
+													<hlayout>
+														<space width="2px" />
+														<datebox id="interim" disabled="false" width="120px" />
+													</hlayout>
+												</row>
+												<row>
+													<label id = "label_FacilityDialog_CountryLimit" value="${c:l('label_FacilityDialog_CountryLimit.value')}"></label>
+													<hlayout>
+														<space width="2px" />
+														<decimalbox id="countryLimit" width="150px" disabled="true"/>
+													</hlayout>
+													<label id = "label_FacilityDialog_CountryExposure" value="${c:l('label_FacilityDialog_CountryExposure.value')}"></label>
+													<hlayout>
+														<space width="2px" />
+														<decimalbox id="countryExposure" width="150px" disabled="true"/>
+													</hlayout>
+												</row>
+												<row>
+													<label id = "label_FacilityDialog_CustGroupLimit" value="${c:l('label_FacilityDialog_CustGroupLimit.value')}"></label>
+													<hlayout>
+														<space width="2px" />
+														<decimalbox id="custGroupLimit" width="150px" disabled="true"/>
+													</hlayout>
+													<label id = "label_FacilityDialog_CustGroupExposure" value="${c:l('label_FacilityDialog_CustGroupExposure.value')}"></label>
+													<hlayout>
+														<space width="2px" />
+														<decimalbox id="custGroupExposure" width="150px" disabled="true"/>
+													</hlayout>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+									<borderlayout>
+										<center style="border:none;">
+											<div>
+												<hbox  pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="50%,50%">
+													<groupbox closable="true" >
+														<caption label="${c:l('title_west_top')}"></caption>
+														<listbox id="listBoxCustomerRating" fixedLayout="true"   span="true" tooltiptext="${c:l('listbox.tooltiptext')}" height="150px" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
+															<listhead sizable="true">
+																<listheader label="${c:l('listheader_Facility_RatingType.label')}" sort="false" hflex="min" />
+																<listheader label="${c:l('listheader_Facility_Agency.label')}" sort="false" hflex="min" />
+																<listheader label="${c:l('listheader_Facility_ObligatorRating.label')}" sort="false" hflex="min" />
+																<listheader label="${c:l('listheader_Facility_CountryRating.label')}" sort="false" hflex="min" />
+																<listheader label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" />
+																<listheader label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
+															</listhead>
+														</listbox>
+													</groupbox>
+													<groupbox closable="true">
+														<caption label="${c:l('title_east_top')}"></caption>
+														<listbox id="listBoxCustomerDirectory" fixedLayout="true"   span="true"   height="150px" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
+															<listhead sizable="true">
+																<listheader id="listheader_Director_FirstName" label="${c:l('listheader_FacilityShareHolder_FirstName.label')}" sort="auto" hflex="min" />
+																<listheader id="listheader_Director_CustGenderCode" label="${c:l('listheader_FacilityShareHolder_ShareID.label')}" sort="auto" hflex="min" />
+																<listheader id="listheader_Director_CustCountry" label="${c:l('listheader_FacilityShareHolder_Country.label')}" sort="auto" hflex="min" />
+																<listheader id="listheader_Director_CustSharePerc" label="${c:l('listheader_FacilityShareHolder_SharePerc.label')}" sort="auto" hflex="min" />
+															</listhead>
+														</listbox>
+													</groupbox>
+												</hbox>
+												<hbox  pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="50%,50%">
+													<groupbox closable="true" >
+														<caption id = "limits_Caption" label="${c:l('Rela')}"></caption>
+														<listbox id="listBoxCustomerLimit" fixedLayout="true"   span="true"   height="150px" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
+															<listhead sizable="true">
+																<listheader label="${c:l('listheader_CustomerLimitEnquiryList_LimitCategory.label')}" sort="auto" hflex="min" />
+																<listheader label="${c:l('listheader_CustomerLimitEnquiryList_LimitCategoryDesc.label')}" sort="auto" hflex="min" />
+																<listheader label="${c:l('listheader_CustomerLimitEnquiryList_RiskAmount.label')}" sort="auto" hflex="min" align="right" />
+																<listheader label="${c:l('listheader_CustomerLimitEnquiryList_LimitStatus.label')}" sort="auto" hflex="min" align="right" />
+																<listheader label="${c:l('listheader_CustomerLimitEnquiryList_AvailWeight.label')}" sort="auto" hflex="min" align="right" />
+															</listhead>
+														</listbox>
+													</groupbox>
+													<groupbox closable="true"  >
+														<caption label="${c:l('title_east_bottom')}"></caption>
+														<div sclass="z-toolbar" style="padding:0" >
+															<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"  width="100%" style=" padding:1px;">
+																<toolbar align="end" style="float:right; border-style: none; padding:0px;" >
+																	<button id="button_CollateralList_NewCollateral"  label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerRatings.tooltiptext')}" autodisable="button_CollateralList_NewCollateral"/>
+																</toolbar>
+															</hbox>
+														</div>
+														<listbox id="listBoxCollateral" fixedLayout="true"   span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="125px" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
+															<listhead sizable="true">
+																<listheader id="listheader_CAFReference" label="${c:l('listheader_CAFReference.label')}" sort="auto" hflex="min" visible="false" />
+																<listheader id="listheader_Reference" label="${c:l('listheader_Reference.label')}" sort="auto" hflex="min" />
+																<listheader id="listheader_LastReview" label="${c:l('listheader_LastReview.label')}" sort="auto" hflex="min" />
+																<listheader id="listheader_Currency" label="${c:l('listheader_Currency.label')}" sort="auto" hflex="min" />
+																<listheader id="listheader_Value" label="${c:l('listheader_Value.label')}" sort="auto" hflex="min" />
+																<listheader id="listheader_Bankvaluation" label="${c:l('listheader_Bankvaluation.label')}" sort="auto" hflex="min" />
+																<listheader id="listheader_Bankmargin" label="${c:l('listheader_Bankmargin.label')}" sort="auto" hflex="min" />
+																<listheader id="listheader_ProposedCoverage" label="${c:l('listheader_ProposedCoverage.label')}" sort="auto" hflex="min" visible="false" />
+																<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" visible="false" />
+																<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min" visible="false" />
+															</listhead>
+														</listbox>
+													</groupbox>
+												</hbox>
+											</div>
+										</center>
+									</borderlayout>
+								</div>
+							</tabpanel>
+							<tabpanel style="overflow:auto">
+								<groupbox id="gb_AddtionalDetails"
+									mold="3d">
+									<grid sclass="GridLayoutNoBorder"
+										fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="200px" />
+											<column />
+											<column width="200px" />
+											<column />
+										</columns>
+										<rows>
+											<row visible="true">
+												<cell zclass="none;"
+													style="padding:1px;">
+													<label id="label_FacilityDialog_purpose" value="${c:l('label_FacilityDialog_purpose.value')}" />
+												</cell>
+												<cell colspan="3" zclass="none;" style="padding:2px;">
+													<hlayout spacing="2px">
+														<space spacing="2px" />
+														<ptCKeditor id="purpose" width="845px" />
+													</hlayout>
+												</cell>
+											</row>
+											<row visible="true">
+												<cell zclass="none;" style="padding:1px;">
+													<label id="label_FacilityDialog_CustomerBackGround" value="${c:l('label_FacilityDialog_CustomerBackGround.value')}" />
+												</cell>
+												<cell colspan="3" zclass="none;" style="padding:2px;">
+													<hlayout spacing="2px">
+														<space spacing="2px" />
+														<ptCKeditor id="customerBackGround" width="845px" />
+													</hlayout>
+												</cell>
+											</row>
+											<row visible="true">
+												<cell zclass="none;" style="padding:1px;">
+													<label id="label_FacilityDialog_Strength" value="${c:l('label_FacilityDialog_Strength.value')}" />
+												</cell>
+												<cell colspan="3" zclass="none;" style="padding:2px;">
+													<hlayout spacing="2px">
+														<space spacing="2px" />
+														<ptCKeditor id="strength" width="845px" />
+													</hlayout>
+												</cell>
+											</row>
+											<row visible="true">
+												<cell zclass="none;" style="padding:1px;">
+													<label id="label_FacilityDialog_Weaknesses" value="${c:l('label_FacilityDialog_Weaknesses.value')}" />
+												</cell>
+												<cell colspan="3" zclass="none;" style="padding:2px;">
+													<hlayout spacing="2px">
+														<space spacing="2px" />
+														<ptCKeditor id="weaknesses" width="845px" />
+													</hlayout>
+												</cell>
+											</row>
+											<row visible="true">
+												<cell zclass="none;"
+													style="padding:1px;">
+													<label id="label_FacilityDialog_Mitigants" value="${c:l('label_FacilityDialog_Mitigants.value')}" />
+												</cell>
+												<cell colspan="3" zclass="none;" style="padding:2px;">
+													<hlayout spacing="2px">
+														<space spacing="2px" />
+														<ptCKeditor id="mitigants" width="845px" />
+													</hlayout>
+												</cell>
+											</row>
+											<row visible="true">
+												<cell zclass="none;" style="padding:1px;">
+													<label id="label_FacilityDialog_SourceOfRepayment" value="${c:l('label_FacilityDialog_SourceOfRepayment.value')}" />
+												</cell>
+												<cell colspan="3" zclass="none;" style="padding:2px;">
+													<hlayout spacing="2px">
+														<space spacing="2px" />
+														<ptCKeditor id="sourceOfRepayment" width="845px" />
+													</hlayout>
+												</cell>
+											</row>
+											<row visible="true">
+												<cell zclass="none;" style="padding:1px;">
+													<label id="label_FacilityDialog_AdequacyOfCashFlows" value="${c:l('label_FacilityDialog_AdequacyOfCashFlows.value')}" />
+												</cell>
+												<cell colspan="3" zclass="none;" style="padding:2px;">
+													<hlayout spacing="2px">
+														<space spacing="2px" />
+														<ptCKeditor id="adequacyOfCashFlows" width="845px" />
+													</hlayout>
+												</cell>
+											</row>
+											<row visible="true">
+												<cell zclass="none;" style="padding:1px;">
+													<label id="label_FacilityDialog_TypesOfsecurities" value="${c:l('label_FacilityDialog_TypesOfsecurities.value')}" />
+												</cell>
+												<cell colspan="3" zclass="none;" style="padding:2px;">
+													<hlayout spacing="2px">
+														<space spacing="2px" />
+														<ptCKeditor id="typesOfsecurities" width="845px" />
+													</hlayout>
+												</cell>
+											</row>
+											<row visible="true">
+												<cell zclass="none;" style="padding:1px;">
+													<label id="label_FacilityDialog_GuaranteeDescription" value="${c:l('label_FacilityDialog_GuaranteeDescription.value')}" />
+												</cell>
+												<cell colspan="3" zclass="none;" style="padding:2px;">
+													<hlayout spacing="2px">
+														<space spacing="2px" />
+														<ptCKeditor id="guaranteeDescription" width="845px" />
+													</hlayout>
+												</cell>
+											</row>
+											<row visible="true">
+												<cell zclass="none;"
+													style="padding:1px;">
+													<label id="label_FacilityDialog_FinancialSummary" value="${c:l('label_FacilityDialog_FinancialSummary.value')}" />
+												</cell>
+												<cell colspan="3" zclass="none;" style="padding:2px;">
+													<hlayout spacing="2px">
+														<space spacing="2px" />
+														<ptCKeditor id="financialSummary" width="845px" />
+													</hlayout>
+												</cell>
+											</row>
+											<row visible="true" id="row_accountRelation">
+												<cell zclass="none;"
+													style="padding:1px;">
+													<label id="label_FacilityDialog_accountRelation" value="${c:l('label_FacilityDialog_accountRelation.value')}" />
+												</cell>
+												<cell colspan="3" zclass="none;" style="padding:2px;">
+													<hlayout spacing="2px">
+														<space spacing="2px" />
+														<ptCKeditor id="accountRelation" width="845px" />
+													</hlayout>
+												</cell>
+											</row>
+											<row visible="true" id="row_limitAndAncillary">
+												<cell zclass="none;"
+													style="padding:1px;">
+													<label id="label_FacilityDialog_limitAndAncillary" value="${c:l('label_FacilityDialog_limitAndAncillary.value')}" />
+												</cell>
+												<cell colspan="3" zclass="none;" style="padding:2px;">
+													<hlayout spacing="2px">
+														<space spacing="2px" />
+														<ptCKeditor id="limitAndAncillary" width="845px" />
+													</hlayout>
+												</cell>
+											</row>
+											<row visible="true" id="row_antiMoneyLaunderSection">
+												<cell zclass="none;"
+													style="padding:1px;">
+													<label id="label_FacilityDialog_antiMoneyLaunderSection" value="${c:l('label_FacilityDialog_antiMoneyLaunderSection.value')}" />
+												</cell>
+												<cell colspan="3" zclass="none;" style="padding:2px;">
+													<hlayout spacing="2px">
+														<space spacing="2px" />
+														<ptCKeditor id="antiMoneyLaunderSection" width="845px" />
+													</hlayout>
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</center>
+				<south id="south" sclass="south-dialog">
+					<groupbox id="groupboxWf" width="98%">
+						<caption label="${c:l('Action')}" style="font-weight:bold" />
+						<hbox width="95%">
+							<radiogroup id="userAction" name="action" />
+							<label id="label_RecordStatus" value="${c:l('label_RecordStatus')} :" sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

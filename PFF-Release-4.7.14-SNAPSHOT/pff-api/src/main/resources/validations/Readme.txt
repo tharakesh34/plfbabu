@@ -1,0 +1,1 @@
+The XMLs that will be used as part of the validation framework will be maintained in this location.

@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Lastfiveyears" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="f474b5d4-bb44-48c0-88df-9f857bba34b1">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["../StyleSheet/Template_Analytic.jrtx"]]></template>
+	<subDataset name="NoofFinances" uuid="c7e34049-2ed3-4b52-8a09-ff292a99e8dc">
+		<queryString>
+			<![CDATA[Select T1.FinDivision Category,T1.Series,ISNULL(T2.Value,0) Value from (
+	SELECT  Distinct FinDivision, YEAR(T1.[Series]) Series FROM (VALUES(0),(1),(2),(3),(4))a(N)
+    CROSS APPLY (VALUES(DATEADD(YEAR, DATEDIFF(YEAR, 0, GETDATE()) - a.N, 0)))T1([Series])CROSS JOIN RMTFinanceTypes)T1 LEFT OUTER JOIN (
+    Select FinDivision,Year(FinApprovedDate) FinApprovedDate, Count(FinReference) Value
+	from   FinPftDetails T1 With(NoLock) Inner Join RMTFinanceTypes T2 With(NoLock) on T1.FinType=T2.FinType
+	Group BY FinDivision,Year(FinApprovedDate))T2 ON T1.FinDivision=T2.FinDivision and T1.Series=T2.FinApprovedDate
+    Order By Category,Series]]>
+		</queryString>
+		<field name="Category" class="java.lang.String"/>
+		<field name="Series" class="java.lang.Integer"/>
+		<field name="Value" class="java.lang.Integer"/>
+	</subDataset>
+	<subDataset name="NumberofCustomers" uuid="899fb294-9d16-459d-8b86-34f480c7a00a">
+		<queryString>
+			<![CDATA[Select T1.FinDivision Category,T1.Series,ISNULL(T2.Value,0) Value from (
+	SELECT  Distinct FinDivision, YEAR(T1.[Series]) Series FROM (VALUES(0),(1),(2),(3),(4))a(N)
+    CROSS APPLY (VALUES(DATEADD(YEAR, DATEDIFF(YEAR, 0, GETDATE()) - a.N, 0)))T1([Series])CROSS JOIN RMTFinanceTypes)T1 LEFT OUTER JOIN (
+    Select FinDivision,Year(FinApprovedDate) FinApprovedDate, Count(DIstinct CustCIF) Value
+	from   FinPftDetails T1 With(NoLock) Inner Join RMTFinanceTypes T2 With(NoLock) on T1.FinType=T2.FinType
+	Group BY FinDivision,Year(FinApprovedDate))T2 ON T1.FinDivision=T2.FinDivision and T1.Series=T2.FinApprovedDate
+    Order By Category,Series]]>
+		</queryString>
+		<field name="Category" class="java.lang.String"/>
+		<field name="Series" class="java.lang.Integer"/>
+		<field name="Value" class="java.lang.Integer"/>
+	</subDataset>
+	<subDataset name="FinanceAmount" uuid="f0755af4-0041-4b8d-8f62-10b425938723">
+		<queryString>
+			<![CDATA[Select T1.FinDivision Category,T1.Series,ISNULL(T2.Value,0) Value from (
+	SELECT  Distinct FinDivision, YEAR(T1.[Series]) Series FROM (VALUES(0),(1),(2),(3),(4))a(N)
+    CROSS APPLY (VALUES(DATEADD(YEAR, DATEDIFF(YEAR, 0, GETDATE()) - a.N, 0)))T1([Series])CROSS JOIN RMTFinanceTypes)T1 LEFT OUTER JOIN (
+    Select FinDivision,Year(FinApprovedDate) FinApprovedDate, SUM([dbo].[UDF_ConvertCurrency](TotalPriSchd,T1.FinCCY,'INR')) Value
+	from   FinPftDetails T1 With(NoLock) Inner Join RMTFinanceTypes T2 With(NoLock) on T1.FinType=T2.FinType
+	Group BY FinDivision,Year(FinApprovedDate))T2 ON T1.FinDivision=T2.FinDivision and T1.Series=T2.FinApprovedDate
+    Order By Category,Series]]>
+		</queryString>
+		<field name="Category" class="java.lang.String"/>
+		<field name="Series" class="java.lang.Integer"/>
+		<field name="Value" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="Profit" uuid="3eb0adea-49dd-4f04-afd9-ff7cda39232f">
+		<queryString>
+			<![CDATA[Select T1.FinDivision Category,T1.Series,ISNULL(T2.Value,0) Value from (
+	SELECT  Distinct FinDivision, YEAR(T1.[Series]) Series FROM (VALUES(0),(1),(2),(3),(4))a(N)
+    CROSS APPLY (VALUES(DATEADD(YEAR, DATEDIFF(YEAR, 0, GETDATE()) - a.N, 0)))T1([Series])CROSS JOIN RMTFinanceTypes)T1 LEFT OUTER JOIN (
+    Select FinDivision,Year(FinApprovedDate) FinApprovedDate, SUM([dbo].[UDF_ConvertCurrency](TotalPftSchd,T1.FinCCY,'INR')) Value
+	from   FinPftDetails T1 With(NoLock) Inner Join RMTFinanceTypes T2 With(NoLock) on T1.FinType=T2.FinType
+	Group BY FinDivision,Year(FinApprovedDate))T2 ON T1.FinDivision=T2.FinDivision and T1.Series=T2.FinApprovedDate
+    Order By Category,Series]]>
+		</queryString>
+		<field name="Category" class="java.lang.String"/>
+		<field name="Series" class="java.lang.Integer"/>
+		<field name="Value" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="FeeAmount" uuid="85d1658d-5952-41d9-8fed-0675455229c3">
+		<queryString>
+			<![CDATA[Select T1.FinDivision Category,T1.Series,ISNULL(T2.Value,0) Value from (
+	SELECT  Distinct FinDivision, YEAR(T1.[Series]) Series FROM (VALUES(0),(1),(2),(3),(4))a(N)
+    CROSS APPLY (VALUES(DATEADD(YEAR, DATEDIFF(YEAR, 0, GETDATE()) - a.N, 0)))T1([Series])CROSS JOIN RMTFinanceTypes)T1 LEFT OUTER JOIN (
+    Select FinDivision,Year(SchDate) SchDate, SUM([dbo].[UDF_ConvertCurrency](FeeAmount,T3.FinCCY,'INR')) Value
+	from   FinFeeCharges T1 With(NoLock) Inner join FinPftDetails T3 With(NoLock) ON T1.FinReference=T3.FinReference Inner Join RMTFinanceTypes T2 With(NoLock) on T3.FinType=T2.FinType
+	Group BY FinDivision,Year(SchDate))T2 ON T1.FinDivision=T2.FinDivision and T1.Series=T2.SchDate
+    Order By Category,Series]]>
+		</queryString>
+		<field name="Category" class="java.lang.String"/>
+		<field name="Series" class="java.lang.Integer"/>
+		<field name="Value" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="OverdueAmount" uuid="2c213376-6940-4561-9d6b-681d05923510">
+		<queryString>
+			<![CDATA[Select T1.FinDivision Category,T1.Series,ISNULL(T2.Value,0) Value from (
+	SELECT  Distinct FinDivision, YEAR(T1.[Series]) Series FROM (VALUES(0),(1),(2),(3),(4))a(N)
+    CROSS APPLY (VALUES(DATEADD(YEAR, DATEDIFF(YEAR, 0, GETDATE()) - a.N, 0)))T1([Series])CROSS JOIN RMTFinanceTypes)T1 LEFT OUTER JOIN (
+    Select FinDivision,Year(FinODSchdDate) FinODSchdDate, SUM([dbo].[UDF_ConvertCurrency](FinCurODAmt,T3.FinCCY,'INR')) Value
+	from   FinodDetails T1 With(NoLock) Inner join FinPftDetails T3 With(NoLock) ON T1.FinReference=T3.FinReference Inner Join RMTFinanceTypes T2 With(NoLock) on T3.FinType=T2.FinType
+	Group BY FinDivision,Year(FinODSchdDate))T2 ON T1.FinDivision=T2.FinDivision and T1.Series=T2.FinODSchdDate
+    Order By Category,Series]]>
+		</queryString>
+		<field name="Category" class="java.lang.String"/>
+		<field name="Series" class="java.lang.Integer"/>
+		<field name="Value" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="organizationLogo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select 'Dummy'Dummy]]>
+	</queryString>
+	<field name="Dummy" class="java.lang.String"/>
+	<group name="Dummy">
+		<groupExpression><![CDATA[$F{Dummy}]]></groupExpression>
+		<groupHeader>
+			<band height="415">
+				<frame>
+					<reportElement uuid="e35fd9a6-2e62-4e38-9999-12493169ca6d" style="Title Description header" mode="Opaque" x="0" y="10" width="390" height="125" backcolor="#FFFFFF"/>
+					<staticText>
+						<reportElement uuid="9883e27d-500d-4d3f-8267-168f7e5dba27" style="Title Description header" x="0" y="0" width="390" height="15"/>
+						<textElement>
+							<paragraph leftIndent="4"/>
+						</textElement>
+						<text><![CDATA[Number of Loans]]></text>
+					</staticText>
+					<barChart>
+						<chart>
+							<reportElement uuid="3dfd0b2a-6d53-4419-9cd1-f23c933b1c86" style="Charts" x="0" y="15" width="390" height="110"/>
+							<chartTitle/>
+							<chartSubtitle/>
+							<chartLegend position="Right"/>
+						</chart>
+						<categoryDataset>
+							<dataset>
+								<datasetRun subDataset="NoofFinances" uuid="379a0079-d7a6-42e1-acd0-d96229dffa71">
+									<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+								</datasetRun>
+							</dataset>
+							<categorySeries>
+								<seriesExpression><![CDATA[$F{Category}]]></seriesExpression>
+								<categoryExpression><![CDATA[$F{Series}]]></categoryExpression>
+								<valueExpression><![CDATA[$F{Value}]]></valueExpression>
+							</categorySeries>
+						</categoryDataset>
+						<barPlot isShowLabels="false" isShowTickLabels="true" isShowTickMarks="true">
+							<plot labelRotation="0.0">
+								<seriesColor seriesOrder="0" color="#1284D7"/>
+								<seriesColor seriesOrder="1" color="#88C42E"/>
+								<seriesColor seriesOrder="2" color="#B770DB"/>
+								<seriesColor seriesOrder="3" color="#E85A0E"/>
+								<seriesColor seriesOrder="4" color="#DB03C6"/>
+								<seriesColor seriesOrder="5" color="#0DC4DD"/>
+								<seriesColor seriesOrder="6" color="#D50622"/>
+								<seriesColor seriesOrder="7" color="#0ADFAF"/>
+								<seriesColor seriesOrder="8" color="#F1C40D"/>
+								<seriesColor seriesOrder="9" color="#590711"/>
+								<seriesColor seriesOrder="10" color="#CCCC05"/>
+								<seriesColor seriesOrder="11" color="#073359"/>
+								<seriesColor seriesOrder="12" color="#147E8C"/>
+							</plot>
+							<itemLabel color="#2D4B7A">
+								<font size="8" isItalic="true" isPdfEmbedded="true"/>
+							</itemLabel>
+							<valueAxisFormat>
+								<axisFormat verticalTickLabels="false">
+									<labelFont>
+										<font fontName="SansSerif" size="36"/>
+									</labelFont>
+								</axisFormat>
+							</valueAxisFormat>
+						</barPlot>
+					</barChart>
+				</frame>
+				<frame>
+					<reportElement uuid="e35fd9a6-2e62-4e38-9999-12493169ca6d" style="Title Description header" mode="Opaque" x="412" y="10" width="390" height="125" backcolor="#FFFFFF"/>
+					<staticText>
+						<reportElement uuid="9883e27d-500d-4d3f-8267-168f7e5dba27" style="Title Description header" x="0" y="0" width="390" height="15"/>
+						<textElement>
+							<paragraph leftIndent="4"/>
+						</textElement>
+						<text><![CDATA[Number of Customers]]></text>
+					</staticText>
+					<barChart>
+						<chart>
+							<reportElement uuid="3dfd0b2a-6d53-4419-9cd1-f23c933b1c86" style="Charts" x="0" y="15" width="390" height="110"/>
+							<chartTitle/>
+							<chartSubtitle/>
+							<chartLegend position="Right"/>
+						</chart>
+						<categoryDataset>
+							<dataset>
+								<datasetRun subDataset="NumberofCustomers" uuid="379a0079-d7a6-42e1-acd0-d96229dffa71">
+									<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+								</datasetRun>
+							</dataset>
+							<categorySeries>
+								<seriesExpression><![CDATA[$F{Category}]]></seriesExpression>
+								<categoryExpression><![CDATA[$F{Series}]]></categoryExpression>
+								<valueExpression><![CDATA[$F{Value}]]></valueExpression>
+							</categorySeries>
+						</categoryDataset>
+						<barPlot isShowLabels="false" isShowTickLabels="true" isShowTickMarks="true">
+							<plot labelRotation="0.0">
+								<seriesColor seriesOrder="0" color="#1284D7"/>
+								<seriesColor seriesOrder="1" color="#88C42E"/>
+								<seriesColor seriesOrder="2" color="#B770DB"/>
+								<seriesColor seriesOrder="3" color="#E85A0E"/>
+								<seriesColor seriesOrder="4" color="#DB03C6"/>
+								<seriesColor seriesOrder="5" color="#0DC4DD"/>
+								<seriesColor seriesOrder="6" color="#D50622"/>
+								<seriesColor seriesOrder="7" color="#0ADFAF"/>
+								<seriesColor seriesOrder="8" color="#F1C40D"/>
+								<seriesColor seriesOrder="9" color="#590711"/>
+								<seriesColor seriesOrder="10" color="#CCCC05"/>
+								<seriesColor seriesOrder="11" color="#073359"/>
+								<seriesColor seriesOrder="12" color="#147E8C"/>
+							</plot>
+							<itemLabel color="#2D4B7A">
+								<font size="8" isItalic="true" isPdfEmbedded="true"/>
+							</itemLabel>
+							<valueAxisFormat>
+								<axisFormat verticalTickLabels="false">
+									<labelFont>
+										<font fontName="SansSerif" size="36"/>
+									</labelFont>
+								</axisFormat>
+							</valueAxisFormat>
+						</barPlot>
+					</barChart>
+				</frame>
+				<frame>
+					<reportElement uuid="e35fd9a6-2e62-4e38-9999-12493169ca6d" style="Title Description header" mode="Opaque" x="0" y="150" width="390" height="125" backcolor="#FFFFFF"/>
+					<staticText>
+						<reportElement uuid="9883e27d-500d-4d3f-8267-168f7e5dba27" style="Title Description header" x="0" y="0" width="390" height="15"/>
+						<textElement>
+							<paragraph leftIndent="4"/>
+						</textElement>
+						<text><![CDATA[Loan Amount in INR]]></text>
+					</staticText>
+					<barChart>
+						<chart>
+							<reportElement uuid="3dfd0b2a-6d53-4419-9cd1-f23c933b1c86" style="Charts" x="0" y="15" width="390" height="110"/>
+							<chartTitle/>
+							<chartSubtitle/>
+							<chartLegend position="Right"/>
+						</chart>
+						<categoryDataset>
+							<dataset>
+								<datasetRun subDataset="FinanceAmount" uuid="379a0079-d7a6-42e1-acd0-d96229dffa71">
+									<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+								</datasetRun>
+							</dataset>
+							<categorySeries>
+								<seriesExpression><![CDATA[$F{Category}]]></seriesExpression>
+								<categoryExpression><![CDATA[$F{Series}]]></categoryExpression>
+								<valueExpression><![CDATA[$F{Value}]]></valueExpression>
+							</categorySeries>
+						</categoryDataset>
+						<barPlot isShowLabels="false" isShowTickLabels="true" isShowTickMarks="true">
+							<plot labelRotation="0.0">
+								<seriesColor seriesOrder="0" color="#1284D7"/>
+								<seriesColor seriesOrder="1" color="#88C42E"/>
+								<seriesColor seriesOrder="2" color="#B770DB"/>
+								<seriesColor seriesOrder="3" color="#E85A0E"/>
+								<seriesColor seriesOrder="4" color="#DB03C6"/>
+								<seriesColor seriesOrder="5" color="#0DC4DD"/>
+								<seriesColor seriesOrder="6" color="#D50622"/>
+								<seriesColor seriesOrder="7" color="#0ADFAF"/>
+								<seriesColor seriesOrder="8" color="#F1C40D"/>
+								<seriesColor seriesOrder="9" color="#590711"/>
+								<seriesColor seriesOrder="10" color="#CCCC05"/>
+								<seriesColor seriesOrder="11" color="#073359"/>
+								<seriesColor seriesOrder="12" color="#147E8C"/>
+							</plot>
+							<itemLabel color="#2D4B7A">
+								<font size="8" isItalic="true" isPdfEmbedded="true"/>
+							</itemLabel>
+							<valueAxisFormat>
+								<axisFormat verticalTickLabels="false">
+									<labelFont>
+										<font fontName="SansSerif" size="36"/>
+									</labelFont>
+								</axisFormat>
+							</valueAxisFormat>
+						</barPlot>
+					</barChart>
+				</frame>
+				<frame>
+					<reportElement uuid="4ed889cf-fb5d-4153-b102-8e881a6dea72" x="0" y="135" width="802" height="15"/>
+				</frame>
+				<frame>
+					<reportElement uuid="e35fd9a6-2e62-4e38-9999-12493169ca6d" style="Title Description header" mode="Opaque" x="412" y="150" width="390" height="125" backcolor="#FFFFFF"/>
+					<staticText>
+						<reportElement uuid="9883e27d-500d-4d3f-8267-168f7e5dba27" style="Title Description header" x="0" y="0" width="390" height="15"/>
+						<textElement>
+							<paragraph leftIndent="4"/>
+						</textElement>
+						<text><![CDATA[Interest in INR]]></text>
+					</staticText>
+					<barChart>
+						<chart>
+							<reportElement uuid="3dfd0b2a-6d53-4419-9cd1-f23c933b1c86" style="Charts" x="0" y="15" width="390" height="110"/>
+							<chartTitle/>
+							<chartSubtitle/>
+							<chartLegend position="Right"/>
+						</chart>
+						<categoryDataset>
+							<dataset>
+								<datasetRun subDataset="Profit" uuid="379a0079-d7a6-42e1-acd0-d96229dffa71">
+									<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+								</datasetRun>
+							</dataset>
+							<categorySeries>
+								<seriesExpression><![CDATA[$F{Category}]]></seriesExpression>
+								<categoryExpression><![CDATA[$F{Series}]]></categoryExpression>
+								<valueExpression><![CDATA[$F{Value}]]></valueExpression>
+							</categorySeries>
+						</categoryDataset>
+						<barPlot isShowLabels="false" isShowTickLabels="true" isShowTickMarks="true">
+							<plot labelRotation="0.0">
+								<seriesColor seriesOrder="0" color="#1284D7"/>
+								<seriesColor seriesOrder="1" color="#88C42E"/>
+								<seriesColor seriesOrder="2" color="#B770DB"/>
+								<seriesColor seriesOrder="3" color="#E85A0E"/>
+								<seriesColor seriesOrder="4" color="#DB03C6"/>
+								<seriesColor seriesOrder="5" color="#0DC4DD"/>
+								<seriesColor seriesOrder="6" color="#D50622"/>
+								<seriesColor seriesOrder="7" color="#0ADFAF"/>
+								<seriesColor seriesOrder="8" color="#F1C40D"/>
+								<seriesColor seriesOrder="9" color="#590711"/>
+								<seriesColor seriesOrder="10" color="#CCCC05"/>
+								<seriesColor seriesOrder="11" color="#073359"/>
+								<seriesColor seriesOrder="12" color="#147E8C"/>
+							</plot>
+							<itemLabel color="#2D4B7A">
+								<font size="8" isItalic="true" isPdfEmbedded="true"/>
+							</itemLabel>
+							<valueAxisFormat>
+								<axisFormat verticalTickLabels="false">
+									<labelFont>
+										<font fontName="SansSerif" size="36"/>
+									</labelFont>
+								</axisFormat>
+							</valueAxisFormat>
+						</barPlot>
+					</barChart>
+				</frame>
+				<frame>
+					<reportElement uuid="4ed889cf-fb5d-4153-b102-8e881a6dea72" x="0" y="275" width="802" height="15"/>
+				</frame>
+				<frame>
+					<reportElement uuid="e35fd9a6-2e62-4e38-9999-12493169ca6d" style="Title Description header" mode="Opaque" x="0" y="290" width="390" height="125" backcolor="#FFFFFF"/>
+					<staticText>
+						<reportElement uuid="9883e27d-500d-4d3f-8267-168f7e5dba27" style="Title Description header" x="0" y="0" width="390" height="15"/>
+						<textElement>
+							<paragraph leftIndent="4"/>
+						</textElement>
+						<text><![CDATA[Total Fee Amount in INR]]></text>
+					</staticText>
+					<barChart>
+						<chart>
+							<reportElement uuid="3dfd0b2a-6d53-4419-9cd1-f23c933b1c86" style="Charts" x="0" y="15" width="390" height="110"/>
+							<chartTitle/>
+							<chartSubtitle/>
+							<chartLegend position="Right"/>
+						</chart>
+						<categoryDataset>
+							<dataset>
+								<datasetRun subDataset="FeeAmount" uuid="379a0079-d7a6-42e1-acd0-d96229dffa71">
+									<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+								</datasetRun>
+							</dataset>
+							<categorySeries>
+								<seriesExpression><![CDATA[$F{Category}]]></seriesExpression>
+								<categoryExpression><![CDATA[$F{Series}]]></categoryExpression>
+								<valueExpression><![CDATA[$F{Value}]]></valueExpression>
+							</categorySeries>
+						</categoryDataset>
+						<barPlot isShowLabels="false" isShowTickLabels="true" isShowTickMarks="true">
+							<plot labelRotation="0.0">
+								<seriesColor seriesOrder="0" color="#1284D7"/>
+								<seriesColor seriesOrder="1" color="#88C42E"/>
+								<seriesColor seriesOrder="2" color="#B770DB"/>
+								<seriesColor seriesOrder="3" color="#E85A0E"/>
+								<seriesColor seriesOrder="4" color="#DB03C6"/>
+								<seriesColor seriesOrder="5" color="#0DC4DD"/>
+								<seriesColor seriesOrder="6" color="#D50622"/>
+								<seriesColor seriesOrder="7" color="#0ADFAF"/>
+								<seriesColor seriesOrder="8" color="#F1C40D"/>
+								<seriesColor seriesOrder="9" color="#590711"/>
+								<seriesColor seriesOrder="10" color="#CCCC05"/>
+								<seriesColor seriesOrder="11" color="#073359"/>
+								<seriesColor seriesOrder="12" color="#147E8C"/>
+							</plot>
+							<itemLabel color="#2D4B7A">
+								<font size="8" isItalic="true" isPdfEmbedded="true"/>
+							</itemLabel>
+							<valueAxisFormat>
+								<axisFormat verticalTickLabels="false">
+									<labelFont>
+										<font fontName="SansSerif" size="36"/>
+									</labelFont>
+								</axisFormat>
+							</valueAxisFormat>
+						</barPlot>
+					</barChart>
+				</frame>
+				<frame>
+					<reportElement uuid="e35fd9a6-2e62-4e38-9999-12493169ca6d" style="Title Description header" mode="Opaque" x="412" y="290" width="390" height="125" backcolor="#FFFFFF"/>
+					<staticText>
+						<reportElement uuid="9883e27d-500d-4d3f-8267-168f7e5dba27" style="Title Description header" x="0" y="0" width="390" height="15"/>
+						<textElement>
+							<paragraph leftIndent="4"/>
+						</textElement>
+						<text><![CDATA[OverDue Amount in INR]]></text>
+					</staticText>
+					<barChart>
+						<chart>
+							<reportElement uuid="3dfd0b2a-6d53-4419-9cd1-f23c933b1c86" style="Charts" x="0" y="15" width="390" height="110"/>
+							<chartTitle/>
+							<chartSubtitle/>
+							<chartLegend position="Right"/>
+						</chart>
+						<categoryDataset>
+							<dataset>
+								<datasetRun subDataset="OverdueAmount" uuid="379a0079-d7a6-42e1-acd0-d96229dffa71">
+									<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+								</datasetRun>
+							</dataset>
+							<categorySeries>
+								<seriesExpression><![CDATA[$F{Category}]]></seriesExpression>
+								<categoryExpression><![CDATA[$F{Series}]]></categoryExpression>
+								<valueExpression><![CDATA[$F{Value}]]></valueExpression>
+							</categorySeries>
+						</categoryDataset>
+						<barPlot isShowLabels="false" isShowTickLabels="true" isShowTickMarks="true">
+							<plot labelRotation="0.0">
+								<seriesColor seriesOrder="0" color="#1284D7"/>
+								<seriesColor seriesOrder="1" color="#88C42E"/>
+								<seriesColor seriesOrder="2" color="#B770DB"/>
+								<seriesColor seriesOrder="3" color="#E85A0E"/>
+								<seriesColor seriesOrder="4" color="#DB03C6"/>
+								<seriesColor seriesOrder="5" color="#0DC4DD"/>
+								<seriesColor seriesOrder="6" color="#D50622"/>
+								<seriesColor seriesOrder="7" color="#0ADFAF"/>
+								<seriesColor seriesOrder="8" color="#F1C40D"/>
+								<seriesColor seriesOrder="9" color="#590711"/>
+								<seriesColor seriesOrder="10" color="#CCCC05"/>
+								<seriesColor seriesOrder="11" color="#073359"/>
+								<seriesColor seriesOrder="12" color="#147E8C"/>
+							</plot>
+							<itemLabel color="#2D4B7A">
+								<font size="8" isItalic="true" isPdfEmbedded="true"/>
+							</itemLabel>
+							<valueAxisFormat>
+								<axisFormat verticalTickLabels="false">
+									<labelFont>
+										<font fontName="SansSerif" size="36"/>
+									</labelFont>
+								</axisFormat>
+							</valueAxisFormat>
+						</barPlot>
+					</barChart>
+				</frame>
+				<frame>
+					<reportElement uuid="b7b959df-cd62-47ca-a027-1e97e172142a" x="0" y="0" width="802" height="10"/>
+				</frame>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="43">
+			<frame>
+				<reportElement uuid="7ba36d77-24f9-4087-b34b-9c53112cceb0" x="0" y="0" width="802" height="43"/>
+				<image hAlign="Left">
+					<reportElement uuid="191dc9c0-d24b-4d40-b0d2-8a4dd0415629" x="668" y="0" width="134" height="43"/>
+					<imageExpression><![CDATA[$P{organizationLogo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement uuid="ce8aa4d0-a410-4e32-95a9-39fee0f119cd" style="Title Header" x="0" y="18" width="668" height="25"/>
+					<box>
+						<bottomPen lineWidth="1.5" lineColor="#654402"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Last 5 Years Analysis by Loan Division]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+</jasperReport>

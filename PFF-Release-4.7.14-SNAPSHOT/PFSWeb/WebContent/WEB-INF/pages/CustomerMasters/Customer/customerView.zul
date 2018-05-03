@@ -1,0 +1,2185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CustomerDialogg" border="normal"
+		style="overflow-y:hidden" apply="${customerViewDialogCtrl}" width="100%"
+		height="100%" sizable="false">
+		<style src="http://fonts.googleapis.com/css?family=Roboto" />
+		<style src="/css/customer-view.css" />
+		<borderlayout>
+			<north id="north">
+				<div sclass="buttonsdiv">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+						</toolbar>
+						<toolbar align="center"
+							style="border-style : none; background :#e6e6e6">
+							<label
+								value="${c:l('window_CustomerDialog.title')}"
+								sclass="maintitle" />
+						</toolbar>
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnClose" label="Close"
+								visible="true"
+								autodisable="btnDelete,btnSave,btnNotes,btnHelp,btnClose,btnCopyTo"
+								tooltiptext="Close" sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<west
+				style="background-color: #f4f3f3;  border-color: #f4f3f3;">
+				<hbox>
+					<menubar autodrop="true" orient="horizontal"
+						sclass="special-menubar">
+						<menu
+							image="images/icons/customerenquiry/Leftbar.png">
+							<menupopup>
+								<menuitem id="custDetails"
+									label="Customer Details" />
+								<menuseparator />
+								<menuitem id="custSummary"
+									label="Customer Summary" />
+							</menupopup>
+						</menu>
+					</menubar>
+				</hbox>
+			</west>
+			<center border="none">
+				<div width="100%" height="100%"
+					style="overflow: auto;">
+					<tabbox width="100%">
+						<tabs width="100%"
+							style="padding-left: 80px; padding-right: 80px;">
+							<tab id="tabBasicDetails"
+								image="images/icons/customerenquiry/basicdetailsorg.png"
+								height="64px" width="13%"
+								label="${c:l('label_CustomerDialog_BasicDetailsTab.value')}"
+								style="padding-left: 20px; border-right: none; border-top-left-radius: 7px; border-bottom-left-radius: 7px;" />
+							<tab id="tabKYCDetails"
+								image="images/icons/customerenquiry/kycdetails.png"
+								height="64px" width="13%"
+								label="${c:l('label_CustomerDialog_KYCDetailsTab.value')}"
+								style="padding-left: 20px; border-left: none; border-right: none;" />
+							<tab
+								image="images/icons/customerenquiry/financial.png"
+								id="tabFinancial"
+								label="${c:l('label_CustomerDialog_FinancialTab.value')}"
+								height="64px" width="13%"
+								style="padding-left: 20px; border-left: none; border-right: none;" />
+							<tab
+								image="images/icons/customerenquiry/financial.png"
+								id="tabShareHoleder"
+								label="${c:l('label_CustomerDialog_DirectorTab.value')}"
+								height="64px" width="13%"
+								style="padding-left: 20px; border-left: none; border-right: none;" />
+							<tab id="tabBankDetails"
+								image="images/icons/customerenquiry/bankingdetails.png"
+								label="${c:l('label_CustomerDialog_BankingDetailsTab.value')}"
+								height="64px" width="61%"
+								style="padding-left: 20px; border-left: none; border-top-right-radius: 7px; border-bottom-right-radius: 7px;" />
+						</tabs>
+
+						<tabpanels ca:data-scrollable="true">
+
+							<!-- basicDetail -->
+							<tabpanel style="background: #f3f3f3;">
+								<div id="basicDetailDiv" align="center"
+									style="background: #f3f3f3; border: none;">
+									<space />
+									<grid width="75%"
+										style="border:0px;">
+										<columns>
+											<column width="20%" />
+											<column width="62%" />
+											<column width="8%" />
+										</columns>
+										<rows>
+											<row
+												style="background: none; height:38px">
+												<hlayout>
+													<image
+														src="images/icons/customerenquiry/profilepic.png" />
+													<div
+														sclass="profile-div">
+														<label
+															value="${c:l('label_CustomerDialog_Profile.value')}"
+															sclass="profileheadsection" />
+													</div>
+												</hlayout>
+												<label
+													value="${c:l('label_CustomerDialog_Status.value')}"
+													sclass="profileheadsection" />
+
+												<label
+													id="recordStatus1"
+													style="padding-right: 25px;text-align:right"
+													sclass="profileheadsection" visible="true" />
+											</row>
+											<row height="70px"
+												style="background: white; border: 1px solid #d7d7d7;">
+												<hlayout>
+													<image
+														id="customerPic" sclass="circular--square" />
+													<vlayout
+														style="padding-top:17px">
+														<label
+															id="custShrtName2" sclass="customername" />
+													</vlayout>
+												</hlayout>
+												<progressmeter
+													id="basicProgress" sclass="progressmeter" width="100%" />
+												<image
+													style="align: right; padding-left: 25px;"
+													src="images/icons/customerenquiry/tickmark.png" />
+											</row>
+										</rows>
+									</grid>
+									<space />
+									<hlayout width="100%"
+										style="margin-left :4%">
+										<vlayout id="CustRetl"
+											style="background: white; border: solid 1px #d7d7d7; border-radius: 5px;">
+											<image
+												src="images/icons/customerenquiry/graphicon.png"
+												height="275px" style="padding-top: 30px;" />
+										</vlayout>
+										<vlayout>
+											<space />
+										</vlayout>
+										<vlayout id="CustRetails"
+											style=" background: white; border: solid 1px #d7d7d7; border-radius: 7px; 
+											width: 88.8%; margin-left: -9%;">
+											<box width="95%"
+												style="padding-top: 12px; background: white;">
+												<hbox pack="stretch"
+													sclass="hboxRemoveWhiteStrips" width="100%"
+													widths="100%,0%">
+													<toolbar
+														align="start" sclass="toolbar-start"
+														style="background-color: white;">
+														<hlayout
+															style="padding-left :15px; padding-top: 8px;">
+															<image
+																id="customerPic1" sclass="circular--square" />
+															<vlayout>
+																<label
+																	id="custShrtName" sclass="customernamee" />
+																<label
+																	id="custCIF"
+																	style="font-weight :normal;font-family: Roboto;font-size: 16px;padding-left: 7px;" />
+															</vlayout>
+														</hlayout>
+													</toolbar>
+													<toolbar
+														height="80px" align="end" sclass="toolbar-end"
+														style="background-color: white;">
+													</toolbar>
+												</hbox>
+												<grid
+													sclass="cutdocgrid"
+													style="border: none; margin-left :-1%;">
+													<columns>
+														<column
+															width="18%" />
+														<column
+															width="20%" />
+														<column
+															width="19%" />
+														<column
+															width="31%" />
+													</columns>
+													<rows>
+														<row
+															height="92px"
+															style="border: solid 1px #d7d7d7; border-right: solid 0px #d7d7d7; background: white;">
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/MobNumber.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		value="${c:l('label_CustomerDialog_MobileNumber.value')}"
+																		sclass="labelfont" />
+																	<space
+																		style="margin-bottom:2px" spacing="0px" />
+																	<label
+																		id="custPhoneNumber" sclass="labelweight" />
+																</vlayout>
+															</hlayout>
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/Branchpic.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		value="${c:l('label_CustomerDialog_CustDftBranch.value')}"
+																		sclass="labelfont" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="custDftBranchDesc" sclass="labelweight" />
+																</vlayout>
+															</hlayout>
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/PanCard.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		value="${c:l('label_CustomerDialog_EIDNumber.value')}"
+																		sclass="labelfont" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="custCRCPR" sclass="labelweight" />
+																</vlayout>
+															</hlayout>
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/GenderPic.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		value="${c:l('label_CustomerDialog_CustGenderCode.value')}"
+																		sclass="labelfont" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="custGenderCodeDesc" sclass="labelweight" />
+																</vlayout>
+															</hlayout>
+														</row>
+														<row
+															height="92px"
+															style="border:1px solid #d7d7d7; border-right: solid 0px #d7d7d7; border-bottom:none; background: white;">
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/DOBpic.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		id="custDOBDOI" sclass="labelfont" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="custDOB" sclass="labelweight" />
+																</vlayout>
+															</hlayout>
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/PreferedLanguage.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		value="${c:l('label_CustomerDialog_CustLngg.value')}"
+																		sclass="labelfont" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="custLng" sclass="labelweight" />
+																</vlayout>
+															</hlayout>
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/MotherName.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}"
+																		sclass="labelfonts" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="motherMaidenName" sclass="labelweights" />
+																</vlayout>
+															</hlayout>
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/AddressPic.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		value="${c:l('label_CustomerDialog_Address.value')}"
+																		sclass="labelfont" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="address1" sclass="labelweight" />
+																</vlayout>
+															</hlayout>
+														</row>
+													</rows>
+												</grid>
+											</box>
+										</vlayout>
+										<vlayout id="CustCorpo"
+											style="background: white; border: solid 1px #d7d7d7; border-radius: 5px;">
+											<image
+												src="images/icons/customerenquiry/graphicon.png"
+												height="284px" style="padding-top: 30px;" />
+										</vlayout>
+										<vlayout>
+											<space />
+										</vlayout>
+										<vlayout id="CustCorporates"
+											style=" background: white; border: solid 1px #d7d7d7; border-radius: 7px; 
+											width: 88.5%; margin-left: -12%;">
+											<box width="95%"
+												style="padding-top: 12px; background: white;">
+												<hbox pack="stretch"
+													sclass="hboxRemoveWhiteStrips" width="100%"
+													widths="100%,0%">
+													<toolbar
+														align="start" sclass="toolbar-start"
+														style="background-color: white;">
+														<hlayout
+															style="padding-left :15px; padding-top: 8px;">
+															<image
+																id="corpCustomerPic1" sclass="circular--square" />
+															<vlayout>
+																<label
+																	id="corpCustShrtName" sclass="customernamee" />
+																<label
+																	id="corpCustCIF"
+																	style="font-weight :normal;font-family: Roboto;font-size: 16px;padding-left: 7px;" />
+															</vlayout>
+														</hlayout>
+													</toolbar>
+													<toolbar
+														height="80px" align="end" sclass="toolbar-end"
+														style="background-color: white;">
+													</toolbar>
+												</hbox>
+												<grid
+													sclass="cutdocgrid"
+													style="border: none; margin-left :-1%;">
+													<columns>
+														<column
+															width="18%" />
+														<column
+															width="20%" />
+														<column
+															width="19%" />
+														<column
+															width="31%" />
+													</columns>
+													<rows>
+														<row
+															height="92px"
+															style="border: solid 1px #d7d7d7; border-right: solid 0px #d7d7d7; background: white;">
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/MobNumber.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		value="${c:l('label_CustomerDialog_MobileNumber.value')}"
+																		sclass="labelfont" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="corpcustPhoneNumber" sclass="labelweight" />
+																</vlayout>
+															</hlayout>
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/Branchpic.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		value="${c:l('label_CustomerDialog_CustDftBranch.value')}"
+																		sclass="labelfont" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="corpcustDftBranchDesc" sclass="labelweight" />
+																</vlayout>
+															</hlayout>
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/PanCard.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		value="${c:l('label_CustomerDialog_EIDNumber.value')}"
+																		sclass="labelfont" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="corpcustCRCPR" sclass="labelweight" />
+																</vlayout>
+															</hlayout>
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/customer type.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		value="${c:l('label_CustomerDialog_CustTypeCode.value')}"
+																		sclass="labelfont" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="corpcustType" sclass="labelweight" />
+																</vlayout>
+															</hlayout>
+														</row>
+														<row
+															height="92px"
+															style="border:1px solid #d7d7d7; border-right: solid 0px #d7d7d7; border-bottom:none; background: white;">
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/DOBpic.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		id="corpcustDOBDOI" sclass="labelfont" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="corpcustDOB" sclass="labelweight" />
+																</vlayout>
+															</hlayout>
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/PreferedLanguage.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		value="${c:l('label_CustomerDialog_CustLngg.value')}"
+																		sclass="labelfont" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="corpcustLngg" sclass="labelweight" />
+																</vlayout>
+															</hlayout>
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/Country of Incorporation.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		value="${c:l('label_CustomerDialog_CORPCustCOB.value')}"
+																		sclass="labelfonts" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="corpcountryincorp" sclass="labelweights" />
+																</vlayout>
+															</hlayout>
+															<hlayout
+																sclass="easthlayout">
+																<image
+																	src="images/icons/customerenquiry/AddressPic.png" />
+																<vlayout
+																	spacing="0px">
+																	<label
+																		value="${c:l('label_CustomerDialog_Address.value')}"
+																		sclass="labelfont" />
+																	<space
+																		spacing="0px" />
+																	<label
+																		id="corpaddress1" sclass="labelweight" />
+																</vlayout>
+															</hlayout>
+														</row>
+													</rows>
+												</grid>
+											</box>
+										</vlayout>
+									</hlayout>
+									<space />
+									<box id="Retails" width="106.8%"
+										align="center"
+										style="border-style : none; margin-left :-3.3%;">
+										<hbox pack="stretch" id=""
+											style="border-style : none;" sclass="hboxRemoveWhiteStrips"
+											width="100%" widths="100%,0%,0%">
+											<toolbar height="100%"
+												align="start"
+												style="padding-top: 15px; background: #f3f3f3; border: none;">
+												<label
+													value="${c:l('label_CustomerDialog_CustomerDetails.value')}"
+													style="font-family : Roboto; font-size:16px; font-weight :normal; color: #f39a36" />
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 18px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+										</hbox>
+										<grid
+											style="border :none; overflow: visible ; background: white; border-radius: 7px;
+										       box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12)!important;">
+
+											<columns>
+												<column width="15%" />
+												<column width="15%" />
+												<column width="18%" />
+												<column width="17%" />
+												<column width="16%" />
+												<column width="20%" />
+											</columns>
+											<rows>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_CustCIF.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustCoreBank.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustCtgCode.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustDftBranch.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustBaseCcy.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustTypeCode.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<label id="custCIF2"
+														sclass="labelweightt" />
+													<label
+														id="custCoreBank" sclass="labelweightt" />
+													<label
+														id="custCtgCode" sclass="labelweightt" />
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custDftBranch" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custDftBranchDesc2" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custBaseCcy" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custBaseCcyDesc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custTypeCode" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custTypeCodeDesc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+												</row>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_CustFirstName.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustMiddleName.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustLastName.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustShrtName.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustLng.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<label
+														id="custFirstName" sclass="labelweightt" />
+													<label
+														id="custMiddleName" sclass="labelweightt" />
+													<label
+														id="custLastName" sclass="labelweightt" />
+													<label
+														id="fatherMaidenName" sclass="labelweightt" />
+													<label
+														id="custShrtNamee" sclass="labelweightt" />
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custLngg" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custLnggDesc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+												</row>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_CustDOB.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustArabicName.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustNationality.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustRO1.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSalutationCode.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_noOfDependents.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<label id="custDOBB"
+														sclass="labelweightt" />
+													<label
+														id="custArabicName" sclass="labelweightt" />
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custNationality" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custNationalitydesc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custRO1" sclass="labelweightt"
+																style="padding-left:20px;" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custRO1Desc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<label
+														id="custSalutationCode" sclass="labelweightt" />
+													<label
+														id="noOfDependents" sclass="labelweightt" />
+												</row>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_CustMaritalSts.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_Target.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_SalaryTransfered.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_EIDNumber.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustCOB.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSector.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<label
+														id="custMaritalStsDesc" sclass="labelweightt" />
+													<label id="target"
+														sclass="labelweightt" />
+													<image
+														id="salariedCustomer" style="padding-left: 25px;" />
+													<label
+														id="custCRCPR2" sclass="labelweightt" />
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custCOB" sclass="labelweightt" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custCOBDesc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custSector" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custSectorDesc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+												</row>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_IsStaff.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSts.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_RelatedParty.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSegment.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustGroupID.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustIndustry.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<image
+														id="custIsStaff" style="padding-left: 25px;" />
+													<label id="custSts"
+														sclass="labelweightt" />
+													<label
+														id="custRelatedParty" sclass="labelweightt" />
+													<label
+														id="custSegment" sclass="labelweightt" />
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custGroupId" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custGroupIdDesc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custIndustry" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custIndustryDesc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+												</row>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_CustSaffID.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustDSACode.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustDSADeptCode.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustRiskCountry.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustParentCountry.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSubSector.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<label
+														id="custStaffID" sclass="labelweightt" />
+													<label id="custDSA"
+														sclass="labelweightt" />
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custDSACode" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custDSADept" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custRiskCountry" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custRiskCountryDesc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custParentCountry" sclass="labelweightt" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custParentCountryDesc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<label
+														id="custSubSector" sclass="labelweightt" />
+												</row>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_CustSubSegment.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustGenderCode.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<label
+														id="custSubSegment" sclass="labelweightt" />
+													<label
+														id="custGenderCodeDescc" sclass="labelweightt" />
+												</row>
+												<row>
+													<space />
+												</row>
+											</rows>
+										</grid>
+									</box>
+									<box id="Corporates" width="106.8%"
+										align="center"
+										style="border-style : none; margin-left :-3.3%;">
+
+										<hbox pack="stretch" id=""
+											style="border-style : none;" sclass="hboxRemoveWhiteStrips"
+											width="100%" widths="100%,0%,0%">
+											<toolbar height="100%"
+												align="start"
+												style="padding-top: 15px; background: #f3f3f3; border: none;">
+												<label
+													value="${c:l('label_CustomerDialog_CustomerDetails.value')}"
+													style="font-family : Roboto; font-size:16px; font-weight :normal; color: #f39a36" />
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 18px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+										</hbox>
+										<grid
+											style="border :none; overflow: visible ; background: white; border-radius: 7px;
+										       box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12)!important;">
+
+											<columns>
+												<column width="16%" />
+												<column width="15%" />
+												<column width="15%" />
+												<column width="16%" />
+												<column width="17%" />
+												<column width="20%" />
+											</columns>
+											<rows>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_CustCIF.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustCoreBank.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustCtgCode.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustDftBranch.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustBaseCcy.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustTypeCode.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<label
+														id="custCIFF2" sclass="labelweightt" />
+													<label
+														id="custCoreBankk" sclass="labelweightt" />
+													<label
+														id="custCtgCodee" sclass="labelweightt" />
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custDftBranchh" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custDftBranchDescc2" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custBaseCcyy" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custBaseCcyDescc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custTypeCodee" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custTypeCodeDescc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+												</row>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_CustArabicNamee.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustNationality.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustRO1.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CORPCustCOB.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSector.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustIndustry.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<label
+														id="custArabicNamee" sclass="labelweightt" />
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custNationalityy" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custNationalitydescc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custROO1" sclass="labelweightt"
+																style="padding-left:20px;" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custRO1Descc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custCOOB" sclass="labelweightt" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custCOBDescc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custSectorr" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custSectorDescc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custIndustryy" sclass="labelweightt"
+																style="padding-left:20x" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custIndustryDescc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+												</row>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_CustGroupID.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSubSector.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustLng.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_EIDNumber.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustDateOfIncorporation.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custGroupIdd" sclass="labelweightt"
+																style="padding-left:20x" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custGroupIdDescc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<label
+														id="custSubSectorr" sclass="labelweightt" />
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="corpcustLng" sclass="labelweightt"
+																style="padding-left:20px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="corpcustLngDesc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 14px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<label
+														id="custCRCPR3" sclass="labelweightt" />
+													<label
+														id="corpcustDOBB" sclass="labelweightt" />
+												</row>
+												<row>
+													<space />
+												</row>
+											</rows>
+										</grid>
+									</box>
+									<space />
+								</div>
+							</tabpanel>
+							<!-- KYC Details -->
+							<tabpanel width="100%"
+								style="background: #f3f3f3;">
+								<div width="100%" align="center">
+									<space />
+									<grid width="75%"
+										style="border:0px;">
+										<columns>
+											<column width="20%" />
+											<column width="62%" />
+											<column width="8%" />
+										</columns>
+										<rows>
+											<row
+												style="background: none; height:38px">
+												<hlayout>
+													<image
+														src="images/icons/customerenquiry/profilepic.png" />
+													<div
+														sclass="profile-div">
+														<label
+															value="${c:l('label_CustomerDialog_Profile.value')}"
+															sclass="profileheadsection" />
+													</div>
+												</hlayout>
+												<label
+													value="${c:l('label_CustomerDialog_Status.value')}"
+													sclass="profileheadsection" />
+
+												<label
+													id="recordStatus2"
+													style="padding-right: 25px;text-align:right"
+													sclass="profileheadsection" visible="true" />
+											</row>
+											<row height="70px"
+												style="background: white; border: 1px solid #d7d7d7;">
+												<hlayout>
+													<image
+														id="customerPic2" sclass="circular--square" />
+													<vlayout
+														style="padding-top:17px">
+														<label
+															id="custShrtName1" sclass="customername" />
+													</vlayout>
+												</hlayout>
+												<progressmeter
+													id="kYCProgress" sclass="progressmeter" width="100%" />
+												<image
+													style="align: right; padding-left: 25px;"
+													src="images/icons/customerenquiry/tickmark.png" />
+											</row>
+										</rows>
+									</grid>
+									<space />
+									<box
+										style="padding-left: 80px; padding-right: 80px;">
+										<hbox pack="stretch"
+											id="hbox_empDetails" style="border-style : none;"
+											sclass="hboxRemoveWhiteStrips" width="100%"
+											widths="100%,0%,0%">
+											<toolbar height="100%"
+												align="start"
+												style="padding-top: 15px; background: #f3f3f3; border: none;">
+												<image align="left"
+													src="images/icons/customerenquiry/Employmentdetails.png" />
+												<space></space>
+												<label
+													value="${c:l('EmploymentDetails')}" sclass="kycheads" />
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 18px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+										</hbox>
+										<listbox
+											id="listBoxCustomerEmploymentDetail" span="true"
+											sizedByContent="true" fixedLayout="true"
+											style="background: #F3F3F3; zoom: 1; border: 1px solid #d7d7d7; 
+														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
+											width="100%" multiple="false"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
+											<listhead sizable="true"
+												height="50px">
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustEmpCIF"
+													label="${c:l('listheader_CustEmpCIF.label')}" sort="false"
+													hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustEmpName"
+													label="${c:l('listheader_CustEmpName.label')}" sort="false"
+													hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustEmpDesg"
+													label="${c:l('listheader_CustEmpDesg.label')}" sort="false"
+													hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustEmpDept"
+													label="${c:l('listheader_CustEmpDept.label')}" sort="false"
+													hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustEmpType"
+													label="${c:l('listheader_CustEmpType.label')}" sort="false"
+													hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustEmp_RecordStatus"
+													label="${c:l('listheader_RecordStatus.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustEmp_RecordType"
+													label="${c:l('listheader_RecordType.label')}" sort="false"
+													hflex="min" />
+											</listhead>
+										</listbox>
+
+										<space></space>
+										<hbox pack="stretch"
+											style="border-style : none;" sclass="hboxRemoveWhiteStrips"
+											width="100%" widths="90%,0%,0%">
+											<toolbar height="100%"
+												align="start"
+												style="padding-top: 15px; background: #f3f3f3; border: none;">
+												<image align="left"
+													src="images/icons/customerenquiry/CustomerDetails.png" />
+												<space></space>
+												<label
+													value="${c:l('DocumentDetails')}" sclass="kycheads" />
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 18px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+										</hbox>
+										<listbox
+											id="listBoxCustomerDocuments" span="true"
+											sizedByContent="true" fixedLayout="true"
+											style="background: #F3F3F3; zoom: 1; border: 1px solid #d7d7d7; 
+														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
+											width="100%" multiple="false"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
+											<listhead sizable="true"
+												height="50px">
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustDocType"
+													label="${c:l('listheader_CustDocType.label')}" sort="false"
+													hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustDocTitle"
+													label="${c:l('listheader_CustDocTitle.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustDocIssuedCountry"
+													label="${c:l('listheader_CustDocIssuedCountry.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustDocIssuedAuthority"
+													label="${c:l('listheader_CustDocIssuedAuthority.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustDocIssuedOn"
+													label="${c:l('listheader_CustDocIssuedOn.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustDocExpDate"
+													label="${c:l('listheader_CustDocExpDate.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustDoc_RecordStatus" width="0px"
+													label="${c:l('listheader_RecordStatus.label')}"
+													sort="false" hflex="min" visible="false" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustDoc_RecordType"
+													label="${c:l('listheader_RecordType.label')}" sort="false"
+													hflex="min" />
+											</listhead>
+										</listbox>
+										<space></space>
+
+										<hbox pack="stretch"
+											style="border-style : none;" sclass="hboxRemoveWhiteStrips"
+											width="100%" widths="100%,0%">
+											<toolbar height="100%"
+												align="start"
+												style="padding-top: 15px; background: #f3f3f3; border: none;">
+												<image align="left"
+													src="images/icons/customerenquiry/AddressDetails.png" />
+												<space></space>
+												<label
+													value="${c:l('AddressDetails')}" sclass="kycheads" />
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 18px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+										</hbox>
+										<listbox
+											id="listBoxCustomerAddress" span="true" sizedByContent="true"
+											style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px; 
+														box-shadow: 1px 1px 1px 1px #e6e6e6;"
+											width="100%" multiple="false"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
+											<listhead sizable="true"
+												height="50px">
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustAddr_CustAddrType"
+													label="${c:l('listheader_CustAddrType.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustAddr_CustAddrCity"
+													label="${c:l('listheader_CustAddrCity.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px; text-align: left;"
+													id="listheader_CustAddr_RecordStatus" width="0px"
+													label="${c:l('listheader_RecordStatus.label')}"
+													sort="false" hflex="min" visible="false" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px; text-align: left;"
+													id="listheader_CustAddr_RecordType"
+													label="${c:l('listheader_RecordType.label')}" sort="false"
+													hflex="min" />
+											</listhead>
+										</listbox>
+										<space></space>
+
+										<hbox pack="stretch"
+											style="border-style : none;" width="100%" widths="100%,0%">
+											<toolbar height="100%"
+												align="start"
+												style="padding-top: 15px; background: #f3f3f3; border: none;">
+												<image align="left"
+													src="images/icons/customerenquiry/PhoneDetails.png" />
+												<space></space>
+												<label
+													value="${c:l('PhoneDetails')}" sclass="kycheads" />
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 18px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+										</hbox>
+										<listbox
+											id="listBoxCustomerPhoneNumbers" span="true"
+											sclass="kyclistbox" sizedByContent="true"
+											style="zoom: 1; background: white; border: 1px solid #d7d7d7; 
+														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
+											multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
+											<listhead sizable="true"
+												height="50px">
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustPhone_Type"
+													label="${c:l('listheader_PhoneTypeCode.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustPhone_PhoneNumber"
+													label="${c:l('listheader_PhoneNumber.label')}" sort="false"
+													hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustPhone_RecordStatus" width="0px"
+													label="${c:l('listheader_RecordStatus.label')}"
+													sort="false" hflex="min" visible="false" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustPhone_RecordType"
+													label="${c:l('listheader_RecordType.label')}" sort="false"
+													hflex="min" />
+											</listhead>
+										</listbox>
+										<space></space>
+
+										<hbox pack="stretch"
+											style="border-style : none;" width="100%" widths="100%,0%">
+											<toolbar height="100%"
+												align="start"
+												style="padding-top: 15px; background: #f3f3f3; border: none;">
+												<image align="left"
+													style="padding-top: 5px;"
+													src="images/icons/customerenquiry/EmailDetails.png" />
+												<space></space>
+												<label
+													value="${c:l('EmailDetails')}" sclass="kycheads" />
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 18px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+										</hbox>
+										<listbox
+											id="listBoxCustomerEmails" span="true" sizedByContent="true"
+											style="zoom: 1; background: white; border: 1px solid #d7d7d7; 
+												border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
+											width="100%" multiple="false"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
+											<listhead sizable="true"
+												height="50px">
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustCIF"
+													label="${c:l('listheader_CustCIF.label')}" sort="auto"
+													hflex="min" visible="false" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustEmail_Type"
+													label="${c:l('listheader_CustEMailTypeCode.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustEmail_Priority" width="0px"
+													label="${c:l('listheader_CustEMailPriority.label')}"
+													sort="false" hflex="min" visible="false" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustEmail_EmailID"
+													label="${c:l('listheader_CustomerEmail.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustEmail_RecordStatus" width="0px"
+													label="${c:l('listheader_RecordStatus.label')}"
+													sort="false" hflex="min" visible="false" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustEmail_RecordType"
+													label="${c:l('listheader_RecordType.label')}" sort="false"
+													hflex="min" />
+											</listhead>
+										</listbox>
+										<space></space>
+									</box>
+								</div>
+							</tabpanel>
+							<!-- financials -->
+							<tabpanel width="100%" height="600px"
+								style="background: #f3f3f3;">
+								<div id="financials" align="center">
+									<space />
+									<grid width="75%"
+										style="border:0px;">
+										<columns>
+											<column width="20%" />
+											<column width="62%" />
+											<column width="8%" />
+										</columns>
+										<rows>
+											<row
+												style="background: none; height:38px">
+												<hlayout>
+													<image
+														src="images/icons/customerenquiry/profilepic.png" />
+													<div
+														sclass="profile-div">
+														<label
+															value="${c:l('label_CustomerDialog_Profile.value')}"
+															sclass="profileheadsection" />
+													</div>
+												</hlayout>
+												<label
+													value="${c:l('label_CustomerDialog_Status.value')}"
+													sclass="profileheadsection" />
+
+												<label
+													id="recordStatus3"
+													style="padding-right: 25px;text-align:right"
+													sclass="profileheadsection" visible="true" />
+											</row>
+											<row height="70px"
+												style="background: white; border-top: 1px solid #d7d7d7;  border-bottom: 1px solid #d7d7d7;  border-right: 1px solid #d7d7d7; 
+    border: 1px solid #d7d7d7;">
+												<hlayout>
+													<image
+														id="customerPic3" sclass="circular--square" />
+													<vlayout
+														style="padding-top:17px">
+														<label
+															id="custShrtName3" sclass="customername" />
+													</vlayout>
+												</hlayout>
+												<progressmeter
+													id="financialProgress" sclass="progressmeter" width="100%" />
+												<image
+													style="align: right; padding-left: 25px;"
+													src="images/icons/customerenquiry/tickmark.png" />
+											</row>
+										</rows>
+									</grid>
+									<space />
+									<box
+										style="padding-left: 80px; padding-right: 80px; background: #f3f3f3; border: none;">
+										<hbox pack="stretch"
+											width="100%" widths="80%,10%,10%"
+											style="border-style : none;"
+											sclass="hboxRemoveWhiteStrips">
+											<toolbar height="100%"
+												align="start"
+												style="padding-top: 15px; background: #f3f3f3; border: none;">
+												<image align="left"
+													src="images/icons/customerenquiry/income.png" />
+												<space></space>
+												<label
+													value="${c:l('IncomeDetails')}" sclass="kycheads"
+													style="background: #f3f3f3;" />
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+										</hbox>
+									</box>
+									<listbox id="listBoxCustomerIncome"
+										span="true" emptyMessage="${c:l('listbox.emptyMessage')}"
+										sizedByContent="true" fixedLayout="true" sclass="kycgrid"
+										tooltiptext="${c:l('listbox.tooltiptext')}" width="90%"
+										multiple="false">
+										<listhead sizable="true"
+											height="50px"
+											style="background-color: #f39a36; color: white;">
+											<listheader
+												sclass="finlistheader"
+												style="color: white; font-size: 15px;"
+												id="listheader_IncomeExpense"
+												label="${c:l('listheader_IncomeExpense.label')} ${c:l('listheader_IncomeTypeCategory.label')}"
+												sort="auto" hflex="min" />
+											<listheader
+												sclass="finlistheader"
+												style="color: white; font-size: 15px;"
+												id="listheader_CustInc_CustIncomeType"
+												label="${c:l('listheader_CustIncomeType.label')}"
+												sort="false" hflex="min" />
+											<listheader
+												sclass="finlistheader"
+												style="color: white; font-size: 15px;"
+												id="listheader_CustInc_CustIncome"
+												label="${c:l('listheader_CustIncome.label')}" sort="false"
+												hflex="min" />
+											<listheader
+												sclass="finlistheader"
+												style="color: white; font-size: 15px;"
+												id="listheader_JointCust"
+												label="${c:l('listheader_JointCust.label')}" sort="false"
+												hflex="min" visible="false" width="0px" />
+											<listheader
+												sclass="finlistheader"
+												style="color: white; font-size: 15px;"
+												id="listheader_CustInc_RecordStatus"
+												label="${c:l('listheader_RecordStatus.label')}" sort="false"
+												hflex="min" visible="false" width="0px" />
+											<listheader
+												sclass="finlistheader"
+												style="color: white; font-size: 15px;"
+												id="listheader_CustInc_RecordType"
+												label="${c:l('listheader_RecordType.label')}" sort="false"
+												hflex="min" />
+										</listhead>
+									</listbox>
+								</div>
+							</tabpanel>
+							<!-- share holder details -->
+							<tabpanel width="100%" height="600px"
+								style="background: #f3f3f3;">
+								<div id="shareHolder" align="center">
+									<space />
+									<grid width="75%"
+										style="border:0px;">
+										<columns>
+											<column width="20%" />
+											<column width="62%" />
+											<column width="8%" />
+										</columns>
+										<rows>
+											<row
+												style="background: none; height:38px">
+												<hlayout>
+													<image
+														src="images/icons/customerenquiry/profilepic.png" />
+													<div
+														sclass="profile-div">
+														<label
+															value="${c:l('label_CustomerDialog_Profile.value')}"
+															sclass="profileheadsection" />
+													</div>
+												</hlayout>
+												<label
+													value="${c:l('label_CustomerDialog_Status.value')}"
+													sclass="profileheadsection" />
+
+												<label
+													id="recordStatus4"
+													style="padding-right: 25px;text-align:right"
+													sclass="profileheadsection" visible="true" />
+											</row>
+											<row height="70px"
+												style="background: white; border-top: 1px solid #d7d7d7;  border-bottom: 1px solid #d7d7d7;  border-right: 2px solid #d7d7d7;">
+												<hlayout>
+													<image
+														id="customerPic4" sclass="circular--square" />
+													<vlayout
+														style="padding-top:17px">
+														<label
+															id="custShrtName4" sclass="customername" />
+													</vlayout>
+												</hlayout>
+												<progressmeter
+													id="shareHolderProgress" sclass="progressmeter"
+													width="100%" />
+												<image
+													style="align: right; padding-left: 25px;"
+													src="images/icons/customerenquiry/tickmark.png" />
+											</row>
+										</rows>
+									</grid>
+									<space />
+									<box
+										style="padding-left: 80px; padding-right: 80px; background: #f3f3f3; border: none; ">
+										<hbox pack="stretch"
+											style="border-style : none;" sclass="hboxRemoveWhiteStrips"
+											width="100%" widths="100%,0%">
+											<toolbar height="100%"
+												align="start"
+												style="padding-top: 15px; background: #f3f3f3; border:none;">
+												<image align="left"
+													src="images/icons/customerenquiry/income.png" />
+												<space></space>
+												<label
+													value="${c:l('DirectorDetails')}" sclass="kycheads"
+													style="" />
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+										</hbox>
+
+									</box>
+									<listbox
+										id="listBoxCustomerDirectory" span="true"
+										sizedByContent="true" sclass="kycgrid"
+										emptyMessage="${c:l('listbox.emptyMessage')}" width="90%"
+										tooltiptext="${c:l('listbox.tooltiptext')}"
+										multiple="false">
+										<listhead sizable="true"
+											height="50px">
+											<listheader
+												sclass="finlistheader"
+												style="color: white; font-size: 15px;"
+												id="listheader_ShortName"
+												label="${c:l('listheader_ShortName.label')}" sort="false"
+												hflex="min" />
+											<listheader
+												sclass="finlistheader"
+												style="color: white; font-size: 15px;"
+												id="listheader_CustCountry"
+												label="${c:l('listheader_CustCountry.label')}" sort="false"
+												hflex="min" />
+											<listheader
+												sclass="finlistheader"
+												style="color: white; font-size: 15px;"
+												id="listheader_CustSharePerc"
+												label="${c:l('listheader_CustSharePerc.label')}"
+												sort="false" hflex="min" />
+											<listheader
+												sclass="finlistheader"
+												style="color: white; font-size: 15px;"
+												id="listheader_IDType"
+												label="${c:l('listheader_IDType.label')}" sort="false"
+												hflex="min" />
+											<listheader
+												sclass="finlistheader"
+												style="color: white; font-size: 15px;"
+												id="listheader_IDReference"
+												label="${c:l('listheader_IDReference.label')}" sort="false"
+												hflex="min" />
+											<listheader
+												sclass="finlistheader"
+												style="color: white; font-size: 15px;"
+												id="listheader_Nationality"
+												label="${c:l('listheader_Nationality.label')}" sort="false"
+												hflex="min" />
+											<listheader
+												sclass="finlistheader"
+												style="color: white; font-size: 15px;"
+												id="listheader_CustDirector_RecordStatus" width="0px"
+												label="${c:l('listheader_RecordStatus.label')}" sort="false"
+												hflex="min" />
+											<listheader
+												sclass="finlistheader"
+												style="color: white; font-size: 15px;"
+												id="listheader_CustDirector_RecordType"
+												label="${c:l('listheader_RecordType.label')}" sort="false"
+												hflex="min" />
+										</listhead>
+									</listbox>
+								</div>
+							</tabpanel>
+							<!-- BankingDetail -->
+							<tabpanel width="100%"
+								style="background: #f3f3f3;">
+								<div align="center">
+									<space />
+									<grid width="75%"
+										style="border:0px;">
+										<columns>
+											<column width="20%" />
+											<column width="62%" />
+											<column width="8%" />
+										</columns>
+										<rows>
+											<row
+												style="background: none; height:38px">
+												<hlayout>
+													<image
+														src="images/icons/customerenquiry/profilepic.png" />
+													<div
+														sclass="profile-div">
+														<label
+															value="${c:l('label_CustomerDialog_Profile.value')}"
+															sclass="profileheadsection" />
+													</div>
+												</hlayout>
+												<label
+													value="${c:l('label_CustomerDialog_Status.value')}"
+													sclass="profileheadsection" />
+
+												<label
+													id="recordStatus5"
+													style="padding-right: 25px;text-align:right"
+													sclass="profileheadsection" visible="true" />
+											</row>
+											<row height="70px"
+												style="background: white; border: 1px solid #d7d7d7;">
+												<hlayout>
+													<image
+														id="customerPic5" sclass="circular--square" />
+													<vlayout
+														style="padding-top:17px">
+														<label
+															id="custShrtName5" sclass="customername" />
+													</vlayout>
+												</hlayout>
+												<progressmeter
+													id="bankingProgress" sclass="progressmeter" width="100%" />
+												<image
+													style="align: right; padding-left: 25px;"
+													src="images/icons/customerenquiry/tickmark.png" />
+											</row>
+										</rows>
+									</grid>
+									<space />
+									<box
+										style="padding-left: 80px; padding-right: 80px;">
+										<hbox pack="stretch"
+											style="border-style : none;" sclass="hboxRemoveWhiteStrips"
+											width="100%" widths="100%,0%">
+											<toolbar height="100%"
+												align="start"
+												style="padding-top: 15px; background: #f3f3f3; border: none;">
+												<label
+													value="${c:l('gp_BankInformationDetails')}"
+													sclass="kycheads" style=" background: #f3f3f3;" />
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+										</hbox>
+										<listbox
+											id="listBoxCustomerBankInformation" span="true"
+											sizedByContent="true" width="100%" multiple="false"
+											sclass="kycgrid" tooltiptext="${c:l('listbox.tooltiptext')}"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
+											<listhead sizable="true"
+												height="50px">
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustomerBankInfo_BankName"
+													label="${c:l('listheader_CustomerBankInfo_BankName.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustomerBankInfo_AccountNumber"
+													label="${c:l('listheader_CustomerBankInfo_AccountNumber.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustomerBankInfo_AccountType"
+													label="${c:l('listheader_CustomerBankInfo_AccountType.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_BankInfo_RecordStatus" width="0px"
+													label="${c:l('listheader_RecordStatus.label')}"
+													sort="false" hflex="min" visible="false" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_BankInfo_RecordType"
+													label="${c:l('listheader_RecordType.label')}" sort="false"
+													hflex="min" />
+											</listhead>
+										</listbox>
+										<space></space>
+
+										<hbox pack="stretch"
+											style="border-style : none;" sclass="hboxRemoveWhiteStrips"
+											width="100%" widths="100%,0%">
+											<toolbar height="100%"
+												align="start"
+												style="padding-top: 15px; background: #f3f3f3; border: none;">
+												<label
+													value="${c:l('gp_CustomerChequeInfoDetails')}"
+													sclass="kycheads" style=" background: #f3f3f3;" />
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+										</hbox>
+										<listbox
+											id="listBoxCustomerChequeInformation" span="true"
+											sizedByContent="true" style="text-align:auto"
+											multiple="false" sclass="kycgrid"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
+											<listhead sizable="true"
+												height="50px">
+												<listheader
+													style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none;"
+													id="listheader_CustomerChequeInfo_MonthYear"
+													label="${c:l('listheader_CustomerChequeInfo_MonthYear.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:left"
+													id="listheader_CustomerChequeInfo_PaymentCheque"
+													label="${c:l('listheader_CustomerChequeInfo_PaymentCheque.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:left"
+													id="listheader_CustomerChequeInfo_Salary"
+													label="${c:l('listheader_CustomerChequeInfo_Salary.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:left"
+													id="listheader_CustomerChequeInfo_ReturnChequeAmt"
+													label="${c:l('listheader_CustomerChequeInfo_ReturnChequeAmt.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:left;"
+													id="listheader_CustomerChequeInfo_Return"
+													label="${c:l('listheader_CustomerChequeInfo_Return.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:right"
+													id="listheader_CustomerChequeInfo_RecordStatus" width="0px"
+													label="${c:l('listheader_RecordStatus.label')}"
+													sort="false" hflex="min" visible="false" />
+												<listheader
+													style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none;"
+													id="listheader_CustomerChequeInfo_RecordType"
+													label="${c:l('listheader_RecordType.label')}" sort="false"
+													hflex="min" />
+											</listhead>
+										</listbox>
+										<space></space>
+										<hbox pack="stretch"
+											style="border-style : none;" sclass="hboxRemoveWhiteStrips"
+											width="100%" widths="100%,0%">
+											<toolbar height="100%"
+												align="start"
+												style="padding-top: 15px; background: #f3f3f3; border: none;">
+												<label id="lable52"
+													value="${c:l('gp_CustFinExposureDetails')}"
+													sclass="kycheads" style=" background: #f3f3f3;" />
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+										</hbox>
+										<listbox
+											id="listBoxCustomerFinExposure" span="true"
+											sizedByContent="true" fixedLayout="true" multiple="false"
+											sclass="kycgrid"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
+											<listhead sizable="true"
+												height="50px">
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustFinExposure_FinDate"
+													label="${c:l('listheader_CustFinExposure_FinDate.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustFinExposure_FinType"
+													label="${c:l('listheader_CustFinExposure_FinType.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustFinExposure_FinReference"
+													label="${c:l('listheader_CustFinExposure_FinReference.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustFinExposure_OriginalAmt"
+													label="${c:l('listheader_CustFinExposure_OriginalAmt.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustFinExposure_Installment"
+													label="${c:l('listheader_CustFinExposure_Installment.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustFinExposure_OutstandingBal"
+													label="${c:l('listheader_CustFinExposure_OutstandingBal.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_CustFinExposure_FinStatus"
+													label="${c:l('listheader_CustFinExposure_FinStatus.label')}"
+													sort="false" hflex="min" />
+											</listhead>
+										</listbox>
+										<space></space>
+										<hbox pack="stretch"
+											style="border-style : none;" sclass="hboxRemoveWhiteStrips"
+											width="100%" widths="100%,0%">
+											<toolbar height="100%"
+												align="start"
+												style="padding-top: 15px; background: #f3f3f3; border: none;">
+												<label
+													value="${c:l('gp_ExternalLiabilityDetails')}"
+													sclass="kycheads" style="background: #f3f3f3;" />
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+										</hbox>
+
+										<listbox
+											id="listBoxCustomerExternalLiability" span="true"
+											sizedByContent="true" multiple="false" sclass="kycgrid"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
+											<listhead sizable="true"
+												height="50px">
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_ExternalLiability_FinDate"
+													label="${c:l('listheader_ExternalLiability_FinDate.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_ExternalLiability_FinType"
+													label="${c:l('listheader_ExternalLiability_FinType.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_ExternalLiability_BankName"
+													label="${c:l('listheader_ExternalLiability_BankName.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_ExternalLiability_OriginalAmt"
+													label="${c:l('listheader_ExternalLiability_OriginalAmt.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_ExternalLiability_Installment"
+													label="${c:l('listheader_ExternalLiability_Installment.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_ExternalLiability_OutstandingBal"
+													label="${c:l('listheader_ExternalLiability_OutstandingBal.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_ExternalLiability_FinStatus"
+													label="${c:l('listheader_ExternalLiability_FinStatus.label')}"
+													sort="false" hflex="min" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_ExternalLiability_RecordStatus" width="0px"
+													label="${c:l('listheader_RecordStatus.label')}"
+													sort="false" hflex="min" visible="false" />
+												<listheader
+													sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;"
+													id="listheader_ExternalLiability_RecordType"
+													label="${c:l('listheader_RecordType.label')}" sort="false"
+													hflex="min" />
+											</listhead>
+										</listbox>
+										<space></space>
+									</box>
+								</div>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

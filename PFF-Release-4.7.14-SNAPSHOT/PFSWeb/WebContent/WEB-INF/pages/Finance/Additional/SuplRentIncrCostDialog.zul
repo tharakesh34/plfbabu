@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_SuplRentIncrCostDialog" border="normal"
+		apply="${suplRentIncrCostDialogCtrl}" width="525px" height="350px"
+		sizable="false" title="${c:l('window_SuplRentIncrCostDialog.title')}"
+		closable="true">
+
+		<borderlayout id="borderlayoutRateChange">
+			<center border="none" autoscroll="true">
+
+				<groupbox id="gb_RateDetails" height="250px"
+					style="border:1px solid #F38C60;">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="200px" />
+							<column width="260px" />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_SuplRentIncrCostDialog_FromDate"
+									value="${c:l('label_SuplRentIncrCostDialog_FromDate.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" id="space_FromDate" />
+									<combobox id="fromDate"
+										readonly="true" width="120px" >
+									</combobox>
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_SuplRentIncrCostDialog_ToDate"
+									value="${c:l('label_SuplRentIncrCostDialog_ToDate.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" id="space_ToDate" />
+									<combobox id="toDate"
+										readonly="true" width="120px" >
+									</combobox>
+								</hbox>
+							</row>
+							<row>
+								<label id="label_SuplRentIncrCostDialog_SuplRent"
+									value="${c:l('label_SuplRentIncrCostDialog_SuplRent.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<decimalbox id="suplRent" width="120px" maxlength="15"
+										style="text-align:right">
+									</decimalbox>
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_SuplRentIncrCostDialog_IncrCost"
+									value="${c:l('label_SuplRentIncrCostDialog_IncrCost.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<hbox>
+										<decimalbox id="incrCost"
+											width="120px" maxlength="15" tabindex="18"
+											style="text-align:right" />
+									</hbox>
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+			<south border="none" margins="1,0,0,0" size="30px"
+				splittable="false">
+				<div id="divSouth" align="left" width="100%">
+					<grid>
+						<rows>
+							<row valign="middle">
+								<hbox align="start">
+									<button id="btnSuplRentIncrCost"
+										label="${c:l('btnSuplRentIncrCost.label')}"
+										tooltiptext="${c:l('btnSuplRentIncrCost.tooltiptext')}" />
+									<button id="btnClose"
+										label="${c:l('btnClose.label')}"
+										tooltiptext="${c:l('btnClose.tooltiptext')}" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

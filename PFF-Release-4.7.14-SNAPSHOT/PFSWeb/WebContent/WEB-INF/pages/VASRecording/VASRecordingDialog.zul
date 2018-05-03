@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_VASRecordingDialog" border="normal"
+			apply="${vASRecordingDialogCtrl}" width="100%" height="100%"
+			sizable="false">
+			<borderlayout id="borderlayoutVASRecording">
+				<north>
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								sclass="toolbar-start">
+								<button id="btnNew"
+									tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnEdit"
+									tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnDelete"
+									tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnSave"
+									tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnCancel"
+									tooltiptext="${c:l('btnCancel.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnNotes"
+									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label id="windowTitle"
+									value="${c:l('window_VASRecordingDialog.title')}"
+									sclass="label-heading" />
+							</toolbar>
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" visible="false"
+									label="${c:l('label_Help')}"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnClose"
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none" id="divCenter">
+					<tabbox id="tabBoxIndexCenter" width="99%"
+						height="100%">
+						<tabs id="tabsIndexCenter">
+							<tab id="basicDetailsTab"
+								label="${c:l('vASRecordingBasicDetails')}" />
+						</tabs>
+						<tabpanels id="tabpanelsBoxIndexCenter">
+							<tabpanel style="overflow:auto">
+								<groupbox id="gb_basicDetails"
+									mold="3d">
+									<textbox id="enquiryType"
+										value="FINENQ" visible="false" />
+									<grid sclass="GridLayoutNoBorder"
+										fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="220px" />
+											<column />
+											<column width="220px" />
+											<column />
+										</columns>
+										<rows>
+											<row id="row0">
+												<label
+													id="label_ProductCode"
+													value="${c:l('label_VASRecordingDialog_ProductCode.value')}" />
+												<hbox>
+													<extendedcombobox
+														id="productCode" />
+												</hbox>
+												<label
+													id="label_PostingAgainst"
+													value="${c:l('label_VASRecordingDialog_PostingAgainst.value')}" />
+												<hbox>
+													<space
+														id="space_PostingAgainst" spacing="2px" />
+													<combobox
+														id="postingAgainst" width="175px" />
+												</hbox>
+											</row>
+											<row id="row1">
+												<label
+													id="label_PrimaryLinkRef"
+													value="${c:l('label_VASRecordingDialog_PrimaryLinkRef.value')}" />
+												<hbox>
+													<space
+														id="space_PrimaryLinkRef" spacing="2px"
+														sclass="mandatory" />
+													<uppercasebox
+														id="primaryLinkRef" width="140px" />
+													<button
+														id="btnSearchSelection"
+														tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}"
+														image="/images/icons/LOVSearch.png" visible="false" />
+													<button
+														id="viewInfo" image="/images/icons/more.png"
+														tooltiptext="${c:l('tooltip_Custinfo')}" />
+												</hbox>
+												<label
+													id="label_VasReference"
+													value="${c:l('label_VASRecordingDialog_VasReference.value')}" />
+												<hbox>
+													<space
+														id="space_VasReference" spacing="2px" sclass="mandatory" />
+													<textbox
+														id="vasReference" maxlength="20" width="175px" />
+												</hbox>
+											</row>
+											<row id="row_Vasfee">
+												<label id="label_Fee"
+													value="${c:l('label_VASRecordingDialog_Fee.value')}" />
+												<currencyBox id="fee"
+													width="120px" />
+												<label
+													id="label_FeePaymentMode"
+													value="${c:l('label_VASRecordingDialog_FeePaymentMode.value')}" />
+												<hbox>
+													<space
+														id="space_FeePaymentMode" spacing="2px"
+														sclass="mandatory" />
+													<combobox
+														id="feePaymentMode" width="175px" />
+												</hbox>
+											</row>
+											<row id="row_VASPaid">
+												<label id="label_Paid"
+													value="${c:l('label_VASRecordingDialog_Paid.value')}" />
+												<hbox>
+													<currencyBox
+														id="paidAmt" width="120px" />
+												</hbox>
+												<label id="label_Waived"
+													value="${c:l('label_VASRecordingDialog_Waived.value')}" />
+												<hbox>
+													<currencyBox
+														id="waivedAmt" width="120px" />
+												</hbox>
+											</row>
+											<row id="row3">
+												<label
+													id="label_ValueDate"
+													value="${c:l('label_VASRecordingDialog_ValueDate.value')}" />
+												<hbox>
+													<space
+														id="space_ValueDate" spacing="2px" />
+													<datebox
+														id="valueDate" width="180px" />
+												</hbox>
+												<label
+													id="label_AccrualTillDate"
+													value="${c:l('label_VASRecordingDialog_AccrualTillDate.value')}" />
+												<hbox>
+													<space
+														id="space_AccrualTillDate" spacing="2px"
+														sclass="mandatory" />
+													<datebox
+														id="accrualTillDate" width="175px" />
+												</hbox>
+											</row>
+											<row id="row4">
+												<label
+													id="label_RecurringDate"
+													value="${c:l('label_VASRecordingDialog_RecurringDate.value')}" />
+												<hbox>
+													<space
+														id="space_RecurringDate" spacing="2px" />
+													<datebox
+														id="recurringDate" width="180px" />
+												</hbox>
+												<label
+													value="${c:l('label_VASRecordingDialog_RenewalFee.value')}" />
+												<hbox>
+													<currencyBox
+														id="renewalFee" width="120px" />
+												</hbox>
+											</row>
+											<row id="row5">
+												<label id="label_DsaId"
+													value="${c:l('label_VASRecordingDialog_DsaId.value')}" />
+												<hbox>
+													<extendedcombobox
+														id="dsaId" />
+												</hbox>
+												<label id="label_DmaId"
+													value="${c:l('label_VASRecordingDialog_DmaId.value')}" />
+												<hbox>
+													<extendedcombobox
+														id="dmaId" />
+												</hbox>
+											</row>
+											<row id="row6">
+												<label
+													id="label_FulfilOfficerId"
+													value="${c:l('label_VASRecordingDialog_FulfilOfficerId.value')}" />
+												<hbox
+													id="hlayout_FulfilOfficerId">
+
+													<extendedcombobox
+														id="fulfilOfficerId" />
+												</hbox>
+												<label
+													id="label_ReferralId"
+													value="${c:l('label_VASRecordingDialog_ReferralId.value')}" />
+												<hbox>
+													<extendedcombobox
+														id="referralId" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+									<tabbox width="100%"
+										height="100%">
+										<tabs
+											style="width:0px;height:0px;border:none;">
+											<tab
+												style="background:none;padding:0px;height:0px;">
+											</tab>
+										</tabs>
+										<tabpanels>
+											<tabpanel
+												id="extendedFieldTabPanel" style="overflow:auto">
+											</tabpanel>
+										</tabpanels>
+									</tabbox>
+								</groupbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</center>
+				<south sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%">
+						<caption label="${c:l('Action')}" />
+						<hbox width="75%">
+							<radiogroup id="userAction" name="action" />
+							<label
+								id="label_VASRecordingDialog_RecordStatus"
+								value="${c:l('label_South_RecordStatus.value')}"
+								sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

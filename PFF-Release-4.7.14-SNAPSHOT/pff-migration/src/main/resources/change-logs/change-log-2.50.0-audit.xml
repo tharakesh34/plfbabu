@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+<property name="call.concatenate" value="+" dbms="mssql" />
+<property name="call.concatenate" value="||" dbms="oracle" />
+<property name="call.maindb" value="PLF.." dbms="mssql"/>
+<property name="call.maindb" value="PLF." dbms="oracle"/>
+
+<changeSet id="01" author="Madhubabu">
+		<addColumn tableName="AdtFinAdvancePayments">
+			<column name="LinkedTranId" type="bigint"/>
+		</addColumn>
+	</changeSet>
+<changeSet id="02" author="Irfan">
+	<modifyDataType tableName="ADTRMTACCOUNTTYPES" columnName="ACTYPE" newDataType="varchar(15)"/>
+</changeSet>
+<changeSet id="03" author="Irfan">
+<addColumn tableName="ADTPARTNERBANKS">
+<column name="HostGLCode" type="varchar(15)"/>
+<column name="ProfitCentre" type="varchar(15)"/>
+<column name="CrossCentre" type="varchar(15)"/>
+</addColumn>
+</changeSet>
+<changeSet id="04" author="Surekha">
+	<createTable tableName="ADTFINANCESTATUSCODES">
+	<column name="AuditId" type="bigint" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditDate" type="datetime">
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditSeq" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditImage" type="varchar(20)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="StatusId" type="bigint">
+			<constraints  nullable="false"/>
+		</column>
+		<column name="StatusCode" type="varchar(8)">
+		<constraints  nullable="false"/>
+		</column>
+		<column name="StatusDesc" type="varchar(20)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="Version" type="int" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(50)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+	</createTable>
+</changeSet>
+<changeSet id="05" author="Madhubabu">
+		<addColumn tableName="AdtFinSchFrqInsurance">
+			<column name="insurancePaid" type="number(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="06" author="Surekha">
+		<createTable tableName="AdtNPABUCKETSCONFIG">
+			<column name="AuditId" type="bigint" >
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditDate" type="datetime">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditSeq" type="int">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="ConfigID" type="bigint">
+				<constraints  nullable="false" />
+			</column>
+			<column name="ProductCode" type="varchar(8)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="BucketID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DueDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="SuspendProfit" type="bit">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="121" author="Surekha">
+		<createTable tableName="AdtDPDBUCKETSCONFIG">
+		<column name="AuditId" type="bigint" >
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditDate" type="datetime">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditSeq" type="int">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="ConfigID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProductCode" type="varchar(8)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="BucketID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DueDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="SuspendProfit" type="bit">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="07" author="Surekha">
+		<createTable tableName="AdtNPABUCKETS">
+		<column name="AuditId" type="bigint" >
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditDate" type="datetime">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditSeq" type="int">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="BucketID" type="bigint">
+				<constraints  nullable="false" />
+			</column>
+			<column name="BucketCode" type="varchar(8)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="BucketDesc" type="nvarchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="bit">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet id="08" author="Surekha">
+		<createTable tableName="AdtManualAdvise">
+		<column name="AuditId" type="bigint" >
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditDate" type="datetime">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditSeq" type="int">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AdviseID" type="bigint">
+				<constraints  nullable="false" />
+			</column>
+			<column name="AdviseType" type="int">
+				<constraints  nullable="false" />
+			</column>
+			<column name="FinReference" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypeID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Sequence" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdviseAmount" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaidAmount" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedAmount" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Remarks" type="nvarchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+</databaseChangeLog>

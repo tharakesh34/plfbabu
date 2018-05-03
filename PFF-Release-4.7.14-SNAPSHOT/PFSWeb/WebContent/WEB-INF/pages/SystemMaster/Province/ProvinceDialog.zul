@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_ProvinceDialog" border="normal"
+		apply="${provinceDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+		<borderlayout id="borderlayoutProvince">
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_ProvinceDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" visible="false"
+								label="${c:l('label_Help')}"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnClose"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+
+			<center border="none" autoscroll="true">
+				
+				<tabbox width="100%">
+					<tabs id="tabsIndexCenter">
+						<tab
+							label="${c:l('tab_ProvinceDialog_BasicDetails.value')}"
+							id="tab_basicDetails" />
+						<tab
+							label="${c:l('tab_ProvinceDialog_GstDetails.value')}"
+							id="tab_gstdetails" visible="false" />
+
+					</tabs>
+					<tabpanels id="tabpanelsBoxIndexCenter">
+						<tabpanel style="overflow:auto"
+							ca:data-scrollable="true">
+				<groupbox id="gb_basicDetails" sclass="gb-dialog">
+					<grid sclass="GridLayoutNoBorder"
+						fixedLayout="true">
+						<columns>
+							<column width="150px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_ProvinceDialog_CPCountry"
+									value="${c:l('label_ProvinceDialog_CPCountry.value')}" />
+								<extendedcombobox id="cPCountry" />
+							</row>
+							<row>
+								<label
+									id="label_ProvinceDialog_CPProvince"
+									value="${c:l('label_ProvinceDialog_CPProvince.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<uppercasebox id="cPProvince"
+										maxlength="8" width="72px" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_ProvinceDialog_CPProvinceName"
+									value="${c:l('label_ProvinceDialog_CPProvinceName.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<textbox id="cPProvinceName" maxlength="50" width="450px" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_ProvinceDialog_UnionTerritory"
+									value="${c:l('label_ProvinceDialog_UnionTerritory.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="unionTerritory" checked="false" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_ProvinceDialog_TaxExempted" value="${c:l('label_ProvinceDialog_TaxExempted.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="taxExempted" checked="false" />
+								</hbox>
+							</row>
+							<row id="row_taxAvailable">
+								<label
+									id="label_ProvinceDialog_TaxAvailable"
+									value="${c:l('label_ProvinceDialog_TaxAvailable.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="taxAvailable" checked="false"/>
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_ProvinceDialog_TaxStateCode"
+									value="${c:l('label_ProvinceDialog_TaxStateCode.value')}" />
+								<hbox>
+									<space id="space_taxStateCode" spacing="2px" sclass="mandatory" />
+									<textbox id="taxStateCode" width="50px" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_ProvinceDialog_BusinessArea"
+									value="${c:l('label_ProvinceDialog_BusinessArea.value')}" />
+								<hbox>
+									<space id="space_businessArea" spacing="2px"  sclass="mandatory"/>
+									<textbox id="businessArea" width="180px" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_ProvinceDialog_BankRefNo"
+									value="${c:l('label_ProvinceDialog_BankRefNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="bankRefNo" width="180px" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_ProvinceDialog_SystemDefault"
+									value="${c:l('label_ProvinceDialog_SystemDefault.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="systemDefault" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_ProvinceDialog_CPIsActive"
+									value="${c:l('label_ProvinceDialog_CPIsActive.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="cPIsActive" checked="false" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+					</groupbox>
+					</tabpanel>
+					
+					<tabpanel>
+					<groupbox >
+						<div sclass="z-toolbar" style="padding:0">
+							<hbox pack="stretch"
+								sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+								width="100%">
+								<toolbar align="start"
+									style="border:none;">
+									<label value="${c:l('GstDetails')}"
+										sclass="listboxHeading">
+									</label>
+								</toolbar>
+								<toolbar align="end"
+									style="float:right; border-style: none; padding:0px;">
+									<button id="btnNew_gstDetails"
+										label="${c:l('label_New')}" autodisable="btnNew_GstDetails" />
+								</toolbar>
+							</hbox>
+						</div>
+						<listbox id="listBoxTaxDetails"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false" sizedByContent="true"
+							span="true" style="overflow:auto">
+							<listhead sizable="true">
+							<listheader id="listheader_Country" label="${c:l('listheader_Country.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_StateCode" label="${c:l('listheader_StateCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_EntityCode" label="${c:l('listheader_EntityCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_TaxCode" label="${c:l('listheader_TaxCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_PinCode" label="${c:l('listheader_PinCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_CityCode" label="${c:l('listheader_CityCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_RecordType"  label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min"  />
+							</listhead>
+						</listbox>
+					</groupbox>
+					</tabpanel>
+					</tabpanels>
+					</tabbox>
+			</center>
+
+			<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_ProvinceDialog_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_FinFeeReceiptDialog" border="normal" width="70%"
+		height="50%"  apply="${finFeeReceiptDialogCtrl}" sizable="false">
+		<borderlayout id="borderlayoutFinFeeReceiptDialog">
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" visible="false"/>
+							<button id="btnEdit"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" visible="false"/>
+							<button id="btnSave"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete" label="Delete"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" visible="false"/>
+							<button id="btnCancel"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_FinFeeReceiptsDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" visible="false"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}" label="Help"
+								sclass="z-toolbarbutton" />
+							<button id="btnClose"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="true">
+				<groupbox style="border:none;">
+					<grid>
+						<columns>
+							<column width="200px" />
+							<column />
+							<column width="200px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label id="label_FinFeeReceiptDialog_FeeType" value = "${c:l('label_FinFeeReceiptDialog_FeeType.value')}" style="font-weight:bold;"/>
+								<label id="label_FeeType" />
+								<label id="label_FinFeeReceiptDialog_FeeAmount" value = "${c:l('label_FinFeeReceiptDialog_FeeAmount.value')}" style="font-weight:bold;"/>
+								<label id="label_FeeAmount" />
+							</row>
+							<row>
+								<label id="label_FinFeeReceiptDialog_PaidAmount" value = "${c:l('label_FinFeeReceiptDialog_PaidAmount.value')}" style="font-weight:bold;"/>
+								<label id="label_PaidAmount" />
+								<label id="label_FinFeeReceiptDialog_WaiverAmount" value = "${c:l('label_FinFeeReceiptDialog_WaiverAmount.value')}" style="font-weight:bold;"/>
+								<label id="label_WaiverAmount" />
+							</row>
+						</rows>
+					</grid>
+					<separator/>
+					<listbox id="listBoxReciptFeeDetail"
+						fixedLayout="false" span="true"
+						emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false"
+						ca:data-scrollable="true" sizedByContent="true">
+						<listhead sizable="false">
+							<listheader
+								id="listheader_FeeDetailList_ReceiptType"
+								label="${c:l('listheader_FeeDetailList_ReceiptType.label')}"
+								sort="false" />
+							<listheader
+								id="listheader_FeeDetailList_Reference"
+								label="${c:l('listheader_FeeDetailList_Reference.label')}"
+								sort="false" />
+							<listheader
+								id="listheader_FeeDetailList_ReceiptAmount"
+								label="${c:l('listheader_FeeDetailList_ReceiptAmount.label')}"
+								sort="false" />
+							<listheader
+								id="listheader_FeeDetailList_AvailableAmount"
+								label="${c:l('listheader_FeeDetailList_AvailableAmount.label')}"
+								sort="false" />
+							<listheader
+								id="listheader_FeeDetailList_ReceiptPaidAmount"
+								label="${c:l('listheader_FeeDetailList_PaidAmount.label')}"
+								sort="false" />
+							<listheader
+								id="listheader_FeeDetailList_Balance"
+								label="${c:l('listheader_FeeDetailList_Balance.label')}"
+								sort="false" />
+						</listhead>
+					</listbox>
+				</groupbox>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,1 @@
+- The audit schema should have access to SecUsers & SecRoles.

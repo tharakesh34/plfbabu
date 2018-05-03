@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+	<!-- Configuration to retrieve values from environment variables or system 
+		properties those will be used for cryptography -->
+	<bean id="envVariableConfig"
+		class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+		<property name="algorithm" value="PBEWithMD5AndDES" />
+		<property name="passwordEnvName" value="APP_ENCRYPTION_PASSWORD" />
+	</bean>
+
+	<!-- Configuration that will be applied for obtaining the encryption key -->
+	<bean id="encryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+		<property name="config" ref="envVariableConfig" />
+	</bean>
+
+	<!-- Configuration which can make use of a StringEncryptor or TextEncryptor 
+		object to decrypt property values if they are encrypted in the loaded resource 
+		locations -->
+	<bean id="propertyConfig"
+		class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+		<constructor-arg ref="encryptor" />
+		<property name="location" value="classpath:data-migration-db.properties" />
+	</bean>
+
+	<!-- Basic implementation of javax.sql.DataSource that is configured via 
+		JavaBeans properties -->
+	<bean id="pfsDatasource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${pfs.jdbc.driverClassName}" />
+		<property name="url" value="${pfs.jdbc.url}" />
+		<property name="username" value="${pfs.jdbc.username}" />
+		<property name="password" value="${pfs.jdbc.password}" />
+	</bean>
+	
+	<tx:advice id="pfsServiceTxAdvice" transaction-manager="pfsTransactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+	
+	<aop:config>
+		<aop:pointcut id="serviceMethods"
+			expression="execution(* com.pennant.datamigration.service.*.*(..))" />
+		<aop:pointcut id="daoMethods"
+			expression="execution(* com.pennant.backend.dao.*.*(..))" />
+
+		<aop:advisor advice-ref="pfsServiceTxAdvice" pointcut-ref="serviceMethods" />
+	
+	</aop:config> 
+	
+	<bean id="pfsTransactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean id="startDataMigration" class="com.pennant.datamigration.process.StartDataMigration">
+	</bean>
+	
+	<!-- ====================================================== -->
+	<!-- Finance Details Configuration -->
+	<!-- ====================================================== -->
+
+	<!--============ Finance Details ============== -->
+
+	<bean id="dmFinanceDetailService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="dmFinanceDetailServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="dmFinanceDetailServiceTarget"
+		class="com.pennant.datamigration.service.impl.DMTransactionServiceImpl">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
+		<property name="finStatusDetailDAO" ref="finStatusDetailDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+	</bean>
+	
+	<bean id="basisCodeDAO" abstract="true"
+		class="com.pennant.backend.dao.impl.BasisCodeDAO" />
+		
+	<bean id="financeMainDAO" class="com.pennant.backend.dao.finance.impl.FinanceMainDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+		<!-- <property name="adtDataSource" ref="auditDataSource" /> -->
+	</bean>
+	
+	
+	<bean id="financeDisbursementDAO"
+		class="com.pennant.backend.dao.finance.impl.FinanceDisbursementDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<bean id="financeScheduleDetailDAO"
+		class="com.pennant.backend.dao.finance.impl.FinanceScheduleDetailDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<bean id="overdueChargeRecoveryDAO"
+		class="com.pennant.backend.dao.financemanagement.impl.OverdueChargeRecoveryDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<bean id="finODDetailsDAO"
+		class="com.pennant.backend.dao.finance.impl.FinODDetailsDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<bean id="finODPenaltyRateDAO"
+		class="com.pennant.backend.dao.finance.impl.FinODPenaltyRateDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<bean id="financeRepaymentsDAO"
+		class="com.pennant.backend.dao.Repayments.impl.FinanceRepaymentsDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<bean id="financeSuspHeadDAO"
+		class="com.pennant.backend.dao.finance.impl.FinanceSuspHeadDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<bean id="finStatusDetailDAO"
+		class="com.pennant.backend.dao.finance.impl.FinStatusDetailDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<bean id="financeTypeDAO"
+		class="com.pennant.backend.dao.rmtmasters.impl.FinanceTypeDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+</beans>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="Durga Prasad D">
+		<addColumn tableName="ChequeDetail_Temp">
+			<column name="documentName" type="nvarchar(200)"></column>
+			<column name="documentRef" type="decimal(38,0)"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2" author="Durga Prasad D">
+		<addColumn tableName="ChequeDetail">
+			<column name="documentName" type="nvarchar(200)"></column>
+			<column name="documentRef" type="decimal(38,0)"></column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="3" author="Durga Prasad D">
+		<sql>
+			drop view Chequedetail_aview ;
+			drop view Chequedetail_view;
+		</sql>
+	</changeSet>
+
+	<changeSet id="4" author="Durga Prasad D">
+		<createView viewName="Chequedetail_view" replaceIfExists="true">
+			    SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+	t1.documentName,
+	t1.documentRef
+   FROM chequedetail_temp t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+UNION ALL
+ SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+	t1.documentName,
+	t1.documentRef
+   FROM chequedetail t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM chequedetail_temp
+          WHERE chequedetail_temp.chequedetailsid = t1.chequedetailsid))
+		 </createView>
+	</changeSet>
+	
+	<changeSet id="5" author="Durga Prasad D">
+		<createView viewName="Chequedetail_aview" replaceIfExists="true">
+ SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+	t1.documentName,
+	t1.documentRef
+   FROM chequedetail t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+		 </createView>
+	</changeSet>
+	<changeSet id="6" author="DurgaPrasad D">
+		<update tableName="chequeDetail_Temp">
+			<column name="documentRef">0</column>
+			<where>
+				<column name="documentRef">null</column>
+			</where>
+		</update>
+	</changeSet>
+	<changeSet id="7" author="DurgaPrasad D">
+		<update tableName="chequeDetail">
+			<column name="documentRef">0</column>
+			<where>
+				<column name="documentRef">null</column>
+			</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="5" author="Ganesh.p">
+	<sql>
+	<![CDATA[INSERT INTO ErrorDetails VALUES('90909','EN','E','{0} iS invalid. Allowed Characters are [a-z A-Z 0-9 . > < , - / ! @ $ & # ( ) [ ] { } ].','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0) ]]>
+	</sql>
+	</changeSet>
+</databaseChangeLog>

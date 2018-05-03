@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	
+		
+
+<changeSet id="0.1" author="DurgaPrasad G">
+	<dropForeignKeyConstraint baseTableName="DISBURSEMENT_LOG"
+			constraintName="FK_DES_ID" />
+	</changeSet> 
+	<changeSet id="0" author="prasad">
+	 <dropTable tableName="DATA_ENGINE_TABLES" />
+	<dropTable tableName="DATA_ENGINE_LOG" /> 
+	<dropTable tableName="DATA_ENGINE_PROCESS_LOG" />
+	<dropTable tableName="DATA_ENGINE_DB_DETAILS" />
+	<dropTable tableName="DATA_ENGINE_COLUMN" />
+	<dropTable tableName="DATA_ENGINE_TABLE" />
+	<dropTable tableName="DATA_ENGINE_CONFIG" />
+	<dropTable tableName="DATA_ENGINE_PARSERS" />
+	<dropTable tableName="SEQ_DATA_ENGINE_CONFIG" />
+	<dropTable tableName="SEQ_DATA_ENGINE_TABLE" />
+	<dropTable tableName="SEQ_DATA_ENGINE_COLUMN" />
+	<dropTable tableName="SEQ_DATA_ENGINE_STATUS" />
+	<dropTable tableName="DATA_ENGINE_STATUS" />		
+</changeSet>
+
+
+
+<changeSet id="1" author="prasad" >
+	<createTable tableName="DATA_ENGINE_PARSERS">
+		<column name="ID" type="smallint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="TYPE" type="char(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="NAME" type="varchar(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="CLASSNAME" type="varchar(250)">
+			<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>
+<changeSet id="1.1" author="prasad">
+	<addPrimaryKey columnNames="ID" constraintName="PK_DE_PARSERS_ID" tableName="DATA_ENGINE_PARSERS"/>
+</changeSet>
+
+<changeSet id="2" author="prasad" >
+	<createTable tableName="DATA_ENGINE_CONFIG">
+		<column name="ID" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="NAME" type="varchar(50)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="DESCRIPTION" type="varchar(250)"/>
+		<column name="PARSER" type="smallint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="WORKSHEET" type="varchar(50)"/>
+		<column name="TEXTQUALIFIER" type="char(1)"/>
+		<column name="ROWDELIMITER" type="varchar(4)"/>
+		<column name="COLUMNDELIMITER" type="char(1)"/>
+		<column defaultValueNumeric="0" name="STARTINGROW" type="smallint">
+			<constraints nullable="false"/>
+		</column>
+		<column defaultValueNumeric="0" name="SKIPHEADERROW" type="boolean">
+			<constraints nullable="false"/>
+		</column>
+		<column name="FIELDNAMES" type="CLOB"/>
+		<column name="HEADER" type="CLOB"/>
+		<column name="TRAILER" type="CLOB"/>
+		<column name="UPLOADLOCATION" type="char(1)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="UPLOADPATH" type="varchar(250)"/>
+		<column name="FILEPREFIXNAME" type="varchar(50)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="FILEEXTENSION" type="varchar(250)"/>
+		<column defaultValueNumeric="0" name="FILESEQUENCENO" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="LASTPROCESSEDON" type="datetime"/>
+		<column name="FILENAMEFORMAT" type="varchar(250)"/>
+		<column name="CRONEXPRESSION" type="varchar(50)"/>
+		<column name="NOTIFICATIONSTATUSEMAIL" type="varchar(254)"/>
+		<column name="POSTEVENT" type="varchar(100)"/>
+		<column name="BACKUPFILE" type="boolean"/>
+		<column name="ACTIVE" type="boolean"/>
+	</createTable>
+</changeSet>
+
+<changeSet id="2.1" author="prasad" >
+	<addPrimaryKey columnNames="ID" constraintName="PK_DE_CONFIG_ID" tableName="DATA_ENGINE_CONFIG"/>
+</changeSet>
+<changeSet id="2.2" author="prasad" >
+	<addUniqueConstraint columnNames="NAME" constraintName="UK_DE_CONFIG_NAME" tableName="DATA_ENGINE_CONFIG"/>
+</changeSet>
+<changeSet id="2.3" author="prasad">
+	<addForeignKeyConstraint baseColumnNames="PARSER" baseTableName="DATA_ENGINE_CONFIG" constraintName="FK_DE_CONFIG_PARSER" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="DATA_ENGINE_PARSERS"/>
+</changeSet>
+
+
+<changeSet id="3" author="prasad">			
+	<createTable tableName="DATA_ENGINE_DB_DETAILS">
+		 <column name="CONFIGID" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="TYPE" type="varchar(15)" />
+		 <column name="DRIVERCLASS" type="varchar(100)" />
+		 <column name="URL" type="varchar(100)" />
+		 <column name="USERNAME" type="varchar(50)" />
+		 <column name="PASSWORD" type="varchar(100)" />
+		 <column name="LOCALDB" type="boolean">
+		  	<constraints nullable="false" />
+		 </column>
+	</createTable>
+</changeSet>
+
+<changeSet id="3.1" author="prasad">
+		<addForeignKeyConstraint constraintName="FK_DE_DB_ID" referencedTableName="DATA_ENGINE_CONFIG" referencedColumnNames="ID" baseTableName="DATA_ENGINE_DB_DETAILS" baseColumnNames="CONFIGID" />
+</changeSet>
+
+<changeSet id="4" author="prasad">
+	<createTable tableName="DATA_ENGINE_TABLE">
+		<column name="Id" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="ConfigId" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Name" type="varchar(50)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Operation" type="boolean"/>
+		<column name="KeyFields" type="varchar(200)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Filter" type="varchar(1000)"/>
+		<column name="StatusUpdate" type="varchar(1000)"/>
+		<column name="SkipRows" type="varchar(100)"/>
+		<column name="Identifier" type="varchar(4)"/>
+		<column name="Description" type="varchar(50)"/>
+		<column name="StartIndex" type="int"/>
+		<column name="EndIndex" type="int"/>
+		<column defaultValueNumeric="0" name="RecordLength" type="int">
+			<constraints nullable="false"/>
+		</column>
+		<column name="MultiRow" type="boolean"/>
+		<column name="HEADERTABLE" type="boolean"/>
+	</createTable>
+</changeSet>
+<changeSet id="4.1" author="prasad" >
+	<addPrimaryKey columnNames="Id" constraintName="PK_DE_TABLE_Id" tableName="DATA_ENGINE_TABLE"/>
+</changeSet>
+<changeSet id="4.2" author="prasad" >
+	<addForeignKeyConstraint baseColumnNames="ConfigId" baseTableName="DATA_ENGINE_TABLE" constraintName="FK_DE_TABLE_ConfigId" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="DATA_ENGINE_CONFIG"/>
+</changeSet>
+
+<changeSet id="5" author="prasad" >
+	<createTable tableName="DATA_ENGINE_COLUMN">
+		<column name="Id" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="TableId" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Name" type="varchar(50)">
+			<constraints nullable="false"/>
+		</column>
+		<column defaultValueNumeric="0" name="Skip" type="boolean"/>
+		<column defaultValue="N" name="SeqType" type="char(1)"/>
+		<column name="SeqObject" type="varchar(30)"/>
+		<column name="DefaultValue" type="varchar(100)"/>
+		<column name="DerivedFrom" type="varchar(100)"/>
+		<column name="REFERENCECOLUMN" type="varchar(50)"/>
+		<column name="StartIndex" type="varchar(10)"/>
+		<column name="EndIndex" type="varchar(10)"/>
+		<column name="RuleForValue" type="varchar(2000)"/>
+		<column name="QueryForValue" type="varchar(2000)"/>
+		<column name="Format" type="varchar(30)"/>
+	</createTable>
+</changeSet>
+<changeSet id="5.1" author="prasad" >
+	<addPrimaryKey columnNames="Id" constraintName="PK_DE_COLUMN_Id" tableName="DATA_ENGINE_COLUMN"/>
+</changeSet>
+<changeSet id="5.2" author="prasad" >
+	<addForeignKeyConstraint baseColumnNames="TableId" baseTableName="DATA_ENGINE_COLUMN" constraintName="FK_DE_COLUMN_TableId" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="Id" referencedTableName="DATA_ENGINE_TABLE"/>
+</changeSet>
+
+<changeSet id="6" author="prasad" >
+	<createTable tableName="DATA_ENGINE_STATUS">
+		<column name="Id" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Name" type="varchar(100)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Status" type="char(1)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="FileName" type="varchar(100)"/>
+		<column name="Reference" type="varchar(100)"/>
+		<column name="ValueDate" type="datetime"/>
+		<column defaultValueNumeric="0" name="TotalRecords" type="int">
+			<constraints nullable="false"/>
+		</column>
+		<column defaultValueNumeric="0" name="ProcessedRecords" type="int">
+			<constraints nullable="false"/>
+		</column>
+		<column defaultValueNumeric="0" name="SuccessRecords" type="int">
+			<constraints nullable="false"/>
+		</column>
+		<column defaultValueNumeric="0" name="FailedRecords" type="int">
+			<constraints nullable="false"/>
+		</column>
+		<column name="StartTime" type="datetime">
+			<constraints nullable="false"/>
+		</column>
+		<column name="EndTime" type="datetime"/>
+		<column name="UserId" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Remarks" type="varchar(2000)"/>
+	</createTable>
+</changeSet>
+<changeSet id="6.1" author="prasad" >
+	<addPrimaryKey columnNames="Id" constraintName="PK_DES_ID" tableName="DATA_ENGINE_STATUS"/>
+</changeSet>
+<changeSet id="0.2" author="DurgaPrasad G">
+		<addForeignKeyConstraint constraintName="FK_DES_ID"
+			referencedTableName="DATA_ENGINE_STATUS" referencedColumnNames="ID"
+			baseTableName="DISBURSEMENT_LOG" baseColumnNames="FILEID" />
+</changeSet>
+<changeSet id="7" author="prasad">
+	<createTable tableName="DATA_ENGINE_LOG">
+		<column name="Id" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="KeyId" type="varchar(50)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Status" type="char(1)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Reason" type="varchar(2000)"/>
+	</createTable>
+</changeSet>
+<changeSet id="7.1" author="prasad">
+	<addForeignKeyConstraint baseColumnNames="Id" baseTableName="DATA_ENGINE_LOG" constraintName="FK_DEL_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="Id" referencedTableName="DATA_ENGINE_STATUS"/>
+</changeSet>
+
+<changeSet id="8" author="prasad">
+	<createTable tableName="DATA_ENGINE_TABLES">
+		<column name="Id" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Name" type="varchar(30)">
+			<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>
+<changeSet id="8.1" author="prasad"> 
+	<addUniqueConstraint columnNames="Name" constraintName="UK_DE_T_Name" tableName="DATA_ENGINE_TABLES"/>
+</changeSet>
+
+<changeSet id="9"  author="prasad">
+	<createTable tableName="DATA_ENGINE_PROCESS_LOG">
+		<column name="Id" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="SEQNO" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="FILEID" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="REFID1" type="bigint"/>
+		<column name="REFID2" type="bigint"/>
+		<column name="REFNO1" type="varchar(50)"/>
+		<column name="REFNO2" type="varchar(50)"/>
+		<column name="CATEGORY" type="char(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="STATUS" type="char(1)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="REMARKS" type="varchar(1000)"/>
+		<column name="VALUEDATE" type="datetime">
+			<constraints nullable="false"/>
+		</column>
+		<column name="ADDFIELD1" type="varchar(1000)"/>
+		<column name="ADDFIELD2" type="varchar(1000)"/>
+		<column name="ADDFIELD3" type="varchar(1000)"/>
+		<column name="ADDFIELD4" type="varchar(1000)"/>
+		<column name="ADDFIELD5" type="datetime"/>
+		<column name="ADDFIELD6" type="datetime"/>
+		<column name="ADDFIELD7" type="datetime"/>
+		<column name="ADDFIELD8" type="datetime"/>
+	</createTable>
+</changeSet>
+<changeSet id="9.1" author="prasad">
+	<addPrimaryKey columnNames="Id" constraintName="PK_DATA_ENGINE_PROCESS_LOG" tableName="DATA_ENGINE_PROCESS_LOG"/>
+</changeSet>
+
+<changeSet id="10" author="prasad">
+	<createTable tableName="SEQ_DATA_ENGINE_CONFIG">
+		<column name="SeqNo" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>
+<changeSet id="11" author="prasad">
+	<createTable tableName="SEQ_DATA_ENGINE_TABLE">
+		<column name="SeqNo" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>
+<changeSet id="12" author="prasad">
+	<createTable tableName="SEQ_DATA_ENGINE_COLUMN">
+		<column name="SeqNo" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet> 
+<changeSet id="13" author="prasad" >
+	<createTable tableName="SEQ_DATA_ENGINE_STATUS">
+		<column name="SeqNo" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>
+ 
+ <changeSet id="15" author="prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 begin
+			 execute 'CREATE SEQUENCE SEQ_DATA_ENGINE_PROCESS_LOG START  1 INCREMENT BY 1 ';  
+			 end;  
+			$$;
+	    </sql>
+ </changeSet>
+ 
+ <changeSet id="16" author="prasad" dbms="mssql">
+		<sql splitStatements="false">
+			CREATE TABLE SEQ_DATA_ENGINE_PROCESS_LOG(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		</sql>
+</changeSet>
+
+<changeSet id="17" author="prasad">
+<sql>
+<![CDATA[
+	INSERT INTO DATA_ENGINE_PARSERS VALUES(1, 'READER', 	'Delimit', 'com.pennanttech.dataengine.reader.DelimitFileReader');
+	INSERT INTO DATA_ENGINE_PARSERS VALUES(2, 'WRITER', 	'Delimit', 'com.pennanttech.dataengine.writer.DelimitFileWriter');
+	INSERT INTO DATA_ENGINE_PARSERS VALUES(3, 'WRITER', 	'Excel', 'com.pennanttech.dataengine.writer.ExelFileWriter');
+	INSERT INTO DATA_ENGINE_PARSERS VALUES(4, 'READER', 	'FixedWidth', 'com.pennanttech.dataengine.reader.FixedWidthFileReader');
+	INSERT INTO DATA_ENGINE_PARSERS VALUES(5, 'DBWRITER',	'DB','com.pennanttech.dbengine.process.ALMRequest');
+	INSERT INTO DATA_ENGINE_PARSERS VALUES(6, 'DBWRITER',	'DB','com.pennanttech.dbengine.process.ControlDumpRequest');
+	INSERT INTO DATA_ENGINE_PARSERS VALUES(7, 'DBWRITER',	'DB','com.pennanttech.dbengine.process.PosidexUpdateEODRequest');
+	INSERT INTO DATA_ENGINE_PARSERS VALUES(8, 'DBREADER',	'DB','com.pennanttech.dbengine.process.PosidexCustomerUpdateRequest');
+	
+	INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'DISB_HDFC_EXPORT', 'Disbursement for HDFC export', 2, NULL, NULL, NULL, ',' , 0, 0, NULL, 'TransactionType, BeneficiaryCode, BeneficiaryAccountNo, InstrumentAmount, BeneficiaryName, DraweeLocation, PrintLocation, Address1, Address2, Address3, Address4, Address5, InstructionRefNo, CustomerRefNo, PaymentDetails1, PaymentDetails2, PaymentDetails3, PaymentDetails4, PaymentDetails5, PaymentDetails6, PaymentDetails7, ChequeNo, TrnDate, MICRNumber, IFSCCode, Bank, Branch, Email',  NULL, 'A', 'D:\Data-Engine\PFF\Bajaj\Disbusment\Request', 'HDFC_', NULL, 0, NULL, '${PRODUCT_CODE},.${SEQ_DATE_FILE}', NULL, 0, NULL, 1, 1);
+ 
+INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT'), 'DISB_HDFC_EXPORT',  0, 'PaymentId', 'PAYMENTTYPE IN (:PAYMENTTYPE), BANKCODE =:BANKCODE, FINREFERENCE = :FINREFERENCE', 'update FinAdvancePayments FAP set FAP.Status = ''AC'' where exists (select 1 from DATA_ENGINE_PROCESS_LOG PL where FAP.PAYMENTID = PL.REFID1 AND PL.FILEID = :FILEID)', NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT'), 'DATA_ENGINE_PROCESS_LOG',  	1,	'ID', 		NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+ 
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'PAYMENTTYPE',			0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, 'if((PAYMENTTYPE ==  ''NEFT'' )){Result =''N'';  return;}else if((PAYMENTTYPE ==  ''RTGS'' )){Result =''R'';  return;}else if((PAYMENTTYPE ==  ''DD'' )){Result =''D'';  return;}else if((PAYMENTTYPE ==  ''IMPS'' )){Result =''I'';  return;}else if((PAYMENTTYPE ==  ''CHEQUE'' )){Result =''C'';  return;}', NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'CUSTID',				0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'BENEFICIARYACCNO',		0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'AMTTOBERELEASED',		0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'BENEFICIARYNAME',		0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'PAYABLELOC',			0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'PRINTINGLOC',			0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'ADDRESS1',				0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'ADDRESS2',				0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'ADDRESS3',				0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'ADDRESS4',				0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'PAYMENTID',			0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'FINREFERENCE',			0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'PAYMENTDETAILS1',		0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'PAYMENTDETAILS2',		0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'PAYMENTDETAILS3',		0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'PAYMENTDETAILS4',		0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'PAYMENTDETAILS5',		0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'PAYMENTDETAILS6',		0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'PAYMENTDETAILS7',		0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'LLREFERENCENO',		0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'LLDATE',				0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, 'DATE:dd/MM/yyyy');
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'MICR',					0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'IFSC',					0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'BANKNAME',				0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'BRANCHDESC',			0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'EMAIL',				0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_HDFC_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 	'BANKCODE',				1, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')),		'ID',				0, 'M', NULL, NULL, 					NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')),		'SEQNO',			0, 'A', NULL, NULL, 					NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')),		'FILEID',			0, 'N', NULL, NULL,  					'${FILE_ID}', 		NULL,			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')),		'REFID1',			0, 'N', NULL, NULL, 					NULL, 				'PAYMENTID',	0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')),		'CATEGORY',			0, 'N', NULL, NULL,						'${DOWNLOAD}', 		NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')),		'STATUS',			0, 'N', NULL, 'S', 						NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')),		'REMARKS',			0, 'N', NULL, 'Awaiting confirmation',  NULL, 				NULL,			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')),		'VALUEDATE',		0, 'N', NULL, NULL,  					'${VALUE_DATE}', 	NULL,			0, NULL, NULL, NULL, NULL);
+
+UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
+UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
+UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
+UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_STATUS);
+
+INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'DISB_OTHER_CHEQUE_DD_EXPORT', 'Disbursement for NON-HDFC CHQ/DD export', 2, NULL, NULL, NULL, ',' , 0, 0, NULL, 'TransactionId, BeneficiaryName, PAYABLEAT, Amount, DDCharges',  NULL, 'A', 'D:\Data-Engine\PFF\Bajaj\Disbusment\Request', 'OTHER_CHQ', '.csv', 0, NULL, NULL, NULL, 0, NULL, 1, 1);
+ 
+INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT'), 'DISB_OTHER_CHEQUE_DD_EXPORT',  0, 'PAYMENTID', NULL, 'update FinAdvancePayments FAP set FAP.Status = ''AC'' where exists (select 1 from DATA_ENGINE_PROCESS_LOG PL where FAP.PAYMENTID = PL.REFID1 AND PL.FILEID = :FILEID)', NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT'), 'DATA_ENGINE_PROCESS_LOG',  	1,	'ID', 		NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+
+
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')), 	'PAYMENTID',			0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')), 	'LIABILITYHOLDNAME',	0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')), 	'PAYABLELOC',			0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')), 	'AMTTOBERELEASED',		0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')), 	'DDCHARGES',			0, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')),		'ID',				0, 'M', NULL, NULL, 					NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')),		'SEQNO',			0, 'A', NULL, NULL, 					NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')),		'FILEID',			0, 'N', NULL, NULL,  					'${FILE_ID}', 		NULL,			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')),		'REFID1',			0, 'N', NULL, NULL, 					NULL, 				'PAYMENTID',	0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')),		'CATEGORY',			0, 'N', NULL, NULL,						'${DOWNLOAD}', 		NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')),		'STATUS',			0, 'N', NULL, 'S', 						NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')),		'REMARKS',			0, 'N', NULL, 'Awaiting confirmation',  NULL, 				NULL,			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')),		'VALUEDATE',		0, 'N', NULL, NULL,  					'${VALUE_DATE}', 	NULL,			0, NULL, NULL, NULL, NULL);
+
+UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
+UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
+UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
+UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_STATUS);
+
+INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'DISB_OTHER_NEFT_RTGS_EXPORT', 'Disbursement for HDFC Cheque/DD export', 2, NULL, NULL, NULL, ',' , 0, 0, NULL, 'TransactionType, BeneficiaryCode, BeneficiaryAccountNo, InstrumentAmount, BeneficiaryName, BeneficiaryCity, PrintLocation, Address1, Address2, Address3, Address4,  DraweeLocation, BAFLTransactionIDRef1, BAFLTransactionIDRef2, BAFLMailId, PaymentDetails1, PaymentDetails2, PaymentDetails3, PaymentDetails4, PaymentDetails5, PaymentDetails6, PaymentDetails7, ChequeNo, FileDownloadDate, MICRNumber, IFSCCode, Bank, Branch, Email',  NULL, 'A', 'D:\Data-Engine\PFF\Bajaj\Disbusment\Request', 'RTGS_NEFT', '.csv', 0, NULL, '${ddMMYYH24MM}', NULL, 0, NULL, 1, 1); 
+
+INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT'), 'DISB_OTHER_NEFT_RTGS_EXPORT',  0, 'PAYMENTID', NULL, 'update FinAdvancePayments FAP set FAP.Status = ''AC'' where exists (select 1 from DATA_ENGINE_PROCESS_LOG PL where FAP.PAYMENTID = PL.REFID1 AND PL.FILEID = :FILEID)', NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT'), 'DATA_ENGINE_PROCESS_LOG',  	1,	'ID', 		NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'PAYMENTTYPE',			0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'CUSTID',				0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'BENEFICIARYACCNO',		0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'AMTTOBERELEASED',		0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'BENEFICIARYNAME',		0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'BENEFICIARYCITY',		0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'PRINTINGLOC',			0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'ADDRESS1',				0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'ADDRESS2',				0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'ADDRESS3',				0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'ADDRESS4',				0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'PAYABLELOC',			0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'PAYMENTID',			0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'FINREFERENCE',			0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'BAFLMAILID',			0, 'N', NULL, 'bafl@bajajfinserve.com',	NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'PAYMENTDETAILS1',		0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'PAYMENTDETAILS2',		0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'PAYMENTDETAILS3',		0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'PAYMENTDETAILS4',		0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'PAYMENTDETAILS5',		0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'PAYMENTDETAILS6',		0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'LLREFERENCENO',		0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'LLDATE',				0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, 'DATE:dd/MM/yyyy');
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'MICR',					0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'IFSC',					0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'BANKNAME',				0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'BRANCHDESC',			0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'EMAIL',				0, 'N', NULL, NULL,		  				NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')), 	'BANKCODE',				1, 'N', NULL, NULL,	NULL, NULL, 0, NULL, NULL, NULL, NULL);
+
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')),		'ID',					0, 'M', NULL, NULL, 					NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')),		'SEQNO',				0, 'A', NULL, NULL, 					NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')),		'FILEID',				0, 'N', NULL, NULL,  					'${FILE_ID}', 		NULL,			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')),		'REFID1',				0, 'N', NULL, NULL, 					NULL, 				'PAYMENTID',	0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')),		'CATEGORY',				0, 'N', NULL, NULL,						'${DOWNLOAD}', 		NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')),		'STATUS',				0, 'N', NULL, 'S', 						NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')),		'REMARKS',				0, 'N', NULL, 'Awaiting confirmation',  NULL, 				NULL,			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')),		'VALUEDATE',			0, 'N', NULL, NULL,  					'${VALUE_DATE}', 	NULL,			0, NULL, NULL, NULL, NULL);
+
+UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
+UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
+UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
+UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_STATUS);
+
+INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'DISB_RESPONSE', 'Cheque response file', 1, NULL, NULL, NULL, ',' , 0, 0, NULL, NULL,  '', 'C', 'D:\Data-Engine\PFF\Bajaj\Disbusment\Response', 'HDFC_Cheque_Response', '.csv', 0, NULL, NULL, NULL, 0, NULL, 1, 1); 
+INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_RESPONSE'), 'FINADVANCEPAYMENTS',  2, 'FinReference', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'FINADVANCEPAYMENTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_RESPONSE')),		'FINREFERENCE',		0, 'N', NULL, NULL,	NULL, NULL, 0, 	NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'FINADVANCEPAYMENTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_RESPONSE')),		'LLREFERENCENO',	0, 'N', NULL, NULL,	NULL, NULL, 2, 	NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'FINADVANCEPAYMENTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_RESPONSE')),		'LLDATE',			0, 'N', NULL, NULL,	NULL, NULL, 3, 	NULL, NULL, NULL, 'dd/MM/yyyy');
+
+UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
+UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
+UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
+UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_STATUS);
+
+INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'MANDATES_EXPORT', 'Mandates export', 3, NULL, NULL, NULL, ',' , 0, 0, 'Mandate Sequence No.,Customer Name,Branch,Product,Application ID,LAN No.,EMI Amount,Open Flag,Account Holder Name,MICR Code,Account No.,Account Type,Updation Date,User ID,First Due Date,EMI End Date,Open End Date,Open Upper Limit,Bank Name,Mandate Debit Amount,Start Date,End Date,Application Form No.,Customer Code,Repayment Mode,Mandate No.', 'Row:{INSTRUMENT AUTO DATA ENTRY REPORT}Row:{User:${USER_ID}}Row:{Business Date:${SYS_DATE_DD-MMM-YYYY}}Row:{Branch Name:${FILTER_BRANCHCODE}}Row:{FromDate:${FILTER_FROMDATE},  ToDate:${FILTER_TODATE}}ROW:{EMPTY_ROW}',  '', 'A', 'D:\Data-Engine\PFF\Bajaj\Mandate\Request', 'MANDATE_', '.xlsx', 0, NULL, '${SEQ_DATE_FILE}', NULL, 0, NULL, 1, 1); 
+INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT'), 'INTERFACE_MANDATE_REG_VIEW',  0, 'MANDATEID', 'INPUTDATE >= :FROMDATE, INPUTDATE <=:TODATE, BRANCHCODE IN (:BRANCHCODE)', 'update MANDATES M set M.Status = ''AC'' where exists (select 1 from DATA_ENGINE_PROCESS_LOG PL where M.MANDATEID = PL.REFID1 AND PL.FILEID = :FILEID)', NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT'), 'DATA_ENGINE_PROCESS_LOG',  	1,	'ID', 		NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'BANKCODE',			0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'FIELD_SEQ:');	
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'CUSTOMERNAME',		0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 		NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'BRANCHSWIFTBRNCDE',0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 		NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'FINTYPE',			0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 		NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'APPLICATIONID',	0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 		NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'LANNO',			0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 		NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'EMI',				0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 		NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'OPENMANDATE',		0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 		NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'ACCHOLDERNAME',	0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 		NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'MICR',				0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 		NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'ACCNUMBER',		0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 		NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'ACCTYPE',			0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 		NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'SYSTEMDATE',		0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 		'DATE:dd-MMM-yyyy');
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'USERNAME',			0, 'N', NULL, NULL, NULL, '${USER_NAME}', 	 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'FIRSTDUEDATE',		0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'DATE:dd-MMM-yyyy');
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'EMIENDDATE',		0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'DATE:dd-MMM-yyyy');
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'OPENENDDATE',		0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'DATE:dd-MMM-yyyy');
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'MAXLIMIT',			0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'BANKNAME',			0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'DEBITAMOUNT',		0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'STARTDATE',		0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'DATE:dd-MMM-yyyy');
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'ENDDATE',			0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'DATE:dd-MMM-yyyy');
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'APPLICATIONNO',	0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'CUSTCIF',			0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'MANDATETYPE',		0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'INTERFACE_MANDATE_REG_VIEW' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),	'MANDATEID',		0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL);
+
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),		'ID',				0, 'M', NULL, NULL, 					NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),		'SEQNO',			0, 'A', NULL, NULL, 					NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),		'FILEID',			0, 'N', NULL, NULL,  					'${FILE_ID}', 		NULL,			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),		'REFID1',			0, 'N', NULL, NULL, 					NULL, 				'MANDATEID', 	0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),		'CATEGORY',			0, 'N', NULL, NULL,						'${DOWNLOAD}', 		NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),		'STATUS',			0, 'N', NULL, 'S', 						NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),		'REMARKS',			0, 'N', NULL, 'Awaiting confirmation',  NULL, 				NULL,			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_EXPORT')),		'VALUEDATE',		0, 'N', NULL, NULL,  					'${VALUE_DATE}', 	NULL,			0, NULL, NULL, NULL, NULL);
+
+UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
+UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
+UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
+UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_STATUS);
+
+INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'MANDATES_IMPORT', 'Mandate response file', 1, NULL, NULL, NULL, ',' , 1, 0, NULL, NULL,  '', 'A', 'D:\Data-Engine\PFF\Bajaj\Mandate\Response', 'Mandate_Import', '.csv', 0, NULL, NULL, NULL, 0, NULL, 1, 1); 
+
+INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT'), 'MANDATES',  2, 'MANDATEID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT'), 'DATA_ENGINE_PROCESS_LOG',  	1,	'ID', 		NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+
+ INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'MANDATES' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')),		'MANDATEID',		0, 'N', NULL, NULL,	NULL, 			NULL, 		15, 	NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'MANDATES' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')),		'MANDATEREF',		0, 'N', NULL, NULL,	NULL, 			NULL, 		11, 	NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'MANDATES' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')),		'STATUS',			0, 'N', NULL, NULL,	NULL, 			NULL, 		12, 	NULL, 'if((STATUS ==  ''Rejected'' )){Result =''REJECTED'';  return;}else {Result =''APPROVED'';  return;}', 	NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'MANDATES' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')),		'REASON',			0, 'N', NULL, NULL,	NULL, 			NULL, 		13,		NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'MANDATES' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')),		'LASTMNTBY',		0, 'N', NULL, NULL,	'${USER_ID}', 	NULL,	 	0, 		NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'MANDATES' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')),		'LASTMNTON',		0, 'N', NULL, NULL,	'${SYS_DATE}', 	NULL, 		0, 		NULL, NULL, NULL, NULL);
+
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')),		'ID',				0, 'M', NULL, NULL, 					NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')),		'SEQNO',			0, 'A', NULL, NULL, 					NULL, 				NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')),		'FILEID',			0, 'N', NULL, NULL,  					'${FILE_ID}', 		NULL,			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')),		'REFID1',			0, 'N', NULL, NULL, 					NULL, 				'MANDATEID', 	0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')),		'CATEGORY',			0, 'N', NULL, NULL,						'${UPLOAD}', 		NULL, 			0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')),		'STATUS',			0, 'N', NULL, 'S', 						NULL, 				NULL,		0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')),		'REMARKS',			0, 'N', NULL, NULL,  					NULL, 				'REASON',		0, NULL, NULL, NULL, NULL);
+INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DATA_ENGINE_PROCESS_LOG' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')),		'VALUEDATE',		0, 'N', NULL, NULL,  					'${VALUE_DATE}', 	 NULL,			0, NULL, NULL, NULL, NULL);
+
+UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
+UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
+UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
+UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_STATUS);
+
+
+INSERT INTO DATA_ENGINE_CONFIG Values((Select MAX(id)+1 from DATA_ENGINE_CONFIG),'ALM_REQUEST','ALMRequest',(Select Id from DATA_ENGINE_PARSERS Where CLASSNAME ='com.pennanttech.dbengine.process.ALMRequest'),	NULL,	NULL,	NULL,	NULL,	0,	0,	NULL,	NULL,	NULL,	'A',	NULL,	'DBFILE',	NULL,	0,	NULL,	NULL,	NULL,	0,	NULL,	1,	1);
+INSERT INTO DATA_ENGINE_CONFIG Values((Select MAX(id)+1 from DATA_ENGINE_CONFIG),'CONTROL_DUMP_REQUEST','ControlDumpRequest',(Select Id from DATA_ENGINE_PARSERS Where CLASSNAME ='com.pennanttech.dbengine.process.ControlDumpRequest'),	NULL,	NULL,	NULL,	NULL,	0,	0,	NULL,	NULL,	NULL,	'A',	NULL,	'DBFILE',	NULL,	0,	NULL,	NULL,	NULL,	0,	NULL,	1,	1);
+INSERT INTO DATA_ENGINE_CONFIG Values((Select MAX(id)+1 from DATA_ENGINE_CONFIG),'POSIDEX_UPDATE_EODREQUEST','PosidexUpdateEODRequest',(Select Id from DATA_ENGINE_PARSERS Where CLASSNAME ='com.pennanttech.dbengine.process.PosidexUpdateEODRequest'),	NULL,	NULL,	NULL,	NULL,	0,	0,	NULL,	NULL,	NULL,	'A',	NULL,	'DBFILE',	NULL,	0,	NULL,	NULL,	NULL,	0,	NULL,	1,	1);
+INSERT INTO DATA_ENGINE_CONFIG Values((Select MAX(id)+1 from DATA_ENGINE_CONFIG),'POSIDEX_CUSTOMER_UPDATEREQUEST','PosidexCustomerUpdateRequest',(Select Id from DATA_ENGINE_PARSERS Where CLASSNAME ='com.pennanttech.dbengine.process.PosidexCustomerUpdateRequest'),	NULL,	NULL,	NULL,	NULL,	0,	0,	NULL,	NULL,	NULL,	'A',	NULL,	'DBFILE',	NULL,	0,	NULL,	NULL,	NULL,	0,	NULL,	1,	1);
+UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
+
+INSERT INTO DATA_ENGINE_DB_DETAILS Values((Select ID from DATA_ENGINE_CONFIG Where NAME = 'ALM_REQUEST'),						NULL,	NULL,	NULL,	NULL,	NULL,	1);
+INSERT INTO DATA_ENGINE_DB_DETAILS Values((Select ID from DATA_ENGINE_CONFIG Where NAME = 'CONTROL_DUMP_REQUEST'),				NULL,	NULL,	NULL,	NULL,	NULL,	1);
+INSERT INTO DATA_ENGINE_DB_DETAILS Values((Select ID from DATA_ENGINE_CONFIG Where NAME = 'POSIDEX_UPDATE_EODREQUEST'),			NULL,	NULL,	NULL,	NULL,	NULL,	1);
+INSERT INTO DATA_ENGINE_DB_DETAILS Values((Select ID from DATA_ENGINE_CONFIG Where NAME = 'POSIDEX_CUSTOMER_UPDATEREQUEST'),	NULL,	NULL,	NULL,	NULL,	NULL,	1);
+]]>
+</sql>
+</changeSet>
+<changeSet id="18" author="prasad">
+<createView viewName="INTERFACE_MANDATE_REG_VIEW" replaceIfExists="true">
+SELECT BANKBRANCH.BANKCODE, CUST.CUSTSHRTNAME CUSTOMERNAME, BRANCH.BRANCHDESC AS BRANCHSWIFTBRNCDE, RMTFINTYPE.FINTYPEDESC AS FINTYPE , FIN.FINREFERENCE  APPLICATIONID, FIN.FINREFERENCE  LANNO,
+(SELECT MAX(REPAYAMOUNT+FEESCHD) FROM FINSCHEDULEDETAILS WHERE FINREFERENCE=FIN.FINREFERENCE AND REPAYONSCHDATE =1)/100 EMI, 
+CASE MANDATE.OPENMANDATE WHEN  1 THEN 'New Open ECS' ELSE 'No Open ECS' END OPENMANDATE, MANDATE.ACCHOLDERNAME, BANKBRANCH.MICR,
+MANDATE.ACCNUMBER, MANDATE.ACCTYPE, (SELECT MIN(FIRSTREPAYDATE) FIRSTDUEDATE FROM FINPFTDETAILS WHERE FINREFERENCE=FIN.FINREFERENCE) FIRSTDUEDATE,
+(SELECT MAX(MATURITYDATE) EMIENDDATE FROM FINPFTDETAILS WHERE FINREFERENCE=FIN.FINREFERENCE) EMIENDDATE, MANDATE.EXPIRYDATE OPENENDDATE, MANDATE.MAXLIMIT, BANK.BANKNAME BANKNAME,
+(SELECT SUM(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=MANDATE.MANDATEID)
+AND REPAYONSCHDATE =1)/100 DEBITAMOUNT, MANDATE.STARTDATE STARTDATE, MANDATE.EXPIRYDATE ENDDATE, FIN.APPLICATIONNO,
+CUST.CUSTCIF, MANDATE.MANDATETYPE, MANDATE.MANDATEID, MANDATE.INPUTDATE,(SELECT SYSPARMVALUE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'APP_DATE')   SYSTEMDATE ,
+ '' AS USERNAME FROM MANDATES MANDATE
+	INNER JOIN CUSTOMERS  CUST ON MANDATE.CUSTID=CUST.CUSTID 
+	LEFT OUTER  JOIN FINANCEMAIN  FIN ON MANDATE.ORGREFERENCE=FIN.FINREFERENCE
+	LEFT OUTER  JOIN RMTBRANCHES BRANCH ON FIN.FINBRANCH=BRANCH.BRANCHCODE
+	INNER JOIN BANKBRANCHES BANKBRANCH ON MANDATE.BANKBRANCHID=BANKBRANCH.BANKBRANCHID
+	INNER JOIN BMTBANKDETAIL  BANK ON BANKBRANCH.BANKCODE=BANK.BANKCODE
+	LEFT OUTER JOIN RMTFINANCETYPES  RMTFINTYPE ON FIN.FINTYPE=RMTFINTYPE.FINTYPE
+	WHERE MANDATE.STATUS='NEW'
+	</createView>
+	</changeSet>
+	<changeSet id="19" author="prasad">
+<createView viewName="DISB_HDFC_EXPORT" replaceIfExists="true">
+SELECT DISB.PAYMENTTYPE, FM.CUSTID, DISB.BENEFICIARYACCNO, DISB.AMTTOBERELEASED/100 AS AMTTOBERELEASED, DISB.BENEFICIARYNAME, DISB.LIABILITYHOLDNAME, DISB.PAYABLELOC, '' BENEFICIARYCITY, DISB.PRINTINGLOC,
+'' ADDRESS1,'' ADDRESS2, '' ADDRESS3, '' ADDRESS4, ''ADDRESS5, DISB.PAYMENTID, DISB.FINREFERENCE, 'bafl@bajajfinserve.com' BAFLMAILID,
+'' PAYMENTDETAILS1,'' PAYMENTDETAILS2, '' PAYMENTDETAILS3, '' PAYMENTDETAILS4, '' PAYMENTDETAILS5, '' PAYMENTDETAILS6, '' PAYMENTDETAILS7,
+DISB.LLREFERENCENO, DISB.LLDATE, BRANCH.MICR, BRANCH.IFSC, BANK.BANKNAME, BRANCH.BRANCHDESC, BNY.EMAIL, BANK.BANKCODE, '' DDCHARGES
+FROM  FINADVANCEPAYMENTS DISB
+INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = DISB.FINREFERENCE
+LEFT OUTER JOIN BENEFICIARY BNY ON BNY.ACCHOLDERNAME = DISB.BENEFICIARYNAME AND BNY.ACCNUMBER = DISB.BENEFICIARYACCNO
+LEFT OUTER JOIN BANKBRANCHES BRANCH ON BRANCH.BANKBRANCHID = DISB.BANKBRANCHID  
+LEFT OUTER JOIN BMTBANKDETAIL BANK ON BANK.BANKCODE = DISB.BANKCODE
+WHERE DISB.STATUS='APPROVED'
+</createView>
+</changeSet>
+<changeSet id="20" author="prasad">
+<createView viewName="DISB_OTHER_NEFT_RTGS_EXPORT" replaceIfExists="true">
+SELECT DISB.PAYMENTTYPE, FM.CUSTID, DISB.BENEFICIARYACCNO, DISB.AMTTOBERELEASED/100 AS AMTTOBERELEASED, DISB.BENEFICIARYNAME, DISB.LIABILITYHOLDNAME, DISB.PAYABLELOC, '' BENEFICIARYCITY, DISB.PRINTINGLOC,
+'' ADDRESS1,'' ADDRESS2, '' ADDRESS3, '' ADDRESS4, ''ADDRESS5, DISB.PAYMENTID, DISB.FINREFERENCE, 'bafl@bajajfinserve.com' BAFLMAILID,
+'' PAYMENTDETAILS1,'' PAYMENTDETAILS2, '' PAYMENTDETAILS3, '' PAYMENTDETAILS4, '' PAYMENTDETAILS5, '' PAYMENTDETAILS6, '' PAYMENTDETAILS7,
+DISB.LLREFERENCENO, DISB.LLDATE, BRANCH.MICR, BRANCH.IFSC, BANK.BANKNAME, BRANCH.BRANCHDESC, BNY.EMAIL, BANK.BANKCODE, '' DDCHARGES
+FROM  FINADVANCEPAYMENTS DISB
+INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = DISB.FINREFERENCE
+LEFT OUTER JOIN BENEFICIARY BNY ON BNY.ACCHOLDERNAME = DISB.BENEFICIARYNAME AND BNY.ACCNUMBER = DISB.BENEFICIARYACCNO
+LEFT OUTER JOIN BANKBRANCHES BRANCH ON BRANCH.BANKBRANCHID = DISB.BANKBRANCHID  
+LEFT OUTER JOIN BMTBANKDETAIL BANK ON BANK.BANKCODE = DISB.BANKCODE
+WHERE DISB.STATUS='APPROVED' AND DISB.PAYMENTTYPE IN ('NEFT', 'RTGS') AND BANK.BANKCODE != '19'
+</createView>
+</changeSet>
+<changeSet id="21" author="prasad">
+<createView viewName="DISB_OTHER_CHEQUE_DD_EXPORT" replaceIfExists="true">
+SELECT DISB.PAYMENTTYPE, FM.CUSTID, DISB.BENEFICIARYACCNO, DISB.AMTTOBERELEASED/100 AS AMTTOBERELEASED, DISB.BENEFICIARYNAME, DISB.LIABILITYHOLDNAME, DISB.PAYABLELOC, '' BENEFICIARYCITY, DISB.PRINTINGLOC,
+'' ADDRESS1,'' ADDRESS2, '' ADDRESS3, '' ADDRESS4, ''ADDRESS5, DISB.PAYMENTID, DISB.FINREFERENCE, 'bafl@bajajfinserve.com' BAFLMAILID,
+'' PAYMENTDETAILS1,'' PAYMENTDETAILS2, '' PAYMENTDETAILS3, '' PAYMENTDETAILS4, '' PAYMENTDETAILS5, '' PAYMENTDETAILS6, '' PAYMENTDETAILS7,
+DISB.LLREFERENCENO, DISB.LLDATE, BRANCH.MICR, BRANCH.IFSC, BANK.BANKNAME, BRANCH.BRANCHDESC, BNY.EMAIL, BANK.BANKCODE, '' DDCHARGES
+FROM  FINADVANCEPAYMENTS DISB
+INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = DISB.FINREFERENCE
+LEFT OUTER JOIN BENEFICIARY BNY ON BNY.ACCHOLDERNAME = DISB.BENEFICIARYNAME AND BNY.ACCNUMBER = DISB.BENEFICIARYACCNO
+LEFT OUTER JOIN BANKBRANCHES BRANCH ON BRANCH.BANKBRANCHID = DISB.BANKBRANCHID  
+LEFT OUTER JOIN BMTBANKDETAIL BANK ON BANK.BANKCODE = DISB.BANKCODE
+WHERE DISB.STATUS='APPROVED' AND DISB.PAYMENTTYPE IN ('CHEQUE', 'DD') AND BANK.BANKCODE != '19'
+</createView>
+</changeSet>
+
+
+<changeSet id="22" author="Durgaprasad G">
+<sql>
+		Delete from SEQ_DATA_ENGINE_CONFIG;
+		Delete from SEQ_DATA_ENGINE_TABLE ;
+		Delete from SEQ_DATA_ENGINE_COLUMN;
+		Delete from SEQ_DATA_ENGINE_STATUS;
+		
+		INSERT INTO SEQ_DATA_ENGINE_CONFIG VALUES(0);
+		INSERT INTO SEQ_DATA_ENGINE_TABLE  VALUES(0);
+		INSERT INTO SEQ_DATA_ENGINE_COLUMN VALUES(0);
+		INSERT INTO SEQ_DATA_ENGINE_STATUS VALUES(0);
+		
+		UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
+		UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
+		UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
+		UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_STATUS);
+</sql>
+</changeSet>
+<changeSet id="23" author="surekha">
+<modifyDataType tableName="DATA_ENGINE_TABLE" columnName="Operation" newDataType="int" />
+</changeSet>
+
+
+	<changeSet id="24" author="durgaprasad g">
+		<dropNotNullConstraint tableName="DATA_ENGINE_STATUS"
+			columnName="TotalRecords" columnDataType="int" />
+	</changeSet>
+	
+	<changeSet id="25" author="durgaprasad g">
+		<dropNotNullConstraint tableName="DATA_ENGINE_STATUS"
+			columnName="ProcessedRecords" columnDataType="int" />
+	</changeSet>
+	
+	<changeSet id="26" author="durgaprasad g">
+		<dropNotNullConstraint tableName="DATA_ENGINE_STATUS"
+			columnName="SuccessRecords" columnDataType="int" />
+	</changeSet>
+	
+	<changeSet id="27" author="durgaprasad g">
+		<dropNotNullConstraint tableName="DATA_ENGINE_STATUS"
+			columnName="FailedRecords" columnDataType="int" />
+	</changeSet>
+	
+	<changeSet id="28" author="durgaprasad g">
+		<sql>
+			Update DATA_ENGINE_COLUMN set SeqType = 'S', SeqObject = 'SEQ_DATA_ENGINE_PROCESS_LOG' WHERE TableId  in  (Select id from DATA_ENGINE_TABLE Where Name = 'DATA_ENGINE_PROCESS_LOG') and Name = 'ID';
+		</sql>
+	</changeSet>
+</databaseChangeLog>

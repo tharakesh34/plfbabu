@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+<property name="call.concatenate" value="+" dbms="mssql" />
+<property name="call.concatenate" value="||" dbms="oracle" />
+<property name="call.maindb" value="PLF.." dbms="mssql"/>
+<property name="call.maindb" value="PLF." dbms="oracle"/>
+
+
+	<changeSet author="Siva" id="1">
+		<addColumn tableName="AdtCollateralAssignment">
+			<column name="Active" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet author="Siva" id="2">
+		<sql>
+			Update AdtCollateralAssignment Set Active = 1;
+		</sql>
+	</changeSet>
+	<changeSet author="Irfan" id="3">
+	<addColumn tableName="AdtFinanceMain">
+		<column name="BpiAmount" type="decimal(18,0)"/>
+		<column name="DeductFeeDisb" type="decimal(18,0)"/>
+	</addColumn>
+</changeSet>
+	
+	<changeSet author="Kesav" id="4"> 
+		<dropTable tableName="AdtPromotionFees" /> 
+		<dropTable tableName="AdtPromotionInsurances" /> 
+	</changeSet>
+	<changeSet id="5" author="Irfan">
+		<dropTable tableName="AdtSponsorBank"/>
+</changeSet>
+						
+<changeSet author="Irfan" id="6">
+	<createTable tableName="AdtPartnerBank">
+		<column name="PartnerBankId" type="bigint"/>
+		<column name="PartnerBankCode" type="varchar(8)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="PartnerBankName" type="varchar(50)" />
+		<column name="BankCode" type="varchar(8)" />
+		<column name="BankBranchCode" type="varchar(8)" />
+		<column name="BranchMICRCode" type="varchar(20)"/>
+		<column name="BranchIFSCCode" type="varchar(20)"/>
+		<column name="BranchCity" type="varchar(50)" />
+		<column name="UtilityCode" type="varchar(8)" />
+		<column name="AccountNo" type="varchar(50)" />
+		<column name="AccountType" type="char(1)" />
+		<column name="AcType" type="varchar(20)"/>
+		<column name="AlwFileDownload" type="bit"/>
+		<column name="DisbDownload" type="bit"/>
+		<column name="InFavourLength" type="int"/>
+		<column name="AccountCategory" type="char(1)"/>
+		<column name="Active" type="bit"/>
+		<column name="Version" type="int"  defaultValueNumeric="0"/>
+		<column name="LastMntBy" type="bigint"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(50)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		<column name="AuditId" type="bigint" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditDate" type="datetime">
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditSeq" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditImage" type="varchar(20)">
+		<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>
+
+<changeSet author="Irfan" id="7">
+<dropTable tableName="AdtPartnerBank"/>
+	<createTable tableName="AdtPartnerBank">
+		<column name="PartnerBankId" type="bigint"/>
+		<column name="PartnerBankCode" type="varchar(8)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="PartnerBankName" type="varchar(50)" />
+		<column name="BankCode" type="varchar(8)" />
+		<column name="BankBranchCode" type="varchar(8)" />
+		<column name="BranchMICRCode" type="varchar(20)"/>
+		<column name="BranchIFSCCode" type="varchar(20)"/>
+		<column name="BranchCity" type="varchar(50)" />
+		<column name="UtilityCode" type="varchar(8)" />
+		<column name="AccountNo" type="varchar(50)" />
+		<column name="Usage" type="char(1)" />
+		<column name="AcType" type="varchar(20)"/>
+		<column name="AlwFileDownload" type="bit"/>
+		<column name="DisbDownload" type="bit"/>
+		<column name="InFavourLength" type="int"/>
+		<column name="AccountCategory" type="char(1)"/>
+		<column name="Active" type="bit"/>
+		<column name="Version" type="int"  defaultValueNumeric="0"/>
+		<column name="LastMntBy" type="bigint"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(50)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		<column name="AuditId" type="bigint" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditDate" type="datetime">
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditSeq" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditImage" type="varchar(20)">
+		<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>	
+<changeSet author="Surekha" id="8">
+    <createTable tableName="AdtAccountTypeGroup">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AcctTypeLevel" type="int"/>
+			<column name="GroupId" type="varchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="GroupDescription" type="varchar(100)" />
+			<column name="ParentGroup" type="varchar(20)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+			</createTable>
+</changeSet>	
+<changeSet id="9" author="Kesav">
+<sql>
+drop table AdtPromotions;
+</sql>
+</changeSet>
+
+<changeSet id="10" author="Kesav">
+        <createTable tableName="AdtPromotions">
+            <column name="AuditId" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AuditDate" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AuditSeq" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AuditImage" type="varchar(2)">
+                <constraints nullable="false"/>
+            </column>
+			 <column name="PromotionCode" remarks="Promotion Code" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="PromotionDesc" remarks="Promotion Code Description" type="varchar(50)"/>
+            <column name="FinType" remarks="Finance Type" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="StartDate" type="datetime"/>
+            <column name="EndDate" type="datetime"/>
+            <column name="FinIsDwPayRequired" type="boolean"/>
+			<column name="DownPayRule" type="bigint"/>
+			<column name="ActualInterestRate" type="decimal(13, 9)"/>
+			<column name="FinBaseRate" type="varchar(8)"/>
+            <column name="FinSplRate" type="varchar(8)"/>
+            <column name="FinMargin" type="decimal(13, 9)"/>
+			<column name="ApplyRpyPricing" type="boolean"/>
+			<column name="RpyPricingMethod" type="bigint"/>
+			<column name="FinMinTerm" remarks="Minimum Terms" type="decimal(3, 0)"/>
+            <column name="FinMaxTerm" remarks="Maximum Terms" type="decimal(3, 0)"/>
+			<column name="FinMinAmount" remarks="Minimum Finance Amount" type="decimal(18, 0)"/>
+			<column name="FinMaxAmount" remarks="Maximum Finance Amount" type="decimal(18, 0)"/>
+            <column name="FinMinRate" type="decimal(13, 9)"/>
+            <column name="FinMaxRate" type="decimal(13, 9)"/>
+			<column name="Active" type="boolean"/>
+			<column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column defaultValueNumeric="0" name="WorkflowId" type="bigint"/>
+        </createTable>
+    </changeSet>	
+    <changeSet author="Surekha" id="11">
+	 <dropTable tableName="AdtAccountTypeGroup"/>
+	</changeSet>
+ 	<changeSet author="Surekha" id="12">
+    <createTable tableName="AdtAccountTypeGroup">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="GroupId" type="bigint">
+			<constraints nullable="false" />
+			</column>
+			<column name="GroupCode" type="varchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="GroupDescription" type="varchar(100)" />
+			<column name="AcctTypeLevel" type="int"/>
+			<column name="ParentGroup" type="varchar(20)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+			</createTable>
+</changeSet>	
+	<changeSet id="13.1" author="Surekha">
+		<renameColumn tableName="AdtAccountTypeGroup" oldColumnName="ParentGroup" newColumnName="ParentGroupId"/>
+	</changeSet>
+<changeSet id="13" author="Madhubabu">
+	<addColumn tableName="AdtFinAdvancePayments">
+		<column name="PartnerBankId" type="bigint"/>
+	</addColumn>
+</changeSet>
+<changeSet id="14" author="Surekha">
+		<modifyDataType tableName="AdtAccountTypeGroup" columnName="ParentGroupId"
+			newDataType="bigint" />
+</changeSet>
+
+<changeSet author="Irfan" id="15">
+ <dropColumn tableName="AdtPartnerBank" columnName="Usage"/>
+<dropColumn tableName="AdtPartnerBank" columnName="DisbDownload"/>
+<dropColumn tableName="AdtPartnerBank" columnName="AccountCategory"/>
+<addColumn tableName="AdtPartnerBank">
+	<column name="AlwDisb" type="bit"/>
+	<column name="AlwPayment" type="bit"/>
+	<column name="AlwReceipt" type="bit"/>
+</addColumn>
+</changeSet>
+</databaseChangeLog>

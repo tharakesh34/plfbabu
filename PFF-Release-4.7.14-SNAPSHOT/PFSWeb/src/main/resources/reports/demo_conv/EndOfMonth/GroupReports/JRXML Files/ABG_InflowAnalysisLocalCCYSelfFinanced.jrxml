@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="InFlow Analysis (Self Financed) Local CCY" language="groovy" pageWidth="776" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="756" leftMargin="0" rightMargin="20" topMargin="0" bottomMargin="20" isIgnorePagination="true" uuid="94d75d8e-97ff-4cd9-9adc-cc38e21748bb">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["../../StyleSheet/Template.jrtx"]]></template>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="userName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="searchCriteria" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="whereCondition" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="organizationLogo" class="java.lang.String"/>
+	<parameter name="productLogo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select InFlows,ISNULL([DAYS_0_8],0)[DAYS_0_8],ISNULL([MONTH_8_1],0)[MONTH_8_1],ISNULL([MONTH_1_3],0)[MONTH_1_3],
+		 ISNULL([MONTH_3_6],0)[MONTH_3_6] FROM(
+	Select InFlows,SUM(UnpaidTotalAmt)UnpaidTotalAmt,'DAYS_0_8' Clmn from RPT_ABGInF_AnylLCCYSlfFin_View
+	Where NoOfDays>=0 and NoOfDays<=7 Group By InFlows
+	UNION
+	Select InFlows,SUM(UnpaidTotalAmt),'MONTH_8_1' from RPT_ABGInF_AnylLCCYSlfFin_View
+	Where NoOfDays>7 and NoOfDays<=30 Group By InFlows
+	UNION
+	Select InFlows,SUM(UnpaidTotalAmt),'MONTH_1_3' from RPT_ABGInF_AnylLCCYSlfFin_View
+	Where NoOfDays>30 and NoOfDays<=90 Group By InFlows
+	UNION
+	Select InFlows,SUM(UnpaidTotalAmt),'MONTH_3_6' from RPT_ABGInF_AnylLCCYSlfFin_View
+	Where NoOfDays>90 and NoOfDays<=180 Group By InFlows )AS SourceTable
+	Pivot (
+	SUM(UnpaidTotalAmt)
+	FOR Clmn IN ([DAYS_0_8],[MONTH_8_1],[MONTH_1_3],[MONTH_3_6])
+	) AS PivotTable  $P!{whereCondition} Order By InFlows]]>
+	</queryString>
+	<field name="InFlows" class="java.lang.String"/>
+	<field name="DAYS_0_8" class="java.math.BigDecimal"/>
+	<field name="MONTH_8_1" class="java.math.BigDecimal"/>
+	<field name="MONTH_1_3" class="java.math.BigDecimal"/>
+	<field name="MONTH_3_6" class="java.math.BigDecimal"/>
+	<columnHeader>
+		<band height="45">
+			<frame>
+				<reportElement uuid="062791cd-50fa-4068-b111-405816383962" x="0" y="0" width="756" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<image>
+					<reportElement uuid="191dc9c0-d24b-4d40-b0d2-8a4dd0415629" x="0" y="0" width="207" height="30"/>
+					<box>
+						<leftPen lineWidth="0.5"/>
+					</box>
+					<imageExpression><![CDATA[$P{organizationLogo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement uuid="ce8aa4d0-a410-4e32-95a9-39fee0f119cd" style="Title Description header" mode="Transparent" x="207" y="0" width="340" height="30"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[InFlow Analysis (Self Financed) Local CCY]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy h.mm a" isBlankWhenNull="true">
+					<reportElement uuid="1f7805f9-bffb-4b7f-ba5c-c66399b6e28d" style="Footer Info" x="652" y="0" width="104" height="30"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" x="547" y="0" width="105" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.0" lineColor="#666666"/>
+						<leftPen lineWidth="0.0" lineColor="#666666"/>
+						<bottomPen lineWidth="0.0" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<paragraph rightIndent="3"/>
+					</textElement>
+					<text><![CDATA[Date :]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="1ca55973-8826-4119-9d45-fae38ff13b94" mode="Opaque" x="0" y="30" width="756" height="15" backcolor="#FFCC99"/>
+				<staticText>
+					<reportElement uuid="07420c49-359d-4381-a43a-b78095ee89e2" x="0" y="0" width="207" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[INFLOWS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="b711ef99-1e18-409c-9590-4b77f9041827" x="207" y="0" width="106" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[DAYS_0_8 BHD]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ea699558-b9c4-4169-a7e3-b70f1f9bf64c" x="313" y="0" width="120" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[MONTH_8_1  BHD]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ffc947e0-9ea5-4433-bc0a-2844a57d58b1" x="433" y="0" width="114" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[MONTH_1_3  BHD]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="0049672b-1da9-413d-b86d-6ce55bde7b94" x="547" y="0" width="105" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[MONTH_3_6  BHD]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="10785363-1718-4d26-bcd9-6ec718ea5c4a" x="652" y="0" width="104" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[TOTAL BHD]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15">
+			<frame>
+				<reportElement uuid="92dcab5c-faf6-4af2-a687-9003b511a0e6" x="0" y="0" width="756" height="15"/>
+				<textField>
+					<reportElement uuid="afe4e16f-59cf-4d93-86a0-c5acc9d21a23" x="0" y="0" width="207" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{InFlows}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.000">
+					<reportElement uuid="d8f4b201-5f04-42e0-8694-65ca55e675da" x="207" y="0" width="106" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DAYS_0_8}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.000">
+					<reportElement uuid="5d075551-29f5-4c2f-bebf-9632b692478a" x="313" y="0" width="120" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MONTH_8_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.000">
+					<reportElement uuid="75760377-f0bb-430d-a9bc-ddb1e96171a2" x="433" y="0" width="114" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MONTH_1_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.000">
+					<reportElement uuid="3e24ae59-72c1-4808-8ee7-b6b110bde6eb" x="547" y="0" width="105" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MONTH_3_6}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.000">
+					<reportElement uuid="c4776ca1-984f-48ef-8a65-1db8161e4c40" x="652" y="0" width="104" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DAYS_0_8}+$F{MONTH_8_1}+$F{MONTH_1_3}+$F{MONTH_3_6}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

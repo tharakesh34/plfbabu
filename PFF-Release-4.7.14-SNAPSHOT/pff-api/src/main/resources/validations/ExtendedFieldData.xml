@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- ExtendedFieldDetail Validations -->
+	<bean class="com.pennant.backend.model.extendedfield.ExtendedFieldData">
+
+		<field name="fieldName">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>fieldName should have maximum 18 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">18</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>fieldName is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint>
+		</field>
+		<field name="fieldValue">
+			<!--  <constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>fieldValue should have maximum 200 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">200</element>
+			</constraint> -->
+			<!-- <constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>fieldValue is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint> -->
+		</field>
+
+	</bean>
+</constraint-mappings>

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="window_ReportConfigurationDialog" border="normal"
+		apply="${reportConfigurationDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+		<borderlayout id="borderlayoutReportConfiguration">
+			<north>
+
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew" visible="false"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnEdit" visible="false"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnDelete" visible="false"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnSave" visible="false"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnCancel" visible="false"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnPreviewReport"
+								label="${c:l('label_Print')}"
+								tooltiptext="${c:l('btnPreviewReportView.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnNotes"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_ReportConfigurationDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" visible="false"
+								label="${c:l('label_Help')}"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnClose"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+
+			<center border="none" autoscroll="true">
+				<div>
+					<groupbox id="gb_basicDetails">
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="150px" />
+								<column />
+								<column width="150px" />
+								<column />
+							</columns>
+							<rows>
+								<row id="row_Zero" visible="true">
+									<label
+										id="label_ReportConfigurationDialog_ReportName"
+										value="${c:l('label_ReportConfigurationDialog_ReportName.value')}" />
+									<hlayout id="hlayout_ReportName">
+										<space id="space_ReportName"
+											spacing="2px" sclass="mandatory" />
+										<textbox id="reportName"
+											maxlength="100" width="250px" />
+									</hlayout>
+
+									<label
+										id="label_ReportConfigurationDialog_ReportHeading"
+										value="${c:l('label_ReportConfigurationDialog_ReportHeading.value')}" />
+									<hlayout
+										id="hlayout_ReportHeading">
+										<space id="space_ReportHeading"
+											spacing="2px" sclass="mandatory" />
+										<textbox id="reportHeading"
+											maxlength="1000" width="350px" />
+									</hlayout>
+
+								</row>
+								<row id="row_One" visible="true">
+									<label
+										id="label_ReportConfigurationDialog_PromptRequired"
+										value="${c:l('label_ReportConfigurationDialog_PromptRequired.value')}" />
+									<hlayout
+										id="hlayout_PromptRequired">
+										<space id="space_PromptRequired"
+											spacing="2px" />
+										<checkbox id="promptRequired"
+											checked="true" />
+									</hlayout>
+
+									<label
+										id="label_ReportConfigurationDialog_ShowTempLibrary"
+										value="${c:l('label_ReportConfigurationDialog_ShowTempLibrary.value')}" />
+									<hlayout
+										id="hlayout_ShowTempLibrary">
+										<space
+											id="space_ShowTempLibrary" spacing="2px" />
+										<checkbox id="showTempLibrary"
+											checked="false" />
+									</hlayout>
+
+								</row>
+								<row id="row_Two" visible="true">
+
+									<label
+										id="label_ReportConfigurationDialog_ReportJasperName"
+										value="${c:l('label_ReportConfigurationDialog_ReportJasperName.value')}" />
+									<hlayout
+										id="hlayout_ReportJasperName">
+										<space
+											id="space_ReportJasperName" spacing="2px" sclass="mandatory" />
+										<textbox id="reportJasperName"
+											maxlength="100" width="250px" />
+									</hlayout>
+
+									<label
+										id="label_ReportConfigurationDialog_DataSourceName"
+										value="${c:l('label_ReportConfigurationDialog_DataSourceName.value')}" />
+									<hlayout
+										id="hlayout_DataSourceName">
+										<space id="space_DataSourceName"
+											spacing="2px" sclass="mandatory" />
+										<combobox id="dataSourceName"
+											width="150px" maxlength="50">
+										</combobox>
+									</hlayout>
+								</row>
+								<row id="row_Three" visible="true">
+									<label
+										id="label_ReportConfigurationDialog_MenuItemCode"
+										value="${c:l('label_ReportConfigurationDialog_MenuItemCode.value')}" />
+									<hlayout
+										id="hlayout_MenuItemCode">
+										<space id="space_MenuItemCode"
+											spacing="2px" sclass="mandatory" />
+										<textbox id="menuItemCode"
+											maxlength="100" width="350px" />
+									</hlayout>
+									
+									<label
+										id="label_ReportConfigurationDialog_AlwMultiFormat"
+										value="${c:l('label_ReportConfigurationDialog_AlwMultiFormat.value')}" />
+									<hlayout
+										id="hlayout_AlwMultiFormat">
+										<space
+											id="space_AlwMultiFormat" spacing="2px" />
+										<checkbox id="alwMultiFormat"
+											checked="false" />
+									</hlayout>
+								</row>
+								<row id="row_Four" visible="true">
+								<label
+										id="label_ReportConfigurationDialog_WhereCondition"
+										value="${c:l('label_ReportConfigurationDialog_WhereCondition.value')}" />
+									<hlayout
+										id="hlayout_WhereCondition">
+										<space
+											id="space_WhereCondition" spacing="2px" />
+										<checkbox id="whereCondition"
+											checked="true" />
+									</hlayout>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<separator />
+					<groupbox id="gb_ReportFilterFields" mold="3d">
+						<caption label="Report Filter Fields"
+							style="font-weight:bold; color:#FF6600" />
+						<div sclass="z-toolbar" style="padding:0">
+							<hbox pack="stretch"
+								sclass="hboxRemoveWhiteStrips" width="100%"
+								style=" padding:0px;">
+								<!-- COMMON BUTTONS -->
+								<toolbar align="start"
+									style="float:left; border-style: none; padding:0px;"
+									width="150px">
+									<hbox align="center"
+										style="padding: 0px">
+										<label value=" "
+											style="font-weight:bold; font-size: 11px;" />
+									</hbox>
+								</toolbar>
+								<!-- CRUD BUTTONS -->
+								<toolbar align="end"
+									style="float:right; border-style: none; padding:0px;">
+									<button
+										id="btnNew_ReportFilterFields" label="${c:l('label_New')}"
+										tooltiptext="${c:l('btnNew_ReportFilterFields.tooltiptext ')}"
+										visible="false" />
+								</toolbar>
+								<space width="2px" />
+							</hbox>
+						</div>
+
+						<listbox id="listBoxReportFilterFields"
+							emptyMessage="${c:l('listbox.emptyMessage')}"  
+							tooltiptext="${c:l('')}" width="100%"
+							height="250px" multiple="false" sizedByContent="true"
+							span="true">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_ReportFilterFields_FieldName"
+									label="${c:l('listheader_FieldName.label')}" sort="false"
+									hflex="min" />
+								<listheader
+									id="listheader_ReportFilterFields_FieldType"
+									label="${c:l('listheader_FieldType.label')}" sort="false"
+									hflex="min" />
+								<listheader
+									id="listheader_ReportFilterFields_FieldLabel"
+									label="${c:l('listheader_FieldLabel.label')}" sort="false"
+									hflex="min" />
+								<listheader
+									id="listheader_ReportFilterFields_FieldDBName"
+									label="${c:l('listheader_FieldDBName.label')}" sort="false"
+									hflex="min" />
+								<listheader
+									id="listheader_ReportFilterFields_Manditory"
+									label="${c:l('listheader_ReportFilterFields_Manditory.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_ReportFilterFields_sequenceOrder"
+									label="${c:l('listheader_ReportFilterFields_sequenceOrder.label')}"
+									sort="false" hflex="min" />
+							</listhead>
+						</listbox>
+						<paging id="pagingReportFilterFieldsList"
+							height="22px" visible="false" />
+					</groupbox>
+					<!-- <separator />
+					<groupbox id="gb_Additional_Conditions" mold="3d">
+						<caption label="Additonal Conditions"
+							style="font-weight:bold; color:#FF6600" />
+						<div sclass="z-toolbar" style="padding:0">
+							<hbox pack="stretch"
+								sclass="hboxRemoveWhiteStrips" width="100%"
+								style=" padding:0px;">
+								COMMON BUTTONS
+								<toolbar align="start"
+									style="float:left; border-style: none; padding:0px;"
+									width="150px">
+									<hbox align="center"
+										style="padding: 0px">
+										<label value=" "
+											style="font-weight:bold; font-size: 11px;" />
+									</hbox>
+								</toolbar>
+								CRUD BUTTONS
+								<toolbar align="end"
+									style="float:right; border-style: none; padding:0px;">
+									<button
+										id="btnNew_AdditionalConditions" label="${c:l('label_New')}"
+										tooltiptext="${c:l('btnNew_AdditionalConditions.tooltiptext')}"
+										visible="true" />
+								</toolbar>
+								<space width="2px" />
+							</hbox>
+						</div>
+						<listbox id="AdditionalConditions"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="180px" multiple="false" sizedByContent="true"
+							span="true">
+							<listhead sizable="true">
+								<listheader id="listheader_sequence"
+									label="${c:l('listheader_SequenceNumber.label')}" />
+								<listheader id="listheader_Fields"
+									label="${c:l('listheader_Fields.label')}" />
+								<listheader id="listheader_Status"
+									label="${c:l('listheader_Status.label')}" />
+							</listhead>
+						</listbox>
+						<paging id="pagingAdditionalConditionsList"
+							height="22px" visible="false" />
+					</groupbox> -->
+				</div>
+			</center>
+			<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label
+							id="label_ReportConfigurationDialog_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>
