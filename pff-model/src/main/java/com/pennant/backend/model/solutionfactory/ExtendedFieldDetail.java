@@ -117,7 +117,8 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 	private String lovDescErroDesc;
 	private ExtendedFieldDetail befImage;
 	private LoggedInUser userDetails;
-
+	private boolean allowInRule=false;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -334,6 +335,14 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 
 	public void setLovDescTableName(String lovDescTableName) {
 		this.lovDescTableName = lovDescTableName;
+	}
+
+	public boolean isAllowInRule() {
+		return allowInRule;
+	}
+
+	public void setAllowInRule(boolean allowInRule) {
+		this.allowInRule = allowInRule;
 	}
 
 }

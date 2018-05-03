@@ -99,4 +99,6 @@ public interface ExtendedFieldDetailDAO {
 	void revertColumn(ExtendedFieldDetail efd);
 
 	List<ExtendedFieldDetail> getExtendedFieldDetailById(long moduleId, int extendedType, String type);
+
+	List<ExtendedFieldDetail> getExtendedFieldDetailForRule();
 }

@@ -68,6 +68,7 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -112,7 +113,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, " );
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, " );
-		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,Editable,");
+		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,Editable,AllowInRule,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 
@@ -229,12 +230,12 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		insertSql.append(" (ModuleId, FieldName, FieldType, FieldLength, FieldPrec, FieldLabel, " );
 		insertSql.append(" FieldMandatory, FieldConstraint, FieldSeqOrder, FieldList, " );
 		insertSql.append(" FieldDefaultValue, FieldMinValue, FieldMaxValue, FieldUnique, MultiLine,ParentTag,");
-		insertSql.append(" InputElement,Editable, ExtendedType, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" InputElement,Editable, ExtendedType,AllowInRule ,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:ModuleId, :FieldName, :FieldType, :FieldLength, :FieldPrec, " );
 		insertSql.append(" :FieldLabel, :FieldMandatory, :FieldConstraint, :FieldSeqOrder, " );
 		insertSql.append(" :FieldList, :FieldDefaultValue, :FieldMinValue, " );
-		insertSql.append(" :FieldMaxValue, :FieldUnique, :MultiLine,:ParentTag,:InputElement,:Editable,:ExtendedType, ");
+		insertSql.append(" :FieldMaxValue, :FieldUnique, :MultiLine,:ParentTag,:InputElement,:Editable,:ExtendedType, :AllowInRule, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -276,7 +277,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		updateSql.append(" FieldSeqOrder = :FieldSeqOrder, " );
 		updateSql.append(" FieldList = :FieldList, FieldDefaultValue = :FieldDefaultValue, " );
 		updateSql.append(" FieldMinValue = :FieldMinValue, FieldMaxValue = :FieldMaxValue,Editable = :Editable, " );
-		updateSql.append(" FieldUnique = :FieldUnique, MultiLine =:MultiLine ,ParentTag =:ParentTag,InputElement =:InputElement,ExtendedType =:ExtendedType,");
+		updateSql.append(" FieldUnique = :FieldUnique, MultiLine =:MultiLine ,ParentTag =:ParentTag,InputElement =:InputElement,ExtendedType =:ExtendedType, AllowInRule=:AllowInRule,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, " );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -307,7 +308,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, " );
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, " );
-		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, ");
+		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, AllowInRule,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
@@ -340,7 +341,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, " );
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, " );
-		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,");
+		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,AllowInRule,");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" lovDescModuleName,lovDescSubModuleName , ");
 		}
@@ -367,7 +368,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, " );
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, " );
-		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,  ");
+		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, AllowInRule ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From ExtendedFieldDetail");
@@ -947,7 +948,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, " );
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, " );
-		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,");
+		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,extendedFieldDetail,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
@@ -966,4 +967,31 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
+
+
+	@Override
+	public List<ExtendedFieldDetail> getExtendedFieldDetailForRule() {
+		logger.debug(Literal.ENTERING);
+		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
+		extendedFieldDetail.setAllowInRule(true);
+
+		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
+		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, " );
+		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, " );
+		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,AllowInRule,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" ,lovDescModuleName,lovDescSubModuleName ");
+		selectSql.append(" From ExtendedFieldDetail_AView");
+		selectSql.append(" Where AllowInRule=:AllowInRule order by lovDescModuleName ASC,lovDescSubModuleName ASC, ParentTag DESC ,FieldSeqOrder ASC");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
+		RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
+				ExtendedFieldDetail.class);
+
+		logger.debug(Literal.LEAVING);
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
+
 }
