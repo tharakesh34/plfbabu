@@ -341,7 +341,8 @@
 			('GSTRULE','UGST','gstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  ');		
 		</sql>
 	</changeSet>
-		<changeSet id="10" author="Kesava">
+	
+	<changeSet id="10" author="Kesava">
 		<sql>
 			delete from Rules where Rulemodule='GSTRULE' and RULECODE = 'CGST';
 			delete from Rules where Rulemodule='GSTRULE' and RULECODE = 'IGST';
@@ -349,7 +350,6 @@
 			delete from Rules where Rulemodule='GSTRULE' and RULECODE = 'UGST';
 		</sql>
 	</changeSet>
-	
 
 	<changeSet id="11" author="Kesava">
 		<insert tableName="Rules">
@@ -1068,6 +1068,26 @@
 	<changeSet author="Kesav" id="62">
 		<comment> data type modified from NUMBER(18,0) to decimal(18,0)</comment>
 		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="IGST_AMT" newDataType="decimal(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="63">
+		<comment> data type modified from NUMBER(5,2) to decimal(5,2)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="CGST_RATE" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="64">
+		<comment> data type modified from NUMBER(5,2) to decimal(5,2)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="SGST_RATE" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="65">
+		<comment> data type modified from NUMBER(5,2) to decimal(5,2)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="IGST_RATE" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="66">
+		<comment> data type modified from NUMBER(5,2) to decimal(5,2)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="UGST_RATE" newDataType="decimal(5,2)" />
 	</changeSet>
 	
 </databaseChangeLog>
