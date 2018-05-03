@@ -30,9 +30,9 @@
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
  * 04-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2018		Sai Krishna				 0.2		  While opening a menu group, close * 
+ *                                                        the siblings. Also fixed the      * 
+ *                                                        position of search menu in ZUL    * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -210,6 +210,25 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 		Treeitem treeitem = (Treeitem) event.getOrigin().getTarget();
 		treeitem.setOpen(!treeitem.isOpen());
+
+		// While opening a menu group, close the siblings.
+		if (treeitem.isOpen()) {
+			// Close previous siblings.
+			Treeitem sibling = treeitem;
+
+			while ((sibling = (sibling.getPreviousSibling() instanceof Treeitem
+					? (Treeitem) sibling.getPreviousSibling() : null)) != null) {
+				sibling.setOpen(false);
+			}
+
+			// Close next siblings.
+			sibling = treeitem;
+
+			while ((sibling = (sibling.getNextSibling() instanceof Treeitem ? (Treeitem) sibling.getNextSibling()
+					: null)) != null) {
+				sibling.setOpen(false);
+			}
+		}
 
 		logger.trace(Literal.LEAVING);
 	}
