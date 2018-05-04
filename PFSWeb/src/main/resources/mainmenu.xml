@@ -987,6 +987,9 @@
 			<menuItem id="menu_Item_Presentment"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_FinByMaturity" />
+			<menuItem id="menu_Item_PresentmentExcludeReport"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_FinByMaturity" />
 			<menuItem id="menu_Item_PendingFinances"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_PendingFinances" />

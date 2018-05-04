@@ -2095,6 +2095,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("PresentmentHeader", new ModuleMapping("PresentmentHeader", PresentmentHeader.class, new String[] { "PresentmentHeader",
 				"PresentmentHeader_AView" }, masterWF, new String[] {"Reference","PresentmentDate","PartnerBankId","FromDate","ToDate","Status","MandateType","LoanType","FinBranch","Schdate"},null, 600));
 	
+		ModuleUtil.register("PresentmentExcludeHeader", new ModuleMapping("PresentmentExcludeHeader", PresentmentHeader.class, new String[] { "PresentmentHeader",
+		"presentmentexcludehdr_view" }, masterWF, new String[] {"Id","Reference"},null, 600));
+		
 		ModuleUtil.register("AccountMapping", new ModuleMapping("AccountMapping", AccountMapping.class, new String[] { "AccountMapping",
 				"AccountMapping_AView" }, masterWF, new String[] {"Account","HostAccount"},null, 600));
 		
