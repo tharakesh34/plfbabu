@@ -140,6 +140,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.service.customer.CustomerServiceExtension;
 import com.pennanttech.pff.external.Crm;
 import com.rits.cloning.Cloner;
 
@@ -218,6 +219,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private List<FinanceMain> financeMainList;
 	@Autowired(required = false)
 	private Crm crm;
+	
+	@Autowired(required=false)
+	private CustomerServiceExtension<Customer> customerServiceExtension;
 	
 	public CustomerDetailsServiceImpl() {
 		super();
@@ -2652,7 +2656,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 
-		if (!StringUtils.equals(customerDetails.getSourceId(), PennantConstants.FINSOURCE_ID_API) && !customerDetails.isNewRecord()) {
+		if (!StringUtils.equals(customerDetails.getSourceId(), PennantConstants.FINSOURCE_ID_API) && !customer.isNewRecord()) {
 			auditDetailList.addAll(listDeletion(customerDetails, "_Temp", auditHeader.getAuditTranType()));
 			getCustomerDAO().delete(customer, "_Temp");
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
