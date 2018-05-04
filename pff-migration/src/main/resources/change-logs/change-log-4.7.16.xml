@@ -5029,8 +5029,8 @@ UNION ALL
 	<changeSet id="90" author="SubbaRao">
 		<sql>
 			delete from DedupFields where FieldName = 'Email';
-			Insert into DedupFields Values ('PanNumber', 'PAN Number', 'varchar', 'RETAILCustomer',1,1005,getDate(), 'Approved', null, null, null, null, null, 0 );
-			Insert into DedupFields Values ('CustEMail', 'Email ID', 'varchar', 'RETAILCustomer',1,1005,getDate(), 'Approved', null, null, null, null, null, 0 );
+			Insert into DedupFields Values ('PanNumber', 'PAN Number', 'varchar', 'RETAILCustomer',1,1005,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0 );
+			Insert into DedupFields Values ('CustEMail', 'Email ID', 'varchar', 'RETAILCustomer',1,1005,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0 );
 		</sql>
 	</changeSet>
 </databaseChangeLog>
