@@ -84,7 +84,7 @@ public class CustomerDedup {
 	private int appScore;
 	private String sourceSystem;
 	private String address;
-	
+	private String panNumber;
 
 
 
@@ -128,6 +128,7 @@ public class CustomerDedup {
 		excludeFields.add("titleDeedNo");
 		excludeFields.add("appScore");
 		excludeFields.add("sourceSystem");
+		excludeFields.add("panNumber");
 		return excludeFields;
 	}
 	
@@ -564,5 +565,10 @@ public class CustomerDedup {
 		this.address = address;
 	}
 
-	
+	public String getPanNumber() {
+		return panNumber;
+	}
+	public void setPanNumber(String panNumber) {
+		this.panNumber = panNumber;
+	}
 }
