@@ -265,7 +265,7 @@
 								<hbox>
 									<space spacing="2px" />
 									<uppercasebox id="branchSortCode"
-										maxlength="4" width="180px" />
+										maxlength="6" width="180px" />
 								</hbox>
 								<label
 									id="label_BranchDialog_BranchIsActive"
