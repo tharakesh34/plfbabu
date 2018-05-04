@@ -37,6 +37,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -158,10 +159,13 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		// Agency
 		this.agency.setMaxlength(50);
 		this.agency.setTextBoxWidth(120);
-		this.agency.setModuleName("TVAgencies");
+		this.agency.setModuleName("VerificationAgencies");
 		this.agency.setValueColumn("DealerName");
 		this.agency.setDescColumn("DealerCity");
 		this.agency.setValidateColumns(new String[] { "DealerName" ,"DealerCity" });
+		Filter agencyFilter[] = new Filter[1];
+		agencyFilter[0] = new Filter("DealerType", Agencies.TVAGENCY.getKey(), Filter.OP_EQUAL);
+		agency.setFilters(agencyFilter);
 		
 		logger.debug(Literal.LEAVING);
 	}
