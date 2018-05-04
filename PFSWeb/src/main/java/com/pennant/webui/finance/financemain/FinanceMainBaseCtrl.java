@@ -1652,7 +1652,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Stage Accounting details Tab Addition
 		appendStageAccountingDetailsTab(onLoad);
-
+		
+		//Credit Review Tab
+		appendCreditReviewDetailTab(onLoad);
+		
 		//Etihad Credit Bureau Detail Tab Addition
 		if (ImplementationConstants.ALLOW_CREDITBUREAU && StringUtils.isEmpty(moduleDefiner)
 				&& getUserWorkspace().isAllowed("FinanceMainDialog_showEtihadCreditBureau")) {
