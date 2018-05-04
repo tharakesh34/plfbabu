@@ -948,7 +948,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, " );
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, " );
-		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,extendedFieldDetail,");
+		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,AllowInRule,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
