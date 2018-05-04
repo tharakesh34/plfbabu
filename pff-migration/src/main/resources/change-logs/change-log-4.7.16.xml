@@ -4935,7 +4935,26 @@ UNION ALL
 	  	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 		</sql>
 	</changeSet>
-
-
+	
+	<changeSet id="87" author="vinay">
+		<comment> New view for Presentment exclude header module for report </comment>
+		<createView viewName="presentmentexcludehdr_view" replaceIfExists="true">
+			select id,reference from presentmentheader
+		</createView>
+		</changeSet>
+		<changeSet id="88" author="vinay">
+		<sql>
+		delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_PresentmentExcludeReport');
+		delete from REPORTCONFIGURATION where menuitemcode='menu_Item_PresentmentExcludeReport';
+		
+		Insert into REPORTCONFIGURATION 
+		values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Presentment Exclude Report','Presentment Exclude Report',1,'PresentmentExcludeReport','dataSource',1,'menu_Item_PresentmentExcludeReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+		
+		
+		Insert into REPORTFILTERFIELDS 
+		values ((select reportid from reportconfiguration where menuitemcode='menu_Item_PresentmentExcludeReport'),1,'Reference','LOVSEARCH','Reference','T4.reference',null,'PresentmentExcludeHeader','getReference','getReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
