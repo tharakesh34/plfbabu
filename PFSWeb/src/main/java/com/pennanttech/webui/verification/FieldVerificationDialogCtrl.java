@@ -41,9 +41,12 @@ import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.Status;
+import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
@@ -503,19 +506,24 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private void fillAgencies(ExtendedCombobox agency) {
 		logger.debug(Literal.ENTERING);
 
-		agency.setModuleName("FIVAgencies");
+		agency.setModuleName("VerificationAgencies");
 		agency.setValueColumn("DealerName");
 		agency.setValidateColumns(new String[] { "DealerName" });
-
+		Filter agencyFilter[] = new Filter[1];
+		agencyFilter[0] = new Filter("DealerType", Agencies.FIAGENCY.getKey(), Filter.OP_EQUAL);
+		agency.setFilters(agencyFilter);
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void fillReasons(ExtendedCombobox reason) {
 		logger.debug(Literal.ENTERING);
 
-		reason.setModuleName("FIWaiverReason");
+		reason.setModuleName("VerificationWaiverReason");
 		reason.setValueColumn("Code");
 		reason.setValidateColumns(new String[] { "Code" });
+		Filter reasonFilter[] = new Filter[1];
+		reasonFilter[0] = new Filter("ReasonTypecode", WaiverReasons.FIWRES.getKey(), Filter.OP_EQUAL);
+		reason.setFilters(reasonFilter);
 
 		logger.debug(Literal.LEAVING);
 	}

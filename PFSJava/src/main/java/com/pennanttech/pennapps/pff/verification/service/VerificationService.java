@@ -62,4 +62,8 @@ public interface VerificationService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	void saveLegalVerification(Verification verification);
+
+	void setLVDetails(List<Verification> verifications);
 }

@@ -87,6 +87,8 @@ public class AssetConstants {
 	public static final String 	UNIQUE_ID_FIAPPROVAL 		= "FIAPPROVAL";
 	public static final String 	UNIQUE_ID_TVINITIATION 		= "TVINIT";
 	public static final String 	UNIQUE_ID_TVAPPROVAL 		= "TVAPPROVAL";
+	public static final String 	UNIQUE_ID_LVINITIATION 		= "LVINIT";
+	public static final String 	UNIQUE_ID_LVAPPROVAL 		= "LVAPPROVAL";
 
 	public static final int 	DEFAULT_ITEMNO 			= 1;
 	

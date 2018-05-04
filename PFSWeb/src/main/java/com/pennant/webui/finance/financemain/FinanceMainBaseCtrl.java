@@ -301,12 +301,14 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.Decision;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
+import com.pennanttech.webui.verification.LVerificationCtrl;
 import com.pennanttech.webui.verification.TVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
 
@@ -781,6 +783,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient OverdraftScheduleDetailDialogCtrl		overdraftScheduleDetailDialogCtrl;
 	private transient FieldVerificationDialogCtrl			fieldVerificationDialogCtrl;
 	private transient TVerificationDialogCtrl				tVerificationDialogCtrl;
+	private transient LVerificationCtrl							lVerificationCtrl;
 	
 	private transient FinBasicDetailsCtrl					finBasicDetailsCtrl;
 	private transient CustomerInterfaceService				customerInterfaceService;
@@ -1533,7 +1536,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//TV Approval Tab
 		appendTVApprovalTab(onLoad);
 		
-
+		//LV Initiation Tab
+		appendLVInitiationTab(onLoad);
+				
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
 
 			//Step Policy Details
@@ -16538,6 +16543,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.tVerificationDialogCtrl = tVerificationDialogCtrl;
 	}
 
+	public LVerificationCtrl getLegalVerificationListCtrl() {
+		return lVerificationCtrl;
+	}
+
+	public void setLegalVerificationListCtrl(LVerificationCtrl lVerificationCtrl) {
+		this.lVerificationCtrl = lVerificationCtrl;
+	}
+
 	/**
 	 * Method for Rendering FIV Initiation Data in finance
 	 */
@@ -16598,7 +16611,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 	
-	private boolean isAddressChanged(FinanceDetail aFinanceDetail, Verification verification,boolean jointAcc) {
+	private boolean isAddressChanged(FinanceDetail aFinanceDetail, Verification verification, boolean jointAcc) {
 		List<CustomerDetails> screenCustomers = new ArrayList<>();
 		screenCustomers.add(aFinanceDetail.getCustomerDetails());
 		if (verification.getCustomerDetailsList().isEmpty() && !screenCustomers.isEmpty()) {
@@ -16620,12 +16633,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						return true;
 					} else {
 						for (CustomerAddres screenaddres : screenCustomer.getAddressList()) {
-							for (CustomerAddres oldAddres :savedcustomer .getAddressList()) {
-								if ((oldAddres.getCustAddrType().equals(screenaddres.getCustAddrType())
-										&& (!StringUtils.isEmpty(screenaddres.getRecordType()) && screenaddres
-												.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)))
+							for (CustomerAddres oldAddres : savedcustomer.getAddressList()) {
+								if ((oldAddres.getCustAddrType().equals(screenaddres.getCustAddrType()) && (!StringUtils
+										.isEmpty(screenaddres.getRecordType())
+										&& (screenaddres.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
+												|| screenaddres.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN))))
 										|| (oldAddres.getCustAddrType().equals(screenaddres.getCustAddrType())
-												&& fieldInvestigationService.isAddressChanged(screenaddres, oldAddres))) {
+												&& fieldInvestigationService.isAddressChanged(screenaddres,oldAddres))) {
 									return true;
 								}
 							}
@@ -16719,7 +16733,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		for (CollateralSetup screenCollateral : screenCollaterals) {
 			for (Verification savedVerification : savedVerifications) {
 				if (StringUtils.isNotEmpty(screenCollateral.getRecordType())
-						&& screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+						&& (screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN) 
+						|| screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL))) {
 					return true;
 				}
 				if (screenCollateral.getCollateralRef().equals(savedVerification.getReferenceFor())) {
@@ -16734,11 +16749,44 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return false;
 	}
 	private void addNewTvVerification(FinanceDetail aFinanceDetail) {
-		financeDetailService.setTvInitVerification(aFinanceDetail);
+		financeDetailService.setInitVerification(aFinanceDetail,VerificationType.TV);
 		financeDetail.setTvVerification(aFinanceDetail.getTvVerification());
 		tVerificationDialogCtrl.renderTechnicalVerificationList(financeDetail.getTvVerification());
 		getTab(AssetConstants.UNIQUE_ID_TVINITIATION).setSelected(true);
 		MessageUtil.showMessage("Collateral details are added or changed, please take respective actions");
+	}
+
+	/**
+	 * Method for Rendering TV Initiation Data in finance
+	 */
+	protected void appendLVInitiationTab(boolean onLoadProcess) {
+		logger.debug(Literal.ENTERING);
+		boolean createTab = false;
+		if (!getFinanceDetail().isLvInitTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_LVINITIATION) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_LVINITIATION, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_LVINITIATION);
+		}
+		if (getFinanceDetail().isLvInitTab() && !onLoadProcess) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			if (financeDetail.getLvVerification() == null) {
+				financeDetail.setLvVerification(new Verification());
+			}
+			map.put("financeMainBaseCtrl", this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("verification", financeDetail.getLvVerification());
+			map.put("InitType", true);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVInitiation.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_LVINITIATION), map);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setCustomerBankInfoService(CustomerBankInfoService customerBankInfoService) {

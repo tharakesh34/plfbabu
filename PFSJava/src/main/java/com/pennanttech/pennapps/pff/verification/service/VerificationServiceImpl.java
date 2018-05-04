@@ -70,6 +70,8 @@ import com.pennanttech.pennapps.pff.verification.Status;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
 import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
+import com.pennanttech.pennapps.pff.verification.model.LVDocument;
+import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 
@@ -83,11 +85,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private AuditHeaderDAO auditHeaderDAO;
 	@Autowired
 	private VerificationDAO verificationDAO;
-
 	@Autowired
 	private FieldInvestigationService fieldInvestigationService;
 	@Autowired
 	private TechnicalVerificationService technicalVerificationService;
+	@Autowired
+	private LegalVerificationService legalVerificationService;
+	
 
 	public List<AuditDetail> saveOrUpdate(Verification verification, String tableType, String auditTranType,
 			boolean isInitTab) {
@@ -109,6 +113,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			collateralSetupList = verification.getCollateralSetupList();
 			idList = technicalVerificationService.getTechnicalVerificaationIds(verification.getVerifications(),
 					verification.getKeyReference());
+		} else if (verificationType == VerificationType.LV) {
+			idList = legalVerificationService.getLegalVerficationIds(verification.getVerifications(),
+					verification.getKeyReference());
 		}
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
@@ -126,7 +133,6 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			item.setNextTaskId(verification.getNextTaskId());
 			item.setRecordStatus(verification.getRecordStatus());
 			item.setWorkflowId(verification.getWorkflowId());
-			item.setLastMntBy(verification.getLastMntBy());
 			item.setCreatedBy(verification.getLastMntBy());
 			if (StringUtils.isEmpty(item.getRecordType())) {
 				item.setRecordType(verification.getRecordType());
@@ -142,17 +148,20 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				} else {
 					verificationDAO.update(item, TableType.MAIN_TAB);
 				}
-
-				if (!idList.contains(item.getId()) && engine.compareTo(verification.getTaskId(),
+				
+				if (engine.compareTo(verification.getTaskId(),
 						verification.getNextTaskId().replace(";", "")) == Flow.SUCCESSOR) {
-
-					if (verificationType == VerificationType.FI) {
-						saveFI(customerDetailsList, item);
-					} else if (verificationType == VerificationType.TV) {
-						saveTV(collateralSetupList, item);
+					if (!idList.contains(item.getId())) {
+						if (verificationType == VerificationType.FI) {
+							saveFI(customerDetailsList, item);
+						} else if (verificationType == VerificationType.TV) {
+							saveTV(collateralSetupList, item);
+						} else if (verificationType == VerificationType.LV) {
+							saveLV(item);
+						}
 					}
-
 				}
+				
 			} else {
 				if (item.getDecision() == Decision.RE_INITIATE.getKey()) {
 					item.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
@@ -182,18 +191,46 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 						saveFI(customerDetailsList, item);
 					} else if (verificationType == VerificationType.TV) {
 						saveTV(collateralSetupList, item);
+					} else if (verificationType == VerificationType.LV) {
+						saveLV(item);
 					}
 				} else {
 					verificationDAO.update(item, TableType.MAIN_TAB);
 				}
 			}
 
-			auditDetails.add(new AuditDetail(auditTranType, i++, fields[0], fields[1], item.getBefImage(), item));
+			auditDetails.add(new AuditDetail(auditTranType, ++i, fields[0], fields[1], item.getBefImage(), item));
 		}
 
 		return auditDetails;
 	}
+	
+	@Override
+	public void saveLegalVerification(Verification verification) {
+		Long verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getReferenceFor(), VerificationType.LV.getKey());
+		if (verificationId != null) {
+			verification.setId(verificationId);
+			verificationDAO.update(verification, TableType.MAIN_TAB);
+		} else {
+			verificationDAO.save(verification, TableType.MAIN_TAB);
+		}
 
+		//delete documents
+		legalVerificationService.deleteDocuments(verification.getReferenceFor(), TableType.MAIN_TAB);
+
+		//Legal verification
+		long id = legalVerificationService.save(verification, TableType.MAIN_TAB);
+
+		//LV Documents
+		for (LVDocument lvDocument : verification.getLvDocuments()) {
+			lvDocument.setLvId(id);
+			lvDocument.setVerificationId(verification.getId());
+		}
+
+		legalVerificationService.saveDocuments(verification.getLvDocuments(), TableType.MAIN_TAB);
+	}
+	
+	
 	private void saveFI(List<CustomerDetails> customerDetailsList, Verification item) {
 		if (item.getFieldInvestigation() == null) {
 			for (CustomerDetails customerDetails : customerDetailsList) {
@@ -216,6 +253,11 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			item.getTechnicalVerification().setLastMntOn(item.getLastMntOn());
 			technicalVerificationService.save(item.getTechnicalVerification(), TableType.TEMP_TAB);
 		}
+	}
+	
+	private void saveLV(Verification item) {
+		legalVerificationService.save(item, TableType.TEMP_TAB);
+		legalVerificationService.saveDocuments(item.getLegalVerification().getLvDocuments(), TableType.TEMP_TAB);
 	}
 
 	/**
@@ -401,12 +443,36 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	@Override
 	public List<Verification> getVerifications(String keyReference, int verificationType) {
 		List<Verification> verifications = verificationDAO.getVeriFications(keyReference, verificationType);
+		
+		if (VerificationType.LV.getKey() != verificationType) {
+			setDecision(verificationType, verifications);
+		}
+				
+		return verifications;
+	}
+
+	@Override
+	public void setLVDetails(List<Verification> verifications) {
+		LegalVerification lv;
+		for (Verification verification : verifications) {
+			lv = legalVerificationService.getLVFromStage(verification.getId());
+
+			if (lv != null) {
+				lv.setLvDocuments(legalVerificationService.getLVDocumentsFromStage(verification.getId()));
+			}
+			
+			verification.setLegalVerification(lv);
+		}
+	}
+
+	private void setDecision(int verificationType, List<Verification> verifications) {
+
 		for (Verification verification : verifications) {
 			if (verification.getStatus() == Status.POSITIVE.getKey()
 					|| verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {
 				verification.setDecision(Decision.APPROVE.getKey());
 			}
 		}
-		return verifications;
+
 	}
 }

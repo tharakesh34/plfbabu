@@ -76,7 +76,11 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		} else if (verificationType == VerificationType.TV.getKey()) {
 			parameterSource.addValue("dealerType", Agencies.TVAGENCY.getKey());
 			parameterSource.addValue("reasontypecode", WaiverReasons.TVWRES.getKey());
+		}else if (verificationType == VerificationType.LV.getKey()) {
+			parameterSource.addValue("dealerType", Agencies.LVAGENCY.getKey());
+			parameterSource.addValue("reasontypecode", WaiverReasons.LVWRES.getKey());
 		}
+		
 		parameterSource.addValue("keyReference", keyReference);
 		parameterSource.addValue("verificationType", verificationType);
 
@@ -216,6 +220,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 	}
 
 	public void updateVerifiaction(long verificationId, Date verificationDate, int status) {
+		logger.debug(Literal.ENTERING);
+		
 		StringBuilder sql = new StringBuilder("update verifications");
 		sql.append(" set verificationdate = :verificationdate, status = :status ");
 		sql.append(" where id = :id ");
@@ -235,6 +241,29 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public Long getVerificationIdByReferenceFor(String referenceFor, int verificationType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("select id from verifications");
+		sql.append(" where referenceFor=:referenceFor and verificationType=:verificationType");
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("referenceFor", referenceFor);
+		paramMap.addValue("verificationType", verificationType);
+		try {
+			Long verificationId = jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
+			if (verificationId != null) {
+				return verificationId;
+			}
+		} catch (EmptyResultDataAccessException e) {
+
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 }

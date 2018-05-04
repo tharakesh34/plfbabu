@@ -658,9 +658,9 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		List<Long> fiIds = new ArrayList<>();
 		List<FieldInvestigation> fiList = fieldInvestigationDAO.getList(keyRef);
 		for (FieldInvestigation fieldInvestigation : fiList) {
-			for (Verification Verification : verifications) {
-				if (fieldInvestigation.getVerificationId() == Verification.getId()) {
-					fiIds.add(Verification.getId());
+			for (Verification verification : verifications) {
+				if (fieldInvestigation.getVerificationId() == verification.getId()) {
+					fiIds.add(verification.getId());
 				}
 			}
 

@@ -24,7 +24,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
- * Model class for the <b>Verification table</b>.<br>
+ * Model class for the <b>Verification table</b>
  *
  */
 public class Verification extends AbstractWorkflowEntity {
@@ -58,6 +58,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private String customerName;
 	private String agencyName;
 	private String reasonName;
+	private List<LVDocument> lvDocuments=new ArrayList<>();
 
 	private List<Verification> verifications = new ArrayList<>();
 	private FieldInvestigation fieldInvestigation;
@@ -67,6 +68,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private String reInitRemarks;
 	private List<CollateralSetup> collateralSetupList = new ArrayList<>();
 	private TechnicalVerification technicalVerification;
+	private LegalVerification legalVerification;
 
 	public Verification() {
 		super();
@@ -91,6 +93,8 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("reInitRemarks");
 		excludeFields.add("technicalVerification");
 		excludeFields.add("collaterals");
+		excludeFields.add("lvDocuments");
+		excludeFields.add("legalVerification");
 		return excludeFields;
 	}
 
@@ -380,6 +384,22 @@ public class Verification extends AbstractWorkflowEntity {
 
 	public void setTechnicalVerification(TechnicalVerification technicalVerification) {
 		this.technicalVerification = technicalVerification;
+	}
+
+	public List<LVDocument> getLvDocuments() {
+		return lvDocuments;
+	}
+
+	public void setLvDocuments(List<LVDocument> lvDocuments) {
+		this.lvDocuments = lvDocuments;
+	}
+
+	public LegalVerification getLegalVerification() {
+		return legalVerification;
+	}
+
+	public void setLegalVerification(LegalVerification legalVerification) {
+		this.legalVerification = legalVerification;
 	}
 
 }

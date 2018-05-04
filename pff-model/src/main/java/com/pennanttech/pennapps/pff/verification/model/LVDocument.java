@@ -11,7 +11,11 @@
  */
 package com.pennanttech.pennapps.pff.verification.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>verification_lv_details table</b>
@@ -20,9 +24,10 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 public class LVDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	private long lvId = Long.MIN_VALUE;
 	private long verificationId;
 	private int seqNo;
-	private long documentId;
+	private Long documentId;
 	private String remarks;
 
 	private String code;
@@ -31,9 +36,34 @@ public class LVDocument extends AbstractWorkflowEntity {
 	private Long docRefId;
 	private String docUri;
 	private String DocName;
+	private boolean newRecord = false;
+	private LoggedInUser userDetails;
+	private Verification befImage;
 
 	public LVDocument() {
 		super();
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("code");
+		excludeFields.add("lvReq");
+		excludeFields.add("docType");
+		excludeFields.add("docRefId");
+		excludeFields.add("docUri");
+		excludeFields.add("DocName");
+		return excludeFields;
+	}
+	public boolean isNew() {
+		return isNewRecord();
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
 	}
 
 	public long getVerificationId() {
@@ -52,11 +82,11 @@ public class LVDocument extends AbstractWorkflowEntity {
 		this.seqNo = seqNo;
 	}
 
-	public long getDocumentId() {
+	public Long getDocumentId() {
 		return documentId;
 	}
 
-	public void setDocumentId(long documentId) {
+	public void setDocumentId(Long documentId) {
 		this.documentId = documentId;
 	}
 
@@ -114,6 +144,30 @@ public class LVDocument extends AbstractWorkflowEntity {
 
 	public void setDocName(String docName) {
 		DocName = docName;
+	}
+
+	public long getLvId() {
+		return lvId;
+	}
+
+	public void setLvId(long lvId) {
+		this.lvId = lvId;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public Verification getBefImage() {
+		return befImage;
+	}
+
+	public void setBefImage(Verification befImage) {
+		this.befImage = befImage;
 	}
 
 }

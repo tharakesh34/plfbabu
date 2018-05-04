@@ -14,6 +14,7 @@ import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
+import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -25,13 +26,18 @@ import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
+import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.LegalVerificationDAO;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
+import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -593,5 +599,78 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 					customerDocumentDAO);
 		}
 		return documentValidation;
+	}
+	
+	@Override
+	public long save(Verification verification, TableType tableType) {
+		setLvFields(verification);
+		return Long.parseLong(legalVerificationDAO.save(verification.getLegalVerification(), tableType));
+	}
+	
+	private void setLvFields(Verification verification) {
+		
+		LegalVerification lv = verification.getLegalVerification();
+		
+		if (lv == null) {
+			lv = new LegalVerification();
+			verification.setLegalVerification(lv);
+		}
+				
+		lv.setVerificationId(verification.getId());
+		lv.setVersion(1);
+		lv.setLastMntBy(verification.getLastMntBy());
+		lv.setLastMntOn(verification.getLastMntOn());
+		setAudit(lv);
+		
+	}
+	
+	private void setAudit(LegalVerification lv) {
+		String workFlowType = ModuleUtil.getWorkflowType("LegalVerification");
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workFlowType);
+		WorkflowEngine engine = new WorkflowEngine(
+				WorkFlowUtil.getWorkflow(workFlowDetails.getWorkFlowId()).getWorkFlowXml());
+
+		lv.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
+		lv.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		lv.setWorkflowId(workFlowDetails.getWorkflowId());
+		lv.setRoleCode(workFlowDetails.getFirstTaskOwner());
+		lv.setNextRoleCode(workFlowDetails.getFirstTaskOwner());
+		lv.setTaskId(engine.getUserTaskId(lv.getRoleCode()));
+		lv.setNextTaskId(engine.getUserTaskId(lv.getNextRoleCode()) + ";");
+	}
+
+	@Override
+	public void saveDocuments(List<LVDocument> lvDocuments, TableType tableType) {
+		legalVerificationDAO.saveDocuments(lvDocuments, tableType);
+	}
+
+	@Override
+	public void deleteDocuments(String reference, TableType tableType) {
+		legalVerificationDAO.deleteDocuments(reference, tableType);
+	}
+
+	@Override
+	public LegalVerification getLVFromStage(long verificationId) {
+		return legalVerificationDAO.getLVFromStage(verificationId);
+	}
+	
+	@Override
+	public List<LVDocument> getLVDocumentsFromStage(long verificationId) {
+		return legalVerificationDAO.getLVDocumentsFromStage(verificationId);
+	}
+	
+	@Override
+	public List<Long> getLegalVerficationIds(List<Verification> verifications, String keyRef) {
+		List<Long> fiIds = new ArrayList<>();
+		List<LegalVerification> fiList = legalVerificationDAO.getList(keyRef);
+		for (LegalVerification lv : fiList) {
+			for (Verification verification : verifications) {
+				if (lv.getVerificationId() == verification.getId()) {
+					fiIds.add(verification.getId());
+				}
+			}
+
+		}
+		return fiIds;
 	}
 }

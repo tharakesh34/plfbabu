@@ -18,7 +18,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class LegalVerification extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-
+	
+	private long id;
 	private String cif;
 	private String keyReference;
 	private String collateralType;
@@ -41,6 +42,7 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	private Date createdOn;
 
 	private List<DocumentDetails> documents = null;
+	private List<LVDocument> lvDocuments = null;
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
@@ -75,20 +77,19 @@ public class LegalVerification extends AbstractWorkflowEntity {
 		excludeFields.add("agency");
 		excludeFields.add("agencyName");
 		excludeFields.add("createdOn");
-		excludeFields.add("reasonDesc");excludeFields.add("reasonDesc");
 		excludeFields.add("reasonDesc");
-		excludeFields.add("reasonDesc");
-		excludeFields.add("reasonDesc");
-		excludeFields.add("reasonDesc");
+		excludeFields.add("documents");
+		excludeFields.add("lvDocuments");
+
 		return excludeFields;
 	}
 
 	public long getId() {
-		return verificationId;
+		return id;
 	}
 
 	public void setId(long id) {
-		this.verificationId = id;
+		this.id = id;
 	}
 
 	public boolean isNew() {
@@ -282,7 +283,15 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	public void setDocuments(List<DocumentDetails> documents) {
 		this.documents = documents;
 	}
-	
+		
+	public List<LVDocument> getLvDocuments() {
+		return lvDocuments;
+	}
+
+	public void setLvDocuments(List<LVDocument> lvDocuments) {
+		this.lvDocuments = lvDocuments;
+	}
+
 	public ExtendedFieldHeader getExtendedFieldHeader() {
 		return extendedFieldHeader;
 	}
