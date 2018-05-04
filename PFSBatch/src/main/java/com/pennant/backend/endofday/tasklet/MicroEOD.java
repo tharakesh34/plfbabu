@@ -31,7 +31,8 @@
  ********************************************************************************************
  * 26-04-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 04-05-2018		Vinay					 0.2         As discuss with Satya Naga Prasad  *
+ * 														 Micro EOD code changed             *  
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -57,7 +58,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -79,7 +79,8 @@ public class MicroEOD implements Tasklet {
 	private PlatformTransactionManager	transactionManager;
 	private DataSource					dataSource;
 
-	private static final String			customerSQL	= "Select CustID from CustomerQueuing  Where ThreadID = ? and Progress= ?";
+	// ##_0.2
+	private static final String			customerSQL	= "Select CustID, LoanExist, LimitRebuild from CustomerQueuing  Where ThreadID = ? and Progress= ?";
 
 	public MicroEOD() {
 
