@@ -394,4 +394,9 @@
 			update adtextendedfielddetail set allowInRule = 0 where allowInRule is null;
 		</sql>
 	</changeSet>
+	 <changeSet id="21" author="srikanth">
+		<addColumn tableName="adtfinancedeviations">
+			<column name="markDeleted" type="boolean"/>
+		</addColumn>
+	</changeSet>
 	</databaseChangeLog>
