@@ -37,6 +37,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -149,10 +150,13 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		// Agency
 		this.agency.setMaxlength(50);
 		this.agency.setTextBoxWidth(120);
-		this.agency.setModuleName("FIVAgencies");
+		this.agency.setModuleName("VerificationAgencies");
 		this.agency.setValueColumn("DealerName");
 		this.agency.setDescColumn("DealerCity");
 		this.agency.setValidateColumns(new String[] { "DealerName" ,"DealerCity" });
+		Filter agencyFilter[] = new Filter[1];
+		agencyFilter[0] = new Filter("DealerType", Agencies.FIAGENCY.getKey(), Filter.OP_EQUAL);
+		agency.setFilters(agencyFilter);
 		
 		logger.debug(Literal.LEAVING);
 	}
