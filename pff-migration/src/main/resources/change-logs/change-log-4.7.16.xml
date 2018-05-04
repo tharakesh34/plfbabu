@@ -5033,5 +5033,15 @@ UNION ALL
 			Insert into DedupFields Values ('CustEMail', 'Email ID', 'varchar', 'RETAILCustomer',1,1005,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0 );
 		</sql>
 	</changeSet>
+	 <changeSet id="91" author="srikanth">
+		<addColumn tableName="financedeviations_temp">
+			<column name="markDeleted" type="boolean"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="92" author="srikanth">
+		<addColumn tableName="financedeviations">
+			<column name="markDeleted" type="boolean"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
 	
