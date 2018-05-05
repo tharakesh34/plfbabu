@@ -104,6 +104,7 @@ import com.pennant.backend.model.rulefactory.BMTRBFldCriterias;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Designation;
@@ -128,6 +129,11 @@ import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class PennantAppUtil {
+	private static enum FieldType {
+		TEXT, UPPERTEXT, STATICCOMBO, MULTISTATICCOMBO, EXTENDEDCOMBO, MULTIEXTENDEDCOMBO, DATE, DATETIME, 
+		TIME, INT, LONG, ACTRATE, DECIMAL, CURRENCY, RADIO, PERCENTAGE, BOOLEAN, MULTILINETEXT, 
+		ACCOUNT, FREQUENCY, BASERATE, ADDRESS, PHONE, LISTFIELD
+	}
 	
 	public static ArrayList<ValueLabel> getProductByCtg(Filter[] filters) {
 		ArrayList<ValueLabel> productList = new ArrayList<ValueLabel>();
@@ -896,6 +902,83 @@ public class PennantAppUtil {
 
 		rbFieldDetailsList = pagedListService.getBySearchObject(searchObject);
 		return rbFieldDetailsList;
+	}
+	
+	
+	/* This Method for getting the GlobalModulesList
+	 * 
+	 * @return CSSParameter
+	 */
+	public static List<RBFieldDetail> getExtendedFieldForRules(List<RBFieldDetail> rbFieldDetailsList ) {
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		
+		JdbcSearchObject<ExtendedFieldDetail> searchObject = new JdbcSearchObject<ExtendedFieldDetail>(ExtendedFieldDetail.class);
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("AllowInRule", true, Filter.OP_EQUAL);
+		searchObject.addFilters(filters);
+		searchObject.addSort("lovDescModuleName", true);
+		searchObject.addSort("lovDescSubModuleName", true);
+		searchObject.addSort("ParentTag", false);
+		searchObject.addSort("FieldSeqOrder", true);
+		searchObject.addTabelName("ExtendedFieldDetail_AView");
+		List<ExtendedFieldDetail> extendedFieldDetails = pagedListService.getBySearchObject(searchObject);
+
+		if(rbFieldDetailsList==null){
+			rbFieldDetailsList = new ArrayList<RBFieldDetail>();
+		}
+		for (ExtendedFieldDetail fieldDetail: extendedFieldDetails) {
+			RBFieldDetail rbFieldDetail= new RBFieldDetail();
+			
+			rbFieldDetail.setRbFldName(fieldDetail.getFieldName());
+			rbFieldDetail.setRbFldDesc(fieldDetail.getFieldLabel());
+			
+			rbFieldDetail.setRbFldType(getExternalFieldType(fieldDetail.getFieldType())); 
+			rbFieldDetail.setRbFldTableName("");
+			rbFieldDetailsList.add(rbFieldDetail);
+		}
+		
+		return rbFieldDetailsList;
+	}
+
+	private static String getExternalFieldType(String fieldType){
+		
+		switch (FieldType.valueOf(fieldType)) {
+		case TEXT:
+		case UPPERTEXT:
+		case MULTILINETEXT:
+		case EXTENDEDCOMBO:
+		case STATICCOMBO:
+		case MULTISTATICCOMBO:
+		case MULTIEXTENDEDCOMBO:
+		case LISTFIELD:
+		case RADIO:
+		case ACCOUNT:
+		case FREQUENCY:
+		case ADDRESS:
+		case PHONE:
+			return "nvarchar";
+
+		case BOOLEAN:
+			return "nchar";
+
+		case ACTRATE:
+		case DECIMAL:
+		case PERCENTAGE:
+		case CURRENCY:
+		case BASERATE:
+			return "decimal";
+		case INT:
+			return "int";
+		case LONG:
+			return "long";
+		case DATE:
+		case DATETIME:
+		case TIME:
+			return "date";
+		default:
+			return "nvarchar";
+		}
+		
 	}
 	
 	public static ArrayList<ValueLabel> getGenderCodes() {
