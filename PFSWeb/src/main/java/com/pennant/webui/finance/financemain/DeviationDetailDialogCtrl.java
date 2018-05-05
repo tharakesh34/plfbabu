@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -22,14 +21,13 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
-import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.util.DeviationConstants;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.delegationdeviation.DeviationRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -185,7 +183,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		logger.debug("Entering");
 		try {
 
-			int height = (borderLayoutHeight - 240) / 2;
+			int height = ((borderLayoutHeight - 240) / 2) - 10;
 			this.listBoxAutoDeviations.setHeight(height + "px");
 			this.listBoxManualDeviations.setHeight(height + "px");
 
@@ -325,20 +323,30 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	}
 
 	public void onManualDeviationItemDoubleClicked(Event event) throws Exception {
-		Listitem listitem = this.listBoxManualDeviations.getSelectedItem();
+		Listitem listitem = listBoxManualDeviations.getSelectedItem();
+
 		if (listitem != null && listitem.getAttribute("data") != null) {
-			final FinanceDeviations aFinDeviations = (FinanceDeviations) listitem.getAttribute("data");
-			if (!DeviationHelper.isApproved(aFinDeviations)
-					&& !StringUtils.equals(aFinDeviations.getRecordType(), PennantConstants.RCD_DEL)) {
-				aFinDeviations.setNewRecord(false);
-				final HashMap<String, Object> map = new HashMap<String, Object>();
-				map.put("financeDeviations", aFinDeviations);
-				doshowDialog(map, false);
-			} else {
-				MessageUtil.showMessage(Labels.getLabel("common_NoMaintainance"));
+			//### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
+
+			FinanceDeviations deviation = (FinanceDeviations) listitem.getAttribute("data");
+			deviation.setNewRecord(false);
+
+			// Check whether authority can be changed.
+			String initDelegationRole = "";
+
+			for (FinanceDeviations item : getFinanceDetail().getManualDeviations()) {
+				if (deviation.getDeviationCode().equals(item.getDeviationCode())) {
+					initDelegationRole = item.getDelegationRole();
+				}
 			}
 
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("financeDeviations", deviation);
+			map.put("InitDelegationRole", initDelegationRole);
+
+			doshowDialog(map, false);
 		}
+		//### 05-05-2018- End- story #361(tuleap server) Manual Deviations
 
 	}
 

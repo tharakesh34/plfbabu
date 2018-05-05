@@ -4296,6 +4296,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (serviceTasks != null && !serviceTasks.isEmpty()) {
 			for(ServiceTask task: serviceTasks) {
 				auditHeader = execute(auditHeader, task, role, usrAction, engine);
+
+				// Check whether to proceed with next service tasks.
+				auditHeader = nextProcess(auditHeader);
+
+				if (!auditHeader.isNextProcess()) {
+					break;
+				}
+
 				finishedTasks = task.getOperation()+";"+finishedTasks;
 				serviceTasks = getRemainingServiceTasks(serviceTasks, engine, taskId, afinanceMain, finishedTasks);
 				if(serviceTasks.isEmpty()) {

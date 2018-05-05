@@ -43,6 +43,7 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 	private long				severity;
 	private String				severityCode;
 	private String				severityName;
+	private boolean 			markDeleted;
 
 	public FinanceDeviations() {
 	}
@@ -307,5 +308,13 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public boolean isMarkDeleted() {
+		return markDeleted;
+	}
+
+	public void setMarkDeleted(boolean markDeleted) {
+		this.markDeleted = markDeleted;
 	}
 }

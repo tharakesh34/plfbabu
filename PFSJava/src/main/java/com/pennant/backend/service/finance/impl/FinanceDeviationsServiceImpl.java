@@ -207,6 +207,13 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
 		//if status is approved then processApproval
 		for (FinanceDeviations financeDeviations : newlist) {
+			if (financeDeviations.isMarkDeleted()) {
+				deviationDetailsDAO.updateMarkDeleted(financeDeviations.getDeviationId(),
+						financeDeviations.getFinReference());
+				financeDeviations.setBefImage(financeDeviations);
+				auditDetails.add(getFinDeviationsAudit(financeDeviations, ++count, PennantConstants.TRAN_DEL));
+				continue;
+			}
 			
 			if (!(StringUtils.isEmpty(financeDeviations.getApprovalStatus())
 					|| StringUtils.equals(financeDeviations.getApprovalStatus(), PennantConstants.List_Select))) {
@@ -353,29 +360,11 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		return null;
 	}
 
-	/**
-	 * @param afinDeviation
-	 * @param list
-	 * @return
-	 */
-	private boolean foundApprovedRecord(FinanceDeviations afinDeviation, List<FinanceDeviations> list) {
-
-		for (FinanceDeviations finDeviation : list) {
-			String module = afinDeviation.getModule();
-			String deviationCode = afinDeviation.getDeviationCode();
-			if (module.equals(finDeviation.getModule()) && deviationCode.equals(finDeviation.getDeviationCode())
-					&& StringUtils.trimToEmpty(finDeviation.getApprovalStatus())
-							.equals(PennantConstants.RCD_STATUS_APPROVED)) {
-				return true;
-			}
-		}
-		return false;
-	}
 	//### 01-05-2018 - story #361(tuleap server) Manual Deviations
 	@Override
 	public AuditHeader doCheckDeviationApproval(AuditHeader auditHeader) {
 		AuditDetail auditDetail = auditHeader.getAuditDetail();
-		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
 
 		// Get the list of finance deviations that were finalized.
 		List<FinanceDeviations> deviations = deviationDetailsDAO
@@ -390,9 +379,11 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 
 		// Check whether any deviations were not approved and add the error.
 		for (FinanceDeviations deviation : deviations) {
-			if (!StringUtils.equalsIgnoreCase(deviation.getApprovalStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
+			if (!StringUtils.equalsIgnoreCase(deviation.getApprovalStatus(), PennantConstants.RCD_STATUS_APPROVED)
+					&& !deviation.isMarkDeleted()) {
 				auditDetail.setErrorDetail(new ErrorDetail("30901", null));
 				auditHeader.setAuditDetail(auditDetail);
+				auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 				break;
 			}

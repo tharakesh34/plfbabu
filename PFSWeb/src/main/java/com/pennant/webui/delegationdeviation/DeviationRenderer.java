@@ -20,11 +20,11 @@ import org.zkoss.zul.Listitem;
 
 import com.pennant.UserWorkspace;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ManualDeviation;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
-import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -190,23 +190,38 @@ public class DeviationRenderer {
 		logger.debug("Entering");
 
 		listbox.getItems().clear();
+		//### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
+
+		// Address soft delete of approved / deleted manual deviations.
+		for (FinanceDeviations deviation : finDeviations) {
+			for (FinanceDeviations apprDeviation : aprvdDeviations) {
+				if (deviation.getDeviationId() == apprDeviation.getDeviationId()) {
+					aprvdDeviations.remove(apprDeviation);
+					deviation.setMarkDeleted(true);
+
+					break;
+				}
+			}
+		}
+		//### 05-05-2018- End- story #361(tuleap server) Manual Deviations
+
 		List<FinanceDeviations> renderList = deviationHelper.mergeList(finDeviations, aprvdDeviations);
 
 		if (renderList == null || renderList.isEmpty()) {
 			return;
 		}
 
-		for (FinanceDeviations deviationDetail : renderList) {
+		for (FinanceDeviations deviation : renderList) {
 			//to show other deviation which in pending queue but should not be editable
 			boolean pending = false;
 			boolean approved = false;
 
-			if (deviationDetail.isApproved()) {
+			if (deviation.isApproved()) {
 				approved = true;
 			}
 
 			if (DeviationConstants.MULTIPLE_APPROVAL && !approved) {
-				if (!userWorkspace.getUserRoles().contains(deviationDetail.getDelegationRole())) {
+				if (!userWorkspace.getUserRoles().contains(deviation.getDelegationRole())) {
 					pending = true;
 				}
 			}
@@ -214,35 +229,44 @@ public class DeviationRenderer {
 			boolean devNotallowed = false;
 			Listcell listcell;
 
-			if (StringUtils.isEmpty(deviationDetail.getDelegationRole())) {
+			if (StringUtils.isEmpty(deviation.getDelegationRole())) {
 				devNotallowed = true;
 			}
 
 			Listitem listitem = new Listitem();
 
 			//deviation code
-			String deviationCodedesc = deviationDetail.getDeviationCodeDesc();
+			String deviationCodedesc = deviation.getDeviationCodeName() + " - " + deviation.getDeviationCodeDesc();
 			listcell = getNewListCell(deviationCodedesc, devNotallowed);
 			listitem.appendChild(listcell);
 			//Severity
-			String Severity = deviationDetail.getSeverityName();
+			String Severity = deviation.getSeverityName();
 			listcell = getNewListCell(Severity, devNotallowed);
 			listitem.appendChild(listcell);
+
+			//User role
+			listcell = getNewListCell(deviation.getUserRole(), devNotallowed);
+			listitem.appendChild(listcell);
+
 			//DeviationUserId
-			listcell = getNewListCell(deviationDetail.getDeviationUserId(), devNotallowed);
+			listcell = getNewListCell(deviation.getDeviationUserId(), devNotallowed);
 			listitem.appendChild(listcell);
 			//DeviationDate
-			listcell = getNewListCell(DateUtility.formatToShortDate(deviationDetail.getDeviationDate()), devNotallowed);
+			listcell = getNewListCell(DateUtility.formatToShortDate(deviation.getDeviationDate()), devNotallowed);
 			listitem.appendChild(listcell);
 			//DelegationRole
 
 			listcell = new Listcell(
-					PennantStaticListUtil.getlabelDesc(deviationDetail.getDelegationRole(), secRolesList));
+					PennantStaticListUtil.getlabelDesc(deviation.getDelegationRole(), secRolesList));
 			listitem.appendChild(listcell);
 			//Approval Status
-			listcell = getNewListCell(
-					PennantStaticListUtil.getlabelDesc(deviationDetail.getApprovalStatus(), approveStatus),
-					devNotallowed);
+			String status = PennantStaticListUtil.getlabelDesc(deviation.getApprovalStatus(), approveStatus);
+
+			if (deviation.isMarkDeleted()) {
+				status += " [Cancelled]";
+			}
+
+			listcell = getNewListCell(status, devNotallowed);
 
 			if (approverScreen) {
 				if (!approved) {
@@ -250,8 +274,8 @@ public class DeviationRenderer {
 					Combobox combobox = new Combobox();
 					combobox.setReadonly(true);
 					combobox.setWidth("100px");
-					combobox.setId("combo_" + deviationDetail.getDeviationId());
-					fillComboBox(combobox, deviationDetail.getApprovalStatus(), approveStatus);
+					combobox.setId("combo_" + deviation.getDeviationId());
+					fillComboBox(combobox, deviation.getApprovalStatus(), approveStatus);
 					combobox.setDisabled(pending);
 					listcell.appendChild(combobox);
 				}
@@ -265,16 +289,16 @@ public class DeviationRenderer {
 			if (approverScreen) {
 				if (!approved) {
 					lable = "add";
-					button.addForward("onClick", "", "onClickAddNotes", deviationDetail);
+					button.addForward("onClick", "", "onClickAddNotes", deviation);
 				} else {
 					lable = "view";
-					button.addForward("onClick", "", "onClickViewNotes", deviationDetail);
+					button.addForward("onClick", "", "onClickViewNotes", deviation);
 				}
 
 			} else {
 				if (approved) {
 					lable = "view";
-					button.addForward("onClick", "", "onClickViewNotes", deviationDetail);
+					button.addForward("onClick", "", "onClickViewNotes", deviation);
 				}
 
 			}
@@ -287,24 +311,21 @@ public class DeviationRenderer {
 			}
 			listitem.appendChild(listcell);
 
-			//User role
-			listcell = getNewListCell(deviationDetail.getUserRole(), devNotallowed);
-			listitem.appendChild(listcell);
 			//DelegatedUserId
-			listcell = getNewListCell(deviationDetail.getDelegatedUserId(), devNotallowed);
+			listcell = getNewListCell(deviation.getDelegatedUserId(), devNotallowed);
 			listitem.appendChild(listcell);
 			//DeviationType
-			listcell = getNewListCell(deviationDetail.getDeviationType(), devNotallowed);
+			listcell = getNewListCell(deviation.getDeviationType(), devNotallowed);
 			listitem.appendChild(listcell);
 
-			listcell = getNewListCell(deviationDetail.getDeviationValue(), devNotallowed);
+			listcell = getNewListCell(deviation.getDeviationValue(), devNotallowed);
 			listitem.appendChild(listcell);
 
-			listitem.setAttribute("data", deviationDetail);
+			listitem.setAttribute("data", deviation);
 			if (!approverScreen) {
 				ComponentsCtrl.applyForward(listitem, "onDoubleClick=onManualDeviationItemDoubleClicked");
 			}
-			listcell = new Listcell(PennantJavaUtil.getLabel(deviationDetail.getRecordType()));
+			listcell = new Listcell(PennantJavaUtil.getLabel(deviation.getRecordType()));
 			listcell.setParent(listitem);
 
 			listbox.appendChild(listitem);

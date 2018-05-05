@@ -16,4 +16,14 @@ public interface FinanceDeviationsDAO {
 	void updateDeviProcessed(String finReference, String type);
 	void deleteById(FinanceDeviations financeDeviations, String type);
 
+	/**
+	 * This method updates the Record financeDeviations.
+	 * 
+	 * @param deviationId
+	 * @return void
+	 * 
+	 */
+	//### 05-05-2018 story #361(tuleap server) Manual Deviations
+	void updateMarkDeleted(long deviationId, String finReference);
+
 }

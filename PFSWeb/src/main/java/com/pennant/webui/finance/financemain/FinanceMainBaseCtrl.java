@@ -6286,27 +6286,30 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (StringUtils.isEmpty(moduleDefiner) && deviationDetailDialogCtrl != null) {
 				//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
 				// Check whether user has taken decision on the manual deviations for which he has the authority.
-				if (this.userAction.getSelectedItem() != null) {
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-						List<FinanceDeviations> list = getDeviationDetailDialogCtrl().getManualDeviationList();
-						List<String>deviations = new ArrayList<>();
-						for (FinanceDeviations financeDeviations : list) {
-							if (getUserWorkspace().getUserRoles().contains(financeDeviations.getDelegationRole())
-									&& StringUtils.equals(PennantConstants.List_Select, financeDeviations.getApprovalStatus())) {
-								deviations.add(financeDeviations.getDeviationCodeDesc());
-							}
+				if (this.userAction.getSelectedItem() != null
+						&& !"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+					List<FinanceDeviations> deviations = getDeviationDetailDialogCtrl().getManualDeviationList();
+					List<String> pendingDecisions = new ArrayList<>();
+
+					for (FinanceDeviations deviation : deviations) {
+						if (getUserWorkspace().getUserRoles().contains(deviation.getDelegationRole())
+								&& StringUtils.equals(PennantConstants.List_Select, deviation.getApprovalStatus())) {
+							pendingDecisions.add(deviation.getDeviationCodeDesc());
 						}
-						if(deviations.size()>0) {
-							String errorMessage = "Please mark your decision for the below manual deviations.";
-							for (String deviation : deviations) {
-								errorMessage = errorMessage.concat("\n - "+deviation);
-							}
-							MessageUtil.showError(errorMessage);
-							return;
+					}
+
+					if (pendingDecisions.size() > 0) {
+						String errorMessage = "Please mark your decision for the below manual deviations.";
+						for (String deviation : pendingDecisions) {
+							errorMessage = errorMessage.concat("\n - " + deviation);
 						}
+
+						MessageUtil.showError(errorMessage);
+						return;
 					}
 				}
 				// ### 01-05-2018 - End
+
 				if (!processDeviations(aFinanceDetail, recSave)) {
 					return;
 				}

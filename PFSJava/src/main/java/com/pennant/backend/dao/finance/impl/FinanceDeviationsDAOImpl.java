@@ -46,7 +46,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 
 		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, Remarks, ");
 		selectSql.append(" DeviationCode ,DeviationType, DeviationValue, UserRole,ManualDeviation,");
-		selectSql.append(" DelegationRole,ApprovalStatus ,DeviationDate, DeviationUserId,");
+		selectSql.append(" DelegationRole,ApprovalStatus ,DeviationDate, DeviationUserId,MarkDeleted,");
 		selectSql.append(" DelegatedUserId From FinanceDeviations");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
@@ -67,7 +67,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 
 		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, Remarks ,");
 		selectSql.append(" DeviationCode ,DeviationType, DeviationValue, UserRole,ManualDeviation,");
-		selectSql.append(" DelegationRole,ApprovalStatus ,DeviationDate, DeviationUserId,DeviProcessed,");
+		selectSql.append(" DelegationRole,ApprovalStatus ,DeviationDate, DeviationUserId,DeviProcessed,MarkDeleted,");
 		selectSql.append(" DelegatedUserId From FinanceDeviations");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference and DeviProcessed =:DeviProcessed");
@@ -94,7 +94,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		
 		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, Remarks ,");
 		selectSql.append(" DeviationCode ,DeviationType, DeviationValue, UserRole,ManualDeviation,");
-		selectSql.append(" DelegationRole,ApprovalStatus ,DeviationDate, DeviationUserId,");
+		selectSql.append(" DelegationRole,ApprovalStatus ,DeviationDate, DeviationUserId,MarkDeleted,");
 		selectSql.append(" DelegatedUserId From FinanceDeviations");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference and Module=:Module and DeviationCode=:DeviationCode");
@@ -263,4 +263,24 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		}
 		logger.debug("Leaving");
 	}
+	//### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
+	@Override
+	public void updateMarkDeleted(long deviationId, String finReference) {
+		logger.debug("Entering");
+		FinanceDeviations financeDeviations = new FinanceDeviations();
+		financeDeviations.setDeviationId(deviationId);
+		financeDeviations.setMarkDeleted(true);
+		StringBuilder updateSql = new StringBuilder("Update FinanceDeviations");
+		updateSql.append("  Set MarkDeleted = :MarkDeleted ");
+		updateSql.append("where DeviationId=:DeviationId ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		logger.debug("Leaving");
+	}
+	//### 05-05-2018- END- story #361(tuleap server) Manual Deviations
+
+
 }
