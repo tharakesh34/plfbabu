@@ -5043,5 +5043,18 @@ UNION ALL
 			<column name="markDeleted" type="boolean"/>
 		</addColumn>
 	</changeSet>
+	<changeSet id="93" author="srikanth">
+	<sql>
+		update financedeviations_temp set markdeleted = 0;
+		update financedeviations set markdeleted = 0;
+	</sql>
+</changeSet>
+	<changeSet id="94" author="Srikanth">
+		<addDefaultValue tableName="financedeviations_temp"
+			columnName="markdeleted" defaultValue="0" />
+		<addDefaultValue tableName="financedeviations"
+			columnName="markdeleted" defaultValue="0" />
+	</changeSet>
+
 </databaseChangeLog>
 	
