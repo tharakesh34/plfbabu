@@ -86,11 +86,11 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Menubar			mainMenuBar;													// autowired
-	protected Label				label_AppName;													// autowired
+	protected Menubar			mainMenuBar;
+	protected Label				label_AppName;
 	protected Image				imgsmallLogo;
-	protected Intbox			currentDesktopHeight;											// autowired
-	protected Intbox			currentDesktopWidth;											// autowired
+	protected Intbox			currentDesktopHeight;
+	protected Intbox			currentDesktopWidth;
 
 	private boolean				homePageDisplayed			= false;
 
@@ -141,16 +141,18 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onClientInfo(ClientInfoEvent event) throws Exception {
+	public void onClientInfo(ClientInfoEvent event) {
 		currentDesktopHeight.setValue(event.getDesktopHeight() - CONTENT_AREA_HEIGHT_OFFSET);
 		currentDesktopWidth.setValue(event.getDesktopWidth());
 		LoggedInUser user = getUserWorkspace().getLoggedInUser();
-		
+
 		try {
 			License.userLogin();
 		} catch (LicenseException e) {
-			if (LicenseError.LIC001 == LicenseError.valueOf(e.getErrorCode())) {
-				if (UserType.valueOf(user.getUserType()) == UserType.ADMIN && getUserWorkspace().isAllowed("menuItem_License_LicenseUpload")) {
+			LicenseError licenseError = LicenseError.valueOf(e.getErrorCode());
+			if (LicenseError.LIC001 == licenseError || LicenseError.LIC003 == licenseError) {
+				if (UserType.valueOf(user.getUserType()) == UserType.ADMIN
+						&& getUserWorkspace().isAllowed("menuItem_License_LicenseUpload")) {
 					Map<String, String> arg = new HashedMap<>();
 					arg.put("origin", "LoginPage");
 					Executions.createComponents("~./pages/lic/LicenseUpload.zul", null, arg);
@@ -185,7 +187,7 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 		// clear the center child comps
 		west.getChildren().clear();
 
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		if (homePageDisplayed) {
 			map.put("HomePageDisplayed", "YES");
 		} else {
