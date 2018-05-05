@@ -2529,12 +2529,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				setVerificationAuditDetails(financeDetail.getLvVerification(), financeMain);
 			}
 			
+			
+			List<AuditDetail> adtVerifications = new ArrayList<>();
 			// set FI Initiation details
 			//=======================================
 			if (financeDetail.isFiInitTab()) {
 				Verification verification = financeDetail.getFiVerification();
 				verification.setVerificationType(VerificationType.FI.getKey());
-				auditDetails.addAll(
+				adtVerifications.addAll(
 						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));
 			}
 
@@ -2543,7 +2545,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.isFiApprovalTab()) {
 				Verification verification = financeDetail.getFiVerification();
 				verification.setVerificationType(VerificationType.FI.getKey());
-				auditDetails.addAll(
+				adtVerifications.addAll(
 						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, false));
 			}
 
@@ -2552,7 +2554,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.isTvInitTab()) {
 				Verification verification = financeDetail.getTvVerification();
 				verification.setVerificationType(VerificationType.TV.getKey());
-				auditDetails.addAll(
+				adtVerifications.addAll(
 						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));
 			}
 
@@ -2561,7 +2563,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.isTvApprovalTab()) {
 				Verification verification = financeDetail.getTvVerification();
 				verification.setVerificationType(VerificationType.TV.getKey());
-				auditDetails.addAll(
+				adtVerifications.addAll(
 						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, false));
 			}
 			
@@ -2574,8 +2576,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				verification.setVerifications(verificationService.getVerifications(verification.getKeyReference(), VerificationType.LV.getKey()));
 				
 				verificationService.setLVDetails(verification.getVerifications());
-				auditDetails.addAll(verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));
+				adtVerifications.addAll(verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));
 			}
+
+			// preparing audit seqno for same table(adtverifications)
+			int i = 0;
+			for (AuditDetail auditDetail : adtVerifications) {
+				auditDetail.setAuditSeq(++i);
+			}
+
+			auditDetails.addAll(adtVerifications);
 		}
 
 		// Finance Fee Details
