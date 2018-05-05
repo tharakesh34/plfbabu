@@ -527,7 +527,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		StringBuilder deleteSql = new StringBuilder("Delete From verification_lv_details");
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
-		deleteSql.append(" Where lvid = :lvid ");
+		deleteSql.append(" Where lvid = :lvId ");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(documents.toArray());

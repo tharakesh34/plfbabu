@@ -79,9 +79,9 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 	protected void doSetProperties() {
 		super.moduleCode = "LegalVerification";
 		super.pageRightName = "LegalVerificationList";
-		super.tableName = "verification_lv_view";
-		super.queueTableName = "verification_lv_view";
-		super.enquiryTableName = "verification_lv_view";
+		super.tableName = "verification_lv_list_view";
+		super.queueTableName = "verification_lv_list_view";
+		super.enquiryTableName = "verification_lv_list_view";
 		this.module = getArgument("module");
 	}
 
@@ -211,7 +211,15 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 		final long id = (long) selectedItem.getAttribute("id");
 		final long documentId = (long) selectedItem.getAttribute("documentId");
 		final String documentSubId = (String) selectedItem.getAttribute("documentSubId");
-		LegalVerification lv = legalVerificationService.getLegalVerification(id, documentId, documentSubId);
+		final long verificationId = (long) selectedItem.getAttribute("verificationId");
+		
+		LegalVerification lv=new LegalVerification();
+		
+		lv.setId(id);
+		lv.setDocumentId(documentId);
+		lv.setDocumentSubId(documentSubId);
+		lv.setVerificationId(verificationId);
+		lv = legalVerificationService.getLegalVerification(lv);
 
 		if (lv == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

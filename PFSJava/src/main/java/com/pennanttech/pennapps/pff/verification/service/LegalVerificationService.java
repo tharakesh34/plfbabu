@@ -13,7 +13,7 @@ public interface LegalVerificationService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	LegalVerification getLegalVerification(long id, long documetId, String documentSubId);
+	LegalVerification getLegalVerification(LegalVerification lv);
 
 	LegalVerification getApprovedLegalVerification(long id, long documetId, String documentSubId);
 
