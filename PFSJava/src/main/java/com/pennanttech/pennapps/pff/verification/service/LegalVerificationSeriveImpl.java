@@ -36,7 +36,6 @@ import com.pennanttech.pennapps.pff.verification.dao.LegalVerificationDAO;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
-import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -66,9 +65,9 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
 	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * verification_fi/verification_fi_Temp by using verification_fiDAO's save method b) Update the Record in the table.
-	 * based on the module workFlow Configuration. by using verification_fiDAO's update method 3) Audit the record in to
-	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
+	 * verification_lv/verification_lv_Temp by using verification_lv DAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using verification_fiDAO's update method 3) Audit the
+	 * record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -108,16 +107,23 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 			tableName.append(CollateralConstants.VERIFICATION_MODULE);
 			tableName.append("_");
 			tableName.append(lv.getExtendedFieldHeader().getSubModuleName());
-			tableName.append("_TV");
+			tableName.append("_ED");
 			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details, tableName.toString(),
 					tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
 
-		// FI documents
+		// Documents
 		if (lv.getDocuments() != null && !lv.getDocuments().isEmpty()) {
 			List<AuditDetail> details = lv.getAuditDetailMap().get("DocumentDetails");
 			details = saveOrUpdateDocuments(details, lv, tableType.getSuffix());
+			auditDetails.addAll(details);
+		}
+
+		// LV Documents
+		if (lv.getLvDocuments() != null && !lv.getLvDocuments().isEmpty()) {
+			List<AuditDetail> details = lv.getAuditDetailMap().get("LVDocumentDetails");
+			details = processingLVDocumnets(details, lv, tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
 
@@ -128,12 +134,15 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 	}
 
 	@Override
-	public LegalVerification getLegalVerification(long id) {
-		LegalVerification legalVerification = legalVerificationDAO.getLegalVerification(id, "_View");
+	public LegalVerification getLegalVerification(long id, long documnetId, String documnetSubId) {
+		LegalVerification legalVerification = legalVerificationDAO.getLegalVerification(id, documnetId, documnetSubId,
+				"_View");
 		if (legalVerification != null) {
-			// FI Document Details
+			List<LVDocument> lvDocuments = legalVerificationDAO.getLVDocuments(id, "_View");
+			legalVerification.setLvDocuments(lvDocuments);
+			// LV Document Details
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(String.valueOf(id),
-					VerificationType.TV.getCode(), "", "_View");
+					VerificationType.LV.getCode(), "", "_View");
 			if (legalVerification.getDocuments() != null && !legalVerification.getDocuments().isEmpty()) {
 				legalVerification.getDocuments().addAll(documentList);
 			} else {
@@ -144,8 +153,8 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 	}
 
 	@Override
-	public LegalVerification getApprovedLegalVerification(long id) {
-		return legalVerificationDAO.getLegalVerification(id, "__AView");
+	public LegalVerification getApprovedLegalVerification(long id, long documnetId, String documnetSubId) {
+		return legalVerificationDAO.getLegalVerification(id, documnetId, documnetSubId, "_AView");
 	}
 
 	/**
@@ -178,7 +187,7 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 
 		legalVerificationDAO.delete(legalVerification, TableType.MAIN_TAB);
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new TechnicalVerification(),
+		String[] fields = PennantJavaUtil.getFieldDetails(new LegalVerification(),
 				legalVerification.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				legalVerification.getBefImage(), legalVerification));
@@ -204,11 +213,11 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
 		LegalVerification lv = new LegalVerification();
-		BeanUtils.copyProperties((TechnicalVerification) auditHeader.getAuditDetail().getModelData(), lv);
+		BeanUtils.copyProperties((LegalVerification) auditHeader.getAuditDetail().getModelData(), lv);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(lv.getRecordType())) {
 			auditHeader.getAuditDetail()
-					.setBefImage(legalVerificationDAO.getLegalVerification(lv.getId(), TableType.MAIN_TAB.getSuffix()));
+					.setBefImage(legalVerificationDAO.getLegalVerification(lv.getId(),lv.getDocumentId(),lv.getDocumentSubId(), TableType.MAIN_TAB.getSuffix()));
 		}
 
 		if (lv.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -225,8 +234,8 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 			if (lv.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				lv.setRecordType("");
-				legalVerificationDAO.save(lv, TableType.MAIN_TAB);
-				verificationDAO.updateVerifiaction(lv.getId(), lv.getDate(), lv.getStatus());
+				legalVerificationDAO.saveLV(lv, TableType.MAIN_TAB);
+				verificationDAO.updateVerifiaction(lv.getVerificationId(), lv.getDate(), lv.getStatus());
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				lv.setRecordType("");
@@ -243,20 +252,29 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 				tableName.append(CollateralConstants.VERIFICATION_MODULE);
 				tableName.append("_");
 				tableName.append(lv.getExtendedFieldHeader().getSubModuleName());
-				tableName.append("_TV");
+				tableName.append("_ed");
 
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details, tableName.toString(),
 						TableType.MAIN_TAB.getSuffix());
 				auditDetails.addAll(details);
 			}
 
-			// FI Document Details
+			// Document Details
 			List<DocumentDetails> documentsList = lv.getDocuments();
 			if (documentsList != null && documentsList.size() > 0) {
 				List<AuditDetail> details = lv.getAuditDetailMap().get("DocumentDetails");
 				details = saveOrUpdateDocuments(details, lv, "");
 				auditDetails.addAll(details);
 			}
+
+			// LV Document Details
+			List<LVDocument> lvDocuments = lv.getLvDocuments();
+			if (lvDocuments != null && lvDocuments.size() > 0) {
+				List<AuditDetail> details = lv.getAuditDetailMap().get("LVDocumentDetails");
+				details = processingLVDocumnets(details, lv, "");
+				auditDetails.addAll(details);
+			}
+
 		}
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 
@@ -264,7 +282,7 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 		legalVerificationDAO.delete(lv, TableType.TEMP_TAB);
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new TechnicalVerification(), lv.getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new LegalVerification(), lv.getExcludeFields());
 		auditHeader.setAuditDetail(
 				new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1], lv.getBefImage(), lv));
 		auditHeader.setAuditDetails(auditDetailList);
@@ -309,9 +327,9 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 			tableName.append(CollateralConstants.VERIFICATION_MODULE);
 			tableName.append("_");
 			tableName.append(lv.getExtendedFieldHeader().getSubModuleName());
-			tableName.append("_TV");
+			tableName.append("_ED");
 			auditList.addAll(extendedFieldDetailsService.delete(lv.getExtendedFieldHeader(),
-					lv.getCollateralReference(), tableName.toString(), tableType, auditTranType, extendedDetails));
+					lv.getReferenceFor(), tableName.toString(), tableType, auditTranType, extendedDetails));
 		}
 
 		// Document Details.
@@ -329,6 +347,23 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 			}
 			documentDetailsDAO.deleteList(documents, tableType);
 		}
+
+		// LV Document Details.
+		List<AuditDetail> lvDocuments = lv.getAuditDetailMap().get("LVDocumentDetails");
+		if (lvDocuments != null && lvDocuments.size() > 0) {
+			LVDocument document = new LVDocument();
+			List<LVDocument> documents = new ArrayList<>();
+			String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
+			for (int i = 0; i < lvDocuments.size(); i++) {
+				document = (LVDocument) lvDocuments.get(i).getModelData();
+				document.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+				documents.add(document);
+				auditList.add(
+						new AuditDetail(auditTranType, i + 1, fields[0], fields[1], document.getBefImage(), document));
+			}
+			legalVerificationDAO.deleteLVDocumentsList(documents, tableType);
+		}
+
 		return auditList;
 	}
 
@@ -341,28 +376,28 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
 
-		TechnicalVerification tv = (TechnicalVerification) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = tv.getUserDetails().getLanguage();
+		LegalVerification lv = (LegalVerification) auditHeader.getAuditDetail().getModelData();
+		String usrLanguage = lv.getUserDetails().getLanguage();
 
 		// Extended field details Validation
-		if (tv.getExtendedFieldRender() != null) {
-			List<AuditDetail> details = tv.getAuditDetailMap().get("ExtendedFieldDetails");
-			ExtendedFieldHeader extHeader = tv.getExtendedFieldHeader();
+		if (lv.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = lv.getAuditDetailMap().get("ExtendedFieldDetails");
+			ExtendedFieldHeader extHeader = lv.getExtendedFieldHeader();
 
 			StringBuilder tableName = new StringBuilder();
 			tableName.append(CollateralConstants.VERIFICATION_MODULE);
 			tableName.append("_");
 			tableName.append(extHeader.getSubModuleName());
-			tableName.append("_TV");
+			tableName.append("_ED");
 
 			details = extendedFieldDetailsService.vaildateDetails(details, method, usrLanguage, tableName.toString());
 			auditDetails.addAll(details);
 		}
 
-		// TV Document details Validation
-		List<DocumentDetails> docuemnts = tv.getDocuments();
+		// LV Document details Validation
+		List<DocumentDetails> docuemnts = lv.getDocuments();
 		if (docuemnts != null && !docuemnts.isEmpty()) {
-			List<AuditDetail> details = tv.getAuditDetailMap().get("DocumentDetails");
+			List<AuditDetail> details = lv.getAuditDetailMap().get("DocumentDetails");
 			details = getDocumentValidation().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
@@ -406,10 +441,16 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
-		// TV Document Details
+		// Document Details
 		if (lv.getDocuments() != null && lv.getDocuments().size() > 0) {
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(lv, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
+		}
+
+		// LV Document Details
+		if (lv.getLvDocuments() != null && lv.getLvDocuments().size() > 0) {
+			auditDetailMap.put("LVDocumentDetails", setLVDocumentDetailsAuditData(lv, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("LVDocumentDetails"));
 		}
 
 		lv.setAuditDetailMap(auditDetailMap);
@@ -470,6 +511,63 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 			documentDetails.setLastMntOn(legalVerification.getLastMntOn());
 			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], documentDetails.getBefImage(),
 					documentDetails));
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+
+	public List<AuditDetail> setLVDocumentDetailsAuditData(LegalVerification legalVerification, String auditTranType,
+			String method) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
+		LVDocument lvDocument = new LVDocument();
+		String[] fields = PennantJavaUtil.getFieldDetails(lvDocument, lvDocument.getExcludeFields());
+
+		for (int i = 0; i < legalVerification.getLvDocuments().size(); i++) {
+			LVDocument lvDocumentDetails = legalVerification.getLvDocuments().get(i);
+
+			if (StringUtils.isEmpty(StringUtils.trimToEmpty(lvDocumentDetails.getRecordType()))) {
+				continue;
+			}
+
+			lvDocumentDetails.setWorkflowId(legalVerification.getWorkflowId());
+			boolean isRcdType = false;
+
+			if (lvDocumentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				lvDocumentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (lvDocumentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				lvDocumentDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (legalVerification.isWorkflow()) {
+					isRcdType = true;
+				}
+			} else if (lvDocumentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				lvDocumentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if ("saveOrUpdate".equals(method) && (isRcdType)) {
+				lvDocumentDetails.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (lvDocumentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (lvDocumentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| lvDocumentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			lvDocumentDetails.setRecordStatus(legalVerification.getRecordStatus());
+			lvDocumentDetails.setUserDetails(legalVerification.getUserDetails());
+			lvDocumentDetails.setLastMntOn(legalVerification.getLastMntOn());
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					lvDocumentDetails.getBefImage(), lvDocumentDetails));
 		}
 
 		logger.debug("Leaving");
@@ -593,6 +691,94 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 		return auditDetails;
 	}
 
+	private List<AuditDetail> processingLVDocumnets(List<AuditDetail> auditDetails, LegalVerification lv, String type) {
+		logger.debug("Entering");
+
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+
+			LVDocument lvDocument = (LVDocument) auditDetails.get(i).getModelData();
+
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+
+			String rcdType = "";
+			String recordStatus = "";
+
+			if (StringUtils.isEmpty(type.toString())) {
+				approveRec = true;
+				lvDocument.setRoleCode("");
+				lvDocument.setNextRoleCode("");
+				lvDocument.setTaskId("");
+				lvDocument.setNextTaskId("");
+			}
+
+			if (lvDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (lvDocument.isNewRecord()) {
+				saveRecord = true;
+				if (lvDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					lvDocument.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (lvDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					lvDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (lvDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					lvDocument.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+			} else if (lvDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (lvDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (lvDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (lvDocument.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+
+			if (approveRec) {
+				rcdType = lvDocument.getRecordType();
+				recordStatus = lvDocument.getRecordStatus();
+				lvDocument.setRecordType("");
+				lvDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+
+			if (saveRecord) {
+				legalVerificationDAO.saveDocuments(lvDocument, type);
+			}
+
+			if (updateRecord) {
+				legalVerificationDAO.updateDocuments(lvDocument, type);
+			}
+
+			if (deleteRecord) {
+				legalVerificationDAO.deleteLVDocuments(lvDocument, type);
+			}
+
+			if (approveRec) {
+				lvDocument.setRecordType(rcdType);
+				lvDocument.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(lvDocument);
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
+
+	}
+
 	public DocumentDetailValidation getDocumentValidation() {
 		if (documentValidation == null) {
 			this.documentValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO,
@@ -688,6 +874,11 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 
 		}
 		return fiIds;
+	}
+
+	@Override
+	public DocumentManager getDocumentById(long id) {
+		return documentManagerDAO.getById(id);
 	}
 
 	@Override
