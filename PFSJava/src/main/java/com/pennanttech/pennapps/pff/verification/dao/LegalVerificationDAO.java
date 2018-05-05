@@ -30,4 +30,6 @@ public interface LegalVerificationDAO extends BasicCrudDao<LegalVerification> {
 
 	List<LegalVerification> getList(String keyRef);
 	
+	List<String> getLVDocumentsIds(String  keyReference);
+	
 }

@@ -84,14 +84,11 @@
 									value="${c:l('label_LegalVerificationDialog_CollateralDoc.value')}" />
 								<listbox id="listBoxCollateralDocuments"
 									fixedLayout="true" sizedByContent="true" span="true"
-									emptyMessage="${c:l('listbox.emptyMessage')}" width="60%"
+									emptyMessage="${c:l('listbox.emptyMessage')}" width="80%"
 									multiple="false">
 									<listhead sizable="false">
 										<listheader
 											label="${c:l('listheader_LVInitiationDialog_DocType.label')}"
-											sort="false" hflex="min" />
-										<listheader
-											label="${c:l('listheader_LVInitiationDialog_DocName.label')}"
 											sort="false" hflex="min" />
 									</listhead>
 								</listbox>
@@ -102,14 +99,11 @@
 									value="${c:l('label_LegalVerificationDialog_LoanDoc.value')}" />
 								<listbox id="listBoxLoanDocuments"
 									fixedLayout="true" sizedByContent="true" span="true"
-									emptyMessage="${c:l('listbox.emptyMessage')}" width="60%"
+									emptyMessage="${c:l('listbox.emptyMessage')}" width="80%"
 									multiple="false">
 									<listhead sizable="false" visible="false">
 										<listheader
 											label="${c:l('listheader_LVInitiationDialog_DocType.label')}"
-											sort="false" hflex="min" />
-										<listheader
-											label="${c:l('listheader_LVInitiationDialog_DocName.label')}"
 											sort="false" hflex="min" />
 									</listhead>
 								</listbox>
@@ -120,14 +114,11 @@
 									value="${c:l('label_LegalVerificationDialog_CustomerDoc.value')}" />
 								<listbox id="listBoxCustomerDocuments"
 									fixedLayout="true" sizedByContent="true" span="true"
-									emptyMessage="${c:l('listbox.emptyMessage')}" width="60%"
+									emptyMessage="${c:l('listbox.emptyMessage')}" width="80%"
 									multiple="false">
 									<listhead sizable="false" visible="false">
 										<listheader
 											label="${c:l('listheader_LVInitiationDialog_DocType.label')}"
-											sort="false" hflex="min" />
-										<listheader
-											label="${c:l('listheader_LVInitiationDialog_DocName.label')}"
 											sort="false" hflex="min" />
 									</listhead>
 								</listbox>
@@ -149,7 +140,7 @@
 									id="label_LVInitiationDialog_Remarks"
 									value="${c:l('label_LVInitiationDialog_Remarks.value')}" />
 								<textbox id="remarks" maxlength="500"
-									width="60%" multiline="true" height="75px" />
+									width="80%" multiline="true" height="75px" />
 							</row>
 						</rows>
 					</grid>

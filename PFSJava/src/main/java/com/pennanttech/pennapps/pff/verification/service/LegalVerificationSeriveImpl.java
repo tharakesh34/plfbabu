@@ -226,12 +226,12 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 				tranType = PennantConstants.TRAN_ADD;
 				lv.setRecordType("");
 				legalVerificationDAO.save(lv, TableType.MAIN_TAB);
-				verificationDAO.updateVerifiaction(lv.getId(), lv.getDate(), lv.getStatus()); 
+				verificationDAO.updateVerifiaction(lv.getId(), lv.getDate(), lv.getStatus());
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				lv.setRecordType("");
 				legalVerificationDAO.update(lv, TableType.MAIN_TAB);
-				verificationDAO.updateVerifiaction(lv.getId(), lv.getDate(), lv.getStatus()); 
+				verificationDAO.updateVerifiaction(lv.getId(), lv.getDate(), lv.getStatus());
 			}
 
 			// Extended field Details
@@ -600,30 +600,46 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 		}
 		return documentValidation;
 	}
-	
+
 	@Override
 	public long save(Verification verification, TableType tableType) {
 		setLvFields(verification);
+		setLVDocumentWorkFlowFields(verification.getLegalVerification());
 		return Long.parseLong(legalVerificationDAO.save(verification.getLegalVerification(), tableType));
 	}
-	
+
+	private void setLVDocumentWorkFlowFields(LegalVerification legalVerification) {
+		for (LVDocument lvDocument : legalVerification.getLvDocuments()) {
+			lvDocument.setVersion(legalVerification.getVersion());
+			lvDocument.setLastMntBy(legalVerification.getLastMntBy());
+			lvDocument.setLastMntOn(legalVerification.getLastMntOn());
+			lvDocument.setRecordStatus(legalVerification.getRecordStatus());
+			lvDocument.setRecordType(legalVerification.getRecordType());
+			lvDocument.setWorkflowId(legalVerification.getWorkflowId());
+			lvDocument.setRoleCode(legalVerification.getRoleCode());
+			lvDocument.setNextRoleCode(legalVerification.getNextRoleCode());
+			lvDocument.setTaskId(legalVerification.getTaskId());
+			lvDocument.setNextTaskId(legalVerification.getNextTaskId());
+		}
+	}
+
 	private void setLvFields(Verification verification) {
-		
+
 		LegalVerification lv = verification.getLegalVerification();
-		
+
 		if (lv == null) {
 			lv = new LegalVerification();
 			verification.setLegalVerification(lv);
 		}
-				
+
 		lv.setVerificationId(verification.getId());
 		lv.setVersion(1);
 		lv.setLastMntBy(verification.getLastMntBy());
 		lv.setLastMntOn(verification.getLastMntOn());
 		setAudit(lv);
-		
+
 	}
-	
+
 	private void setAudit(LegalVerification lv) {
 		String workFlowType = ModuleUtil.getWorkflowType("LegalVerification");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workFlowType);
@@ -653,12 +669,12 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 	public LegalVerification getLVFromStage(long verificationId) {
 		return legalVerificationDAO.getLVFromStage(verificationId);
 	}
-	
+
 	@Override
 	public List<LVDocument> getLVDocumentsFromStage(long verificationId) {
 		return legalVerificationDAO.getLVDocumentsFromStage(verificationId);
 	}
-	
+
 	@Override
 	public List<Long> getLegalVerficationIds(List<Verification> verifications, String keyRef) {
 		List<Long> fiIds = new ArrayList<>();
@@ -672,5 +688,10 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 
 		}
 		return fiIds;
+	}
+
+	@Override
+	public List<String> getLVDocumentsIds(String keyReference) {
+		return legalVerificationDAO.getLVDocumentsIds(keyReference);
 	}
 }

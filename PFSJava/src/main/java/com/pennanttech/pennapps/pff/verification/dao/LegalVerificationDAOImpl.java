@@ -38,10 +38,10 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 	@Override
 	public String save(LegalVerification legalVerification, TableType tableType) {// Prepare the SQL.
-		
+
 		StringBuilder sql = new StringBuilder(" insert into verification_lv");
 		sql.append(tableType.getSuffix());
-		
+
 		if (tableType == TableType.MAIN_TAB) {
 			sql.append("_stage");
 			sql.append(" (Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
@@ -54,10 +54,8 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 			sql.append(" values (:Id, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 			sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		}
-		
-		
-		logger.trace(Literal.SQL + sql.toString());
 
+		logger.trace(Literal.SQL + sql.toString());
 
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		// Execute the SQL, binding the arguments.
@@ -75,13 +73,13 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		}
 
 		logger.debug(Literal.LEAVING);
-		
+
 		if (tableType == TableType.MAIN_TAB) {
 			legalVerification.setId(keyHolder.getKey().longValue());
 		}
-		
+
 		return String.valueOf(legalVerification.getId());
-	
+
 	}
 
 	@Override
@@ -180,53 +178,55 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into verification_lv_details");
 		sql.append(tableType.getSuffix());
-		
+
 		if (tableType == TableType.MAIN_TAB) {
 			sql.append("_stage");
 		}
-		
-		sql.append(" (lvId, seqNo, verificationId, documentId,");
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?");
+
+		sql.append(" (lvId, seqNo, verificationId, documentId,documentSubId,");
+		sql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?,?");
 		sql.append(" ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug("insertSql: " + sql.toString());
-		
+
 		jdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				LVDocument document = lvDocuments.get(i);
-			    ps.setLong(1, document.getLvId());
-			    if (tableType == TableType.MAIN_TAB) {
-			    	ps.setInt(2, i+1);
-			    } else {
-			    	ps.setInt(2, document.getSeqNo());
-			    }
-			    ps.setLong(3, document.getVerificationId());
-			    ps.setLong(4, document.getDocumentId());
-			    ps.setInt(5 ,document.getVersion());
-			    ps.setTimestamp(6 ,document.getLastMntOn());
-			    ps.setLong(7 ,document.getLastMntBy());
-			    ps.setString(8, document.getRecordStatus());
-			    ps.setString(9, document.getRoleCode());
-			    ps.setString(10, document.getNextRoleCode());
-			    ps.setString(11, document.getTaskId());
-			    ps.setString(12, document.getNextTaskId());
-			    ps.setString(13, document.getRecordType());
-			    ps.setLong(14 ,document.getWorkflowId());
+				ps.setLong(1, document.getLvId());
+				if (tableType == TableType.MAIN_TAB) {
+					ps.setInt(2, i + 1);
+				} else {
+					ps.setInt(2, document.getSeqNo());
+				}
+				ps.setLong(3, document.getVerificationId());
+				ps.setLong(4, document.getDocumentId());
+				ps.setString(5, document.getDocumentSubId());
+				ps.setInt(6, document.getVersion());
+				ps.setTimestamp(7, document.getLastMntOn());
+				ps.setLong(8, document.getLastMntBy());
+				ps.setString(9, document.getRecordStatus());
+				ps.setString(10, document.getRoleCode());
+				ps.setString(11, document.getNextRoleCode());
+				ps.setString(12, document.getTaskId());
+				ps.setString(13, document.getNextTaskId());
+				ps.setString(14, document.getRecordType());
+				ps.setLong(15, document.getWorkflowId());
 			}
-			
+
 			@Override
 			public int getBatchSize() {
 				return lvDocuments.size();
 			}
-				
+
 		});
 
 		logger.debug("Leaving");
 
 	}
-	
+
 	@Override
 	public void deleteDocuments(String reference, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -238,26 +238,26 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("referenceFor", reference);
-		
+
 		int recordCount = 0;
 
 		try {
 			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
-			
-			if(recordCount > 0) {
+
+			if (recordCount > 0) {
 				sql = new StringBuilder();
 				sql.append("delete from verification_lv_stage");
 				sql.append(" where id not in (select lvid from verification_lv_details_stage)");
 				jdbcTemplate.update(sql.toString(), paramSource);
 			}
-			
+
 		} catch (DataAccessException e) {
-			
+
 		}
-		 
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -280,13 +280,12 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
-	
+
 	@Override
 	public List<LVDocument> getLVDocumentsFromStage(long verificationId) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select lvid, seqno, verificationId, documentId from verification_lv_details_stage");
+		sql.append("select lvid, seqno, verificationId, documentId,documentSubId from verification_lv_details_stage");
 		sql.append(" where verificationId=:verificationId");
-
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("verificationId", verificationId);
@@ -298,7 +297,28 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
-		return null;
+		return new ArrayList<>();
+	}
+
+	@Override
+	public List<String> getLVDocumentsIds(String keyReference) {
+		StringBuilder sql = new StringBuilder("select");
+		sql.append(" documentId ");
+		sql.append(QueryUtil.getQueryConcat());
+		sql.append(" COALESCE(documentSubId,'') documentId");
+		sql.append(" from  verification_lv_details_stage where verificationid in(select verificationid");
+		sql.append(" from verifications where keyReference=:keyReference)");
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("keyReference", keyReference);
+
+		try {
+			return jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

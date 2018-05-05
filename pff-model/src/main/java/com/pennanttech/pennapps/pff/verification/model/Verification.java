@@ -57,8 +57,9 @@ public class Verification extends AbstractWorkflowEntity {
 	private String cif;
 	private String customerName;
 	private String agencyName;
+	private String agencyCity;
 	private String reasonName;
-	private List<LVDocument> lvDocuments=new ArrayList<>();
+	private List<LVDocument> lvDocuments = new ArrayList<>();
 
 	private List<Verification> verifications = new ArrayList<>();
 	private FieldInvestigation fieldInvestigation;
@@ -95,6 +96,7 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("collaterals");
 		excludeFields.add("lvDocuments");
 		excludeFields.add("legalVerification");
+		excludeFields.add("agencyCity");
 		return excludeFields;
 	}
 
@@ -402,4 +404,11 @@ public class Verification extends AbstractWorkflowEntity {
 		this.legalVerification = legalVerification;
 	}
 
+	public String getAgencyCity() {
+		return agencyCity;
+	}
+
+	public void setAgencyCity(String agencyCity) {
+		this.agencyCity = agencyCity;
+	}
 }

@@ -66,4 +66,6 @@ public interface VerificationService {
 	void saveLegalVerification(Verification verification);
 
 	void setLVDetails(List<Verification> verifications);
+	
+	Verification getVerificationById(long id);
 }

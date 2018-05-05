@@ -1,6 +1,7 @@
 package com.pennanttech.pennapps.pff.verification.model;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,7 +43,7 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	private Date createdOn;
 
 	private List<DocumentDetails> documents = null;
-	private List<LVDocument> lvDocuments = null;
+	private List<LVDocument> lvDocuments = new ArrayList<>();
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient

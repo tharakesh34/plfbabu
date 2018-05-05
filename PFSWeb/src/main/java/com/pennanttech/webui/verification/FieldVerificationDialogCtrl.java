@@ -146,7 +146,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				continue;
 			}
 
-			id = id.substring(0, id.length() - 1);
+			id=id.replaceAll("\\d","");
 			if (StringUtils.equals(id, listcellId)) {
 				return listcell.getFirstChild();
 			}

@@ -19,8 +19,8 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
@@ -41,7 +41,6 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.Status;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -117,8 +116,10 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 
 		financeMainDialogCtrl.setLegalVerificationListCtrl(this);
+
+		//render Initiation and Waiver Lists
 		renderLVInitiationList();
-		//renderTechnicalVerificationList(verification);
+		renderLVWaiverList();
 
 		this.listBoxInitiation.setHeight(this.borderLayoutHeight - 380 - 90 + "px");
 		this.listBoxWaiver.setHeight(this.borderLayoutHeight - 380 - 90 + "px");
@@ -139,19 +140,9 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		Verification verification = new Verification();
 		BeanUtils.copyProperties(this.verification, verification);
 		verification.setNewRecord(true);
+		verification.setRequestType(RequestType.INITIATE.getKey());
 		verification.getLvDocuments().clear();
-		// Display the dialog page.
-		Map<String, Object> arg = getDefaultArguments();
-		arg.put("initiation", true);
-		arg.put("verification", verification);
-		arg.put("legalVerificationListCtrl", this);
-
-		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVInitiationDialog.zul", null,
-					arg);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
+		doShowDialogPage(verification);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -167,11 +158,15 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 		// Create a new entity.
 		//Verification verification = new Verification();
-		this.verification.setNewRecord(true);
+		// Create a new entity.
+		Verification verification = new Verification();
+		BeanUtils.copyProperties(this.verification, verification);
+		verification.setRequestType(RequestType.WAIVE.getKey());
+		verification.setNewRecord(true);
 
 		// Display the dialog page.
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("verification", this.verification);
+		arg.put("verification", verification);
 		arg.put("legalVerificationListCtrl", this);
 
 		try {
@@ -230,6 +225,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		} else {
 			ReasonCode reasonCode = (ReasonCode) dataObject;
 			if (reasonCode != null) {
+				reason.setValue(reasonCode.getDescription());
 				reason.setAttribute("reasonId", reasonCode.getId());
 			}
 		}
@@ -261,7 +257,8 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	 */
 	public void renderLVInitiationList() {
 		logger.debug(Literal.ENTERING);
-		List<Verification> verifications = verificationService.getVerifications(this.verification.getKeyReference(), VerificationType.LV.getKey());
+		List<Verification> verifications = verificationService.getVerifications(this.verification.getKeyReference(),
+				VerificationType.LV.getKey());
 
 		if (this.listBoxInitiation.getItems() != null) {
 			this.listBoxInitiation.getItems().clear();
@@ -269,7 +266,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 		int i = 0;
 		for (Verification vrf : verifications) {
-			if (vrf.getReinitid() != null && vrf.getRequestType() == RequestType.WAIVE.getKey()) {
+			if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
 				continue;
 			}
 
@@ -296,7 +293,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 			//Remarks
 			listCell = new Listcell();
-			listCell.setId("Remarks".concat(String.valueOf(i)));
+			listCell.setId("IRemarks".concat(String.valueOf(i)));
 			Label remarks = new Label(vrf.getRemarks());
 			listCell.appendChild(remarks);
 			listCell.setParent(item);
@@ -315,11 +312,58 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			listCell.appendChild(new Label(DateUtil.formatToShortDate(vrf.getVerificationDate())));
 			listCell.setParent(item);
 
-			String key = vrf.getReferenceFor().concat(vrf.getCif());
-			item.setAttribute(key, vrf);
+			item.setAttribute("id", vrf.getId());
+			ComponentsCtrl.applyForward(item, "onDoubleClick=onVerificationItemDoubleClicked");
 
 			this.listBoxInitiation.appendChild(item);
 
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onVerificationItemDoubleClicked(Event event) {
+		logger.debug("Entering");
+
+		// Get the selected record.
+		Listitem selectedItem = this.listBoxInitiation.getSelectedItem();
+		if (selectedItem == null) {
+			return;
+		}
+
+		// Get the selected entity.
+		long id = (long) selectedItem.getAttribute("id");
+		Verification vrf = verificationService.getVerificationById(id);
+
+		if (vrf == null) {
+			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
+			return;
+		}
+		doShowDialogPage(vrf);
+
+		logger.debug("Leaving");
+	}
+
+	private void doShowDialogPage(Verification vrf) {
+		logger.debug(Literal.ENTERING);
+
+		// Display the dialog page.
+		Map<String, Object> arg = getDefaultArguments();
+		arg.put("initiation", true);
+		arg.put("verification", vrf);
+		arg.put("legalVerificationListCtrl", this);
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVInitiationDialog.zul", null,
+					arg);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -329,18 +373,18 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	 * 
 	 * @param customer
 	 */
-	public void renderLVWaiverList(Verification verification) {
+	public void renderLVWaiverList() {
 		logger.debug(Literal.ENTERING);
-
-		this.verification = verification;
+		List<Verification> verifications = verificationService.getVerifications(this.verification.getKeyReference(),
+				VerificationType.LV.getKey());
 
 		if (this.listBoxWaiver.getItems() != null) {
 			this.listBoxWaiver.getItems().clear();
 		}
 
 		int i = 0;
-		for (Verification vrf : verification.getVerifications()) {
-			if (vrf.getReinitid() != null && vrf.getRequestType() == RequestType.WAIVE.getKey()) {
+		for (Verification vrf : verifications) {
+			if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
 				continue;
 			}
 
@@ -348,10 +392,10 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			Listitem item = new Listitem();
 			Listcell listCell;
 
-			//Document Name Type
+			//Document Type
 			listCell = new Listcell();
-			listCell.setId("DocumentName".concat(String.valueOf(i)));
-			listCell.appendChild(new Label(vrf.getReferenceFor()));
+			listCell.setId("DocumentType".concat(String.valueOf(i)));
+			listCell.appendChild(new Label(vrf.getReferenceType()));
 			listCell.setParent(item);
 
 			//Reason
@@ -368,7 +412,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 			//Remarks
 			listCell = new Listcell();
-			listCell.setId("Remarks".concat(String.valueOf(i)));
+			listCell.setId("WRemarks".concat(String.valueOf(i)));
 			Textbox remarks = new Textbox(vrf.getRemarks());
 			listCell.appendChild(remarks);
 			listCell.setParent(item);
@@ -388,9 +432,8 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			listCell.setParent(item);
 
 			reason.addForward("onFulfill", self, "onChangeReason", item);
-
-			String key = vrf.getReferenceFor().concat(vrf.getCif());
-			item.setAttribute(key, vrf);
+			
+			item.setAttribute("vrf", vrf);
 
 			this.listBoxWaiver.appendChild(item);
 
@@ -415,7 +458,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	private void doClearMessage() {
-		for (Listitem listitem : listBoxInitiation.getItems()) {
+		for (Listitem listitem : listBoxWaiver.getItems()) {
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
 
 			reasonComboBox.clearErrorMessage();
@@ -430,7 +473,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		for (Listitem listitem : listBoxInitiation.getItems()) {
+		for (Listitem listitem : listBoxWaiver.getItems()) {
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
 
 			if (!reasonComboBox.isReadonly()) {
@@ -442,69 +485,21 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	private void setValue(Listitem listitem, String comonentId) {
+	private Verification updateWaiverVerification(Listitem listitem) {
 		Verification verification = null;
-		String referenceFor = ((Label) getComponent(listitem, "ReferenceFor")).getValue();
-		String reference = ((Label) getComponent(listitem, "Reference")).getValue();
 
-		String key = referenceFor.concat(reference);
+		verification = (Verification) listitem.getAttribute("vrf");
 
-		verification = (Verification) listitem.getAttribute(key);
+		ExtendedCombobox reason = ((ExtendedCombobox) getComponent(listitem, "Reason"));
 
-		switch (comonentId) {
-		case "RequestType":
-			String requestType = ((Combobox) getComponent(listitem, "RequestType")).getSelectedItem().getValue();
-			verification.setRequestType(Integer.parseInt(requestType));
-			break;
-		case "Agency":
-			ExtendedCombobox agency = ((ExtendedCombobox) getComponent(listitem, "Agency"));
-			if (StringUtils.isNotEmpty(agency.getValue())) {
-				verification.setAgency(Long.parseLong(agency.getAttribute("agencyId").toString()));
-			} else {
-				verification.setAgency(null);
-			}
-			break;
-		case "Reason":
-			ExtendedCombobox reason = ((ExtendedCombobox) getComponent(listitem, "Reason"));
-			if (StringUtils.isNotEmpty(reason.getValue())) {
-				verification.setReason(Long.parseLong(reason.getAttribute("reasonId").toString()));
-			} else {
-				verification.setReason(null);
-			}
-			break;
-		case "Remarks":
-			verification.setRemarks(((Textbox) getComponent(listitem, "Remarks")).getValue());
-			break;
-		case "Decision":
-			Combobox combobox = (Combobox) getComponent(listitem, "Decision");
-			int decision = Integer.parseInt(getComboboxValue(combobox));
-			verification.setDecision(decision);
-			if (!combobox.isDisabled() && decision == 0) {
-				throw new WrongValueException(combobox,
-						Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
-			}
-			break;
-		case "ReInitAgency":
-			ExtendedCombobox reInitAgency = ((ExtendedCombobox) getComponent(listitem, "ReInitAgency"));
-			if (StringUtils.isNotEmpty(reInitAgency.getValue())) {
-				verification.setReInitAgency(Long.parseLong(reInitAgency.getAttribute("reInitAgencyId").toString()));
-			} else {
-				verification.setReInitAgency(null);
-			}
-			break;
-		case "ReInitRemarks":
-			Textbox textbox = (Textbox) getComponent(listitem, "ReInitRemarks");
-			verification.setReInitRemarks(textbox.getValue());
-			if (verification.getDecision() == Decision.OVERRIDE.getKey()
-					&& StringUtils.isEmpty(verification.getReInitRemarks())) {
-				throw new WrongValueException(textbox, "Remarks is mandatory");
-			}
-			break;
-		default:
-			break;
+		if (StringUtils.isNotEmpty(reason.getValue())) {
+			verification.setReason(Long.parseLong(reason.getAttribute("reasonId").toString()));
+		} else {
+			verification.setReason(null);
 		}
 
-		verification.setRecordStatus(this.recordStatus.getValue());
+		verification.setRemarks(((Textbox) getComponent(listitem, "WRemarks")).getValue());
+		return verification;
 	}
 
 	/**
@@ -515,43 +510,12 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	 */
 	public ArrayList<WrongValueException> doWriteComponentsToBean() {
 		logger.debug("Entering");
-
+		
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-
-		for (Listitem listitem : listBoxInitiation.getItems()) {
-			try {
-				setValue(listitem, "RequestType");
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-			try {
-				setValue(listitem, "Agency");
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				setValue(listitem, "Reason");
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			setValue(listitem, "Remarks");
-
-			if (!initType) {
-				try {
-					setValue(listitem, "Decision");
-				} catch (WrongValueException we) {
-					wve.add(we);
-				}
-				try {
-					setValue(listitem, "ReInitAgency");
-				} catch (WrongValueException we) {
-					wve.add(we);
-				}
-
-				setValue(listitem, "ReInitRemarks");
-			}
+		
+		this.verification.getVerifications().clear();
+		for (Listitem listitem : listBoxWaiver.getItems()) {
+			this.verification.getVerifications().add(updateWaiverVerification(listitem));
 		}
 
 		doRemoveValidation();
@@ -564,24 +528,12 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 
 		setValidationOn(false);
-		for (Listitem listitem : listBoxInitiation.getItems()) {
-			Combobox fivComboBox = (Combobox) getComponent(listitem, "RequestType");
-			ExtendedCombobox agencyComboBox = (ExtendedCombobox) getComponent(listitem, "Agency");
+		for (Listitem listitem : listBoxWaiver.getItems()) {
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
-			Combobox decision = (Combobox) getComponent(listitem, "Decision");
-
-			fivComboBox.setConstraint("");
-			agencyComboBox.setConstraint("");
 			reasonComboBox.setConstraint("");
-
-			if (decision != null) {
-				decision.setConstraint("");
-			}
-
 		}
 
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	/**
@@ -608,7 +560,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public void doSave_FiVerification(FinanceDetail financeDetail, Tab tab, boolean recSave)
+	public void doSave_LVVerification(FinanceDetail financeDetail, Tab tab)
 			throws InterruptedException {
 		logger.debug("Entering");
 
@@ -624,7 +576,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		showErrorDetails(wve, tab);
 
 		this.verification.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-		financeDetail.setTvVerification(this.verification);
+		financeDetail.setLvVerification(this.verification);
 
 		logger.debug("Leaving");
 	}

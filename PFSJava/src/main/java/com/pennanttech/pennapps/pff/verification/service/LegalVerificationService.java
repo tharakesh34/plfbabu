@@ -33,4 +33,6 @@ public interface LegalVerificationService {
 	List<LVDocument> getLVDocumentsFromStage(long verificationId);
 
 	List<Long> getLegalVerficationIds(List<Verification> verifications, String keyRef);
+	
+	List<String> getLVDocumentsIds(String  keyReference);
 }

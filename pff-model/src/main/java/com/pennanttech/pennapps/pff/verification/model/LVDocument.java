@@ -28,13 +28,13 @@ public class LVDocument extends AbstractWorkflowEntity {
 	private long verificationId;
 	private int seqNo;
 	private Long documentId;
+	private String documentSubId;
 	private String remarks;
 
 	private String code;
+	private String description;
 	private boolean lvReq;
 	private int docType;
-	private Long docRefId;
-	private String docUri;
 	private String DocName;
 	private boolean newRecord = false;
 	private LoggedInUser userDetails;
@@ -52,8 +52,10 @@ public class LVDocument extends AbstractWorkflowEntity {
 		excludeFields.add("docRefId");
 		excludeFields.add("docUri");
 		excludeFields.add("DocName");
+		excludeFields.add("description");
 		return excludeFields;
 	}
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -122,22 +124,6 @@ public class LVDocument extends AbstractWorkflowEntity {
 		this.docType = docType;
 	}
 
-	public Long getDocRefId() {
-		return docRefId;
-	}
-
-	public void setDocRefId(Long docRefId) {
-		this.docRefId = docRefId;
-	}
-
-	public String getDocUri() {
-		return docUri;
-	}
-
-	public void setDocUri(String docUri) {
-		this.docUri = docUri;
-	}
-
 	public String getDocName() {
 		return DocName;
 	}
@@ -170,4 +156,21 @@ public class LVDocument extends AbstractWorkflowEntity {
 		this.befImage = befImage;
 	}
 
+	public String getDocumentSubId() {
+		return documentSubId;
+	}
+
+	public void setDocumentSubId(String documentSubId) {
+		this.documentSubId = documentSubId;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	
 }

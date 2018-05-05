@@ -77,10 +77,6 @@
 											label="${c:l('listheader_LegalVerification_DocumentType.label')}"
 											sort="false" hflex="min" />
 										<listheader
-											id="listheader_LegalVerification_DocumentName"
-											label="${c:l('listheader_LegalVerification_DocumentName.label')}"
-											sort="false" hflex="min" />
-										<listheader
 											id="listheader_LegalVerification_Reason"
 											label="${c:l('listheader_LegalVerification_Reason.label')}"
 											sort="false" hflex="min" />

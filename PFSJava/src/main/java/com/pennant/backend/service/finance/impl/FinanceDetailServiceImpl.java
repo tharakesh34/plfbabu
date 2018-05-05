@@ -2572,13 +2572,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.isLvInitTab()) {
 				Verification verification = financeDetail.getLvVerification();
 				verification.setVerificationType(VerificationType.LV.getKey());
-				
-				verification.setVerifications(verificationService.getVerifications(verification.getKeyReference(), VerificationType.LV.getKey()));
-				
-				verificationService.setLVDetails(verification.getVerifications());
-				adtVerifications.addAll(verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));
-			}
 
+				List<Verification> verificationsList = verificationService
+						.getVerifications(verification.getKeyReference(), VerificationType.LV.getKey());
+
+				for (Verification oldVrf : verificationsList) {
+					for (Verification newVrf : verification.getVerifications()) {
+						if (newVrf.getId() == oldVrf.getId() && newVrf.getRequestType() == RequestType.WAIVE.getKey()) {
+							oldVrf = newVrf;
+						}
+					}
+				}
+
+				verificationService.setLVDetails(verification.getVerifications());
+				auditDetails.addAll(
+						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));
+			}
 			// preparing audit seqno for same table(adtverifications)
 			int i = 0;
 			for (AuditDetail auditDetail : adtVerifications) {
@@ -2587,6 +2596,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			auditDetails.addAll(adtVerifications);
 		}
+	
+		
 
 		// Finance Fee Details
 		//=======================================

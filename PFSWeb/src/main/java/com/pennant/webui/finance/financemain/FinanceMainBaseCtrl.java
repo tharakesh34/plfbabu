@@ -783,7 +783,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient OverdraftScheduleDetailDialogCtrl		overdraftScheduleDetailDialogCtrl;
 	private transient FieldVerificationDialogCtrl			fieldVerificationDialogCtrl;
 	private transient TVerificationDialogCtrl				tVerificationDialogCtrl;
-	private transient LVerificationCtrl							lVerificationCtrl;
+	private transient LVerificationCtrl						lVerificationCtrl;
 	
 	private transient FinBasicDetailsCtrl					finBasicDetailsCtrl;
 	private transient CustomerInterfaceService				customerInterfaceService;
@@ -6212,7 +6212,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
+		
+		Tab lvInitTab = getTab(AssetConstants.UNIQUE_ID_LVINITIATION);
+		if (lvInitTab != null && lvInitTab.isVisible() && lVerificationCtrl != null) {
+			lVerificationCtrl.doSave_LVVerification(aFinanceDetail, lvInitTab);
+		}
 
+		
 		//Validation For Mandatory Recommendation
 		if (!doValidateRecommendation()) {
 			return;
@@ -6480,7 +6486,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-
+		
 		logger.debug("Leaving");
 	}
 

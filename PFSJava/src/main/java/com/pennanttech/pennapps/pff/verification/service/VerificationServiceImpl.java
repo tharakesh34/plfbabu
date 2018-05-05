@@ -60,6 +60,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -207,7 +208,40 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	
 	@Override
 	public void saveLegalVerification(Verification verification) {
+		if (verification.getRequestType() == RequestType.WAIVE.getKey()) {
+			saveLVWaive(verification);
+		} else {
+			saveLVInit(verification);
+		}
+	}
+
+	private void saveLVWaive(Verification verification) {
+		Verification item = null;
+		for (LVDocument lvDocument : verification.getLvDocuments()) {
+			item = new Verification();
+			BeanUtils.copyProperties(verification, item);
+
+			item.setReferenceFor(String.valueOf(lvDocument.getDocumentId()));
+			item.setReferenceType(lvDocument.getCode());
+
+			Long verificationId = verificationDAO.getVerificationIdByReferenceFor(item.getReferenceFor(),
+					VerificationType.LV.getKey());
+
+			if (verificationId != null) {
+				item.setId(verificationId);
+				verificationDAO.update(item, TableType.MAIN_TAB);
+			} else {
+				verificationDAO.save(item, TableType.MAIN_TAB);
+			}
+		}
+	}
+
+	private void saveLVInit(Verification verification) {
 		Long verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getReferenceFor(), VerificationType.LV.getKey());
+	
+		if (verification.isNewRecord() && verificationId != null) {
+			throw new AppException(String.format("Collateral %s already initiated", verification.getReferenceFor()));
+		}
 		if (verificationId != null) {
 			verification.setId(verificationId);
 			verificationDAO.update(verification, TableType.MAIN_TAB);
@@ -256,8 +290,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 	
 	private void saveLV(Verification item) {
-		legalVerificationService.save(item, TableType.TEMP_TAB);
-		legalVerificationService.saveDocuments(item.getLegalVerification().getLvDocuments(), TableType.TEMP_TAB);
+		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
+			legalVerificationService.save(item, TableType.TEMP_TAB);
+			legalVerificationService.saveDocuments(item.getLegalVerification().getLvDocuments(), TableType.TEMP_TAB);
+		}
 	}
 
 	/**
@@ -473,6 +509,16 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				verification.setDecision(Decision.APPROVE.getKey());
 			}
 		}
+
+	}
+
+	@Override
+	public Verification getVerificationById(long id) {
+		Verification verification = verificationDAO.getVerificationById(id);
+		if (verification != null) {
+			verification.setLvDocuments(legalVerificationService.getLVDocumentsFromStage(id));
+		}
+		return verification;
 
 	}
 }

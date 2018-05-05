@@ -56,7 +56,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		StringBuilder sql = new StringBuilder("select ");
 		sql.append(" v.id, verificationType, module, keyReference, referenceType, reference, ");
 		sql.append(" referenceFor, c.custId, c.custCif as cif, c.custshrtname customerName,");
-		sql.append(" requesttype, reinitid, agency, a.dealerName agencyName, reason, r.code reasonName, remarks, ");
+		sql.append(" requesttype, reinitid, agency, a.dealerName agencyName, reason, r.description reasonName, remarks, ");
 		sql.append(" createdBy, createdOn, status, agencyRemarks, agencyReason, decision, ");
 		sql.append(" verificationDate, decisionRemarks, ");
 		sql.append(" v.LastMntOn, v.LastMntBy");
@@ -76,11 +76,11 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		} else if (verificationType == VerificationType.TV.getKey()) {
 			parameterSource.addValue("dealerType", Agencies.TVAGENCY.getKey());
 			parameterSource.addValue("reasontypecode", WaiverReasons.TVWRES.getKey());
-		}else if (verificationType == VerificationType.LV.getKey()) {
+		} else if (verificationType == VerificationType.LV.getKey()) {
 			parameterSource.addValue("dealerType", Agencies.LVAGENCY.getKey());
 			parameterSource.addValue("reasontypecode", WaiverReasons.LVWRES.getKey());
 		}
-		
+
 		parameterSource.addValue("keyReference", keyReference);
 		parameterSource.addValue("verificationType", verificationType);
 
@@ -221,7 +221,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 	public void updateVerifiaction(long verificationId, Date verificationDate, int status) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder sql = new StringBuilder("update verifications");
 		sql.append(" set verificationdate = :verificationdate, status = :status ");
 		sql.append(" where id = :id ");
@@ -262,6 +262,33 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		}
 
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public Verification getVerificationById(long id) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("select");
+		sql.append(" v.id, verificationType, module, keyReference, referenceType, reference, ");
+		sql.append(" referenceFor,");
+		sql.append(" requesttype, reinitid, agency, a.dealerName agencyName,a.dealerCity agencyCity, reason, remarks, ");
+		sql.append(" createdBy, createdOn, status, agencyRemarks, agencyReason, decision, ");
+		sql.append(" verificationDate, decisionRemarks,a.dealerName agencyName ");
+		sql.append(" from verifications v left join AMTVehicleDealer_AView a on a.dealerid=v.agency");
+		sql.append(" where id=:id and a.dealerType=:dealerType");
+		
+		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		
+		paramMap.addValue("dealerType", Agencies.LVAGENCY.getKey());
+		paramMap.addValue("id", id);
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
