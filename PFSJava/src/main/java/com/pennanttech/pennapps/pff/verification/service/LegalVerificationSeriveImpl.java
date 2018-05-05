@@ -157,6 +157,10 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 		return legalVerificationDAO.getLegalVerification(id, documnetId, documnetSubId, "_AView");
 	}
 
+	@Override
+	public boolean isLVExists(long id) {
+		return legalVerificationDAO.isLVExists(id);
+	}
 	/**
 	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table

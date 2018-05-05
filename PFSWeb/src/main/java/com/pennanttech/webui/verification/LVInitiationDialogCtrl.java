@@ -445,14 +445,14 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (!verification.getLvDocuments().isEmpty()) {
 				lvDocIds = getInitDocIds(verification.getLvDocuments());
 			}
-		} else {
-			oldLVIds = legalVerificationService.getLVDocumentsIds(verification.getKeyReference());
-			oldLVIds.addAll(getWaiveDocIds(verificationService.getVerifications(verification.getKeyReference(),
-					VerificationType.LV.getKey())));
 		}
+		oldLVIds = legalVerificationService.getLVDocumentsIds(verification.getKeyReference());
+		oldLVIds.addAll(getWaiveDocIds(
+				verificationService.getVerifications(verification.getKeyReference(), VerificationType.LV.getKey())));
+
 		for (LVDocument lvDocument : lvDocuments) {
 			String reference = lvDocument.getDocumentId() + StringUtils.trimToEmpty(lvDocument.getDocumentSubId());
-			if (oldLVIds.contains(reference)) {
+			if (oldLVIds.contains(reference) && !lvDocIds.contains(reference)) {
 				continue;
 			}
 
@@ -628,15 +628,15 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 */
 	public void doShowDialog(Verification verification) throws Exception {
 		logger.debug(Literal.ENTERING);
-
+		
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (isNewRecord()) {
 			// setFocus
 			this.collateral.focus();
 			this.btnCtrl.setInitNew();
 			doEdit();
-
 		} else {
+			boolean isLVExists = legalVerificationService.isLVExists(verification.getId());
 			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
@@ -644,6 +644,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				this.btnCtrl.setInitNew();
 				doReadOnly();
 				btnCancel.setVisible(false);
+				if (isLVExists) {
+					this.btnSave.setVisible(false);
+				}
 			}
 		}
 
@@ -660,7 +663,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			doCheckEnquiry();
 			this.window_LVInitiationDialog.setHeight("80%");
-			this.window_LVInitiationDialog.setWidth("70%");
+			this.window_LVInitiationDialog.setWidth("75%");
 			this.groupboxWf.setVisible(false);
 			this.window_LVInitiationDialog.doModal();
 

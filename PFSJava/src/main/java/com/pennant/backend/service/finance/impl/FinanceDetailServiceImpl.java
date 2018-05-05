@@ -2579,11 +2579,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				for (Verification oldVrf : verificationsList) {
 					for (Verification newVrf : verification.getVerifications()) {
 						if (newVrf.getId() == oldVrf.getId() && newVrf.getRequestType() == RequestType.WAIVE.getKey()) {
-							oldVrf = newVrf;
+							BeanUtils.copyProperties(newVrf, oldVrf);;
 						}
 					}
 				}
-
+				verification.setVerifications(verificationsList);
 				verificationService.setLVDetails(verification.getVerifications());
 				auditDetails.addAll(
 						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));

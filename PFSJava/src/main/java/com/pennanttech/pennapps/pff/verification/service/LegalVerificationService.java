@@ -13,9 +13,9 @@ public interface LegalVerificationService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	LegalVerification getLegalVerification(long id,long documetId,String documentSubId);
+	LegalVerification getLegalVerification(long id, long documetId, String documentSubId);
 
-	LegalVerification getApprovedLegalVerification(long id,long documetId,String documentSubId);
+	LegalVerification getApprovedLegalVerification(long id, long documetId, String documentSubId);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
@@ -38,4 +38,7 @@ public interface LegalVerificationService {
 	DocumentManager getDocumentById(long id);
 
 	List<String> getLVDocumentsIds(String keyReference);
+
+	boolean isLVExists(long id);
+
 }

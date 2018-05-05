@@ -183,7 +183,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		sql.append(" FROM  Verification_lv");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where id = :id and documentId = :documentId");
-		if(documentSubId!=null){
+		if (documentSubId != null) {
 			sql.append(" and documentSubId = :documentSubId");
 		}
 		logger.trace(Literal.SQL + sql.toString());
@@ -205,6 +205,30 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 	}
 
 	@Override
+	public boolean isLVExists(long id) {
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+		sql = new StringBuilder("Select count(*) FROM  Verification_lv_view  Where verificationId = :id");
+
+		logger.trace(Literal.SQL + sql.toString());
+		source = new MapSqlParameterSource();
+		source.addValue("id", id);
+
+		try {
+			int recordCount = jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+			if (recordCount > 0) {
+				return true;
+			}
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return false;
+	}
+
+	@Override
 	public void saveDocuments(List<LVDocument> lvDocuments, TableType tableType) {
 		logger.debug("Entering");
 
@@ -216,10 +240,10 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 			sql.append("_stage");
 		}
 
-		sql.append(" (lvId, seqNo, verificationId, documentId,");
+		sql.append(" (lvId, seqNo, verificationId, documentId,documentSubId,");
 		sql.append(
 				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?");
+		sql.append(" Values(?, ?, ?, ?,?");
 		sql.append(" ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug("insertSql: " + sql.toString());
@@ -236,16 +260,17 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 				}
 				ps.setLong(3, document.getVerificationId());
 				ps.setLong(4, document.getDocumentId());
-				ps.setInt(5, document.getVersion());
-				ps.setTimestamp(6, document.getLastMntOn());
-				ps.setLong(7, document.getLastMntBy());
-				ps.setString(8, document.getRecordStatus());
-				ps.setString(9, document.getRoleCode());
-				ps.setString(10, document.getNextRoleCode());
-				ps.setString(11, document.getTaskId());
-				ps.setString(12, document.getNextTaskId());
-				ps.setString(13, document.getRecordType());
-				ps.setLong(14, document.getWorkflowId());
+				ps.setString(5, document.getDocumentSubId());
+				ps.setInt(6, document.getVersion());
+				ps.setTimestamp(7, document.getLastMntOn());
+				ps.setLong(8, document.getLastMntBy());
+				ps.setString(9, document.getRecordStatus());
+				ps.setString(10, document.getRoleCode());
+				ps.setString(11, document.getNextRoleCode());
+				ps.setString(12, document.getTaskId());
+				ps.setString(13, document.getNextTaskId());
+				ps.setString(14, document.getRecordType());
+				ps.setLong(15, document.getWorkflowId());
 			}
 
 			@Override
@@ -316,7 +341,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 	@Override
 	public List<LVDocument> getLVDocumentsFromStage(long verificationId) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select lvid, seqno, verificationId, documentId from verification_lv_details_stage");
+		sql.append("select lvid, seqno, verificationId, documentId,documentsubId from verification_lv_details_stage");
 		sql.append(" where verificationId=:verificationId");
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
@@ -388,7 +413,8 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		sql.append(" Select lvid, verificationid, documentid, documentsubid,");
 		if (type.contains("View")) {
-			sql.append(" code, description, docmodule, docrefid, seqno, docname, doctype, remarks1, remarks2, remarks3, ");
+			sql.append(
+					" code, description, docmodule, docrefid, seqno, docname, doctype, remarks1, remarks2, remarks3, ");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");

@@ -92,7 +92,6 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private TechnicalVerificationService technicalVerificationService;
 	@Autowired
 	private LegalVerificationService legalVerificationService;
-	
 
 	public List<AuditDetail> saveOrUpdate(Verification verification, String tableType, String auditTranType,
 			boolean isInitTab) {
@@ -149,7 +148,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				} else {
 					verificationDAO.update(item, TableType.MAIN_TAB);
 				}
-				
+
 				if (engine.compareTo(verification.getTaskId(),
 						verification.getNextTaskId().replace(";", "")) == Flow.SUCCESSOR) {
 					if (!idList.contains(item.getId())) {
@@ -162,7 +161,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 						}
 					}
 				}
-				
+
 			} else {
 				if (item.getDecision() == Decision.RE_INITIATE.getKey()) {
 					item.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
@@ -205,7 +204,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 		return auditDetails;
 	}
-	
+
 	@Override
 	public void saveLegalVerification(Verification verification) {
 		if (verification.getRequestType() == RequestType.WAIVE.getKey()) {
@@ -221,11 +220,11 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			item = new Verification();
 			BeanUtils.copyProperties(verification, item);
 
-			item.setReferenceFor(String.valueOf(lvDocument.getDocumentId()));
+			item.setReferenceFor(String.valueOf(lvDocument.getDocumentId())
+					+ StringUtils.trimToEmpty(lvDocument.getDocumentSubId()));
 			item.setReferenceType(lvDocument.getCode());
 
-			Long verificationId = verificationDAO.getVerificationIdByReferenceFor(item.getReferenceFor(),
-					VerificationType.LV.getKey());
+			Long verificationId = getVerificationIdByReferenceFor(item.getReferenceFor(), VerificationType.LV.getKey());
 
 			if (verificationId != null) {
 				item.setId(verificationId);
@@ -237,8 +236,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	private void saveLVInit(Verification verification) {
-		Long verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getReferenceFor(), VerificationType.LV.getKey());
-	
+		Long verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getReferenceFor(),
+				VerificationType.LV.getKey());
+
 		if (verification.isNewRecord() && verificationId != null) {
 			throw new AppException(String.format("Collateral %s already initiated", verification.getReferenceFor()));
 		}
@@ -263,8 +263,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 		legalVerificationService.saveDocuments(verification.getLvDocuments(), TableType.MAIN_TAB);
 	}
-	
-	
+
 	private void saveFI(List<CustomerDetails> customerDetailsList, Verification item) {
 		if (item.getFieldInvestigation() == null) {
 			for (CustomerDetails customerDetails : customerDetailsList) {
@@ -288,7 +287,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			technicalVerificationService.save(item.getTechnicalVerification(), TableType.TEMP_TAB);
 		}
 	}
-	
+
 	private void saveLV(Verification item) {
 		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
 			legalVerificationService.save(item, TableType.TEMP_TAB);
@@ -479,11 +478,11 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	@Override
 	public List<Verification> getVerifications(String keyReference, int verificationType) {
 		List<Verification> verifications = verificationDAO.getVeriFications(keyReference, verificationType);
-		
+
 		if (VerificationType.LV.getKey() != verificationType) {
 			setDecision(verificationType, verifications);
 		}
-				
+
 		return verifications;
 	}
 
@@ -496,7 +495,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (lv != null) {
 				lv.setLvDocuments(legalVerificationService.getLVDocumentsFromStage(verification.getId()));
 			}
-			
+
 			verification.setLegalVerification(lv);
 		}
 	}
@@ -520,5 +519,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		}
 		return verification;
 
+	}
+
+	@Override
+	public Long getVerificationIdByReferenceFor(String referenceFor, int verificationType) {
+		return verificationDAO.getVerificationIdByReferenceFor(referenceFor, verificationType);
 	}
 }

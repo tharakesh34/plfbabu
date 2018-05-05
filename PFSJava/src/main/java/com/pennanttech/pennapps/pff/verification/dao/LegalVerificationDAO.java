@@ -43,5 +43,7 @@ public interface LegalVerificationDAO extends BasicCrudDao<LegalVerification> {
 	void saveDocuments(LVDocument lvDocument, String tableType);
 
 	List<String> getLVDocumentsIds(String keyReference);
+	
+	boolean isLVExists(long id);
 
 }

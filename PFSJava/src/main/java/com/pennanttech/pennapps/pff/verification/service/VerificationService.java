@@ -68,4 +68,6 @@ public interface VerificationService {
 	void setLVDetails(List<Verification> verifications);
 	
 	Verification getVerificationById(long id);
+	
+	Long getVerificationIdByReferenceFor(String referenceFor, int verificationType);
 }
