@@ -372,7 +372,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			}
 
 			if (customer != null) {
-				customerDetails = getCustomerDetailsService().getCustomerDetailsById(customer.getId(), true, "_View");
+				customerDetails = getCustomerDetailsService().getCustomerDetailsById(customer.getId(), true, "_AView");
 			}
 
 		} catch (Exception e) {
