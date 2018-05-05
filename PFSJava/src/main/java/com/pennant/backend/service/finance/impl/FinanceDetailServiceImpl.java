@@ -1812,13 +1812,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
 								FinanceConstants.PROCEDT_VERIFICATION_TV_APPR)) {
 							financeDetail.setTvApprovalTab(true);
-						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
+						} /*else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
 								FinanceConstants.PROCEDT_VERIFICATION_LV_INIT)) {
 							financeDetail.setLvInitTab(true);
 						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
 								FinanceConstants.PROCEDT_VERIFICATION_LV_APPR)) {
 							financeDetail.setLvApprovalTab(true);
-						}
+						}*/
 					}
 				}
 			}
@@ -2585,7 +2585,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 				verification.setVerifications(verificationsList);
 				verificationService.setLVDetails(verification.getVerifications());
-				auditDetails.addAll(
+				adtVerifications.addAll(
 						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));
 			}
 			// preparing audit seqno for same table(adtverifications)
