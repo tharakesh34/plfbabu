@@ -30,12 +30,18 @@ public class LVDocument extends AbstractWorkflowEntity {
 	private Long documentId;
 	private String documentSubId;
 	private String remarks;
+	private String docCategory;
+	private String docModule;
+	private String remarks1;
+	private String remarks2;
+	private String remarks3;
 
+	private Long docRefID;
 	private String code;
 	private String description;
 	private boolean lvReq;
-	private int docType;
-	private String DocName;
+	private String docType;
+	private String docName;
 	private boolean newRecord = false;
 	private LoggedInUser userDetails;
 	private Verification befImage;
@@ -51,7 +57,15 @@ public class LVDocument extends AbstractWorkflowEntity {
 		excludeFields.add("docType");
 		excludeFields.add("docRefId");
 		excludeFields.add("docUri");
-		excludeFields.add("DocName");
+		excludeFields.add("docName");
+		excludeFields.add("id");
+		excludeFields.add("docCategory");
+		excludeFields.add("docName");
+		excludeFields.add("docUri");
+		excludeFields.add("docModule");
+		excludeFields.add("remarks");
+		excludeFields.add("docRefID");
+
 		excludeFields.add("description");
 		return excludeFields;
 	}
@@ -100,8 +114,56 @@ public class LVDocument extends AbstractWorkflowEntity {
 		this.remarks = remarks;
 	}
 
+	public String getDocCategory() {
+		return docCategory;
+	}
+
+	public void setDocCategory(String docCategory) {
+		this.docCategory = docCategory;
+	}
+
 	public String getCode() {
 		return code;
+	}
+
+	public String getDocModule() {
+		return docModule;
+	}
+
+	public void setDocModule(String docModule) {
+		this.docModule = docModule;
+	}
+
+	public String getRemarks1() {
+		return remarks1;
+	}
+
+	public void setRemarks1(String remarks1) {
+		this.remarks1 = remarks1;
+	}
+
+	public String getRemarks2() {
+		return remarks2;
+	}
+
+	public void setRemarks2(String remarks2) {
+		this.remarks2 = remarks2;
+	}
+
+	public String getRemarks3() {
+		return remarks3;
+	}
+
+	public void setRemarks3(String remarks3) {
+		this.remarks3 = remarks3;
+	}
+	
+	public Long getDocRefID() {
+		return docRefID;
+	}
+
+	public void setDocRefID(Long docRefID) {
+		this.docRefID = docRefID;
 	}
 
 	public void setCode(String code) {
@@ -116,20 +178,20 @@ public class LVDocument extends AbstractWorkflowEntity {
 		this.lvReq = lvReq;
 	}
 
-	public int getDocType() {
+	public String getDocType() {
 		return docType;
 	}
 
-	public void setDocType(int docType) {
+	public void setDocType(String docType) {
 		this.docType = docType;
 	}
 
 	public String getDocName() {
-		return DocName;
+		return docName;
 	}
 
 	public void setDocName(String docName) {
-		DocName = docName;
+		this.docName = docName;
 	}
 
 	public long getLvId() {
@@ -172,5 +234,4 @@ public class LVDocument extends AbstractWorkflowEntity {
 		this.description = description;
 	}
 
-	
 }

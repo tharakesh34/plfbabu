@@ -5264,13 +5264,9 @@
 	</bean>
 	
 	<!--============ Legal Verification Module ============== -->
-	<bean id="legalVerificationListCtrl" class="com.pennant.webui.verification.legalverification.LegalVerificationListCtrl" parent="basisListCtrl" scope="prototype">
-		<property name="legalVerificationService" ref="legalVerificationService" />
-	</bean>
+	<bean id="legalVerificationListCtrl" class="com.pennant.webui.verification.legalverification.LegalVerificationListCtrl" parent="basisListCtrl" scope="prototype"/>
 	
-	<bean id="legalVerificationDialogCtrl" class="com.pennant.webui.verification.legalverification.LegalVerificationDialogCtrl" parent="basisCtrl" scope="prototype">
-		<property name="legalVerificationService" ref="legalVerificationService" />
-	</bean>
+	<bean id="legalVerificationDialogCtrl" class="com.pennant.webui.verification.legalverification.LegalVerificationDialogCtrl" parent="basisCtrl" scope="prototype"/>
 	
 	<!--============ Authorization Limit ============== -->
 	

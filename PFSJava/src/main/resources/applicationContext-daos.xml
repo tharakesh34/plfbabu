@@ -11264,7 +11264,7 @@
 	<bean id="technicalVerificationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationServiceImpl"/>
 	
 	<!-- Legal Verification -->
-	<bean id="legalVerificationDAO" class="com.pennanttech.pennapps.pff.verification.dao.LegalVerificationDAOImpl"  parent="sequenceDao"/>
+	<bean id="legalVerificationDAO" class="com.pennanttech.pennapps.pff.verification.dao.LegalVerificationDAOImpl" parent="sequenceDao" />
 	
 	<bean id="legalVerificationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

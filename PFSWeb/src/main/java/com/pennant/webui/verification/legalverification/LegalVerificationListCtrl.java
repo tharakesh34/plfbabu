@@ -25,16 +25,16 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.service.LegalVerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Verification/LegalVerification/LegalVerificationList.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/Verification/LegalVerification/LegalVerificationList.zul file.
  * 
  */
-public class LegalVerificationListCtrl  extends GFCBaseListCtrl<LegalVerification> {
+public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(LegalVerificationListCtrl.class);
 
@@ -60,10 +60,9 @@ public class LegalVerificationListCtrl  extends GFCBaseListCtrl<LegalVerificatio
 
 	protected Textbox cif;
 	protected Textbox loanReference;
-	protected ExtendedCombobox agency; 
+	protected ExtendedCombobox agency;
 	protected Datebox createdOn;
 
-	
 	private String module = "";
 
 	@Autowired
@@ -87,19 +86,18 @@ public class LegalVerificationListCtrl  extends GFCBaseListCtrl<LegalVerificatio
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_LegalVerification(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		if ("ENQ".equals(this.module)) {
 			enqiryModule = true;
 		}
-		
+
 		doSetFieldProperties();
 		// Set the page level components.
 		setPageComponents(window_LegalVerification, borderLayout_LegalVerificationList, listBoxLegalVerification,
@@ -110,31 +108,37 @@ public class LegalVerificationListCtrl  extends GFCBaseListCtrl<LegalVerificatio
 		registerButton(button_LegalVerificationList_LegalVerificationSearch);
 
 		registerField("id");
+		registerField("verificationId");
+		registerField("documentid");
+		registerField("documentsubid");
 		registerField("cif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
 		registerField("keyReference", listheader_LoanReference, SortOrder.ASC, loanReference,
 				sortOperator_LoanReference, Operators.STRING);
 		registerField("createdOn", listheader_CreatedOn, SortOrder.NONE, createdOn, sortOperator_CreatedOn,
 				Operators.DATE);
-		registerField("agencyName",listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
+		registerField("agencyName", listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 	}
-	
+
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
 		// Agency
 		this.agency.setMaxlength(50);
 		this.agency.setTextBoxWidth(120);
-		this.agency.setModuleName("FIVAgencies");
+		this.agency.setModuleName("VerificationAgencies");
 		this.agency.setValueColumn("DealerName");
 		this.agency.setDescColumn("DealerCity");
-		this.agency.setValidateColumns(new String[] { "DealerName" ,"DealerCity" });
-		
+		this.agency.setValidateColumns(new String[] { "DealerName", "DealerCity" });
+		Filter agencyFilter[] = new Filter[1];
+		agencyFilter[0] = new Filter("DealerType", Agencies.LVAGENCY.getKey(), Filter.OP_EQUAL);
+		agency.setFilters(agencyFilter);
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
@@ -163,16 +167,15 @@ public class LegalVerificationListCtrl  extends GFCBaseListCtrl<LegalVerificatio
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	protected void doReset() {
 		super.doReset();
 		this.agency.setAttribute("agency", null);
 	}
-	
+
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -182,8 +185,7 @@ public class LegalVerificationListCtrl  extends GFCBaseListCtrl<LegalVerificatio
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -192,9 +194,10 @@ public class LegalVerificationListCtrl  extends GFCBaseListCtrl<LegalVerificatio
 		doReset();
 		search();
 	}
+
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -206,7 +209,9 @@ public class LegalVerificationListCtrl  extends GFCBaseListCtrl<LegalVerificatio
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxLegalVerification.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
-		LegalVerification lv = legalVerificationService.getLegalVerification(id);
+		final long documentId = (long) selectedItem.getAttribute("documentId");
+		final String documentSubId = (String) selectedItem.getAttribute("documentSubId");
+		LegalVerification lv = legalVerificationService.getLegalVerification(id, documentId, documentSubId);
 
 		if (lv == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -258,8 +263,7 @@ public class LegalVerificationListCtrl  extends GFCBaseListCtrl<LegalVerificatio
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -296,9 +300,4 @@ public class LegalVerificationListCtrl  extends GFCBaseListCtrl<LegalVerificatio
 		search();
 	}
 
-	public void setLegalVerificationService(LegalVerificationService legalVerificationService) {
-		this.legalVerificationService = legalVerificationService;
-	}
-	
-	
 }

@@ -3,6 +3,7 @@ package com.pennanttech.pennapps.pff.verification.service;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -12,9 +13,9 @@ public interface LegalVerificationService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	LegalVerification getLegalVerification(long id);
+	LegalVerification getLegalVerification(long id,long documetId,String documentSubId);
 
-	LegalVerification getApprovedLegalVerification(long id);
+	LegalVerification getApprovedLegalVerification(long id,long documetId,String documentSubId);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
@@ -29,10 +30,12 @@ public interface LegalVerificationService {
 	void deleteDocuments(String reference, TableType tableType);
 
 	LegalVerification getLVFromStage(long verificationId);
-	
+
 	List<LVDocument> getLVDocumentsFromStage(long verificationId);
 
 	List<Long> getLegalVerficationIds(List<Verification> verifications, String keyRef);
-	
-	List<String> getLVDocumentsIds(String  keyReference);
+
+	DocumentManager getDocumentById(long id);
+
+	List<String> getLVDocumentsIds(String keyReference);
 }

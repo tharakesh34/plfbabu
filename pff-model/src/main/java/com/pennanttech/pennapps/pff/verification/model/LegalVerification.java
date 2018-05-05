@@ -24,7 +24,7 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	private String cif;
 	private String keyReference;
 	private String collateralType;
-	private String collateralReference;
+	private String referenceFor;
 
 	private Date date;
 	private String agentCode;
@@ -41,6 +41,8 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	private String agency;
 	private String agencyName;
 	private Date createdOn;
+	private Long documentId;
+	private String documentSubId;
 
 	private List<DocumentDetails> documents = null;
 	private List<LVDocument> lvDocuments = new ArrayList<>();
@@ -72,7 +74,7 @@ public class LegalVerification extends AbstractWorkflowEntity {
 		excludeFields.add("reasonDesc");
 		excludeFields.add("cif");
 		excludeFields.add("collateralType");
-		excludeFields.add("collateralReference");
+		excludeFields.add("referenceFor");
 		excludeFields.add("verificationId");
 		excludeFields.add("custId");
 		excludeFields.add("agency");
@@ -81,6 +83,12 @@ public class LegalVerification extends AbstractWorkflowEntity {
 		excludeFields.add("reasonDesc");
 		excludeFields.add("documents");
 		excludeFields.add("lvDocuments");
+		excludeFields.add("extendedFieldHeader");
+		excludeFields.add("extendedFieldRender");
+		excludeFields.add("keyReference");
+		excludeFields.add("verificationFromName");
+		excludeFields.add("documentId");
+		excludeFields.add("documentSubId");
 
 		return excludeFields;
 	}
@@ -185,12 +193,12 @@ public class LegalVerification extends AbstractWorkflowEntity {
 		this.collateralType = collateralType;
 	}
 
-	public String getCollateralReference() {
-		return collateralReference;
+	public String getReferenceFor() {
+		return referenceFor;
 	}
 
-	public void setCollateralReference(String collateralReference) {
-		this.collateralReference = collateralReference;
+	public void setReferenceFor(String referenceFor) {
+		this.referenceFor = referenceFor;
 	}
 
 	public String getReasonCode() {
@@ -241,6 +249,30 @@ public class LegalVerification extends AbstractWorkflowEntity {
 		this.createdOn = createdOn;
 	}
 
+	public Long getDocumentId() {
+		return documentId;
+	}
+
+	public void setDocumentId(Long documentId) {
+		this.documentId = documentId;
+	}
+
+	public String getDocumentSubId() {
+		return documentSubId;
+	}
+
+	public void setDocumentSubId(String documentSubId) {
+		this.documentSubId = documentSubId;
+	}
+
+	public List<LVDocument> getLvDocuments() {
+		return lvDocuments;
+	}
+
+	public void setLvDocuments(List<LVDocument> lvDocuments) {
+		this.lvDocuments = lvDocuments;
+	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -285,14 +317,6 @@ public class LegalVerification extends AbstractWorkflowEntity {
 		this.documents = documents;
 	}
 		
-	public List<LVDocument> getLvDocuments() {
-		return lvDocuments;
-	}
-
-	public void setLvDocuments(List<LVDocument> lvDocuments) {
-		this.lvDocuments = lvDocuments;
-	}
-
 	public ExtendedFieldHeader getExtendedFieldHeader() {
 		return extendedFieldHeader;
 	}

@@ -1,5 +1,7 @@
 package com.pennant.webui.verification.legalverification;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -20,12 +23,19 @@ import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -41,6 +51,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
@@ -57,15 +68,16 @@ import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
-import com.pennant.webui.verification.fieldinvestigation.FieldInvestigationListCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
-import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
+import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.LegalVerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -86,6 +98,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	protected Textbox collateralType;
 	protected Textbox collateralReference;
 
+	protected Listbox listBoxLegalVerificationDocuments;
 	protected Tabpanel observationsFieldTabPanel;
 
 	protected Tabbox tabBoxIndexCenter;
@@ -103,9 +116,10 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	private LegalVerification legalVerification;
 	protected Map<String, DocumentDetails> docDetailMap = null;
 	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+	private List<LVDocument> lvDocumentsList = new ArrayList<>();
 	private transient FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl;
 	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
-	private transient FieldInvestigationListCtrl fieldInvestigationListCtrl;
+	private transient LegalVerificationListCtrl legalVerificationListCtrl;
 
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
 
@@ -145,8 +159,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			this.legalVerification = (LegalVerification) arguments.get("legalVerification");
 
 			if (arguments.get("legalVerificationListCtrl") != null) {
-				this.fieldInvestigationListCtrl = (FieldInvestigationListCtrl) arguments
-						.get("legalVerificationListCtrl");
+				this.legalVerificationListCtrl = (LegalVerificationListCtrl) arguments.get("legalVerificationListCtrl");
 			}
 
 			if (arguments.get("enqiryModule") != null) {
@@ -208,6 +221,43 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	}
 
 	/**
+	 * Set the components for edit mode. <br>
+	 */
+	private void doEdit() {
+		logger.debug(Literal.LEAVING);
+
+		if (this.legalVerification.isNewRecord()) {
+			this.btnCancel.setVisible(false);
+		} else {
+			this.btnCancel.setVisible(true);
+		}
+
+		/*
+		 * readOnlyComponent(isReadOnly("LegalVerificationDialog_VerificationDate"), this.verificationDate);
+		 * readOnlyComponent(isReadOnly("LegalVerificationDialog_AgentCode"), this.agentCode);
+		 * readOnlyComponent(isReadOnly("LegalVerificationDialog_AgentName"), this.agentName);
+		 * readOnlyComponent(isReadOnly("LegalVerificationDialog_Recommendations"), this.recommendations);
+		 * readOnlyComponent(isReadOnly("LegalVerificationDialog_Reason"), this.reason);
+		 * readOnlyComponent(isReadOnly("LegalVerificationDialog_AgentRemarks"), this.remarks);
+		 */
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (this.legalVerification.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
+			} else {
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+			}
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
 	private void doCheckRights() {
@@ -216,7 +266,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalVerificationList_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalVerificationDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalVerificationDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalVerificationDialog_btnSave"));
+		// this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalVerificationDialog_btnSave"));
 
 		this.btnCancel.setVisible(false);
 
@@ -314,7 +364,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	 */
 	private void refreshList() {
 		logger.debug(Literal.ENTERING);
-		fieldInvestigationListCtrl.search();
+		legalVerificationListCtrl.search();
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -360,7 +410,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.custCIF.setValue(lv.getCif());
 		this.finReference.setValue(lv.getKeyReference());
 		this.collateralType.setValue(lv.getCollateralType());
-		this.collateralReference.setValue(lv.getCollateralReference());
+		this.collateralReference.setValue(lv.getReferenceFor());
 
 		this.verificationDate.setValue(lv.getDate());
 		this.agentCode.setValue(lv.getAgentCode());
@@ -380,12 +430,100 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		fillComboBox(this.recommendations, lv.getStatus(), FIStatus.getList());
 
 		this.recordStatus.setValue(lv.getRecordStatus());
+		doFillLVDocuments(lv.getLvDocuments());
 		// Document Detail Tab Addition
 		appendDocumentDetailTab();
 
 		// Verification details
 		appendVerificationFieldDetails(lv);
 
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void doFillLVDocuments(List<LVDocument> lvDocuments) {
+		logger.debug("Entering");
+
+		this.listBoxLegalVerificationDocuments.getItems().clear();
+		if (lvDocuments != null) {
+
+			int i = 0;
+			for (LVDocument document : lvDocuments) {
+				i++;
+				Listitem item = new Listitem();
+				Listcell lc;
+				lc = new Listcell(document.getDocModule());
+				lc.setParent(item);
+				A docLink = new A();
+				docLink.setLabel(document.getDescription());
+				lc = new Listcell();
+				docLink.addForward("onClick", self, "onClickDoDownload", document);
+				docLink.setStyle("text-decoration:underline;");
+				lc.appendChild(docLink);
+				lc.setParent(item);
+
+				lc = new Listcell();
+				lc.setId("Remarks1".concat(String.valueOf(i)));
+				Textbox remarks1 = new Textbox();
+				remarks1.setValue(document.getRemarks1());
+				remarks1.setMaxlength(500);
+				remarks1.setMultiline(true);
+				remarks1.setHeight("30px");
+				remarks1.setWidth("350px");
+				lc.appendChild(remarks1);
+				lc.setParent(item);
+
+				lc = new Listcell();
+				lc.setId("Remarks2".concat(String.valueOf(i)));
+				Textbox remarks2 = new Textbox();
+				remarks2.setValue(document.getRemarks2());
+				remarks2.setMaxlength(500);
+				remarks2.setMultiline(true);
+				remarks2.setHeight("30px");
+				remarks2.setWidth("350px");
+				lc.appendChild(remarks2);
+				lc.setParent(item);
+
+				lc = new Listcell();
+				lc.setId("Remarks3".concat(String.valueOf(i)));
+				Textbox remarks3 = new Textbox();
+				remarks3.setValue(document.getRemarks3());
+				remarks3.setMaxlength(500);
+				remarks3.setMultiline(true);
+				remarks3.setHeight("30px");
+				remarks3.setWidth("350px");
+				lc.appendChild(remarks3);
+				lc.setParent(item);
+
+				item.setAttribute("data", document);
+				this.listBoxLegalVerificationDocuments.appendChild(item);
+			}
+			setLvDocumentsList(lvDocuments);
+		}
+	}
+
+	/**
+	 * To Download the upload Document
+	 */
+	public void onClickDoDownload(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+		LVDocument details = (LVDocument) event.getData();
+
+		DocumentManager docDetails = legalVerificationService.getDocumentById(details.getDocRefID());
+		AMedia amedia = null;
+		if (docDetails.getDocImage() != null) {
+			final InputStream data = new ByteArrayInputStream(docDetails.getDocImage());
+			String docName = details.getDocName();
+			if (details.getDocType().equals(PennantConstants.DOC_TYPE_PDF)) {
+				amedia = new AMedia(docName, "pdf", "application/pdf", data);
+			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_IMAGE)) {
+				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
+			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_WORD)
+					|| details.getDocType().equals(PennantConstants.DOC_TYPE_MSG)) {
+				amedia = new AMedia(docName, "docx", "application/pdf", data);
+			}
+			Filedownload.save(amedia);
+
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -397,8 +535,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		try {
 			extendedFieldCtrl = new ExtendedFieldCtrl();
 			ExtendedFieldHeader extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(
-					CollateralConstants.MODULE_NAME, lv.getCollateralType(),
-					ExtendedFieldConstants.EXTENDEDTYPE_TECHVALUATION);
+					CollateralConstants.VERIFICATION_MODULE, ExtendedFieldConstants.VERIFICATION_LV);
 
 			if (extendedFieldHeader == null) {
 				return;
@@ -408,7 +545,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			tableName.append(CollateralConstants.VERIFICATION_MODULE);
 			tableName.append("_");
 			tableName.append(extendedFieldHeader.getSubModuleName());
-			tableName.append("_LV");
+			tableName.append("_ED");
 
 			List<ExtendedFieldDetail> detailsList = extendedFieldHeader.getExtendedFieldDetails();
 			int fieldSize = 0;
@@ -432,10 +569,12 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				lv.getBefImage().setExtendedFieldRender(extendedFieldRender);
 			}
 			extendedFieldCtrl.setCcyFormat(2);
-			extendedFieldCtrl.setReadOnly(isReadOnly("LegalVerificationDialog_LegalVerificationExtFields"));/* "TechnicalVerificationDialog_TechVerificationExtFields" */
+			// extendedFieldCtrl.setReadOnly(isReadOnly("LegalVerificationDialog_LegalVerificationExtFields"));/*
+			// "TechnicalVerificationDialog_TechVerificationExtFields" */
 			extendedFieldCtrl.setWindow(this.window_LegalVerificationDialog);
 			extendedFieldCtrl.render();
 		} catch (Exception e) {
+			closeDialog();
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
@@ -468,7 +607,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("isNotFinanceProcess", true);
-		map.put("moduleName", VerificationType.TV.name());
+		map.put("moduleName", VerificationType.LV.name());
 		map.put("enqiryModule", enqiryModule);
 		map.put("isEditable", !isReadOnly("LegalVerificationDialog_Documents"));
 
@@ -516,8 +655,26 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		lv.setCif(this.custCIF.getValue());
 		lv.setKeyReference(this.finReference.getValue());
 		lv.setCollateralType(this.collateralType.getValue());
-		lv.setCollateralReference(this.collateralReference.getValue());
+		lv.setReferenceFor(this.collateralReference.getValue());
 
+		for (Listitem listitem : listBoxLegalVerificationDocuments.getItems()) {
+			try {
+				setValue(listitem, "Remarks1");
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				setValue(listitem, "Remarks2");
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				setValue(listitem, "Remarks3");
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
 		// Extended Field validations
 		if (lv.getExtendedFieldHeader() != null) {
 			lv.setExtendedFieldRender(extendedFieldCtrl.save());
@@ -567,11 +724,51 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		
+		lv.setLvDocuments(this.lvDocumentsList);
 		doRemoveValidation();
 
 		showErrorDetails(wve, this.verificationDetails);
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void setValue(Listitem listitem, String comonentId) {
+		LVDocument lvDoc = null;
+
+		lvDoc = (LVDocument) listitem.getAttribute("data");
+		switch (comonentId) {
+		case "Remarks1":
+			lvDoc.setRemarks1(((Textbox) getComponent(listitem, "Remarks1")).getValue());
+			break;
+		case "Remarks2":
+			lvDoc.setRemarks2(((Textbox) getComponent(listitem, "Remarks2")).getValue());
+			break;
+		case "Remarks3":
+			lvDoc.setRemarks3(((Textbox) getComponent(listitem, "Remarks3")).getValue());
+			break;
+
+		default:
+			break;
+		}
+		lvDoc.setRecordStatus(this.recordStatus.getValue());
+	}
+
+	private org.zkoss.zk.ui.Component getComponent(Listitem listitem, String listcellId) {
+		List<Listcell> listcels = listitem.getChildren();
+
+		for (Listcell listcell : listcels) {
+			String id = StringUtils.trimToNull(listcell.getId());
+
+			if (id == null) {
+				continue;
+			}
+
+			id = id.substring(0, id.length() - 1);
+			if (StringUtils.equals(id, listcellId)) {
+				return listcell.getFirstChild();
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -608,6 +805,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		}
 
 		doWriteBeanToComponents(legalVerification);
+		setDialog(DialogType.EMBEDDED);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -666,7 +864,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	 */
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
-		
+
 		if (this.verificationDate.isVisible() && !this.verificationDate.isReadonly()) {
 			this.verificationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_LegalVerificationDialog_VerificationDate.value"), true,
@@ -688,8 +886,8 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 					Labels.getLabel("label_LegalVerificationDialog_Recommendations.value"), FIStatus.getList(), true));
 		}
 		if (!this.remarks.isReadonly()) {
-			this.remarks.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_LegalVerificationDialog_Remarks.value"),
+			this.remarks
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_LegalVerificationDialog_Remarks.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 
@@ -702,6 +900,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
 
+		this.verificationDate.setConstraint("");
 		this.agentCode.setConstraint("");
 		this.agentName.setConstraint("");
 		this.recommendations.setConstraint("");
@@ -761,42 +960,6 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Set the components for edit mode. <br>
-	 */
-	private void doEdit() {
-		logger.debug(Literal.LEAVING);
-
-		if (this.legalVerification.isNewRecord()) {
-			this.btnCancel.setVisible(false);
-		} else {
-			this.btnCancel.setVisible(true);
-		}
-
-		readOnlyComponent(isReadOnly("LegalVerificationDialog_VerificationDate"), this.verificationDate);
-		readOnlyComponent(isReadOnly("LegalVerificationDialog_AgentCode"), this.agentCode);
-		readOnlyComponent(isReadOnly("LegalVerificationDialog_AgentName"), this.agentName);
-		readOnlyComponent(isReadOnly("LegalVerificationDialog_Recommendations"), this.recommendations);
-		readOnlyComponent(isReadOnly("LegalVerificationDialog_Reason"), this.reason);
-		readOnlyComponent(isReadOnly("LegalVerificationDialog_AgentRemarks"), this.remarks);
-
-		if (isWorkFlowEnabled()) {
-			for (int i = 0; i < userAction.getItemCount(); i++) {
-				userAction.getItemAtIndex(i).setDisabled(false);
-			}
-			if (this.legalVerification.isNewRecord()) {
-				this.btnCtrl.setBtnStatus_Edit();
-				btnCancel.setVisible(false);
-			} else {
-				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-			}
-		} else {
-			this.btnCtrl.setBtnStatus_Edit();
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -876,7 +1039,9 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		} else {
 			lv.setDocuments(getLegalVerification().getDocuments());
 		}
-
+        
+		lv.setLvDocuments(getLvDocumentsList());
+		
 		try {
 			if (doProcess(lv, tranType)) {
 				refreshList();
@@ -1007,6 +1172,31 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				}
 			}
 
+			// LV Document Details
+			if (legalVerification.getLvDocuments() != null && !legalVerification.getLvDocuments().isEmpty()) {
+				for (LVDocument details : legalVerification.getLvDocuments()) {
+					if (StringUtils.isEmpty(StringUtils.trimToEmpty(details.getRecordType()))) {
+						continue;
+					}
+
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					details.setRecordStatus(legalVerification.getRecordStatus());
+					details.setWorkflowId(legalVerification.getWorkflowId());
+					details.setTaskId(taskId);
+					details.setNextTaskId(nextTaskId);
+					details.setRoleCode(getRole());
+					details.setNextRoleCode(nextRoleCode);
+					if (PennantConstants.RECORD_TYPE_DEL.equals(legalVerification.getRecordType())) {
+						if (StringUtils.trimToNull(details.getRecordType()) == null) {
+							details.setRecordType(legalVerification.getRecordType());
+							details.setNewRecord(true);
+						}
+					}
+				}
+			}
+			
+			
 			auditHeader = getAuditHeader(legalVerification, tranType);
 			String operationRefs = getServiceOperations(taskId, legalVerification);
 
@@ -1047,7 +1237,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		FieldInvestigation fieldInvestigation = (FieldInvestigation) auditHeader.getAuditDetail().getModelData();
+		LegalVerification legalVerification = (LegalVerification) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
@@ -1066,13 +1256,13 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = legalVerificationService.doApprove(auditHeader);
 
-						if (fieldInvestigation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+						if (legalVerification.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = legalVerificationService.doReject(auditHeader);
-						if (fieldInvestigation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						if (legalVerification.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
@@ -1128,12 +1318,12 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		return String.valueOf(this.legalVerification.getId());
 	}
 
-	public FieldInvestigationListCtrl getFieldInvestigationListCtrl() {
-		return fieldInvestigationListCtrl;
+	public LegalVerificationListCtrl getLegalVerificationListCtrl() {
+		return legalVerificationListCtrl;
 	}
 
-	public void setFieldInvestigationListCtrl(FieldInvestigationListCtrl fieldInvestigationListCtrl) {
-		this.fieldInvestigationListCtrl = fieldInvestigationListCtrl;
+	public void setLegalVerificationListCtrl(LegalVerificationListCtrl legalVerificationListCtrl) {
+		this.legalVerificationListCtrl = legalVerificationListCtrl;
 	}
 
 	public List<DocumentDetails> getDocumentDetailsList() {
@@ -1182,4 +1372,11 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.legalVerification = legalVerification;
 	}
 
+	public List<LVDocument> getLvDocumentsList() {
+		return lvDocumentsList;
+	}
+
+	public void setLvDocumentsList(List<LVDocument> lvDocumentsList) {
+		this.lvDocumentsList = lvDocumentsList;
+	}
 }

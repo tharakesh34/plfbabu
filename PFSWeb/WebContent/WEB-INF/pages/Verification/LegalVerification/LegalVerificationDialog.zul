@@ -101,7 +101,7 @@
 														id="custCIF" width="155px" readonly="true" />
 													<button
 														id="btnSearchCustomerDetails"
-														tooltiptext="${c:l('label_CollateralSearch_CollateralRef.tooltiptext')}"
+														tooltiptext="${c:l('label_CustomerlSearch_CustomerCIF.tooltiptext')}"
 														image="/images/icons/more.png" />
 												</hbox>
 												<label
@@ -152,36 +152,36 @@
 											<column width="15%" />
 											<column width="35%" />
 										</columns>
-										<listbox
-											id="listBoxLegalVerificationDocuments"
-											emptyMessage="${c:l('listbox.emptyMessage')}"
-											tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-											height="100%" multiple="false" sizedByContent="true"
-											span="true">
-											<listhead sizable="true">
-												<listheader
-													id="listheader_DocumentType"
-													label="${c:l('listheader_DocumentType.label')}" sort="auto"
-													hflex="min" />
-												<listheader
-													id="listheader_DocumentName"
-													label="${c:l('listheader_DocumentName.label')}" sort="auto"
-													hflex="min" />
-												<listheader
-													id="listheader_Remarks1"
-													label="${c:l('listheader_Remarks1.label')}" sort="auto"
-													hflex="min" />
-												<listheader
-													id="listheader_Remarks2"
-													label="${c:l('listheader_Remarks2.label')}" sort="auto"
-													hflex="min" />
-												<listheader
-													id="listheader_Remarks3"
-													label="${c:l('listheader_Remarks3.label')}" sort="auto"
-													hflex="min" />
-											</listhead>
-										</listbox>
 									</grid>
+									<listbox
+										id="listBoxLegalVerificationDocuments"
+										emptyMessage="${c:l('listbox.emptyMessage')}"
+										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+										height="100%" multiple="false" sizedByContent="true"
+										span="true">
+										<listhead sizable="true">
+											<listheader
+												id="listheader_DocumentType"
+												label="${c:l('listheader_DocumentType.label')}" sort="auto"
+												hflex="min" />
+											<listheader
+												id="listheader_DocumentName"
+												label="${c:l('listheader_DocumentName.label')}" sort="auto"
+												hflex="min" />
+											<listheader
+												id="listheader_Remarks1"
+												label="${c:l('listheader_Remarks1.label')}" sort="auto"
+												hflex="min" />
+											<listheader
+												id="listheader_Remarks2"
+												label="${c:l('listheader_Remarks2.label')}" sort="auto"
+												hflex="min" />
+											<listheader
+												id="listheader_Remarks3"
+												label="${c:l('listheader_Remarks3.label')}" sort="auto"
+												hflex="min" />
+										</listhead>
+									</listbox>
 								</groupbox>
 
 								<!-- Observations -->
@@ -226,15 +226,16 @@
 														sclass="mandatory" />
 													<datebox
 														id="verificationDate" width="155px" />
-													<label
-														id="label_AgentCode"
-														value="${c:l('label_LegalVerificationDialog_AgentCode.value')}" />
-													<hbox>
-														<space
-															id="space_AgentCode" spacing="2px" sclass="mandatory" />
-														<uppercasebox
-															id="agentCode" width="155px" />
-													</hbox>
+												</hbox>
+												<label
+													id="label_AgentCode"
+													value="${c:l('label_LegalVerificationDialog_AgentCode.value')}" />
+												<hbox>
+													<space
+														id="space_AgentCode" spacing="2px" sclass="mandatory" />
+													<uppercasebox
+														id="agentCode" width="155px" />
+												</hbox>
 											</row>
 											<row id="row8">
 												<label
@@ -264,6 +265,8 @@
 													<extendedcombobox
 														id="reason" />
 												</hbox>
+											</row>
+											<row id="row10">
 												<cell>
 													<label
 														id="label_Remarks"
@@ -278,6 +281,7 @@
 															height="80px" />
 													</hbox>
 												</cell>
+
 											</row>
 										</rows>
 									</grid>
