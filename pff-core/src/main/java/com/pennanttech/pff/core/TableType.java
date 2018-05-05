@@ -15,7 +15,7 @@ package com.pennanttech.pff.core;
  * Enumerates the table types that were used in the data access layer. This includes physical and logical tables.
  */
 public enum TableType {
-	MAIN_TAB(""), TEMP_TAB("_Temp"), PRE_APPR_TAB("_PA"), BOTH_TAB(null);
+	MAIN_TAB(""), TEMP_TAB("_Temp"), PRE_APPR_TAB("_PA"), BOTH_TAB(null), STAGE_TAB("_Stage");
 
 	private String suffix;
 
