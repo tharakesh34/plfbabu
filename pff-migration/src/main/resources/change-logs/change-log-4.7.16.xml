@@ -4615,7 +4615,7 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 	 <changeSet id="74" author="Vinay">
 		<modifyDataType tableName="IRRFeeTypes" columnName="feepercentage" newDataType="decimal(5,2)"/>
 		<modifyDataType tableName="IRRFeeTypes_Temp" columnName="feepercentage" newDataType="decimal(5,2)"/>
-	</changeSet> 
+	</changeSet>
 	<changeSet id="74.1" author="Prasad">
 		<createView viewName="irrfeetypes_view" replaceIfExists="true">
 			SELECT t1.irrid,
@@ -5055,6 +5055,25 @@ UNION ALL
 		<addDefaultValue tableName="financedeviations"
 			columnName="markdeleted" defaultValue="0" />
 	</changeSet>
+<changeSet id="95" author="Srikanth">
+<!--  Deleting the manual deviation severities as these will be moved to application static list. -->
+<sql>
+delete from RMTLovFieldDetail where FieldCode = 'MDEV_SEV';
+delete from BMTLovFieldCode where FieldCode = 'MDEV_SEV';
 
+insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetail)
+	,'MDAAL1', 'Manual Deviation Allowed Authorities for Level 1', 1);
+insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetail)
+	,'MDAAL2', 'Manual Deviation Allowed Authorities for Level 2', 1);
+insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetail)
+	,'MDAAL3', 'Manual Deviation Allowed Authorities for Level 3', 1);
+insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetail)
+	,'MDAAL4', 'Manual Deviation Allowed Authorities for Level 4', 1);
+insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetail)
+	,'MDAAL5', 'Manual Deviation Allowed Authorities for Level 5', 1);
+</sql>
+
+
+</changeSet>
 </databaseChangeLog>
 	
