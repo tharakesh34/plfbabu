@@ -57,7 +57,7 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 
 	public LegalVerification() {
 		super();
