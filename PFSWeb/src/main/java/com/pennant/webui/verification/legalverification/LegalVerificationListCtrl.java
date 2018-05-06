@@ -79,9 +79,9 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 	protected void doSetProperties() {
 		super.moduleCode = "LegalVerification";
 		super.pageRightName = "LegalVerificationList";
-		super.tableName = "verification_lv_list_view";
-		super.queueTableName = "verification_lv_list_view";
-		super.enquiryTableName = "verification_lv_list_view";
+		super.tableName = "verification_lv_view";
+		super.queueTableName = "verification_lv_view";
+		super.enquiryTableName = "verification_lv_view";
 		this.module = getArgument("module");
 	}
 

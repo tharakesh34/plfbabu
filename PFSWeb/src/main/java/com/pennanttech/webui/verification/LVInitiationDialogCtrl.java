@@ -106,43 +106,40 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_LVInitiationDialog; // autowired
+	protected Window window_LVInitiationDialog; 
 
-	protected Listbox listBoxCollateralDocuments; // autowired
-	protected Listbox listBoxLoanDocuments; // autowired
-	protected Listbox listBoxCustomerDocuments; // autowired
-	protected Textbox remarks; // autowired
+	protected Listbox listBoxCollateralDocuments; 
+	protected Listbox listBoxLoanDocuments; 
+	protected Listbox listBoxCustomerDocuments; 
+	protected Textbox remarks; 
 
 	//Initiation components
-	protected ExtendedCombobox collateral; // autowired
-	protected ExtendedCombobox agency; // autowired
-	protected Row collateralRow; // autowired
-	protected Row agencyRow; // autowired
+	protected ExtendedCombobox collateral; 
+	protected ExtendedCombobox agency; 
+	protected Row collateralRow; 
+	protected Row agencyRow; 
 
 	//Waiver components
-	protected ExtendedCombobox reason; // autowired
-	protected Row reasonRow; // autowired
+	protected ExtendedCombobox reason; 
+	protected Row reasonRow; 
 
 	// not auto wired vars
-	private Verification verification; // overhanded per param
-	private transient LVerificationCtrl lVerificationCtrl; // overhanded
-	// per
+	private Verification verification; 
+	private transient LVerificationCtrl lVerificationCtrl; 
 	private transient boolean validationOn;
 
 	private boolean newRecord = false;
 	private List<Verification> verifications;
 	private String moduleType = "";
-	private StringBuilder CollateralRefList = new StringBuilder();
+	private StringBuilder collateralRefList = new StringBuilder();
 	private boolean initiation = false;
-	private List<String> oldLVIds = new ArrayList<>();
-	List<String> lvDocIds = new ArrayList<>();
 
 	@Autowired
 	private SearchProcessor searchProcessor;
 	@Autowired
-	VerificationService verificationService;
+	private transient VerificationService verificationService;
 	@Autowired
-	LegalVerificationService legalVerificationService;
+	private transient LegalVerificationService legalVerificationService;
 
 	/**
 	 * default constructor.<br>
@@ -210,9 +207,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (!getVerification().getCollateralSetupList().isEmpty()) {
 				for (CollateralSetup collateralSetup : getVerification().getCollateralSetupList()) {
 					if (getVerification().getCollateralSetupList().indexOf(collateralSetup) == 0) {
-						CollateralRefList.append("'" + collateralSetup.getCollateralRef() + "'");
+						collateralRefList.append("'" + collateralSetup.getCollateralRef() + "'");
 					} else {
-						CollateralRefList.append(",'" + collateralSetup.getCollateralRef() + "'");
+						collateralRefList.append(",'" + collateralSetup.getCollateralRef() + "'");
 					}
 				}
 			}
@@ -253,9 +250,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			this.collateral.setDescColumn("CollateralType");
 			this.collateral.setValidateColumns(new String[] { "CollateralRef" });
 			if (getVerification().getCollateralSetupList().isEmpty()) {
-				CollateralRefList.append("''");
+				collateralRefList.append("''");
 			}
-			this.collateral.setWhereClause("CollateralRef in (" + CollateralRefList + ")");
+			this.collateral.setWhereClause("CollateralRef in (" + collateralRefList + ")");
 			this.collateral.addForward("onFulfill", self, "onChangeCollateral");
 
 			this.agency.setMandatoryStyle(true);
@@ -300,11 +297,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 			} else {
 				CollateralSetup collateralSetup = (CollateralSetup) dataObject;
-				if (collateralSetup != null) {
-					collateral.setAttribute("collateralRef", collateralSetup.getCollateralRef());
-					fillListBox(this.listBoxCollateralDocuments, getLVDocuments(1, collateralSetup.getCollateralRef()),
-							"Collateral_");
-				}
+				collateral.setAttribute("collateralRef", collateralSetup.getCollateralRef());
+				fillListBox(this.listBoxCollateralDocuments, getLVDocuments(1, collateralSetup.getCollateralRef()),
+						"Collateral_");
 			}
 		}
 	}
@@ -415,57 +410,65 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		fillListBox(this.listBoxLoanDocuments, getLVDocuments(2, null), "Loan_");
 		fillListBox(this.listBoxCustomerDocuments, getLVDocuments(3, null), "Customer_");
 
-		//this.recordStatus.setValue(aVerification.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
 
-	private List<String> getInitDocIds(List<LVDocument> LVDocs) {
-		List<String> lvDocIds = new ArrayList<>();
-		for (LVDocument lvDocument : LVDocs) {
-			lvDocIds.add(lvDocument.getDocumentId() + StringUtils.trimToEmpty(lvDocument.getDocumentSubId()));
+	private List<String> getInitDocIds(List<LVDocument> documents) {
+		List<String> documentIds = new ArrayList<>();
+		for (LVDocument document : documents) {
+			documentIds.add(document.getDocumentId() + StringUtils.trimToEmpty(document.getDocumentSubId()));
 		}
-		return lvDocIds;
+		return documentIds;
 	}
 
 	private List<String> getWaiveDocIds(List<Verification> verifications) {
-		List<String> lvDocIds = new ArrayList<>();
-		for (Verification verification : verifications) {
-			if (verification.getRequestType() == RequestType.WAIVE.getKey()) {
-				lvDocIds.add(verification.getReferenceFor());
+		List<String> documentIds = new ArrayList<>();
+		for (Verification item : verifications) {
+			if (item.getRequestType() == RequestType.WAIVE.getKey()) {
+				documentIds.add(item.getReferenceFor());
 			}
 		}
-		return lvDocIds;
+		return documentIds;
 	}
 
-	public void fillListBox(Listbox listbox, List<LVDocument> lvDocuments, String type) {
-		logger.debug("Entering");
+	public void fillListBox(Listbox listbox, List<LVDocument> documents, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		List<String>  documentIds = new ArrayList<>();
 
 		if (initiation) {
 			listbox.getItems().clear();
 			if (!verification.getLvDocuments().isEmpty()) {
-				lvDocIds = getInitDocIds(verification.getLvDocuments());
+				documentIds = getInitDocIds(verification.getLvDocuments());
 			}
 		}
-		oldLVIds = legalVerificationService.getLVDocumentsIds(verification.getKeyReference());
-		oldLVIds.addAll(getWaiveDocIds(
+		
+		List<String> oldDocumentIds = legalVerificationService.getLVDocumentsIds(verification.getKeyReference());
+		oldDocumentIds.addAll(getWaiveDocIds(
 				verificationService.getVerifications(verification.getKeyReference(), VerificationType.LV.getKey())));
 
-		for (LVDocument lvDocument : lvDocuments) {
-			String reference = lvDocument.getDocumentId() + StringUtils.trimToEmpty(lvDocument.getDocumentSubId());
-			if (oldLVIds.contains(reference) && !lvDocIds.contains(reference)) {
+		for (LVDocument document : documents) {
+			String reference = document.getDocumentId() + StringUtils.trimToEmpty(document.getDocumentSubId());
+			if (oldDocumentIds.contains(reference) && !documentIds.contains(reference)) {
 				continue;
 			}
 
 			Listitem item = new Listitem();
 			Listcell lc;
 			Checkbox checkbox = new Checkbox();
-			checkbox.setValue(lvDocument.getDocumentId());
-			checkbox.setLabel(
-					lvDocument.getCode().concat(" - ").concat(StringUtils.trimToEmpty(lvDocument.getDescription())));
-			checkbox.setAttribute("docSubId", lvDocument.getDocumentSubId());
-			checkbox.setAttribute("docType", lvDocument.getCode());
+			checkbox.setValue(document.getDocumentId());
+			
+			String documentDescription  = StringUtils.trimToEmpty(document.getDescription());
+			if(documentDescription.equals("")) {
+				checkbox.setLabel(document.getCode());
+			} else {
+				checkbox.setLabel(document.getCode().concat(" - ").concat(documentDescription));
+			}
+			
+			checkbox.setAttribute("docSubId", document.getDocumentSubId());
+			checkbox.setAttribute("docType", document.getCode());
 
-			if (lvDocument.isLvReq() || lvDocIds.contains(reference)) {
+			if (document.isLvReq() || documentIds.contains(reference)) {
 				checkbox.setChecked(true);
 			}
 
@@ -476,7 +479,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listbox.appendChild(item);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -507,7 +510,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			//Document Type
 			try {
 				if (StringUtils.isNotBlank(this.collateral.getValue())) {
-					//					Object object = this.collateral.getAttribute("collateral");
 					Object object = this.collateral.getObject();
 					if (object != null) {
 						CollateralSetup collateralSetup = (CollateralSetup) object;
@@ -567,15 +569,14 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		doRemoveValidation();
 
-		if (wve.size() > 0) {
+		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
 
-		//aVerification.setRecordStatus(this.recordStatus.getValue());
 		setVerification(aVerification);
 		logger.debug(Literal.LEAVING);
 	}
@@ -668,7 +669,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			this.window_LVInitiationDialog.doModal();
 
 		} catch (UiException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			this.window_LVInitiationDialog.onClose();
 		} catch (Exception e) {
 			throw e;
@@ -850,8 +851,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 */
 	public void doSave() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
-		//final Verification verification = new Verification();
-		//BeanUtils.copyProperties(getVerification(), verification);
+		
 		boolean isNew = false;
 
 		// force validation, if on, than execute by component.getValue()
@@ -1156,13 +1156,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.verification);
 	}
-
-	/**
-	 * Get the Reference value
-	 *//*
-		 * @Override protected String getReference() { return getVerification().getPhoneCustID() +
-		 * PennantConstants.KEY_SEPERATOR + getVerification().getPhoneTypeCode(); }
-		 */
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

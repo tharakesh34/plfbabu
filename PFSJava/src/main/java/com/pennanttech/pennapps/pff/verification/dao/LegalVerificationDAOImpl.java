@@ -38,12 +38,12 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 	}
 
 	@Override
-	public String save(LegalVerification legalVerification, TableType tableType) {// Prepare the SQL.
+	public String save(LegalVerification legalVerification, TableType tableType) {
 
 		StringBuilder sql = new StringBuilder(" insert into verification_lv");
 		sql.append(tableType.getSuffix());
 
-		if (tableType == TableType.MAIN_TAB && legalVerification.getId() == 0) {
+		if (tableType == TableType.MAIN_TAB) {
 			sql.append("_stage");
 			sql.append(" (Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 			sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
@@ -64,7 +64,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalVerification);
 
 		try {
-			if (tableType == TableType.MAIN_TAB && legalVerification.getId() == 0) {
+			if (tableType == TableType.MAIN_TAB) {
 				jdbcTemplate.update(sql.toString(), paramSource, keyHolder, new String[] { "id" });
 			} else {
 				jdbcTemplate.update(sql.toString(), paramSource);
@@ -75,7 +75,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		logger.debug(Literal.LEAVING);
 
-		if (tableType == TableType.MAIN_TAB && legalVerification.getId() == 0) {
+		if (tableType == TableType.MAIN_TAB) {
 			legalVerification.setId(keyHolder.getKey().longValue());
 		}
 

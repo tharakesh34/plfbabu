@@ -77,7 +77,7 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 
 		if (!auditHeader.isNextProcess()) {
@@ -176,7 +176,7 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 	public AuditHeader delete(AuditHeader aAuditHeader) {
 		logger.debug(Literal.ENTERING);
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		aAuditHeader = businessValidation(aAuditHeader, "delete");
 		if (!aAuditHeader.isNextProcess()) {
 			logger.debug(Literal.LEAVING);
@@ -206,7 +206,7 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 		logger.info(Literal.ENTERING);
 
 		String tranType = "";
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
 
 		if (!aAuditHeader.isNextProcess()) {
@@ -226,7 +226,6 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 		}
 
 		if (lv.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType = PennantConstants.TRAN_DEL;
 			auditDetails.addAll(deleteChilds(lv, TableType.MAIN_TAB.getSuffix(), tranType));
 			legalVerificationDAO.delete(lv, TableType.MAIN_TAB);
 		} else {
@@ -237,12 +236,10 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 			lv.setWorkflowId(0);
 
 			if (lv.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				tranType = PennantConstants.TRAN_ADD;
 				lv.setRecordType("");
 				legalVerificationDAO.saveLV(lv, TableType.MAIN_TAB);
 				verificationDAO.updateVerifiaction(lv.getVerificationId(), lv.getDate(), lv.getStatus());
 			} else {
-				tranType = PennantConstants.TRAN_UPD;
 				lv.setRecordType("");
 				legalVerificationDAO.update(lv, TableType.MAIN_TAB);
 				verificationDAO.updateVerifiaction(lv.getId(), lv.getDate(), lv.getStatus());
@@ -266,7 +263,7 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 
 			// Document Details
 			List<DocumentDetails> documentsList = lv.getDocuments();
-			if (documentsList != null && documentsList.size() > 0) {
+			if (documentsList != null && !documentsList.isEmpty()) {
 				List<AuditDetail> details = lv.getAuditDetailMap().get("DocumentDetails");
 				details = saveOrUpdateDocuments(details, lv, "");
 				auditDetails.addAll(details);
@@ -274,14 +271,14 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 
 			// LV Document Details
 			List<LVDocument> lvDocuments = lv.getLvDocuments();
-			if (lvDocuments != null && lvDocuments.size() > 0) {
+			if (lvDocuments != null && !lvDocuments.isEmpty()) {
 				List<AuditDetail> details = lv.getAuditDetailMap().get("LVDocumentDetails");
 				details = processingLVDocumnets(details, lv, "");
 				auditDetails.addAll(details);
 			}
 
 		}
-		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetailList = new ArrayList<>();
 
 		auditDetailList.addAll(deleteChilds(lv, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
 		legalVerificationDAO.delete(lv, TableType.TEMP_TAB);
@@ -323,10 +320,10 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 
 	// Method for Deleting all records related to Legal Verification childs in _Temp/Main tables depend on method type
 	public List<AuditDetail> deleteChilds(LegalVerification lv, String tableType, String auditTranType) {
-		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditList = new ArrayList<>();
 		// Extended field Render Details.
 		List<AuditDetail> extendedDetails = lv.getAuditDetailMap().get("ExtendedFieldDetails");
-		if (extendedDetails != null && extendedDetails.size() > 0) {
+		if (extendedDetails != null && !extendedDetails.isEmpty()) {
 			// Table Name
 			StringBuilder tableName = new StringBuilder();
 			tableName.append(CollateralConstants.VERIFICATION_MODULE);
@@ -339,7 +336,7 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 
 		// Document Details.
 		List<AuditDetail> documentDetails = lv.getAuditDetailMap().get("DocumentDetails");
-		if (documentDetails != null && documentDetails.size() > 0) {
+		if (documentDetails != null && !documentDetails.isEmpty()) {
 			DocumentDetails document = new DocumentDetails();
 			List<DocumentDetails> documents = new ArrayList<>();
 			String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
@@ -355,7 +352,7 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 
 		// LV Document Details.
 		List<AuditDetail> lvDocuments = lv.getAuditDetailMap().get("LVDocumentDetails");
-		if (lvDocuments != null && lvDocuments.size() > 0) {
+		if (lvDocuments != null && !lvDocuments.isEmpty()) {
 			LVDocument document = new LVDocument();
 			List<LVDocument> documents = new ArrayList<>();
 			String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
@@ -376,10 +373,10 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader = getAuditDetails(auditHeader, method);
+		getAuditDetails(auditHeader, method);
 
 		LegalVerification lv = (LegalVerification) auditHeader.getAuditDetail().getModelData();
 		String usrLanguage = lv.getUserDetails().getLanguage();
@@ -426,8 +423,8 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 
 		LegalVerification lv = (LegalVerification) auditHeader.getAuditDetail().getModelData();
 
@@ -447,13 +444,13 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 		}
 
 		// Document Details
-		if (lv.getDocuments() != null && lv.getDocuments().size() > 0) {
+		if (lv.getDocuments() != null && !lv.getDocuments().isEmpty()) {
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(lv, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 
 		// LV Document Details
-		if (lv.getLvDocuments() != null && lv.getLvDocuments().size() > 0) {
+		if (lv.getLvDocuments() != null && !lv.getLvDocuments().isEmpty()) {
 			auditDetailMap.put("LVDocumentDetails", setLVDocumentDetailsAuditData(lv, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("LVDocumentDetails"));
 		}
