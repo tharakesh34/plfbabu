@@ -5083,7 +5083,5 @@ insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetai
 			
 		</sql>
 	</changeSet>
-
-</changeSet>
 </databaseChangeLog>
 	
