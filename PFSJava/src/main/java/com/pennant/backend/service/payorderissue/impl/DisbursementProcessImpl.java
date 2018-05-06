@@ -2,6 +2,7 @@ package com.pennant.backend.service.payorderissue.impl;
 
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -9,6 +10,8 @@ import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.MandateConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.process.DisbursementProcess;
@@ -29,17 +32,22 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 	@Autowired
 	private FinAdvancePaymentsDAO		finAdvancePaymentsDAO;
 
+	private static String PAID_STATUS = "E";
 	@Override
 	public void process(FinAdvancePayments disbursement) {
 		logger.debug(Literal.ENTERING);
 		
 		FinanceMain financeMain = null;
+		String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
+		if (StringUtils.isNotBlank(disbStatus)) {
+			PAID_STATUS =disbStatus;
+		}
 		
 		financeMain = financeMainDAO.getDisbursmentFinMainById(disbursement.getFinReference(), TableType.MAIN_TAB);
 		String paymentType = disbursement.getPaymentType();
 		
 		try {
-			if (StringUtils.equals("E", disbursement.getStatus())) {
+			if (StringUtils.equals(PAID_STATUS, disbursement.getStatus())) {
 				disbursement.setStatus(DisbursementConstants.STATUS_PAID);
 			} else {
 				postingsPreparationUtil.postReversalsByLinkedTranID(disbursement.getLinkedTranId());

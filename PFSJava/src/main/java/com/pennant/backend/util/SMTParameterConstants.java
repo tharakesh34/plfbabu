@@ -60,4 +60,5 @@ public class SMTParameterConstants {
 	public static final String	ELGMETHOD			= "ELGMETHOD";
 	public static final String	ALW_DIFF_RPYHCY_NPA	= "ALW_DIFF_RPYHCY_NPA";
 	public static final String	RPYHCY_ON_NPA		= "RPYHCY_ON_NPA";
+	public static final String	DISB_PAID_STATUS	= "DISB_PAID_STATUS";
 }
