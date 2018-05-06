@@ -721,12 +721,8 @@
 													<label
 														id="label_FinanceMainDialog_EligibilityMethod"
 														value="${c:l('label_FinanceMainDialog_EligibilityMethod.value')}" />
-													<hbox>
-														<space
-															spacing="2px" />
-														<combobox 
+													<extendedcombobox 
 															id="eligibilityMethod" width="200px" />
-													</hbox>
 												</row>
 												</rows>
 											</grid>

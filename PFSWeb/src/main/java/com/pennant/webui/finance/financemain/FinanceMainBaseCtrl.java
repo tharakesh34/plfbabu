@@ -563,7 +563,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Decimalbox									oDMaxWaiverPerc;
 	//###_0.3
 	protected Row											row_EligibilityMethod;
-	protected Combobox										eligibilityMethod;
+	protected ExtendedCombobox								eligibilityMethod;
 
 	protected Space											space_oDChargeAmtOrPerc;
 	protected Space											space_oDMaxWaiverPerc;
@@ -904,7 +904,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	TechnicalVerificationService technicalVerificationService;
 	@Autowired
 	private CollateralSetupDAO								collateralSetupDAO;
-
+	private String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
 	/**
 	 * default constructor.<br>
 	 */
@@ -963,6 +963,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				LengthConstants.LEN_MASTER_CODE);
 
 		this.finCcy.setProperties("Currency", "CcyCode", "CcyDesc", true, LengthConstants.LEN_CURRENCY);
+
+		if(StringUtils.equals(PennantConstants.YES, elgMethodVisible)){
+			this.eligibilityMethod.setProperties("EligibilityMethod", "FieldCodeValue", "ValueDesc", false, 4);
+		}
 
 		this.finStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finContractDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -3659,7 +3663,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		
 		// ###_0.3
-		fillComboBox(this.eligibilityMethod, aFinanceMain.getEligibilityMethod(), PennantStaticListUtil.getEligibilityMethodList(), "");
+		this.eligibilityMethod.setValue(aFinanceMain.getEligibilityMethod());
 		
 		//FinanceMain Details Tab ---> 5. DDA Registration Details
 		if (this.gb_ddaRequest.isVisible()) {
@@ -3946,8 +3950,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// ###_0.3
-		String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
-		if (StringUtils.equals("Y", elgMethodVisible)) {
+		if (StringUtils.equals(PennantConstants.YES, elgMethodVisible)) {
 			this.row_EligibilityMethod.setVisible(true);
 		}
 		
@@ -11127,7 +11130,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Eligibility Method
 		if(this.row_EligibilityMethod.isVisible()){
 			try {
-				aFinanceMain.setEligibilityMethod(getComboboxValue(this.eligibilityMethod));
+				aFinanceMain.setEligibilityMethod(this.eligibilityMethod.getValidatedValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}

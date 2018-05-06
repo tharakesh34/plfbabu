@@ -2254,7 +2254,10 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("DocumentCategory", new ModuleMapping("DocumentCategory", DocumentCategory.class, new String[] { "DocumentCategory",
 		"DocumentCategory" }, null, new String[] {"Code", "Description"}, null, 600));
-
+		
+		ModuleUtil.register("EligibilityMethod", new ModuleMapping("EligibilityMethod", LovFieldDetail.class,
+				new String[] { "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeValue", "ValueDesc" },
+				new String[][] { { "FieldCode", "0", "ELGMETHOD" } }, 300));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {
