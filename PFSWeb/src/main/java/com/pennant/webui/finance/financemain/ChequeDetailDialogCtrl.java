@@ -1157,8 +1157,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.chequeSerialNo.intValue();
 		this.amount.getValue();
 		this.noOfCheques.getValue();
-		this.noOfChequesCalc.getValue();
 		this.amountCD.getValue();
+		this.noOfChequesCalc.getValue();
 		this.chequeStatus.getSelectedItem().getValue().toString();
 		this.accHolderName.getValue();
 		this.accountType.getSelectedItem().getValue().toString();
@@ -1344,69 +1344,75 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * @throws ParseException
 	 */
 	private void validateChequeDetails(List<ChequeDetail> chequeDetails, boolean validate) throws ParseException {
+		logger.debug(Literal.ENTERING);
 		for (Listitem listitem : listBoxChequeDetail.getItems()) {
-			int emiRefCount = 0;
-			for (ChequeDetail chequeDetail : chequeDetails) {
-				List<Listcell> list = listitem.getChildren();
-				Listcell chkSerial = (Listcell) list.get(1);
-				Listcell extListCell = (Listcell) list.get(2);
-				ExtendedCombobox extendedCombobox = (ExtendedCombobox) extListCell.getFirstChild();
-
-				// validate cheque serial number
-				if (!validate && !StringUtils.equals(chequeDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-					if (StringUtils.equals(String.valueOf(extendedCombobox.getValue()),
-							String.valueOf(chequeDetail.getBankBranchID()))
-							&& StringUtils.equals(chkSerial.getLabel().toString(),
-									String.format("%06d", chequeDetail.getChequeSerialNo()))) {
-						if (fromLoan) {
-							parenttab.setSelected(true);
-						}
-						throw new WrongValueException(extendedCombobox,
-								Labels.getLabel("ChequeDetailDialog_ChkSerial_Exists"));
-					}
-				}
-
-				// validate cheque EMI ref no's
-				if (validate && !StringUtils.equals(chequeDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-					Listcell emiLc = (Listcell) list.get(4);
-					Combobox emi = (Combobox) emiLc.getFirstChild();
-					if (StringUtils.equals(getComboboxValue(emi), chequeDetail.geteMIRefNo())) {
-						emiRefCount++;
-						if (emiRefCount > 1) {
+			List<Listcell> list = listitem.getChildren();
+			Listcell chequeType = (Listcell) list.get(0);
+			if (!validate) {
+				for (ChequeDetail chequeDetail : chequeDetails) {
+					Listcell chkSerial = (Listcell) list.get(1);
+					Listcell extListCell = (Listcell) list.get(2);
+					ExtendedCombobox extendedCombobox = (ExtendedCombobox) extListCell.getFirstChild();
+					// validate cheque serial number
+					if (!StringUtils.equals(chequeDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+						if (StringUtils.equals(String.valueOf(extendedCombobox.getValue()),
+								String.valueOf(chequeDetail.getBankBranchID()))
+								&& StringUtils.equals(chkSerial.getLabel().toString(),
+										String.format("%06d", chequeDetail.getChequeSerialNo()))) {
 							if (fromLoan) {
 								parenttab.setSelected(true);
 							}
-							throw new WrongValueException(emiLc,
+							throw new WrongValueException(extendedCombobox,
+									Labels.getLabel("ChequeDetailDialog_ChkSerial_Exists"));
+						}
+					}
+				}
+			} else if (StringUtils.equals(chequeType.getLabel(), FinanceConstants.REPAYMTH_PDC)) {
+				//Validation  of Cheque EMI Reference.
+				Listcell emiDateLc = (Listcell) list.get(4);
+				Combobox emiComboBox = (Combobox) emiDateLc.getFirstChild();
+
+				int chequesWithSameEmiRefs = 0;
+				for (ChequeDetail chequeDetail : chequeDetails) {
+					if (StringUtils.equals(getComboboxValue(emiComboBox), chequeDetail.geteMIRefNo())) {
+						chequesWithSameEmiRefs++;
+						if (chequesWithSameEmiRefs > 1) {
+							if (fromLoan) {
+								parenttab.setSelected(true);
+							}
+							throw new WrongValueException(emiComboBox,
 									Labels.getLabel("ChequeDetailDialog_ChkEMIRef_Exists"));
 						}
 					}
 				}
 
-				if (validate) {
-					Combobox comboItem = getCombobox(chequeDetail.geteMIRefNo());
-					if (StringUtils.equals(chequeDetail.getChequeType(), FinanceConstants.REPAYMTH_PDC)) {
-						Date emiDate = DateUtility.parse(comboItem.getSelectedItem().getLabel(), PennantConstants.dateFormat);
-						if (getFinanceDetail() != null) {
-							List<FinanceScheduleDetail> schedules = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
-							for (FinanceScheduleDetail detail : schedules) {
-								if (DateUtility.compare(emiDate, detail.getSchDate()) == 0) {
-									if (detail.getRepayAmount().compareTo(chequeDetail.getAmount()) != 0) {
-										Listcell emiAmountLc = (Listcell) list.get(5);
-										Decimalbox emiAmount = (Decimalbox) emiAmountLc.getFirstChild();
-										if (fromLoan) {
-											parenttab.setSelected(true);
-										}
-										throw new WrongValueException(emiAmountLc,Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
-									} else {
-										break;
-									}
+				//Validation  of Cheque EMI Amount.
+				Combobox comboItem = getCombobox(getComboboxValue(emiComboBox));
+				Date emiDate = DateUtility.parse(comboItem.getSelectedItem().getLabel(), PennantConstants.dateFormat);
+				if (getFinanceDetail() != null) {
+					List<FinanceScheduleDetail> schedules = financeDetail.getFinScheduleData()
+							.getFinanceScheduleDetails();
+					Listcell emiAmountLc = (Listcell) list.get(5);
+					Decimalbox emiAmount = (Decimalbox) emiAmountLc.getFirstChild();
+
+					for (FinanceScheduleDetail detail : schedules) {
+						if (DateUtility.compare(emiDate, detail.getSchDate()) == 0) {
+
+							BigDecimal repayAmount = PennantApplicationUtil.formateAmount(detail.getRepayAmount(),
+									CurrencyUtil.getFormat(detail.getFinCcy()));
+							if (repayAmount.compareTo(emiAmount.getValue()) != 0) {
+								if (fromLoan) {
+									parenttab.setSelected(true);
 								}
+								throw new WrongValueException(emiAmount,
+										Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
 							}
 						}
 					}
 				}
 			}
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onChangeEmiAmount(Event event) {
@@ -1522,6 +1528,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 			Listcell emiLc = (Listcell) list.get(4);
 			Combobox emi = (Combobox) emiLc.getFirstChild();
+			emi.clearErrorMessage();
 			if (!StringUtils.equals(getComboboxValue(emi), PennantConstants.List_Select)) {
 				chequeDetail.seteMIRefNo(emi.getSelectedItem().getValue().toString());
 			}else{
@@ -1534,6 +1541,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			
 			Listcell amount = (Listcell) list.get(5);
 			Decimalbox emiAmount = (Decimalbox) amount.getFirstChild();
+			emiAmount.clearErrorMessage();
 			String curField = this.curCcyField;
 			BigDecimal chequeAmt = PennantAppUtil.unFormateAmount(emiAmount.getValue(),
 					CurrencyUtil.getFormat(curField));
