@@ -16797,6 +16797,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("financeMainBaseCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("verification", financeDetail.getLvVerification());
+			map.put("financeDetail", financeDetail);
 			map.put("InitType", true);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVInitiation.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_LVINITIATION), map);
