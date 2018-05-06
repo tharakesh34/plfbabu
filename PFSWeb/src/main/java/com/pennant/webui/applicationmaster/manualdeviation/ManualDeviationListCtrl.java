@@ -97,7 +97,6 @@ public class ManualDeviationListCtrl extends GFCBaseListCtrl<ManualDeviation> {
 	protected Textbox							description;															// autowired
 	protected Textbox							module;																	// autowired
 	protected Textbox							categorization;															// autowired
-	protected Textbox							severity;																// autowired
 	protected Checkbox							active;																	// autowired
 
 	protected Listbox							sortOperator_Code;
@@ -150,8 +149,7 @@ public class ManualDeviationListCtrl extends GFCBaseListCtrl<ManualDeviation> {
 		registerField("module", listheader_Module, SortOrder.NONE, module, sortOperator_Module, Operators.STRING);
 		registerField("categorizationName", listheader_Categorization, SortOrder.NONE, categorization,
 				sortOperator_Categorization, Operators.STRING);
-		registerField("severityName", listheader_Severity, SortOrder.NONE, severity, sortOperator_Severity,
-				Operators.STRING);
+		registerField("severity", listheader_Severity, SortOrder.NONE);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.

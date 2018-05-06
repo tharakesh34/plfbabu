@@ -352,5 +352,27 @@ public class DeviationHelper {
 
 		return allowed;
 	}
+	// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
+
+	public List<ValueLabel> getRoleAndDesc(String finType, String finEvent, String module) {
+		String workflowType = financeReferenceDetailDAO.getWorkflowType(finType, finEvent, module);
+		long workflowid = financeReferenceDetailDAO.getWorkflowIdByType(workflowType);
+		WorkflowEngine workflow = new WorkflowEngine(WorkFlowUtil.getWorkflow(workflowid).getWorkFlowXml());
+		List<String> list = workflow.getActors(true);
+		return getRoleAndDesc(list);
+
+	}
+
+	public String getAuthorities(String finType, int procedtLimit, String limitCode) {
+		long limitid = financeReferenceDetailDAO.getLimitIdByLimitCode(limitCode);
+
+		if (limitid == 0) {
+			return null;
+		}
+
+		String authorities = financeReferenceDetailDAO.authorities(finType, procedtLimit, limitid);
+		return authorities;
+	}
+	// ### 06-05-2018 - End
 
 }

@@ -43,6 +43,7 @@
 package com.pennant.webui.applicationmaster.manualdeviation;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Checkbox;
@@ -50,6 +51,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.applicationmaster.ManualDeviation;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -60,8 +62,8 @@ import com.pennant.util.PennantAppUtil;
  * 
  */
 public class ManualDeviationListModelItemRenderer implements ListitemRenderer<ManualDeviation>, Serializable {
-
 	private static final long serialVersionUID = 1L;
+	private List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
 
 	public ManualDeviationListModelItemRenderer() {
 		super();
@@ -80,7 +82,7 @@ public class ManualDeviationListModelItemRenderer implements ListitemRenderer<Ma
 		lc.setParent(item);
 		lc = new Listcell(manualDeviation.getCategorizationName());
 		lc.setParent(item);
-		lc = new Listcell(manualDeviation.getSeverityName());
+		lc = new Listcell(PennantStaticListUtil.getPropertyValue(severities, manualDeviation.getSeverity()));
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();

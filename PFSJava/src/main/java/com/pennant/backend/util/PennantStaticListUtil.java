@@ -249,6 +249,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> ChequeAccTypeList;
 	private static ArrayList<ValueLabel> eligibilityMethod;
 	private static ArrayList<ValueLabel> financeClosingStatusList;
+	private static List<Property> manualDeviationSeverities;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -3312,6 +3313,22 @@ public class PennantStaticListUtil {
 
 		return result;
 	}
-	
-}
 
+	/**
+	 * Gets the list of manual deviation severities.
+	 * 
+	 * @return The list of manual deviation severities.
+	 */
+	public static List<Property> getManualDeviationSeverities() {
+		if (manualDeviationSeverities == null) {
+			manualDeviationSeverities = new ArrayList<>(5);
+			manualDeviationSeverities.add(new Property(Long.valueOf(1), Labels.getLabel("label_ManDevSev_Level1")));
+			manualDeviationSeverities.add(new Property(Long.valueOf(2), Labels.getLabel("label_ManDevSev_Level2")));
+			manualDeviationSeverities.add(new Property(Long.valueOf(3), Labels.getLabel("label_ManDevSev_Level3")));
+			manualDeviationSeverities.add(new Property(Long.valueOf(4), Labels.getLabel("label_ManDevSev_Level4")));
+			manualDeviationSeverities.add(new Property(Long.valueOf(5), Labels.getLabel("label_ManDevSev_Level5")));
+		}
+
+		return manualDeviationSeverities;
+	}
+}

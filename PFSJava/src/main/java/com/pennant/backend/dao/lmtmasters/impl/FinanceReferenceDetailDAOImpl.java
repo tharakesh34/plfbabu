@@ -755,6 +755,99 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 			return null;
 		}
     }
+	// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
 
-	
+	@Override
+	public String getWorkflowType(String finType, String finEvent, String module) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinType", finType);
+		source.addValue("FinEvent", finEvent);
+		source.addValue("ModuleName", module);
+
+		StringBuilder selectSql = new StringBuilder("Select WorkFlowType  From lmtfinanceworkflowdef ");
+		selectSql.append(" Where FinType =:FinType AND FinEvent =:FinEvent AND ModuleName =:ModuleName");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+		} catch (Exception e) {
+			logger.warn("Exception", e);
+			return null;
+		}
+	}
+
+	@Override
+	public long getWorkflowIdByType(String workflowType) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("WorkFlowType", workflowType);
+		source.addValue("WorkFlowActive", 1);
+
+		StringBuilder selectSql = new StringBuilder("Select WorkFlowId From workflowdetails ");
+		selectSql.append(" Where WorkFlowType =:WorkFlowType AND WorkFlowActive =:WorkFlowActive");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+		} catch (Exception e) {
+			logger.warn("Exception", e);
+			return 0;
+		}
+
+	}
+
+	@Override
+	public long getLimitIdByLimitCode(String limitCode) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("LimitCode", limitCode);
+		source.addValue("Active", 1);
+
+		StringBuilder selectSql = new StringBuilder("Select LimitId From limitcodedetail ");
+		selectSql.append(" Where LimitCode =:LimitCode AND Active =:Active");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+		} catch (Exception e) {
+			logger.warn("Exception", e);
+			return 0;
+		}
+
+	}
+
+	@Override
+	public String authorities(String finType, int finRefType, long limitid) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinType", finType);
+		source.addValue("FinRefId", limitid);
+		source.addValue("FinRefType", finRefType);
+
+		StringBuilder selectSql = new StringBuilder("Select MandInputInStage  From LmtFinRefDetail ");
+		selectSql.append(" Where FinType =:FinType AND FinRefId =:FinRefId AND FinRefType =:FinRefType");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+		} catch (Exception e) {
+			logger.warn("Exception", e);
+			return null;
+		}
+	}
+	// ### 06-05-2018 - End
+
 }

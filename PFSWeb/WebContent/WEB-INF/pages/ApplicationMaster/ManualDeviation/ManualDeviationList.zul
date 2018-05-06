@@ -102,14 +102,6 @@
 								</row>
 								<row>
 									<label
-										id="label_ManualDeviationList_Severity"
-										value="${c:l('label_ManualDeviationList_Severity.value')}" />
-									<listbox id="sortOperator_Severity"
-										width="43px" mold="select" rows="1"
-										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="severity"
-										width="180px" />
-									<label
 										id="label_ManualDeviationList_Active"
 										value="${c:l('label_ManualDeviationList_Active.value')}" />
 									<listbox id="sortOperator_Active"

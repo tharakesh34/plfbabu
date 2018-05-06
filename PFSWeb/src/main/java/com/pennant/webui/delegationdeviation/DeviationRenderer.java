@@ -21,6 +21,7 @@ import org.zkoss.zul.Listitem;
 import com.pennant.UserWorkspace;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ManualDeviation;
 import com.pennant.backend.model.finance.FinanceDeviations;
@@ -43,6 +44,8 @@ public class DeviationRenderer {
 	List<DeviationParam>			deviationParams	= PennantAppUtil.getDeviationParams();
 	ArrayList<ValueLabel>			approveStatus	= PennantStaticListUtil.getApproveStatus();
 	ArrayList<ValueLabel>			secRolesList	= PennantAppUtil.getSecRolesList(null);
+	List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
+
 
 	@Autowired
 	private DeviationHelper			deviationHelper;
@@ -239,11 +242,9 @@ public class DeviationRenderer {
 			String deviationCodedesc = deviation.getDeviationCodeName() + " - " + deviation.getDeviationCodeDesc();
 			listcell = getNewListCell(deviationCodedesc, devNotallowed);
 			listitem.appendChild(listcell);
-			//Severity
-			String Severity = deviation.getSeverityName();
-			listcell = getNewListCell(Severity, devNotallowed);
+			listcell = getNewListCell(PennantStaticListUtil.getPropertyValue(severities, deviation.getSeverity()),
+					devNotallowed);
 			listitem.appendChild(listcell);
-
 			//User role
 			listcell = getNewListCell(deviation.getUserRole(), devNotallowed);
 			listitem.appendChild(listcell);
@@ -381,6 +382,7 @@ public class DeviationRenderer {
 						finDeviations.setDeviationCodeDesc(deviation.getDescription());
 						finDeviations.setSeverityCode(deviation.getSeverityCode());
 						finDeviations.setSeverityName(deviation.getSeverityName());
+						finDeviations.setSeverity(deviation.getSeverity());
 					}
 				}
 			}

@@ -50,6 +50,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
@@ -74,6 +75,8 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.backend.delegationdeviation.DeviationHelper;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -152,6 +155,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private String roleCodes;
+	private String delegatorRoles;
 	private String moduleName;
 	private String eventAction;
 	
@@ -199,6 +203,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 	private transient FinanceWorkFlowService financeWorkFlowService;
 	boolean canRaiseManualDeviation = true;
+	@Autowired
+	private DeviationHelper deviationHelper;
 
 
 	/**
@@ -268,6 +274,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			if (arguments.containsKey("roleCodeList")) {
 				roleCodes = arguments.get("roleCodeList").toString();
 			}
+			// ### 06-05-2018 - story #361(Tuleap server) Manual Deviations
+			delegatorRoles = getDelegatorRoles();
 			if (arguments.containsKey("moduleName")) {
 				moduleName = (String) arguments.get("moduleName");
 			}
@@ -473,8 +481,17 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 				FinanceConstants.PROCEDT_SHOWINSTAGE);
 		fillListBox(this.listboxallowInputInStage, roleCodes, checkAllowInputInStage, 
 				FinanceConstants.PROCEDT_ALWINPUTSTAGE);
-		fillListBox(this.listboxmandInputInStage, roleCodes, checkMandInputInStageMap, 
-				FinanceConstants.PROCEDT_MANDINPUTSTAGE);
+		// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
+
+		if (StringUtils.isNotEmpty(aFinanceReferenceDetail.getLovDescNamelov())
+				&& aFinanceReferenceDetail.getLovDescNamelov().startsWith("MDAAL")) {
+			fillListBox(this.listboxmandInputInStage, delegatorRoles, checkMandInputInStageMap,
+					FinanceConstants.PROCEDT_MANDINPUTSTAGE);
+		} else {
+			fillListBox(this.listboxmandInputInStage, roleCodes, checkMandInputInStageMap,
+					FinanceConstants.PROCEDT_MANDINPUTSTAGE);
+		}
+		// ### 06-05-2018 - End
 		fillComboBox(this.alertType, aFinanceReferenceDetail.getAlertType(), PennantStaticListUtil.getNotificationTypes(), "");
 		doDesignByType(getFinanceReferenceDetail());
 		CheckOverride();
@@ -1364,10 +1381,39 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 				this.lovDescRefDesc.setValue(details.getLimitCode() + "-" + details.getLimitDesc());
 				getFinanceReferenceDetail().setLovDescNamelov(details.getLimitCode());
 				getFinanceReferenceDetail().setLovDescRefDesc(details.getLimitDesc());
+				// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
+				if (details.getLimitCode().startsWith("MDAAL")) {
+					fillListBox(this.listboxmandInputInStage, delegatorRoles, checkMandInputInStageMap,
+							FinanceConstants.PROCEDT_MANDINPUTSTAGE);
+				} else {
+					fillListBox(this.listboxmandInputInStage, roleCodes, checkMandInputInStageMap,
+							FinanceConstants.PROCEDT_MANDINPUTSTAGE);
+				}
+				// ### 06-05-2018 - End
 			}
 		}
+
 		logger.debug("Leaving" + event.toString());
 	}
+	// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
+
+	private String getDelegatorRoles() {
+		List<ValueLabel> delegators = deviationHelper.getRoleAndDesc(
+				getFinanceReferenceDetail().getFinType(), getFinanceReferenceDetail().getFinEvent(),
+				"FINANCE");
+
+		String delegatorRoles = "";
+		for (ValueLabel valueLabel : delegators) {
+			if (StringUtils.isNotEmpty(delegatorRoles)) {
+				delegatorRoles = delegatorRoles.concat(";");
+			}
+
+			delegatorRoles = delegatorRoles.concat(valueLabel.getValue());
+		}
+		return delegatorRoles;
+	}
+	// ### 06-05-2018 - End
+
 	
 	public void onClick$btnSearchTatNotification(Event event) {
 		logger.debug("Entering" + event.toString());

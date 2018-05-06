@@ -97,8 +97,8 @@
 								<label id="label_Module"
 									value="${c:l('label_ManualDeviationDialog_Module.value')}" />
 								<hbox>
-									<space id="space_Module"
-										spacing="2px" sclass="mandatory" />
+									<space spacing="2px"
+										sclass="mandatory" />
 									<combobox id="module" width="180px" />
 								</hbox>
 							</row>
@@ -111,7 +111,11 @@
 							<row id="row4">
 								<label id="label_Severity"
 									value="${c:l('label_ManualDeviationDialog_Severity.value')}" />
-									<extendedcombobox id="severity" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="severity" />
+								</hbox>
 							</row>
 							<row id="row5">
 								<label id="label_Active"

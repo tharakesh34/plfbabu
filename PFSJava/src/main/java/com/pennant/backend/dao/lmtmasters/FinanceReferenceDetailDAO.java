@@ -73,4 +73,14 @@ public interface FinanceReferenceDetailDAO {
 	FinCollaterals getFinCollaterals(String finReference, String collateralType);
 	int getFinanceReferenceDetailByRuleCode(long ruleId, String type);
 	String getAllowedRolesByCode(String finType, int finRefType, String quickDisbCode);
+// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
+
+	String getWorkflowType(String finType, String finEvent, String module);
+
+	long getWorkflowIdByType(String workflowType);
+
+	long getLimitIdByLimitCode(String limitCode);
+
+	String authorities(String finType, int procedtLimit, long limitid);
+// ### 06-05-2018 - End 
 }

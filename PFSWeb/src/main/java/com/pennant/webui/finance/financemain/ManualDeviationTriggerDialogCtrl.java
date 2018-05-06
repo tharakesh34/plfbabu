@@ -1,5 +1,5 @@
 /**
-	 * Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -73,6 +73,7 @@ import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.DeviationConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -122,13 +123,14 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	private Row							row_ApprovelStatus;
 
 	private List<FinanceDeviations>		financeDeviationsList;
-	private List<ValueLabel>			delegator			= null;
 	private FinanceMain					financeMain;
 	@Autowired
 	private DeviationHelper				deviationHelper;
 	private String						prodCode;
-	ArrayList<ValueLabel>				approveStatus	= PennantStaticListUtil.getApproveStatus();
+	private List<ValueLabel> delegators = new ArrayList<>();
+	ArrayList<ValueLabel> approvalStatuses = PennantStaticListUtil.getApproveStatus();
 	String initDelegationRole = "";
+	boolean ALLOW_ASSIGNED_DELEGATOR_TO_APPROVE = false;
 
 	/**
 	 * default constructor.<br>
@@ -166,7 +168,6 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 
 			if (arguments.containsKey("financeMain")) {
 				financeMain = (FinanceMain) arguments.get("financeMain");
-				delegator = deviationHelper.getRoleAndDesc(financeMain.getWorkflowId());
 				prodCode = financeMain.getFinCategory();
 			} else {
 				financeMain = null;
@@ -228,6 +229,8 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 
 			// set Field Properties
 			doSetFieldProperties();
+			// ### 06-05-2018  story #361(Tuleap server) Manual Deviations
+			setDelegatorRoles(financeDeviations.getSeverity());
 			doShowDialog(this.financeDeviations);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -331,17 +334,14 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	 * @throws InterruptedException
 	 */
 	public void doShowDialog(FinanceDeviations aFinanceDeviations) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		// set ReadOnly mode accordingly if the object is new or not.
+		// Set ReadOnly mode accordingly if the object is new or not.
 		if (aFinanceDeviations.isNew()) {
-
 			this.btnCtrl.setInitNew();
 			doEdit();
-			// setFocus
-			//			this.paymentDetail.focus();
+			deviationCode.setFocus(true);
 		} else {
-			//			this.paymentDetail.focus();
 			if (isNewFinance()) {
 				if (enqModule) {
 					doReadOnly();
@@ -356,15 +356,15 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 				doReadOnly();
 				btnCancel.setVisible(false);
 			}
-			//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
 
+			// ### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
 			if((getUserWorkspace().getUserRoles().contains(aFinanceDeviations.getUserRole()))) {
 				btnDelete.setVisible(true);
 			}
 			// ### 01-05-2018 - End
 		}
 
-		//### 01-05-2018 - Start - story #361(Tuleap server) Manual Deviations
+		// ### 01-05-2018 - Start - story #361(Tuleap server) Manual Deviations
 		// Set the components based on the record status.
 		if (aFinanceDeviations.isMarkDeleted()) {
 			btnSave.setVisible(false);
@@ -378,14 +378,16 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 			readOnlyComponent(true, status);
 			remarks.setReadonly(true);
 		} else {
+			// Initiator.
 			if (aFinanceDeviations.isNewRecord()
 					|| StringUtils.equals(aFinanceDeviations.getRecordType(), PennantConstants.RCD_ADD)
 					|| (getUserWorkspace().getUserRoles().contains(aFinanceDeviations.getUserRole()))) {
 				readOnlyComponent(false, delegationRole);
 			}
 
+			// Approval Authority
 			if (DeviationConstants.MULTIPLE_APPROVAL) {
-				if (getUserWorkspace().getUserRoles().contains(initDelegationRole)) {
+				if (isAllowedApprovalAuthority()) {
 					readOnlyComponent(false, delegationRole);
 					readOnlyComponent(false, status);
 				}
@@ -412,8 +414,26 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 			this.window_ManualDeviationTrigger.onClose();
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
+	// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
+
+	private boolean isAllowedApprovalAuthority() {
+		if (ALLOW_ASSIGNED_DELEGATOR_TO_APPROVE) {
+			return getUserWorkspace().getUserRoles().contains(initDelegationRole);
+		} else {
+			for (ValueLabel delegator : delegators) {
+				if (getUserWorkspace().getUserRoles().contains(delegator.getValue())) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+	}
+	// ### 06-05-2018 - End 
+
 
 	/**
 	 * Set the components for edit mode. <br>
@@ -492,12 +512,6 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.deviationCode.setProperties("ProductDeviation", "DeviationCode", "DeviationDesc", true, 1, 155);
-		//		this.deviationCode.setModuleName("ProductDeviation");
-		//		this.deviationCode.setMandatoryStyle(true);
-		//		this.deviationCode.setValueColumn("DeviationCode");
-		//		this.deviationCode.setDescColumn("DeviationDesc");
-		//		this.deviationCode.setDisplayStyle(1);
-		//	this.deviationCode.setValidateColumns(new String[] { "DeviationCode" });
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("ProductCode", prodCode, Filter.OP_EQUAL);
 		this.deviationCode.setFilters(filters);
@@ -514,6 +528,8 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	 */
 	private void doCancel() {
 		logger.debug("Entering");
+
+		setDelegatorRoles(financeDeviations.getBefImage().getSeverity());
 		doWriteBeanToComponents(this.financeDeviations.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
@@ -527,31 +543,27 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	 *            FinAdvancePaymentsDetail
 	 */
 	public void doWriteBeanToComponents(FinanceDeviations aFinanceDeviations) {
-		logger.debug("Entering");
+		// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
+		logger.debug(Literal.ENTERING);
 
 		aFinanceDeviations.setModule(DeviationConstants.TY_LOAN);
-		fillComboBox(delegationRole, aFinanceDeviations.getDelegationRole(), delegator, "");
-		//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
-		fillComboBox(status, aFinanceDeviations.getApprovalStatus(), approveStatus, "");
 
-		String deviationCode = aFinanceDeviations.getDeviationCode();
-
-		// ### 01-05-2018 - End
-
-		if (StringUtils.isEmpty(deviationCode)) {
-			deviationCode="0";
+		String code = aFinanceDeviations.getDeviationCode();
+		if (StringUtils.isEmpty(code)) {
+			code = "0";
 		}
-		this.deviationCode.setAttribute("deviationCode", Long.parseLong(deviationCode));
-		this.deviationCode.setAttribute("severity", aFinanceDeviations.getSeverity());
-		this.deviationCode.setAttribute("severityName", aFinanceDeviations.getSeverityName());
-		this.deviationCode.setValue(aFinanceDeviations.getDeviationCodeName(),
-				aFinanceDeviations.getDeviationCodeDesc());
+		deviationCode.setAttribute("deviationCode", Long.parseLong(code));
+		deviationCode.setAttribute("severity", aFinanceDeviations.getSeverity());
+		deviationCode.setValue(aFinanceDeviations.getDeviationCodeName(), aFinanceDeviations.getDeviationCodeDesc());
+
+		fillComboBox(delegationRole, aFinanceDeviations.getDelegationRole(), delegators, "");
+
+		fillComboBox(status, aFinanceDeviations.getApprovalStatus(), approvalStatuses, "");
+
 		this.remarks.setValue(aFinanceDeviations.getRemarks());
 
-		//		this.recordStatus.setValue(aFinanceDeviations.getRecordStatus());
-		//		this.recordType.setValue(PennantJavaUtil.getLabel(aFinanceDeviations.getRecordType()));
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
+		// ### 06-05-2018 - End
 	}
 
 	/**
@@ -577,14 +589,6 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 					if (StringUtils.isNotEmpty(severity2)) {
 						aFinanceDeviations.setSeverity(Long.parseLong(severity2));
 
-					}
-
-				}
-				//Set severity Name to Product Manual Deviation bean
-				Object severityName = this.deviationCode.getAttribute("severityName");
-				if (severityName != null) {
-					if (StringUtils.isNotEmpty(severityName.toString())) {
-						aFinanceDeviations.setSeverityName(severityName.toString());
 					}
 				}
 			} else {
@@ -657,7 +661,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		}
 
 		if (!delegationRole.isDisabled()) {
-			delegationRole.setConstraint(new StaticListValidator(delegator,
+			delegationRole.setConstraint(new StaticListValidator(delegators,
 					Labels.getLabel("label_ManualDeviationTriggerDialog_delegationRole.value")));
 		}
 
@@ -940,16 +944,47 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 			if (details != null) {
 				this.deviationCode.setAttribute("deviationCode", details.getProductDevID());
 				this.deviationCode.setAttribute("severity", details.getSeverity());
-				this.deviationCode.setAttribute("severityName", details.getSeverityName());
 			} else {
 				this.deviationCode.setValue("", "");
 				this.deviationCode.setAttribute("severity", 0);
 				this.deviationCode.setAttribute("deviationCode", Long.MIN_VALUE);
 			}
+			// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
+			setDelegatorRoles(details == null ? 0 : details.getSeverity());
+			fillComboBox(delegationRole, delegators.isEmpty() ? "" : delegators.get(0).getValue(), delegators, "");
+			// ### 06-05-2018 - End
+
 		}
 
 		logger.debug("Leaving" + event.toString());
 	}
+	// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
+	private void setDelegatorRoles(long severity) {
+		delegators.clear();
+
+		if (severity == 0) {
+			return;
+		}
+
+		String delegatorRoles = deviationHelper.getAuthorities(financeMain.getFinType(), FinanceConstants.PROCEDT_LIMIT,
+				"MDAAL" + severity);
+
+		if (delegatorRoles == null) {
+			return;
+		}
+
+		String[] list = delegatorRoles.split(PennantConstants.DELIMITER_COMMA);
+
+		for (String item : list) {
+			ValueLabel delegator = new ValueLabel();
+			delegator.setLabel(item);
+			delegator.setValue(item);
+
+			delegators.add(delegator);
+		}
+	}
+	// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
+
 
 	/**
 	 * @param aAuthorizedSignatoryRepository

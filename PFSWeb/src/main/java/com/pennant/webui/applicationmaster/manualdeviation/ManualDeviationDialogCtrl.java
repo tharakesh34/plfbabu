@@ -61,6 +61,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ManualDeviation;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -96,12 +97,11 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	protected Textbox							code;
 	protected Space								space_Description;
 	protected Textbox							description;
-	protected Space								space_Module;
 	protected Combobox							module;
 	protected Space								space_Categorization;
 	protected ExtendedCombobox					categorization;
 	protected Space								space_Severity;
-	protected ExtendedCombobox					severity;
+	protected Combobox severity;
 	protected Space								space_Active;
 	protected Checkbox							active;
 	private ManualDeviation						manualDeviation;														// overhanded per param
@@ -110,6 +110,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	private transient ManualDeviationService	manualDeviationService;
 
 	private List<ValueLabel>					moduleList			= PennantStaticListUtil.getWorkFlowModules();
+	private List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
 
 	/**
 	 * default constructor.<br>
@@ -192,12 +193,6 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 		this.categorization.setValueColumn("FieldCodeValue");
 		this.categorization.setDescColumn("ValueDesc");
 		this.categorization.setValidateColumns(new String[] { "FieldCodeValue" });
-
-		this.severity.setMandatoryStyle(true);
-		this.severity.setModuleName("MDEV_SEV");
-		this.severity.setValueColumn("FieldCodeValue");
-		this.severity.setDescColumn("ValueDesc");
-		this.severity.setValidateColumns(new String[] { "FieldCodeValue" });
 
 		this.code.setMaxlength(20);
 		this.description.setMaxlength(100);
@@ -324,23 +319,6 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onFulfill$severity(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		Object dataObject = severity.getObject();
-
-		if (dataObject instanceof String) {
-			this.severity.setValue(dataObject.toString());
-		} else {
-			LovFieldDetail details = (LovFieldDetail) dataObject;
-			if (details != null) {
-				this.severity.setAttribute("severity", details.getFieldCodeId());
-			}
-		}
-
-		logger.debug("Leaving" + event.toString());
-	}
-
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
@@ -377,14 +355,12 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 		this.description.setValue(aManualDeviation.getDescription());
 		String moduleName = PennantConstants.WORFLOW_MODULE_FINANCE;
 		fillComboBox(this.module, moduleName, moduleList, "");
+		// ### 06-05-2018 -story #361(Tuleap server) Manual Deviations
+		fillList(severity, severities, aManualDeviation.getSeverity());
 		if (aManualDeviation.getCategorization() != Long.MIN_VALUE && aManualDeviation.getCategorization() != 0) {
 			this.categorization.setAttribute("categorization", aManualDeviation.getCategorization());
 			this.categorization.setValue(aManualDeviation.getCategorizationCode(),
 					aManualDeviation.getCategorizationName());
-		}
-		if (aManualDeviation.getSeverity() != Long.MIN_VALUE && aManualDeviation.getSeverity() != 0) {
-			this.severity.setAttribute("severity", aManualDeviation.getSeverity());
-			this.severity.setValue(aManualDeviation.getSeverityCode(), aManualDeviation.getSeverityName());
 		}
 		this.active.setChecked(aManualDeviation.isActive());
 		this.recordStatus.setValue(aManualDeviation.getRecordStatus());
@@ -445,15 +421,14 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 			wve.add(we);
 		}
 		//Severity
+		// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
 		try {
-			this.severity.getValidatedValue();
-			Object obj = this.severity.getAttribute("severity");
-			if (obj != null) {
-				if (!StringUtils.isEmpty(obj.toString())) {
-					aManualDeviation.setSeverity(Long.valueOf((obj.toString())));
-				}
+			if (severity.getSelectedIndex() <= 0) {
+				aManualDeviation.setSeverity(0);
+			} else {
+				aManualDeviation.setSeverity(severity.getSelectedItem().getValue());
 			}
-
+			// ### 06-05-2018 - End - story #361(Tuleap server) Manual Deviations
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -541,9 +516,9 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 			this.categorization.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_ManualDeviationDialog_Categorization.value"), null, true, true));
 		}
-		if (!this.severity.isReadonly()) {
-			this.severity.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_ManualDeviationDialog_Severity.value"), null, true, true));
+		if (!this.severity.isDisabled()) {
+			this.severity.setConstraint(
+					new StaticListValidator(severities, Labels.getLabel("label_ManualDeviationDialog_Severity.value")));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -710,8 +685,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 		this.description.setValue("");
 		this.module.setSelectedIndex(0);
 		this.categorization.setValue("");
-		this.severity.setValue("");
-		;
+		this.severity.setSelectedIndex(0);
 		this.active.setChecked(false);
 
 		logger.debug("Leaving");
