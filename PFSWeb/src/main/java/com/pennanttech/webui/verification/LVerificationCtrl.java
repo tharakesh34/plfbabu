@@ -71,6 +71,8 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 	private transient boolean validationOn;
 	private transient boolean initType;
+	private FinanceDetail financeDetail;
+
 
 	@Autowired
 	private TechnicalVerificationService technicalVerificationService;
@@ -105,6 +107,10 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
+		}
+		
+		if (arguments.containsKey("financeDetail")) {
+			this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		}
 
 		doShowDialog();
@@ -156,9 +162,6 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	public void onClick$btnNew_Waiver(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		// Create a new entity.
-		//Verification verification = new Verification();
-		// Create a new entity.
 		Verification verification = new Verification();
 		BeanUtils.copyProperties(this.verification, verification);
 		verification.setRequestType(RequestType.WAIVE.getKey());
@@ -358,6 +361,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		arg.put("initiation", true);
 		arg.put("verification", vrf);
 		arg.put("legalVerificationListCtrl", this);
+		arg.put("financeDetail", financeDetail);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVInitiationDialog.zul", null,
