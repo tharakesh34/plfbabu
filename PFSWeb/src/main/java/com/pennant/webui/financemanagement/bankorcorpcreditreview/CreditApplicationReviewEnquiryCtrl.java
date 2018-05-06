@@ -238,8 +238,6 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 */
 	public void onCreate$window_CreditApplicationReviewDialog(Event event) throws Exception {
 		logger.debug("Entering");
-		logger.debug("TIME MILLI SECONDS ENTERING"+System.currentTimeMillis());
-
 
 		// Set the page level components.
 		setPageComponents(window_CreditApplicationReviewDialog);
@@ -459,7 +457,6 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			MessageUtil.showError(e);
 			this.window_CreditApplicationReviewDialog.onClose();
 		}
-		logger.debug("TIME MILLI SECONDS LEAVING"+System.currentTimeMillis());
 		logger.debug("Leaving" + event.toString());
 	}
 	

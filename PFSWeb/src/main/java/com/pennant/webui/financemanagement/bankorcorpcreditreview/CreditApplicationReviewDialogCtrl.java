@@ -2143,7 +2143,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		//Get FinCredit Categories based on the Customer Category Type 
 		this.listOfFinCreditRevCategory = this.creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(this.creditRevCode);
 		prvYearValuesMap = new HashMap<String, BigDecimal>();
-		prvYearValuesMap.putAll(extValuesMap);
 		this.creditReviewSummaryList = this.creditApplicationReviewService.getLatestCreditReviewSummaryByCustId(this.custID.longValue());
 
 		int audityear = Integer.parseInt(creditReviewDetails.getAuditYear());
@@ -2155,16 +2154,18 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		// empty values for to avoid exceptions and improve performance.
 		boolean isCurrentDataMapAvil = false;
 		if(creditReviewSummaryMap == null ||creditReviewSummaryMap.isEmpty()){
-			isCurrentDataMapAvil = true;
 			creditReviewSummaryMap= getCreditApplicationReviewService().getListCreditReviewSummaryByCustId2(aCustomer.getCustID(), 0, audityear, category, creditReviewDetails.getAuditPeriod(), true, type);
-			creditReviewSummaryMap.put(String.valueOf(audityear-1), creditReviewSummaryMap.get(String.valueOf(audityear)));
-			creditReviewSummaryMap.put(String.valueOf(audityear-2), creditReviewSummaryMap.get(String.valueOf(audityear)));
+			isCurrentDataMapAvil = true;
+			if (creditReviewSummaryMap != null && creditReviewSummaryMap.size() > 0) {
+				creditReviewSummaryMap.put(String.valueOf(audityear-1), creditReviewSummaryMap.get(String.valueOf(audityear)));
+				creditReviewSummaryMap.put(String.valueOf(audityear-2), creditReviewSummaryMap.get(String.valueOf(audityear)));
+			}
 		}
 		prv1YearValuesMap = new HashMap<String,BigDecimal>();
-		prv1YearValuesMap.putAll(extValuesMap);
 		prv1YearValuesMap.put("auditYear", BigDecimal.valueOf(audityear-2));
 		creditReviewSummaryList = creditReviewSummaryMap.get(String.valueOf(audityear-2));
 		if(this.creditReviewSummaryList != null && this.creditReviewSummaryList.size() > 0){
+			prv1YearValuesMap.putAll(extValuesMap);
 			for(int k=0;k<this.creditReviewSummaryList.size(); k++){
 				// to set map and engine default values for which is not available previous years
 				if(isCurrentDataMapAvil){
@@ -2187,7 +2188,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 			}
 		}
 
-		if(prv1YearValuesMap!= null && prv1YearValuesMap.size() >0){
+		if(prv1YearValuesMap!= null && prv1YearValuesMap.size() >1){
 			setData(prv1YearValuesMap);
 		}
 
@@ -2202,6 +2203,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		}
 		prvYearValuesMap.put("auditYear", BigDecimal.valueOf(audityear-1));
 		if(!isPrevYearSummayNull && this.creditReviewSummaryList.size() > 0){
+			prvYearValuesMap.putAll(extValuesMap);
 			for(int k=0;k<this.creditReviewSummaryList.size(); k++){
 				prvYearValuesMap.put(this.creditReviewSummaryList.get(k).getSubCategoryCode(),PennantAppUtil.formateAmount(this.creditReviewSummaryList.get(k).getItemValue(),this.currFormatter).setScale(this.currFormatter,RoundingMode.HALF_DOWN));
 				//  summaryMap.put(this.creditReviewSummaryList.get(k).getSubCategoryCode(),this.creditReviewSummaryList.get(k));
@@ -2218,7 +2220,9 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 			}
 		}
 
-		setData(prvYearValuesMap);
+		if(prvYearValuesMap.size() > 28){
+			setData(prvYearValuesMap);
+		}
 		curYearValuesMap.putAll(extValuesMap);
 		//if(!this.creditReviewDetails.isNewRecord()){
 		// below flag is previous years data not available.It is true 
@@ -2250,13 +2254,14 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				if(isPrevYearSummayNull){
 					prvYearValuesMap.put(this.listOfFinCreditRevSubCategory.get(k).getSubCategoryCode(),PennantAppUtil.formateAmount(BigDecimal.ZERO,this.currFormatter));
 					engine.put("Y"+(audityear-1)+this.listOfFinCreditRevSubCategory.get(k).getSubCategoryCode(),PennantAppUtil.formateAmount(BigDecimal.ZERO,this.currFormatter));
-					if(prvYearValuesMap!= null && prvYearValuesMap.size() >0){
+					if(prvYearValuesMap!= null && prvYearValuesMap.size() >0 && !creditReviewDetails.isNew()){
 						setData(prvYearValuesMap);
 					}
 				}
 			}
 		}
-		if(curYearValuesMap != null){
+		//If current year data is available and not new than set
+		if(curYearValuesMap != null && !creditReviewDetails.isNew()){
 			setData(curYearValuesMap);
 		}
 		//}
