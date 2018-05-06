@@ -5071,7 +5071,7 @@ insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetai
 	,'MDAAL4', 'Manual Deviation Allowed Authorities for Level 4', 1);
 insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetail)
 	,'MDAAL5', 'Manual Deviation Allowed Authorities for Level 5', 1);
-</sql>
+</sql></changeSet>
 <changeSet id="96" author="SubbaRao">
 		<sql>
 			Insert into SECRIGHTS values ((select max(rightid)+1 from SECRIGHTS),0,'menuItem_Administration_UserpasswordReset','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
