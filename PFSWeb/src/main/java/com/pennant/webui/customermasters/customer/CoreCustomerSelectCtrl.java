@@ -363,7 +363,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				if (StringUtils.isNotBlank(cif)) {
 					String msg = Labels.getLabel("label_CoreCustomerDialog_ProspectExist",
-							new String[] { Labels.getLabel(primaryIdLabel), custCIF + ". \n" });
+							new String[] { Labels.getLabel(primaryIdLabel), cif + ". \n" });
 
 					if (MessageUtil.confirm(msg) != MessageUtil.YES) {
 						return;
