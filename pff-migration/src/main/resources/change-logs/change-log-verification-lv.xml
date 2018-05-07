@@ -213,8 +213,8 @@
 	
 	<changeSet id="2.3" author="Durgaprasad G">
 		<addForeignKeyConstraint constraintName="fk_verf_det_lvid" referencedTableName="verification_lv" baseColumnNames="LvId" baseTableName="verification_lv_details" referencedColumnNames="Id"/>
-		<addForeignKeyConstraint constraintName="fk_verf_det_temp_lvid" referencedTableName="verification_lv" baseColumnNames="LvId" baseTableName="verification_lv_details_temp" referencedColumnNames="Id"/>
-		<addForeignKeyConstraint constraintName="fk_verf_det_stage_lvid" referencedTableName="verification_lv" baseColumnNames="LvId" baseTableName="verification_lv_details_stage" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_temp_lvid" referencedTableName="verification_lv_temp" baseColumnNames="LvId" baseTableName="verification_lv_details_temp" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_stage_lvid" referencedTableName="verification_lv_stage" baseColumnNames="LvId" baseTableName="verification_lv_details_stage" referencedColumnNames="Id"/>
 		
 		<addForeignKeyConstraint constraintName="fk_verification_lv_verid" referencedTableName="verifications" baseColumnNames="VerificationId" baseTableName="verification_lv" referencedColumnNames="Id"/>
 		<addForeignKeyConstraint constraintName="fk_verification_lv_temp_verid" referencedTableName="verifications" baseColumnNames="VerificationId" baseTableName="verification_lv_temp" referencedColumnNames="Id"/>
