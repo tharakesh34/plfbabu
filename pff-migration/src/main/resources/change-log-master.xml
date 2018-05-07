@@ -103,5 +103,6 @@
 <!-- 	<include file="change-logs/change-log-ExtendedFields.xml" /> -->
 <include file="change-logs/change-log-verification-fi.xml" />
 	<!-- <include file="change-logs/change-log-verification-tv.xml" /> -->
+	<include file="change-logs/change-log-verification-lv.xml" />
 	
 </databaseChangeLog>

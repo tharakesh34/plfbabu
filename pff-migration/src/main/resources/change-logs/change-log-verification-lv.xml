@@ -337,7 +337,6 @@
 			select 
 			lvd.lvid, 
 			lvd.SeqNo, 
-			lv.verificationid, 
 			doc.docType, 
     		doc.docModule, 
 			doccategory docName, 
@@ -360,14 +359,12 @@
             lvd.recordtype,
             lvd.workflowid 
 			from verification_lv_details_temp lvd
-			inner join verification_lv_temp lv on lv.id = lvd.lvid
 			inner join documentdetails_view doc on doc.docid = lvd.documentid
 			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
 			union all
 			select 
 			lvd.lvid, 
 			lvd.SeqNo, 
-			lv.verificationid, 
 			doc.docType, 
     		doc.docModule,
 			doccategory docName,
@@ -400,7 +397,6 @@
 			select 
 			lvd.lvid, 
 			lvd.SeqNo, 
-			lv.verificationid, 
 			custdocType docType, 
     		'Customer' docModule,
 			custdoccategory docName,
@@ -423,14 +419,12 @@
             lvd.recordtype,
             lvd.workflowid 
 			from verification_lv_details_temp lvd
-			inner join verification_lv_temp lv on lv.id = lvd.lvid
 			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
 			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
 			union all
 			select 
 			lvd.lvid, 
 			lvd.SeqNo, 
-			lv.verificationid, 
 			custdocType docType,
     		'Customer' docModule,
 			custdoccategory docName, 
@@ -453,7 +447,6 @@
             lvd.recordtype,
             lvd.workflowid  
 			from verification_lv_details_temp lvd
-			inner join verification_lv_temp lv on lv.id = lvd.lvid
 			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
 			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
 			WHERE NOT (EXISTS ( SELECT 1

@@ -82,4 +82,5 @@
 	<include file="change-logs/change-log-GSTCoreChanges-audit.xml" />
 	<include file="change-logs/change-log-verification-fi-audit.xml" />
 	<include file="change-logs/change-log-verification-tv-audit.xml" />
+	<include file="change-logs/change-log-verification-lv-audit.xml" />
 </databaseChangeLog>
