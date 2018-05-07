@@ -32,7 +32,6 @@ import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Groupbox;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -49,12 +48,14 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -71,13 +72,13 @@ import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
-import com.pennanttech.pennapps.pff.verification.Decision;
+import com.pennanttech.pennapps.pff.verification.StatuReasons;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
-import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
+import com.pennanttech.pennapps.pff.verification.fi.LVStatus;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
-import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.LegalVerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -127,6 +128,8 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	private transient LegalVerificationService legalVerificationService;
 	@Autowired
 	private transient CustomerDetailsService customerDetailsService;
+	@Autowired
+	private transient CollateralSetupService collateralSetupService;
 
 	/**
 	 * default constructor.<br>
@@ -206,10 +209,13 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 
 		this.reason.setMaxlength(8);
 		this.reason.setMandatoryStyle(false);
-		this.reason.setModuleName("FIStatusReason");
+		this.reason.setModuleName("VerificationReasons");
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
+		Filter reasonFilter[] = new Filter[1];
+		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.LVSRES.getKey(), Filter.OP_EQUAL);
+		reason.setFilters(reasonFilter);
 
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(20);
@@ -232,14 +238,14 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			this.btnCancel.setVisible(true);
 		}
 
-		/*
-		 * readOnlyComponent(isReadOnly("LegalVerificationDialog_VerificationDate"), this.verificationDate);
-		 * readOnlyComponent(isReadOnly("LegalVerificationDialog_AgentCode"), this.agentCode);
-		 * readOnlyComponent(isReadOnly("LegalVerificationDialog_AgentName"), this.agentName);
-		 * readOnlyComponent(isReadOnly("LegalVerificationDialog_Recommendations"), this.recommendations);
-		 * readOnlyComponent(isReadOnly("LegalVerificationDialog_Reason"), this.reason);
-		 * readOnlyComponent(isReadOnly("LegalVerificationDialog_AgentRemarks"), this.remarks);
-		 */
+		
+		  readOnlyComponent(isReadOnly("LegalVerificationDialog_VerificationDate"), this.verificationDate);
+		  readOnlyComponent(isReadOnly("LegalVerificationDialog_AgentCode"), this.agentCode);
+		  readOnlyComponent(isReadOnly("LegalVerificationDialog_AgentName"), this.agentName);
+		  readOnlyComponent(isReadOnly("LegalVerificationDialog_Recommendations"), this.recommendations);
+		  readOnlyComponent(isReadOnly("LegalVerificationDialog_Reason"), this.reason);
+		  readOnlyComponent(isReadOnly("LegalVerificationDialog_Remarks"), this.remarks);
+		 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -266,7 +272,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalVerificationList_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalVerificationDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalVerificationDialog_btnDelete"));
-		// this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalVerificationDialog_btnSave"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalVerificationDialog_btnSave"));
 
 		this.btnCancel.setVisible(false);
 
@@ -427,7 +433,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		}
 
 		this.remarks.setValue(lv.getRemarks());
-		fillComboBox(this.recommendations, lv.getStatus(), FIStatus.getList());
+		fillComboBox(this.recommendations, lv.getStatus(), LVStatus.getList());
 
 		this.recordStatus.setValue(lv.getRecordStatus());
 		doFillLVDocuments(lv.getLvDocuments());
@@ -464,6 +470,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				lc = new Listcell();
 				lc.setId("Remarks1".concat(String.valueOf(i)));
 				Textbox remarks1 = new Textbox();
+				remarks1.setReadonly(isReadOnly("LegalVerificationDialog_Remarks1"));
 				remarks1.setValue(document.getRemarks1());
 				remarks1.setMaxlength(500);
 				remarks1.setMultiline(true);
@@ -475,6 +482,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				lc = new Listcell();
 				lc.setId("Remarks2".concat(String.valueOf(i)));
 				Textbox remarks2 = new Textbox();
+				remarks2.setReadonly(isReadOnly("LegalVerificationDialog_Remarks2"));
 				remarks2.setValue(document.getRemarks2());
 				remarks2.setMaxlength(500);
 				remarks2.setMultiline(true);
@@ -486,6 +494,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				lc = new Listcell();
 				lc.setId("Remarks3".concat(String.valueOf(i)));
 				Textbox remarks3 = new Textbox();
+				remarks3.setReadonly(isReadOnly("LegalVerificationDialog_Remarks3"));
 				remarks3.setValue(document.getRemarks3());
 				remarks3.setMaxlength(500);
 				remarks3.setMultiline(true);
@@ -569,7 +578,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				lv.getBefImage().setExtendedFieldRender(extendedFieldRender);
 			}
 			extendedFieldCtrl.setCcyFormat(2);
-			// extendedFieldCtrl.setReadOnly(isReadOnly("LegalVerificationDialog_LegalVerificationExtFields"));/*
+		    extendedFieldCtrl.setReadOnly(isReadOnly("LegalVerificationDialog_LegalVerificationExtFields"));/*
 			// "TechnicalVerificationDialog_TechVerificationExtFields" */
 			extendedFieldCtrl.setWindow(this.window_LegalVerificationDialog);
 			extendedFieldCtrl.render();
@@ -588,7 +597,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		createTab("DOCUMENTDETAIL", true);
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getLegalVerification().getDocuments());
-		map.put("module", DocumentCategories.VERIFICATION_FI.getKey());
+		map.put("module", DocumentCategories.VERIFICATION_LV.getKey());
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
 				getTabpanel("DOCUMENTDETAIL"), map);
 		logger.debug("Leaving");
@@ -729,6 +738,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		doRemoveValidation();
 
 		showErrorDetails(wve, this.verificationDetails);
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -830,6 +840,25 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 
 		logger.debug(Literal.LEAVING + event.toString());
 	}
+	/**
+	 * When user clicks on button "Collateral Reference" button
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnSearchCollateralRef(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug(Literal.ENTERING + event.toString());
+
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(this.collateralReference.getValue(), "", true);
+		if (collateralSetup != null) {
+			map.put("collateralSetup", collateralSetup);
+			map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
+			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul", null, map);
+		}
+
+		logger.debug(Literal.LEAVING + event.toString());
+	}
 
 	/**
 	 * Method to show error details if occurred
@@ -883,7 +912,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		}
 		if (!this.recommendations.isDisabled()) {
 			this.recommendations.setConstraint(new PTListValidator(
-					Labels.getLabel("label_LegalVerificationDialog_Recommendations.value"), FIStatus.getList(), true));
+					Labels.getLabel("label_LegalVerificationDialog_Recommendations.value"), LVStatus.getList(), true));
 		}
 		if (!this.remarks.isReadonly()) {
 			this.remarks

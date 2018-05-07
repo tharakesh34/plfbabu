@@ -10,7 +10,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
@@ -40,8 +39,8 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
-public class LegalVerificationSeriveImpl extends GenericService<LegalVerification> implements LegalVerificationService {
-	private static final Logger logger = Logger.getLogger(LegalVerificationSeriveImpl.class);
+public class LegalVerificationServiceImpl extends GenericService<LegalVerification> implements LegalVerificationService {
+	private static final Logger logger = Logger.getLogger(LegalVerificationServiceImpl.class);
 
 	@Autowired
 	private AuditHeaderDAO auditHeaderDAO;
@@ -51,8 +50,6 @@ public class LegalVerificationSeriveImpl extends GenericService<LegalVerificatio
 	private VerificationDAO verificationDAO;
 	@Autowired
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
-	@Autowired
-	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
 	@Autowired

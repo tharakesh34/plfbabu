@@ -73,7 +73,9 @@ import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.verification.StatuReasons;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.fi.FILivingStandard;
 import com.pennanttech.pennapps.pff.verification.fi.FINeighbourHoodFeedBack;
@@ -246,10 +248,13 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 
 		this.reason.setMaxlength(8);
 		this.reason.setMandatoryStyle(false);
-		this.reason.setModuleName("FIStatusReason");
+		this.reason.setModuleName("VerificationReasons");
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
+		Filter reasonFilter[] = new Filter[1];
+		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.FISRES.getKey(), Filter.OP_EQUAL);
+		reason.setFilters(reasonFilter);
 
 		this.relationShip.setMaxlength(8);
 		this.relationShip.setMandatoryStyle(false);
@@ -506,7 +511,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("isNotFinanceProcess", true);
-		map.put("moduleName", VerificationType.TV.name());
+		map.put("moduleName", VerificationType.FI.name());
 		map.put("enqiryModule", enqiryModule);
 		map.put("isEditable", !isReadOnly("FieldInvestigationDialog_Documents"));
 

@@ -2215,14 +2215,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FieldInvestigation", new ModuleMapping("FieldInvestigation", FieldInvestigation.class,
 				new String[] { "verification_fi", "verification_fi_AView" }, masterWF, null, null, 600));
 
-		ModuleUtil.register("FIStatusReason", new ModuleMapping("FIStatusReason", ReasonCode.class,
+		ModuleUtil.register("VerificationReasons", new ModuleMapping("VerificationReasons", ReasonCode.class,
 				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
-				new Object[][] { { "ReasonTypecode", "0", StatuReasons.FISRES.getKey() }, { "Active", "0", 1 } }, 500));
-
-		
-		ModuleUtil.register("TVStatusReason", new ModuleMapping("TVStatusReason", ReasonCode.class,
-				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
-				new Object[][] { { "ReasonTypecode", "0", StatuReasons.TVSRES.getKey() }, { "Active", "0", 1 } }, 500));
+				new Object[][] { { "Active", "0", 1 } }, 500));
 		
 		ModuleUtil.register("LegalVerification", new ModuleMapping("LegalVerification", LegalVerification.class,
 				new String[] { "verification_lv", "verification_lv_AView" }, masterWF, null, null, 600));

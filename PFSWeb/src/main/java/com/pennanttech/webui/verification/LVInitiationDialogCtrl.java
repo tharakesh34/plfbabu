@@ -255,7 +255,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			this.collateral.setDescColumn("CollateralType");
 			this.collateral.setValidateColumns(new String[] { "CollateralRef" });
 			
-			if (collateralRefList.length() >= 0) {
+			if (collateralRefList.length() > 0) {
 				this.collateral.setWhereClause("CollateralRef in (" + collateralRefList + ")");
 			} else {
 				this.collateral.setWhereClause("CollateralRef in (" + "''" + ")");

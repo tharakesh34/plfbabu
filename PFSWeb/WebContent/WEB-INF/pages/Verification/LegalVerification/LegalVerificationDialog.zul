@@ -132,6 +132,10 @@
 														id="space_CollateralReference" spacing="2px" />
 													<textbox
 														id="collateralReference" width="155px" readonly="true" />
+													<button
+														id="btnSearchCollateralRef"
+														tooltiptext="${c:l('label_CollateralSearch_CollateralRef.tooltiptext')}"
+														image="/images/icons/more.png" />
 												</hbox>
 											</row>
 

@@ -45,6 +45,8 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 
 	// List headers
 	protected Listheader listheader_CIF;
+	protected Listheader listheader_CollateralType;
+	protected Listheader listheader_CollateralReference;
 	protected Listheader listheader_LoanReference;
 	protected Listheader listheader_Agency;
 	protected Listheader listheader_CreatedOn;
@@ -54,11 +56,15 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 
 	// Search Fields
 	protected Listbox sortOperator_CIF;
+	protected Listbox sortOperator_CollateralType;
+	protected Listbox sortOperator_CollateralReference;
 	protected Listbox sortOperator_LoanReference;
 	protected Listbox sortOperator_Agency;
 	protected Listbox sortOperator_CreatedOn;
 
 	protected Textbox cif;
+	protected Textbox collateralType;
+	protected Textbox collateralReference;
 	protected Textbox loanReference;
 	protected ExtendedCombobox agency;
 	protected Datebox createdOn;
@@ -112,6 +118,8 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 		registerField("documentid");
 		registerField("documentsubid");
 		registerField("cif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
+		registerField("collateralType", listheader_CollateralType, SortOrder.ASC, collateralType, sortOperator_CollateralType, Operators.STRING);
+		registerField("referenceFor", listheader_CollateralReference, SortOrder.ASC, collateralReference, sortOperator_CollateralReference, Operators.STRING);
 		registerField("keyReference", listheader_LoanReference, SortOrder.ASC, loanReference,
 				sortOperator_LoanReference, Operators.STRING);
 		registerField("createdOn", listheader_CreatedOn, SortOrder.NONE, createdOn, sortOperator_CreatedOn,

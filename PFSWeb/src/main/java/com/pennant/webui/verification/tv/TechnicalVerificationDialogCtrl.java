@@ -80,9 +80,12 @@ import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.verification.StatuReasons;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
+import com.pennanttech.pennapps.pff.verification.fi.TVStatus;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -232,10 +235,14 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 
 		this.reason.setMaxlength(8);
 		this.reason.setMandatoryStyle(false);
-		this.reason.setModuleName("TVStatusReason");
+		this.reason.setModuleName("VerificationReasons");
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
+		Filter reasonFilter[] = new Filter[1];
+		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.TVSRES.getKey(), Filter.OP_EQUAL);
+		reason.setFilters(reasonFilter);
+		
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(20);
 		this.summaryRemarks.setMaxlength(50);
@@ -425,7 +432,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			visibleComponent(tv.getStatus());
 		}
 		this.summaryRemarks.setValue(tv.getSummaryRemarks());
-		fillComboBox(this.recommendations, tv.getStatus(), FIStatus.getList());
+		fillComboBox(this.recommendations, tv.getStatus(), TVStatus.getList());
 		
 		// Extended Field details
 		appendExtendedFieldDetails(tv);
@@ -467,7 +474,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("isNotFinanceProcess", true);
-		map.put("moduleName", VerificationType.FI.name());
+		map.put("moduleName", VerificationType.TV.name());
 		map.put("enqiryModule", enqiryModule);
 		map.put("isEditable", !isReadOnly(/*"TechnicalVerificationDialog_Documents"*/"TechnicalVerificationDialog_AgentCode"));
 		
