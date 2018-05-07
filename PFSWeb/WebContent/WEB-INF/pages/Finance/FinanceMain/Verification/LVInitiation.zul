@@ -7,8 +7,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window>
-		<window id="window_LegalVerificationDialog" border="none"
+ 		<window id="window_LegalVerificationDialog" border="none"
 			apply="${lVerificationCtrl}" width="100%" height="100%"
 			style="padding-top:10px" sizable="false">
 
@@ -100,5 +99,4 @@
 				</center>
 			</borderlayout>
 		</window>
-	</window>
-</zk>
+ </zk>

@@ -675,12 +675,16 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			logger.error(Literal.EXCEPTION, e);
 			this.window_LVInitiationDialog.onClose();
 		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
-
-		this.listBoxCollateralDocuments.setHeight(this.borderLayoutHeight - 400 - 90 + "px");
-		this.listBoxLoanDocuments.setHeight(this.borderLayoutHeight - 400 - 90 + "px");
-		this.listBoxCustomerDocuments.setHeight(this.borderLayoutHeight - 400 - 90 + "px");
+		
+		int divHieght = this.borderLayoutHeight - 80;
+		int borderlayoutHeights = divHieght / 3;
+		this.listBoxCollateralDocuments.setHeight(borderlayoutHeights - 30 + "px");
+		this.listBoxLoanDocuments.setHeight(borderlayoutHeights - 30 + "px");
+		this.listBoxCustomerDocuments.setHeight(borderlayoutHeights - 30 + "px");
+		
 		logger.debug(Literal.LEAVING);
 	}
 
