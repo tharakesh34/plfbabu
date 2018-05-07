@@ -4619,8 +4619,8 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		</sql>
 	</changeSet>
 	 <changeSet id="74" author="Vinay">
-		<modifyDataType tableName="IRRFeeTypes" columnName="feepercentage" newDataType="decimal(5,1)"/>
-		<modifyDataType tableName="IRRFeeTypes_Temp" columnName="feepercentage" newDataType="decimal(5,1)"/>
+		<modifyDataType tableName="IRRFeeTypes" columnName="feepercentage" newDataType="decimal(5,2)"/>
+		<modifyDataType tableName="IRRFeeTypes_Temp" columnName="feepercentage" newDataType="decimal(5,2)"/>
 	</changeSet>
 	<changeSet id="74_Post" author="Jayant">
 		<sql>
@@ -5084,7 +5084,7 @@ insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetai
 insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetail)
 	,'MDAAL5', 'Manual Deviation Allowed Authorities for Level 5', 1);
 </sql></changeSet>
-<!-- <changeSet id="96" author="SubbaRao">
+ <changeSet id="96" author="SubbaRao">
 		<sql>
 			Insert into SECRIGHTS values ((select max(rightid)+1 from SECRIGHTS),0,'menuItem_Administration_UserpasswordReset','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
 			Insert into SECGROUPRIGHTS values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(select grpid from secgroups where grpcode='SECURITYUSER_MAKER'),(select rightid from secrights where rightname='menuItem_Administration_UserpasswordReset'),1,0,10000,current_timestamp,' ',null,null,null,null,null,0);
@@ -5094,7 +5094,7 @@ insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetai
 			update seqSECGROUPRIGHTS set seqno=(select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
 			
 		</sql>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="97" author="Vinay">
 		<comment>Eligibility Method values from table in Loan Origination</comment>
