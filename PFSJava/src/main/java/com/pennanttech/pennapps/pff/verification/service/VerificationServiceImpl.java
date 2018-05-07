@@ -224,7 +224,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					+ StringUtils.trimToEmpty(lvDocument.getDocumentSubId()));
 			item.setReferenceType(lvDocument.getCode());
 
-			Long verificationId = getVerificationIdByReferenceFor(item.getReferenceFor(), VerificationType.LV.getKey());
+			Long verificationId = getVerificationIdByReferenceFor(item.getKeyReference(),item.getReferenceFor(), VerificationType.LV.getKey());
 
 			if (verificationId != null) {
 				item.setId(verificationId);
@@ -236,7 +236,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	private void saveLVInit(Verification verification) {
-		Long verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getReferenceFor(),
+		Long verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getKeyReference(),verification.getReferenceFor(),
 				VerificationType.LV.getKey());
 
 		if (verification.isNewRecord() && verificationId != null) {
@@ -522,7 +522,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	@Override
-	public Long getVerificationIdByReferenceFor(String referenceFor, int verificationType) {
-		return verificationDAO.getVerificationIdByReferenceFor(referenceFor, verificationType);
+	public Long getVerificationIdByReferenceFor(String finReference,String referenceFor, int verificationType) {
+		return verificationDAO.getVerificationIdByReferenceFor(finReference,referenceFor, verificationType);
 	}
 }

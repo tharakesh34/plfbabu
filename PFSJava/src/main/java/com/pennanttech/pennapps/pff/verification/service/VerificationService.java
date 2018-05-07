@@ -69,5 +69,5 @@ public interface VerificationService {
 	
 	Verification getVerificationById(long id);
 	
-	Long getVerificationIdByReferenceFor(String referenceFor, int verificationType);
+	Long getVerificationIdByReferenceFor(String finReference,String referenceFor, int verificationType);
 }

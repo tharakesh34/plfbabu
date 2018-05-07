@@ -244,13 +244,14 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 	}
 
 	@Override
-	public Long getVerificationIdByReferenceFor(String referenceFor, int verificationType) {
+	public Long getVerificationIdByReferenceFor(String finReference,String referenceFor, int verificationType) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("select id from verifications");
-		sql.append(" where referenceFor=:referenceFor and verificationType=:verificationType");
+		sql.append(" where referenceFor=:referenceFor and verificationType=:verificationType and keyReference=:keyReference");
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("keyReference", finReference);
 		paramMap.addValue("referenceFor", referenceFor);
 		paramMap.addValue("verificationType", verificationType);
 		try {
