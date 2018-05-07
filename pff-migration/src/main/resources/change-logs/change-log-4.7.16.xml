@@ -5128,6 +5128,9 @@ insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetai
 	<changeSet id="100" author="Sai Krishna">
 		<addNotNullConstraint tableName="AccountsHistory" columnName="OpeningBal" />
 	</changeSet>
+	<changeSet id="101" author="Kesav">
+		<addDefaultValue tableName="AccountsHistory" defaultValueNumeric="0" columnName="OpeningBal" columnDataType="decimal(18,0)"/>
+	</changeSet>
 		
 </databaseChangeLog>
 	
