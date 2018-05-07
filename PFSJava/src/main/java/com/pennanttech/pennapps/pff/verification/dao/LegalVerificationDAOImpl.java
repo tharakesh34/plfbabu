@@ -45,14 +45,14 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		if (tableType == TableType.MAIN_TAB) {
 			sql.append("_stage");
-			sql.append(" (Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+			sql.append(" (VerificationId, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 			sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-			sql.append(" values (:Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
+			sql.append(" values (:VerificationId, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 			sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		} else {
-			sql.append(" (Id, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+			sql.append(" (VerificationId, Id, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 			sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-			sql.append(" values (:Id, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
+			sql.append(" values (:VerificationId, :Id, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 			sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		}
 
@@ -89,10 +89,10 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into verification_lv");
 		sql.append(tableType.getSuffix());
-		sql.append(" (id, agentcode, agentname, status, reason, remarks, date,");
+		sql.append(" (verificationId, id, agentcode, agentname, status, reason, remarks, date,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append("values (:id,:agentCode, :agentName, :status, :reason, :remarks, :date,");
+		sql.append("values (:verificationId, :id,:agentCode, :agentName, :status, :reason, :remarks, :date,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -117,7 +117,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update verification_lv");
 		sql.append(tableType.getSuffix());
-		sql.append(" set date = :date, agentCode = :agentCode, agentName = :agentName, status = :status, ");
+		sql.append(" set verificationId = :verificationId, date = :date, agentCode = :agentCode, agentName = :agentName, status = :status, ");
 		sql.append(" reason = :reason, remarks = :remarks, Version = :Version, LastMntBy = :LastMntBy,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
@@ -411,10 +411,10 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
 
-		sql.append(" Select lvid, verificationid, documentid, documentsubid,");
+		sql.append(" Select lvid, documentid, documentsubid,");
 		if (type.contains("View")) {
 			sql.append(
-					" code, description, docmodule, docrefid, seqno, docname, doctype, remarks1, remarks2, remarks3, ");
+					" verificationid, code, description, docmodule, docrefid, seqno, docname, doctype, remarks1, remarks2, remarks3, ");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -445,13 +445,13 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into verification_lv_details");
 		sql.append(tableType);
-		sql.append("(lvid, seqno, verificationid, documentid, documentsubid, remarks1,");
+		sql.append("(lvid, seqno, documentid, documentsubid, remarks1,");
 		sql.append(" remarks2, remarks3,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 
 		sql.append(
-				"values (:lvId, :seqNo, :verificationId, :documentId, :documentSubId,:remarks1, :remarks2, :remarks3,");
+				"values (:lvId, :seqNo, :documentId, :documentSubId,:remarks1, :remarks2, :remarks3,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
