@@ -5101,5 +5101,12 @@ insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetai
 			Insert into RMTLOVFIELDDETAIL values ((select max(seqno)+5 from  seqRMTLOVFIELDDETAIL),'ELGMETHOD','TL','Turnover',1,3,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,0);
 		</sql>
 	</changeSet>
+	 <changeSet id="98" author="SaiKrishna"> 
+		<addColumn tableName="AccountsHistory">
+			<column name="OpeningBal" type="decimal(18,0)">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
 	
