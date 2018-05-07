@@ -32,6 +32,9 @@
 			<column name="Id" type="bigint">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_ID"/>
 			</column>
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" />
+			</column>
 			<column name="VerificationFormName" type="varchar(30)"/>
 			<column name="AgentCode" type="varchar(20)" />
 			<column name="AgentName" type="varchar(50)" />
@@ -58,6 +61,9 @@
 		<createTable tableName="verification_lv_temp">
 			<column name="Id" type="bigint">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_TEMP_ID"/>
+			</column>
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" />
 			</column>
 			<column name="VerificationFormName" type="varchar(30)"/>
 			<column name="AgentCode" type="varchar(20)" />
@@ -86,6 +92,9 @@
 		<createTable tableName="verification_lv_stage">
 			<column name="Id" type="bigint" autoIncrement="true" startWith="1">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_STAGE_ID"/>
+			</column>
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" />
 			</column>
 			<column name="VerificationFormName" type="varchar(30)"/>
 			<column name="AgentCode" type="varchar(20)" />
@@ -118,9 +127,6 @@
 			<column name="seqno" type="int">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET"/>
 			</column>
-			<column name="VerificationID" type="bigint">
-				<constraints nullable="false" />
-			</column>
 			<column name="DocumentId" type="bigint">
 				<constraints nullable="false" />
 			</column>
@@ -150,9 +156,6 @@
 			</column>
 			<column name="seqno" type="int">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET_T"/>
-			</column>
-			<column name="VerificationID" type="bigint">
-				<constraints nullable="false" />
 			</column>
 			<column name="DocumentId" type="bigint">
 				<constraints nullable="false" />
@@ -185,9 +188,6 @@
 			<column name="seqno" type="int">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET_S"/>
 			</column>
-			<column name="VerificationID" type="bigint">
-				<constraints nullable="false" />
-			</column>
 			<column name="DocumentId" type="bigint">
 				<constraints nullable="false" />
 			</column>
@@ -212,13 +212,13 @@
 	</changeSet>
 	
 	<changeSet id="2.3" author="Durgaprasad G">
-		<addForeignKeyConstraint constraintName="FK_VERF_DET_LVID" referencedTableName="verification_lv" baseColumnNames="LvId" baseTableName="verification_lv_details" referencedColumnNames="Id"/>
-		<addForeignKeyConstraint constraintName="FK_VERF_DET_TEMP_LVID" referencedTableName="verification_lv_temp" baseColumnNames="LvId" baseTableName="verification_lv_details_temp" referencedColumnNames="Id"/>
-		<addForeignKeyConstraint constraintName="FK_VERF_DET_STAGE_LVID" referencedTableName="verification_lv_stage" baseColumnNames="LvId" baseTableName="verification_lv_details_stage" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_lvid" referencedTableName="verification_lv" baseColumnNames="LvId" baseTableName="verification_lv_details" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_temp_lvid" referencedTableName="verification_lv" baseColumnNames="LvId" baseTableName="verification_lv_details_temp" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_stage_lvid" referencedTableName="verification_lv" baseColumnNames="LvId" baseTableName="verification_lv_details_stage" referencedColumnNames="Id"/>
 		
-		<addForeignKeyConstraint constraintName="FK_VERF_DET_VERID" referencedTableName="verifications" baseColumnNames="VerificationId" baseTableName="verification_lv_details" referencedColumnNames="Id"/>
-		<addForeignKeyConstraint constraintName="FK_VERF_DET_TEMP_VERID" referencedTableName="verifications" baseColumnNames="VerificationId" baseTableName="verification_lv_details_temp" referencedColumnNames="Id"/>
-		<addForeignKeyConstraint constraintName="FK_VERF_DET_STAGE_VERID" referencedTableName="verifications" baseColumnNames="VerificationId" baseTableName="verification_lv_details_stage" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verification_lv_verid" referencedTableName="verifications" baseColumnNames="VerificationId" baseTableName="verification_lv" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verification_lv_temp_verid" referencedTableName="verifications" baseColumnNames="VerificationId" baseTableName="verification_lv_temp" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verification_lv_stage_verid" referencedTableName="verifications" baseColumnNames="VerificationId" baseTableName="verification_lv_stage" referencedColumnNames="Id"/>
 	</changeSet>
 	
 	<changeSet id="3.0" author="Durgaprasad G">
@@ -226,7 +226,7 @@
 			select  * from (
 			select 
 				lv.Id, 
-				lvd.verificationId,  
+				lv.verificationId,  
 				lvd.documentId,
 				lvd.documentSubId,
 				lv.VerificationFormName,			
@@ -260,7 +260,7 @@
 				a.dealerName agencyName
 			from verification_lv_temp lv
 			inner join verification_lv_details_temp lvd on lvd.lvid = lv.id
-			inner join verifications v on v.id = lvd.verificationId
+			inner join verifications v on v.id = lv.verificationId
 			inner join customers c on c.custCif = v.reference
 			inner join collateralsetup cs on cs.collateralref = v.referenceFor
 			left join reasons_aview r1 on r1.id = lv.reason
@@ -268,7 +268,7 @@
 			union all 
 			 select 
 				lv.Id, 
-				lvd.verificationId,  
+				lv.verificationId,  
 				lvd.documentId,
 				lvd.documentSubId,
 				lv.VerificationFormName,			
@@ -302,7 +302,7 @@
 				a.dealerName agencyName
 			from verification_lv lv
 			inner join verification_lv_details lvd on lvd.lvid = lv.id
-			inner join verifications v on v.id = lvd.verificationId
+			inner join verifications v on v.id = lv.verificationId
 			inner join customers c on c.custCif = v.reference
 			inner join collateralsetup cs on cs.collateralref = v.referenceFor
 			left join reasons_aview r1 on r1.id = lv.reason
@@ -337,7 +337,7 @@
 			select 
 			lvd.lvid, 
 			lvd.SeqNo, 
-			lvd.verificationid, 
+			lv.verificationid, 
 			doc.docType, 
     		doc.docModule, 
 			doccategory docName, 
@@ -360,13 +360,14 @@
             lvd.recordtype,
             lvd.workflowid 
 			from verification_lv_details_temp lvd
-			inner join documentdetails doc on doc.docid = lvd.documentid
+			inner join verification_lv_temp lv on lv.id = lvd.lvid
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
 			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
 			union all
 			select 
 			lvd.lvid, 
 			lvd.SeqNo, 
-			lvd.verificationid, 
+			lv.verificationid, 
 			doc.docType, 
     		doc.docModule,
 			doccategory docName,
@@ -389,7 +390,8 @@
             lvd.recordtype,
             lvd.workflowid 
 			from verification_lv_details lvd
-			inner join documentdetails doc on doc.docid = lvd.documentid
+			inner join verification_lv lv on lv.id = lvd.lvid
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
 			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
 			WHERE NOT (EXISTS ( SELECT 1
 					   FROM verification_lv_details_temp
@@ -398,7 +400,7 @@
 			select 
 			lvd.lvid, 
 			lvd.SeqNo, 
-			lvd.verificationid, 
+			lv.verificationid, 
 			custdocType docType, 
     		'Customer' docModule,
 			custdoccategory docName,
@@ -421,13 +423,14 @@
             lvd.recordtype,
             lvd.workflowid 
 			from verification_lv_details_temp lvd
-			inner join customerdocuments doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join verification_lv_temp lv on lv.id = lvd.lvid
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
 			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
 			union all
 			select 
 			lvd.lvid, 
 			lvd.SeqNo, 
-			lvd.verificationid, 
+			lv.verificationid, 
 			custdocType docType,
     		'Customer' docModule,
 			custdoccategory docName, 
@@ -450,7 +453,8 @@
             lvd.recordtype,
             lvd.workflowid  
 			from verification_lv_details_temp lvd
-			inner join customerdocuments doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join verification_lv_temp lv on lv.id = lvd.lvid
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
 			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
 			WHERE NOT (EXISTS ( SELECT 1
 					  FROM verification_lv_details_temp

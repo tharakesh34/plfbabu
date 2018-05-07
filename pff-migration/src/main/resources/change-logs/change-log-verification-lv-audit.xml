@@ -41,6 +41,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="Id" type="bigint"/>
+			<column name="VerificationID" type="bigint"/>
 			<column name="VerificationFormName" type="varchar(30)"/>
 			<column name="AgentCode" type="varchar(20)" />
 			<column name="AgentName" type="varchar(50)" />
@@ -81,7 +82,6 @@
 			</column>
 			<column name="LvId" type="bigint"/>
 			<column name="seqno" type="int"/>
-			<column name="VerificationId" type="bigint"/>
 			<column name="DocumentId" type="bigint"/>
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="Remarks1" type="varchar(500)" />
