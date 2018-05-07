@@ -884,4 +884,14 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	public List<String> getLVDocumentsIds(String keyReference) {
 		return legalVerificationDAO.getLVDocumentsIds(keyReference);
 	}
+
+	@Override
+	public List<LegalVerification> getList(String keyReference) {
+		return legalVerificationDAO.getList(keyReference);
+	}
+
+	@Override
+	public List<LVDocument> getLVDocuments(long id) {
+		return legalVerificationDAO.getLVDocuments(id, "_View");
+	}
 }

@@ -41,4 +41,8 @@ public interface LegalVerificationService {
 
 	boolean isLVExists(long id);
 
+	List<LegalVerification> getList(String keyReference);
+
+	List<LVDocument> getLVDocuments(long id);
+
 }

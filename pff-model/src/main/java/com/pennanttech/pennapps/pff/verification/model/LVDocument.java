@@ -25,7 +25,6 @@ public class LVDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long lvId = Long.MIN_VALUE;
-	private long verificationId;
 	private int seqNo;
 	private Long documentId;
 	private String documentSubId;
@@ -80,14 +79,6 @@ public class LVDocument extends AbstractWorkflowEntity {
 
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
-	}
-
-	public long getVerificationId() {
-		return verificationId;
-	}
-
-	public void setVerificationId(long verificationId) {
-		this.verificationId = verificationId;
 	}
 
 	public int getSeqNo() {
@@ -157,7 +148,7 @@ public class LVDocument extends AbstractWorkflowEntity {
 	public void setRemarks3(String remarks3) {
 		this.remarks3 = remarks3;
 	}
-	
+
 	public Long getDocRefID() {
 		return docRefID;
 	}

@@ -26,9 +26,11 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -45,9 +47,9 @@ import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.Status;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
-import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
+import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
-import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
+import com.pennanttech.pennapps.pff.verification.service.LegalVerificationService;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -57,13 +59,15 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	private static final long serialVersionUID = 8661799804403963415L;
 	private static final Logger logger = LogManager.getLogger(LVerificationCtrl.class);
 
-	protected Window window_LegalVerificationDialog;
+	protected Window window_LVerificationDialog;
 	protected Groupbox finBasicdetails;
 	protected Listbox listBoxInitiation;
 	protected Listbox listBoxWaiver;
-	protected Groupbox tvInquiry;
+	protected Groupbox lvInquiry;
 	protected Button btnNew_Initiation;
 	protected Button btnNew_Waiver;
+	protected Toolbar toolbar_Waiver;
+	protected Toolbar toolbar_Initiation;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
@@ -73,13 +77,11 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	private transient boolean initType;
 	private FinanceDetail financeDetail;
 
-
-	@Autowired
-	private TechnicalVerificationService technicalVerificationService;
 	@Autowired
 	private VerificationService verificationService;
-
-	protected Radiogroup tv;
+	@Autowired
+	private LegalVerificationService legalVerificationService;
+	protected Radiogroup lv;
 
 	/**
 	 * default constructor.<br>
@@ -93,10 +95,10 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_LegalVerificationDialog(Event event) throws Exception {
+	public void onCreate$window_LVerificationDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_LegalVerificationDialog);
+		setPageComponents(window_LVerificationDialog);
 
 		appendFinBasicDetails(arguments.get("finHeaderList"));
 
@@ -108,7 +110,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
-		
+
 		if (arguments.containsKey("financeDetail")) {
 			this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		}
@@ -131,6 +133,12 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		int borderlayoutHeights = divHeight / 3;
 		this.listBoxInitiation.setHeight(borderlayoutHeights - 30 + "px");
 		this.listBoxWaiver.setHeight(borderlayoutHeights - 30 + "px");
+		this.window_LVerificationDialog.setHeight(this.borderLayoutHeight - 80 + "px");
+		if (!initType) {
+			this.toolbar_Waiver.setVisible(false);
+			this.toolbar_Initiation.setVisible(false);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -235,21 +243,18 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		}
 	}
 
-	public void onCheck$tv(Event event) {
+	public void onCheck$lv(Event event) {
 		final HashMap<String, Object> map = new HashMap<>();
-		TechnicalVerification technicalVerification = technicalVerificationService
-				.getTechnicalVerification(tv.getSelectedItem().getValue());
-		if (technicalVerification != null) {
+		LegalVerification legalVerification = lv.getSelectedItem().getValue();
+		if (legalVerification != null) {
 			map.put("LOAN_ORG", true);
-			map.put("technicalVerification", technicalVerification);
-			if (tvInquiry.getChildren() != null) {
-				tvInquiry.getChildren().clear();
+			map.put("legalVerification", legalVerification);
+			if (lvInquiry.getChildren() != null) {
+				lvInquiry.getChildren().clear();
 			}
-			Executions.createComponents(
-					"/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationDialog.zul", tvInquiry,
-					map);
+			Executions.createComponents("/WEB-INF/pages/Verification/LegalVerification/LegalVerificationDialog.zul", lvInquiry, map);
 		} else {
-			MessageUtil.showMessage("Initiation request not available in Technical Verification Module.");
+			MessageUtil.showMessage("Initiation request not available in Lagal Verification Module.");
 		}
 
 	}
@@ -261,9 +266,13 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	 */
 	public void renderLVInitiationList() {
 		logger.debug(Literal.ENTERING);
-		List<Verification> verifications = verificationService.getVerifications(this.verification.getKeyReference(),
-				VerificationType.LV.getKey());
-
+		List<Verification> verifications;
+		if (initType) {
+			verifications = verificationService.getVerifications(this.verification.getKeyReference(),
+					VerificationType.LV.getKey());
+		} else {
+			verifications = getVerifications();
+		}
 		if (this.listBoxInitiation.getItems() != null) {
 			this.listBoxInitiation.getItems().clear();
 		}
@@ -277,6 +286,17 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			i++;
 			Listitem item = new Listitem();
 			Listcell listCell;
+			if (!initType) {
+				//Select
+				listCell = new Listcell();
+				listCell.setId("select".concat(String.valueOf(i)));
+				Radio select = new Radio();
+				
+				select.setRadiogroup(lv);
+				select.setValue(vrf.getLegalVerification());
+				listCell.appendChild(select);
+				listCell.setParent(item);
+			}
 
 			//Collateral Type
 			listCell = new Listcell();
@@ -316,9 +336,23 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			listCell.appendChild(new Label(DateUtil.formatToShortDate(vrf.getVerificationDate())));
 			listCell.setParent(item);
 
-			item.setAttribute("id", vrf.getId());
-			ComponentsCtrl.applyForward(item, "onDoubleClick=onVerificationItemDoubleClicked");
+			if (!initType) {
+				//ReInitiate
+				listCell = new Listcell();
+				listCell.setId("IReInitiate".concat(String.valueOf(i)));
+				Button btnReInit = new Button("ReInitiate");
+				listCell.appendChild(btnReInit);
+				listCell.setStyle("text-align:right;");
+				listCell.setParent(item);
 
+				item.setAttribute("verification", vrf);
+				btnReInit.addForward("onClick", self, "onClickReInitiate", item);
+			}
+
+			if (initType) {
+				item.setAttribute("id", vrf.getId());
+				ComponentsCtrl.applyForward(item, "onDoubleClick=onVerificationItemDoubleClicked");
+			}
 			this.listBoxInitiation.appendChild(item);
 
 		}
@@ -380,8 +414,13 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	 */
 	public void renderLVWaiverList() {
 		logger.debug(Literal.ENTERING);
-		List<Verification> verifications = verificationService.getVerifications(this.verification.getKeyReference(),
-				VerificationType.LV.getKey());
+		List<Verification> verifications;
+		if (initType) {
+			verifications = verificationService.getVerifications(this.verification.getKeyReference(),
+					VerificationType.LV.getKey());
+		} else {
+			verifications = getVerifications();
+		}
 
 		if (this.listBoxWaiver.getItems() != null) {
 			this.listBoxWaiver.getItems().clear();
@@ -436,14 +475,41 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			listCell.appendChild(new Label(DateUtil.formatToShortDate(vrf.getVerificationDate())));
 			listCell.setParent(item);
 
-			reason.addForward("onFulfill", self, "onChangeReason", item);
-			
+			if (!initType) {
+				//ReInitiate
+				listCell = new Listcell();
+				listCell.setId("WReInitiate".concat(String.valueOf(i)));
+				Button btnReInit = new Button("ReInitiate");
+				listCell.appendChild(btnReInit);
+				listCell.setStyle("text-align:right;");
+				listCell.setParent(item);
+
+				btnReInit.addForward("onClick", self, "onClickReInitiate", item);
+			}
+
 			item.setAttribute("vrf", vrf);
+			reason.addForward("onFulfill", self, "onChangeReason", item);
 
 			this.listBoxWaiver.appendChild(item);
 
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClickReInitiate(ForwardEvent event) throws Exception {
+		Listitem listitem = (Listitem) event.getData();
+
+		// Get the selected entity.
+		Verification vrf = (Verification) listitem.getAttribute("verification");
+
+		if (vrf == null) {
+			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
+			return;
+		}
+		vrf.setNewRecord(true);
+		vrf.setApproveTab(true);
+
+		doShowDialogPage(vrf);
 	}
 
 	private void fillReasons(ExtendedCombobox reason) {
@@ -515,9 +581,9 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	 */
 	public ArrayList<WrongValueException> doWriteComponentsToBean() {
 		logger.debug("Entering");
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		this.verification.getVerifications().clear();
 		for (Listitem listitem : listBoxWaiver.getItems()) {
 			this.verification.getVerifications().add(updateWaiverVerification(listitem));
@@ -565,8 +631,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public void doSave_LVVerification(FinanceDetail financeDetail, Tab tab)
-			throws InterruptedException {
+	public void doSave_LVVerification(FinanceDetail financeDetail, Tab tab) throws InterruptedException {
 		logger.debug("Entering");
 
 		doClearMessage();
@@ -584,6 +649,24 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		financeDetail.setLvVerification(this.verification);
 
 		logger.debug("Leaving");
+	}
+
+	private List<Verification> getVerifications() {
+		//get verifications
+		List<Verification> verifications = verificationService.getVerifications(verification.getKeyReference(),
+				VerificationType.LV.getKey());
+		//get Legal Verifications
+		List<LegalVerification> lvList = legalVerificationService.getList(verification.getKeyReference());
+		for (Verification vrf : verifications) {
+			for (LegalVerification lv : lvList) {
+				if (vrf.getId() == lv.getVerificationId()) {
+					vrf.setLegalVerification(lv);
+					vrf.setLvDocuments(legalVerificationService.getLVDocuments(lv.getId()));
+					break;
+				}
+			}
+		}
+		return verifications;
 	}
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {

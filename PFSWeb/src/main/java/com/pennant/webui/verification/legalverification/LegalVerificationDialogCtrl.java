@@ -35,6 +35,8 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.North;
+import org.zkoss.zul.South;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -113,6 +115,10 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	protected Combobox recommendations;
 	protected ExtendedCombobox reason;
 	protected Textbox remarks;
+	protected North north;
+	protected South south;
+	
+	private boolean fromLoanOrg;
 
 	private LegalVerification legalVerification;
 	protected Map<String, DocumentDetails> docDetailMap = null;
@@ -172,6 +178,15 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			if (this.legalVerification == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
+			
+			if (arguments.get("LOAN_ORG") != null) {
+				fromLoanOrg = true;
+				enqiryModule = true;
+			}
+
+			if (arguments.get("enqiryModule") != null) {
+				enqiryModule = (boolean) arguments.get("enqiryModule");
+			}
 
 			// Store the before image.
 			LegalVerification legalVerification = new LegalVerification();
@@ -185,9 +200,13 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
 			}
+			
 
-			if (!enqiryModule) {
+			if (isWorkFlowEnabled() && !enqiryModule) {
+				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
+			} else if (fromLoanOrg) {
+				setWorkFlowEnabled(true);
 			}
 
 			doSetFieldProperties();
@@ -813,9 +832,18 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
 		}
+		
+		if (fromLoanOrg) {
+			north.setVisible(false);
+			south.setVisible(false);
+		}
 
 		doWriteBeanToComponents(legalVerification);
-		setDialog(DialogType.EMBEDDED);
+		if (!fromLoanOrg) {
+			setDialog(DialogType.EMBEDDED);
+		} else {
+			window_LegalVerificationDialog.setHeight("100%");
+		}
 
 		logger.debug(Literal.LEAVING);
 	}

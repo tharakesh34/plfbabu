@@ -63,7 +63,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	protected Listheader listheader_PinCode;
 	protected Listheader listheader_LoanReference;
 	protected Listheader listheader_Agency;
-	protected Listheader						listheader_CreatedOn;
+	protected Listheader listheader_CreatedOn;
 
 	// checkRights
 	protected Button button_FieldInvestigationList_FieldInvestigationSearch;
@@ -74,14 +74,14 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	protected Listbox sortOperator_PinCode;
 	protected Listbox sortOperator_LoanReference;
 	protected Listbox sortOperator_Agency;
-	protected Listbox							sortOperator_CreatedOn;
+	protected Listbox sortOperator_CreatedOn;
 
 	protected Textbox cif;
 	protected Textbox addressType;
 	protected Textbox pinCode;
 	protected Textbox loanReference;
-	protected ExtendedCombobox agency; 
-	protected Datebox							createdOn;
+	protected ExtendedCombobox agency;
+	protected Datebox createdOn;
 
 	
 	private String module = "";

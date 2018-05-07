@@ -7,12 +7,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
- 		<window id="window_LVerificationDialog" border="none"
+	<window>
+		<window id="window_LVerificationDialog" border="none"
 			apply="${lVerificationCtrl}" width="100%" height="100%"
 			style="padding-top:10px" sizable="false">
-
+			<radiogroup id="lv" visible="false" />
 			<borderlayout id="borderlayoutLVInitiation">
-				<center border="none" id="divCenter">
+				<center sclass="none" autoscroll="true">
 					<div>
 						<groupbox id="finBasicdetails" zclass="null" />
 						<div>
@@ -20,7 +21,8 @@
 								sclass="gb-dialog">
 								<caption
 									label="${c:l('gb_Initiation')}" />
-								<toolbar align="end">
+								<toolbar id="toolbar_Initiation"
+									align="end">
 									<button id="btnNew_Initiation"
 										label="${c:l('label_New')}"
 										tooltiptext="${c:l('button_LegalVerificationDialog_InitDoc.tooltiptext')}"
@@ -32,6 +34,10 @@
 									emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
 									multiple="false">
 									<listhead sizable="false">
+										<listheader
+											id="listheader_TechnicalVerification_Select"
+											label="${c:l('listheader_TechnicalVerification_Select.label')}"
+											sort="false" hflex="min" />
 										<listheader
 											id="listheader_LegalVerification_Collateral"
 											label="${c:l('listheader_LegalVerification_Collateral.label')}"
@@ -45,12 +51,15 @@
 											label="${c:l('listheader_LegalVerification_Remarks.label')}"
 											sort="false" hflex="min" />
 										<listheader
-											id="listheader_LegalVerification_Initiation_LastStatus"
-											label="${c:l('listheader_LegalVerification_LastStatus.label')}"
+											id="listheader_LegalVerification_Initiation_Status"
+											label="${c:l('listheader_LegalVerification_Status.label')}"
 											sort="false" hflex="min" />
 										<listheader
-											id="listheader_LegalVerification_Initiation_LastVrfDate"
-											label="${c:l('listheader_LegalVerification_LastVrfDate.label')}"
+											id="listheader_LegalVerification_Initiation_VrfDate"
+											label="${c:l('listheader_LegalVerification_VrfDate.label')}"
+											sort="false" hflex="min" />
+										<listheader visible="false"
+											id="listheader_LegalVerification_Initiation_ReInitiate"
 											sort="false" hflex="min" />
 									</listhead>
 								</listbox>
@@ -60,7 +69,8 @@
 							<groupbox id="gb_Waiver"
 								sclass="gb-dialog">
 								<caption label="${c:l('gb_Waiver')}" />
-								<toolbar align="end">
+								<toolbar id="toolbar_Waiver"
+									align="end">
 									<button id="btnNew_Waiver"
 										label="${c:l('label_New')}"
 										tooltiptext="${c:l('button_LegalVerificationDialog_WaiveDoc.tooltiptext')}"
@@ -84,19 +94,26 @@
 											label="${c:l('listheader_LegalVerification_Remarks.label')}"
 											sort="false" hflex="min" />
 										<listheader
-											id="listheader_LegalVerification_Waiver_LastStatus"
-											label="${c:l('listheader_LegalVerification_LastStatus.label')}"
+											id="listheader_LegalVerification_Waiver_Status"
+											label="${c:l('listheader_LegalVerification_Status.label')}"
 											sort="false" hflex="min" />
 										<listheader
-											id="listheader_LegalVerification_Waiver_LastVrfDate"
-											label="${c:l('listheader_LegalVerification_LastVrfDate.label')}"
+											id="listheader_LegalVerification_Waiver_VrfDate"
+											label="${c:l('listheader_LegalVerification_VrfDate.label')}"
+											sort="false" hflex="min" />
+										<listheader visible="false"
+											id="listheader_LegalVerification_Waiver_ReInitiate"
 											sort="false" hflex="min" />
 									</listhead>
 								</listbox>
 							</groupbox>
 						</div>
+						<div>
+							<groupbox id="lvInquiry" zclass="null" height="330px" />
+						</div>
 					</div>
 				</center>
 			</borderlayout>
 		</window>
- </zk>
+	</window>
+</zk>

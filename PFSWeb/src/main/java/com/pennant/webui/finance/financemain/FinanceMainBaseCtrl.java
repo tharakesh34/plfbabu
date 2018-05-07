@@ -1542,6 +1542,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		
 		//LV Initiation Tab
 		appendLVInitiationTab(onLoad);
+		
+		//LV Initiation Tab
+		appendLVApprovalTab(onLoad);
 				
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
 
@@ -16772,7 +16775,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	/**
-	 * Method for Rendering TV Initiation Data in finance
+	 * Method for Rendering LV Initiation Data in finance
 	 */
 	protected void appendLVInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
@@ -16805,6 +16808,37 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	/**
+	 * Method for Rendering LV Initiation Data in finance
+	 */
+	protected void appendLVApprovalTab(boolean onLoadProcess) {
+		logger.debug(Literal.ENTERING);
+		boolean createTab = false;
+		if (!getFinanceDetail().isLvApprovalTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_LVAPPROVAL) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_LVAPPROVAL, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_LVAPPROVAL);
+		}
+		if (getFinanceDetail().isLvApprovalTab() && !onLoadProcess) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			map.put("financeMainBaseCtrl", this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("verification", financeDetail.getLvVerification());
+			map.put("financeDetail", financeDetail);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVApproval.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_LVAPPROVAL), map);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	
 	public void setCustomerBankInfoService(CustomerBankInfoService customerBankInfoService) {
 		this.customerBankInfoService = customerBankInfoService;
 	}

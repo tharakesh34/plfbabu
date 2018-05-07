@@ -117,7 +117,8 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update verification_lv");
 		sql.append(tableType.getSuffix());
-		sql.append(" set verificationId = :verificationId, date = :date, agentCode = :agentCode, agentName = :agentName, status = :status, ");
+		sql.append(
+				" set verificationId = :verificationId, date = :date, agentCode = :agentCode, agentName = :agentName, status = :status, ");
 		sql.append(" reason = :reason, remarks = :remarks, Version = :Version, LastMntBy = :LastMntBy,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
@@ -240,10 +241,10 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 			sql.append("_stage");
 		}
 
-		sql.append(" (lvId, seqNo, verificationId, documentId,documentSubId,");
+		sql.append(" (lvId, seqNo, documentId,documentSubId,");
 		sql.append(
 				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?,?");
+		sql.append(" Values(?, ?, ?,?");
 		sql.append(" ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug("insertSql: " + sql.toString());
@@ -258,19 +259,19 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 				} else {
 					ps.setInt(2, document.getSeqNo());
 				}
-				ps.setLong(3, document.getVerificationId());
-				ps.setLong(4, document.getDocumentId());
-				ps.setString(5, document.getDocumentSubId());
-				ps.setInt(6, document.getVersion());
-				ps.setTimestamp(7, document.getLastMntOn());
-				ps.setLong(8, document.getLastMntBy());
-				ps.setString(9, document.getRecordStatus());
-				ps.setString(10, document.getRoleCode());
-				ps.setString(11, document.getNextRoleCode());
-				ps.setString(12, document.getTaskId());
-				ps.setString(13, document.getNextTaskId());
-				ps.setString(14, document.getRecordType());
-				ps.setLong(15, document.getWorkflowId());
+
+				ps.setLong(3, document.getDocumentId());
+				ps.setString(4, document.getDocumentSubId());
+				ps.setInt(5, document.getVersion());
+				ps.setTimestamp(6, document.getLastMntOn());
+				ps.setLong(7, document.getLastMntBy());
+				ps.setString(8, document.getRecordStatus());
+				ps.setString(9, document.getRoleCode());
+				ps.setString(10, document.getNextRoleCode());
+				ps.setString(11, document.getTaskId());
+				ps.setString(12, document.getNextTaskId());
+				ps.setString(13, document.getRecordType());
+				ps.setLong(14, document.getWorkflowId());
 			}
 
 			@Override
@@ -291,7 +292,8 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from verification_lv_details_stage");
 		sql.append(tableType.getSuffix());
-		sql.append(" where verificationId in(select id from verifications where referenceFor=:referenceFor) ");
+		sql.append(
+				" where lvId in(select id from verification_lv_stage where verificationId in(select id from verifications where referenceFor=:referenceFor)) ");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -341,8 +343,8 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 	@Override
 	public List<LVDocument> getLVDocumentsFromStage(long verificationId) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select lvid, seqno, verificationId, documentId,documentsubId from verification_lv_details_stage");
-		sql.append(" where verificationId=:verificationId");
+		sql.append("select lvid, seqno, documentId,documentsubId from verification_lv_details_stage");
+		sql.append(" where lvId in(select id from verification_lv_stage where verificationId=:verificationId)");
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("verificationId", verificationId);
@@ -363,8 +365,9 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		sql.append(" documentId ");
 		sql.append(QueryUtil.getQueryConcat());
 		sql.append(" COALESCE(documentSubId,'') documentId");
-		sql.append(" from  verification_lv_details_stage where verificationid in(select verificationid");
-		sql.append(" from verifications where keyReference=:keyReference)");
+		sql.append(" from  verification_lv_details_stage where lvId in(select id from verification_lv_stage");
+		sql.append(
+				" where verificationId in (select verificationId from verifications where keyReference=:keyReference))");
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("keyReference", keyReference);
@@ -414,7 +417,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		sql.append(" Select lvid, documentid, documentsubid,");
 		if (type.contains("View")) {
 			sql.append(
-					" verificationid, code, description, docmodule, docrefid, seqno, docname, doctype, remarks1, remarks2, remarks3, ");
+					" code, description, docmodule, docrefid, seqno, docname, doctype, remarks1, remarks2, remarks3, ");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -450,8 +453,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 
-		sql.append(
-				"values (:lvId, :seqNo, :documentId, :documentSubId,:remarks1, :remarks2, :remarks3,");
+		sql.append("values (:lvId, :seqNo, :documentId, :documentSubId,:remarks1, :remarks2, :remarks3,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		// sql.append(QueryUtil.getConcurrencyCondition(tableType));

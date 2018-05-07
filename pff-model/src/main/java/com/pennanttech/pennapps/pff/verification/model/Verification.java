@@ -53,6 +53,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private String decisionRemarks;
 	private Verification befImage;
 	private LoggedInUser userDetails;
+	private boolean approveTab;
 
 	private String cif;
 	private String customerName;
@@ -97,6 +98,7 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("lvDocuments");
 		excludeFields.add("legalVerification");
 		excludeFields.add("agencyCity");
+		excludeFields.add("approveTab");
 		return excludeFields;
 	}
 
@@ -411,4 +413,13 @@ public class Verification extends AbstractWorkflowEntity {
 	public void setAgencyCity(String agencyCity) {
 		this.agencyCity = agencyCity;
 	}
+
+	public boolean isApproveTab() {
+		return approveTab;
+	}
+
+	public void setApproveTab(boolean approveTab) {
+		this.approveTab = approveTab;
+	}
+	
 }

@@ -258,7 +258,6 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		//LV Documents
 		for (LVDocument lvDocument : verification.getLvDocuments()) {
 			lvDocument.setLvId(id);
-			lvDocument.setVerificationId(verification.getId());
 		}
 
 		legalVerificationService.saveDocuments(verification.getLvDocuments(), TableType.MAIN_TAB);

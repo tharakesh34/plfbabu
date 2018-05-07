@@ -648,6 +648,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeDetail.setLvVerification(new Verification());
 			setInitVerification(financeDetail, VerificationType.LV);
 		}
+		
+		// LV Verification Approval
+		if (financeDetail.isLvApprovalTab()) {
+			Verification verification=new Verification();
+
+			String keyRef = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+			verification.setKeyReference(keyRef);
+			financeDetail.setLvVerification(verification);
+		}
 		logger.debug("Leaving");
 		return financeDetail;
 	}
@@ -1812,13 +1821,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
 								FinanceConstants.PROCEDT_VERIFICATION_TV_APPR)) {
 							financeDetail.setTvApprovalTab(true);
-						} /*else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
+						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
 								FinanceConstants.PROCEDT_VERIFICATION_LV_INIT)) {
 							financeDetail.setLvInitTab(true);
 						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
 								FinanceConstants.PROCEDT_VERIFICATION_LV_APPR)) {
 							financeDetail.setLvApprovalTab(true);
-						}*/
+						}
 					}
 				}
 			}
@@ -2525,7 +2534,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Legal Verification details
-			if (financeDetail.isLvInitTab() /*|| financeDetail.isLvApprovalTab()*/) {
+			if (financeDetail.isLvInitTab() || financeDetail.isLvApprovalTab()) {
 				setVerificationAuditDetails(financeDetail.getLvVerification(), financeMain);
 			}
 			
