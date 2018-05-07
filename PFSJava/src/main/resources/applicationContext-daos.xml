@@ -11285,7 +11285,7 @@
 		</property>
 	</bean>
 	
-	<bean id="legalVerificationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.LegalVerificationSeriveImpl"/>
+	<bean id="legalVerificationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.LegalVerificationServiceImpl"/>
 	<!-- Authorization Limit -->
 	<bean id="authorizationLimitDAO" class="com.pennant.backend.dao.authorization.impl.AuthorizationLimitDAOImpl"  parent="basisNextidDao">
 		<property name="dataSource" ref="dataSource" />
