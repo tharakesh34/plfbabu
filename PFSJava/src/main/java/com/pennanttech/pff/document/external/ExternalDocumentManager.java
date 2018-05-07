@@ -71,8 +71,11 @@ public class ExternalDocumentManager {
 
 	public DocumentDetails getExternalDocument(String fileName, String docRefId, String reference) {
 		logger.debug(Literal.ENTERING);
-
+		
 		DocumentDetails returndetails = null;
+		if (documentManagementService==null) {
+			return returndetails;
+		}
 
 		String[] docRefIds = null;
 		List<DocumentDetails> documentDetailList = new ArrayList<>(1);
