@@ -64,7 +64,8 @@
 				</div>
 			</north>
 			<center border="none">
-				<groupbox id="gb_basicDetails" sclass="gb-dialog">
+			  <div width="100%" height="100%" style="overflow:auto">
+				<groupbox id="gb_basicDetails" sclass="gb-dialog" >
 					<grid fixedLayout="true" sclass="GridLayoutNoBorder"
 						style="border:0px">
 						<columns>
@@ -90,7 +91,7 @@
 										<listheader
 											label="${c:l('listheader_LVInitiationDialog_DocType.label')}"
 											sort="false" hflex="min" />
-									</listhead>
+									</>
 								</listbox>
 							</row>
 							<row>
@@ -145,6 +146,7 @@
 						</rows>
 					</grid>
 				</groupbox>
+				</div>
 			</center>
 			<south sclass="south-dialog">
 					<groupbox id="groupboxWf" width="99%">
