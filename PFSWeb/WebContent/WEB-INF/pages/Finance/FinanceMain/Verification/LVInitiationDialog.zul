@@ -91,7 +91,7 @@
 										<listheader
 											label="${c:l('listheader_LVInitiationDialog_DocType.label')}"
 											sort="false" hflex="min" />
-									</>
+									</listhead>
 								</listbox>
 							</row>
 							<row>
