@@ -424,10 +424,10 @@
 	<column name="AuditImage" type="varchar(20)">
 		<constraints nullable="false" />
 	</column>
-	<column name="Id" type="fieldDetailsVO.dataType">
-	<column name="Code" type="fieldDetailsVO.dataType">
-	<column name="Description" type="fieldDetailsVO.dataType">
-	<column name="Active" type="fieldDetailsVO.dataType">
+	<column name="Id" type="bigint"/>
+	<column name="Code" type="varchar(10)"/>
+	<column name="Description" type="varchar(50)"/>
+	<column name="Active" type="boolean"/>
 	<column name="version" type="int"/>
 	<column name="lastmntby" type="bigint"/>
 	<column name="lastmnton" type="datetime"/>
