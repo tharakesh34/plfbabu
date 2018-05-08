@@ -5084,7 +5084,7 @@ insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetai
 insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetail)
 	,'MDAAL5', 'Manual Deviation Allowed Authorities for Level 5', 1);
 </sql></changeSet>
- <changeSet id="96" author="SubbaRao">
+	<changeSet id="96" author="SubbaRao">
 		<sql>
 			Insert into SECRIGHTS values ((select max(rightid)+1 from SECRIGHTS),0,'menuItem_Administration_UserpasswordReset','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
 			Insert into SECGROUPRIGHTS values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(select grpid from secgroups where grpcode='SECURITYUSER_MAKER'),(select rightid from secrights where rightname='menuItem_Administration_UserpasswordReset'),1,0,10000,current_timestamp,' ',null,null,null,null,null,0);
@@ -5094,7 +5094,7 @@ insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetai
 			update seqSECGROUPRIGHTS set seqno=(select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
 			
 		</sql>
-	</changeSet>
+	</changeSet> 
 	
 	<changeSet id="97" author="Vinay">
 		<comment>Eligibility Method values from table in Loan Origination</comment>
@@ -5194,6 +5194,12 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 </changeSet>
 	<changeSet id="105" author="Jayant">
 		<createSequence sequenceName="seqBMTQueryCategories" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999"/>
+	</changeSet>
+	<changeSet id="106" author="srikanth">
+	<sql>
+	delete from SMTPARAMETERS where sysParmcode='DEV_HIGHER_APPROVAL';
+	INSERT INTO SMTPARAMETERS VALUES ('DEV_HIGHER_APPROVAL', 'Allow top level hierarchical approval Required (Y, N)', 'String', 0, 'N', 1, 0, NULL, NULL, 'Allow top level hierarchical approval Required', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	</sql>
 	</changeSet>
 </databaseChangeLog>
 	
