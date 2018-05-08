@@ -220,8 +220,105 @@
 		<addForeignKeyConstraint constraintName="fk_verification_lv_temp_verid" referencedTableName="verifications" baseColumnNames="VerificationId" baseTableName="verification_lv_temp" referencedColumnNames="Id"/>
 		<addForeignKeyConstraint constraintName="fk_verification_lv_stage_verid" referencedTableName="verifications" baseColumnNames="VerificationId" baseTableName="verification_lv_stage" referencedColumnNames="Id"/>
 	</changeSet>
-	
-	<changeSet id="3.0" author="Durgaprasad G">
+	<changeSet id="2.1" author="Jayant" dbms="oracle">
+		<comment> Renaming column because it is a keyword </comment>
+		<renameColumn tableName="verification_lv" oldColumnName="Date" newColumnName="IntitatedDate"/>
+	</changeSet>	
+	<changeSet id="3.1" author="Jayant" dbms="oracle">
+		<comment> Renaming column because it is a keyword </comment>
+		<renameColumn tableName="verification_lv_temp" oldColumnName="Date" newColumnName="IntitatedDate"/>
+	</changeSet>	
+	<changeSet id="3.0" author="Durgaprasad G"dbms="oracle">
+		<createView viewName="verification_lv_view" replaceIfExists="true">	
+			select  * from (
+			select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lv.VerificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.IntitatedDate, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv_temp lv
+			inner join verification_lv_details_temp lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			union all 
+			 select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lv.VerificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.IntitatedDate, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv lv
+			inner join verification_lv_details lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			 where not (exists ( select 1 from verification_lv_temp where verification_lv_temp.id = lv.id))
+			) t
+		 </createView>
+	</changeSet>
+	<changeSet id="3.0" author="Durgaprasad G"dbms="postgresql">
 		<createView viewName="verification_lv_view" replaceIfExists="true">	
 			select  * from (
 			select 
