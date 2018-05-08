@@ -548,9 +548,11 @@
 		<menuItem id="menu_Item_TechnicalVerification"
 			zulNavigation="/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationList.zul"
 			rightName="menuItem_Verification_TechnicalVerification" />
-	<menuItem id="menu_Item_LegalVerification"
+		<menuItem id="menu_Item_LegalVerification"
 		zulNavigation="/WEB-INF/pages/Verification/LegalVerification/LegalVerificationList.zul"
 		rightName="menuItem_Verification_LegalVerification" /> 	
+		<menuItem id="menu_Item_RiskContainmentUnit"
+			zulNavigation="/WEB-INF/pages/Verification/RiskContainmentUnit/RiskContainmentUnitList.zul" /> 	
 	</menu>
 
 	<!-- Loan Management -->

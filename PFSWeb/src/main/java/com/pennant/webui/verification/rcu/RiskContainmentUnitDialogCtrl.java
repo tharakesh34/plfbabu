@@ -1,4 +1,4 @@
-package com.pennant.webui.verification.legalverification;
+package com.pennant.webui.verification.rcu;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -32,11 +32,10 @@ import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.North;
-import org.zkoss.zul.South;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -50,14 +49,12 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
-import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -78,30 +75,31 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.StatuReasons;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
-import com.pennanttech.pennapps.pff.verification.fi.LVStatus;
-import com.pennanttech.pennapps.pff.verification.model.LVDocument;
-import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
-import com.pennanttech.pennapps.pff.verification.service.LegalVerificationService;
+import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
+import com.pennanttech.pennapps.pff.verification.fi.RCUStatus;
+import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
+import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
+import com.pennanttech.pennapps.pff.verification.service.RiskContainmentUnitService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Verification/LegalVerification/LegalVerificationDialog.zul file.
- * <br>
+ * This is the controller class for the /WEB-INF/pages/Verification/RiskContainmentUnit/RiskContainmentUnitDialog.zul
+ * file. <br>
  */
-public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> {
-
+public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUnit> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(LegalVerificationDialogCtrl.class);
 
-	protected Window window_LegalVerificationDialog;
+	private static final Logger logger = Logger.getLogger(RiskContainmentUnitDialogCtrl.class);
+
+	protected Window window_RiskContainmentUnitDialog;
 	protected Tab verificationDetails;
 	protected Groupbox gb_basicDetails;
 	protected Textbox custCIF;
 	protected Textbox finReference;
-	protected Textbox collateralType;
-	protected Textbox collateralReference;
+	protected Textbox customerName;
+	protected Textbox rcuReference;
 
-	protected Listbox listBoxLegalVerificationDocuments;
+	protected Listbox listBoxRiskContainmentUnitDocuments;
 	protected Tabpanel observationsFieldTabPanel;
 
 	protected Tabbox tabBoxIndexCenter;
@@ -115,38 +113,36 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	protected Combobox recommendations;
 	protected ExtendedCombobox reason;
 	protected Textbox remarks;
-	protected North north;
-	protected South south;
 	
-	private boolean fromLoanOrg;
+	protected Combobox verificationType;
+	protected Combobox rcuStatus;
+	protected Intbox pagesEyeBalled;
+	protected Intbox pagesSampled;
 
-	private LegalVerification legalVerification;
+	private RiskContainmentUnit riskContainmentUnit;
 	protected Map<String, DocumentDetails> docDetailMap = null;
-	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
-	private List<LVDocument> lvDocumentsList = new ArrayList<>();
+	private List<DocumentDetails> documentDetailsList = new ArrayList<>();
+	private List<RCUDocument> rcuDocumentsList = new ArrayList<>();
 	private transient FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl;
 	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
-	private transient LegalVerificationListCtrl legalVerificationListCtrl;
-
-	private ExtendedFieldCtrl extendedFieldCtrl = null;
+	private transient RiskContainmentUnitListCtrl riskContainmentUnitListCtrl;
 
 	@Autowired
-	private transient LegalVerificationService legalVerificationService;
+	private transient RiskContainmentUnitService riskContainmentUnitService;
 	@Autowired
 	private transient CustomerDetailsService customerDetailsService;
-	@Autowired
-	private transient CollateralSetupService collateralSetupService;
+	private ExtendedFieldCtrl extendedFieldCtrl = null;
 
 	/**
 	 * default constructor.<br>
 	 */
-	public LegalVerificationDialogCtrl() {
+	public RiskContainmentUnitDialogCtrl() {
 		super();
 	}
 
 	@Override
 	protected void doSetProperties() {
-		super.pageRightName = "LegalVerificationDialog";
+		super.pageRightName = "RiskContainmentUnitDialog";
 	}
 
 	/**
@@ -157,56 +153,46 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	 *            An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
-	public void onCreate$window_LegalVerificationDialog(Event event) throws Exception {
+	public void onCreate$window_RiskContainmentUnitDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
-		setPageComponents(window_LegalVerificationDialog);
+		setPageComponents(window_RiskContainmentUnitDialog);
 
 		try {
 			// Get the required arguments.
-			this.legalVerification = (LegalVerification) arguments.get("legalVerification");
+			this.riskContainmentUnit = (RiskContainmentUnit) arguments.get("riskContainmentUnit");
 
-			if (arguments.get("legalVerificationListCtrl") != null) {
-				this.legalVerificationListCtrl = (LegalVerificationListCtrl) arguments.get("legalVerificationListCtrl");
+			if (arguments.get("riskContainmentUnitListCtrl") != null) {
+				this.riskContainmentUnitListCtrl = (RiskContainmentUnitListCtrl) arguments
+						.get("riskContainmentUnitListCtrl");
 			}
 
 			if (arguments.get("enqiryModule") != null) {
 				enqiryModule = (boolean) arguments.get("enqiryModule");
 			}
 
-			if (this.legalVerification == null) {
+			if (this.riskContainmentUnit == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
-			}
-			
-			if (arguments.get("LOAN_ORG") != null) {
-				fromLoanOrg = true;
-				enqiryModule = true;
-			}
-
-			if (arguments.get("enqiryModule") != null) {
-				enqiryModule = (boolean) arguments.get("enqiryModule");
 			}
 
 			// Store the before image.
-			LegalVerification legalVerification = new LegalVerification();
-			BeanUtils.copyProperties(this.legalVerification, legalVerification);
-			this.legalVerification.setBefImage(legalVerification);
+			RiskContainmentUnit rcu = new RiskContainmentUnit();
+			BeanUtils.copyProperties(this.riskContainmentUnit, rcu);
+			this.riskContainmentUnit.setBefImage(rcu);
 
 			// Render the page and display the data.
-			doLoadWorkFlow(this.legalVerification.isWorkflow(), this.legalVerification.getWorkflowId(),
-					this.legalVerification.getNextTaskId());
+			doLoadWorkFlow(this.riskContainmentUnit.isWorkflow(), this.riskContainmentUnit.getWorkflowId(),
+					this.riskContainmentUnit.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
-			} else if (fromLoanOrg) {
-				setWorkFlowEnabled(true);
 			}
 
 			doSetFieldProperties();
 			doCheckRights();
-			doShowDialog(this.legalVerification);
+			doShowDialog(this.riskContainmentUnit);
 		} catch (Exception e) {
 			closeDialog();
 			MessageUtil.showError(e);
@@ -228,7 +214,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
 		Filter reasonFilter[] = new Filter[1];
-		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.LVSRES.getKey(), Filter.OP_EQUAL);
+		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.RCUSRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
 
 		this.agentCode.setMaxlength(8);
@@ -241,52 +227,15 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	}
 
 	/**
-	 * Set the components for edit mode. <br>
-	 */
-	private void doEdit() {
-		logger.debug(Literal.LEAVING);
-
-		if (this.legalVerification.isNewRecord()) {
-			this.btnCancel.setVisible(false);
-		} else {
-			this.btnCancel.setVisible(true);
-		}
-
-		
-		  readOnlyComponent(isReadOnly("LegalVerificationDialog_VerificationDate"), this.verificationDate);
-		  readOnlyComponent(isReadOnly("LegalVerificationDialog_AgentCode"), this.agentCode);
-		  readOnlyComponent(isReadOnly("LegalVerificationDialog_AgentName"), this.agentName);
-		  readOnlyComponent(isReadOnly("LegalVerificationDialog_Recommendations"), this.recommendations);
-		  readOnlyComponent(isReadOnly("LegalVerificationDialog_Reason"), this.reason);
-		  readOnlyComponent(isReadOnly("LegalVerificationDialog_Remarks"), this.remarks);
-		 
-		if (isWorkFlowEnabled()) {
-			for (int i = 0; i < userAction.getItemCount(); i++) {
-				userAction.getItemAtIndex(i).setDisabled(false);
-			}
-			if (this.legalVerification.isNewRecord()) {
-				this.btnCtrl.setBtnStatus_Edit();
-				btnCancel.setVisible(false);
-			} else {
-				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-			}
-		} else {
-			this.btnCtrl.setBtnStatus_Edit();
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalVerificationList_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalVerificationDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalVerificationDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalVerificationDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_RiskContainmentUnitList_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_RiskContainmentUnitDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_RiskContainmentUnitDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_RiskContainmentUnitDialog_btnSave"));
 
 		this.btnCancel.setVisible(false);
 
@@ -375,7 +324,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
-		doShowNotes(this.legalVerification);
+		doShowNotes(this.riskContainmentUnit);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -384,7 +333,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	 */
 	private void refreshList() {
 		logger.debug(Literal.ENTERING);
-		legalVerificationListCtrl.search();
+		riskContainmentUnitListCtrl.search();
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -394,7 +343,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	private void doCancel() {
 		logger.debug(Literal.ENTERING);
 
-		doWriteBeanToComponents(this.legalVerification.getBefImage());
+		doWriteBeanToComponents(this.riskContainmentUnit.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
@@ -421,53 +370,54 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param lv
+	 * @param rcu
 	 * 
 	 */
-	public void doWriteBeanToComponents(LegalVerification lv) {
+	public void doWriteBeanToComponents(RiskContainmentUnit rcu) {
 		logger.debug(Literal.ENTERING);
 
-		this.custCIF.setValue(lv.getCif());
-		this.finReference.setValue(lv.getKeyReference());
-		this.collateralType.setValue(lv.getCollateralType());
-		this.collateralReference.setValue(lv.getReferenceFor());
+		this.custCIF.setValue(rcu.getCif());
+		this.finReference.setValue(rcu.getKeyReference());
+		this.customerName.setValue(rcu.getCustomerName());
+		this.rcuReference.setValue(rcu.getRcuReference());
 
-		this.verificationDate.setValue(lv.getDate());
-		this.agentCode.setValue(lv.getAgentCode());
-		this.agentName.setValue(lv.getAgentName());
-		this.recommendations.setValue(String.valueOf(lv.getStatus()));
-		if (!lv.isNewRecord()) {
-			this.reason.setValue(StringUtils.trimToEmpty((lv.getReasonCode())),
-					StringUtils.trimToEmpty(lv.getReasonDesc()));
-			if (lv.getReason() != null) {
-				this.reason.setAttribute("ReasonId", lv.getReason());
+		this.verificationDate.setValue(rcu.getDate());
+		this.agentCode.setValue(rcu.getAgentCode());
+		this.agentName.setValue(rcu.getAgentName());
+		this.recommendations.setValue(String.valueOf(rcu.getStatus()));
+		if (!rcu.isNewRecord()) {
+			this.reason.setValue(StringUtils.trimToEmpty((rcu.getReasonCode())),
+					StringUtils.trimToEmpty(rcu.getReasonDesc()));
+			if (rcu.getReason() != null) {
+				this.reason.setAttribute("ReasonId", rcu.getReason());
 			} else {
 				this.reason.setAttribute("ReasonId", null);
 			}
 		}
 
-		this.remarks.setValue(lv.getRemarks());
-		fillComboBox(this.recommendations, lv.getStatus(), LVStatus.getList());
+		this.remarks.setValue(rcu.getRemarks());
+		fillComboBox(this.recommendations, rcu.getStatus(), RCUStatus.getList());
+		onChangeRCUStatus();
 
-		this.recordStatus.setValue(lv.getRecordStatus());
-		doFillLVDocuments(lv.getLvDocuments());
+		this.recordStatus.setValue(rcu.getRecordStatus());
+		doFillRCUDocuments(rcu.getRcuDocuments());
 		// Document Detail Tab Addition
 		appendDocumentDetailTab();
 
 		// Verification details
-		appendVerificationFieldDetails(lv);
+		appendVerificationFieldDetails(rcu);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doFillLVDocuments(List<LVDocument> lvDocuments) {
-		logger.debug("Entering");
+	private void doFillRCUDocuments(List<RCUDocument> rcuDocuments) {
+		logger.debug(Literal.ENTERING);
 
-		this.listBoxLegalVerificationDocuments.getItems().clear();
-		if (lvDocuments != null) {
+		this.listBoxRiskContainmentUnitDocuments.getItems().clear();
+		if (rcuDocuments != null) {
 
 			int i = 0;
-			for (LVDocument document : lvDocuments) {
+			for (RCUDocument document : rcuDocuments) {
 				i++;
 				Listitem item = new Listitem();
 				Listcell lc;
@@ -482,46 +432,58 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				lc.setParent(item);
 
 				lc = new Listcell();
-				lc.setId("Remarks1".concat(String.valueOf(i)));
-				Textbox remarks1 = new Textbox();
-				remarks1.setReadonly(isReadOnly("LegalVerificationDialog_Remarks1"));
-				remarks1.setValue(document.getRemarks1());
-				remarks1.setMaxlength(500);
-				remarks1.setMultiline(true);
-				remarks1.setHeight("30px");
-				remarks1.setWidth("350px");
-				lc.appendChild(remarks1);
+				lc.setId("VerificationType".concat(String.valueOf(i)));
+				verificationType = new Combobox();
+				verificationType.setReadonly(isReadOnly("RiskContainmentUnitDialog_VerificationType"));
+				verificationType.setValue(document.getVerificationType());
+				lc.appendChild(verificationType);
 				lc.setParent(item);
 
 				lc = new Listcell();
-				lc.setId("Remarks2".concat(String.valueOf(i)));
-				Textbox remarks2 = new Textbox();
-				remarks2.setReadonly(isReadOnly("LegalVerificationDialog_Remarks2"));
-				remarks2.setValue(document.getRemarks2());
-				remarks2.setMaxlength(500);
-				remarks2.setMultiline(true);
-				remarks2.setHeight("30px");
-				remarks2.setWidth("350px");
-				lc.appendChild(remarks2);
+				lc.setId("RCUStatus".concat(String.valueOf(i)));
+				rcuStatus = new Combobox();
+				rcuStatus.setReadonly(isReadOnly("RiskContainmentUnitDialog_RCUStatus"));
+				rcuStatus.setValue(document.getRcuStatus());
+				docLink.addForward("onChange", self, "onChangeRCUStatus", document);
+				lc.appendChild(rcuStatus);
 				lc.setParent(item);
 
 				lc = new Listcell();
-				lc.setId("Remarks3".concat(String.valueOf(i)));
-				Textbox remarks3 = new Textbox();
-				remarks3.setReadonly(isReadOnly("LegalVerificationDialog_Remarks3"));
-				remarks3.setValue(document.getRemarks3());
-				remarks3.setMaxlength(500);
-				remarks3.setMultiline(true);
-				remarks3.setHeight("30px");
-				remarks3.setWidth("350px");
-				lc.appendChild(remarks3);
+				lc.setId("PagesEyeBalled".concat(String.valueOf(i)));
+				pagesEyeBalled = new Intbox();
+				pagesEyeBalled.setReadonly(isReadOnly("RiskContainmentUnitDialog_PagesEyeBalled"));
+				pagesEyeBalled.setValue(document.getPagesEyeballed());
+				pagesEyeBalled.setMaxlength(2);
+				lc.appendChild(pagesEyeBalled);
+				lc.setParent(item);
+
+				lc = new Listcell();
+				lc.setId("PagesSampled".concat(String.valueOf(i)));
+				pagesSampled = new Intbox();
+				pagesSampled.setReadonly(isReadOnly("RiskContainmentUnitDialog_PagesSampled"));
+				pagesSampled.setValue(document.getPagesEyeballed());
+				pagesSampled.setMaxlength(2);
+				lc.appendChild(pagesSampled);
+				lc.setParent(item);
+
+				lc = new Listcell();
+				lc.setId("Remarks".concat(String.valueOf(i)));
+				Textbox remarks = new Textbox();
+				remarks.setReadonly(isReadOnly("RiskContainmentUnitDialog_Remarks"));
+				remarks.setValue(document.getRemarks());
+				remarks.setMaxlength(500);
+				remarks.setMultiline(true);
+				remarks.setHeight("30px");
+				remarks.setWidth("350px");
+				lc.appendChild(remarks);
 				lc.setParent(item);
 
 				item.setAttribute("data", document);
-				this.listBoxLegalVerificationDocuments.appendChild(item);
+				this.listBoxRiskContainmentUnitDocuments.appendChild(item);
 			}
-			setLvDocumentsList(lvDocuments);
+			setRcuDocumentsList(rcuDocuments);
 		}
+
 	}
 
 	/**
@@ -529,9 +491,9 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	 */
 	public void onClickDoDownload(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
-		LVDocument details = (LVDocument) event.getData();
+		RCUDocument details = (RCUDocument) event.getData();
 
-		DocumentManager docDetails = legalVerificationService.getDocumentById(details.getDocRefID());
+		DocumentManager docDetails = riskContainmentUnitService.getDocumentById(details.getDocRefId());
 		AMedia amedia = null;
 		if (docDetails.getDocImage() != null) {
 			final InputStream data = new ByteArrayInputStream(docDetails.getDocImage());
@@ -550,15 +512,30 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void onChangeRCUStatus() {
+		logger.debug(Literal.ENTERING);
+		
+		if (!this.verificationType.isDisabled()) {
+			if (this.verificationType.getSelectedItem().getValue() == "1") {
+				this.pagesEyeBalled.setDisabled(false);
+				this.pagesSampled.setDisabled(true);
+			} else if (this.verificationType.getSelectedItem().getValue() == "2") {
+				this.pagesEyeBalled.setDisabled(true);
+				this.pagesSampled.setDisabled(false);
+			}
+			logger.debug(Literal.LEAVING);
+		}
+	}
+
 	/**
 	 * This method is for append verification extended field details
 	 */
-	private void appendVerificationFieldDetails(LegalVerification lv) {
+	private void appendVerificationFieldDetails(RiskContainmentUnit rcu) {
 		logger.debug(Literal.ENTERING);
 		try {
 			extendedFieldCtrl = new ExtendedFieldCtrl();
 			ExtendedFieldHeader extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(
-					CollateralConstants.VERIFICATION_MODULE, ExtendedFieldConstants.VERIFICATION_LV);
+					CollateralConstants.VERIFICATION_MODULE, ExtendedFieldConstants.VERIFICATION_RCU);
 
 			if (extendedFieldHeader == null) {
 				return;
@@ -582,21 +559,22 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			this.observationsFieldTabPanel.setHeight((fieldSize * 37) + "px");
 
 			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
-					.getExtendedFieldRender(String.valueOf(lv.getVerificationId()), tableName.toString(), "_View");
+					.getExtendedFieldRender(String.valueOf(rcu.getVerificationId()), tableName.toString(), "_View");
 			extendedFieldCtrl.setTabpanel(observationsFieldTabPanel);
 			extendedFieldCtrl.setTab(this.verificationDetails);
-			lv.setExtendedFieldHeader(extendedFieldHeader);
-			lv.setExtendedFieldRender(extendedFieldRender);
+			rcu.setExtendedFieldHeader(extendedFieldHeader);
+			rcu.setExtendedFieldRender(extendedFieldRender);
 
-			if (lv.getBefImage() != null) {
-				lv.getBefImage().setExtendedFieldHeader(extendedFieldHeader);
-				lv.getBefImage().setExtendedFieldRender(extendedFieldRender);
+			if (rcu.getBefImage() != null) {
+				rcu.getBefImage().setExtendedFieldHeader(extendedFieldHeader);
+				rcu.getBefImage().setExtendedFieldRender(extendedFieldRender);
 			}
 			extendedFieldCtrl.setCcyFormat(2);
-		    extendedFieldCtrl.setReadOnly(isReadOnly("LegalVerificationDialog_LegalVerificationExtFields"));
-			extendedFieldCtrl.setWindow(this.window_LegalVerificationDialog);
+			extendedFieldCtrl.setReadOnly(isReadOnly("LegalVerificationDialog_LegalVerificationExtFields"));
+			extendedFieldCtrl.setWindow(this.window_RiskContainmentUnitDialog);
 			extendedFieldCtrl.render();
-			this.verificationDetails.setLabel(Labels.getLabel("label_LegalVerificationDialog_VerificationDetails.value"));
+			this.verificationDetails
+					.setLabel(Labels.getLabel("label_LegalVerificationDialog_VerificationDetails.value"));
 		} catch (Exception e) {
 			closeDialog();
 			logger.error(Literal.EXCEPTION, e);
@@ -611,8 +589,8 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		logger.debug("Entering");
 		createTab("DOCUMENTDETAIL", true);
 		final HashMap<String, Object> map = getDefaultArguments();
-		map.put("documentDetails", getLegalVerification().getDocuments());
-		map.put("module", DocumentCategories.VERIFICATION_LV.getKey());
+		map.put("documentDetails", getRiskContainmentUnit().getDocuments());
+		map.put("module", DocumentCategories.VERIFICATION_FI.getKey());
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
 				getTabpanel("DOCUMENTDETAIL"), map);
 		logger.debug("Leaving");
@@ -631,9 +609,9 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("isNotFinanceProcess", true);
-		map.put("moduleName", VerificationType.LV.name());
+		map.put("moduleName", VerificationType.RCU.name());
 		map.put("enqiryModule", enqiryModule);
-		map.put("isEditable", !isReadOnly("LegalVerificationDialog_Documents"));
+		map.put("isEditable", !isReadOnly("RiskContainmentUnitDialog_Documents"));
 
 		return map;
 	}
@@ -671,111 +649,128 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	 * @param verification
 	 * @throws ParseException
 	 */
-	public void doWriteComponentsToBean(LegalVerification lv) throws ParseException {
+	public void doWriteComponentsToBean(RiskContainmentUnit rcu) throws ParseException {
 		logger.debug(Literal.LEAVING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 
-		lv.setCif(this.custCIF.getValue());
-		lv.setKeyReference(this.finReference.getValue());
-		lv.setCollateralType(this.collateralType.getValue());
-		lv.setReferenceFor(this.collateralReference.getValue());
+		rcu.setCif(this.custCIF.getValue());
+		rcu.setKeyReference(this.finReference.getValue());
+		rcu.setCustomerName(this.customerName.getValue());
+		rcu.setRcuReference(this.rcuReference.getValue());
 
-		for (Listitem listitem : listBoxLegalVerificationDocuments.getItems()) {
+		for (Listitem listitem : listBoxRiskContainmentUnitDocuments.getItems()) {
 			try {
-				setValue(listitem, "Remarks1");
+				setValue(listitem, "VerificationType");
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 			try {
-				setValue(listitem, "Remarks2");
+				setValue(listitem, "RCUStatus");
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 
 			try {
-				setValue(listitem, "Remarks3");
+				setValue(listitem, "PagesEyeBalled");
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				setValue(listitem, "PagesSampled");
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				setValue(listitem, "Remarks");
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 		}
+
 		// Extended Field validations
-		if (lv.getExtendedFieldHeader() != null) {
-			lv.setExtendedFieldRender(extendedFieldCtrl.save());
+		if (rcu.getExtendedFieldHeader() != null) {
+			rcu.setExtendedFieldRender(extendedFieldCtrl.save());
 		}
 
 		try {
-			lv.setDate(this.verificationDate.getValue());
+			rcu.setDate(this.verificationDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			lv.setAgentCode(this.agentCode.getValue());
+			rcu.setAgentCode(this.agentCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			lv.setAgentName(this.agentName.getValue());
+			rcu.setAgentName(this.agentName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			if ("0".equals(getComboboxValue(this.recommendations))) {
 				throw new WrongValueException(this.recommendations, Labels.getLabel("STATIC_INVALID",
-						new String[] { Labels.getLabel("label_FieldInvestigationDialog_Recommendations.value") }));
+						new String[] { Labels.getLabel("label_RiskContainmentUnitDialog_Recommendations.value") }));
 			} else {
-				lv.setStatus(Integer.parseInt(getComboboxValue(this.recommendations)));
+				rcu.setStatus(Integer.parseInt(getComboboxValue(this.recommendations)));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			lv.setReasonDesc(this.reason.getDescription());
-			lv.setReasonCode(this.reason.getValue());
+			rcu.setReasonDesc(this.reason.getDescription());
+			rcu.setReasonCode(this.reason.getValue());
 			this.reason.getValidatedValue();
 			Object object = this.reason.getAttribute("ReasonId");
 			if (object != null) {
-				lv.setReason((Long.parseLong(object.toString())));
+				rcu.setReason((Long.parseLong(object.toString())));
 			} else {
-				lv.setReason(null);
+				rcu.setReason(null);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			lv.setRemarks(this.remarks.getValue());
+			rcu.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		lv.setLvDocuments(this.lvDocumentsList);
+		rcu.setRcuDocuments(this.rcuDocumentsList);
 		doRemoveValidation();
 
 		showErrorDetails(wve, this.verificationDetails);
-		
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void setValue(Listitem listitem, String comonentId) {
-		LVDocument lvDoc = null;
+		RCUDocument rcuDocument = null;
 
-		lvDoc = (LVDocument) listitem.getAttribute("data");
+		rcuDocument = (RCUDocument) listitem.getAttribute("data");
 		switch (comonentId) {
-		case "Remarks1":
-			lvDoc.setRemarks1(((Textbox) getComponent(listitem, "Remarks1")).getValue());
+		case "VerificationType":
+			rcuDocument.setVerificationType(((Textbox) getComponent(listitem, "VerificationType")).getValue());
 			break;
-		case "Remarks2":
-			lvDoc.setRemarks2(((Textbox) getComponent(listitem, "Remarks2")).getValue());
+		case "RCUStatus":
+			rcuDocument.setRcuStatus(((Textbox) getComponent(listitem, "RCUStatus")).getValue());
 			break;
-		case "Remarks3":
-			lvDoc.setRemarks3(((Textbox) getComponent(listitem, "Remarks3")).getValue());
+		case "PagesEyeBalled":
+			rcuDocument.setPagesEyeballed(((Intbox) getComponent(listitem, "PagesEyeBalled")).getValue());
+			break;
+		case "PagesSampled":
+			rcuDocument.setPagesSampled(((Intbox) getComponent(listitem, "PagesSampled")).getValue());
+			break;
+		case "Remarks":
+			rcuDocument.setRemarks(((Textbox) getComponent(listitem, "Remarks")).getValue());
 			break;
 
 		default:
 			break;
 		}
-		lvDoc.setRecordStatus(this.recordStatus.getValue());
+		rcuDocument.setRecordStatus(this.recordStatus.getValue());
 	}
 
 	private org.zkoss.zk.ui.Component getComponent(Listitem listitem, String listcellId) {
@@ -799,20 +794,20 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param legalVerification
+	 * @param rcu
 	 *            The entity that need to be render.
 	 */
-	public void doShowDialog(LegalVerification legalVerification) {
+	public void doShowDialog(RiskContainmentUnit rcu) {
 		logger.debug(Literal.LEAVING);
 
-		if (legalVerification.isNew()) {
+		if (rcu.isNew()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
 		} else {
 
 			if (isWorkFlowEnabled()) {
-				if (StringUtils.isNotBlank(legalVerification.getRecordType())) {
+				if (StringUtils.isNotBlank(rcu.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				// setFocus
@@ -828,19 +823,75 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
 		}
-		
-		if (fromLoanOrg) {
-			north.setVisible(false);
-			south.setVisible(false);
-		}
 
-		doWriteBeanToComponents(legalVerification);
-		if (!fromLoanOrg) {
-			setDialog(DialogType.EMBEDDED);
+		doWriteBeanToComponents(rcu);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Set the components for edit mode. <br>
+	 */
+	private void doEdit() {
+		logger.debug(Literal.LEAVING);
+
+		if (this.riskContainmentUnit.isNewRecord()) {
+			this.btnCancel.setVisible(false);
 		} else {
-			window_LegalVerificationDialog.setHeight("100%");
+			this.btnCancel.setVisible(true);
 		}
 
+		readOnlyComponent(isReadOnly("RiskContainmentUnitDialog_VerificationDate"), this.verificationDate);
+		readOnlyComponent(isReadOnly("RiskContainmentUnitDialog_AgentCode"), this.agentCode);
+		readOnlyComponent(isReadOnly("RiskContainmentUnitDialog_AgentName"), this.agentName);
+		readOnlyComponent(isReadOnly("RiskContainmentUnitDialog_Recommendations"), this.recommendations);
+		readOnlyComponent(isReadOnly("RiskContainmentUnitDialog_Reason"), this.reason);
+		readOnlyComponent(isReadOnly("RiskContainmentUnitDialog_SummaryRemarks"), this.remarks);
+
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (this.riskContainmentUnit.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
+			} else {
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+			}
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Set the components to ReadOnly. <br>
+	 */
+	public void doReadOnly() {
+		logger.debug(Literal.ENTERING);
+
+		this.custCIF.setReadonly(true);
+		this.finReference.setReadonly(true);
+		this.customerName.setReadonly(true);
+		this.rcuReference.setReadonly(true);
+
+		this.agentCode.setReadonly(true);
+		this.agentName.setReadonly(true);
+		this.recommendations.setDisabled(true);
+		this.reason.setReadonly(true);
+		this.remarks.setReadonly(true);
+
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(true);
+			}
+			this.recordStatus.setValue("");
+			if (!enqiryModule) {
+				this.userAction.setSelectedIndex(0);
+			}
+
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -854,31 +905,12 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
 
-		CustomerDetails customerDetails = customerDetailsService.getCustomerById(this.legalVerification.getCustId());
+		CustomerDetails customerDetails = customerDetailsService.getCustomerById(this.riskContainmentUnit.getCustId());
 		if (customerDetails != null) {
 			map.put("customerDetails", customerDetails);
 			map.put("isEnqProcess", true);
 			map.put("CustomerEnq", true);
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
-		}
-
-		logger.debug(Literal.LEAVING + event.toString());
-	}
-	/**
-	 * When user clicks on button "Collateral Reference" button
-	 * 
-	 * @param event
-	 */
-	public void onClick$btnSearchCollateralRef(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
-
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		
-		CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(this.collateralReference.getValue(), "", true);
-		if (collateralSetup != null) {
-			map.put("collateralSetup", collateralSetup);
-			map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
-			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul", null, map);
 		}
 
 		logger.debug(Literal.LEAVING + event.toString());
@@ -920,27 +952,28 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 
 		if (this.verificationDate.isVisible() && !this.verificationDate.isReadonly()) {
 			this.verificationDate.setConstraint(
-					new PTDateValidator(Labels.getLabel("label_LegalVerificationDialog_VerificationDate.value"), true,
-							DateUtil.getDatePart(legalVerification.getCreatedOn()),
+					new PTDateValidator(Labels.getLabel("label_RiskContainmentUnitDialog_VerificationDate.value"), true,
+							DateUtil.getDatePart(riskContainmentUnit.getCreatedOn()),
 							DateUtil.getDatePart(DateUtil.getSysDate()), true));
 		}
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_LegalVerificationDialog_AgentCode.value"),
+					new PTStringValidator(Labels.getLabel("label_RiskContainmentUnitDialog_AgentCode.value"),
 							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		if (!this.agentName.isReadonly()) {
 			this.agentName.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_LegalVerificationDialog_AgentName.value"),
+					new PTStringValidator(Labels.getLabel("label_RiskContainmentUnitDialog_AgentName.value"),
 							PennantRegularExpressions.REGEX_CUST_NAME, true));
 		}
 		if (!this.recommendations.isDisabled()) {
-			this.recommendations.setConstraint(new PTListValidator(
-					Labels.getLabel("label_LegalVerificationDialog_Recommendations.value"), LVStatus.getList(), true));
+			this.recommendations.setConstraint(
+					new PTListValidator(Labels.getLabel("label_RiskContainmentUnitDialog_Recommendations.value"),
+							FIStatus.getList(), true));
 		}
 		if (!this.remarks.isReadonly()) {
-			this.remarks
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_LegalVerificationDialog_Remarks.value"),
+			this.remarks.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_RiskContainmentUnitDialog_Remarks.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 
@@ -953,7 +986,6 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
 
-		this.verificationDate.setConstraint("");
 		this.agentCode.setConstraint("");
 		this.agentName.setConstraint("");
 		this.recommendations.setConstraint("");
@@ -975,15 +1007,15 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	}
 
 	/**
-	 * Deletes a FieldInvestigation object from database.<br>
+	 * Deletes a RiskContainmentUnit object from database.<br>
 	 * 
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
 
-		final LegalVerification entity = new LegalVerification();
-		BeanUtils.copyProperties(this.legalVerification, entity);
+		final RiskContainmentUnit entity = new RiskContainmentUnit();
+		BeanUtils.copyProperties(this.riskContainmentUnit, entity);
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
@@ -1019,65 +1051,35 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	}
 
 	/**
-	 * Set the components to ReadOnly. <br>
-	 */
-	public void doReadOnly() {
-		logger.debug(Literal.ENTERING);
-
-		this.custCIF.setReadonly(true);
-		this.finReference.setReadonly(true);
-		this.collateralType.setReadonly(true);
-		this.collateralReference.setReadonly(true);
-
-		this.agentCode.setReadonly(true);
-		this.agentName.setReadonly(true);
-		this.recommendations.setDisabled(true);
-		this.reason.setReadonly(true);
-		this.remarks.setReadonly(true);
-
-		if (isWorkFlowEnabled()) {
-			for (int i = 0; i < userAction.getItemCount(); i++) {
-				userAction.getItemAtIndex(i).setDisabled(true);
-			}
-			this.recordStatus.setValue("");
-			if (!enqiryModule) {
-				this.userAction.setSelectedIndex(0);
-			}
-
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
 	 * Saves the components to table. <br>
 	 * 
 	 * @throws ParseException
 	 */
 	public void doSave() throws ParseException {
 		logger.debug(Literal.ENTERING);
-		final LegalVerification lv = new LegalVerification();
-		BeanUtils.copyProperties(this.legalVerification, lv);
+		final RiskContainmentUnit rcu = new RiskContainmentUnit();
+		BeanUtils.copyProperties(this.riskContainmentUnit, rcu);
 		boolean isNew = false;
 
 		doSetValidation();
-		doWriteComponentsToBean(lv);
+		doWriteComponentsToBean(rcu);
 
-		isNew = lv.isNew();
+		isNew = rcu.isNew();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(lv.getRecordType())) {
-				lv.setVersion(lv.getVersion() + 1);
+			if (StringUtils.isBlank(rcu.getRecordType())) {
+				rcu.setVersion(rcu.getVersion() + 1);
 				if (isNew) {
-					lv.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					rcu.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					lv.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					lv.setNewRecord(true);
+					rcu.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					rcu.setNewRecord(true);
 				}
 			}
 		} else {
-			lv.setVersion(lv.getVersion() + 1);
+			rcu.setVersion(rcu.getVersion() + 1);
 			if (isNew) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
@@ -1088,15 +1090,15 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		// Document Details Saving
 
 		if (documentDetailDialogCtrl != null) {
-			lv.setDocuments(documentDetailDialogCtrl.getDocumentDetailsList());
+			rcu.setDocuments(documentDetailDialogCtrl.getDocumentDetailsList());
 		} else {
-			lv.setDocuments(getLegalVerification().getDocuments());
+			rcu.setDocuments(getRiskContainmentUnit().getDocuments());
 		}
-        
-		lv.setLvDocuments(getLvDocumentsList());
-		
+
+		rcu.setRcuDocuments(getRcuDocumentsList());
+
 		try {
-			if (doProcess(lv, tranType)) {
+			if (doProcess(rcu, tranType)) {
 				refreshList();
 				closeDialog();
 			}
@@ -1120,32 +1122,32 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(LegalVerification legalVerification, String tranType) {
+	private boolean doProcess(RiskContainmentUnit riskContainmentUnit, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		legalVerification.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-		legalVerification.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		legalVerification.setUserDetails(getUserWorkspace().getLoggedInUser());
+		riskContainmentUnit.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		riskContainmentUnit.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		riskContainmentUnit.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			legalVerification.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			riskContainmentUnit.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(legalVerification.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(riskContainmentUnit.getNextTaskId());
 
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
-					nextTaskId = getNextTaskIds(taskId, legalVerification);
+					nextTaskId = getNextTaskIds(taskId, riskContainmentUnit);
 				}
 
-				if (isNotesMandatory(taskId, legalVerification)) {
+				if (isNotesMandatory(taskId, riskContainmentUnit)) {
 					if (!notesEntered) {
 						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
 						return false;
@@ -1169,89 +1171,87 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				}
 			}
 
-			legalVerification.setTaskId(taskId);
-			legalVerification.setNextTaskId(nextTaskId);
-			legalVerification.setRoleCode(getRole());
-			legalVerification.setNextRoleCode(nextRoleCode);
+			riskContainmentUnit.setTaskId(taskId);
+			riskContainmentUnit.setNextTaskId(nextTaskId);
+			riskContainmentUnit.setRoleCode(getRole());
+			riskContainmentUnit.setNextRoleCode(nextRoleCode);
 
 			// Extended Field details
-			if (legalVerification.getExtendedFieldRender() != null) {
+			if (riskContainmentUnit.getExtendedFieldRender() != null) {
 				int seqNo = 0;
-				ExtendedFieldRender details = legalVerification.getExtendedFieldRender();
-				details.setReference(String.valueOf(legalVerification.getVerificationId()));
+				ExtendedFieldRender details = riskContainmentUnit.getExtendedFieldRender();
+				details.setReference(String.valueOf(riskContainmentUnit.getVerificationId()));
 				details.setSeqNo(++seqNo);
 				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				details.setRecordStatus(legalVerification.getRecordStatus());
-				details.setRecordType(legalVerification.getRecordType());
-				details.setVersion(legalVerification.getVersion());
-				details.setWorkflowId(legalVerification.getWorkflowId());
+				details.setRecordStatus(riskContainmentUnit.getRecordStatus());
+				details.setRecordType(riskContainmentUnit.getRecordType());
+				details.setVersion(riskContainmentUnit.getVersion());
+				details.setWorkflowId(riskContainmentUnit.getWorkflowId());
 				details.setTaskId(taskId);
 				details.setNextTaskId(nextTaskId);
 				details.setRoleCode(getRole());
 				details.setNextRoleCode(nextRoleCode);
-				details.setNewRecord(legalVerification.isNewRecord());
-				if (PennantConstants.RECORD_TYPE_DEL.equals(legalVerification.getRecordType())) {
+				details.setNewRecord(riskContainmentUnit.isNewRecord());
+				if (PennantConstants.RECORD_TYPE_DEL.equals(riskContainmentUnit.getRecordType())) {
 					if (StringUtils.trimToNull(details.getRecordType()) == null) {
-						details.setRecordType(legalVerification.getRecordType());
+						details.setRecordType(riskContainmentUnit.getRecordType());
 						details.setNewRecord(true);
 					}
 				}
 			}
 
 			// Document Details
-			if (legalVerification.getDocuments() != null && !legalVerification.getDocuments().isEmpty()) {
-				for (DocumentDetails details : legalVerification.getDocuments()) {
+			if (riskContainmentUnit.getDocuments() != null && !riskContainmentUnit.getDocuments().isEmpty()) {
+				for (DocumentDetails details : riskContainmentUnit.getDocuments()) {
 					if (StringUtils.isEmpty(StringUtils.trimToEmpty(details.getRecordType()))) {
 						continue;
 					}
 
-					details.setReferenceId(String.valueOf(legalVerification.getVerificationId()));
-					details.setDocModule(VerificationType.LV.getCode());
+					details.setReferenceId(String.valueOf(riskContainmentUnit.getVerificationId()));
+					details.setDocModule(VerificationType.RCU.getCode());
 					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					details.setRecordStatus(legalVerification.getRecordStatus());
-					details.setWorkflowId(legalVerification.getWorkflowId());
+					details.setRecordStatus(riskContainmentUnit.getRecordStatus());
+					details.setWorkflowId(riskContainmentUnit.getWorkflowId());
 					details.setTaskId(taskId);
 					details.setNextTaskId(nextTaskId);
 					details.setRoleCode(getRole());
 					details.setNextRoleCode(nextRoleCode);
-					if (PennantConstants.RECORD_TYPE_DEL.equals(legalVerification.getRecordType())) {
+					if (PennantConstants.RECORD_TYPE_DEL.equals(riskContainmentUnit.getRecordType())) {
 						if (StringUtils.trimToNull(details.getRecordType()) == null) {
-							details.setRecordType(legalVerification.getRecordType());
+							details.setRecordType(riskContainmentUnit.getRecordType());
 							details.setNewRecord(true);
 						}
 					}
 				}
 			}
 
-			// LV Document Details
-			if (legalVerification.getLvDocuments() != null && !legalVerification.getLvDocuments().isEmpty()) {
-				for (LVDocument details : legalVerification.getLvDocuments()) {
+			// RCU Document Details
+			if (riskContainmentUnit.getRcuDocuments() != null && !riskContainmentUnit.getRcuDocuments().isEmpty()) {
+				for (RCUDocument details : riskContainmentUnit.getRcuDocuments()) {
 					if (StringUtils.isEmpty(StringUtils.trimToEmpty(details.getRecordType()))) {
 						continue;
 					}
-
 					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					details.setRecordStatus(legalVerification.getRecordStatus());
-					details.setWorkflowId(legalVerification.getWorkflowId());
+					details.setRecordStatus(riskContainmentUnit.getRecordStatus());
+					details.setWorkflowId(riskContainmentUnit.getWorkflowId());
 					details.setTaskId(taskId);
 					details.setNextTaskId(nextTaskId);
 					details.setRoleCode(getRole());
 					details.setNextRoleCode(nextRoleCode);
-					if (PennantConstants.RECORD_TYPE_DEL.equals(legalVerification.getRecordType())) {
+					if (PennantConstants.RECORD_TYPE_DEL.equals(riskContainmentUnit.getRecordType())) {
 						if (StringUtils.trimToNull(details.getRecordType()) == null) {
-							details.setRecordType(legalVerification.getRecordType());
+							details.setRecordType(riskContainmentUnit.getRecordType());
 							details.setNewRecord(true);
 						}
 					}
 				}
 			}
-			
-			
-			auditHeader = getAuditHeader(legalVerification, tranType);
-			String operationRefs = getServiceOperations(taskId, legalVerification);
+
+			auditHeader = getAuditHeader(riskContainmentUnit, tranType);
+			String operationRefs = getServiceOperations(taskId, riskContainmentUnit);
 
 			if ("".equals(operationRefs)) {
 				processCompleted = doSaveProcess(auditHeader, null);
@@ -1259,7 +1259,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(legalVerification, PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(riskContainmentUnit, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -1267,7 +1267,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				}
 			}
 		} else {
-			auditHeader = getAuditHeader(legalVerification, tranType);
+			auditHeader = getAuditHeader(riskContainmentUnit, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
 
@@ -1290,7 +1290,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		LegalVerification legalVerification = (LegalVerification) auditHeader.getAuditDetail().getModelData();
+		RiskContainmentUnit rcu = (RiskContainmentUnit) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
@@ -1299,42 +1299,42 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 
 				if (StringUtils.isBlank(method)) {
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = legalVerificationService.delete(auditHeader);
+						auditHeader = riskContainmentUnitService.delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = legalVerificationService.saveOrUpdate(auditHeader);
+						auditHeader = riskContainmentUnitService.saveOrUpdate(auditHeader);
 					}
 
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = legalVerificationService.doApprove(auditHeader);
+						auditHeader = riskContainmentUnitService.doApprove(auditHeader);
 
-						if (legalVerification.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+						if (rcu.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = legalVerificationService.doReject(auditHeader);
-						if (legalVerification.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						auditHeader = riskContainmentUnitService.doReject(auditHeader);
+						if (rcu.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
 					} else {
 						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_LegalVerificationDialog, auditHeader);
+						retValue = ErrorControl.showErrorControl(this.window_RiskContainmentUnitDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(this.window_LegalVerificationDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_RiskContainmentUnitDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
 
 					if (deleteNotes) {
-						deleteNotes(getNotes(this.legalVerification), true);
+						deleteNotes(getNotes(this.riskContainmentUnit), true);
 					}
 				}
 
@@ -1360,31 +1360,9 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	 * @return
 	 */
 
-	private AuditHeader getAuditHeader(LegalVerification legalVerification, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, legalVerification.getBefImage(), legalVerification);
-		return new AuditHeader(getReference(), null, null, null, auditDetail, legalVerification.getUserDetails(),
-				getOverideMap());
-	}
-
-	@Override
-	protected String getReference() {
-		return String.valueOf(this.legalVerification.getId());
-	}
-
-	public LegalVerificationListCtrl getLegalVerificationListCtrl() {
-		return legalVerificationListCtrl;
-	}
-
-	public void setLegalVerificationListCtrl(LegalVerificationListCtrl legalVerificationListCtrl) {
-		this.legalVerificationListCtrl = legalVerificationListCtrl;
-	}
-
-	public List<DocumentDetails> getDocumentDetailsList() {
-		return documentDetailsList;
-	}
-
-	public void setDocumentDetailsList(List<DocumentDetails> documentDetailsList) {
-		this.documentDetailsList = documentDetailsList;
+	private AuditHeader getAuditHeader(RiskContainmentUnit rcu, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, rcu.getBefImage(), rcu);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, rcu.getUserDetails(), getOverideMap());
 	}
 
 	private void fillComboBox(Combobox combobox, int value, List<ValueLabel> list) {
@@ -1400,6 +1378,19 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		}
 	}
 
+	@Override
+	protected String getReference() {
+		return String.valueOf(this.riskContainmentUnit.getId());
+	}
+
+	public RiskContainmentUnit getRiskContainmentUnit() {
+		return riskContainmentUnit;
+	}
+
+	public void setRiskContainmentUnit(RiskContainmentUnit riskContainmentUnit) {
+		this.riskContainmentUnit = riskContainmentUnit;
+	}
+
 	public FinanceCheckListReferenceDialogCtrl getFinanceCheckListReferenceDialogCtrl() {
 		return financeCheckListReferenceDialogCtrl;
 	}
@@ -1407,6 +1398,14 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	public void setFinanceCheckListReferenceDialogCtrl(
 			FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl) {
 		this.financeCheckListReferenceDialogCtrl = financeCheckListReferenceDialogCtrl;
+	}
+
+	public RiskContainmentUnitListCtrl getRiskContainmentUnitListCtrl() {
+		return riskContainmentUnitListCtrl;
+	}
+
+	public void setRiskContainmentUnitListCtrl(RiskContainmentUnitListCtrl riskContainmentUnitListCtrl) {
+		this.riskContainmentUnitListCtrl = riskContainmentUnitListCtrl;
 	}
 
 	public DocumentDetailDialogCtrl getDocumentDetailDialogCtrl() {
@@ -1417,19 +1416,20 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.documentDetailDialogCtrl = documentDetailDialogCtrl;
 	}
 
-	public LegalVerification getLegalVerification() {
-		return legalVerification;
+	public List<DocumentDetails> getDocumentDetailsList() {
+		return documentDetailsList;
 	}
 
-	public void setLegalVerification(LegalVerification legalVerification) {
-		this.legalVerification = legalVerification;
+	public void setDocumentDetailsList(List<DocumentDetails> documentDetailsList) {
+		this.documentDetailsList = documentDetailsList;
 	}
 
-	public List<LVDocument> getLvDocumentsList() {
-		return lvDocumentsList;
+	public List<RCUDocument> getRcuDocumentsList() {
+		return rcuDocumentsList;
 	}
 
-	public void setLvDocumentsList(List<LVDocument> lvDocumentsList) {
-		this.lvDocumentsList = lvDocumentsList;
+	public void setRcuDocumentsList(List<RCUDocument> rcuDocumentsList) {
+		this.rcuDocumentsList = rcuDocumentsList;
 	}
+
 }

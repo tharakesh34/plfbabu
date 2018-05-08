@@ -384,10 +384,10 @@ import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.core.util.ClassUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.document.DocumentCategory;
-import com.pennanttech.pennapps.pff.verification.StatuReasons;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
+import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 
@@ -2224,6 +2224,9 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("LVDocument", new ModuleMapping("LVDocument", LVDocument.class,
 				new String[] { "verification_lv_details", "verification_lv_details_view" }, masterWF, null, null, 600));
+		
+		ModuleUtil.register("RiskContainmentUnit", new ModuleMapping("RiskContainmentUnit", RiskContainmentUnit.class,
+				new String[] { "verification_rcu", "verification_rcu_AView" }, masterWF, null, null, 600));
 		
 		/*Technical Verification*/
 		ModuleUtil.register("TechnicalVerification", new ModuleMapping("TechnicalVerification", TechnicalVerification.class,

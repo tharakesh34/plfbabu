@@ -43,7 +43,7 @@ public class LVDocument extends AbstractWorkflowEntity {
 	private String docName;
 	private boolean newRecord = false;
 	private LoggedInUser userDetails;
-	private Verification befImage;
+	private LVDocument befImage;
 
 	public LVDocument() {
 		super();
@@ -64,7 +64,6 @@ public class LVDocument extends AbstractWorkflowEntity {
 		excludeFields.add("docModule");
 		excludeFields.add("remarks");
 		excludeFields.add("docRefID");
-
 		excludeFields.add("description");
 		return excludeFields;
 	}
@@ -201,11 +200,11 @@ public class LVDocument extends AbstractWorkflowEntity {
 		this.userDetails = userDetails;
 	}
 
-	public Verification getBefImage() {
+	public LVDocument getBefImage() {
 		return befImage;
 	}
 
-	public void setBefImage(Verification befImage) {
+	public void setBefImage(LVDocument befImage) {
 		this.befImage = befImage;
 	}
 

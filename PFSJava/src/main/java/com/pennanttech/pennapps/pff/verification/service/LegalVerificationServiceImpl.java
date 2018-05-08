@@ -393,7 +393,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 			auditDetails.addAll(details);
 		}
 
-		// LV Document details Validation
+		// Document details Validation
 		List<DocumentDetails> docuemnts = lv.getDocuments();
 		if (docuemnts != null && !docuemnts.isEmpty()) {
 			List<AuditDetail> details = lv.getAuditDetailMap().get("DocumentDetails");

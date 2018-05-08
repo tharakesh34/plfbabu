@@ -5268,6 +5268,11 @@
 	
 	<bean id="legalVerificationDialogCtrl" class="com.pennant.webui.verification.legalverification.LegalVerificationDialogCtrl" parent="basisCtrl" scope="prototype"/>
 	
+	<!--============ RiskContainmentUnit Module ============== -->
+	<bean id="riskContainmentUnitListCtrl" class="com.pennant.webui.verification.rcu.RiskContainmentUnitListCtrl" parent="basisListCtrl" scope="prototype"/>
+	
+	<bean id="riskContainmentUnitDialogCtrl" class="com.pennant.webui.verification.rcu.RiskContainmentUnitDialogCtrl" parent="basisCtrl" scope="prototype"/>
+	
 	<!--============ Authorization Limit ============== -->
 	
 	<bean id="authorizationLimitListCtrl" class="com.pennant.webui.authorization.authorizationlimit.AuthorizationLimitListCtrl"
