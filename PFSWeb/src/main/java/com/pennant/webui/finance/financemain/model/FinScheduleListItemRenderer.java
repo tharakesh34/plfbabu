@@ -1650,6 +1650,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 		BigDecimal odlimitDrop = BigDecimal.ZERO;
 		BigDecimal odAvailAmt = BigDecimal.ZERO;
 		BigDecimal limitIncreaseAmt = BigDecimal.ZERO;
+		Date appDate = DateUtility.getAppDate();
 		
 		setFinScheduleData(aFinScheduleData);
 		FinanceScheduleDetail prvSchDetail = null; 
@@ -2709,6 +2710,33 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 				count = 2;
 			}
+
+			// Accrual Value
+			if (aFinScheduleData.getAccrueValue() != null
+					&& aFinScheduleData.getAccrueValue().compareTo(BigDecimal.ZERO) > 0) {
+
+				if ((!lastRec && appDate.compareTo(prvSchDetail.getSchDate()) >= 0
+						&& appDate.compareTo(aScheduleDetail.getSchDate()) < 0)
+						|| (lastRec && appDate.compareTo(aScheduleDetail.getSchDate()) > 0)) {
+
+					data = new FinanceScheduleReportData();
+					data.setLabel(Labels.getLabel("label_listcell_AccrueAmount.label"));
+					data.setSchDate("");
+					data.setPftAmount("");
+					data.setSchdPft("");
+					data.setSchdFee("");
+					data.setTdsAmount("");
+					data.setSchdPri("");
+					data.setTotalAmount(formatAmt(aFinScheduleData.getAccrueValue(), false, false));
+					data.setEndBal("");
+					data.setTotalLimit("");
+					data.setAvailLimit("");
+					data.setLimitDrop("");
+					reportList.add(data);
+
+				}
+			}
+
 		}
 		
 		count = 1;
