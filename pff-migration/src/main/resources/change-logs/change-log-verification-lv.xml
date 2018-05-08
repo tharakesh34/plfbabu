@@ -455,5 +455,16 @@
 			) t
 		</createView>
 	</changeSet>
+	<changeSet id="5.0" author="manikanta.p">
+		<sql>
+			<![CDATA[
+			delete from  LimitCodeDetail where LimitCode = 'LVINIT';
+			delete from  LimitCodeDetail where LimitCode = 'LVAPPR';
+	
+			INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'LVINIT','Legal Verification Initiation',1);
+			INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'LVAPPR','Legal Verification Approval',1);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
  
