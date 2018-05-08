@@ -185,6 +185,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 	String primaryIdRegex = null;
 
+	String primaryIdLabel = null;
+
 
 	// ServiceDAOs / Domain Classes
 	private transient CustomerDocumentService customerDocumentService;
@@ -911,19 +913,31 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		if (!this.custID.isReadonly()){
 			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocCIF.value"),null,true));
 		}
-		
 		// ### 01-05-2018 TuleApp ID : #360
-		
 		if (!this.custDocTitle.isReadonly()) {
-			this.custDocTitle.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle"), primaryIdRegex, isIdNumMand));
-		} else {
-			this.custDocTitle.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM_CODE, isIdNumMand));
+			if (StringUtils.trimToEmpty(this.custDocType.getValue())
+					.equalsIgnoreCase(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL_DOC_TYPE"))) {
+				this.custDocTitle.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
+								primaryIdRegex, isIdNumMand));
+
+			} else if (StringUtils.trimToEmpty(this.custDocType.getValue())
+					.equalsIgnoreCase(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP_DOC_TYPE"))) {
+				this.custDocTitle.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
+								primaryIdRegex, isIdNumMand));
+			} else if (StringUtils.trimToEmpty(this.custDocType.getValue())
+					.equalsIgnoreCase(PennantConstants.CPRCODE)) {
+				this.custDocTitle.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
+								PennantRegularExpressions.REGEX_AADHAR_NUMBER, isIdNumMand));
+			} else {
+				this.custDocTitle.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
+								PennantRegularExpressions.REGEX_ALPHANUM_CODE, isIdNumMand));
+			}
 		}
-			
-		// ### 01-05-2018 - End	
+
 
 		if (!this.custDocSysName.isReadonly()){
 			this.custDocSysName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocSysName.value"), 
