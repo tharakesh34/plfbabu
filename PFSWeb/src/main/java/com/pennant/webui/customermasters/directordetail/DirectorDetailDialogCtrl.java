@@ -356,10 +356,10 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 
 		this.nationality.setMaxlength(2);
 		this.nationality.setMandatoryStyle(false);
-		this.nationality.setModuleName("Country");
-		this.nationality.setValueColumn("CountryCode");
-		this.nationality.setDescColumn("CountryDesc");
-		this.nationality.setValidateColumns(new String[] { "CountryCode" });
+		this.nationality.setModuleName("NationalityCode");
+		this.nationality.setValueColumn("NationalityCode");
+		this.nationality.setDescColumn("NationalityDesc");
+		this.nationality.setValidateColumns(new String[] { "NationalityCode" });
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
