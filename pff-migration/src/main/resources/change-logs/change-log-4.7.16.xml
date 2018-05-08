@@ -5191,6 +5191,7 @@ SELECT		T1.Id, T1.Code, T1.Description, T1.Active
 FROM    	BMTQueryCategories T1 
 WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 </createView>
+</changeSet>
 	<changeSet id="105" author="Jayant">
 		<createSequence sequenceName="seqBMTQueryCategories" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999"/>
 	</changeSet>
