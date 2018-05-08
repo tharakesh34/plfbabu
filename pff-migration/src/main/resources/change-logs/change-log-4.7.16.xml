@@ -5133,7 +5133,7 @@ insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetai
 			<column name="Id" type="bigint"/>
 			<column name="Code" type="varchar(10)"/>
 			<column name="Description" type="varchar(50)"/>
-			<column name="Active" type="fieldDetailsVO.dataType"/>
+			<column name="Active" type="boolean"/>
 			<column name="version" type="int"/>
 			<column name="lastmntby" type="bigint"/>
 			<column name="lastmnton" type="datetime"/>
