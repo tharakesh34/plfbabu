@@ -5131,6 +5131,35 @@ insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetai
 	<changeSet id="101" author="Kesav">
 		<addDefaultValue tableName="AccountsHistory" defaultValueNumeric="0" columnName="OpeningBal" columnDataType="decimal(18,0)"/>
 	</changeSet>
-		
+	
+	<changeSet id="102" author="Vinay">
+		<addColumn tableName="FinCovenantType">
+			<column name="alwOtc" type="boolean" defaultValue="0" />
+		</addColumn>
+		<addColumn tableName="FinCovenantType_Temp">
+			<column name="alwOtc" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="103" author="Vinay">
+		<sql>
+			update FinCovenantType set alwOtc = 0;
+			update FinCovenantType_Temp set alwOtc = 0;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="104" author="Vinay">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinCovenantTypeDialog_alwOtc','FinCovenantTypeDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FinCovenantType_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_alwOtc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='COVENANTSMAINTAIN_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_alwOtc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		</sql>
+	</changeSet>	
 </databaseChangeLog>
 	
