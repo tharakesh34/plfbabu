@@ -197,11 +197,6 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			doLoadWorkFlow(this.legalVerification.isWorkflow(), this.legalVerification.getWorkflowId(),
 					this.legalVerification.getNextTaskId());
 
-			if (isWorkFlowEnabled()) {
-				this.userAction = setListRecordStatus(this.userAction);
-			}
-			
-
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
@@ -589,6 +584,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
 					.getExtendedFieldRender(String.valueOf(lv.getVerificationId()), tableName.toString(), "_View");
 			extendedFieldCtrl.setTabpanel(observationsFieldTabPanel);
+			extendedFieldCtrl.setTab(this.verificationDetails);
 			lv.setExtendedFieldHeader(extendedFieldHeader);
 			lv.setExtendedFieldRender(extendedFieldRender);
 
@@ -597,10 +593,10 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				lv.getBefImage().setExtendedFieldRender(extendedFieldRender);
 			}
 			extendedFieldCtrl.setCcyFormat(2);
-		    extendedFieldCtrl.setReadOnly(isReadOnly("LegalVerificationDialog_LegalVerificationExtFields"));/*
-			// "TechnicalVerificationDialog_TechVerificationExtFields" */
+		    extendedFieldCtrl.setReadOnly(isReadOnly("LegalVerificationDialog_LegalVerificationExtFields"));
 			extendedFieldCtrl.setWindow(this.window_LegalVerificationDialog);
 			extendedFieldCtrl.render();
+			this.verificationDetails.setLabel(Labels.getLabel("label_LegalVerificationDialog_VerificationDetails.value"));
 		} catch (Exception e) {
 			closeDialog();
 			logger.error(Literal.EXCEPTION, e);

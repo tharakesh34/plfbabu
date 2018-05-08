@@ -605,6 +605,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			
 			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(String.valueOf(tv.getVerificationId()), tableName.toString(),  "_View");
 			extendedFieldCtrl.setTabpanel(observationsFieldTabPanel);
+			extendedFieldCtrl.setTab(this.verificationDetails);
 			tv.setExtendedFieldHeader(extendedFieldHeader);
 			tv.setExtendedFieldRender(extendedFieldRender);
 
@@ -616,6 +617,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			extendedFieldCtrl.setReadOnly(isReadOnly("TechnicalVerificationDialog_Recommendations"));/*"TechnicalVerificationDialog_TechVerificationExtFields"*/
 			extendedFieldCtrl.setWindow(this.window_TechnicalVerificationDialog);
 			extendedFieldCtrl.render();
+			this.verificationDetails.setLabel(Labels.getLabel("label_FieldInvestigationDialog_VerificationDetails.value"));
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

@@ -466,5 +466,71 @@
 			]]>
 		</sql>
 	</changeSet>
+	 <changeSet id="6.0" author="lakshmi.n">
+		<sql>
+			<![CDATA[
+			Delete from SecRoleGroups where roleid in(Select roleid from secroles where rolecd in('MSTGRP1_MAKER','MSTGRP1_APPROVER')) and grpid in(Select grpid from secgroups where grpcode IN('LEGALVERIFICATION_MAKER','LEGALVERIFICATION_APPROVER'));
+			Delete from Secgrouprights where grpid in(Select grpid from secgroups where grpcode IN('LEGALVERIFICATION_MAKER','LEGALVERIFICATION_APPROVER')) and rightid in(Select rightid from SecRights where Page IN('LegalVerificationDialog','LegalVerificationList'));
+			Delete from Secgrouprights where grpid in(Select grpid from secgroups where grpcode IN('LEGALVERIFICATION_MAKER','LEGALVERIFICATION_APPROVER')) and rightid in(Select rightid from SecRights where RightName = 'menuItem_Verification_LegalVerification');
+			Delete from SecGroups where GrpCode IN('LEGALVERIFICATION_MAKER','LEGALVERIFICATION_APPROVER');
+			Delete from SecRights where page IN('LegalVerificationDialog','LegalVerificationList');
+			Delete from SecRights where RightName = 'menuItem_Verification_LegalVerification';
+
+
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Verification_LegalVerification', 'MENU',  1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_LegalVerificationList_btnNew', 'LegalVerificationList', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_LegalVerificationDialog_btnEdit', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_LegalVerificationDialog_btnDelete', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_LegalVerificationDialog_btnSave', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_LegalVerificationExtFields', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_VerificationDate', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_AgentCode', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_AgentName', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_Recommendations', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_Reason', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_Remarks', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_Remarks1', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_Remarks2', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_Remarks3', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_Documents', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			
+			Insert Into secGroups values((Select MAX(GrpID)+1 From secGroups),'LEGALVERIFICATION_MAKER','WF Maker for  LegalVerification',0 ,1000,current_timestamp,'Approved','','','','','',0);
+			Insert Into secGroups values((Select MAX(GrpID)+1 From secGroups),'LEGALVERIFICATION_APPROVER','WF Approver for LegalVerification',0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='menuItem_Verification_LegalVerification'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='button_LegalVerificationDialog_btnEdit'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='button_LegalVerificationDialog_btnDelete'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='button_LegalVerificationDialog_btnSave'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_LegalVerificationExtFields'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_VerificationDate'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_AgentCode'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_AgentName'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_Recommendations'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_Reason'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_Remarks'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_Remarks1'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_Remarks2'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_Remarks3'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_Documents'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_APPROVER'),(select RightId from secRights where RightName='menuItem_Verification_LegalVerification'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_APPROVER'),(select RightId from secRights where RightName='button_LegalVerificationDialog_btnSave'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='LEGALVERIFICATION_MAKER'),(select RoleID from secRoles where RoleCd='MSTGRP1_MAKER'),0,1000,current_timestamp,'Approved','','','','','',0);
+			Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='LEGALVERIFICATION_APPROVER'),(select RoleID from secRoles where RoleCd='MSTGRP1_APPROVER'),0,1000,current_timestamp,'Approved','','','','','',0);
+       		    ]]>
+			</sql>
+		</changeSet>
+
+	<changeSet id="6.1" author="lakshmi.n">
+		<sql> 
+			<![CDATA[ 
+			delete from REPORTLIST Where Code = 'LegalVerification'; 
+			INSERT INTO REPORTLIST Values ('LegalVerification','LegalVerification','listheader_CIF.label,listheader_CollateralType.label,listheader_CollateralReference.label,listheader_LoanReference.label', 'cif,collateralType,referenceFor,keyReference','String,String,String,String',' ','ReportList04','Legal Verification','Legal Verification'
+			,0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0); 
+  		    ]]>
+		</sql> 
+	</changeSet>
+	
 </databaseChangeLog>
  
