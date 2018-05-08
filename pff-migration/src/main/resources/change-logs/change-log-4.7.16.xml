@@ -5281,6 +5281,74 @@ insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetai
 		           FROM fincovenanttype_temp
 		          WHERE fincovenanttype_temp.finreference = t1.finreference AND fincovenanttype_temp.covenanttype = t1.covenanttype))
 		</createView>
-	</changeSet>	
+	</changeSet>
+	<changeSet id="101" author="Jayant">
+		<createTable tableName="BMTQueryCategories">
+			<column name="Id" type="fieldDetailsVO.dataType">
+			<column name="Code" type="fieldDetailsVO.dataType">
+			<column name="Description" type="fieldDetailsVO.dataType">
+			<column name="Active" type="fieldDetailsVO.dataType">
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="102" author="Jayant">
+		<createTable tableName="BMTQueryCategories_Temp">
+	<column name="Id" type="fieldDetailsVO.dataType">
+	<column name="Code" type="fieldDetailsVO.dataType">
+	<column name="Description" type="fieldDetailsVO.dataType">
+	<column name="Active" type="fieldDetailsVO.dataType">
+	<column name="version" type="int"/>
+	<column name="lastmntby" type="bigint"/>
+	<column name="lastmnton" type="datetime"/>
+	<column name="recordstatus" type="varchar(50)"/>
+	<column name="rolecode" type="varchar(100)"/>
+	<column name="nextrolecode" type="varchar(200)"/>
+	<column name="taskid" type="varchar(50)"/>
+	<column name="nexttaskid" type="varchar(200)"/>
+	<column name="recordtype" type="varchar(50)"/>
+	<column name="workflowid" type="bigint">
+		<constraints nullable="false"/>
+	</column>
+
+</createTable>
+	</changeSet>
+	<changeSet id="103" author="Jayant">
+		<comment> New View added : BMTQueryCategories_View</comment>
+		<createView viewName="BMTQueryCategories_AView" replaceIfExists="true">
+
+SELECT		T1.Id, T1.Code, T1.Description, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	BMTQueryCategories T1 
+</createView>
+
+	</changeSet>
+	<changeSet id="104" author="Jayant">
+		<comment> New View added : BMTQueryCategories_View</comment>
+		<createView viewName="BMTQueryCategories_View" replaceIfExists="true">
+AS
+SELECT		T1.Id, T1.Code, T1.Description, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	BMTQueryCategories_Temp T1 
+UNION ALL
+SELECT		T1.Id, T1.Code, T1.Description, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	BMTQueryCategories T1 
+WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
+</createView>
+	<changeSet id="105" author="Jayant">
+		<createSequence sequenceName="seqBMTQueryCategories" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999"/>
+	</changeSet>
+	
 </databaseChangeLog>
 	
