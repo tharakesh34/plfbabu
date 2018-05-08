@@ -23,7 +23,9 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
@@ -62,7 +64,10 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 	private FinanceDeviationsListCtrl	financeDeviationsListCtrl;
 	@Autowired
 	private DeviationRenderer			deviationRenderer;
+	@Autowired
+	private DeviationHelper deviationHelper;
 	int									ccyformat			= 0;
+	List<ValueLabel> delegators = new ArrayList<>();
 
 	/**
 	 * default constructor.<br>
@@ -96,8 +101,9 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 				this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 				setFinanceDetail(financeDetail);
 				ccyformat = CurrencyUtil.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
+				deviationHelper.getRoleAndDesc(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
 			}
-			deviationRenderer.init(getUserWorkspace(), ccyformat, true, false);
+			deviationRenderer.init(getUserWorkspace(), ccyformat, true, false, delegators);
 
 			if (arguments.containsKey("financeDeviationsListCtrl")) {
 				this.setFinanceDeviationsListCtrl(
@@ -400,6 +406,10 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 
 	public void setFinanceDeviationsListCtrl(FinanceDeviationsListCtrl financeDeviationsListCtrl) {
 		this.financeDeviationsListCtrl = financeDeviationsListCtrl;
+	}
+
+	public void setDeviationHelper(DeviationHelper deviationHelper) {
+		this.deviationHelper = deviationHelper;
 	}
 
 }

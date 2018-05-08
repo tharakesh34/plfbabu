@@ -24,6 +24,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -70,6 +71,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	//Manual deviations
 	List<FinanceDeviations>		manualDeviationList		= null;
 	private Button				btnNew_ManualDeviation;
+	List<ValueLabel> delegators = new ArrayList<>();
 
 	@Autowired
 	private DeviationHelper		deviationHelper;
@@ -110,13 +112,15 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 				setFinanceDetail(financeDetail);
 				financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 				ccyformat = CurrencyUtil.getFormat(financeMain.getFinCcy());
+
+				delegators = deviationHelper.getRoleAndDesc(financeMain.getWorkflowId());
 			}
 
 			if (arguments.containsKey("enquiry")) {
 				enquiry = true;
 			}
 
-			deviationRenderer.init(getUserWorkspace(), ccyformat, false, !enquiry);
+			deviationRenderer.init(getUserWorkspace(), ccyformat, false, !enquiry, delegators);
 			if (arguments.containsKey("financeMainDialogCtrl")) {
 				this.financeMainDialogCtrl = arguments.get("financeMainDialogCtrl");
 			}

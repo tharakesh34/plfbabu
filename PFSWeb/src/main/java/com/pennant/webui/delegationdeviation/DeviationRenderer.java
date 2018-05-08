@@ -20,6 +20,7 @@ import org.zkoss.zul.Listitem;
 
 import com.pennant.UserWorkspace;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
@@ -40,22 +41,24 @@ public class DeviationRenderer {
 	int								ccyformat		= 0;
 	private transient UserWorkspace	userWorkspace;
 	private boolean					approverScreen	= false;
-	private boolean workFlow = false;
+	private boolean workflow = false;
 
 	List<DeviationParam>			deviationParams	= PennantAppUtil.getDeviationParams();
 	ArrayList<ValueLabel>			approveStatus	= PennantStaticListUtil.getApproveStatus();
 	ArrayList<ValueLabel>			secRolesList	= PennantAppUtil.getSecRolesList(null);
 	List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
-
+	List<ValueLabel> delegators = new ArrayList<>();
 
 	@Autowired
 	private DeviationHelper			deviationHelper;
 
-	public void init(UserWorkspace userWorkspace, int ccyformat, boolean approverScreen, boolean isWorkFlow) {
+	public void init(UserWorkspace userWorkspace, int ccyformat, boolean approverScreen, boolean workflow,
+			List<ValueLabel> delegators) {
 		this.userWorkspace = userWorkspace;
 		this.ccyformat = ccyformat;
 		this.approverScreen = approverScreen;
-		this.workFlow = isWorkFlow;
+		this.workflow = workflow;
+		this.delegators = delegators;
 	}
 
 	class CompareDeviation implements Comparator<FinanceDeviations> {
@@ -85,10 +88,12 @@ public class DeviationRenderer {
 		Collections.sort(renderList, new CompareDeviation());
 
 		String module = "";
+		final boolean DEV_HIGHER_APPROVAL = StringUtils.equals((SysParamUtil.getValueAsString("DEV_HIGHER_APPROVAL")),
+				"Y") ? true : false;
 
 		for (FinanceDeviations deviationDetail : renderList) {
 			//to show other deviation which in pending queue but should not be editable
-			boolean pending = false;
+			boolean readOnly = true;
 			boolean approved = false;
 
 			if (deviationDetail.isApproved()) {
@@ -96,8 +101,24 @@ public class DeviationRenderer {
 			}
 
 			if (DeviationConstants.MULTIPLE_APPROVAL && !approved) {
-				if (!userWorkspace.getUserRoles().contains(deviationDetail.getDelegationRole())) {
-					pending = true;
+				if (DEV_HIGHER_APPROVAL) {
+					boolean allowedLevel = false;
+
+					for (ValueLabel delegator : delegators) {
+						if (!allowedLevel && deviationDetail.getDelegationRole().equals(delegator.getValue())) {
+							allowedLevel = true;
+						}
+
+						if (allowedLevel
+								&& userWorkspace.getUserRoles().contains(delegator.getValue())) {
+							readOnly = false;
+							break;
+						}
+					}
+				} else {
+					if (userWorkspace.getUserRoles().contains(deviationDetail.getDelegationRole())) {
+						readOnly = false;
+					}
 				}
 			}
 
@@ -138,7 +159,7 @@ public class DeviationRenderer {
 					PennantStaticListUtil.getlabelDesc(deviationDetail.getApprovalStatus(), approveStatus),
 					deviationNotallowed);
 
-			if (approverScreen || workFlow) {
+			if (approverScreen || workflow) {
 				if (!approved) {
 					listcell = getNewListCell("", deviationNotallowed);
 					Combobox combobox = new Combobox();
@@ -147,7 +168,7 @@ public class DeviationRenderer {
 					combobox.setId("combo_" + deviationDetail.getDeviationId());
 					combobox.addForward("onChange", "", "onChangeAutoDevStatus", deviationDetail);
 					fillComboBox(combobox, deviationDetail.getApprovalStatus(), approveStatus);
-					combobox.setDisabled(pending);
+					combobox.setDisabled(readOnly);
 					listcell.appendChild(combobox);
 				}
 			}
@@ -174,7 +195,7 @@ public class DeviationRenderer {
 			listcell = getNewListCell("", deviationNotallowed);
 
 			button.setLabel(lable);
-			button.setDisabled(pending);
+			button.setDisabled(readOnly);
 			if (StringUtils.isNotBlank(lable)) {
 				listcell.appendChild(button);
 			}
@@ -325,7 +346,7 @@ public class DeviationRenderer {
 			listitem.appendChild(listcell);
 
 			listitem.setAttribute("data", deviation);
-			if (!approverScreen || workFlow) {
+			if (!approverScreen || workflow) {
 				ComponentsCtrl.applyForward(listitem, "onDoubleClick=onManualDeviationItemDoubleClicked");
 			}
 			listcell = new Listcell(PennantJavaUtil.getLabel(deviation.getRecordType()));
