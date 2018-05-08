@@ -334,7 +334,7 @@
 		<addDefaultValue columnName="NoofAttempts" 			tableName="verification_fi_temp" defaultValue="0"/>
 		<addDefaultValue columnName="Version" 				tableName="verification_fi_temp" defaultValue="0"/>
 	</changeSet>
-	<changeSet id="4.0" author="murthy.y">
+	<changeSet id="4.0" author="murthy.y" dbms="postgresql">
 		<createView viewName="verification_fi_view" replaceIfExists="true">
 			select fi.verificationid,
 		    fi.agentcode,
@@ -707,7 +707,7 @@
 				Select public.deps_restore_dependencies('plf','amtvehicledealer_temp');
 			</sql>
 		</changeSet>
-		<changeSet id="10.0" author="murthy.y">
+		<changeSet id="10.0" author="murthy.y" dbms="postgresql">
 		<createView viewName="verification_fi_view" replaceIfExists="true">
 			select fi.verificationid,
 		    fi.agentcode,
@@ -868,7 +868,7 @@
 			LEFT OUTER JOIN LimitCodeDetail T10 on T10.limitid = T1.finrefid
 		</createView>
 	</changeSet>
-	<changeSet id="12.0" author="murthy.y">
+	<changeSet id="12.0" author="murthy.y" dbms="postgresql">
 		<createView viewName="verification_fi_view" replaceIfExists="true">
 			select fi.verificationid,
 		    fi.agentcode,
@@ -1536,7 +1536,7 @@
 	</sql>
 </changeSet>
 
-<changeSet id="20" author="Durgaprasad G">
+<changeSet id="20" author="Durgaprasad G" dbms="postgresql">
  <createView viewName="verification_fi_view" replaceIfExists="true">
 	 SELECT fi.verificationid,
 	    fi.agentcode,
@@ -1682,8 +1682,153 @@
 	          WHERE verification_fi_temp.verificationid = fi.verificationid));
  </createView>
 </changeSet>
-
-<changeSet id="21" author="lakshmi.n">
+<changeSet id="20" author="Durgaprasad G" dbms="oracle">
+ <createView viewName="verification_fi_view" replaceIfExists="true">
+	 SELECT fi.verificationid,
+	    fi.agentcode,
+	    fi.agentname,
+	    fi.type,
+	    fi.date,
+	    fi.status,
+	    fi.reason,
+	    r1.code AS reasoncode,
+	    r1.description AS reasondesc,
+	    fi.summaryremarks,
+	    fi.version,
+	    fi.lastmntby,
+	    fi.lastmnton,
+	    fi.recordstatus,
+	    fi.rolecode,
+	    fi.nextrolecode,
+	    fi.taskid,
+	    fi.nexttaskid,
+	    fi.recordtype,
+	    fi.workflowid,
+	    fi.addresstype,
+	    fi.name,
+	    fi.housenumber,
+	    fi.flatnumber,
+	    fi.street,
+	    fi.addressline1,
+	    fi.addressline2,
+	    fi.addressline3,
+	    fi.addressline4,
+	    fi.addressline5,
+	    fi.country,
+	    fi.province,
+	    fi.city,
+	    fi.contactnumber1,
+	    fi.contactnumber2,
+	    fi.pobox,
+	    fi.zipcode,
+	    fi.ownershipstatus,
+	    fi.yearsatpresentaddress,
+	    fi.personmet,
+	    fi.relationship,
+	    r2.prelationdesc AS lovrelationdesc,
+	    fi.contactnumber,
+	    fi.neighbourhoodfeedback,
+	    fi.livingstandard,
+	    fi.negativecheck,
+	    fi.noofattempts,
+	    fi.observationremarks,
+	    c.custcif AS cif,
+	    v.keyreference,
+	    v.createdon,
+	    v.agency,
+	    v.verificationdate,
+	    a.dealername AS agencyname,
+	    v.reinitid,
+	    a.dealertype,
+	    r1.reasontypecode,
+		country.countrydesc,
+		p.cpprovincename as provinceDesc,
+		city.pccityname as cityDesc
+	   FROM verification_fi_temp fi
+	     JOIN verifications v ON v.id = fi.verificationid
+	     JOIN amtvehicledealer a ON a.dealerid = v.agency
+		 JOIN bmtcountries country on country.countrycode = fi.country
+		 JOIN RMTCountryVsProvince p on p.cpprovince = fi.province
+		 JOIN RMTProvinceVsCity city on city.pccity = fi.city
+	     LEFT JOIN customers c ON c.custid = v.custid
+	     LEFT JOIN reasons_aview r1 ON r1.id = fi.reason
+	     LEFT JOIN bmtprelationcodes r2 ON r2.prelationcode = fi.relationship
+	UNION ALL
+	 SELECT fi.verificationid,
+	    fi.agentcode,
+	    fi.agentname,
+	    fi.type,
+	    fi.date,
+	    fi.status,
+	    fi.reason,
+	    r1.code AS reasoncode,
+	    r1.description AS reasondesc,
+	    fi.summaryremarks,
+	    fi.version,
+	    fi.lastmntby,
+	    fi.lastmnton,
+	    fi.recordstatus,
+	    fi.rolecode,
+	    fi.nextrolecode,
+	    fi.taskid,
+	    fi.nexttaskid,
+	    fi.recordtype,
+	    fi.workflowid,
+	    fi.addresstype,
+	    fi.name,
+	    fi.housenumber,
+	    fi.flatnumber,
+	    fi.street,
+	    fi.addressline1,
+	    fi.addressline2,
+	    fi.addressline3,
+	    fi.addressline4,
+	    fi.addressline5,
+	    fi.country,
+	    fi.province,
+	    fi.city,
+	    fi.contactnumber1,
+	    fi.contactnumber2,
+	    fi.pobox,
+	    fi.zipcode,
+	    fi.ownershipstatus,
+	    fi.yearsatpresentaddress,
+	    fi.personmet,
+	    fi.relationship,
+	    r2.prelationdesc AS lovrelationdesc,
+	    fi.contactnumber,
+	    fi.neighbourhoodfeedback,
+	    fi.livingstandard,
+	    fi.negativecheck,
+	    fi.noofattempts,
+	    fi.observationremarks,
+	    c.custcif AS cif,
+	    v.keyreference,
+	    v.createdon,
+	    v.agency,
+	    v.verificationdate,
+	    a.dealername AS agencyname,
+	    v.reinitid,
+	    a.dealertype,
+	    r1.reasontypecode,
+		country.countrydesc,
+		p.cpprovincename as provinceDesc,
+		city.pccityname as cityDesc
+	   FROM verification_fi fi
+	     JOIN verifications v ON v.id = fi.verificationid
+	     JOIN amtvehicledealer a ON a.dealerid = v.agency
+		 JOIN bmtcountries country on country.countrycode = fi.country
+		 JOIN RMTCountryVsProvince p on p.cpprovince = fi.province
+		 JOIN RMTProvinceVsCity city on city.pccity = fi.city
+	     LEFT JOIN customers c ON c.custid = v.custid
+	     LEFT JOIN reasons_aview r1 ON r1.id = fi.reason
+	     LEFT JOIN bmtprelationcodes r2 ON r2.prelationcode = fi.relationship
+	  WHERE NOT (EXISTS ( SELECT 1
+	           FROM verification_fi_temp
+	          WHERE verification_fi_temp.verificationid = fi.verificationid))
+ </createView>
+</changeSet>
+<changeSet id="21" author="lakshmi.n" dbms="postgresql">
  <createView viewName="verification_fi_view" replaceIfExists="true">
 	 SELECT fi.verificationid,
 	    fi.agentcode,
@@ -1831,4 +1976,548 @@
 	          WHERE verification_fi_temp.verificationid = fi.verificationid));
  </createView>
 </changeSet>
+<changeSet id="21" author="lakshmi.n" dbms="oracle">
+ <createView viewName="verification_fi_view" replaceIfExists="true">
+	 SELECT fi.verificationid,
+	    fi.agentcode,
+	    fi.agentname,
+	    fi.type,
+	    fi.date,
+	    fi.status,
+	    fi.reason,
+	    r1.code AS reasoncode,
+	    r1.description AS reasondesc,
+	    fi.summaryremarks,
+	    fi.version,
+	    fi.lastmntby,
+	    fi.lastmnton,
+	    fi.recordstatus,
+	    fi.rolecode,
+	    fi.nextrolecode,
+	    fi.taskid,
+	    fi.nexttaskid,
+	    fi.recordtype,
+	    fi.workflowid,
+	    fi.addresstype,
+	    fi.name,
+	    fi.housenumber,
+	    fi.flatnumber,
+	    fi.street,
+	    fi.addressline1,
+	    fi.addressline2,
+	    fi.addressline3,
+	    fi.addressline4,
+	    fi.addressline5,
+	    fi.country,
+	    fi.province,
+	    fi.city,
+	    fi.contactnumber1,
+	    fi.contactnumber2,
+	    fi.pobox,
+	    fi.zipcode,
+	    fi.ownershipstatus,
+	    fi.yearsatpresentaddress,
+	    fi.personmet,
+	    fi.relationship,
+	    r2.prelationdesc AS lovrelationdesc,
+	    fi.contactnumber,
+	    fi.neighbourhoodfeedback,
+	    fi.livingstandard,
+	    fi.negativecheck,
+	    fi.noofattempts,
+	    fi.observationremarks,
+	    c.custcif AS cif,
+	    v.custid,
+	    v.keyreference,
+	    v.createdon,
+	    v.agency,
+	    v.verificationdate,
+	    a.dealername AS agencyname,
+	    v.reinitid,
+	    a.dealertype,
+	    r1.reasontypecode,
+		country.countrydesc,
+		p.cpprovincename as provinceDesc,
+		city.pccityname as cityDesc
+	   FROM verification_fi_temp fi
+	     JOIN verifications v ON v.id = fi.verificationid
+	     left join amtvehicledealer a ON a.dealerid = v.agency
+		 JOIN bmtcountries country on country.countrycode = fi.country
+		 JOIN RMTCountryVsProvince p on p.cpprovince = fi.province
+		 JOIN RMTProvinceVsCity city on city.pccity = fi.city
+	     LEFT JOIN customers c ON c.custid = v.custid
+	     LEFT JOIN reasons_aview r1 ON r1.id = fi.reason
+	     LEFT JOIN bmtprelationcodes r2 ON r2.prelationcode = fi.relationship
+	UNION ALL
+	 SELECT fi.verificationid,
+	    fi.agentcode,
+	    fi.agentname,
+	    fi.type,
+	    fi.date,
+	    fi.status,
+	    fi.reason,
+	    r1.code AS reasoncode,
+	    r1.description AS reasondesc,
+	    fi.summaryremarks,
+	    fi.version,
+	    fi.lastmntby,
+	    fi.lastmnton,
+	    fi.recordstatus,
+	    fi.rolecode,
+	    fi.nextrolecode,
+	    fi.taskid,
+	    fi.nexttaskid,
+	    fi.recordtype,
+	    fi.workflowid,
+	    fi.addresstype,
+	    fi.name,
+	    fi.housenumber,
+	    fi.flatnumber,
+	    fi.street,
+	    fi.addressline1,
+	    fi.addressline2,
+	    fi.addressline3,
+	    fi.addressline4,
+	    fi.addressline5,
+	    fi.country,
+	    fi.province,
+	    fi.city,
+	    fi.contactnumber1,
+	    fi.contactnumber2,
+	    fi.pobox,
+	    fi.zipcode,
+	    fi.ownershipstatus,
+	    fi.yearsatpresentaddress,
+	    fi.personmet,
+	    fi.relationship,
+	    r2.prelationdesc AS lovrelationdesc,
+	    fi.contactnumber,
+	    fi.neighbourhoodfeedback,
+	    fi.livingstandard,
+	    fi.negativecheck,
+	    fi.noofattempts,
+	    fi.observationremarks,
+	    c.custcif AS cif,
+	    v.custid,
+	    v.keyreference,
+	    v.createdon,
+	    v.agency,
+	    v.verificationdate,
+	    a.dealername AS agencyname,
+	    v.reinitid,
+	    a.dealertype,
+	    r1.reasontypecode,
+		country.countrydesc,
+		p.cpprovincename as provinceDesc,
+		city.pccityname as cityDesc
+	   FROM verification_fi fi
+	     JOIN verifications v ON v.id = fi.verificationid
+	     left join amtvehicledealer a ON a.dealerid = v.agency
+		 JOIN bmtcountries country on country.countrycode = fi.country
+		 JOIN RMTCountryVsProvince p on p.cpprovince = fi.province
+		 JOIN RMTProvinceVsCity city on city.pccity = fi.city
+	     LEFT JOIN customers c ON c.custid = v.custid
+	     LEFT JOIN reasons_aview r1 ON r1.id = fi.reason
+	     LEFT JOIN bmtprelationcodes r2 ON r2.prelationcode = fi.relationship
+	  WHERE NOT (EXISTS ( SELECT 1
+	           FROM verification_fi_temp
+	          WHERE verification_fi_temp.verificationid = fi.verificationid))
+ </createView>
+</changeSet>
+<changeSet id="2.1" author="Jayant" dbms="oracle">
+		<comment> Renaming column because it is a keyword </comment>
+		<renameColumn tableName="verification_fi" oldColumnName="Date" newColumnName="IntitatedDate"/>
+	</changeSet>
+	<changeSet id="3.1" author="Jayant" dbms="oracle">
+		<comment> Renaming column because it is a keyword </comment>
+		<renameColumn tableName="verification_fi_temp" oldColumnName="Date" newColumnName="IntitatedDate"/>
+	</changeSet>
+	<changeSet id="4.0" author="murthy.y" dbms="oracle">
+		<createView viewName="verification_fi_view" replaceIfExists="true">
+			select fi.verificationid,
+		    fi.agentcode,
+		    fi.agentname,
+		    fi.type,
+		    fi.IntitatedDate,
+		    fi.status,
+		    fi.reason,
+		    r1.code as reasoncode,
+		    r1.description as reasondesc,
+		    fi.summaryremarks,
+		    fi.version,
+		    fi.lastmntby,
+		    fi.lastmnton,
+		    fi.recordstatus,
+		    fi.rolecode,
+		    fi.nextrolecode,
+		    fi.taskid,
+		    fi.nexttaskid,
+		    fi.recordtype,
+		    fi.workflowid,
+		    fi.addresstype,
+		    fi.name,
+		    fi.housenumber,
+		    fi.flatnumber,
+		    fi.street,
+		    fi.addressline1,
+		    fi.addressline2,
+		    fi.addressline3,
+		    fi.addressline4,
+		    fi.addressline5,
+		    fi.country,
+		    fi.province,
+		    fi.city,
+		    fi.contactnumber1,
+		    fi.contactnumber2,
+		    fi.pobox,
+		    fi.zipcode,
+		    fi.ownershipstatus,
+		    fi.yearsatpresentaddress,
+		    fi.personmet,
+		    fi.relationship,
+		    r2.prelationdesc as lovrelationdesc,
+		    fi.contactnumber,
+		    fi.neighbourhoodfeedback,
+		    fi.livingstandard,
+		    fi.negativecheck,
+		    fi.noofattempts,
+		    fi.observationremarks,
+		    c.custcif as cif,
+		    v.keyreference,
+		    v.createdon,
+		    v.agency,
+			a.dealerName as agencyName,
+			reinitid
+		    from verification_fi_temp fi
+		     inner join verifications v on v.id = fi.verificationid
+		     inner join amtvehicledealer a on a.dealerid = v.agency 
+		     left join customers c on c.custid = v.custid
+		     left join reasons_aview r1 on r1.id = fi.reason
+			 left join bmtprelationcodes r2 on r2.prelationcode=fi.relationship 
+			union all
+			select fi.verificationid,
+		    fi.agentcode,
+		    fi.agentname,
+		    fi.type,
+		    fi.IntitatedDate,
+		    fi.status,
+		    fi.reason,
+		    r1.code as reasoncode,
+		    r1.description as reasondesc,
+		    fi.summaryremarks,
+		    fi.version,
+		    fi.lastmntby,
+		    fi.lastmnton,
+		    fi.recordstatus,
+		    fi.rolecode,
+		    fi.nextrolecode,
+		    fi.taskid,
+		    fi.nexttaskid,
+		    fi.recordtype,
+		    fi.workflowid,
+		    fi.addresstype,
+		    fi.name,
+		    fi.housenumber,
+		    fi.flatnumber,
+		    fi.street,
+		    fi.addressline1,
+		    fi.addressline2,
+		    fi.addressline3,
+		    fi.addressline4,
+		    fi.addressline5,
+		    fi.country,
+		    fi.province,
+		    fi.city,
+		    fi.contactnumber1,
+		    fi.contactnumber2,
+		    fi.pobox,
+		    fi.zipcode,
+		    fi.ownershipstatus,
+		    fi.yearsatpresentaddress,
+		    fi.personmet,
+		    fi.relationship,
+		    r2.prelationdesc as lovrelationdesc,
+		    fi.contactnumber,
+		    fi.neighbourhoodfeedback,
+		    fi.livingstandard,
+		    fi.negativecheck,
+		    fi.noofattempts,
+		    fi.observationremarks,
+		    c.custcif as cif,
+		    v.keyreference,
+		    v.createdon,
+		    v.agency,
+			a.dealerName as agencyName,
+			reinitid
+		    from verification_fi fi
+		     inner join verifications v on v.id = fi.verificationid
+		     inner join amtvehicledealer a on a.dealerid = v.agency
+		     left join customers c on c.custid = v.custid
+		     left join reasons_aview r1 on r1.id = fi.reason
+			 left join bmtprelationcodes r2 on r2.prelationcode=fi.relationship
+			 where not exists ( select 1 from verification_fi_temp where verification_fi_temp.verificationid = fi.verificationid)
+		</createView>
+	</changeSet>
+	<changeSet id="10.0" author="murthy.y" dbms="oracle">
+		<createView viewName="verification_fi_view" replaceIfExists="true">
+			select fi.verificationid,
+		    fi.agentcode,
+		    fi.agentname,
+		    fi.type,
+		    fi.IntitatedDate,
+		    fi.status,
+		    fi.reason,
+		    r1.code as reasoncode,
+		    r1.description as reasondesc,
+		    fi.summaryremarks,
+		    fi.version,
+		    fi.lastmntby,
+		    fi.lastmnton,
+		    fi.recordstatus,
+		    fi.rolecode,
+		    fi.nextrolecode,
+		    fi.taskid,
+		    fi.nexttaskid,
+		    fi.recordtype,
+		    fi.workflowid,
+		    fi.addresstype,
+		    fi.name,
+		    fi.housenumber,
+		    fi.flatnumber,
+		    fi.street,
+		    fi.addressline1,
+		    fi.addressline2,
+		    fi.addressline3,
+		    fi.addressline4,
+		    fi.addressline5,
+		    fi.country,
+		    fi.province,
+		    fi.city,
+		    fi.contactnumber1,
+		    fi.contactnumber2,
+		    fi.pobox,
+		    fi.zipcode,
+		    fi.ownershipstatus,
+		    fi.yearsatpresentaddress,
+		    fi.personmet,
+		    fi.relationship,
+		    r2.prelationdesc as lovrelationdesc,
+		    fi.contactnumber,
+		    fi.neighbourhoodfeedback,
+		    fi.livingstandard,
+		    fi.negativecheck,
+		    fi.noofattempts,
+		    fi.observationremarks,
+		    c.custcif as cif,
+		    v.keyreference,
+		    v.createdon,
+		    v.agency,
+			a.dealerName as agencyName,
+			reinitid,
+			a.dealertype,
+			r1.reasontypecode
+		    from verification_fi_temp fi
+		     inner join verifications v on v.id = fi.verificationid
+		     inner join amtvehicledealer a on a.dealerid = v.agency 
+		     left join customers c on c.custid = v.custid
+		     left join reasons_aview r1 on r1.id = fi.reason
+			 left join bmtprelationcodes r2 on r2.prelationcode=fi.relationship 
+			union all
+			select fi.verificationid,
+		    fi.agentcode,
+		    fi.agentname,
+		    fi.type,
+		    fi.IntitatedDate,
+		    fi.status,
+		    fi.reason,
+		    r1.code as reasoncode,
+		    r1.description as reasondesc,
+		    fi.summaryremarks,
+		    fi.version,
+		    fi.lastmntby,
+		    fi.lastmnton,
+		    fi.recordstatus,
+		    fi.rolecode,
+		    fi.nextrolecode,
+		    fi.taskid,
+		    fi.nexttaskid,
+		    fi.recordtype,
+		    fi.workflowid,
+		    fi.addresstype,
+		    fi.name,
+		    fi.housenumber,
+		    fi.flatnumber,
+		    fi.street,
+		    fi.addressline1,
+		    fi.addressline2,
+		    fi.addressline3,
+		    fi.addressline4,
+		    fi.addressline5,
+		    fi.country,
+		    fi.province,
+		    fi.city,
+		    fi.contactnumber1,
+		    fi.contactnumber2,
+		    fi.pobox,
+		    fi.zipcode,
+		    fi.ownershipstatus,
+		    fi.yearsatpresentaddress,
+		    fi.personmet,
+		    fi.relationship,
+		    r2.prelationdesc as lovrelationdesc,
+		    fi.contactnumber,
+		    fi.neighbourhoodfeedback,
+		    fi.livingstandard,
+		    fi.negativecheck,
+		    fi.noofattempts,
+		    fi.observationremarks,
+		    c.custcif as cif,
+		    v.keyreference,
+		    v.createdon,
+		    v.agency,
+			a.dealerName as agencyName,
+			reinitid,
+			a.dealertype,
+			r1.reasontypecode
+		    from verification_fi fi
+		     inner join verifications v on v.id = fi.verificationid
+		     inner join amtvehicledealer a on a.dealerid = v.agency
+		     left join customers c on c.custid = v.custid
+		     left join reasons_aview r1 on r1.id = fi.reason
+			 left join bmtprelationcodes r2 on r2.prelationcode=fi.relationship
+			 where not exists ( select 1 from verification_fi_temp where verification_fi_temp.verificationid = fi.verificationid)
+		</createView>
+	</changeSet>
+	<changeSet id="12.0" author="murthy.y" dbms="oracle">
+		<createView viewName="verification_fi_view" replaceIfExists="true">
+			select fi.verificationid,
+		    fi.agentcode,
+		    fi.agentname,
+		    fi.type,
+		    fi.IntitatedDate,
+		    fi.status,
+		    fi.reason,
+		    r1.code as reasoncode,
+		    r1.description as reasondesc,
+		    fi.summaryremarks,
+		    fi.version,
+		    fi.lastmntby,
+		    fi.lastmnton,
+		    fi.recordstatus,
+		    fi.rolecode,
+		    fi.nextrolecode,
+		    fi.taskid,
+		    fi.nexttaskid,
+		    fi.recordtype,
+		    fi.workflowid,
+		    fi.addresstype,
+		    fi.name,
+		    fi.housenumber,
+		    fi.flatnumber,
+		    fi.street,
+		    fi.addressline1,
+		    fi.addressline2,
+		    fi.addressline3,
+		    fi.addressline4,
+		    fi.addressline5,
+		    fi.country,
+		    fi.province,
+		    fi.city,
+		    fi.contactnumber1,
+		    fi.contactnumber2,
+		    fi.pobox,
+		    fi.zipcode,
+		    fi.ownershipstatus,
+		    fi.yearsatpresentaddress,
+		    fi.personmet,
+		    fi.relationship,
+		    r2.prelationdesc as lovrelationdesc,
+		    fi.contactnumber,
+		    fi.neighbourhoodfeedback,
+		    fi.livingstandard,
+		    fi.negativecheck,
+		    fi.noofattempts,
+		    fi.observationremarks,
+		    c.custcif as cif,
+		    v.keyreference,
+		    v.createdon,
+		    v.agency,
+		    v.verificationdate,
+			a.dealerName as agencyName,
+			reinitid,
+			a.dealertype,
+			r1.reasontypecode
+		    from verification_fi_temp fi
+		     inner join verifications v on v.id = fi.verificationid
+		     inner join amtvehicledealer a on a.dealerid = v.agency 
+		     left join customers c on c.custid = v.custid
+		     left join reasons_aview r1 on r1.id = fi.reason
+			 left join bmtprelationcodes r2 on r2.prelationcode=fi.relationship 
+			union all
+			select fi.verificationid,
+		    fi.agentcode,
+		    fi.agentname,
+		    fi.type,
+		    fi.IntitatedDate,
+		    fi.status,
+		    fi.reason,
+		    r1.code as reasoncode,
+		    r1.description as reasondesc,
+		    fi.summaryremarks,
+		    fi.version,
+		    fi.lastmntby,
+		    fi.lastmnton,
+		    fi.recordstatus,
+		    fi.rolecode,
+		    fi.nextrolecode,
+		    fi.taskid,
+		    fi.nexttaskid,
+		    fi.recordtype,
+		    fi.workflowid,
+		    fi.addresstype,
+		    fi.name,
+		    fi.housenumber,
+		    fi.flatnumber,
+		    fi.street,
+		    fi.addressline1,
+		    fi.addressline2,
+		    fi.addressline3,
+		    fi.addressline4,
+		    fi.addressline5,
+		    fi.country,
+		    fi.province,
+		    fi.city,
+		    fi.contactnumber1,
+		    fi.contactnumber2,
+		    fi.pobox,
+		    fi.zipcode,
+		    fi.ownershipstatus,
+		    fi.yearsatpresentaddress,
+		    fi.personmet,
+		    fi.relationship,
+		    r2.prelationdesc as lovrelationdesc,
+		    fi.contactnumber,
+		    fi.neighbourhoodfeedback,
+		    fi.livingstandard,
+		    fi.negativecheck,
+		    fi.noofattempts,
+		    fi.observationremarks,
+		    c.custcif as cif,
+		    v.keyreference,
+		    v.createdon,
+		    v.agency,
+		    v.verificationdate,
+			a.dealerName as agencyName,
+			reinitid,
+			a.dealertype,
+			r1.reasontypecode
+		    from verification_fi fi
+		     inner join verifications v on v.id = fi.verificationid
+		     inner join amtvehicledealer a on a.dealerid = v.agency
+		     left join customers c on c.custid = v.custid
+		     left join reasons_aview r1 on r1.id = fi.reason
+			 left join bmtprelationcodes r2 on r2.prelationcode=fi.relationship
+			 where not exists ( select 1 from verification_fi_temp where verification_fi_temp.verificationid = fi.verificationid)
+		</createView>
+	</changeSet>
 </databaseChangeLog>
