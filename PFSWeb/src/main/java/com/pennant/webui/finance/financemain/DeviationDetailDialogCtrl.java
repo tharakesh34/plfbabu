@@ -12,6 +12,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
@@ -111,13 +112,13 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 				ccyformat = CurrencyUtil.getFormat(financeMain.getFinCcy());
 			}
 
-			deviationRenderer.init(getUserWorkspace(), ccyformat, false);
-			if (arguments.containsKey("financeMainDialogCtrl")) {
-				this.financeMainDialogCtrl = arguments.get("financeMainDialogCtrl");
-			}
-
 			if (arguments.containsKey("enquiry")) {
 				enquiry = true;
+			}
+
+			deviationRenderer.init(getUserWorkspace(), ccyformat, false, !enquiry);
+			if (arguments.containsKey("financeMainDialogCtrl")) {
+				this.financeMainDialogCtrl = arguments.get("financeMainDialogCtrl");
 			}
 
 			if (arguments.containsKey("approvalEnquiry")) {
@@ -367,6 +368,21 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 
 	}
 
+	public void onChangeAutoDevStatus(ForwardEvent event) throws Exception {
+		FinanceDeviations deviation = (FinanceDeviations) event.getData();
+		Combobox combobox = (Combobox) event.getOrigin().getTarget();
+
+		for (FinanceDeviations item : getFinanceDetail().getFinanceDeviations()) {
+			if (deviation.getDeviationId() == item.getDeviationId()) {
+				item.setApprovalStatus(combobox.getSelectedItem().getValue());
+				long userId = getUserWorkspace().getLoggedInUser().getUserId();
+				if (StringUtils.isBlank(item.getDelegatedUserId())) {
+					item.setDelegatedUserId(String.valueOf(userId));
+				}
+			}
+		}
+	}
+
 	public void onClickViewNotes(ForwardEvent event) throws Exception {
 		logger.debug(" Entering ");
 
@@ -401,6 +417,15 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		logger.debug("Leaving ");
 	}
 
+	public void onClickAddNotes(ForwardEvent event) throws Exception {
+		logger.debug(" Entering ");
+
+		FinanceDeviations deviationDetail = (FinanceDeviations) event.getData();
+		showNotes(deviationDetail, false);
+
+		logger.debug(" Leaving ");
+
+	}
 	private String getReference(FinanceDeviations deviations) {
 		return deviations.getFinReference() + "_" + deviations.getDeviationId();
 	}

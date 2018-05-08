@@ -40,6 +40,7 @@ public class DeviationRenderer {
 	int								ccyformat		= 0;
 	private transient UserWorkspace	userWorkspace;
 	private boolean					approverScreen	= false;
+	private boolean workFlow = false;
 
 	List<DeviationParam>			deviationParams	= PennantAppUtil.getDeviationParams();
 	ArrayList<ValueLabel>			approveStatus	= PennantStaticListUtil.getApproveStatus();
@@ -50,11 +51,11 @@ public class DeviationRenderer {
 	@Autowired
 	private DeviationHelper			deviationHelper;
 
-	public void init(UserWorkspace userWorkspace, int ccyformat, boolean approverScreen) {
+	public void init(UserWorkspace userWorkspace, int ccyformat, boolean approverScreen, boolean isWorkFlow) {
 		this.userWorkspace = userWorkspace;
 		this.ccyformat = ccyformat;
 		this.approverScreen = approverScreen;
-
+		this.workFlow = isWorkFlow;
 	}
 
 	class CompareDeviation implements Comparator<FinanceDeviations> {
@@ -137,13 +138,14 @@ public class DeviationRenderer {
 					PennantStaticListUtil.getlabelDesc(deviationDetail.getApprovalStatus(), approveStatus),
 					deviationNotallowed);
 
-			if (approverScreen) {
+			if (approverScreen || workFlow) {
 				if (!approved) {
 					listcell = getNewListCell("", deviationNotallowed);
 					Combobox combobox = new Combobox();
 					combobox.setReadonly(true);
 					combobox.setWidth("100px");
 					combobox.setId("combo_" + deviationDetail.getDeviationId());
+					combobox.addForward("onChange", "", "onChangeAutoDevStatus", deviationDetail);
 					fillComboBox(combobox, deviationDetail.getApprovalStatus(), approveStatus);
 					combobox.setDisabled(pending);
 					listcell.appendChild(combobox);
@@ -323,7 +325,7 @@ public class DeviationRenderer {
 			listitem.appendChild(listcell);
 
 			listitem.setAttribute("data", deviation);
-			if (!approverScreen) {
+			if (!approverScreen || workFlow) {
 				ComponentsCtrl.applyForward(listitem, "onDoubleClick=onManualDeviationItemDoubleClicked");
 			}
 			listcell = new Listcell(PennantJavaUtil.getLabel(deviation.getRecordType()));

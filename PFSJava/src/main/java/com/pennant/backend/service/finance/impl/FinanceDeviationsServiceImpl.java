@@ -367,8 +367,14 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
 
 		// Get the list of finance deviations that were finalized.
-		List<FinanceDeviations> deviations = deviationDetailsDAO
+		List<FinanceDeviations> financedeviations = deviationDetailsDAO
 				.getFinanceDeviations(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), "");
+		List<FinanceDeviations> deviations = new ArrayList<>();
+		for (FinanceDeviations financeDeviation : financedeviations) {
+			if (financeDeviation.isManualDeviation()) {
+				deviations.add(financeDeviation);
+			}
+		}
 
 		// Add the pending manual deviations.
 		List<FinanceDeviations> pendingDeviations = financeDetail.getManualDeviations();
@@ -376,7 +382,10 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		if (pendingDeviations != null && !pendingDeviations.isEmpty()) {
 			deviations.addAll(pendingDeviations);
 		}
-
+		List<FinanceDeviations> pendingAutoDeviations = financeDetail.getFinanceDeviations();
+		if (pendingAutoDeviations != null && !pendingAutoDeviations.isEmpty()) {
+			deviations.addAll(pendingAutoDeviations);
+		}
 		// Check whether any deviations were not approved and add the error.
 		for (FinanceDeviations deviation : deviations) {
 			if (!StringUtils.equalsIgnoreCase(deviation.getApprovalStatus(), PennantConstants.RCD_STATUS_APPROVED)

@@ -97,7 +97,7 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 				setFinanceDetail(financeDetail);
 				ccyformat = CurrencyUtil.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
 			}
-			deviationRenderer.init(getUserWorkspace(), ccyformat, true);
+			deviationRenderer.init(getUserWorkspace(), ccyformat, true, false);
 
 			if (arguments.containsKey("financeDeviationsListCtrl")) {
 				this.setFinanceDeviationsListCtrl(

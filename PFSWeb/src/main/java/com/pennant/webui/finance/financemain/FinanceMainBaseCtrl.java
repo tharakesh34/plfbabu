@@ -6300,13 +6300,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				// Check whether user has taken decision on the manual deviations for which he has the authority.
 				if (this.userAction.getSelectedItem() != null
 						&& !"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-					List<FinanceDeviations> deviations = getDeviationDetailDialogCtrl().getManualDeviationList();
+					List<FinanceDeviations> manualDeviations = getDeviationDetailDialogCtrl().getManualDeviationList();
+					List<FinanceDeviations> Autodeviations = financeDetail.getFinanceDeviations();
+					List<FinanceDeviations> deviations = new ArrayList<>();
+					deviations.addAll(Autodeviations);
+					deviations.addAll(manualDeviations);
 					List<String> pendingDecisions = new ArrayList<>();
 
 					for (FinanceDeviations deviation : deviations) {
 						if (getUserWorkspace().getUserRoles().contains(deviation.getDelegationRole())
-								&& StringUtils.equals(PennantConstants.List_Select, deviation.getApprovalStatus())) {
-							pendingDecisions.add(deviation.getDeviationCodeDesc());
+								&& (StringUtils.equals(PennantConstants.List_Select, deviation.getApprovalStatus())
+										|| StringUtils.isBlank(deviation.getApprovalStatus()))) {
+							pendingDecisions.add(deviation.isManualDeviation() ? deviation.getDeviationCodeDesc()
+									: deviation.getDeviationCode());
 						}
 					}
 
@@ -6757,9 +6763,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private boolean processDeviations(FinanceDetail aFinanceDetail, boolean recordSave) {
 		if (deviationExecutionCtrl != null) {
-			if (!recordSave) {
-				aFinanceDetail.setFinanceDeviations(deviationExecutionCtrl.getFinanceDeviations());
-			}
+			aFinanceDetail.setFinanceDeviations(deviationExecutionCtrl.getFinanceDeviations());
 		}
 		if (getDeviationDetailDialogCtrl() != null) {
 			List<FinanceDeviations> list = getDeviationDetailDialogCtrl().getManualDeviationList();
