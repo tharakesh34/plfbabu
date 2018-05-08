@@ -214,7 +214,7 @@ public class DeviationHelper {
 		JdbcSearchObject<Rule> searchObject = new JdbcSearchObject<Rule>(Rule.class);
 		searchObject.addTabelName("Rules");
 		if (!StringUtils.isEmpty(ruleid)) {
-			searchObject.addFilterEqual("RuleId", ruleid);
+			searchObject.addFilterEqual("RuleId", Long.valueOf(ruleid));
 		}
 		if (!StringUtils.isEmpty(ruleModule)) {
 			searchObject.addFilterEqual("RuleModule", ruleModule);
