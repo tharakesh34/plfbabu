@@ -30,7 +30,8 @@ o * Copyright 2011 - Pennant Technologies
  ********************************************************************************************
  * 27-05-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 09-05-2018		Vinay					 0.2      Extended Details tab changes for 		*
+ * 													  Customer Enquiry menu based on rights	* 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -1287,7 +1288,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				aCustomerDetails.getBefImage().setExtendedFieldRender(extendedFieldRender);
 			}
 			extendedFieldCtrl.setCcyFormat(2);
-			//extendedFieldCtrl.setReadOnly(isReadOnly("CustomerDialog_custFirstName"));
+			extendedFieldCtrl.setReadOnly(isReadOnly("CustomerDialog_custFirstName"));
 			extendedFieldCtrl.setWindow(this.window_CustomerDialog);
 			//for getting rights in ExtendeFieldGenerator these two fields required.
 			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
