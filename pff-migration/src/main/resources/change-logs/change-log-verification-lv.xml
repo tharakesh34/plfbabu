@@ -1245,5 +1245,138 @@
   		    ]]>
 		</sql> 
 	</changeSet>
+	
+	<changeSet id="10.0" author="durgaprasad.g">
+		<createView viewName="verification_lv_details_view" replaceIfExists="true">	
+			select * from (
+			select 
+			lvd.lvid, 
+			lvd.SeqNo, 
+			doc.docType, 
+    		doc.docModule, 
+			doccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid,
+			doc.docRefId,  
+			lvd.DocumentSubId,
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			union all
+			select 
+			lvd.lvid, 
+			lvd.SeqNo, 
+			doc.docType, 
+    		doc.docModule,
+			doccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid,
+			doc.docRefId, 
+			lvd.DocumentSubId,
+			lvd.documentRefId,
+			lvd.documentUri,  
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details lvd
+			inner join verification_lv lv on lv.id = lvd.lvid
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			WHERE NOT (EXISTS ( SELECT 1
+					   FROM verification_lv_details_temp
+					  WHERE verification_lv_details_temp.lvid = lvd.lvid))
+			union all
+			select 
+			lvd.lvid, 
+			lvd.SeqNo, 
+			custdocType docType, 
+    		'Customer' docModule,
+			custdoccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid, 
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			union all
+			select 
+			lvd.lvid, 
+			lvd.SeqNo, 
+			custdocType docType,
+    		'Customer' docModule,
+			custdoccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid, 
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid  
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			WHERE NOT (EXISTS ( SELECT 1
+					  FROM verification_lv_details_temp
+					  WHERE verification_lv_details_temp.lvid = lvd.lvid))
+			) t
+		</createView>
+	</changeSet>
 </databaseChangeLog>
  
