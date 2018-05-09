@@ -629,13 +629,13 @@
 		</sql> 
 	</changeSet>
 
-<!-- 	<changeSet id="7.0" author="durgaprasad g">
+	<changeSet id="7.0" author="durgaprasad g">
 		 <dropView viewName="verification_lv_view "/>
 		 <dropView viewName="verification_lv_details_view"/>
 		 <dropTable tableName="verification_lv_details"/>
 		 <dropTable tableName="verification_lv_details_temp"/>
 		 <dropTable tableName="verification_lv_details_stage"/>
-	</changeSet> -->
+	</changeSet>
 	
 	
 	<changeSet id="7.1" author="durgaprasad g">
@@ -1222,6 +1222,28 @@
 			 where not (exists ( select 1 from verification_lv_temp where verification_lv_temp.id = lv.id))
 			) t
 		 </createView>
+	</changeSet>
+	
+	<changeSet id="9.0" author="durgaprasad g">
+	   <sql> 
+			<![CDATA[ 
+				delete from reasons where reasontypeid IN (select id from reasontypes where code IN ('LVWRES', 'LVSTATUS')) and reasoncategoryId IN (select id from reasoncategory where code IN ('TVWRES', 'TVSTATUS'));
+				delete from reasontypes where code IN ('LVWRES', 'LVSTATUS');
+				delete from reasoncategory where code IN ('LVWRES', 'LVSTATUS');
+
+				update seqreasontypes set seqno = (select coalesce(max(Id), 0) from reasontypes_view);
+				update seqreasoncategory set seqno = (select coalesce(max(Id), 0) from reasoncategory_view);
+				update seqreasons set seqno = (select coalesce(max(Id), 0) from reasons_view);
+
+				insert into reasontypes values((select coalesce(max(Id), 0)+1 from reasontypes_view), 'LVWRES', 'Legal verification waiver reason type.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+				insert into reasontypes values((select coalesce(max(Id), 0)+1 from reasontypes_view), 'LVSTATUS', 'Legal verification status reason type.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+				update seqreasontypes set seqno = (select coalesce(max(Id), 0) from reasontypes_view);
+
+				insert into reasoncategory values((select coalesce(max(Id), 0)+1 from reasoncategory_view), 'LVWRES', 'Legal verification waiver reason category.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+				insert into reasoncategory values((select coalesce(max(Id), 0)+1 from reasoncategory_view), 'LVSTATUS', 'Legal verification status reason category.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+				update seqreasoncategory set seqno = (select coalesce(max(Id), 0) from reasoncategory_view);
+  		    ]]>
+		</sql> 
 	</changeSet>
 </databaseChangeLog>
  
