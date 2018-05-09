@@ -685,6 +685,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		//removing the deleted addresses
 		for (CustomerDetails screenCustomer : verification.getCustomerDetailsList()) {
+			if (screenCustomer.getAddressList() == null) {
+				continue;
+			}
+			
 			for (int i = 0; i < screenCustomer.getAddressList().size(); i++) {
 				String recordType = screenCustomer.getAddressList().get(i).getRecordType();
 				if (StringUtils.isNotEmpty(screenCustomer.getAddressList().get(i).getRecordType())

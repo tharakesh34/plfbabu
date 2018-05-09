@@ -16708,6 +16708,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		for (CustomerDetails screenCustomer : screenCustomers) {
 			for (CustomerDetails savedcustomer : verification.getCustomerDetailsList()) {
+				
+				if(savedcustomer.getAddressList() == null || screenCustomer.getAddressList() == null) {
+					continue;
+				}			
+				
+				
 				if (screenCustomer.getCustID() == savedcustomer.getCustID()) {
 					if (fieldInvestigationService.isAddressesAdded(screenCustomer.getAddressList(),
 							savedcustomer.getAddressList())

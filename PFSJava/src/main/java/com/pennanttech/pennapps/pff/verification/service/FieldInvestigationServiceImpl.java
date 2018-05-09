@@ -804,6 +804,10 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		List<String> requiredCodes = addressTypeDAO.getFiRequiredCodes();
 
 		for (CustomerDetails customerDetails : customerDetailsList) {
+			if (customerDetails.getAddressList() == null) {
+				continue;
+			}
+			
 			for (CustomerAddres address : customerDetails.getAddressList()) {
 				Verification vrf = new Verification();
 				vrf.setNewRecord(true);
@@ -990,6 +994,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	public boolean isAddressesAdded(List<CustomerAddres> screenCustomerAddresses,
 			List<CustomerAddres> savedCustomerAddresses) {
 		boolean flag = true;
+	
 		for (CustomerAddres screenCustomerAddres : screenCustomerAddresses) {
 			for (CustomerAddres savedCustomerAddres : savedCustomerAddresses) {
 				if (savedCustomerAddres.getCustAddrType().equals(screenCustomerAddres.getCustAddrType())
