@@ -136,15 +136,15 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 					tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
-		
+
 		// FI documents
 		if (tv.getDocuments() != null && !tv.getDocuments().isEmpty()) {
 			List<AuditDetail> details = tv.getAuditDetailMap().get("DocumentDetails");
 			details = saveOrUpdateDocuments(details, tv, tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
-		
-		auditHeader.setAuditDetails(auditDetails);				
+
+		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -205,7 +205,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			auditList.addAll(extendedFieldDetailsService.delete(tv.getExtendedFieldHeader(), tv.getCollateralRef(),
 					tableName.toString(), tableType, auditTranType, extendedDetails));
 		}
-		
+
 		// Document Details.
 		List<AuditDetail> documentDetails = tv.getAuditDetailMap().get("DocumentDetails");
 		if (documentDetails != null && documentDetails.size() > 0) {
@@ -430,7 +430,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			details = extendedFieldDetailsService.vaildateDetails(details, method, usrLanguage, tableName.toString());
 			auditDetails.addAll(details);
 		}
-		
+
 		// TV Document details Validation
 		List<DocumentDetails> docuemnts = tv.getDocuments();
 		if (docuemnts != null && !docuemnts.isEmpty()) {
@@ -468,13 +468,12 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 					.setExtendedFieldsAuditData(tv.getExtendedFieldRender(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
-		
+
 		// TV Document Details
-				if (tv.getDocuments() != null && tv.getDocuments().size() > 0) {
-					auditDetailMap.put("DocumentDetails",
-							setDocumentDetailsAuditData(tv, auditTranType, method));
-					auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
-				}
+		if (tv.getDocuments() != null && tv.getDocuments().size() > 0) {
+			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(tv, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
+		}
 
 		tv.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(tv);
@@ -547,7 +546,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-	
+
 	private List<Verification> getScreenVerifications(Verification verification) {
 		List<Verification> verifications = new ArrayList<>();
 		List<String> requiredCodes = collateralStructureService.getCollateralValuatorRequiredCodes();
@@ -717,23 +716,9 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		for (Map<String, Object> prv : prvCollaterals) {
 			for (Map<String, Object> current : currentCollaterals) {
 				if (prv.get("reference").equals(current.get("reference"))
-						&& prv.get("seqno").equals(current.get("seqno")) && compareCollaterals(prv, current)) {
+						&& prv.get("seqno").equals(current.get("seqno"))
+						&& prv.get("version").equals(current.get("version"))) {
 					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	private Boolean compareCollaterals(Map<String, Object> prvCollateral, Map<String, Object> currentCollateral) {
-		for (Map.Entry<String, Object> prvCollateralEntry : prvCollateral.entrySet()) {
-			for (Map.Entry<String, Object> currentCollateralEntry : currentCollateral.entrySet()) {
-				if (prvCollateralEntry.getKey().equals(currentCollateralEntry.getKey())) {
-					if (prvCollateralEntry.getValue().equals(currentCollateralEntry.getValue())) {
-						break;
-					} else {
-						return true;
-					}
 				}
 			}
 		}
@@ -926,10 +911,11 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-	
+
 	public DocumentDetailValidation getDocumentValidation() {
 		if (documentValidation == null) {
-			this.documentValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO, customerDocumentDAO);
+			this.documentValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO,
+					customerDocumentDAO);
 		}
 		return documentValidation;
 	}
