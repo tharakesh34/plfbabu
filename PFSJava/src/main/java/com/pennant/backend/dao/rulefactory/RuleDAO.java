@@ -12,27 +12,27 @@
  */
 
 /**
- *********************************************************************************************
- *                                 FILE HEADER                                               *
- *********************************************************************************************
- *
- * FileName    		:  CountryDAO.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  08-03-2011    
- *                                                                  
- * Modified Date    :  08-03-2011    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  RuleDAO.java															*                           
+ *																							* 	
+ * Author      		:  PENNANT TECHONOLOGIES              									*	
+ *                                                                  						*
+ * Creation Date    :  08-03-2011    														*
+ *                                                                  						*
+ * Modified Date    :  08-03-2011    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 08-03-2011       PENNANT TECHONOLOGIES	                 0.1                                         * 
+ * 08-03-2011       PENNANT TECHONOLOGIES	 0.1                            				* 
  *                                                                                          * 
  *                                                                                          * 
- *                                                                                          * 
+ * 08-05-2019		Srinivasa Varma			 0.2		  Development Iteam 81              * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -81,5 +81,8 @@ public interface RuleDAO {
 	List<Rule> getSubHeadRuleList(List<String> subHeadRuleList);
 	//GST
 	List<Rule> getGSTRuleDetails(String ruleModule, String type);
+	
+	//### 08-05-2018 Development Iteam 81 
+	boolean isFieldAssignedToRule(String fieldName);
 
   }

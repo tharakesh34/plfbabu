@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ExtendedFieldDetailServiceImpl.java                                                   * 	  
+ * FileName    		:  ExtendedFieldDetailServiceImpl.java                                  * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -31,7 +31,7 @@
  ********************************************************************************************
  * 28-12-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 08-05-2019		Srinivasa Varma			 0.2			Development Iteam 81            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -52,6 +52,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.bmtmasters.ProductDAO;
+import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -77,6 +78,8 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
 	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
 	private ProductDAO				productDAO;
+	private RuleDAO 				ruleDAO;
+	
 	public ExtendedFieldDetailServiceImpl() {
 		super();
 	}
@@ -112,6 +115,14 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 
 	public void setProductDAO(ProductDAO productDAO) {
 		this.productDAO = productDAO;
+	}
+
+	public RuleDAO getRuleDAO() {
+		return ruleDAO;
+	}
+
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
 	}
 
 	/**
@@ -828,4 +839,20 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	public List<ExtendedFieldDetail> getExtendedFieldDetailByModuleID(long id, String type) {
 		return extendedFieldDetailDAO.getExtendedFieldDetailById(id, type);
 	}
+
+	//### 08-05-2018 StartDevelopment Iteam 81
+	/**
+	 * isFieldAssignedToRule Return true or false by using RulesDAO  isFieldAssignedToRule method.
+	 * method
+	 * 
+	 * @param fieldName
+	 *            (String)
+	 * @return boolean
+	 */
+	@Override
+	public boolean isFieldAssignedToRule(String fieldName) {
+		return  getRuleDAO().isFieldAssignedToRule(fieldName);
+	}
+
+	//### 08-05-2018 StartDevelopment Iteam 81
 }

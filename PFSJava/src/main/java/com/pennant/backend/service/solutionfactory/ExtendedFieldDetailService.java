@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ExtendedFieldDetailService.java                                                   * 	  
+ * FileName    		:  ExtendedFieldDetailService.java                                      * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -32,7 +32,7 @@
  * 28-12-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
- *                                                                                          * 
+ * 08-05-2019		Srinivasa Varma			 0.2			Development Iteam 81            *  
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -72,4 +72,8 @@ public interface ExtendedFieldDetailService {
 	ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String moduleName,String subModuleName,String type);
 	
 	List<ExtendedFieldDetail> getExtendedFieldDetailByModuleID(long id, String type);
+	
+	//### 08-05-2018 Development Iteam 81
+	boolean isFieldAssignedToRule(String fieldName);
+	
 }

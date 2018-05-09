@@ -12,28 +12,28 @@
  */
 
 /**
- *********************************************************************************************
- *                                 FILE HEADER                                               *
- *********************************************************************************************
- *
- * FileName    		:  RuleDAOImpl.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  03-06-2011    
- *                                                                  
- * Modified Date    :  03-06-2011    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  RuleDAOImpl.java                           							*
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ * Creation Date    :  03-06-2011    														*
+ *                                                                  						*
+ * Modified Date    :  03-06-2011    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                         * 
+ * 03-06-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
- *                                                                                          * 
+ * 08-05-2019		Srinivasa Varma			 0.2		  Development Iteam 81              *  
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -792,4 +792,44 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
+
+	//### 08-05-2018 Start Development Iteam 81 
+	
+	/**
+	 * Get Rule by key field
+	 * 
+	 * @param id (String)
+	 * @param type (String) ""/_Temp/_View
+	 * @return Rule
+	 */
+	@Override
+	public boolean isFieldAssignedToRule(final String fieldName) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Fields1", fieldName);
+		source.addValue("Fields2", "%,"+fieldName+"%");
+		source.addValue("Fields3", "%"+fieldName+",%");
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT count(RuleId) ");
+		selectSql.append(" From Rules");
+		selectSql.append(" Where Fields=:Fields1 OR Fields LIKE :Fields2 OR Fields LIKE :Fields3");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		Integer count =0;
+		try {
+			count = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		if(count>0){
+			return true;
+		}
+		return false;
+	}
+
+	//### 08-05-2018 End Development Iteam 81
 }

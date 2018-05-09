@@ -3681,6 +3681,7 @@
 		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="productDAO" ref="productDAO" />
+		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<!--============ Finance Type Details ============== -->
