@@ -99,6 +99,7 @@ import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.UserActivityLog;
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -4610,6 +4611,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		try {
 			//begin 09-05-18
 			if (!"Y".equalsIgnoreCase((String) SysParamUtil.getValue("GCD_FINONE_PROC_REQD"))) {
+				customerDetails.setReturnStatus(new WSReturnStatus());
 				customerDetails.getReturnStatus().setReturnCode(InterfaceConstants.SUCCESS_CODE);
 				return financeDetail;
 			}

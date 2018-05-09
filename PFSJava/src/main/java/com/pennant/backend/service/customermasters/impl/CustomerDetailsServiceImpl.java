@@ -2696,6 +2696,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			
 			//begin 09-05-18
 			if (!"Y".equalsIgnoreCase((String) SysParamUtil.getValue("GCD_FINONE_PROC_REQD"))) {
+				customerDetails.setReturnStatus(new WSReturnStatus());
 				customerDetails.getReturnStatus().setReturnCode(InterfaceConstants.SUCCESS_CODE);
 				return auditHeader;
 			}

@@ -1458,9 +1458,12 @@ public class ExtendedFieldDetailsService {
 
 		// process Extended field details
 		// Get the ExtendedFieldHeader for given module and subModule
+		String event = null;
+		if(financeDetail.getExtendedFieldHeader() != null) {
+			event = financeDetail.getExtendedFieldHeader().getEvent();
+		}
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
-				ExtendedFieldConstants.MODULE_LOAN, finMain.getFinCategory(),
-				financeDetail.getExtendedFieldHeader().getEvent(), "");
+				ExtendedFieldConstants.MODULE_LOAN, finMain.getFinCategory(), event, "");
 		financeDetail.setExtendedFieldHeader(extendedFieldHeader);
 
 		List<ExtendedField> extendedFields = financeDetail.getExtendedDetails();
