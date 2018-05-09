@@ -5177,5 +5177,18 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 		<addDefaultValue tableName="AccountsHistory" defaultValueNumeric="0" columnName="OpeningBal" columnDataType="decimal(18,0)"/>
 	</changeSet>
 	
+	<changeSet id="108" author="Vinay">
+	<comment>New ErrorDetails added</comment>
+		<sql>
+			delete from ERRORDETAILS where code='41101';
+			Insert into ERRORDETAILS values ('41101','EN','E','Not allowed to approve loan with Disbursement type : {0} and Covenant type : {1}','test','Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,34);
+			
+			delete from ERRORDETAILS where code='41102';
+			Insert into ERRORDETAILS values ('41102','EN','E','NOC can not be issued for this loan ','test','Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,34);
+			
+			
+			Insert into FLAGS values ('NONOC','No NOC','1',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
