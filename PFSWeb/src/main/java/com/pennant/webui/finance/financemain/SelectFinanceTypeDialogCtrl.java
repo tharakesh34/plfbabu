@@ -125,6 +125,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 
@@ -1026,7 +1027,13 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 
 		}
-
+		
+		// FI Init Verification
+		if (financeDetail.isFiInitTab()) {
+			financeDetail.setFiVerification(new Verification());
+			financeDetailService.setFIInitVerification(financeDetail);
+		}
+				
 		showDetailView(financeDetail);
 		logger.debug("Leaving " + event.toString());
 	}

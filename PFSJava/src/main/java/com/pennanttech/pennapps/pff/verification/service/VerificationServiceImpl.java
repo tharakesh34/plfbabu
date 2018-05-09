@@ -142,6 +142,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (StringUtils.isEmpty(item.getRecordType())) {
 				item.setRecordType(verification.getRecordType());
 			}
+			if (StringUtils.isEmpty(item.getKeyReference())) {
+				item.setKeyReference(verification.getKeyReference());
+			}
 
 			if (isInitTab) {
 				// clear Re-init for non initiated records  
@@ -162,6 +165,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 						} else if (verificationType == VerificationType.TV) {
 							saveTV(collateralSetupList, item);
 						} else if (verificationType == VerificationType.LV) {
+							saveLV(item);
+						} else if (verificationType == VerificationType.RCU) {
 							saveLV(item);
 						}
 					}
@@ -198,7 +203,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 						saveTV(collateralSetupList, item);
 					} else if (verificationType == VerificationType.LV) {
 						saveLV(item);
-					}else if (verificationType == VerificationType.RCU) {
+					} else if (verificationType == VerificationType.RCU) {
 						saveLV(item);
 					}
 				} else {
@@ -231,7 +236,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					+ StringUtils.trimToEmpty(lvDocument.getDocumentSubId()));
 			item.setReferenceType(lvDocument.getCode());
 
-			Long verificationId = getVerificationIdByReferenceFor(item.getKeyReference(),item.getReferenceFor(), VerificationType.LV.getKey());
+			Long verificationId = getVerificationIdByReferenceFor(item.getKeyReference(), item.getReferenceFor(),
+					VerificationType.LV.getKey());
 
 			if (verificationId != null) {
 				item.setId(verificationId);
@@ -243,8 +249,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	private void saveLVInit(Verification verification) {
-		Long verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getKeyReference(),verification.getReferenceFor(),
-				VerificationType.LV.getKey());
+		Long verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getKeyReference(),
+				verification.getReferenceFor(), VerificationType.LV.getKey());
 
 		if (verification.isNewRecord() && verificationId != null) {
 			throw new AppException(String.format("Collateral %s already initiated", verification.getReferenceFor()));
@@ -300,7 +306,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			legalVerificationService.saveDocuments(item.getLegalVerification().getLvDocuments(), TableType.TEMP_TAB);
 		}
 	}
-	
+
 	private void saveRCU(Verification item) {
 		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
 			riskContainmentUnitService.save(item, TableType.TEMP_TAB);
@@ -534,7 +540,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	@Override
-	public Long getVerificationIdByReferenceFor(String finReference,String referenceFor, int verificationType) {
-		return verificationDAO.getVerificationIdByReferenceFor(finReference,referenceFor, verificationType);
+	public Long getVerificationIdByReferenceFor(String finReference, String referenceFor, int verificationType) {
+		return verificationDAO.getVerificationIdByReferenceFor(finReference, referenceFor, verificationType);
 	}
 }

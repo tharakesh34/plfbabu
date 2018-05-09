@@ -574,7 +574,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		
 		// FI Init Verification
 		if (financeDetail.isFiInitTab()) {
-			financeDetail.setFiVerification(new Verification());
+			if (financeDetail.getFiVerification() == null) {
+				financeDetail.setFiVerification(new Verification());
+			}
 			setFIInitVerification(financeDetail);
 		}
 		// FI Approval Verification
@@ -2566,6 +2568,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//=======================================
 			if (financeDetail.isFiInitTab()) {
 				Verification verification = financeDetail.getFiVerification();
+				verification.setKeyReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
 				verification.setVerificationType(VerificationType.FI.getKey());
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));
