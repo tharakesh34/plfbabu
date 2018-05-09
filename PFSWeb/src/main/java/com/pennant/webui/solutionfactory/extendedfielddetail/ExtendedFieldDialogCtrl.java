@@ -1,3 +1,46 @@
+
+/**
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  ExtendedFieldDialogCtrl.java											*                           
+ *																							* 	
+ * Author      		:  PENNANT TECHONOLOGIES              									*	
+ *                                                                  						*
+ * Creation Date    :  28-12-2011    														*
+ *                                                                  						*
+ * Modified Date    :  28-12-2011    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 08-03-2011       PENNANT TECHONOLOGIES	 0.1                            				* 
+ *                                                                                          * 
+ *                                                                                          * 
+ * 08-05-2019		Srinivasa Varma			 0.2		  Development Iteam 81              * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+*/
 package com.pennant.webui.solutionfactory.extendedfielddetail;
 
 import java.io.Serializable;
@@ -575,7 +618,10 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		map.put("newRecord", true);
 		map.put("maxSeqNo", maxSeqNo);
 		map.put("roleCode", getRole());
-
+		//### 08-05-2018 Start Development Iteam 81
+		map.put("moduleDesc", this.moduleDesc.getValue());
+		map.put("subModuleDesc", this.subModuleDesc.getValue());
+		//### 08-05-2018 End Development Iteam 81
 		try {
 			Executions.createComponents(
 					"/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldDetailDialog.zul",
@@ -602,6 +648,10 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 			map.put("roleCode", getRole());
 			map.put("firstTaskRole", this.firstTaskRole);
 			map.put("layoutDesign", numberOfColumns.getSelectedItem().getValue());
+			//### 08-05-2018 Start Development Iteam 81
+			map.put("moduleDesc", this.moduleDesc.getValue());
+			map.put("subModuleDesc", this.subModuleDesc.getValue());
+			//### 08-05-2018 End Development Iteam 81
 			// call the zul-file with the parameters packed in a map
 			try {
 				Executions.createComponents(
