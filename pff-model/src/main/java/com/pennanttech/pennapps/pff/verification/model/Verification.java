@@ -54,6 +54,8 @@ public class Verification extends AbstractWorkflowEntity {
 	private Verification befImage;
 	private LoggedInUser userDetails;
 	private boolean approveTab;
+	private int docType;
+	private String docName;
 
 	private String cif;
 	private String customerName;
@@ -71,6 +73,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private List<CollateralSetup> collateralSetupList = new ArrayList<>();
 	private TechnicalVerification technicalVerification;
 	private LegalVerification legalVerification;
+	private RiskContainmentUnit rcuVerification;
 
 	public Verification() {
 		super();
@@ -99,6 +102,9 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("legalVerification");
 		excludeFields.add("agencyCity");
 		excludeFields.add("approveTab");
+		excludeFields.add("docType");
+		excludeFields.add("docName");
+		excludeFields.add("rcuVerification");
 		return excludeFields;
 	}
 
@@ -421,5 +427,29 @@ public class Verification extends AbstractWorkflowEntity {
 	public void setApproveTab(boolean approveTab) {
 		this.approveTab = approveTab;
 	}
-	
+
+	public int getDocType() {
+		return docType;
+	}
+
+	public void setDocType(int docType) {
+		this.docType = docType;
+	}
+
+	public String getDocName() {
+		return docName;
+	}
+
+	public void setDocName(String docName) {
+		this.docName = docName;
+	}
+
+	public RiskContainmentUnit getRcuVerification() {
+		return rcuVerification;
+	}
+
+	public void setRcuVerification(RiskContainmentUnit rcuVerification) {
+		this.rcuVerification = rcuVerification;
+	}
+
 }

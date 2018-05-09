@@ -359,4 +359,6 @@ public class FinanceConstants {
 	public static final String PROCEDT_VERIFICATION_TV_APPR = "TVAPPR";
 	public static final String PROCEDT_VERIFICATION_LV_INIT = "LVINIT";
 	public static final String PROCEDT_VERIFICATION_LV_APPR = "LVAPPR";
+	public static final String PROCEDT_VERIFICATION_RCU_INIT = "RCUINIT";
+	public static final String PROCEDT_VERIFICATION_RCU_APPR = "RCUAPPR";
 }

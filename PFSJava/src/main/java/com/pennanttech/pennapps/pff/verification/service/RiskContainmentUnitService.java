@@ -1,8 +1,12 @@
 package com.pennanttech.pennapps.pff.verification.service;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
+import com.pennanttech.pff.core.TableType;
 
 public interface RiskContainmentUnitService {
 
@@ -19,5 +23,9 @@ public interface RiskContainmentUnitService {
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	DocumentManager getDocumentById(Long docRefId);
-	
+
+	List<Long> getRCUVerificaationIds(List<Verification> verifications, String keyRef);
+
+	long save(Verification verification, TableType tableType);
+
 }

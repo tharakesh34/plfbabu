@@ -258,12 +258,15 @@ public class FinanceDetail implements java.io.Serializable {
 	private Verification fiVerification;
 	private Verification tvVerification;
 	private Verification lvVerification;
+	private Verification rcuVerification;
 	private boolean fiApprovalTab =false;
 	private boolean fiInitTab = false;
 	private boolean tvApprovalTab =false;
 	private boolean tvInitTab = false;
 	private boolean lvApprovalTab = false;
 	private boolean lvInitTab = false;
+	private boolean rcuApprovalTab = false;
+	private boolean rcuInitTab = false;
 	
 	public FinanceDetail() {
 		
@@ -988,6 +991,14 @@ public class FinanceDetail implements java.io.Serializable {
 		this.lvVerification = lvVerification;
 	}
 
+	public Verification getRcuVerification() {
+		return rcuVerification;
+	}
+
+	public void setRcuVerification(Verification rcuVerification) {
+		this.rcuVerification = rcuVerification;
+	}
+
 	public boolean isLvApprovalTab() {
 		return lvApprovalTab;
 	}
@@ -1004,4 +1015,20 @@ public class FinanceDetail implements java.io.Serializable {
 		this.lvInitTab = lvInitTab;
 	}
 
+	public boolean isRcuApprovalTab() {
+		return rcuApprovalTab;
+	}
+
+	public void setRcuApprovalTab(boolean rcuApprovalTab) {
+		this.rcuApprovalTab = rcuApprovalTab;
+	}
+
+	public boolean isRcuInitTab() {
+		return rcuInitTab;
+	}
+
+	public void setRcuInitTab(boolean rcuInitTab) {
+		this.rcuInitTab = rcuInitTab;
+	}
+	
 }

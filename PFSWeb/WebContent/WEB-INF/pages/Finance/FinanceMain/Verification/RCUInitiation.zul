@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_RCUVerificationDialog" border="none"
+			apply="${rcuVerificationDialogCtrl}" width="100%" height="100%"
+			style="padding-top:10px" sizable="false">
+
+			<borderlayout id="borderlayoutFIInitiation">
+				<center border="none" id="divCenter">
+				<div>
+					<groupbox id="finBasicdetails" zclass="null"/>
+					<listbox id="listBoxRCUVerification" fixedLayout="true"
+						sizedByContent="true" span="true"
+						emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
+						multiple="false">
+						<listhead sizable="false">
+							<listheader
+								id="listheader_RCUVerification_DocumentType"
+								label="${c:l('listheader_RCUVerification_DocumentType.label')}"
+								sort="false" hflex="min" />
+							<listheader
+								id="listheader_RCUVerification_DocumentName"
+								label="${c:l('listheader_RCUVerification_DocumentName.label')}"
+								sort="false" hflex="min" />
+							<listheader
+								id="listheader_RCUVerification_RCU"
+								label="${c:l('listheader_RCUVerification_RCU.label')}"
+								sort="false" hflex="min" />
+							<listheader
+								id="listheader_RCUVerification_Agency"
+								label="${c:l('listheader_RCUVerification_Agency.label')}"
+								sort="false" hflex="min" />
+							<listheader
+								id="listheader_RCUVerification_Reason"
+								label="${c:l('listheader_RCUVerification_Reason.label')}"
+								sort="false" hflex="min" />
+							<listheader
+								id="listheader_RCUVerification_Remarks"
+								label="${c:l('listheader_RCUVerification_Remarks.label')}"
+								sort="false" hflex="min" />
+							<listheader
+								id="listheader_RCUVerification_LastStatus"
+								label="${c:l('listheader_RCUVerification_LastStatus.label')}"
+								sort="false" hflex="min" />
+							<listheader
+								id="listheader_RCUVerification_LastVrfDate"
+								label="${c:l('listheader_RCUVerification_LastVrfDate.label')}"
+								sort="false" hflex="min" />
+						</listhead>
+					</listbox>
+				</div>
+				</center>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

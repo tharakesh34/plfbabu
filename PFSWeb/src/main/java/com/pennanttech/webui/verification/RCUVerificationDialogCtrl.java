@@ -23,6 +23,7 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
@@ -34,6 +35,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
+import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
@@ -42,42 +44,51 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.Decision;
+import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.Status;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
+import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-@Component(value = "tVerificationDialogCtrl")
+@Component(value = "rcuVerificationDialogCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
-	private static final long	serialVersionUID		= 8661799804403963415L;
-	private static final Logger	logger					= LogManager.getLogger(TVerificationDialogCtrl.class);
+public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
+	private static final long serialVersionUID = 8661799804403963415L;
+	private static final Logger logger = LogManager.getLogger(RCUVerificationDialogCtrl.class);
 
-	protected Window			window_TVerificationDialog;
-	protected Groupbox			finBasicdetails;
-	protected Listbox			listBoxTechnicalVerification;
-	protected Groupbox			tvInquiry;
+	protected Window window_RCUVerificationDialog;
+	protected Groupbox finBasicdetails;
+	protected Listbox listBoxRCUVerification;
+	protected Groupbox rcuInquiry;
 
-	private FinBasicDetailsCtrl	finBasicDetailsCtrl;
-	private FinanceMainBaseCtrl	financeMainDialogCtrl	= null;
-	private Verification		verification;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
+	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
+	private Verification verification;
+	private FinanceDetail financeDetail;
+	private List<String> collateralRefList = new ArrayList<>();
 
-	private transient boolean	validationOn;
-	private transient boolean	initType;
-	
+	private transient boolean validationOn;
+	private transient boolean initType;
+
 	@Autowired
 	private TechnicalVerificationService technicalVerificationService;
+	@Autowired
+	private SearchProcessor searchProcessor;
 
 	protected Radiogroup tv;
+
 	/**
 	 * default constructor.<br>
 	 */
-	public TVerificationDialogCtrl() {
+	public RCUVerificationDialogCtrl() {
 		super();
 	}
 
@@ -86,16 +97,25 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_TVerificationDialog(Event event) throws Exception {
+	public void onCreate$window_RCUVerificationDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_TVerificationDialog);
+		setPageComponents(window_RCUVerificationDialog);
 
 		appendFinBasicDetails(arguments.get("finHeaderList"));
 
 		verification = (Verification) arguments.get("verification");
 
 		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
+
+		if (arguments.containsKey("financeDetail")) {
+			this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
+			if (!financeDetail.getCollateralAssignmentList().isEmpty()) {
+				for (CollateralAssignment item : financeDetail.getCollateralAssignmentList()) {
+					collateralRefList.add(item.getCollateralRef());
+				}
+			}
+		}
 
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
@@ -109,13 +129,42 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 
-		financeMainDialogCtrl.settVerificationDialogCtrl(this);
+		financeMainDialogCtrl.setRcuVerificationDialogCtrl(this);
 
+		setScreenVerifications();
 		renderTechnicalVerificationList(verification);
 
-		this.listBoxTechnicalVerification.setHeight(this.borderLayoutHeight - 600 - 90 + "px");
-		this.window_TVerificationDialog.setHeight(this.borderLayoutHeight - 80 + "px");
+		this.window_RCUVerificationDialog.setHeight(this.borderLayoutHeight - 80 + "px");
+		int part = (this.borderLayoutHeight - 80) / 3;
+		this.listBoxRCUVerification.setHeight(2.5 * part + "px");
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void setScreenVerifications() {
+		Verification vrf;
+		List<RCUDocument> documents = (List<RCUDocument>) getDocuments();
+		for (RCUDocument document : documents) {
+			if (document.getDocTypeId() != DocumentType.COLLATRL.getKey()
+					|| (StringUtils.isNotBlank(document.getCollateralRef())
+							&& collateralRefList.contains(document.getCollateralRef()))) {
+				vrf = new Verification();
+				vrf.setReferenceFor(document.getDocumentId() + StringUtils.trimToEmpty(document.getDocumentSubId()));
+				vrf.setDocName(document.getDescription());
+				vrf.setReferenceType(document.getCode());
+				vrf.setDocType(document.getDocTypeId());
+				vrf.setReference(verification.getCif());
+				vrf.setCustId(verification.getCustId());
+				vrf.setModule(verification.getModule());
+				vrf.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
+				//set RCU Required
+				if (document.isRcuReq()) {
+					vrf.setRequestType(RequestType.INITIATE.getKey());
+				} else {
+					vrf.setRequestType(RequestType.NOT_REQUIRED.getKey());
+				}
+				this.verification.getVerifications().add(vrf);
+			}
+		}
 	}
 
 	/**
@@ -144,7 +193,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (id == null) {
 				continue;
 			}
-			id=id.replaceAll("\\d","");
+			id = id.replaceAll("\\d", "");
 			if (StringUtils.equals(id, listcellId)) {
 				return listcell.getFirstChild();
 			}
@@ -224,7 +273,6 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	
 	public void onChangeReInitAgency(ForwardEvent event) throws Exception {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox agency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
@@ -240,7 +288,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 	}
-	
+
 	public void onChangeDecision(ForwardEvent event) throws Exception {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox reInitAgency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
@@ -254,7 +302,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			throw new WrongValueException(decisionBox,
 					Labels.getLabel("STATIC_INVALID", new String[] { value + " is not valid," }));
 		}
-		
+
 		if (decision.getKey() == Decision.RE_INITIATE.getKey()) {
 			reInitAgency.setReadonly(false);
 		} else {
@@ -265,15 +313,16 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	public void onCheck$tv(Event event) {
 		final HashMap<String, Object> map = new HashMap<>();
-		TechnicalVerification technicalVerification = technicalVerificationService.getTechnicalVerification(tv.getSelectedItem().getValue());
+		TechnicalVerification technicalVerification = technicalVerificationService
+				.getTechnicalVerification(tv.getSelectedItem().getValue());
 		if (technicalVerification != null) {
 			map.put("LOAN_ORG", true);
 			map.put("technicalVerification", technicalVerification);
-			if (tvInquiry.getChildren() != null) {
-				tvInquiry.getChildren().clear();
+			if (rcuInquiry.getChildren() != null) {
+				rcuInquiry.getChildren().clear();
 			}
 			Executions.createComponents(
-					"/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationDialog.zul", tvInquiry,
+					"/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationDialog.zul", rcuInquiry,
 					map);
 		} else {
 			MessageUtil.showMessage("Initiation request not available in Technical Verification Module.");
@@ -288,15 +337,28 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 */
 	public void renderTechnicalVerificationList(Verification verification) {
 		logger.debug(Literal.ENTERING);
+		Listgroup group;
+		Listcell cell;
+		List<Integer> docTypes = new ArrayList<>();
 
 		this.verification = verification;
 
-		if (listBoxTechnicalVerification.getItems() != null) {
-			listBoxTechnicalVerification.getItems().clear();
+		if (listBoxRCUVerification.getItems() != null) {
+			listBoxRCUVerification.getItems().clear();
 		}
 
 		int i = 0;
 		for (Verification vrf : verification.getVerifications()) {
+
+			if (!docTypes.contains(vrf.getDocType())) {
+				// Creating list group for DocType.
+				group = new Listgroup();
+				cell = new Listcell(DocumentType.getType(vrf.getDocType()).getValue());
+				cell.setStyle("font-weight:bold;");
+				group.appendChild(cell);
+				listBoxRCUVerification.appendChild(group);
+			}
+
 			if (vrf.getReinitid() != null && vrf.getRequestType() == RequestType.WAIVE.getKey()) {
 				continue;
 			}
@@ -305,40 +367,30 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Listitem item = new Listitem();
 			Listcell listCell;
 			if (!initType) {
-				
+
 				//Select
 				listCell = new Listcell();
 				listCell.setId("select".concat(String.valueOf(i)));
-				Radio select=new Radio();
+				Radio select = new Radio();
 				select.setRadiogroup(tv);
 				select.setValue(vrf.getId());
 				listCell.appendChild(select);
 				listCell.setParent(item);
 			}
 
-			//Collateral Type
+			//Document Type
 			listCell = new Listcell();
 			listCell.setId("ReferenceType".concat(String.valueOf(i)));
 			listCell.appendChild(new Label(vrf.getReferenceType()));
 			listCell.setParent(item);
 
-			//Depositor CIF
-			listCell = new Listcell();
-			listCell.setId("Reference".concat(String.valueOf(i)));
-			listCell.appendChild(new Label(vrf.getCif()));
-			listCell.setParent(item);
-
-			//Dipositor Name
-			listCell = new Listcell(vrf.getCustomerName());
-			listCell.setParent(item);
-
-			//Collateral Reference
+			//Document Name
 			listCell = new Listcell();
 			listCell.setId("ReferenceFor".concat(String.valueOf(i)));
-			listCell.appendChild(new Label(vrf.getReferenceFor()));
+			listCell.appendChild(new Label(vrf.getDocName()));
 			listCell.setParent(item);
 
-			//TV
+			//RCU
 			listCell = new Listcell();
 			listCell.setId("RequestType".concat(String.valueOf(i)));
 			Combobox requestType = new Combobox();
@@ -413,7 +465,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
-				
+
 				List<ValueLabel> decisionList = new ArrayList<>();
 				if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()
 						|| vrf.getStatus() == Status.POSITIVE.getKey()) {
@@ -437,7 +489,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 				decision.setParent(listCell);
 				listCell.setParent(item);
-				
+
 				//Re-Initiation Agency
 				listCell = new Listcell();
 				listCell.setId("ReInitAgency".concat(String.valueOf(i)));
@@ -464,10 +516,12 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			onchangeVerificationType(requestType, agency, reason);
 
-			String key = vrf.getReferenceFor().concat(vrf.getCif());
-			item.setAttribute(key, vrf);
+			/*
+			 * String key = vrf.getReferenceFor().concat(vrf.getCif()); item.setAttribute(key, vrf);
+			 */
 
-			this.listBoxTechnicalVerification.appendChild(item);
+			item.setAttribute("vrf", vrf);
+			this.listBoxRCUVerification.appendChild(item);
 
 			if (!initType) {
 				requestType.setDisabled(true);
@@ -475,8 +529,17 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				reason.setReadonly(true);
 				remarks.setReadonly(true);
 			}
+			docTypes.add(vrf.getDocType());
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private List<RCUDocument> getDocuments() {
+		Search search = new Search(RCUDocument.class);
+		search.addTabelName("verification_rcu_doc_view");
+		search.addFilter(new Filter("FinReference", this.verification.getKeyReference()));
+
+		return searchProcessor.getResults(search);
 	}
 
 	private List<ValueLabel> filterDecisions(List<ValueLabel> list) {
@@ -503,9 +566,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		agency.setValueColumn("DealerName");
 		agency.setValidateColumns(new String[] { "DealerName" });
 		Filter agencyFilter[] = new Filter[1];
-		agencyFilter[0] = new Filter("DealerType", Agencies.TVAGENCY.getKey(), Filter.OP_EQUAL);
+		agencyFilter[0] = new Filter("DealerType", Agencies.RCUVAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -516,7 +579,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		reason.setValueColumn("Code");
 		reason.setValidateColumns(new String[] { "Code" });
 		Filter reasonFilter[] = new Filter[1];
-		reasonFilter[0] = new Filter("ReasonTypecode", WaiverReasons.TVWRES.getKey(), Filter.OP_EQUAL);
+		reasonFilter[0] = new Filter("ReasonTypecode", WaiverReasons.RCUWRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
 
 		logger.debug(Literal.LEAVING);
@@ -527,7 +590,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 */
 	@Override
 	protected void doClearMessage() {
-		for (Listitem listitem : listBoxTechnicalVerification.getItems()) {
+		for (Listitem listitem : listBoxRCUVerification.getItems()) {
 			Combobox fivComboBox = (Combobox) getComponent(listitem, "RequestType");
 			ExtendedCombobox agencyComboBox = (ExtendedCombobox) getComponent(listitem, "Agency");
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
@@ -541,7 +604,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (decision != null) {
 				decision.clearErrorMessage();
 			}
-			if(reInitagencyComboBox !=null){
+			if (reInitagencyComboBox != null) {
 				reInitagencyComboBox.clearErrorMessage();
 			}
 		}
@@ -554,43 +617,38 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		for (Listitem listitem : listBoxTechnicalVerification.getItems()) {
-			Combobox tvComboBox = (Combobox) getComponent(listitem, "RequestType");
+		for (Listitem listitem : listBoxRCUVerification.getItems()) {
+			Combobox rcuComboBox = (Combobox) getComponent(listitem, "RequestType");
 			ExtendedCombobox agencyComboBox = (ExtendedCombobox) getComponent(listitem, "Agency");
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
 			ExtendedCombobox reInitAgencyComboBox = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 
-			if (!tvComboBox.isDisabled()) {
-				tvComboBox.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_TechnicalVerificationDialog_TV.value"), null, true));
+			if (!rcuComboBox.isDisabled()) {
+				rcuComboBox.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_RCUVerificationDialog_RCU.value"), null, true));
 			}
 
 			if (!agencyComboBox.isReadonly()) {
 				agencyComboBox.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_TechnicalVerificationDialog_Agency.value"), null, true, true));
+						Labels.getLabel("label_RCUVerificationDialog_Agency.value"), null, true, true));
 			}
 
 			if (!reasonComboBox.isReadonly()) {
 				reasonComboBox.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_TechnicalVerificationDialog_Reason.value"), null, true, true));
+						Labels.getLabel("label_RCUVerificationDialog_Reason.value"), null, true, true));
 			}
-			
+
 			if (!initType && !reInitAgencyComboBox.isReadonly()) {
 				reInitAgencyComboBox.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_TechnicalVerificationDialog_Agency.value"), null, true, true));
+						Labels.getLabel("label_RCUVerificationDialog_Agency.value"), null, true, true));
 			}
 		}
 		logger.debug("Leaving");
 	}
 
 	private void setValue(Listitem listitem, String comonentId) {
-		Verification verification = null;
-		String referenceFor = ((Label) getComponent(listitem, "ReferenceFor")).getValue();
-		String reference = ((Label) getComponent(listitem, "Reference")).getValue();
 
-		String key = referenceFor.concat(reference);
-
-		verification = (Verification) listitem.getAttribute(key);
+		Verification verification = (Verification) listitem.getAttribute("vrf");
 
 		switch (comonentId) {
 		case "RequestType":
@@ -659,7 +717,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		for (Listitem listitem : listBoxTechnicalVerification.getItems()) {
+		for (Listitem listitem : listBoxRCUVerification.getItems()) {
 			try {
 				setValue(listitem, "RequestType");
 			} catch (WrongValueException we) {
@@ -705,7 +763,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 
 		setValidationOn(false);
-		for (Listitem listitem : listBoxTechnicalVerification.getItems()) {
+		for (Listitem listitem : listBoxRCUVerification.getItems()) {
 			Combobox fivComboBox = (Combobox) getComponent(listitem, "RequestType");
 			ExtendedCombobox agencyComboBox = (ExtendedCombobox) getComponent(listitem, "Agency");
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
@@ -724,7 +782,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 
 	}
-	
+
 	private void fillComboBox(Combobox combobox, int value, List<ValueLabel> list) {
 		combobox.getChildren().clear();
 		for (ValueLabel valueLabel : list) {

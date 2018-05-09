@@ -862,17 +862,17 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 
 	@Override
 	public List<Long> getLegalVerficationIds(List<Verification> verifications, String keyRef) {
-		List<Long> fiIds = new ArrayList<>();
+		List<Long> lvIds = new ArrayList<>();
 		List<LegalVerification> fiList = legalVerificationDAO.getList(keyRef);
 		for (LegalVerification lv : fiList) {
 			for (Verification verification : verifications) {
 				if (lv.getVerificationId() == verification.getId()) {
-					fiIds.add(verification.getId());
+					lvIds.add(verification.getId());
 				}
 			}
 
 		}
-		return fiIds;
+		return lvIds;
 	}
 
 	@Override

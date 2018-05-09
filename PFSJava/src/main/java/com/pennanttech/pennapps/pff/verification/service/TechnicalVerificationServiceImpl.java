@@ -658,17 +658,17 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 
 	@Override
 	public List<Long> getTechnicalVerificaationIds(List<Verification> verifications, String keyRef) {
-		List<Long> fiIds = new ArrayList<>();
+		List<Long> tvIds = new ArrayList<>();
 		List<TechnicalVerification> tvList = technicalVerificationDAO.getList(keyRef);
 		for (TechnicalVerification technicalVerification : tvList) {
 			for (Verification Verification : verifications) {
 				if (technicalVerification.getVerificationId() == Verification.getId()) {
-					fiIds.add(Verification.getId());
+					tvIds.add(Verification.getId());
 				}
 			}
 
 		}
-		return fiIds;
+		return tvIds;
 	}
 
 	@Override

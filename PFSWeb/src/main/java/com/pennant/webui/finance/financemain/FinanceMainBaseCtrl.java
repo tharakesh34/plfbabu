@@ -309,6 +309,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
 import com.pennanttech.webui.verification.LVerificationCtrl;
+import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 import com.pennanttech.webui.verification.TVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
 
@@ -784,6 +785,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient FieldVerificationDialogCtrl			fieldVerificationDialogCtrl;
 	private transient TVerificationDialogCtrl				tVerificationDialogCtrl;
 	private transient LVerificationCtrl						lVerificationCtrl;
+	private transient RCUVerificationDialogCtrl				rcuVerificationDialogCtrl;
 	
 	private transient FinBasicDetailsCtrl					finBasicDetailsCtrl;
 	private transient CustomerInterfaceService				customerInterfaceService;
@@ -1545,6 +1547,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		
 		//LV Initiation Tab
 		appendLVApprovalTab(onLoad);
+
+		//RCU Initiation Tab
+		appendRCUInitiationTab(onLoad);
 				
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
 
@@ -16573,6 +16578,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.lVerificationCtrl = lVerificationCtrl;
 	}
 
+	public RCUVerificationDialogCtrl getRcuVerificationDialogCtrl() {
+		return rcuVerificationDialogCtrl;
+	}
+
+	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
+		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
+	}
+
 	/**
 	 * Method for Rendering FIV Initiation Data in finance
 	 */
@@ -16813,7 +16826,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	/**
-	 * Method for Rendering LV Initiation Data in finance
+	 * Method for Rendering LV Approval Data in finance
 	 */
 	protected void appendLVApprovalTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
@@ -16842,6 +16855,40 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	
+	/**
+	 * Method for Rendering RCU Initiation Data in finance
+	 */
+	protected void appendRCUInitiationTab(boolean onLoadProcess) {
+		logger.debug(Literal.ENTERING);
+		boolean createTab = false;
+		if (!getFinanceDetail().isRcuInitTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_RCUINITIATION) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_RCUINITIATION, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_RCUINITIATION);
+		}
+		if (getFinanceDetail().isRcuInitTab() && !onLoadProcess) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			if (financeDetail.getRcuVerification() == null) {
+				financeDetail.setRcuVerification(new Verification());
+			}
+			map.put("financeMainBaseCtrl", this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("verification", financeDetail.getRcuVerification());
+			map.put("financeDetail", financeDetail);
+			map.put("InitType", true);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUInitiation.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_RCUINITIATION), map);
+		}
+		logger.debug(Literal.LEAVING);
+	}
 	
 	public void setCustomerBankInfoService(CustomerBankInfoService customerBankInfoService) {
 		this.customerBankInfoService = customerBankInfoService;

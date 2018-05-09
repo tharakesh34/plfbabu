@@ -1,5 +1,6 @@
 package com.pennanttech.pennapps.pff.verification.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -247,5 +248,33 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		logger.debug(Literal.LEAVING);
 		
 	}
+	
+	@Override
+	public List<RiskContainmentUnit> getList(String keyReference) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("select * From verification_rcu_view");
+		sql.append(" Where keyreference = :keyreference");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("keyreference", keyReference);
+
+		RowMapper<RiskContainmentUnit> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(RiskContainmentUnit.class);
+
+		try {
+			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
+
 
 }

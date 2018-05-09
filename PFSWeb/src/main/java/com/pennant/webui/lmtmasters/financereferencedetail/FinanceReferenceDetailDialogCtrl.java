@@ -1139,6 +1139,10 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 				FinanceConstants.PROCEDT_VERIFICATION_LV_APPR, VerificationType.LV)) {
 			return;
 		}
+		if (!validateStages(FinanceConstants.PROCEDT_VERIFICATION_RCU_INIT,
+				FinanceConstants.PROCEDT_VERIFICATION_RCU_APPR, VerificationType.RCU)) {
+			return;
+		}
 		final FinanceReferenceDetail aFinanceReferenceDetail = new FinanceReferenceDetail();
 		List<Listitem> items = new ArrayList<Listitem>();
 		items.addAll(this.listBoxFinanceCheckList.getItems());

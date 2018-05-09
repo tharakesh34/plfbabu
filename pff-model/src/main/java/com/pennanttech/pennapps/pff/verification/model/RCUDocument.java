@@ -1,3 +1,4 @@
+
 package com.pennanttech.pennapps.pff.verification.model;
 
 import java.util.HashSet;
@@ -26,13 +27,42 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	private String description;
 	private boolean rcuReq;
 	private String docType;
+	private int docTypeId;
 	private String docName;
+	private String collateralRef;
 	private boolean newRecord = false;
+
+	private LoggedInUser userDetails;
+	private Verification befImage;
+
+	public RCUDocument() {
+		super();
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("code");
+		excludeFields.add("rcuReq");
+		excludeFields.add("docType");
+		excludeFields.add("docRefId");
+		excludeFields.add("docUri");
+		excludeFields.add("docName");
+		excludeFields.add("id");
+		excludeFields.add("docCategory");
+		excludeFields.add("docName");
+		excludeFields.add("docUri");
+		excludeFields.add("docModule");
+		excludeFields.add("docRefID");
+		excludeFields.add("description");
+		excludeFields.add("collateralRef");
+		excludeFields.add("docTypeId");
+		return excludeFields;
+	}
 
 	public boolean isNew() {
 		return isNewRecord();
 	}
-	
+
 	public long getRcuId() {
 		return rcuId;
 	}
@@ -161,6 +191,14 @@ public class RCUDocument extends AbstractWorkflowEntity {
 		this.docType = docType;
 	}
 
+	public int getDocTypeId() {
+		return docTypeId;
+	}
+
+	public void setDocTypeId(int docTypeId) {
+		this.docTypeId = docTypeId;
+	}
+
 	public String getDocName() {
 		return docName;
 	}
@@ -193,30 +231,12 @@ public class RCUDocument extends AbstractWorkflowEntity {
 		this.befImage = befImage;
 	}
 
-	private LoggedInUser userDetails;
-	private Verification befImage;
-
-	public RCUDocument() {
-		super();
+	public String getCollateralRef() {
+		return collateralRef;
 	}
 
-	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<>();
-		excludeFields.add("code");
-		excludeFields.add("rcuReq");
-		excludeFields.add("docType");
-		excludeFields.add("docRefId");
-		excludeFields.add("docUri");
-		excludeFields.add("docName");
-		excludeFields.add("id");
-		excludeFields.add("docCategory");
-		excludeFields.add("docName");
-		excludeFields.add("docUri");
-		excludeFields.add("docModule");
-		excludeFields.add("docRefID");
-
-		excludeFields.add("description");
-		return excludeFields;
+	public void setCollateralRef(String collateralRef) {
+		this.collateralRef = collateralRef;
 	}
 
 }

@@ -92,6 +92,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private TechnicalVerificationService technicalVerificationService;
 	@Autowired
 	private LegalVerificationService legalVerificationService;
+	@Autowired
+	private RiskContainmentUnitService riskContainmentUnitService;
 
 	public List<AuditDetail> saveOrUpdate(Verification verification, String tableType, String auditTranType,
 			boolean isInitTab) {
@@ -115,6 +117,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					verification.getKeyReference());
 		} else if (verificationType == VerificationType.LV) {
 			idList = legalVerificationService.getLegalVerficationIds(verification.getVerifications(),
+					verification.getKeyReference());
+		} else if (verificationType == VerificationType.RCU) {
+			idList = riskContainmentUnitService.getRCUVerificaationIds(verification.getVerifications(),
 					verification.getKeyReference());
 		}
 
@@ -192,6 +197,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					} else if (verificationType == VerificationType.TV) {
 						saveTV(collateralSetupList, item);
 					} else if (verificationType == VerificationType.LV) {
+						saveLV(item);
+					}else if (verificationType == VerificationType.RCU) {
 						saveLV(item);
 					}
 				} else {
@@ -277,8 +284,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 	private void saveTV(List<CollateralSetup> collateralSetupList, Verification item) {
 		if (item.getTechnicalVerification() == null) {
-			for (CollateralSetup ollateralSetup : collateralSetupList) {
-				technicalVerificationService.save(ollateralSetup, item);
+			for (CollateralSetup collateralSetup : collateralSetupList) {
+				technicalVerificationService.save(collateralSetup, item);
 			}
 		} else if (item.getRequestType() == RequestType.INITIATE.getKey()) {
 			item.getTechnicalVerification().setVerificationId(item.getId());
@@ -291,6 +298,12 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
 			legalVerificationService.save(item, TableType.TEMP_TAB);
 			legalVerificationService.saveDocuments(item.getLegalVerification().getLvDocuments(), TableType.TEMP_TAB);
+		}
+	}
+	
+	private void saveRCU(Verification item) {
+		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
+			riskContainmentUnitService.save(item, TableType.TEMP_TAB);
 		}
 	}
 
