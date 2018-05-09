@@ -1743,11 +1743,13 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 					return errorDetails;
 				}
-				if(StringUtils.isBlank(mandate.getBarCodeNumber())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "BarCodeNumber";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					 return errorDetails;
+				if(!ImplementationConstants.CLIENT_NFL) {
+					if(StringUtils.isBlank(mandate.getBarCodeNumber())) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "BarCodeNumber";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+						return errorDetails;
+					}
 				}
 				if (mandate.getAccNumber().length() > 50) {
 					String[] valueParm = new String[2];
@@ -1785,14 +1787,16 @@ public class FinanceDataValidation {
 				}
 
 				//barcode
-				Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_BARCODE_NUMBER));
-				Matcher matcher = pattern.matcher(mandate.getBarCodeNumber());
-				
-				if (matcher.matches() == false) {
-					String[] valueParm = new String[1];
-					valueParm[0] = mandate.getBarCodeNumber();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("barCodeNumber", "90404", valueParm, valueParm)));
-					return errorDetails;
+				if(StringUtils.isNotBlank(mandate.getBarCodeNumber())) {
+					Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_BARCODE_NUMBER));
+					Matcher matcher = pattern.matcher(mandate.getBarCodeNumber());
+					
+					if (matcher.matches() == false) {
+						String[] valueParm = new String[1];
+						valueParm[0] = mandate.getBarCodeNumber();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("barCodeNumber", "90404", valueParm, valueParm)));
+						return errorDetails;
+					}
 				}
 				if(mandate.getMaxLimit() == null) {
 					String[] valueParm = new String[1];

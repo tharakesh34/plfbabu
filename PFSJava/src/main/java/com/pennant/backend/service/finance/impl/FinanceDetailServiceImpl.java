@@ -2512,11 +2512,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			//Extended field Details
+			String event = null;
+			if(financeDetail.getExtendedFieldHeader() != null) {
+				event = financeDetail.getExtendedFieldHeader().getEvent();
+			}
 			if (financeDetail.getExtendedFieldRender() != null) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-						ExtendedFieldConstants.MODULE_LOAN, financeDetail.getExtendedFieldHeader().getEvent(),
-						tableType.getSuffix());
+						ExtendedFieldConstants.MODULE_LOAN, event, tableType.getSuffix());
 				if(details != null && !details.isEmpty()) {
 					auditDetails.addAll(details);
 				}
