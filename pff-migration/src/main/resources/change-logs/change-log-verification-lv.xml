@@ -228,7 +228,7 @@
 		<comment> Renaming column because it is a keyword </comment>
 		<renameColumn tableName="verification_lv_temp" oldColumnName="Date" newColumnName="IntitatedDate"/>
 	</changeSet>	
-	<changeSet id="3.0" author="Durgaprasad G"dbms="oracle">
+	<changeSet id="3.0" author="Durgaprasad G" dbms="oracle">
 		<createView viewName="verification_lv_view" replaceIfExists="true">	
 			select  * from (
 			select 
@@ -318,7 +318,7 @@
 			) t
 		 </createView>
 	</changeSet>
-	<changeSet id="3.0" author="Durgaprasad G"dbms="postgresql">
+	<changeSet id="3.0" author="Durgaprasad G" dbms="postgresql">
 		<createView viewName="verification_lv_view" replaceIfExists="true">	
 			select  * from (
 			select 
