@@ -909,6 +909,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	@Autowired
 	private CollateralSetupDAO								collateralSetupDAO;
 	private String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
+	private String isCreditRevTabReq = SysParamUtil.getValueAsString(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ);
 	/**
 	 * default constructor.<br>
 	 */
@@ -1668,7 +1669,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		appendStageAccountingDetailsTab(onLoad);
 		
 		//Credit Review Tab
-		appendCreditReviewDetailTab(false);
+		if(StringUtils.equals(isCreditRevTabReq,PennantConstants.YES)){
+			appendCreditReviewDetailTab(false);
+		}
 		
 		//Etihad Credit Bureau Detail Tab Addition
 		if (ImplementationConstants.ALLOW_CREDITBUREAU && StringUtils.isEmpty(moduleDefiner)
@@ -14777,8 +14780,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		appendStageAccountingDetailsTab(false);
 		
 		//Credit Review Details
-		if(customer.getCustID() != 0){
-			appendCreditReviewDetailTab(false);
+		if(StringUtils.equals(isCreditRevTabReq,PennantConstants.YES)){
+			if(customer.getCustID() != 0){
+				appendCreditReviewDetailTab(false);
+			}
 		}
 
 		logger.debug("Leaving");
