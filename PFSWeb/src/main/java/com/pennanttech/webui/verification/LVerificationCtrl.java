@@ -397,6 +397,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		arg.put("verification", vrf);
 		arg.put("legalVerificationListCtrl", this);
 		arg.put("financeDetail", financeDetail);
+		arg.put("financeMainBaseCtrl", this.financeMainDialogCtrl);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVInitiationDialog.zul", null,
@@ -590,6 +591,8 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		}
 
 		doRemoveValidation();
+		
+		//this.verification.setKeyReference(financeMainDialogCtrl.getFinanceDetail().getFinReference());
 
 		logger.debug("Leaving");
 		return wve;
@@ -661,7 +664,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			for (LegalVerification lv : lvList) {
 				if (vrf.getId() == lv.getVerificationId()) {
 					vrf.setLegalVerification(lv);
-					vrf.setLvDocuments(legalVerificationService.getLVDocuments(lv.getId()));
+					vrf.setLvDocuments(legalVerificationService.getLVDocuments(vrf.getId()));
 					break;
 				}
 			}

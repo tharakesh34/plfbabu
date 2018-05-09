@@ -18,7 +18,7 @@ public interface LegalVerificationDAO extends BasicCrudDao<LegalVerification> {
 	 *            The type of the table.
 	 * @return LegalVerification
 	 */
-	LegalVerification getLegalVerification(long id, long documetId, String documentSubId, String type);
+	LegalVerification getLegalVerification(long verificationId, String type);
 
 	List<LVDocument> getLVDocuments(long id, String type);
 
@@ -38,7 +38,7 @@ public interface LegalVerificationDAO extends BasicCrudDao<LegalVerification> {
 
 	void deleteLVDocumentsList(List<LVDocument> documents, String tableType);
 
-	String saveLV(LegalVerification legalVerification, TableType tableType);
+	void saveLV(LegalVerification legalVerification, TableType tableType);
 
 	void saveDocuments(LVDocument lvDocument, String tableType);
 

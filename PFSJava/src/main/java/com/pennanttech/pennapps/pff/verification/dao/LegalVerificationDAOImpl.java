@@ -18,8 +18,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -74,7 +72,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 	}
 
-	public String saveLV(LegalVerification legalVerification, TableType tableType) {
+	public void saveLV(LegalVerification legalVerification, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -98,7 +96,6 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		}
 
 		logger.debug(Literal.LEAVING);
-		return String.valueOf(legalVerification.getId());
 	}
 
 	@Override
@@ -158,13 +155,13 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 	}
 
 	@Override
-	public LegalVerification getLegalVerification(long verificationId, long documetId, String documentSubId, String type) {
+	public LegalVerification getLegalVerification(long verificationId, String type) {
 		// FIXME Murthy
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
 
-		sql.append(" Select verificationid, agentCode, agentName,  verificationDate, status, reason, documentId,");
+		sql.append(" Select verificationid, agentCode, agentName,  verificationDate, status, reason");
 		sql.append(" remarks, verificationFormName,");
 		if (type.contains("View")) {
 			sql.append(" cif, custid, custName, keyReference, collateralType, referencefor, createdon, ");
@@ -174,17 +171,13 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" FROM  Verification_lv");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where verificationId = :verificationId and documentId = :documentId");
-		if (documentSubId != null) {
-			sql.append(" and documentSubId = :documentSubId");
-		}
+		sql.append(" Where verificationId = :verificationId");
+		
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
 		source.addValue("verificationId", verificationId);
-		source.addValue("documentId", documetId);
-		source.addValue("documentSubId", documentSubId);
-
+		
 		RowMapper<LegalVerification> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(LegalVerification.class);
 		try {
@@ -205,7 +198,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 		source = new MapSqlParameterSource();
-		source.addValue("id", verificationId);
+		source.addValue("verificationId", verificationId);
 
 		try {
 			int recordCount = jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
@@ -243,7 +236,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				LVDocument document = lvDocuments.get(i);
-				ps.setLong(1, document.getverificationId());
+				ps.setLong(1, document.getVerificationId());
 				if (tableType == TableType.MAIN_TAB) {
 					ps.setInt(2, i + 1);
 				} else {
@@ -282,7 +275,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from verification_lv_details_stage");
 		sql.append(tableType.getSuffix());
-		sql.append(" where verificationId in (select verificationId from verifications where referenceFor=:referenceFor)) ");
+		sql.append(" where verificationId in (select id from verifications where referenceFor=:referenceFor)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -354,8 +347,8 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		sql.append(" documentId ");
 		sql.append(QueryUtil.getQueryConcat());
 		sql.append(" COALESCE(documentSubId,'') documentId");
-		sql.append(" from verification_lv_details_stage verificationId in (");
-		sql.append(" select verificationId from verifications where keyReference=:keyReference))");
+		sql.append(" from verification_lv_details_stage where verificationId in (");
+		sql.append(" select id from verifications where keyReference=:keyReference)");
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("keyReference", keyReference);

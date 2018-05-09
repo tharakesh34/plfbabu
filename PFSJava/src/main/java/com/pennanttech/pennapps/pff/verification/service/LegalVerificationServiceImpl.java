@@ -90,9 +90,9 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 		}
 
 		if (lv.isNew()) {
-			lv.setId(Long.parseLong(legalVerificationDAO.save(lv, tableType)));
+			legalVerificationDAO.save(lv, tableType);
 			auditHeader.getAuditDetail().setModelData(lv);
-			auditHeader.setAuditReference(String.valueOf(lv.getId()));
+			auditHeader.setAuditReference(String.valueOf(lv.getVerificationId()));
 		} else {
 			legalVerificationDAO.update(lv, tableType);
 		}
@@ -132,10 +132,9 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 
 	@Override
 	public LegalVerification getLegalVerification(LegalVerification lv) {
-		LegalVerification legalVerification = legalVerificationDAO.getLegalVerification(lv.getId(), lv.getDocumentId(), lv.getDocumentSubId(),
-				"_View");
+		LegalVerification legalVerification = legalVerificationDAO.getLegalVerification(lv.getVerificationId(), "_View");
 		if (legalVerification != null) {
-			List<LVDocument> lvDocuments = legalVerificationDAO.getLVDocuments(lv.getId(), "_View");
+			List<LVDocument> lvDocuments = legalVerificationDAO.getLVDocuments(lv.getVerificationId(), "_View");
 			legalVerification.setLvDocuments(lvDocuments);
 			
 			// LV Document Details
@@ -151,8 +150,8 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	}
 
 	@Override
-	public LegalVerification getApprovedLegalVerification(long id, long documnetId, String documnetSubId) {
-		return legalVerificationDAO.getLegalVerification(id, documnetId, documnetSubId, "_AView");
+	public LegalVerification getApprovedLegalVerification(long verificationId, String documnetSubId) {
+		return legalVerificationDAO.getLegalVerification(verificationId, "_AView");
 	}
 
 	@Override
@@ -219,7 +218,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(lv.getRecordType())) {
 			auditHeader.getAuditDetail()
-					.setBefImage(legalVerificationDAO.getLegalVerification(lv.getId(),lv.getDocumentId(),lv.getDocumentSubId(), TableType.MAIN_TAB.getSuffix()));
+					.setBefImage(legalVerificationDAO.getLegalVerification(lv.getVerificationId(), TableType.MAIN_TAB.getSuffix()));
 		}
 
 		if (lv.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -239,7 +238,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 			} else {
 				lv.setRecordType("");
 				legalVerificationDAO.update(lv, TableType.MAIN_TAB);
-				verificationDAO.updateVerifiaction(lv.getId(), lv.getVerificationDate(), lv.getStatus());
+				verificationDAO.updateVerifiaction(lv.getVerificationId(), lv.getVerificationDate(), lv.getStatus());
 			}
 
 			// Extended field Details
@@ -787,10 +786,10 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	}
 
 	@Override
-	public long save(Verification verification, TableType tableType) {
+	public void save(Verification verification, TableType tableType) {
 		setLvFields(verification);
 		setLVDocumentWorkFlowFields(verification.getLegalVerification());
-		return Long.parseLong(legalVerificationDAO.save(verification.getLegalVerification(), tableType));
+		legalVerificationDAO.save(verification.getLegalVerification(), tableType);
 	}
 
 	private void setLVDocumentWorkFlowFields(LegalVerification legalVerification) {

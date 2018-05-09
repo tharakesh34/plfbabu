@@ -56,6 +56,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private boolean approveTab;
 	private int docType;
 	private String docName;
+	private RCUDocument rcuDocument;
 
 	private String cif;
 	private String customerName;
@@ -63,6 +64,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private String agencyCity;
 	private String reasonName;
 	private List<LVDocument> lvDocuments = new ArrayList<>();
+	private List<RCUDocument> rcuDocuments = new ArrayList<>();
 
 	private List<Verification> verifications = new ArrayList<>();
 	private FieldInvestigation fieldInvestigation;
@@ -97,7 +99,6 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("reInitAgency");
 		excludeFields.add("reInitRemarks");
 		excludeFields.add("technicalVerification");
-		excludeFields.add("collaterals");
 		excludeFields.add("lvDocuments");
 		excludeFields.add("legalVerification");
 		excludeFields.add("agencyCity");
@@ -105,6 +106,8 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("docType");
 		excludeFields.add("docName");
 		excludeFields.add("rcuVerification");
+		excludeFields.add("rcuDocuments");
+		excludeFields.add("rcuDocument");
 		return excludeFields;
 	}
 
@@ -452,4 +455,21 @@ public class Verification extends AbstractWorkflowEntity {
 		this.rcuVerification = rcuVerification;
 	}
 
+	public List<RCUDocument> getRcuDocuments() {
+		return rcuDocuments;
+	}
+
+	public void setRcuDocuments(List<RCUDocument> rcuDocuments) {
+		this.rcuDocuments = rcuDocuments;
+	}
+
+	public RCUDocument getRcuDocument() {
+		return rcuDocument;
+	}
+
+	public void setRcuDocument(RCUDocument rcuDocument) {
+		this.rcuDocument = rcuDocument;
+	}
+
+	
 }

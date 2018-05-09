@@ -39,9 +39,9 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.CollateralHeaderDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.ScreenCTL;
 
 public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssignment> {
 	private static final long				serialVersionUID		= 1L;
@@ -70,6 +70,8 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	private List<CollateralAssignment>		collateralAssignments;
 	private CollateralSetupService 			collateralSetupService;
 	private FinanceTypeService 				financeTypeService;
+	
+	private List<String> assignCollateralRef;
 
 	public CollateralAssignmentDialogCtrl() {
 		super();
@@ -79,7 +81,8 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	protected void doSetProperties() {
 		super.pageRightName = "CollateralAssignmentDetailDialog";
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	public void onCreate$window_CollateralAssignmentDetailDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
@@ -106,7 +109,11 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			if (arguments.containsKey("customerId")) {
 				this.customerId = (long) arguments.get("customerId");
 			}
-
+			
+			if (arguments.containsKey("assignCollateralRef")) {
+				this.assignCollateralRef = (List<String>) arguments.get("assignCollateralRef");
+			}
+			
 			//collateralSetupCtrl
 			if (arguments.containsKey("collateralHeaderDialogCtrl")) {
 				setCollateralHeaderDialogCtrl((CollateralHeaderDialogCtrl) arguments.get("collateralHeaderDialogCtrl"));
@@ -843,6 +850,9 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			logger.error("Exception: ", e);
 			showMessage(e);
 		}
+		
+		
+		assignCollateralRef.add(aCollateralAssignment.getCollateralRef());
 		logger.debug("Leaving");
 	}
 

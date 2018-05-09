@@ -41,7 +41,7 @@ public class LegalVerificationListModelItemRender implements ListitemRenderer<Le
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(lv.getRecordType()));
 		lc.setParent(item);
-		item.setAttribute("id", lv.getId());
+
 		item.setAttribute("documentId", lv.getDocumentId());
 		item.setAttribute("documentSubId", lv.getDocumentSubId());
 		item.setAttribute("verificationId", lv.getVerificationId());

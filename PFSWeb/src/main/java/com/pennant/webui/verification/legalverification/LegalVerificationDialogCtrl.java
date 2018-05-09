@@ -988,7 +988,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ entity.getId();
+				+ entity.getVerificationId();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(entity.getRecordType()).equals("")) {
 				entity.setVersion(entity.getVersion() + 1);
@@ -1368,7 +1368,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 
 	@Override
 	protected String getReference() {
-		return String.valueOf(this.legalVerification.getId());
+		return String.valueOf(this.legalVerification.getVerificationId());
 	}
 
 	public LegalVerificationListCtrl getLegalVerificationListCtrl() {

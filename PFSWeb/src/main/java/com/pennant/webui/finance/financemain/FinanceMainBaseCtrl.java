@@ -910,6 +910,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private CollateralSetupDAO								collateralSetupDAO;
 	private String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
 	private String isCreditRevTabReq = SysParamUtil.getValueAsString(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ);
+	private List<String> assignCollateralRef = new ArrayList<>();
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -2498,6 +2500,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("assetsReq", true);
 				map.put("collateralReq", getFinanceDetail().getFinScheduleData().getFinanceType().isFinCollateralReq()
 						|| !getFinanceDetail().getCollateralAssignmentList().isEmpty());
+				
+				map.put("assignCollateralRef", assignCollateralRef);
 
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CollateralHeaderDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_COLLATERAL), map);
@@ -6229,11 +6233,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		
+		// LV Init Verification Detail
 		Tab lvInitTab = getTab(AssetConstants.UNIQUE_ID_LVINITIATION);
 		if (lvInitTab != null && lvInitTab.isVisible() && lVerificationCtrl != null) {
 			lVerificationCtrl.doSave_LVVerification(aFinanceDetail, lvInitTab);
 		}
 
+		// RCU Init Verification Detail
+		Tab rcuInitTab = getTab(AssetConstants.UNIQUE_ID_RCUINITIATION);
+		if ((rcuInitTab != null && rcuInitTab.isVisible()) && rcuVerificationDialogCtrl != null) {
+			rcuVerificationDialogCtrl.doSave_RcuVerification(aFinanceDetail, rcuInitTab, recSave);
+		}
 		
 		//Validation For Mandatory Recommendation
 		if (!doValidateRecommendation()) {
@@ -16951,5 +16961,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setCustomerExtLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
 		this.customerExtLiabilityService = customerExtLiabilityService;
 	}
-	
+
+	public List<String> getAssignCollateralRef() {
+		return assignCollateralRef;
+	}	
 }

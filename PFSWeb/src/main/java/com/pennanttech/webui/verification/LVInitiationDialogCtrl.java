@@ -78,6 +78,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -135,6 +136,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private String moduleType = "";
 	private StringBuilder collateralRefList = new StringBuilder();
 	private boolean initiation = false;
+	
+	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private FinanceDetail financeDetail;
 
 	@Autowired
@@ -186,7 +189,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (arguments.containsKey("initiation")) {
 				this.initiation = (boolean) arguments.get("initiation");
 			}
-
+			
 			if (arguments.containsKey("financeDetail")) {
 				this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 				if (!financeDetail.getCollateralAssignmentList().isEmpty()) {
@@ -198,6 +201,19 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 				}
 			}
+			
+			if (arguments.containsKey("financeMainBaseCtrl")) {
+				this.financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
+				
+				for (String collteralRef: financeMainDialogCtrl.getAssignCollateralRef()) {
+					if (collateralRefList.length() > 0) {
+						collateralRefList.append(", ");
+					}
+					collateralRefList.append("'" + collteralRef + "'");
+				}
+			}
+			
+			
 
 			if (getVerification().isNewRecord()) {
 				setNewRecord(true);
@@ -323,7 +339,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	/**
 	 * when the "edit" button is clicked. <br>
 	 * 
-	 * @param event
+	 * @param eventl
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -496,7 +512,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		Search search = new Search(LVDocument.class);
 		search.addTabelName("verification_legal_doc_view");
 		search.addFilter(new Filter("docType", docType));
-		search.addFilter(new Filter("FinReference", this.verification.getKeyReference()));
+		
 
 		if (collateralRef != null) {
 			search.addFilter(new Filter("collateralRef", collateralRef));

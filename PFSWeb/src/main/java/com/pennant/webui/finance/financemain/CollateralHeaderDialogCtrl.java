@@ -126,6 +126,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	private boolean 						collateralReq = true;
 	private String							moduleName;
 	private long							customerId;
+	private List<String> assignCollateralRef;
 	
 
 	/**
@@ -214,6 +215,10 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			
 			if (arguments.containsKey("customerId")) {
 				this.customerId = (long) arguments.get("customerId");
+			}
+			
+			if (arguments.containsKey("assignCollateralRef")) {
+				this.assignCollateralRef = (List<String>) arguments.get("assignCollateralRef");
 			}
 
 			doCheckRights();
@@ -332,6 +337,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		map.put("roleCode", this.roleCode);
 		map.put("newRecord", true);
 		map.put("collateralAssignment", assignment);
+		map.put("assignCollateralRef", assignCollateralRef);
 		map.put("finType", finType);
 		map.put("customerId", customerId);
 

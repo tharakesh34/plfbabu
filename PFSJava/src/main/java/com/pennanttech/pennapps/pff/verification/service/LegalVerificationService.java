@@ -15,7 +15,7 @@ public interface LegalVerificationService {
 
 	LegalVerification getLegalVerification(LegalVerification lv);
 
-	LegalVerification getApprovedLegalVerification(long id, long documetId, String documentSubId);
+	LegalVerification getApprovedLegalVerification(long verificationId, String documentSubId);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
@@ -23,7 +23,7 @@ public interface LegalVerificationService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	long save(Verification verification, TableType tableType);
+	void save(Verification verification, TableType tableType);
 
 	void saveDocuments(List<LVDocument> lvDocuments, TableType tableType);
 

@@ -3,6 +3,7 @@ package com.pennanttech.webui.verification;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
@@ -148,7 +149,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					|| (StringUtils.isNotBlank(document.getCollateralRef())
 							&& collateralRefList.contains(document.getCollateralRef()))) {
 				vrf = new Verification();
-				vrf.setReferenceFor(document.getDocumentId() + StringUtils.trimToEmpty(document.getDocumentSubId()));
+				vrf.setReferenceFor(StringUtils.trimToEmpty(document.getDocumentSubId()));
 				vrf.setDocName(document.getDescription());
 				vrf.setReferenceType(document.getCode());
 				vrf.setDocType(document.getDocTypeId());
@@ -156,12 +157,16 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				vrf.setCustId(verification.getCustId());
 				vrf.setModule(verification.getModule());
 				vrf.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
+				if (StringUtils.isNotBlank(document.getCollateralRef())) {
+					vrf.setReferenceFor(document.getCollateralRef());
+				}
 				//set RCU Required
 				if (document.isRcuReq()) {
 					vrf.setRequestType(RequestType.INITIATE.getKey());
 				} else {
 					vrf.setRequestType(RequestType.NOT_REQUIRED.getKey());
 				}
+				vrf.setRcuDocument(document);
 				this.verification.getVerifications().add(vrf);
 			}
 		}
@@ -339,7 +344,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 		Listgroup group;
 		Listcell cell;
-		List<Integer> docTypes = new ArrayList<>();
+		List<Integer> docTypes = DocumentType.getKeys();
 
 		this.verification = verification;
 
@@ -349,14 +354,24 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		int i = 0;
 		for (Verification vrf : verification.getVerifications()) {
+			if (docTypes.contains(vrf.getDocType())) {
 
-			if (!docTypes.contains(vrf.getDocType())) {
 				// Creating list group for DocType.
 				group = new Listgroup();
-				cell = new Listcell(DocumentType.getType(vrf.getDocType()).getValue());
+				if (vrf.getDocType() == DocumentType.CUSTOMER.getKey()) {
+					cell = new Listcell(DocumentType.getType(vrf.getDocType()).getValue() + ": "
+							+ verification.getReference() + " - " + verification.getCustomerName());
+				} else if (vrf.getDocType() == DocumentType.COLLATRL.getKey()) {
+					cell = new Listcell(
+							DocumentType.getType(vrf.getDocType()).getValue() + ": " + verification.getReferenceFor());
+				} else {
+					cell = new Listcell(
+							DocumentType.getType(vrf.getDocType()).getValue() + ": " + verification.getKeyReference());
+				}
 				cell.setStyle("font-weight:bold;");
 				group.appendChild(cell);
 				listBoxRCUVerification.appendChild(group);
+				docTypes.remove((Object) vrf.getDocType());
 			}
 
 			if (vrf.getReinitid() != null && vrf.getRequestType() == RequestType.WAIVE.getKey()) {
@@ -529,8 +544,23 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				reason.setReadonly(true);
 				remarks.setReadonly(true);
 			}
-			docTypes.add(vrf.getDocType());
 		}
+
+		// Creating empty list groups.
+		for (int docType : docTypes) {
+			group = new Listgroup();
+			cell = new Listcell(DocumentType.getType(docType).getValue());
+			cell.setStyle("font-weight:bold;");
+			group.appendChild(cell);
+			listBoxRCUVerification.appendChild(group);
+			Listitem item = new Listitem();
+			cell = new Listcell("No Records Available");
+			cell.setSpan(20);
+			cell.setStyle("text-align:center;");
+			item.appendChild(cell);
+			listBoxRCUVerification.appendChild(item);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -820,7 +850,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public void doSave_FiVerification(FinanceDetail financeDetail, Tab tab, boolean recSave)
+	public void doSave_RcuVerification(FinanceDetail financeDetail, Tab tab, boolean recSave)
 			throws InterruptedException {
 		logger.debug("Entering");
 
@@ -836,9 +866,33 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		showErrorDetails(wve, tab);
 
 		this.verification.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-		financeDetail.setTvVerification(this.verification);
+		financeDetail.setRcuVerification(this.verification);
 
 		logger.debug("Leaving");
+	}
+
+	private List<Verification> getVerifications() {
+		Map<Long, Verification> map = new HashMap<>();
+		List<Verification> verifications = new ArrayList<>();
+		Verification verification = null;
+
+		for (Verification vrf : this.verification.getVerifications()) {
+			if (vrf.getRequestType() != RequestType.INITIATE.getKey()) {
+				verifications.add(vrf);
+			}
+			if (!map.containsKey(vrf.getAgency())) {
+				map.put(vrf.getAgency(), vrf);
+			}
+		}
+
+		for (Verification vrf : this.verification.getVerifications()) {
+			if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
+				verification = map.get(vrf.getAgency());
+				verification.getRcuDocuments().add(vrf.getRcuDocument());
+			}
+		}
+		verifications.addAll(map.values());
+		return verifications;
 	}
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {

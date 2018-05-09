@@ -39,7 +39,7 @@ public enum DocumentType {
 	public String getValue() {
 		return value;
 	}
-	
+
 	public static DocumentType getType(Integer key) {
 		for (DocumentType type : values()) {
 			if (type.getKey() == key) {
@@ -49,7 +49,15 @@ public enum DocumentType {
 		return null;
 	}
 
-	public List<ValueLabel> getList() {
+	public static List<Integer> getKeys() {
+		List<Integer> list = new ArrayList<>();
+		for (DocumentType status : values()) {
+			list.add(new Integer(status.getKey()));
+		}
+		return list;
+	}
+
+	public static List<ValueLabel> getList() {
 		List<ValueLabel> list = new ArrayList<>();
 		for (DocumentType status : values()) {
 			list.add(new ValueLabel(String.valueOf(status.getKey()), status.getValue()));

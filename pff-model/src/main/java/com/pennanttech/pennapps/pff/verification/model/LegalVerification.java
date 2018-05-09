@@ -19,8 +19,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class LegalVerification extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	
-	private long id;
+
+	private long verificationId;
 	private String cif;
 	private String keyReference;
 	private String collateralType;
@@ -34,7 +34,6 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	private String remarks;
 	private String verificationFromName;
 
-	private long verificationId;
 	private String reasonCode;
 	private String reasonDesc;
 	private Long custId;
@@ -54,7 +53,7 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	private LegalVerification befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-	
+
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
@@ -65,7 +64,6 @@ public class LegalVerification extends AbstractWorkflowEntity {
 
 	public LegalVerification(long id) {
 		super();
-		this.setId(id);
 	}
 
 	public Set<String> getExcludeFields() {
@@ -91,14 +89,6 @@ public class LegalVerification extends AbstractWorkflowEntity {
 		excludeFields.add("documentSubId");
 
 		return excludeFields;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
 	}
 
 	public boolean isNew() {
@@ -316,7 +306,7 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	public void setDocuments(List<DocumentDetails> documents) {
 		this.documents = documents;
 	}
-		
+
 	public ExtendedFieldHeader getExtendedFieldHeader() {
 		return extendedFieldHeader;
 	}

@@ -167,7 +167,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 						} else if (verificationType == VerificationType.LV) {
 							saveLV(item);
 						} else if (verificationType == VerificationType.RCU) {
-							saveLV(item);
+							saveRCU(item);
 						}
 					}
 				}
@@ -266,13 +266,15 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		legalVerificationService.deleteDocuments(verification.getReferenceFor(), TableType.MAIN_TAB);
 
 		//Legal verification
-		long id = legalVerificationService.save(verification, TableType.MAIN_TAB);
+		legalVerificationService.save(verification, TableType.MAIN_TAB);
 
 		//LV Documents
-		for (LVDocument lvDocument : verification.getLvDocuments()) {
-			lvDocument.setLvId(id);
+		
+		for (LVDocument document : verification.getLvDocuments()) {
+			document.setVerificationId(verification.getLegalVerification().getVerificationId());
 		}
-
+		
+		
 		legalVerificationService.saveDocuments(verification.getLvDocuments(), TableType.MAIN_TAB);
 	}
 

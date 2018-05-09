@@ -24,7 +24,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class LVDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private long lvId = Long.MIN_VALUE;
+	private long verificationId = Long.MIN_VALUE;
 	private int seqNo;
 	private Long documentId;
 	private String documentSubId;
@@ -187,12 +187,12 @@ public class LVDocument extends AbstractWorkflowEntity {
 		this.docName = docName;
 	}
 
-	public long getLvId() {
-		return lvId;
+	public long getVerificationId() {
+		return verificationId;
 	}
 
-	public void setLvId(long lvId) {
-		this.lvId = lvId;
+	public void setVerificationId(long verificationId) {
+		this.verificationId = verificationId;
 	}
 
 	public Long getDocumentRefId() {

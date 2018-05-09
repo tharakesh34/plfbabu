@@ -113,10 +113,9 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 		// Register buttons and fields.label_LegalVerificationList_RecordType.value
 		registerButton(button_LegalVerificationList_LegalVerificationSearch);
 
-		registerField("id");
 		registerField("verificationId");
-		registerField("documentid");
-		registerField("documentsubid");
+		//registerField("documentid");
+		//registerField("documentsubid");
 		registerField("cif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
 		registerField("collateralType", listheader_CollateralType, SortOrder.ASC, collateralType, sortOperator_CollateralType, Operators.STRING);
 		registerField("referenceFor", listheader_CollateralReference, SortOrder.ASC, collateralReference, sortOperator_CollateralReference, Operators.STRING);
@@ -216,16 +215,10 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxLegalVerification.getSelectedItem();
-		final long id = (long) selectedItem.getAttribute("id");
-		final long documentId = (long) selectedItem.getAttribute("documentId");
-		final String documentSubId = (String) selectedItem.getAttribute("documentSubId");
 		final long verificationId = (long) selectedItem.getAttribute("verificationId");
 		
 		LegalVerification lv=new LegalVerification();
-		
-		lv.setId(id);
-		lv.setDocumentId(documentId);
-		lv.setDocumentSubId(documentSubId);
+	
 		lv.setVerificationId(verificationId);
 		lv = legalVerificationService.getLegalVerification(lv);
 
@@ -235,11 +228,12 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 		}
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(lv.getId());
+		whereCond.append("  AND  verificationId = ");
+		whereCond.append(lv.getVerificationId());
 		whereCond.append(" AND  version=");
 		whereCond.append(lv.getVersion());
 
+		
 		if (doCheckAuthority(lv, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && lv.getWorkflowId() == 0) {
