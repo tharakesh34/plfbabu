@@ -817,7 +817,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			this.balanceTenure.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_BalanceTenure.value"), true, false));
 		}
 		if (!this.noOfBounces.isDisabled()) {
-			this.noOfBounces.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_NoOfBounces.value"), true, false));
+			this.noOfBounces.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_NoOfBounces.value"), false, false));
 		}
 		if (!this.source.isReadonly()) {
 			this.source.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_Source.value"),null,true));
