@@ -275,6 +275,9 @@
 			<menuItem id="menu_Item_BlacklistCustomer"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/Blacklist/BlacklistCustomerList.zul"
 				rightName="menuItem_ApplicationMaster_BlacklistCustomer" />
+			<menuItem id="menu_Item_QueryCategory" 
+				zulNavigation="/WEB-INF/pages/LoanQuery/QueryCategory/QueryCategoryList.zul" 
+				rightName="menuItem_LoanQuery_QueryCategory"/>	
 			<menuItem id="menu_Item_ReasonCategory"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCategory/ReasonCategoryList.zul"
 				rightName="menuItem_ApplicationMaster_ReasonCategory" />

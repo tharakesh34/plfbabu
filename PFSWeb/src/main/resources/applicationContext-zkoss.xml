@@ -5282,5 +5282,15 @@
 	<bean id="authorizationLimitDialogCtrl" class="com.pennant.webui.authorization.authorizationlimit.AuthorizationLimitDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="authorizationLimitService" ref="authorizationLimitService"/>
 	</bean>
+
+	
+	<!-- QueryCategory -->
+	<bean id="queryCategoryListCtrl" class="com.pennant.webui.loanquery.querycategory.QueryCategoryListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="queryCategoryService" ref="queryCategoryService" />
+	</bean>
+	<bean id="queryCategoryDialogCtrl" class="com.pennant.webui.loanquery.querycategory.QueryCategoryDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="queryCategoryService" ref="queryCategoryService"/>
+	</bean>
 	
 </beans>

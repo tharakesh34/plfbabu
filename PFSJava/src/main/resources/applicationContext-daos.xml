@@ -11361,4 +11361,27 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
+	<!-- QueryCategory -->
+	<bean id="queryCategoryDAO" class="com.pennant.backend.dao.loanquery.impl.QueryCategoryDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="queryCategoryService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
+	   <property name="target"><ref bean="queryCategoryServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="queryCategoryServiceTarget" class="com.pennant.backend.service.loanquery.impl.QueryCategoryServiceImpl">
+       <property name="queryCategoryDAO" ref="queryCategoryDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+	
 </beans>

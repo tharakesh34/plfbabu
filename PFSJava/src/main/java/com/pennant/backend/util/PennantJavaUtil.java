@@ -280,6 +280,7 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.lmtmasters.ProcessEditorDetail;
+import com.pennant.backend.model.loanquery.QueryCategory;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
@@ -2256,6 +2257,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("EligibilityMethod", new ModuleMapping("EligibilityMethod", LovFieldDetail.class,
 				new String[] { "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeValue", "ValueDesc" },
 				new String[][] { { "FieldCode", "0", "ELGMETHOD" } }, 300));
+	
+		ModuleUtil.register("QueryCategory", new ModuleMapping("QueryCategory", QueryCategory.class, new String[] { "BMTQueryCategories",
+		"BMTQueryCategories_AView" }, masterWF, new String[] {"Code","Description","Active"},new Object[][] { { "Active", "0", 1 } }, 600));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {
