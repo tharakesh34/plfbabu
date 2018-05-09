@@ -55,18 +55,18 @@
 									<label id="label_LegalVerificationList_CIF" value="${c:l('label_LegalVerificationList_CIF.value')}" />
 									<listbox id="sortOperator_CIF" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="cif" width="155px" maxlength="19" />
-									<label id="label_LegalVerificationList_CollateralType" value="${c:l('label_LegalVerificationList_CollateralType.value')}" />
-									<listbox id="sortOperator_CollateralType" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id = "collateralType" width="155px" maxlength="20" />
-								</row>
-								
-								<row>
-									<label id="label_LegalVerificationList_CollateralReference" value="${c:l('label_LegalVerificationList_CollateralReference.value')}" />
-									<listbox id="sortOperator_CollateralReference" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id = "collateralReference" width="155px" maxlength="20" />
 									<label id="label_LegalVerificationList_LoanReference" value="${c:l('label_LegalVerificationList_LoanReference.value')}" />
 									<listbox id="sortOperator_LoanReference" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id = "loanReference" width="155px" maxlength="20" />
+								</row>
+								
+								<row>
+									<label id="label_LegalVerificationList_CollateralType" value="${c:l('label_LegalVerificationList_CollateralType.value')}" />
+									<listbox id="sortOperator_CollateralType" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<textbox id = "collateralType" width="155px" maxlength="20" />
+									<label id="label_LegalVerificationList_CollateralReference" value="${c:l('label_LegalVerificationList_CollateralReference.value')}" />
+									<listbox id="sortOperator_CollateralReference" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<textbox id = "collateralReference" width="155px" maxlength="20" />
 								</row>
 								
 								<row>

@@ -38,8 +38,11 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -72,6 +75,8 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	private VerificationDAO verificationDAO;
 	@Autowired
 	private AddressTypeDAO addressTypeDAO;
+	@Autowired
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
 	@Autowired
@@ -128,7 +133,19 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		} else {
 			fieldInvestigationDAO.update(fi, tableType);
 		}
-
+		// Extended field Details
+		if (fi.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = fi.getAuditDetailMap().get("ExtendedFieldDetails");
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(CollateralConstants.VERIFICATION_MODULE);
+			tableName.append("_");
+			tableName.append(fi.getExtendedFieldHeader().getSubModuleName());
+			tableName.append("_ED");
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details, tableName.toString(),
+					tableType.getSuffix());
+			auditDetails.addAll(details);
+		}
+		
 		// FI documents
 		if (fi.getDocuments() != null && !fi.getDocuments().isEmpty()) {
 			List<AuditDetail> details = fi.getAuditDetailMap().get("DocumentDetails");
@@ -396,6 +413,22 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 				fieldInvestigationDAO.update(fi, TableType.MAIN_TAB);
 				verificationDAO.updateVerifiaction(fi.getId(), fi.getDate(), fi.getStatus());
 			}
+			
+			// Extended field Details
+			if (fi.getExtendedFieldRender() != null) {
+				List<AuditDetail> details = fi.getAuditDetailMap().get("ExtendedFieldDetails");
+
+				// Table Name
+				StringBuilder tableName = new StringBuilder();
+				tableName.append(CollateralConstants.VERIFICATION_MODULE);
+				tableName.append("_");
+				tableName.append(fi.getExtendedFieldHeader().getSubModuleName());
+				tableName.append("_ed");
+
+				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details, tableName.toString(),
+						TableType.MAIN_TAB.getSuffix());
+				auditDetails.addAll(details);
+			}
 
 			// FI Document Details
 			List<DocumentDetails> documentsList = fi.getDocuments();
@@ -439,6 +472,19 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		logger.debug("Entering");
 
 		List<AuditDetail> auditList = new ArrayList<>();
+		
+		// Extended field Render Details.
+		List<AuditDetail> extendedDetails = fi.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (extendedDetails != null && !extendedDetails.isEmpty()) {
+			// Table Name
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(CollateralConstants.VERIFICATION_MODULE);
+			tableName.append("_");
+			tableName.append(fi.getExtendedFieldHeader().getSubModuleName());
+			tableName.append("_ED");
+			auditList.addAll(extendedFieldDetailsService.delete(fi.getExtendedFieldHeader(), String.valueOf(fi.getVerificationId()),
+					tableName.toString(), tableType, auditTranType, extendedDetails));
+		}
 
 		// Document Details.
 		List<AuditDetail> documentDetails = fi.getAuditDetailMap().get("DocumentDetails");
@@ -517,6 +563,21 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		auditHeader = getAuditDetails(auditHeader, method);
 		FieldInvestigation fieldInvestigation = (FieldInvestigation) auditDetail.getModelData();
 		String usrLanguage = fieldInvestigation.getUserDetails().getLanguage();
+		
+		// Extended field details Validation
+		if (fieldInvestigation.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = fieldInvestigation.getAuditDetailMap().get("ExtendedFieldDetails");
+			ExtendedFieldHeader extHeader = fieldInvestigation.getExtendedFieldHeader();
+
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(CollateralConstants.VERIFICATION_MODULE);
+			tableName.append("_");
+			tableName.append(extHeader.getSubModuleName());
+			tableName.append("_ED");
+
+			details = extendedFieldDetailsService.vaildateDetails(details, method, usrLanguage, tableName.toString());
+			auditDetails.addAll(details);
+		}
 
 		// FI Document details Validation
 		List<DocumentDetails> docuemnts = fieldInvestigation.getDocuments();
@@ -572,6 +633,13 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			if (fieldInvestigation.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
+		}
+		
+		// Extended Field Details
+		if (fieldInvestigation.getExtendedFieldRender() != null) {
+			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
+					.setExtendedFieldsAuditData(fieldInvestigation.getExtendedFieldRender(), auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
 		// FI Document Details

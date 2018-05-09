@@ -226,8 +226,7 @@
 														id="space_City" spacing="2px" />
 													<textbox id="city"
 														width="155px" readonly="true" />
-													<label
-														id="CityDesc"
+													<label id="CityDesc"
 														style="margin-left:10px;display:inline-block;padding-top:3px;" />
 												</hbox>
 												<label
@@ -263,10 +262,29 @@
 										</rows>
 									</grid>
 								</groupbox>
-								<groupbox id="gb_observations"
-									sclass="gb-dialog">
+
+								<!-- Observations -->
+								<groupbox sclass="gb-dialog">
 									<caption
 										label="${c:l('gb_Observations')}" />
+									<tabbox width="100%"
+										height="100%">
+										<tabs
+											style="width:0px;height:0px;border:none;">
+											<tab
+												style="background:none;padding:0px;height:0px;" />
+										</tabs>
+										<tabpanels>
+											<tabpanel
+												id="observationsFieldTabPanel" style="overflow:auto" />
+										</tabpanels>
+									</tabbox>
+								</groupbox>
+
+								<groupbox id="gb_summary"
+									sclass="gb-dialog">
+									<caption
+										label="${c:l('gb_Summary')}" />
 									<grid sclass="GridLayoutNoBorder"
 										fixedLayout="true" style="border:0px">
 										<columns>
@@ -285,136 +303,8 @@
 														id="space_VerificationDate" spacing="2px"
 														sclass="mandatory" />
 													<datebox
-														id="verificationDate" width="95px" />
+														id="verificationDate" width="155px" />
 												</hbox>
-												<label
-													id="label_VerificationType"
-													value="${c:l('label_FieldInvestigationDialog_VerificationType.value')}" />
-												<hbox>
-													<space
-														id="space_VerificationType" spacing="2px"
-														sclass="mandatory" />
-													<combobox
-														id="verificationType" width="155px" readonly="true" />
-												</hbox>
-											</row>
-											<row id="row9">
-												<label
-													id="label_YearsAtPresentAddress"
-													value="${c:l('label_FieldInvestigationDialog_YearsAtPresentAddress.value')}" />
-												<hbox>
-													<space
-														id="space_YearsAtPresentAddress" spacing="2px" />
-													<intbox
-														id="yearsAtPresentAddress" width="95px" />
-												</hbox>
-												<label
-													id="label_PersonMet"
-													value="${c:l('label_FieldInvestigationDialog_PersonMet.value')}" />
-												<hbox>
-													<space
-														id="space_PersonMet" spacing="2px" />
-													<textbox
-														id="personMet" width="155px" />
-												</hbox>
-											</row>
-											<row id="row10">
-												<label
-													id="label_OwnerShipStatus"
-													value="${c:l('label_FieldInvestigationDialog_OwnerShipStatus.value')}" />
-												<hbox>
-													<space
-														id="space_OwnerShipStatus" spacing="2px"
-														sclass="mandatory" />
-													<combobox
-														id="ownerShipStatus" width="155px" readonly="true" />
-												</hbox>
-												<label
-													id="label_RelationShip"
-													value="${c:l('label_FieldInvestigationDialog_RelationShip.value')}" />
-												<hbox>
-													<extendedcombobox
-														id="relationShip" />
-												</hbox>
-											</row>
-											<row id="row11">
-												<label
-													id="label_NeighbourhoodCheckFeedBack"
-													value="${c:l('label_FieldInvestigationDialog_NeighbourhoodCheck.value')}" />
-												<hbox>
-													<space
-														id="space_NeighbourhoodCheckFeedBack" spacing="2px" />
-													<combobox
-														id="neighbourhoodCheckFeedBack" width="155px"
-														readonly="true" />
-												</hbox>
-												<label
-													id="label_ContactNo"
-													value="${c:l('label_FieldInvestigationDialog_ContactNo.value')}" />
-												<hbox>
-													<space
-														id="space_ContactNo" spacing="2px" />
-													<textbox
-														id="contactNo" width="155px" />
-												</hbox>
-											</row>
-											<row id="row12">
-												<label
-													id="label_ObservationRemarks"
-													value="${c:l('label_FieldInvestigationDialog_Remarks.value')}" />
-												<hbox>
-													<space
-														id="space_Remarks" spacing="2px" />
-													<textbox
-														id="observationRemarks" width="155px" />
-												</hbox>
-												<label
-													id="label_LivingStandard"
-													value="${c:l('label_FieldInvestigationDialog_LivingStandard.value')}" />
-												<hbox>
-													<space
-														id="space_LivingStandard" spacing="2px" />
-													<combobox
-														id="livingStandard" width="155px" readonly="true" />
-												</hbox>
-											</row>
-											<row id="row13">
-												<label
-													id="label_NegativeCheck"
-													value="${c:l('label_FieldInvestigationDialog_NegativeCheck.value')}" />
-												<hbox>
-													<space
-														id="space_NegativeCheck" spacing="2px" />
-													<checkbox
-														id="negativeCheck" />
-												</hbox>
-												<label
-													id="label_NoOfAttempts"
-													value="${c:l('label_FieldInvestigationDialog_NoOfAttempts.value')}" />
-												<hbox>
-													<space
-														id="space_NoOfAttempts" spacing="2px" sclass="mandatory" />
-													<intbox
-														id="noOfAttempts" width="50px" />
-												</hbox>
-											</row>
-										</rows>
-									</grid>
-								</groupbox>
-								<groupbox id="gb_summary"
-									sclass="gb-dialog">
-									<caption
-										label="${c:l('gb_Summary')}" />
-									<grid sclass="GridLayoutNoBorder"
-										fixedLayout="true" style="border:0px">
-										<columns>
-											<column width="15%" />
-											<column width="35%" />
-											<column width="15%" />
-											<column width="35%" />
-										</columns>
-										<rows>
-											<row id="row14">
 												<label
 													id="label_AgentCode"
 													value="${c:l('label_FieldInvestigationDialog_AgentCode.value')}" />
@@ -424,6 +314,8 @@
 													<uppercasebox
 														id="agentCode" width="155px" />
 												</hbox>
+											</row>
+											<row id="row9">
 												<label
 													id="label_AgentName"
 													value="${c:l('label_FieldInvestigationDialog_AgentName.value')}" />
@@ -433,8 +325,6 @@
 													<textbox
 														id="agentName" width="155px" />
 												</hbox>
-											</row>
-											<row id="row15">
 												<label
 													id="label_Recommendations"
 													value="${c:l('label_FieldInvestigationDialog_Recommendations.value')}" />
@@ -445,6 +335,8 @@
 													<combobox
 														id="recommendations" width="155px" readonly="true" />
 												</hbox>
+											</row>
+											<row id="row10">
 												<label id="label_Reason"
 													value="${c:l('label_FieldInvestigationDialog_Reason.value')}" />
 												<hbox>
@@ -452,7 +344,7 @@
 														id="reason" />
 												</hbox>
 											</row>
-											<row id="row16">
+											<row id="row11">
 												<cell>
 													<label
 														id="label_summaryRemarks"

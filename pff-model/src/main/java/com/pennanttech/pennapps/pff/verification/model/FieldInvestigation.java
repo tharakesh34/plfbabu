@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -56,20 +58,7 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 	private String provinceDesc;
 	private String cityDesc;
 	
-
 	private Date date;
-	private int type;
-	private int yearsAtPresentAddress;
-	private String personMet;
-	private int ownershipStatus;
-	private String relationship;
-	private int neighbourhoodFeedBack;
-	private String contactNumber;
-	private String observationRemarks;
-	private int livingStandard;
-	private boolean negativeCheck;
-	private int noofAttempts;
-
 	private String agentCode;
 	private String agentName;
 	private int status;
@@ -94,6 +83,8 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 	private FieldInvestigation befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	private ExtendedFieldHeader extendedFieldHeader;
+	private ExtendedFieldRender extendedFieldRender;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	
 
@@ -123,6 +114,8 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 		excludeFields.add("countryDesc");
 		excludeFields.add("provinceDesc");
 		excludeFields.add("cityDesc");
+		excludeFields.add("extendedFieldHeader");
+		excludeFields.add("extendedFieldRender");
 		return excludeFields;
 	}
 
@@ -184,14 +177,6 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 
 	public void setReasonCode(String reasonCode) {
 		this.reasonCode = reasonCode;
-	}
-
-	public String getObservationRemarks() {
-		return observationRemarks;
-	}
-
-	public void setObservationRemarks(String observationRemarks) {
-		this.observationRemarks = observationRemarks;
 	}
 
 	public Date getDate() {
@@ -338,86 +323,6 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 		this.zipCode = zipCode;
 	}
 
-	public int getOwnershipStatus() {
-		return ownershipStatus;
-	}
-
-	public void setOwnershipStatus(int ownershipStatus) {
-		this.ownershipStatus = ownershipStatus;
-	}
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
-
-	public int getYearsAtPresentAddress() {
-		return yearsAtPresentAddress;
-	}
-
-	public void setYearsAtPresentAddress(int yearsAtPresentAddress) {
-		this.yearsAtPresentAddress = yearsAtPresentAddress;
-	}
-
-	public String getPersonMet() {
-		return personMet;
-	}
-
-	public void setPersonMet(String personMet) {
-		this.personMet = personMet;
-	}
-
-	public String getContactNumber() {
-		return contactNumber;
-	}
-
-	public void setContactNumber(String contactNumber) {
-		this.contactNumber = contactNumber;
-	}
-
-	public String getRelationship() {
-		return relationship;
-	}
-
-	public void setRelationship(String relationship) {
-		this.relationship = relationship;
-	}
-
-	public int getNeighbourhoodFeedBack() {
-		return neighbourhoodFeedBack;
-	}
-
-	public void setNeighbourhoodFeedBack(int neighbourhoodFeedBack) {
-		this.neighbourhoodFeedBack = neighbourhoodFeedBack;
-	}
-
-	public int getLivingStandard() {
-		return livingStandard;
-	}
-
-	public void setLivingStandard(int livingStandard) {
-		this.livingStandard = livingStandard;
-	}
-
-	public boolean isNegativeCheck() {
-		return negativeCheck;
-	}
-
-	public void setNegativeCheck(boolean negativeCheck) {
-		this.negativeCheck = negativeCheck;
-	}
-
-	public int getNoofAttempts() {
-		return noofAttempts;
-	}
-
-	public void setNoofAttempts(int noofAttempts) {
-		this.noofAttempts = noofAttempts;
-	}
-
 	public String getSummaryRemarks() {
 		return summaryRemarks;
 	}
@@ -512,6 +417,22 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
+	}
+
+	public ExtendedFieldHeader getExtendedFieldHeader() {
+		return extendedFieldHeader;
+	}
+
+	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
+		this.extendedFieldHeader = extendedFieldHeader;
+	}
+
+	public ExtendedFieldRender getExtendedFieldRender() {
+		return extendedFieldRender;
+	}
+
+	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
+		this.extendedFieldRender = extendedFieldRender;
 	}
 
 	public Timestamp getPrevMntOn() {

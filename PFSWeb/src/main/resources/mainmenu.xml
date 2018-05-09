@@ -871,6 +871,9 @@
 			<menuItem id="menu_Item_TechnicalVerification_Enquiry"
 				zulNavigation="/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationList.zul?module=ENQ"
 				rightName="menuItem_Verification_TechnicalVerification_Enquiry" />
+			<menuItem id="menu_Item_LegalVerification_Enquiry"
+				zulNavigation="/WEB-INF/pages/Verification/LegalVerification/LegalVerificationList.zul?module=ENQ"
+				rightName="menuItem_Verification_LegalVerification_Enquiry" />
 		</menu>
 		<menu id="menu_Category_BulkProcessingEnquiry">
 			<menuItem id="menu_Item_PresentmentHeaderEnquiry"

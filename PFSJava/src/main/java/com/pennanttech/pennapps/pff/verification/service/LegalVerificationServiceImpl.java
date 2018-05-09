@@ -235,11 +235,11 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 			if (lv.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				lv.setRecordType("");
 				legalVerificationDAO.saveLV(lv, TableType.MAIN_TAB);
-				verificationDAO.updateVerifiaction(lv.getVerificationId(), lv.getDate(), lv.getStatus());
+				verificationDAO.updateVerifiaction(lv.getVerificationId(), lv.getVerificationDate(), lv.getStatus());
 			} else {
 				lv.setRecordType("");
 				legalVerificationDAO.update(lv, TableType.MAIN_TAB);
-				verificationDAO.updateVerifiaction(lv.getId(), lv.getDate(), lv.getStatus());
+				verificationDAO.updateVerifiaction(lv.getId(), lv.getVerificationDate(), lv.getStatus());
 			}
 
 			// Extended field Details
@@ -328,7 +328,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 			tableName.append(lv.getExtendedFieldHeader().getSubModuleName());
 			tableName.append("_ED");
 			auditList.addAll(extendedFieldDetailsService.delete(lv.getExtendedFieldHeader(),
-					lv.getReferenceFor(), tableName.toString(), tableType, auditTranType, extendedDetails));
+					String.valueOf(lv.getVerificationId()), tableName.toString(), tableType, auditTranType, extendedDetails));
 		}
 
 		// Document Details.

@@ -36,6 +36,8 @@ public class LVDocument extends AbstractWorkflowEntity {
 	private String remarks3;
 
 	private Long docRefID;
+	private Long documentRefId;
+	private String docUri;
 	private String code;
 	private String description;
 	private boolean lvReq;
@@ -63,8 +65,9 @@ public class LVDocument extends AbstractWorkflowEntity {
 		excludeFields.add("docUri");
 		excludeFields.add("docModule");
 		excludeFields.add("remarks");
-		excludeFields.add("docRefID");
+		excludeFields.add("documentRefId");
 		excludeFields.add("description");
+		excludeFields.add("docUri");
 		return excludeFields;
 	}
 
@@ -190,6 +193,22 @@ public class LVDocument extends AbstractWorkflowEntity {
 
 	public void setLvId(long lvId) {
 		this.lvId = lvId;
+	}
+
+	public Long getDocumentRefId() {
+		return documentRefId;
+	}
+
+	public void setDocumentRefId(Long documentRefId) {
+		this.documentRefId = documentRefId;
+	}
+
+	public String getDocUri() {
+		return docUri;
+	}
+
+	public void setDocUri(String docUri) {
+		this.docUri = docUri;
 	}
 
 	public LoggedInUser getUserDetails() {

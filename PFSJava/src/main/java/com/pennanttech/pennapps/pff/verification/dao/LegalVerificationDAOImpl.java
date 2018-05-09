@@ -89,10 +89,10 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into verification_lv");
 		sql.append(tableType.getSuffix());
-		sql.append(" (verificationId, id, agentcode, agentname, status, reason, remarks, date,");
+		sql.append(" (verificationId, id, agentcode, agentname, status, reason, remarks, verificationdate,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append("values (:verificationId, :id,:agentCode, :agentName, :status, :reason, :remarks, :date,");
+		sql.append("values (:verificationId, :id,:agentCode, :agentName, :status, :reason, :remarks, :verificationDate,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -118,7 +118,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		StringBuilder sql = new StringBuilder("update verification_lv");
 		sql.append(tableType.getSuffix());
 		sql.append(
-				" set verificationId = :verificationId, date = :date, agentCode = :agentCode, agentName = :agentName, status = :status, ");
+				" set verificationId = :verificationId, verificationDate = :verificationDate, agentCode = :agentCode, agentName = :agentName, status = :status, ");
 		sql.append(" reason = :reason, remarks = :remarks, Version = :Version, LastMntBy = :LastMntBy,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
@@ -173,7 +173,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
 
-		sql.append(" Select id,verificationid, agentCode, agentName,  date, status, reason, documentId,");
+		sql.append(" Select id,verificationid, agentCode, agentName,  verificationDate, status, reason, documentId,");
 		sql.append(" remarks, verificationFormName,");
 		if (type.contains("View")) {
 			sql.append(" cif, custid, custName, keyReference, collateralType, referencefor, createdon, ");

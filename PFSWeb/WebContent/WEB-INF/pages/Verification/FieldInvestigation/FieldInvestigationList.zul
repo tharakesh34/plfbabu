@@ -55,17 +55,17 @@
 									<label id="label_FieldInvestigationList_CIF" value="${c:l('label_FieldInvestigationList_CIF.value')}" />
 									<listbox id="sortOperator_CIF" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="cif" width="155px" maxlength="19" />
-									<label id="label_FieldInvestigationList_AddressType" value="${c:l('label_FieldInvestigationList_AddressType.value')}" />
-									<listbox id="sortOperator_AddressType" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-	   								<textbox id ="addressType" width="155px"/>
-								</row>
-								<row>
-									<label id="label_FieldInvestigationList_PinCode" value="${c:l('label_FieldInvestigationList_PinCode.value')}" />
-									<listbox id="sortOperator_PinCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-	   								<textbox id ="pinCode" width="155px" maxlength="6" />
 									<label id="label_FieldInvestigationList_LoanReference" value="${c:l('label_FieldInvestigationList_LoanReference.value')}" />
 									<listbox id="sortOperator_LoanReference" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id = "loanReference" width="155px" maxlength="20" />
+								</row>
+								<row>
+									<label id="label_FieldInvestigationList_AddressType" value="${c:l('label_FieldInvestigationList_AddressType.value')}" />
+									<listbox id="sortOperator_AddressType" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+	   								<textbox id ="addressType" width="155px"/>
+									<label id="label_FieldInvestigationList_PinCode" value="${c:l('label_FieldInvestigationList_PinCode.value')}" />
+									<listbox id="sortOperator_PinCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+	   								<textbox id ="pinCode" width="155px" maxlength="6" />
 								</row>
 								<row>
 									<label id="label_FieldInvestigationList_Agency" value="${c:l('label_FieldInvestigationList_Agency.value')}" />

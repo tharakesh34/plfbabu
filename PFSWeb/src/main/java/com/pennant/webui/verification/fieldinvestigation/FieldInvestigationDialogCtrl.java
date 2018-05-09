@@ -13,6 +13,7 @@
 package com.pennant.webui.verification.fieldinvestigation;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,15 +34,12 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
-import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.North;
-import org.zkoss.zul.Radio;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
@@ -58,30 +56,31 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
-import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.StatuReasons;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
-import com.pennanttech.pennapps.pff.verification.fi.FILivingStandard;
-import com.pennanttech.pennapps.pff.verification.fi.FINeighbourHoodFeedBack;
-import com.pennanttech.pennapps.pff.verification.fi.FIOwnerShipStatus;
 import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
-import com.pennanttech.pennapps.pff.verification.fi.FIVerificationType;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -127,23 +126,10 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	protected Tabpanels tabpanelsBoxIndexCenter;
 	protected String selectMethodName = "onSelectTab";
 
-	protected Groupbox gb_observations;
-	protected Datebox verificationDate;
-	protected Combobox verificationType;
-	protected Intbox yearsAtPresentAddress;
-	protected Textbox personMet;
-	protected Combobox ownerShipStatus;
-	protected ExtendedCombobox relationShip;
-	protected Combobox neighbourhoodCheckFeedBack;
-	protected Radio positive;
-	protected Radio negative;
-	protected Textbox contactNo;
-	protected Textbox observationRemarks;
-	protected Combobox livingStandard;
-	protected Checkbox negativeCheck;
-	protected Intbox noOfAttempts;
+	protected Tabpanel observationsFieldTabPanel;
 
 	protected Groupbox gb_summary;
+	protected Datebox verificationDate;
 	protected Textbox agentCode;
 	protected Textbox agentName;
 	protected Combobox recommendations;
@@ -158,7 +144,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	private transient FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl;
 	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
 	private transient FieldInvestigationListCtrl fieldInvestigationListCtrl;
-
+	private ExtendedFieldCtrl extendedFieldCtrl = null;
 	@Autowired
 	private transient FieldInvestigationService fieldInvestigationService;
 	@Autowired
@@ -228,7 +214,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			} else if (fromLoanOrg) {
 				setWorkFlowEnabled(true);
 			}
-			
+
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.fieldInvestigation);
@@ -256,22 +242,6 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.FISRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
 
-		this.relationShip.setMaxlength(8);
-		this.relationShip.setMandatoryStyle(false);
-		this.relationShip.setModuleName("PRelationCode");
-		this.relationShip.setValueColumn("PRelationCode");
-		this.relationShip.setDescColumn("PRelationDesc");
-		this.relationShip.setValidateColumns(new String[] { "PRelationCode" });
-
-		this.yearsAtPresentAddress.setMaxlength(2);
-		this.personMet.setMaxlength(20);
-		this.contactNo.setMaxlength(10);
-		this.observationRemarks.setMaxlength(50);
-		this.noOfAttempts.setMaxlength(2);
-		this.agentCode.setMaxlength(8);
-		this.agentName.setMaxlength(20);
-		this.summaryRemarks.setMaxlength(500);
-
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		setStatusDetails();
 
@@ -283,7 +253,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FieldInvestigationDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FieldInvestigationDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FieldInvestigationDialog_btnDelete"));
@@ -448,15 +418,6 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.contactNumber2.setValue(fi.getContactNumber2());
 
 		this.verificationDate.setValue(fi.getDate());
-		this.yearsAtPresentAddress.setValue(fi.getYearsAtPresentAddress());
-		this.personMet.setValue(fi.getPersonMet());
-		this.relationShip.setValue(StringUtils.trimToEmpty((fi.getRelationship())),
-				StringUtils.trimToEmpty(fi.getLovrelationdesc()));
-		this.contactNo.setValue(fi.getContactNumber());
-		this.observationRemarks.setValue(fi.getObservationRemarks());
-		this.livingStandard.setValue(String.valueOf(fi.getLivingStandard()));
-		this.negativeCheck.setChecked(fi.isNegativeCheck());
-		this.noOfAttempts.setValue(fi.getNoofAttempts());
 		this.agentCode.setValue(fi.getAgentCode());
 		this.agentName.setValue(fi.getAgentName());
 		this.recommendations.setValue(String.valueOf(fi.getStatus()));
@@ -471,16 +432,71 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		}
 
 		this.summaryRemarks.setValue(fi.getSummaryRemarks());
-		fillComboBox(this.verificationType, fieldInvestigation.getType(), FIVerificationType.getList());
-		fillComboBox(this.ownerShipStatus, fi.getOwnershipStatus(), FIOwnerShipStatus.getList());
-		fillComboBox(this.livingStandard, fi.getLivingStandard(), FILivingStandard.getList());
+
 		fillComboBox(this.recommendations, fi.getStatus(), FIStatus.getList());
-		fillComboBox(this.neighbourhoodCheckFeedBack, fi.getNeighbourhoodFeedBack(), FINeighbourHoodFeedBack.getList());
 
 		this.recordStatus.setValue(fi.getRecordStatus());
 		// Document Detail Tab Addition
 		appendDocumentDetailTab();
 
+		// Verification details
+		appendVerificationFieldDetails(fi);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * This method is for append verification extended field details
+	 */
+	private void appendVerificationFieldDetails(FieldInvestigation fi) {
+		logger.debug(Literal.ENTERING);
+		try {
+			extendedFieldCtrl = new ExtendedFieldCtrl();
+			ExtendedFieldHeader extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(
+					CollateralConstants.VERIFICATION_MODULE, ExtendedFieldConstants.VERIFICATION_FI);
+
+			if (extendedFieldHeader == null) {
+				return;
+			}
+			// Extended Field Details
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(CollateralConstants.VERIFICATION_MODULE);
+			tableName.append("_");
+			tableName.append(extendedFieldHeader.getSubModuleName());
+			tableName.append("_ED");
+
+			List<ExtendedFieldDetail> detailsList = extendedFieldHeader.getExtendedFieldDetails();
+			int fieldSize = 0;
+			if (detailsList != null && !detailsList.isEmpty()) {
+				fieldSize = detailsList.size();
+				if (fieldSize != 0) {
+					fieldSize = fieldSize / 2;
+					fieldSize = fieldSize + 1;
+				}
+			}
+			this.observationsFieldTabPanel.setHeight((fieldSize * 37) + "px");
+
+			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
+					.getExtendedFieldRender(String.valueOf(fi.getVerificationId()), tableName.toString(), "_View");
+			extendedFieldCtrl.setTabpanel(observationsFieldTabPanel);
+			extendedFieldCtrl.setTab(this.verificationDetails);
+			fi.setExtendedFieldHeader(extendedFieldHeader);
+			fi.setExtendedFieldRender(extendedFieldRender);
+
+			if (fi.getBefImage() != null) {
+				fi.getBefImage().setExtendedFieldHeader(extendedFieldHeader);
+				fi.getBefImage().setExtendedFieldRender(extendedFieldRender);
+			}
+			extendedFieldCtrl.setCcyFormat(2);
+			extendedFieldCtrl.setReadOnly(isReadOnly("FieldInvestigationDialog_FieldInvestigationExtFields"));
+			extendedFieldCtrl.setWindow(this.window_FieldInvestigationDialog);
+			extendedFieldCtrl.render();
+			this.verificationDetails
+					.setLabel(Labels.getLabel("label_LegalVerificationDialog_VerificationDetails.value"));
+		} catch (Exception e) {
+			closeDialog();
+			logger.error(Literal.EXCEPTION, e);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -573,81 +589,19 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		fi.setZipCode(this.zipCode.getValue());
 		fi.setContactNumber1(this.contactNumber1.getValue());
 		fi.setContactNumber2(this.contactNumber2.getValue());
+		
+		// Extended Field validations
+		if (fi.getExtendedFieldHeader() != null) {
+			try {
+				fi.setExtendedFieldRender(extendedFieldCtrl.save());
+			} catch (ParseException e) {
+				logger.debug(Literal.EXCEPTION);
+			}
+		}
+
 
 		try {
 			fi.setDate(this.verificationDate.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			if ("0".equals(getComboboxValue(this.verificationType))) {
-				throw new WrongValueException(this.verificationType, Labels.getLabel("STATIC_INVALID",
-						new String[] { Labels.getLabel("label_FieldInvestigationDialog_VerificationType.value") }));
-			} else {
-				fi.setType(Integer.parseInt(getComboboxValue(this.verificationType)));
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			fi.setYearsAtPresentAddress(this.yearsAtPresentAddress.intValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			fi.setPersonMet(this.personMet.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			if ("0".equals(getComboboxValue(this.ownerShipStatus))) {
-				throw new WrongValueException(this.ownerShipStatus, Labels.getLabel("STATIC_INVALID",
-						new String[] { Labels.getLabel("label_FieldInvestigationDialog_OwnerShipStatus.value") }));
-			} else {
-				fi.setOwnershipStatus(Integer.parseInt(getComboboxValue(this.ownerShipStatus)));
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			fi.setLovrelationdesc(this.relationShip.getDescription());
-			fi.setRelationship(StringUtils.trimToNull(this.relationShip.getValidatedValue()));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			fi.setNeighbourhoodFeedBack(Integer.parseInt(getComboboxValue(this.neighbourhoodCheckFeedBack)));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			fi.setContactNumber(this.contactNo.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			fi.setObservationRemarks(this.observationRemarks.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			fi.setLivingStandard(Integer.parseInt(getComboboxValue(this.livingStandard)));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			fi.setNegativeCheck(this.negativeCheck.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			fi.setNoofAttempts(this.noOfAttempts.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -709,7 +663,6 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
-			this.verificationDate.focus();
 		} else {
 
 			if (isWorkFlowEnabled()) {
@@ -717,7 +670,6 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 					this.btnNotes.setVisible(true);
 				}
 				// setFocus
-				this.verificationDate.focus();
 				doEdit();
 			} else {
 				this.btnCtrl.setInitEdit();
@@ -745,7 +697,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * When user clicks on button "Customer CIF" button
 	 * 
@@ -755,8 +707,8 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		logger.debug(Literal.ENTERING + event.toString());
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		
-		 CustomerDetails customerDetails = customerDetailsService.getCustomerById(this.fieldInvestigation.getCustId());
+
+		CustomerDetails customerDetails = customerDetailsService.getCustomerById(this.fieldInvestigation.getCustId());
 		if (customerDetails != null) {
 			map.put("customerDetails", customerDetails);
 			map.put("isEnqProcess", true);
@@ -766,8 +718,6 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 
 		logger.debug(Literal.LEAVING + event.toString());
 	}
-	
-	
 
 	/**
 	 * Method to show error details if occurred
@@ -809,33 +759,6 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 							DateUtil.getDatePart(fieldInvestigation.getCreatedOn()),
 							DateUtil.getDatePart(DateUtil.getSysDate()), true));
 		}
-		if (!this.yearsAtPresentAddress.isReadonly()) {
-			this.yearsAtPresentAddress.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_FieldInvestigationDialog_AddrType.value"),
-							PennantRegularExpressions.REGEX_NUMERIC, false));
-		}
-
-		if (!this.personMet.isReadonly()) {
-			this.personMet.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_FieldInvestigationDialog_AddrType.value"),
-							PennantRegularExpressions.REGEX_CUST_NAME, false));
-		}
-		if (!this.contactNo.isReadonly()) {
-			this.contactNo.setConstraint(
-					new PTMobileNumberValidator(Labels.getLabel("label_FieldInvestigationDialog_ContactNo.value"),
-							false, null, this.contactNo.getMaxlength()));
-		}
-		if (!this.observationRemarks.isReadonly()) {
-			this.observationRemarks.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_FieldInvestigationDialog_Remarks.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, false));
-		}
-
-		if (!this.noOfAttempts.isReadonly()) {
-			this.noOfAttempts.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_FieldInvestigationDialog_NoOfAttempts.value"),
-							PennantRegularExpressions.REGEX_NUMERIC, true));
-		}
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_FieldInvestigationDialog_AgentCode.value"),
@@ -865,15 +788,6 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
 
-		this.verificationDate.setConstraint("");
-		this.verificationType.setConstraint("");
-		this.yearsAtPresentAddress.setConstraint("");
-		this.personMet.setConstraint("");
-		this.ownerShipStatus.setConstraint("");
-		this.relationShip.setConstraint("");
-		this.contactNo.setConstraint("");
-		this.observationRemarks.setConstraint("");
-		this.noOfAttempts.setConstraint("");
 		this.agentCode.setConstraint("");
 		this.agentName.setConstraint("");
 		this.recommendations.setConstraint("");
@@ -949,19 +863,8 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		} else {
 			this.btnCancel.setVisible(true);
 		}
-		readOnlyComponent(isReadOnly("FieldInvestigationDialog_Date"), this.verificationDate);
-		readOnlyComponent(isReadOnly("FieldInvestigationDialog_VerificationType"), this.verificationType);
-		readOnlyComponent(isReadOnly("FieldInvestigationDialog_YearsAtPresentAddress"), this.yearsAtPresentAddress);
-		readOnlyComponent(isReadOnly("FieldInvestigationDialog_PersonMet"), this.personMet);
-		readOnlyComponent(isReadOnly("FieldInvestigationDialog_OwnershipStatus"), this.ownerShipStatus);
-		readOnlyComponent(isReadOnly("FieldInvestigationDialog_Relationship"), this.relationShip);
-		readOnlyComponent(isReadOnly("FieldInvestigationDialog_NeighborhoodCheck"), this.neighbourhoodCheckFeedBack);
-		readOnlyComponent(isReadOnly("FieldInvestigationDialog_contactNo"), this.contactNo);
-		readOnlyComponent(isReadOnly("FieldInvestigationDialog_Remarks"), this.observationRemarks);
-		readOnlyComponent(isReadOnly("FieldInvestigationDialog_LivingStandard"), this.livingStandard);
-		readOnlyComponent(isReadOnly("FieldInvestigationDialog_NegativeCheck"), this.negativeCheck);
-		readOnlyComponent(isReadOnly("FieldInvestigationDialog_NoofAttempts"), this.noOfAttempts);
 
+		readOnlyComponent(isReadOnly("FieldInvestigationDialog_Date"), this.verificationDate);
 		readOnlyComponent(isReadOnly("FieldInvestigationDialog_AgentCode"), this.agentCode);
 		readOnlyComponent(isReadOnly("FieldInvestigationDialog_AgentName"), this.agentName);
 		readOnlyComponent(isReadOnly("FieldInvestigationDialog_Recommendations"), this.recommendations);
@@ -1007,19 +910,6 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.zipCode.setReadonly(true);
 		this.contactNumber1.setReadonly(true);
 		this.contactNumber2.setReadonly(true);
-
-		this.verificationDate.setDisabled(true);
-		this.verificationType.setDisabled(true);
-		this.yearsAtPresentAddress.setReadonly(true);
-		this.personMet.setReadonly(true);
-		this.ownerShipStatus.setDisabled(true);
-		this.relationShip.setReadonly(true);
-		this.neighbourhoodCheckFeedBack.setDisabled(true);
-		this.contactNo.setReadonly(true);
-		this.observationRemarks.setReadonly(true);
-		this.livingStandard.setDisabled(true);
-		this.negativeCheck.setDisabled(true);
-		this.noOfAttempts.setReadonly(true);
 
 		this.agentCode.setReadonly(true);
 		this.agentName.setReadonly(true);
@@ -1161,6 +1051,31 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			fieldInvestigation.setNextTaskId(nextTaskId);
 			fieldInvestigation.setRoleCode(getRole());
 			fieldInvestigation.setNextRoleCode(nextRoleCode);
+			
+			// Extended Field details
+			if (fieldInvestigation.getExtendedFieldRender() != null) {
+				int seqNo = 0;
+				ExtendedFieldRender details = fieldInvestigation.getExtendedFieldRender();
+				details.setReference(String.valueOf(fieldInvestigation.getVerificationId()));
+				details.setSeqNo(++seqNo);
+				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+				details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				details.setRecordStatus(fieldInvestigation.getRecordStatus());
+				details.setRecordType(fieldInvestigation.getRecordType());
+				details.setVersion(fieldInvestigation.getVersion());
+				details.setWorkflowId(fieldInvestigation.getWorkflowId());
+				details.setTaskId(taskId);
+				details.setNextTaskId(nextTaskId);
+				details.setRoleCode(getRole());
+				details.setNextRoleCode(nextRoleCode);
+				details.setNewRecord(fieldInvestigation.isNewRecord());
+				if (PennantConstants.RECORD_TYPE_DEL.equals(fieldInvestigation.getRecordType())) {
+					if (StringUtils.trimToNull(details.getRecordType()) == null) {
+						details.setRecordType(fieldInvestigation.getRecordType());
+						details.setNewRecord(true);
+					}
+				}
+			}
 
 			// Document Details
 			if (fieldInvestigation.getDocuments() != null && !fieldInvestigation.getDocuments().isEmpty()) {
@@ -1168,7 +1083,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 					if (StringUtils.isEmpty(StringUtils.trimToEmpty(details.getRecordType()))) {
 						continue;
 					}
-					
+
 					details.setReferenceId(String.valueOf(fieldInvestigation.getVerificationId()));
 					details.setDocModule(VerificationType.FI.getCode());
 					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());

@@ -537,7 +537,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			tableName.append("_");
 			tableName.append(rcu.getExtendedFieldHeader().getSubModuleName());
 			tableName.append("_ED");
-			auditList.addAll(extendedFieldDetailsService.delete(rcu.getExtendedFieldHeader(), rcu.getKeyReference(),
+			auditList.addAll(extendedFieldDetailsService.delete(rcu.getExtendedFieldHeader(), String.valueOf(rcu.getVerificationId()),
 					tableName.toString(), tableType, auditTranType, extendedDetails));
 		}
 

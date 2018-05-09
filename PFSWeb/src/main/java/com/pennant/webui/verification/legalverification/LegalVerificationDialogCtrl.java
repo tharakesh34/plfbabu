@@ -432,7 +432,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.collateralType.setValue(lv.getCollateralType());
 		this.collateralReference.setValue(lv.getReferenceFor());
 
-		this.verificationDate.setValue(lv.getDate());
+		this.verificationDate.setValue(lv.getVerificationDate());
 		this.agentCode.setValue(lv.getAgentCode());
 		this.agentName.setValue(lv.getAgentName());
 		this.recommendations.setValue(String.valueOf(lv.getStatus()));
@@ -705,7 +705,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		}
 
 		try {
-			lv.setDate(this.verificationDate.getValue());
+			lv.setVerificationDate(this.verificationDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

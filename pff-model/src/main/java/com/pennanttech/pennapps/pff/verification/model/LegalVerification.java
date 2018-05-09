@@ -26,7 +26,7 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	private String collateralType;
 	private String referenceFor;
 
-	private Date date;
+	private Date verificationDate;
 	private String agentCode;
 	private String agentName;
 	private int status;
@@ -105,12 +105,12 @@ public class LegalVerification extends AbstractWorkflowEntity {
 		return isNewRecord();
 	}
 
-	public Date getDate() {
-		return date;
+	public Date getVerificationDate() {
+		return verificationDate;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setVerificationDate(Date verificationDate) {
+		this.verificationDate = verificationDate;
 	}
 
 	public String getAgentCode() {

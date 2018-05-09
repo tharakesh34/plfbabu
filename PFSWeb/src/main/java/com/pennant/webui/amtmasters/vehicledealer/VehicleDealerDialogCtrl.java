@@ -250,8 +250,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		
 		// Empty sent any required attributes
 		this.dealerName.setMaxlength(50);
-		this.dealerTelephone.setMaxlength(10);
-		this.dealerFax.setMaxlength(10);
+		this.dealerTelephone.setMaxlength(13);
+		this.dealerFax.setMaxlength(13);
 		this.dealerAddress1.setMaxlength(50);
 		this.dealerAddress2.setMaxlength(50);
 		this.dealerAddress3.setMaxlength(50);
@@ -800,7 +800,9 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		} 
 		
 		if (!this.dealerTelephone.isReadonly()) {
-			this.dealerTelephone.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_VehicleDealerDialog_DealerTelephone.value"), true));
+			this.dealerTelephone.setConstraint(
+					new PTMobileNumberValidator(Labels.getLabel("label_VehicleDealerDialog_DealerTelephone.value"),
+							true, null, this.dealerTelephone.getMaxlength()));
 		}
 		
 		if (!this.dealerAddress1.isReadonly()) {
@@ -823,7 +825,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		}
 		if (!this.dealerFax.isReadonly()) {
 			this.dealerFax.setConstraint(
-					new PTMobileNumberValidator(Labels.getLabel("label_VehicleDealerDialog_DealerFax.value"), true));
+					new PTMobileNumberValidator(Labels.getLabel("label_VehicleDealerDialog_DealerFax.value"), true,null, this.dealerFax.getMaxlength()));
 		}
 	 
 		if (!this.email.isReadonly()) {

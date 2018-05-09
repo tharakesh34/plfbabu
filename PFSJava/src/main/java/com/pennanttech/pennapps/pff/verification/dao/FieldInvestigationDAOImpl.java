@@ -119,20 +119,20 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 		sql.append(" addressLine1, addressLine2, addressLine3, addressLine4, addressLine5,");
 		sql.append(" poBox, country,");
 		sql.append(" province, city, zipcode, contactNumber1, contactNumber2,");
-		sql.append(" date, type, yearsatpresentaddress, personmet, ownershipstatus, relationship,");
-		sql.append(" neighbourhoodfeedback, contactnumber, observationremarks, livingstandard, negativecheck,");
-		sql.append(" noofattempts, agentcode, agentname, status, reason, summaryremarks,");
+		/*sql.append(" date, type, yearsatpresentaddress, personmet, ownershipstatus, relationship,");
+		sql.append(" neighbourhoodfeedback, contactnumber, observationremarks, livingstandard, negativecheck,");*/
+		sql.append(" date, agentcode, agentname, status, reason, summaryremarks,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 
 		sql.append("values (:verificationId, :name, :addressType, :houseNumber, :flatNumber, :street,");
 		sql.append(" :addressLine1, :addressLine2, :addressLine3, :addressLine4, :addressLine5,");
 		sql.append(" :poBox, :country, :province, :city, :zipCode, :contactNumber1, :contactNumber2,");
-		sql.append(" :date, :type, :yearsAtPresentAddress, ");
+		/*sql.append(" :date, :type, :yearsAtPresentAddress, ");
 		sql.append(" :personMet, :ownershipStatus, :relationship, ");
 		sql.append(" :neighbourhoodFeedBack, :contactNumber, :observationRemarks, ");
-		sql.append(" :livingStandard, :negativeCheck, :noofAttempts, ");
-		sql.append(" :agentCode, :agentName, :status, :reason, :summaryRemarks, ");
+		sql.append(" :livingStandard, :negativeCheck, :noofAttempts, ");*/
+		sql.append(" :date, :agentCode, :agentName, :status, :reason, :summaryRemarks, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -157,12 +157,12 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update verification_fi");
 		sql.append(tableType.getSuffix());
-		sql.append(" set date = :date, type = :type, yearsatpresentaddress = :yearsAtPresentAddress, ");
+		/*sql.append(" set date = :date, type = :type, yearsatpresentaddress = :yearsAtPresentAddress, ");
 		sql.append(" personmet = :personMet, ownershipstatus = :ownershipStatus, relationship = :relationship, ");
 		sql.append(
 				" neighbourhoodfeedback = :neighbourhoodFeedBack, contactnumber = :contactNumber, observationremarks = :observationRemarks, ");
-		sql.append(" livingstandard = :livingStandard, negativecheck = :negativeCheck, noofattempts = :noofAttempts, ");
-		sql.append(" agentcode = :agentCode, agentname = :agentName, status = :status, ");
+		sql.append(" livingstandard = :livingStandard, negativecheck = :negativeCheck, noofattempts = :noofAttempts, ");*/
+		sql.append(" set date = :date, agentcode = :agentCode, agentname = :agentName, status = :status, ");
 		sql.append(" reason = :reason, summaryremarks = :summaryRemarks, Version = :Version, LastMntBy = :LastMntBy,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
@@ -220,11 +220,13 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 		sql.append(
 				" addressline1, addressline2, addressline3, addressline4, addressline5, pobox, country, province, city, countryDesc, ");
 		sql.append(
-				" provinceDesc, cityDesc, zipcode, contactnumber1, contactnumber2, date, type, ");
+				" provinceDesc, cityDesc, zipcode, contactnumber1, contactnumber2, date, ");
+		/*sql.append(
+				"   type, yearsatpresentaddress, personmet, ownershipstatus, relationship, neighbourhoodfeedback, contactnumber, observationremarks,");
 		sql.append(
-				"  yearsatpresentaddress, personmet, ownershipstatus, relationship, neighbourhoodfeedback, contactnumber, observationremarks,");
+				" livingstandard, negativecheck, noofattempts, agentcode, agentname, status, reason, summaryremarks,");*/
 		sql.append(
-				" livingstandard, negativecheck, noofattempts, agentcode, agentname, status, reason, summaryremarks,");
+				" agentcode, agentname, status, reason, summaryremarks,");
 		if (type.equalsIgnoreCase("_view")) {
 			sql.append("cif, custid, keyreference, createdon, lovrelationdesc, reasoncode, reasondesc,");
 		}

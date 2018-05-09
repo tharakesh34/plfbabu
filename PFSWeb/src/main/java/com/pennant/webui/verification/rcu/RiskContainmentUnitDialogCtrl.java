@@ -36,6 +36,7 @@ import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -114,11 +115,6 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	protected ExtendedCombobox reason;
 	protected Textbox remarks;
 	
-	protected Combobox verificationType;
-	protected Combobox rcuStatus;
-	protected Intbox pagesEyeBalled;
-	protected Intbox pagesSampled;
-
 	private RiskContainmentUnit riskContainmentUnit;
 	protected Map<String, DocumentDetails> docDetailMap = null;
 	private List<DocumentDetails> documentDetailsList = new ArrayList<>();
@@ -397,7 +393,6 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 
 		this.remarks.setValue(rcu.getRemarks());
 		fillComboBox(this.recommendations, rcu.getStatus(), RCUStatus.getList());
-		onChangeRCUStatus();
 
 		this.recordStatus.setValue(rcu.getRecordStatus());
 		doFillRCUDocuments(rcu.getRcuDocuments());
@@ -433,24 +428,24 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 
 				lc = new Listcell();
 				lc.setId("VerificationType".concat(String.valueOf(i)));
-				verificationType = new Combobox();
+				Combobox verificationType = new Combobox();
 				verificationType.setReadonly(isReadOnly("RiskContainmentUnitDialog_VerificationType"));
 				verificationType.setValue(document.getVerificationType());
+				verificationType.addForward("onChange", self, "onChangeVerificationType", document);
 				lc.appendChild(verificationType);
 				lc.setParent(item);
 
 				lc = new Listcell();
 				lc.setId("RCUStatus".concat(String.valueOf(i)));
-				rcuStatus = new Combobox();
+				Combobox rcuStatus = new Combobox();
 				rcuStatus.setReadonly(isReadOnly("RiskContainmentUnitDialog_RCUStatus"));
 				rcuStatus.setValue(document.getRcuStatus());
-				docLink.addForward("onChange", self, "onChangeRCUStatus", document);
 				lc.appendChild(rcuStatus);
 				lc.setParent(item);
 
 				lc = new Listcell();
 				lc.setId("PagesEyeBalled".concat(String.valueOf(i)));
-				pagesEyeBalled = new Intbox();
+				Intbox pagesEyeBalled = new Intbox();
 				pagesEyeBalled.setReadonly(isReadOnly("RiskContainmentUnitDialog_PagesEyeBalled"));
 				pagesEyeBalled.setValue(document.getPagesEyeballed());
 				pagesEyeBalled.setMaxlength(2);
@@ -459,7 +454,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 
 				lc = new Listcell();
 				lc.setId("PagesSampled".concat(String.valueOf(i)));
-				pagesSampled = new Intbox();
+				Intbox pagesSampled = new Intbox();
 				pagesSampled.setReadonly(isReadOnly("RiskContainmentUnitDialog_PagesSampled"));
 				pagesSampled.setValue(document.getPagesEyeballed());
 				pagesSampled.setMaxlength(2);
@@ -478,6 +473,19 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				lc.appendChild(remarks);
 				lc.setParent(item);
 
+				if (!verificationType.isDisabled()) {
+					if (verificationType.getValue() == "1") {
+						pagesEyeBalled.setDisabled(false);
+						pagesSampled.setDisabled(true);
+					} else if (verificationType.getValue() == "2") {
+						pagesEyeBalled.setDisabled(true);
+						pagesSampled.setDisabled(false);
+					} else {
+						pagesEyeBalled.setDisabled(true);
+						pagesSampled.setDisabled(true);
+					}
+				}
+				
 				item.setAttribute("data", document);
 				this.listBoxRiskContainmentUnitDocuments.appendChild(item);
 			}
@@ -512,19 +520,35 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onChangeRCUStatus() {
+	public void onChangeVerificationType(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
-		
-		if (!this.verificationType.isDisabled()) {
-			if (this.verificationType.getSelectedItem().getValue() == "1") {
-				this.pagesEyeBalled.setDisabled(false);
-				this.pagesSampled.setDisabled(true);
-			} else if (this.verificationType.getSelectedItem().getValue() == "2") {
-				this.pagesEyeBalled.setDisabled(true);
-				this.pagesSampled.setDisabled(false);
+
+		RCUDocument details = (RCUDocument) event.getData();
+		List<Component> components = event.getTarget().getChildren();
+		Combobox verificationType = null;
+		Textbox pagesEyeBalled = null;
+		Textbox pagesSampled = null;
+		for (Component component : components) {
+			Row row = (Row) component;
+			if (row != null) {
+				verificationType = (Combobox) row.getFirstChild().getNextSibling().getNextSibling();
+				pagesEyeBalled = (Textbox) verificationType.getNextSibling().getNextSibling();
+				pagesSampled = (Textbox) verificationType.getNextSibling().getNextSibling();
 			}
-			logger.debug(Literal.LEAVING);
 		}
+		if (!verificationType.isDisabled()) {
+			if (verificationType.getValue() == "1") {
+				pagesEyeBalled.setDisabled(false);
+				pagesSampled.setDisabled(true);
+			} else if (verificationType.getValue() == "2") {
+				pagesEyeBalled.setDisabled(true);
+				pagesSampled.setDisabled(false);
+			} else {
+				pagesEyeBalled.setDisabled(true);
+				pagesSampled.setDisabled(true);
+			}
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
