@@ -5172,5 +5172,10 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 			Insert into SMTParameters values ('IS_CREDITREVIEW_TAB_REQ','Credit Review Details Tab','String','1','Y',1,0,null,null,'Credit Review Details Tab required.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="107" author="Kesav">
+		<addDefaultValue tableName="AccountsHistory" defaultValueNumeric="0" columnName="OpeningBal" columnDataType="decimal(18,0)"/>
+	</changeSet>
+	
 </databaseChangeLog>
 	
