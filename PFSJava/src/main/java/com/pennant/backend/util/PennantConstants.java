@@ -419,6 +419,7 @@ public class PennantConstants {
 
 	// Allowed Back Value Days for Start Date in Finance Creation
 	public static final String PHONETYPE_MOBILE = "MOBILE";
+	public static final String EMAILTYPE_ADHRCRD = "ADHRCRD";
 	public static final String DELIMITER_COMMA = ",";
 
 	public static final String COMMISSION_TYPE_FLAT = "F";

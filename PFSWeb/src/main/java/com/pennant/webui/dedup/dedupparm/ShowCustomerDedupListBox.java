@@ -286,9 +286,9 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		final Listhead listhead = new Listhead();
 		listhead.setParent(this.listbox);
 		String headerList = Labels.getLabel("listHeader_CustomerDedup_label");
-		if(StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+		/*if(StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 			headerList = Labels.getLabel("listHeader_CustomerDedup_label_Bajaj");
-		}
+		}*/
 		this.listHeaders = headerList.split(",");
 		for (int i = 0; i < this.listHeaders.length; i++) {
 			final Listheader listheader = new Listheader();
@@ -356,7 +356,9 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 
 		@Override
 		public void onEvent(Event event) throws Exception {
+			setUserAction(0);
 			onClose();
+			
 		}
 	}
 	
@@ -375,31 +377,29 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 			setUserAction(0);
 			setObject(null);
 			boolean iseleceted=false;
-			int count=0;
+			
 			for (int i = 0; i < listbox.getItems().size(); i++) {
+
 				Listitem listitem = listbox.getItems().get(i);
 				List<Component> componentList = ((Listcell) listitem
 						.getLastChild()).getChildren();
 				if (componentList != null && componentList.size() > 0) {
 					Component component = componentList.get(0);
 					if (((Checkbox) component).isChecked()) {
-						count++;
 						iseleceted=true;
 					}
 				}
 			
 			}
 			if(!iseleceted){
-				throw new WrongValueException(listbox,Labels.getLabel("label_Message_CustomerOverrideAlert_Baj"));
-			}
-			if(count>1){
-				throw new WrongValueException(listbox,Labels.getLabel("label_Message_CustomerMultiOverrideAlert_Baj"));
+				throw new WrongValueException(listbox,"Please Select Atleast one Cutomer to dedup");
 			}
 			
-			
-			if (StringUtils.equals(ImplementationConstants.CLIENT_NAME,
-					ImplementationConstants.CLIENT_BFL)) {
 				setUserAction(1);
+				if(validateUserMultiSelection()){
+					setUserAction(2);
+					return;
+				}
 				List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
 				for (int i = 0; i < listbox.getItems().size(); i++) {
 					Listitem listitem = listbox.getItems().get(i);
@@ -431,9 +431,29 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 					onClose();
 				}
 
-			}
+			
 		}
 
+		private boolean validateUserMultiSelection() throws InterruptedException {
+			int userMultiselect = 0;
+			for (int i = 0; i < listbox.getItems().size(); i++) {
+				Listitem listitem = listbox.getItems().get(i);
+				List<Component> componentList = ((Listcell) listitem
+						.getLastChild()).getChildren();
+				if (componentList != null && componentList.size() > 0) {
+					Component component = componentList.get(0);
+					if (((Checkbox) component).isChecked()) {
+						userMultiselect++;
+					}
+				}
+			}
+
+			if (userMultiselect > 1) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 
 	/**

@@ -11,6 +11,8 @@ import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.service.dedup.DedupParmService;
@@ -23,7 +25,8 @@ public class FetchCustomerDedupDetails {
 
 	private static final Logger		logger					= Logger.getLogger(FetchCustomerDedupDetails.class);
 
-	private static final String		CUSTOMERDEDUP_LABELS	= "custCIF,custDOB,custShrtName,custCRCPR,mobileNumber,appScore,override";
+	private static final String		CUSTOMERDEDUP_LABELS	= "custCIF,custDOB,custFName,custLName,custCRCPR,custEMail,mobileNumber,aadharNumber,"
+			+ "custNationality,dedupRule,override";
 
 	private static DedupParmService	dedupParmService;
 	private static CustomerDedupDAO	customerDedupDAO;
@@ -61,6 +64,8 @@ public class FetchCustomerDedupDetails {
 					if (userAction == 1) {
 						customerDetails.setCustomerDedupList(customerDedupList);
 						customer.setSkipDedup(true);
+					}else if(userAction==0){
+						customer.setSkipDedup(false);
 					}
 				}
 				
@@ -205,11 +210,30 @@ public class FetchCustomerDedupDetails {
 	private static CustomerDedup doSetCustomerDedup(CustomerDetails customerDetails) {
 		logger.debug("Entering");
 		String mobileNumber = "";
+		String emailid = "";
+		String aadharId = "";
 		Customer customer = customerDetails.getCustomer();
 		if (customerDetails.getCustomerPhoneNumList() != null) {
 			for (CustomerPhoneNumber custPhone : customerDetails.getCustomerPhoneNumList()) {
 				if (custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)) {
-					mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(), custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+					mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
+							custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+					break;
+				}
+			}
+		}
+		if (customerDetails.getCustomerEMailList() != null) {
+			for (CustomerEMail email : customerDetails.getCustomerEMailList()) {
+				if (String.valueOf(email.getCustEMailPriority()).equals(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+					emailid = email.getCustEMail();
+					break;
+				}
+			}
+		}
+		if (customerDetails.getCustomerDocumentsList() != null) {
+			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
+				if (document.getCustDocCategory().equals(PennantConstants.EMAILTYPE_ADHRCRD)) {
+					aadharId = document.getCustDocTitle();
 					break;
 				}
 			}
@@ -224,6 +248,7 @@ public class FetchCustomerDedupDetails {
 		customerDedup.setCustShrtName(customer.getCustShrtName());
 		customerDedup.setCustDOB(customer.getCustDOB());
 		customerDedup.setCustCRCPR(customer.getCustCRCPR());
+		customerDedup.setAadharNumber(aadharId);
 		customerDedup.setCustCtgCode(customer.getCustCtgCode());
 		customerDedup.setCustDftBranch(customer.getCustDftBranch());
 		customerDedup.setCustSector(customer.getCustSector());
@@ -235,7 +260,7 @@ public class FetchCustomerDedupDetails {
 		customerDedup.setMobileNumber(mobileNumber);
 		customerDedup.setCustPOB(customer.getCustPOB());
 		customerDedup.setCustResdCountry(customer.getCustResdCountry());
-		customerDedup.setCustEMail(customer.getEmailID());
+		customerDedup.setCustEMail(emailid);
 
 		logger.debug("Leaving");
 		return customerDedup;

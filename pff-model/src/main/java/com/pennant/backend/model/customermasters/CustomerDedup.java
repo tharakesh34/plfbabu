@@ -85,6 +85,7 @@ public class CustomerDedup {
 	private String sourceSystem;
 	private String address;
 	private String panNumber;
+	private String aadharNumber;
 
 
 
@@ -129,6 +130,8 @@ public class CustomerDedup {
 		excludeFields.add("appScore");
 		excludeFields.add("sourceSystem");
 		excludeFields.add("panNumber");
+		excludeFields.add("aadharNumber");
+		excludeFields.add("address");
 		return excludeFields;
 	}
 	
@@ -570,5 +573,12 @@ public class CustomerDedup {
 	}
 	public void setPanNumber(String panNumber) {
 		this.panNumber = panNumber;
+	}
+	public String getAadharNumber() {
+		return aadharNumber;
+	}
+
+	public void setAadharNumber(String aadharNumber) {
+		this.aadharNumber = aadharNumber;
 	}
 }
