@@ -1393,7 +1393,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		// Fin Reference
 		try {
-			aMandate.setOrgReference(this.finReference.getValue());
+			aMandate.setOrgReference(StringUtils.trimToNull(this.finReference.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1541,7 +1541,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		// Loan Reference
 		if (!this.finReference.isReadonly()) {
 			this.finReference.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_MandateDialog_FinReference.value"), null, validate));
+					new PTStringValidator(Labels.getLabel("label_MandateDialog_FinReference.value"), null,
+							ImplementationConstants.CLIENT_NFL ? false : validate));
 		}
 		//Entity
 		if (!this.entityCode.isReadonly()){
@@ -2213,7 +2214,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			sql.append(" FinType in(Select FinType from RMTFinanceTypes where FinDivision IN ");
 			sql.append(" (Select DivisionCode from SMTDivisionDetail where EntityCode = '"+this.entityCode.getValue()+"'))");
 			readOnlyComponent(false, this.finReference);
-			this.finReference.setMandatoryStyle(true);
+			this.finReference.setMandatoryStyle(ImplementationConstants.CLIENT_NFL ? false : true);
 			this.finReference.setWhereClause(sql.toString());
 			
 			Filter[] filter = new Filter[2];
