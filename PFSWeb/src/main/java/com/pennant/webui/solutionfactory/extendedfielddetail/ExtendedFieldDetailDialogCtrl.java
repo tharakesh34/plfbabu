@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ExtendedFieldDetailDialogCtrl.java                                                   * 	  
+ * FileName    		:  ExtendedFieldDetailDialogCtrl.java                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -31,7 +31,7 @@
  ********************************************************************************************
  * 28-12-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 08-05-2019		Srinivasa Varma			 0.2		  Development Iteam 81              *  
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -169,11 +169,12 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	private TechnicalValuationDialogCtrl technicalValuationDialogCtrl;
 	private List<ExtendedFieldDetail> extendedFieldDetails;
 	private List<ValueLabel> moduleList = PennantAppUtil.getExtendedModuleList();
-
+	//### 08-05-2018 Start Development Iteam 81
 	protected Checkbox 		allowInRule; 						// autowired
 	protected Row 			rowfieldAllowInRule;				// autowired
-
-	
+	private String moduleDesc;
+	private String subModuleDesc;
+	//### 08-05-2018 End Development Iteam 81
 	/**
 	 * default constructor.<br>
 	 */
@@ -220,7 +221,16 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			} else if (arguments.containsKey("technicalValuationDialogCtrl")) {
 				setTechnicalValuationDialogCtrl((TechnicalValuationDialogCtrl) arguments.get("technicalValuationDialogCtrl"));
 			}
-
+			//### 08-05-2018 Start Development Iteam 81
+			
+			if (arguments.containsKey("moduleDesc")) {
+				moduleDesc=(String) arguments.get("moduleDesc");
+			}
+		
+			if (arguments.containsKey("subModuleDesc")) {
+				subModuleDesc=(String) arguments.get("subModuleDesc");
+			}
+			//### 08-05-2018 End Development Iteam 81
 			setNewFieldDetail(true);
 
 			if (arguments.containsKey("newRecord")) {
@@ -1318,9 +1328,41 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.fieldMultilinetxt.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldMultilinetxt"));
 			this.parentTag.setDisabled((isReadOnly("ExtendedFieldDetailDialog_parentTag")));
 			this.fieldEditable.setDisabled(isReadOnly("ExtendedFieldDetailDialog_fieldEditable"));
-			// FIXME vasu if this field alredy assigned to any rule then not allowed to remove selection.
 			
-			readOnlyComponent(isReadOnly("ExtendedFieldDetailDialog_AllowInRule"), this.allowInRule);
+			//### 08-05-2018 Start Development Iteam 81 	
+			boolean validate=true;
+			StringBuffer uniqueField=new StringBuffer();
+			
+			if(StringUtils.trimToNull(getExtendedFieldDetail().getFieldName())==null){
+				validate=false;
+			}
+			
+			if(StringUtils.trimToNull(this.moduleDesc)==null || !validate){
+				validate=false;
+			}else{
+				uniqueField.append(this.moduleDesc);
+			}
+			
+			if(StringUtils.trimToNull(this.subModuleDesc)==null || !validate){
+				validate=false;
+			}else{
+				uniqueField.append("_");
+				uniqueField.append(this.subModuleDesc);
+			}
+			
+			if(validate){
+				uniqueField.append("_");
+				uniqueField.append(getExtendedFieldDetail().getFieldName());
+				if(extendedFieldDetailService.isFieldAssignedToRule(uniqueField.toString())){
+					readOnlyComponent(true, this.allowInRule);
+				}else{
+					readOnlyComponent(isReadOnly("ExtendedFieldDetailDialog_AllowInRule"), this.allowInRule);	
+				}
+			}else{
+				readOnlyComponent(isReadOnly("ExtendedFieldDetailDialog_AllowInRule"), this.allowInRule);	
+			}
+			
+			//### 08-05-2018 End Development Iteam 81
 		}
 		
 		boolean isMaintainRcd = false;

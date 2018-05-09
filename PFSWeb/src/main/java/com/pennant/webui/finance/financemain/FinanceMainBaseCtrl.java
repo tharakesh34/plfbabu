@@ -44,14 +44,15 @@
  * 														date.As discussed with Raju, this 	*
  * 														has to be removed for Core 			*
  * 														Functionality and hence the 		*
- * 														Condition is removed and committed. *                                                                                    * 
+ * 														Condition is removed and committed. *                                                                                     
  *                                                                                          * 
  * 23-04-2018		Vinay					0.3			As per mail from raju, 				*
  * 														Eligibility Method filed added 		*
  * 														for Profectus.                      * 
  *                                                                                          * 
  *                                                                                          * 
- *                                                                                          * 
+ * 08-05-2019		Srinivasa Varma			0.4			Development Iteam 81                *
+ *                                                                                          *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
  */
@@ -229,6 +230,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
@@ -14625,6 +14627,47 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// ###_0.3
 		detail.getCustomerEligibilityCheck().setEligibilityMethod(financeMain.getEligibilityMethod());
 		detail.getFinScheduleData().setFinanceMain(financeMain);
+		
+		// ### 08-05-2018 - Start - Development Item 81
+
+		try {
+			
+			// FIXME FINE TUNE THIS UN NEcessary it may call 2 times.
+			detail.setExtendedFieldRender(extendedFieldCtrl.save());
+		} catch (WrongValuesException e){
+			throw e;
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
+		// Customer Extended Value
+		if(detail.getCustomerDetails()!=null && detail.getCustomerDetails().getExtendedFieldHeader()!=null && detail.getCustomerDetails().getExtendedFieldHeader().getExtendedFieldDetails()!=null){
+			for (ExtendedFieldDetail fieldDetail : detail.getCustomerDetails().getExtendedFieldHeader().getExtendedFieldDetails()) {
+				if(fieldDetail.isAllowInRule()){
+					Object value = detail.getCustomerDetails().getExtendedFieldRender().getMapValues().get(fieldDetail.getFieldName());
+					detail.getCustomerEligibilityCheck().setExtendedFieldMap(fieldDetail.getLovDescModuleName()+"_"+fieldDetail.getLovDescSubModuleName()+"_"+fieldDetail.getFieldName(), value);
+				}
+			}
+			
+		}
+
+		
+		// Loan Extended Value  
+		if(detail.getExtendedFieldHeader()!=null && detail.getExtendedFieldHeader().getExtendedFieldDetails()!=null){
+				
+			for (ExtendedFieldDetail fieldDetail : detail.getExtendedFieldHeader().getExtendedFieldDetails()) {
+				if(fieldDetail.isAllowInRule()){
+					Object value = detail.getExtendedFieldRender().getMapValues().get(fieldDetail.getFieldName());
+					detail.getCustomerEligibilityCheck().setExtendedFieldMap(fieldDetail.getLovDescModuleName()+"_"+fieldDetail.getLovDescSubModuleName()+"_"+fieldDetail.getFieldName(), value);
+				}
+			}	
+		}
+		
+		
+		
+		
+		// ### 08-05-2018 - End- Development Item 81
+		
 		setFinanceDetail(detail);
 		logger.debug("Leaving");
 		return getFinanceDetail();

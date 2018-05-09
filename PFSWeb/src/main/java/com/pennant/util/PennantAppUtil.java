@@ -15,23 +15,23 @@
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
- *
+ *																							*
  * FileName    		:  PennantAppUtil.java													*                           
- *                                                                    
+ *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
+ *                                                                  						*
  * Creation Date    :  26-04-2011															*
- *                                                                  
+ *                                                                  						*
  * Modified Date    :  26-04-2011															*
- *                                                                  
+ *                                                                  						*
  * Description 		:												 						*                                 
- *                                                                                          
+ *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
  * 26-04-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 08-05-2019		Srinivasa Varma			 0.2		  Development Iteam 81              * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -905,7 +905,9 @@ public class PennantAppUtil {
 	}
 	
 	
-	/* This Method for getting the GlobalModulesList
+	//### 08-05-2018 Start Development Iteam 81
+	
+	/* This Method for getting the Extended Fields Which are marked as Allow in Rule as true.
 	 * 
 	 * @return CSSParameter
 	 */
@@ -929,7 +931,7 @@ public class PennantAppUtil {
 		for (ExtendedFieldDetail fieldDetail: extendedFieldDetails) {
 			RBFieldDetail rbFieldDetail= new RBFieldDetail();
 			
-			rbFieldDetail.setRbFldName(fieldDetail.getFieldName());
+			rbFieldDetail.setRbFldName(fieldDetail.getLovDescModuleName()+"_"+fieldDetail.getLovDescSubModuleName()+"_"+fieldDetail.getFieldName());
 			rbFieldDetail.setRbFldDesc(fieldDetail.getFieldLabel());
 			
 			rbFieldDetail.setRbFldType(getExternalFieldType(fieldDetail.getFieldType())); 
@@ -940,6 +942,8 @@ public class PennantAppUtil {
 		return rbFieldDetailsList;
 	}
 
+	//### 08-05-2018 End Development Iteam 81
+	
 	private static String getExternalFieldType(String fieldType){
 		
 		switch (FieldType.valueOf(fieldType)) {
