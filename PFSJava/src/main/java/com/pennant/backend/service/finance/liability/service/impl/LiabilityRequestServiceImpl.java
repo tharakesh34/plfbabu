@@ -31,7 +31,9 @@
  ********************************************************************************************
  * 31-12-2015       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 09-05-2018		Vinay					 0.2   		As per mail from Raju  				*
+ * 														NOC flag validation functionality 	*
+ * 														implemented	                        * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -69,6 +71,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
+import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
@@ -620,6 +623,15 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 				}
 			}
 		}
+		
+		// ###_0.2
+		for (FinFlagsDetail finFlagsDetail : liabilityRequest.getFinanceDetail().getFinFlagsDetails()) {
+			if(StringUtils.equals(finFlagsDetail.getFlagCode(), "NONOC")){
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41102", null)));
+				break;
+			}
+		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !liabilityRequest.isWorkflow()){
