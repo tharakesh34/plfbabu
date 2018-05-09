@@ -2693,8 +2693,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		errorParm[0] = "Customer";
 
 		try {
+			
+			//begin 09-05-18
+			if (!"Y".equalsIgnoreCase((String) SysParamUtil.getValue("GCD_FINONE_PROC_REQD"))) {
+				customerDetails.getReturnStatus().setReturnCode(InterfaceConstants.SUCCESS_CODE);
+				return auditHeader;
+			}
+			//end
 			customerService.prepareGCDCustomerData(customerDetails);
-
 			crm.create(customerDetails);
 
 			WSReturnStatus status = customerDetails.getReturnStatus();

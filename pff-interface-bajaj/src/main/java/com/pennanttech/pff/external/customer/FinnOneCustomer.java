@@ -44,11 +44,6 @@ public class FinnOneCustomer extends BajajService implements Crm {
 
 		customerDetails.setReturnStatus(new WSReturnStatus());
 
-		if (!"Y".equalsIgnoreCase((String) getSMTParameter("GCD_FINONE_PROC_REQD", String.class))) {
-			customerDetails.getReturnStatus().setReturnCode(InterfaceConstants.SUCCESS_CODE);
-			return customerDetails;
-		}
-
 		CustomerProcedure customerproc = new CustomerProcedure(finOneDataSource, "CREATE_CUSTOMER_IN_FINNONE");
 		Map<String, Object> params = new LinkedHashMap<>();
 
@@ -137,11 +132,13 @@ public class FinnOneCustomer extends BajajService implements Crm {
 			if (output != null && !output.isEmpty()) {
 				if (((String) output.get("P_SUCCESS_REJECT")).equals("R")) {
 					gcdCustomer.setStatusFromFinnOne(String.valueOf(output.get("P_SUCCESS_REJECT")));
-					gcdCustomer.setRejectionReason(String.valueOf(output.get("P_REJECTION_REASON")));
+					gcdCustomer.setRejectionReason(String.valueOf(output.get("P_REJECTION_REASON")).equals("null")
+							? null : String.valueOf(output.get("P_REJECTION_REASON")));
 					updateFailStatus(gcdCustomer);
 				} else {
 					customerDetails.getCustomer().setCustCoreBank(String.valueOf(output.get("P_FINN_CUST_ID")));
-					gcdCustomer.setFinnCustId(String.valueOf(output.get("P_FINN_CUST_ID")));
+					gcdCustomer.setFinnCustId(String.valueOf(output.get("P_FINN_CUST_ID")).equals("null") ? null
+							: String.valueOf(output.get("P_FINN_CUST_ID")));
 					gcdCustomer.setStatusFromFinnOne(String.valueOf(output.get("P_SUCCESS_REJECT")));
 					gcdCustomer.setRejectionReason(String.valueOf(output.get("P_REJECTION_REASON")));
 					updateSuccessStatus(gcdCustomer);

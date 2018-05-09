@@ -212,6 +212,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -4573,6 +4574,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		errorParm[0] = "Customer";
 
 		try {
+			//begin 09-05-18
+			if (!"Y".equalsIgnoreCase((String) SysParamUtil.getValue("GCD_FINONE_PROC_REQD"))) {
+				customerDetails.getReturnStatus().setReturnCode(InterfaceConstants.SUCCESS_CODE);
+				return financeDetail;
+			}
+			//end
 			customerService.prepareGCDCustomerData(customerDetails);
 			crm.create(customerDetails);
 		} catch (Exception e) {
