@@ -148,9 +148,12 @@ public class CustomerEligibilityCheck implements Serializable {
 	private BigDecimal  custPDLive180D = BigDecimal.ZERO;
 	private BigDecimal  custPDLive180DP = BigDecimal.ZERO;*/
 
+	HashMap<String, Object> extendedFieldMap = new HashMap<String, Object>();
+	
 	public CustomerEligibilityCheck() {
 		
 	}
+
 	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -534,12 +537,16 @@ public class CustomerEligibilityCheck implements Serializable {
 	
 	public HashMap<String, Object> getDeclaredFieldValues() {
 		HashMap<String, Object> customerEligibityMap = new HashMap<String, Object>();
-
+		
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				customerEligibityMap.put(this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
+				if("extendedFieldMap".equals(this.getClass().getDeclaredFields()[i].getName())){
+					customerEligibityMap.putAll(extendedFieldMap);
+				}else if(!"serialVersionUID".equals(this.getClass().getDeclaredFields()[i].getName())){
+					customerEligibityMap.put(this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));	
+				}
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-				// Nothing TO DO
+				e.printStackTrace();
 			}
 		}
 		return customerEligibityMap;
@@ -758,5 +765,10 @@ public class CustomerEligibilityCheck implements Serializable {
 	public void setEligibilityMethod(String eligibilityMethod) {
 		this.eligibilityMethod = eligibilityMethod;
 	}
-	
+
+
+	public void setExtendedFieldMap(String fieldName, Object value) {
+		this.extendedFieldMap.put(fieldName, value);
+	}
+
 }
