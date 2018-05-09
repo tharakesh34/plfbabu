@@ -251,7 +251,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				this.custID.setValue((Long) arguments.get("custID"));
 				this.custCtgCode = (String) arguments.get("custCtgType");
 				this.listOfFinCreditRevCategory = this.creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(this.custCtgCode);
-				this.toYear.setValue(DateUtility.getYear(appldate));
+				this.maxAuditYear = getCreditApplicationReviewService().getMaxAuditYearByCustomerId(this.custID.longValue(), "_VIEW");
+				this.toYear.setValue(Integer.parseInt(maxAuditYear));
 				year = this.toYear.getValue();
 				if(arguments.containsKey("facility")){
 					isEnquiry = true;
