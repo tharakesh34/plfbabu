@@ -10344,12 +10344,6 @@
 	</bean>
 	
 	<bean name="cibilService" class="com.pennant.backend.service.cibil.CIBILServiceImpl"/>
-	
-	<bean id="gCDCustomerDAO"
-		class="com.pennant.backend.dao.customermasters.impl.GCDCustomerDAOImpl"
-		parent="basisCodeDAO">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
 
 	<!-- GCDCustomers END -->	
 	<bean id="soaReportGenerationDAO"
