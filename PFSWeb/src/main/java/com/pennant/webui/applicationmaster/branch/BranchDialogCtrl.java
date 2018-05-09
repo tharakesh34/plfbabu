@@ -31,7 +31,8 @@
  ********************************************************************************************
  * 26-05-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 09-05-2018		Vinay				     0.2      Branch Code field working on rights	*
+ * 													  functionality changes.                * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -710,7 +711,9 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			doEdit();
 			// setFocus
 			this.branchCode.focus();
+			this.branchCode.setReadonly(false);
 		} else {
+			this.branchCode.setReadonly(true);
 			this.branchDesc.focus();
 			if (isWorkFlowEnabled()) {
 				if (StringUtils.isNotBlank(aBranch.getRecordType())) {
@@ -1028,14 +1031,12 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	private void doEdit() {
 		logger.debug("Entering");
 		if (getBranch().isNewRecord()) {
-			this.branchCode.setReadonly(false);
 			this.btnCancel.setVisible(false);
 		} else {
 			this.branchCountry.setMandatoryStyle(true);
 			this.branchCity.setMandatoryStyle(true);
 			this.branchProvince.setMandatoryStyle(true);
 			this.pinCode.setMandatoryStyle(true);
-			this.branchCode.setReadonly(isReadOnly("BranchDialog_newBranchCode"));
 			this.btnCancel.setVisible(true);
 		}
 
