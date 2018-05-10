@@ -5690,5 +5690,26 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 		insert into ProcessEditorDetail (ModuleId, ModuleName, ModuleDesc) values (1, 'Cheque', 'Customer Return Cheques');
 		</sql>
 	</changeSet>
+	
+	<changeSet id="124" author="Vinay">
+	<comment>Disbursement download for IMPS configurations</comment>
+		<createTable tableName="INT_DSBIMPS_RESPONSE">
+			<column name="CHANNELPARTNERREFNO" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TRANSACTIONID" type="varchar(15)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="STATUS" type="decimal(10,0)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="DESCRIPTION" type="varchar(200)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="PROCESSFLAG" type="varchar(1)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
 	
