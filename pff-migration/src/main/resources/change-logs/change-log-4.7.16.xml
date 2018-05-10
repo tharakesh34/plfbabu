@@ -5206,7 +5206,7 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 		<column name="ResponseOn" type="datetime"/>
 		<column name="CloserNotes" type="nchar"/>
 		<column name="CloserBy" type="bigint"/>
-		<column name="CloserOn" type="datetime">
+		<column name="CloserOn" type="datetime"/>
 		<column name="version" type="int"/>
 		<column name="lastmntby" type="bigint"/>
 		<column name="lastmnton" type="datetime"/>
