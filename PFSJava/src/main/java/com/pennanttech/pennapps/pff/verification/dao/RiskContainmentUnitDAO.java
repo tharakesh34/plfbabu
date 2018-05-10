@@ -6,6 +6,7 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
+import com.pennanttech.pff.core.TableType;
 
 public interface RiskContainmentUnitDAO extends BasicCrudDao<RiskContainmentUnit> {
 
@@ -20,5 +21,7 @@ public interface RiskContainmentUnitDAO extends BasicCrudDao<RiskContainmentUnit
 	void deleteRCUDocumentsList(List<LVDocument> documents, String tableType);
 
 	List<RiskContainmentUnit> getList(String keyReference);
+
+	void saveDocuments(List<RCUDocument> rcuDocuments, TableType tableType);
 
 }

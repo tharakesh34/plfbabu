@@ -10,7 +10,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class RCUDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private long rcuId = Long.MIN_VALUE;
+	private long verificationId = Long.MIN_VALUE;
 	private int seqNo;
 	private Long documentId;
 	private String documentSubId;
@@ -63,12 +63,12 @@ public class RCUDocument extends AbstractWorkflowEntity {
 		return isNewRecord();
 	}
 
-	public long getRcuId() {
-		return rcuId;
+	public long getVerificationId() {
+		return verificationId;
 	}
 
-	public void setRcuId(long rcuId) {
-		this.rcuId = rcuId;
+	public void setVerificationId(long verificationId) {
+		this.verificationId = verificationId;
 	}
 
 	public int getSeqNo() {

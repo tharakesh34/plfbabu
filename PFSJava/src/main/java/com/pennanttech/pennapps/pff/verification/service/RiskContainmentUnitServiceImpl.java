@@ -34,7 +34,6 @@ import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.RiskContainmentUnitDAO;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
-import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -537,8 +536,9 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			tableName.append("_");
 			tableName.append(rcu.getExtendedFieldHeader().getSubModuleName());
 			tableName.append("_ED");
-			auditList.addAll(extendedFieldDetailsService.delete(rcu.getExtendedFieldHeader(), String.valueOf(rcu.getVerificationId()),
-					tableName.toString(), tableType, auditTranType, extendedDetails));
+			auditList.addAll(extendedFieldDetailsService.delete(rcu.getExtendedFieldHeader(),
+					String.valueOf(rcu.getVerificationId()), tableName.toString(), tableType, auditTranType,
+					extendedDetails));
 		}
 
 		// Document Details.
@@ -794,7 +794,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	public DocumentManager getDocumentById(Long docRefId) {
 		return documentManagerDAO.getById(docRefId);
 	}
-	
+
 	@Override
 	public List<Long> getRCUVerificaationIds(List<Verification> verifications, String keyRef) {
 		List<Long> rcuIds = new ArrayList<>();
@@ -809,42 +809,64 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		}
 		return rcuIds;
 	}
-	
+
 	@Override
-	public long save(Verification verification, TableType tableType) {
-		setLvFields(verification);
-		return Long.parseLong(riskContainmentUnitDAO.save(verification.getRcuVerification(), tableType));
+	public void save(Verification verification, TableType tableType) {
+		setRcuFields(verification);
+		setRcuDocumentWorkFlowFields(verification.getRcuVerification());
+		riskContainmentUnitDAO.save(verification.getRcuVerification(), tableType);
 	}
-	
-	private void setLvFields(Verification verification) {
 
-		LegalVerification lv = verification.getLegalVerification();
+	private void setRcuFields(Verification verification) {
 
-		if (lv == null) {
-			lv = new LegalVerification();
-			verification.setLegalVerification(lv);
+		RiskContainmentUnit rcu = verification.getRcuVerification();
+
+		if (rcu == null) {
+			rcu = new RiskContainmentUnit();
+			verification.setRcuVerification(rcu);
 		}
 
-		lv.setVerificationId(verification.getId());
-		lv.setVersion(1);
-		lv.setLastMntBy(verification.getLastMntBy());
-		lv.setLastMntOn(verification.getLastMntOn());
-		setAudit(lv);
+		rcu.setVerificationId(verification.getId());
+		rcu.setVersion(1);
+		rcu.setLastMntBy(verification.getLastMntBy());
+		rcu.setLastMntOn(verification.getLastMntOn());
+		setWorkflowFields(rcu);
 
 	}
 
-	private void setAudit(LegalVerification lv) {
+	private void setWorkflowFields(RiskContainmentUnit rcu) {
 		String workFlowType = ModuleUtil.getWorkflowType("LegalVerification");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workFlowType);
 		WorkflowEngine engine = new WorkflowEngine(
 				WorkFlowUtil.getWorkflow(workFlowDetails.getWorkFlowId()).getWorkFlowXml());
 
-		lv.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
-		lv.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		lv.setWorkflowId(workFlowDetails.getWorkflowId());
-		lv.setRoleCode(workFlowDetails.getFirstTaskOwner());
-		lv.setNextRoleCode(workFlowDetails.getFirstTaskOwner());
-		lv.setTaskId(engine.getUserTaskId(lv.getRoleCode()));
-		lv.setNextTaskId(engine.getUserTaskId(lv.getNextRoleCode()) + ";");
+		rcu.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
+		rcu.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		rcu.setWorkflowId(workFlowDetails.getWorkflowId());
+		rcu.setRoleCode(workFlowDetails.getFirstTaskOwner());
+		rcu.setNextRoleCode(workFlowDetails.getFirstTaskOwner());
+		rcu.setTaskId(engine.getUserTaskId(rcu.getRoleCode()));
+		rcu.setNextTaskId(engine.getUserTaskId(rcu.getNextRoleCode()) + ";");
+	}
+
+	private void setRcuDocumentWorkFlowFields(RiskContainmentUnit rcu) {
+		for (RCUDocument rcuDocument : rcu.getRcuDocuments()) {
+			rcuDocument.setVersion(rcu.getVersion());
+			rcuDocument.setLastMntBy(rcu.getLastMntBy());
+			rcuDocument.setLastMntOn(rcu.getLastMntOn());
+			rcuDocument.setRecordStatus(rcu.getRecordStatus());
+			rcuDocument.setRecordType(rcu.getRecordType());
+			rcuDocument.setWorkflowId(rcu.getWorkflowId());
+			rcuDocument.setRoleCode(rcu.getRoleCode());
+			rcuDocument.setNextRoleCode(rcu.getNextRoleCode());
+			rcuDocument.setTaskId(rcu.getTaskId());
+			rcuDocument.setNextTaskId(rcu.getNextTaskId());
+		}
+	}
+
+	@Override
+	public void saveDocuments(List<RCUDocument> rcuDocuments, TableType tableType) {
+		riskContainmentUnitDAO.saveDocuments(rcuDocuments, tableType);
+
 	}
 }

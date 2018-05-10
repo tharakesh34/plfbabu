@@ -1,5 +1,7 @@
 package com.pennanttech.pennapps.pff.verification.dao;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -276,5 +279,54 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		return new ArrayList<>();
 	}
 
+	@Override
+	public void saveDocuments(List<RCUDocument> rcuDocuments, TableType tableType) {
+		logger.debug("Entering");
 
+		StringBuilder sql = new StringBuilder();
+		sql.append("Insert Into verification_rcu_details");
+		sql.append(tableType.getSuffix());
+
+		sql.append(" (verificationId, seqNo, documentId, documentSubId");
+		sql.append(" ,Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?");
+		sql.append(" ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug("insertSql: " + sql.toString());
+
+		jdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				RCUDocument document = rcuDocuments.get(i);
+				ps.setLong(1, document.getVerificationId());
+				if (tableType == TableType.MAIN_TAB) {
+					ps.setInt(2, i + 1);
+				} else {
+					ps.setInt(2, document.getSeqNo());
+				}
+
+				ps.setLong(3, document.getDocumentId());
+				ps.setString(4, document.getDocumentSubId());
+				ps.setInt(5, document.getVersion());
+				ps.setTimestamp(6, document.getLastMntOn());
+				ps.setLong(7, document.getLastMntBy());
+				ps.setString(8, document.getRecordStatus());
+				ps.setString(9, document.getRoleCode());
+				ps.setString(10, document.getNextRoleCode());
+				ps.setString(11, document.getTaskId());
+				ps.setString(12, document.getNextTaskId());
+				ps.setString(13, document.getRecordType());
+				ps.setLong(14, document.getWorkflowId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return rcuDocuments.size();
+			}
+
+		});
+
+		logger.debug("Leaving");
+
+	}
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
@@ -26,6 +27,7 @@ public interface RiskContainmentUnitService {
 
 	List<Long> getRCUVerificaationIds(List<Verification> verifications, String keyRef);
 
-	long save(Verification verification, TableType tableType);
+	void save(Verification verification, TableType tableType);
 
+	void saveDocuments(List<RCUDocument> rcuDocuments, TableType tableType);
 }

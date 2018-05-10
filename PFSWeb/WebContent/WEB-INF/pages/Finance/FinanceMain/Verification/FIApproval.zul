@@ -20,7 +20,7 @@
 				<center sclass="none" autoscroll="true">
 					<div>
 						<div>
-								<listbox id="listBoxFIVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true" rows="5">
+								<listbox id="listBoxFIVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
 								<listhead sizable="false">
 									<listheader
 										id="listheader_FIVerification_Select"

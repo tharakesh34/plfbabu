@@ -170,6 +170,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 							saveRCU(item);
 						}
 					}
+				} else if (verificationType == VerificationType.RCU) {
+					saveRCUInStage(item);
 				}
 
 			} else {
@@ -204,7 +206,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					} else if (verificationType == VerificationType.LV) {
 						saveLV(item);
 					} else if (verificationType == VerificationType.RCU) {
-						saveLV(item);
+						saveRCU(item);
 					}
 				} else {
 					verificationDAO.update(item, TableType.MAIN_TAB);
@@ -269,12 +271,11 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		legalVerificationService.save(verification, TableType.MAIN_TAB);
 
 		//LV Documents
-		
+
 		for (LVDocument document : verification.getLvDocuments()) {
 			document.setVerificationId(verification.getLegalVerification().getVerificationId());
 		}
-		
-		
+
 		legalVerificationService.saveDocuments(verification.getLvDocuments(), TableType.MAIN_TAB);
 	}
 
@@ -312,6 +313,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private void saveRCU(Verification item) {
 		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
 			riskContainmentUnitService.save(item, TableType.TEMP_TAB);
+			riskContainmentUnitService.saveDocuments(item.getRcuVerification().getRcuDocuments(), TableType.TEMP_TAB);
+		}
+	}
+
+	private void saveRCUInStage(Verification item) {
+		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
+			riskContainmentUnitService.save(item, TableType.STAGE_TAB);
+			riskContainmentUnitService.saveDocuments(item.getRcuVerification().getRcuDocuments(), TableType.STAGE_TAB);
 		}
 	}
 
