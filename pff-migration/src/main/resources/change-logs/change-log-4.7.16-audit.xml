@@ -493,4 +493,76 @@
 		</column>
 	</createTable>
 </changeSet>
+
+
+  <changeSet id="25" author="Durgaprasad G" dbms="postgresql">
+		<dropView viewName="adtreasoncategory_view"/>
+	</changeSet>
+
+	<changeSet id="26" author="Durgaprasad G" dbms="postgresql">
+		<modifyDataType tableName="adtreasoncategory" columnName="Code" newDataType="varchar(10)" />
+	</changeSet>
+	
+	<changeSet id="27" author="Durgaprasad G">
+		<dropView viewName="adtreasontypes_view"/>
+	</changeSet>
+
+	<changeSet id="28" author="Durgaprasad G">
+		<modifyDataType tableName="adtreasontypes" columnName="Code" newDataType="varchar(10)" />
+	</changeSet>
+	 
+	<changeSet id="29" author="Durgaprasad G">
+		 <sql>
+		 	<![CDATA[ 
+			    CREATE OR REPLACE VIEW adtreasoncategory_view AS
+			    SELECT th.auditid,
+			    th.auditdate AS auditdatetime,
+			    to_char(th.auditdate, 'DD-MON-YYYY'::text) AS auditdate,
+			    to_char(th.auditdate, 'HH24:MI:SS'::text) AS audittime,
+			    COALESCE(aft.auditseq, bef.auditseq) AS auditseq,
+			    th.auditusrid,
+			    (t1.usrfname::text || t1.usrmname::text) || t1.usrlname::text AS auditusername,
+			    th.audittrantype,
+			    aft.id AS aftid,
+			    aft.code AS aftcode,
+			    aft.description AS aftdescription,
+			    bef.id AS befid,
+			    bef.code AS befcode,
+			    bef.description AS befdescription
+			    FROM plfaudit.auditheader th
+			    JOIN plfaudit.secusers_view t1 ON th.auditusrid = t1.usrid
+			    LEFT JOIN plfaudit.adtreasoncategory aft ON th.auditid = aft.auditid AND th.auditdate = aft.auditdate AND aft.auditimage::text = 'A'::text
+			    FULL JOIN plfaudit.adtreasoncategory bef ON th.auditid = bef.auditid AND th.auditdate = bef.auditdate AND bef.auditimage::text = 'B'::text
+			    WHERE th.audittrantype <> 'W'::bpchar AND th.auditmodule::text = 'ReasonCategory'::text
+		 	 ]]>
+		 </sql>
+    </changeSet>
+    
+	<changeSet id="30" author="Durgaprasad G">
+		 <sql>
+		 	<![CDATA[ 
+				CREATE OR REPLACE VIEW adtreasontypes_view AS
+			    SELECT th.auditid,
+			    th.auditdate AS auditdatetime,
+			    to_char(th.auditdate, 'DD-MON-YYYY'::text) AS auditdate,
+			    to_char(th.auditdate, 'HH24:MI:SS'::text) AS audittime,
+			    COALESCE(aft.auditseq, bef.auditseq) AS auditseq,
+			    th.auditusrid,
+			    (t1.usrfname::text || t1.usrmname::text) || t1.usrlname::text AS auditusername,
+			    th.audittrantype,
+			    aft.id AS aftid,
+			    aft.code AS aftcode,
+			    aft.description AS aftdescription,
+			    bef.id AS befid,
+			    bef.code AS befcode,
+			    bef.description AS befdescription
+			    FROM plfaudit.auditheader th
+			    JOIN plfaudit.secusers_view t1 ON th.auditusrid = t1.usrid
+			    LEFT JOIN plfaudit.adtreasontypes aft ON th.auditid = aft.auditid AND th.auditdate = aft.auditdate AND aft.auditimage::text = 'A'::text
+			    FULL JOIN plfaudit.adtreasontypes bef ON th.auditid = bef.auditid AND th.auditdate = bef.auditdate AND bef.auditimage::text = 'B'::text
+			    WHERE th.audittrantype <> 'W'::bpchar AND th.auditmodule::text = 'ReasonTypes'::text
+		 	 ]]>
+		 </sql>
+	</changeSet>
+	
 	</databaseChangeLog>
