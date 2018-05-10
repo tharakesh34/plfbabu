@@ -205,7 +205,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	boolean canRaiseManualDeviation = true;
 	@Autowired
 	private DeviationHelper deviationHelper;
-
+	private int referenceType = 0;
 
 	/**
 	 * default constructor.<br>
@@ -242,6 +242,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			if (arguments.containsKey("financeReferenceDetail")) {
 				this.financeReferenceDetail = (FinanceReferenceDetail) arguments
 						.get("financeReferenceDetail");
+				referenceType = financeReferenceDetail.getFinRefType();
 
 				boolean addBefImage = true;
 				if (PennantConstants.RECORD_TYPE_NEW
@@ -274,13 +275,17 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			if (arguments.containsKey("roleCodeList")) {
 				roleCodes = arguments.get("roleCodeList").toString();
 			}
-			// ### 06-05-2018 - story #361(Tuleap server) Manual Deviations
-			delegatorRoles = getDelegatorRoles();
+
 			if (arguments.containsKey("moduleName")) {
 				moduleName = (String) arguments.get("moduleName");
 			}
 			if (arguments.containsKey("eventAction")) {
 				eventAction = (String) arguments.get("eventAction");
+			}
+
+			// ### 06-05-2018 - story #361(Tuleap server) Manual Deviations
+			if (referenceType == FinanceConstants.PROCEDT_LIMIT) {
+				delegatorRoles = getDelegatorRoles();
 			}
 
 			doLoadWorkFlow(this.financeReferenceDetail.isWorkflow(),
@@ -1403,9 +1408,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
 
 	private String getDelegatorRoles() {
-		List<ValueLabel> delegators = deviationHelper.getRoleAndDesc(
-				getFinanceReferenceDetail().getFinType(), getFinanceReferenceDetail().getFinEvent(),
-				"FINANCE");
+		List<ValueLabel> delegators = deviationHelper.getRoleAndDesc(getFinanceReferenceDetail().getFinType(),
+				getFinanceReferenceDetail().getFinEvent(), moduleName);
 
 		String delegatorRoles = "";
 		for (ValueLabel valueLabel : delegators) {
