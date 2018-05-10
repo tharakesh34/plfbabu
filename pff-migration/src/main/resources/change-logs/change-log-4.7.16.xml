@@ -5680,9 +5680,14 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 	update SeqSecRights set SeqNo = (SeqNo+10+15) ;
 	</sql>
 </changeSet>
-<changeSet id="122" author="vijaykumar.L">
+  <changeSet id="122" author="vijaykumar.L">
 		<sql>
 			update RejectFinanceMain set duebucket=0 where duebucket is null;
+		</sql>
+	</changeSet>
+	<changeSet id="123" author="saikrishna.p">
+		<sql>
+		insert into ProcessEditorDetail (ModuleId, ModuleName, ModuleDesc) values (1, 'Cheque', 'Customer Return Cheques');
 		</sql>
 	</changeSet>
 </databaseChangeLog>
