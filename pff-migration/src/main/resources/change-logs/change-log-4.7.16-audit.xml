@@ -600,5 +600,9 @@
 		 	 ]]>
 		 </sql>
 	</changeSet>
-	
+	<changeSet id="31" author="Vijaykumar.l">
+	<sql>
+	 alter table adtloanpurposes alter column loanpurposeisactive TYPE smallint using  loanpurposeisactive::smallint
+	</sql>
+	</changeSet>
 	</databaseChangeLog>
