@@ -15,7 +15,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ScheduleDetailDialogCtrl.java                                                   * 	  
+ * FileName    		:  CollateralHeaderDialogCtrl.java                                      * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -30,7 +30,7 @@
  ********************************************************************************************
  * 12-11-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 10-05-2019		Srinivasa Varma			 0.2		  Development Item 82              	* 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -127,8 +127,17 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	private String							moduleName;
 	private long							customerId;
 	private List<String> assignCollateralRef;
+	//### 10-05-2018 Start Development Item 82
+	private HashMap<String, Object> ruleMap = new HashMap<String, Object>();
 	
+	public HashMap<String, Object> getRuleMap() {
+		return ruleMap;
+	}
 
+	public void setRuleMap(HashMap<String, Object> ruleMap) {
+		this.ruleMap = ruleMap;
+	}
+	//### 10-05-2018 End Development Item 82
 	/**
 	 * default constructor.<br>
 	 */
@@ -527,6 +536,11 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	public void doFillCollateralDetails(List<CollateralAssignment> CollateralAssignments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering");
 		
+		//### 10-05-2018 Start Development Item 82
+		BigDecimal totalBankValuation= new BigDecimal(0);
+		BigDecimal balanceAssignedValue= new BigDecimal(0);
+		//### 10-05-2018 End Development Item 82
+		
 		int totCollateralCount = 0;
 		BigDecimal totAssignedColValue = BigDecimal.ZERO;
 		
@@ -554,8 +568,8 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				listcell.setStyle("text-align:right;");
 				listitem.appendChild(listcell);
 				
-				BigDecimal curAssignValue =(collateralAssignment.getBankValuation().multiply(
-						collateralAssignment.getAssignPerc())).divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN);
+				BigDecimal curAssignValue =(collateralAssignment.getBankValuation().multiply(collateralAssignment.getAssignPerc())).divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN);
+				
 				
 				listcell = new Listcell(PennantAppUtil.amountFormate(curAssignValue, ccyFormat));
 				listcell.setStyle("text-align:right;");
@@ -602,7 +616,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				listitem.setAttribute("data", collateralAssignment);
 				ComponentsCtrl.applyForward(listitem, "onDoubleClick=onCollateralAssignItemDoubleClicked");
 				this.listBoxCollateralAssignments.appendChild(listitem);
-				
+				totalBankValuation		= 	totalBankValuation.add(collateralAssignment.getBankValuation());
 			}
 		}
 
@@ -617,6 +631,14 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			this.availableCollateral.setValue("Available");
 			this.availableCollateral.setStyle("color:Green;font-weight:bold;");
 		}
+
+		//### 10-05-2018 Start Development Item 82
+		balanceAssignedValue = totalBankValuation.subtract(totAssignedColValue);
+		
+		ruleMap.put("Collateral_Bank_Valuation", totalBankValuation);
+		ruleMap.put("Collaterals_Total_Assigned ", totAssignedColValue);
+		ruleMap.put("Collaterals_Total_UN_Assigned", balanceAssignedValue);
+		//### 10-05-2018 End  Development Item 82
 		logger.debug("Leaving");
 	}
 

@@ -15,7 +15,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinanceMainDialogCtrl.java                                                   * 	  
+ * FileName    		:  JointAccountDetailDialogCtrl.java                                    * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -30,7 +30,7 @@
  ********************************************************************************************
  * 12-11-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 10-05-2019		Srinivasa Varma			 0.2		  Development Item 82               *  
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -118,7 +118,18 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private Object mainController;
 	private boolean enquiry;
 	private	boolean fromApproved;
+	//### 10-05-2018 Start Development Item 82
+	private HashMap<String, Object> ruleMap = new HashMap<String, Object>();
+	
+	public HashMap<String, Object> getRuleMap() {
+		return ruleMap;
+	}
 
+	public void setRuleMap(HashMap<String, Object> ruleMap) {
+		this.ruleMap = ruleMap;
+	}
+
+	//### 10-05-2018 End Development Item 82
 	/**
 	 * default constructor.<br>
 	 */
@@ -356,6 +367,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Entering");
 		this.listBoxJountAccountDetails.getItems().clear();
 		setJountAccountDetailList(jountAccountDetails);
+		//### 10-05-2018 Development Item 82
+		ruleMap.put("Co_Applicants_Count", jountAccountDetails.size());
+		
 		for (JointAccountDetail jountAccountDetail : jountAccountDetails) {
 			Listitem listitem = new Listitem();
 			Listcell listcell;
@@ -464,7 +478,20 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Entering");
 		this.listBoxGurantorsDetail.getItems().clear();
 		setGuarantorDetailList(guarantorDetailList);
+		int customerCount = 0;
+		int otherCount = 0;
+		
 		for (GuarantorDetail guarantorDetail : guarantorDetailList) {
+			
+			if(guarantorDetail.isBankCustomer()){
+				customerCount++;	
+			}else{
+				otherCount++;	
+			}
+			
+			
+
+			
 			Listitem listitem = new Listitem();
 			Listcell listcell;
 			if (StringUtils.isBlank(guarantorDetail.getGuarantorCIF())) {
@@ -512,6 +539,12 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onFinGurantorItemDoubleClicked");
 			this.listBoxGurantorsDetail.appendChild(listitem);
 		}
+		
+		//### 10-05-2018 Start Development Item 82
+		ruleMap.put("Guarantors_Bank_CustomerCount", customerCount);
+		ruleMap.put("Guarantors_Other_CustomerCount", otherCount);
+		ruleMap.put("Guarantors_Total_Count", customerCount+otherCount);
+		//### 10-05-2018 End Development Item 82
 		logger.debug("Leaving");
 	}
 

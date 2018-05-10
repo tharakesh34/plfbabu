@@ -51,8 +51,9 @@
  * 														for Profectus.                      * 
  *                                                                                          * 
  *                                                                                          * 
- * 08-05-2019		Srinivasa Varma			0.4			Development Iteam 81                *
- *                                                                                          *                                                                                          * 
+ * 08-05-2019		Srinivasa Varma			0.4			Development Item 81                 *
+ *                                                                                          *
+ * 10-05-2019		Srinivasa Varma			0.5			Development Item 82                 *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
  */
@@ -14666,6 +14667,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		
  		
 		// ### 08-05-2018 - End- Development Item 81
+
+		// ### 10-05-2018 - Start- Development Item 82
+		if(jointAccountDetailDialogCtrl!=null){
+			detail.getCustomerEligibilityCheck().addExtendedFieldMap(jointAccountDetailDialogCtrl.getRuleMap());
+		}
+
+		if(collateralHeaderDialogCtrl!=null){
+			detail.getCustomerEligibilityCheck().addExtendedFieldMap(collateralHeaderDialogCtrl.getRuleMap());
+		}
+		// ### 10-05-2018 - End - Development Item 82
 		setFinanceDetail(detail);
 		logger.debug("Leaving");
 		return getFinanceDetail();
