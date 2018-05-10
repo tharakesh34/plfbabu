@@ -14641,20 +14641,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		detail.getCustomerEligibilityCheck().setEligibilityMethod(financeMain.getEligibilityMethod());
 		detail.getFinScheduleData().setFinanceMain(financeMain);
 		
-		// ### 08-05-2018 - Start - Development Item 81
-
-		try {
-			
-			// FIXME FINE TUNE THIS UN NEcessary it may call 2 times.
-			detail.setExtendedFieldRender(extendedFieldCtrl.save());
-		} catch (WrongValuesException e){
-			throw e;
-		} catch (Exception e) {
-			logger.error(e);
-		}
-
 		// Customer Extended Value
-		if(detail.getCustomerDetails()!=null && detail.getCustomerDetails().getExtendedFieldHeader()!=null && detail.getCustomerDetails().getExtendedFieldHeader().getExtendedFieldDetails()!=null){
+		if(detail.getCustomerDetails()!=null && detail.getCustomerDetails().getExtendedFieldHeader()!=null && detail.getCustomerDetails().getExtendedFieldHeader().getExtendedFieldDetails()!=null && detail.getCustomerDetails().getExtendedFieldRender().getMapValues()!=null){
 			for (ExtendedFieldDetail fieldDetail : detail.getCustomerDetails().getExtendedFieldHeader().getExtendedFieldDetails()) {
 				if(fieldDetail.isAllowInRule()){
 					Object value = detail.getCustomerDetails().getExtendedFieldRender().getMapValues().get(fieldDetail.getFieldName());
@@ -14666,7 +14654,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		
 		// Loan Extended Value  
-		if(detail.getExtendedFieldHeader()!=null && detail.getExtendedFieldHeader().getExtendedFieldDetails()!=null){
+		if(detail.getExtendedFieldHeader()!=null && detail.getExtendedFieldHeader().getExtendedFieldDetails()!=null && detail.getExtendedFieldRender().getMapValues()!=null){
 				
 			for (ExtendedFieldDetail fieldDetail : detail.getExtendedFieldHeader().getExtendedFieldDetails()) {
 				if(fieldDetail.isAllowInRule()){
@@ -14676,11 +14664,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}	
 		}
 		
-		
-		
-		
+ 		
 		// ### 08-05-2018 - End- Development Item 81
-		
 		setFinanceDetail(detail);
 		logger.debug("Leaving");
 		return getFinanceDetail();
