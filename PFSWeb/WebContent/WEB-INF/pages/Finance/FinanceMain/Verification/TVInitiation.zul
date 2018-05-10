@@ -16,7 +16,7 @@
 				<center border="none" id="divCenter">
 				<div>
 					<groupbox id="finBasicdetails" zclass="null"/>
-					<listbox id="listBoxTechnicalVerification" width="100%" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
+					<listbox id="listBoxTechnicalVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
 						<listhead sizable="false">
 							<listheader
 								id="listheader_TechnicalVerification_CollateralType"

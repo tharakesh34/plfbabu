@@ -16,7 +16,7 @@
 				<center border="none" id="divCenter">
 				<div>
 					<groupbox id="finBasicdetails" zclass="null"/>					
-					<listbox id="listBoxFIVerification" width="100%" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">  
+					<listbox id="listBoxFIVerification" width="100%" style="overflow:auto;" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">  
 						<listhead sizable="false">
 							<listheader
 								id="listheader_FIVerification_ApplicantType"
