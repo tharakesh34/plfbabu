@@ -489,7 +489,7 @@
 		<column name="nexttaskid" type="varchar(200)"/>
 		<column name="recordtype" type="varchar(50)"/>
 		<column name="workflowid" type="bigint">
-			<constraints nullable="false">
+			<constraints nullable="false"/>
 		</column>
 	</createTable>
 </changeSet>
