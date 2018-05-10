@@ -5568,5 +5568,117 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 			Insert into batchuploadconfig values ('ManualPayment','/finInstructionRest/loanInstructionService/manualPayment',1,'');
 		</sql>
 	</changeSet>
+	<changeSet id="129"  author="DSK">
+	<createTable tableName="QueryDocumentInfo">
+		<column name="DocId" type="bigint"/>
+		<column name="QueryDetailId" type="bigint"/>
+		<column name="ManagerId" type="bigint"/>
+		<column name="FileName" type="nchar"/>
+		<column name="Remarks" type="varchar"/>
+		<column name="UploadedBy" type="bigint"/>
+		<column name="UploadedOn" type="datetime"/>
+		<column name="version" type="int"/>
+		<column name="lastmntby" type="bigint"/>
+		<column name="lastmnton" type="datetime"/>
+		<column name="recordstatus" type="varchar(50)"/>
+		<column name="rolecode" type="varchar(100)"/>
+		<column name="nextrolecode" type="varchar(200)"/>
+		<column name="taskid" type="varchar(50)"/>
+		<column name="nexttaskid" type="varchar(200)"/>
+		<column name="recordtype" type="varchar(50)"/>
+		<column name="workflowid" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>
+
+<changeSet id="130" author="DSK">
+	<createTable tableName="QueryDocumentInfo_Temp">
+		<column name="DocId" type="bigint"/>
+		<column name="QueryDetailId" type="bigint"/>
+		<column name="ManagerId" type="bigint"/>
+		<column name="FileName" type="nchar"/>
+		<column name="Remarks" type="varchar"/>
+		<column name="UploadedBy" type="bigint"/>
+		<column name="UploadedOn" type="datetime"/>
+		<column name="version" type="int"/>
+		<column name="lastmntby" type="bigint"/>
+		<column name="lastmnton" type="datetime"/>
+		<column name="recordstatus" type="varchar(50)"/>
+		<column name="rolecode" type="varchar(100)"/>
+		<column name="nextrolecode" type="varchar(200)"/>
+		<column name="taskid" type="varchar(50)"/>
+		<column name="nexttaskid" type="varchar(200)"/>
+		<column name="recordtype" type="varchar(50)"/>
+		<column name="workflowid" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>
+
+<changeSet id="121" author="DSK">
+<sql>
+	INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'QUERYDETAIL_VIEW', 'Allow to view QueryDetail', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+	INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'QUERYDETAIL_MAKER', 'WF Maker for QueryDetail', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+	INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'QUERYDETAIL_APPROVER', 'WF Approver for QueryDetail', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_LoanQuery_QueryDetail','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_LoanQuery_QueryDetailEnquiry','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_QueryDetailList_PrintList','QueryDetailList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_QueryDetailList_NewQueryDetail','QueryDetailList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_QueryDetailDialog_btnNew','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_QueryDetailDialog_btnEdit','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_QueryDetailDialog_btnDelete','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_QueryDetailDialog_btnSave','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'QueryDetailDialog_Id','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'QueryDetailDialog_FinReference','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'QueryDetailDialog_CategoryId','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'QueryDetailDialog_QryNotes','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+5) from SeqSecRights),3,'QueryDetailDialog_AssignedRole','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+6) from SeqSecRights),3,'QueryDetailDialog_NotifyTo','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+7) from SeqSecRights),3,'QueryDetailDialog_Status','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+8) from SeqSecRights),3,'QueryDetailDialog_RaisedBy','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+9) from SeqSecRights),3,'QueryDetailDialog_RaisedOn','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+10) from SeqSecRights),3,'QueryDetailDialog_ResponsNotes','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+11) from SeqSecRights),3,'QueryDetailDialog_ResponseBy','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+12) from SeqSecRights),3,'QueryDetailDialog_ResponseOn','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+13) from SeqSecRights),3,'QueryDetailDialog_CloserNotes','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+14) from SeqSecRights),3,'QueryDetailDialog_CloserBy','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecRights SELECT (select (SeqNo+10+15) from SeqSecRights),3,'QueryDetailDialog_CloserOn','QueryDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_LoanQueryEnquiry'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_LoanQuery'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+4) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+5) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+6) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+7) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+1) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+2) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+4) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+4) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+5) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+5) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+6) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+6) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+7) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+7) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+8) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+8) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+9) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+9) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+10) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+10) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+11) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+11) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+12) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+12) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+13) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+13) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+14) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+14) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+8+15) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+15) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+9+15) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_LoanQuery'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+10+15) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	INSERT INTO SecGroupRights SELECT (select (SeqNo+11+15) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	update SeqSecGroupRights set SeqNo = (SeqNo+11+15) ;
+	INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+	INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+	update SeqSecRoleGroups set SeqNo = (SeqNo+2) ;
+	INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'QueryDetail','menu_Item_QueryDetail','/WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailList.zul',0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0,'menuItem_LoanQuery_QueryDetail' FROM SeqPTMenuDetails WHERE 0=0;
+	INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'QueryDetailEnquiry','menu_Item_QueryDetailEnquiry?enqiryModule=Y" ','/WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailEnquiryList.zul',0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0,'menuItem_LoanQuery_QueryDetail' FROM SeqPTMenuDetails WHERE 0=0;
+	update SeqPTMenuDetails set SeqNo = (SeqNo+2) ;
+	update SeqSecGroups set SeqNo = (SeqNo+3) ;
+	update SeqSecRights set SeqNo = (SeqNo+10+15) ;
+	</sql>
+</changeSet>
 </databaseChangeLog>
 	
