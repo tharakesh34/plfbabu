@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1.0" author="manikanta.p">
+		<sql>
+			<![CDATA[
+			delete from  LimitCodeDetail where LimitCode = 'RCUINIT';
+			delete from  LimitCodeDetail where LimitCode = 'RCUAPPR';
+	
+			INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'RCUINIT','RCU Verification Initiation',1);
+			INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'RCUAPPR','RCU Verification Approval',1);
+			]]>
+		</sql>
+	</changeSet>
+	 <changeSet id="1.1" author="lakshmi.n">
+		<sql>
+			<![CDATA[
+			Delete from SecRoleGroups where roleid in(Select roleid from secroles where rolecd in('MSTGRP1_MAKER','MSTGRP1_APPROVER')) and grpid in(Select grpid from secgroups where grpcode IN('RCU_VERIFICATION_MAKER','RCU_VERIFICATION_APPROVER'));
+			Delete from Secgrouprights where grpid in(Select grpid from secgroups where grpcode IN('RCU_VERIFICATION_MAKER','RCU_VERIFICATION_APPROVER')) and rightid in(Select rightid from SecRights where Page IN('RCUVerificationDialog','RCUVerificationList'));
+			Delete from Secgrouprights where grpid in(Select grpid from secgroups where grpcode IN('RCU_VERIFICATION_MAKER','RCU_VERIFICATION_APPROVER')) and rightid in(Select rightid from SecRights where RightName = 'menuItem_Verification_RCUVerification');
+			Delete from SecGroups where GrpCode IN('RCU_VERIFICATION_MAKER','RCU_VERIFICATION_APPROVER');
+			Delete from SecRights where page IN('RCUVerificationDialog','RCUVerificationList');
+			Delete from SecRights where RightName = 'menuItem_Verification_RCUVerification';
+
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Verification_RCUVerification', 'MENU',  1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_RCUVerificationList_btnNew', 'RCUVerificationList', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_RCUVerificationDialog_btnEdit', 'RCUVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_RCUVerificationDialog_btnDelete', 'RCUVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_RCUVerificationDialog_btnSave', 'RCUVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RCUVerificationDialog_RCUVerificationExtFields', 'RCUVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RCUVerificationDialog_VerificationDate', 'RCUVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RCUVerificationDialog_AgentCode', 'RCUVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RCUVerificationDialog_AgentName', 'RCUVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RCUVerificationDialog_Recommendations', 'RCUVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RCUVerificationDialog_Reason', 'RCUVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RCUVerificationDialog_Remarks', 'RCUVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RCUVerificationDialog_Remarks1', 'RCUVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RCUVerificationDialog_Remarks2', 'RCUVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RCUVerificationDialog_Remarks3', 'RCUVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RCUVerificationDialog_Documents', 'RCUVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			
+			Insert Into secGroups values((Select MAX(GrpID)+1 From secGroups),'RCU_VERIFICATION_MAKER','WF Maker for  RCUVerification',0 ,1000,current_timestamp,'Approved','','','','','',0);
+			Insert Into secGroups values((Select MAX(GrpID)+1 From secGroups),'RCU_VERIFICATION_APPROVER','WF Approver for RCUVerification',0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='menuItem_Verification_RCUVerification'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='button_RCUVerificationDialog_btnEdit'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='button_RCUVerificationDialog_btnDelete'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='button_RCUVerificationDialog_btnSave'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='RCUVerificationDialog_RCUVerificationExtFields'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='RCUVerificationDialog_VerificationDate'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='RCUVerificationDialog_AgentCode'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='RCUVerificationDialog_AgentName'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='RCUVerificationDialog_Recommendations'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='RCUVerificationDialog_Reason'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='RCUVerificationDialog_Remarks'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='RCUVerificationDialog_Remarks1'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='RCUVerificationDialog_Remarks2'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='RCUVerificationDialog_Remarks3'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_MAKER'),(select RightId from secRights where RightName='RCUVerificationDialog_Documents'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_APPROVER'),(select RightId from secRights where RightName='menuItem_Verification_RCUVerification'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RCU_VERIFICATION_APPROVER'),(select RightId from secRights where RightName='button_RCUVerificationDialog_btnSave'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='RCU_VERIFICATION_MAKER'),(select RoleID from secRoles where RoleCd='MSTGRP1_MAKER'),0,1000,current_timestamp,'Approved','','','','','',0);
+			Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='RCU_VERIFICATION_APPROVER'),(select RoleID from secRoles where RoleCd='MSTGRP1_APPROVER'),0,1000,current_timestamp,'Approved','','','','','',0);
+       		    ]]>
+			</sql>
+		</changeSet>
+
+	<changeSet id="1.2" author="lakshmi.n">
+		<sql> 
+			<![CDATA[ 
+			delete from REPORTLIST Where Code = 'RCUVerification'; 
+			INSERT INTO REPORTLIST Values ('RCUVerification','RCUVerification','listheader_CIF.label,listheader_CollateralType.label,listheader_CollateralReference.label,listheader_LoanReference.label', 'cif,collateralType,referenceFor,keyReference','String,String,String,String',' ','ReportList04','RCU Verification','RCU Verification'
+			,0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0); 
+  		    ]]>
+		</sql> 
+	</changeSet>	
+	<changeSet id="1.3" author="durgaprasad g">
+	   <sql> 
+			<![CDATA[ 
+				delete from reasons where reasontypeid IN (select id from reasontypes where code IN ('RCUWRES', 'RCUSTATUS')) and reasoncategoryId IN (select id from reasoncategory where code IN ('RCUWRES', 'RCUSTATUS'));
+				delete from reasontypes where code IN ('RCUWRES', 'RCUSTATUS');
+				delete from reasoncategory where code IN ('RCUWRES', 'RCUSTATUS');
+
+				update seqreasontypes set seqno = (select coalesce(max(Id), 0) from reasontypes_view);
+				update seqreasoncategory set seqno = (select coalesce(max(Id), 0) from reasoncategory_view);
+				update seqreasons set seqno = (select coalesce(max(Id), 0) from reasons_view);
+
+				insert into reasontypes values((select coalesce(max(Id), 0)+1 from reasontypes_view), 'RCUWRES', 'RCU verification waiver reason type.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+				insert into reasontypes values((select coalesce(max(Id), 0)+1 from reasontypes_view), 'RCUSTATUS', 'RCU verification status reason type.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+				update seqreasontypes set seqno = (select coalesce(max(Id), 0) from reasontypes_view);
+
+				insert into reasoncategory values((select coalesce(max(Id), 0)+1 from reasoncategory_view), 'RCUWRES', 'RCU verification waiver reason category.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+				insert into reasoncategory values((select coalesce(max(Id), 0)+1 from reasoncategory_view), 'RCUSTATUS', 'RCU verification status reason category.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+				update seqreasoncategory set seqno = (select coalesce(max(Id), 0) from reasoncategory_view);
+  		    ]]>
+		</sql> 
+	</changeSet>
+	 <changeSet id="2.0" author="durgaprasad.g">
+		<createTable tableName="verification_rcu">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_vrfid"/>
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="VerificationDate" type="datetime" />	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="2.1" author="durgaprasad.g">
+		<createTable tableName="verification_rcu_temp">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_temp_rcu_vrfid"/>
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="VerificationDate" type="datetime" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="2.2" author="durgaprasad.g">
+		<createTable tableName="verification_rcu_stage">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verifica_stage_rcu_vrfid"/>
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="VerificationDate" type="datetime" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="2.3" author="durgaprasad.g">
+		<createTable tableName="verification_rcu_details">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="2.4" author="durgaprasad.g">
+		<createTable tableName="verification_rcu_details_temp">
+			<column name="VerificationID" type="bigint" >
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det_t"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det_t"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="2.5" author="durgaprasad.g">
+		<createTable tableName="verification_rcu_details_stage">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det_s"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det_s"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="2.6" author="durgaprasad.g">
+		<addForeignKeyConstraint constraintName="fk_verf_rcu_vrfid" baseTableName="verification_rcu" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_rcu_temp_vrfid" baseTableName="verification_rcu_temp" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_rcu_stage_vrfid" baseTableName="verification_rcu_stage" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_vrfid" baseTableName="verification_rcu_details" baseColumnNames="VerificationId"  referencedTableName="verification_rcu" referencedColumnNames="VerificationId"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_temp_vrfid" baseTableName="verification_rcu_details_temp" baseColumnNames="VerificationId"  referencedTableName="verification_rcu_temp" referencedColumnNames="VerificationId"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_stage_vrfid" baseTableName="verification_rcu_details_stage" baseColumnNames="VerificationId"  referencedTableName="verification_rcu_stage" referencedColumnNames="VerificationId"/>
+	</changeSet>
+	<changeSet id="2.7" author="durgaprasad.g">
+		<createView viewName="verification_rcu_view" replaceIfExists="true">	
+			select  * from (
+			select 
+				rcu.verificationId,  
+				rcu.verificationFormName,			
+				rcu.agentcode,  
+				rcu.agentname, 
+				rcu.verificationDate, 
+				rcu.status,
+				rcu.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				rcu.version, 
+				rcu.lastmntby, 
+				rcu.lastmnton, 
+				rcu.recordstatus, 
+				rcu.rolecode, 
+				rcu.nextrolecode,
+				rcu.taskid, 
+				rcu.nexttaskid, 
+				rcu.recordtype, 
+				rcu.workflowid, 
+				rcu.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_rcu_temp rcu
+			inner join verifications v on v.id = rcu.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = rcu.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			union all 
+			 select 
+				rcu.verificationId,  
+				rcu.verificationFormName,			
+				rcu.agentcode,  
+				rcu.agentname, 
+				rcu.verificationDate, 
+				rcu.status,
+				rcu.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				rcu.version, 
+				rcu.lastmntby, 
+				rcu.lastmnton, 
+				rcu.recordstatus, 
+				rcu.rolecode, 
+				rcu.nextrolecode,
+				rcu.taskid, 
+				rcu.nexttaskid, 
+				rcu.recordtype, 
+				rcu.workflowid, 
+				rcu.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_rcu rcu
+			inner join verifications v on v.id = rcu.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = rcu.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			 where not (exists ( select 1 from verification_rcu_temp where verification_rcu_temp.verificationId = rcu.verificationId))
+			) t
+		 </createView>
+	</changeSet>
+	<changeSet id="2.8" author="durgaprasad.g">
+		<createView viewName="verification_rcu_details_view" replaceIfExists="true">	
+			select * from (
+			select 
+			rcud.verificationId, 
+			rcud.SeqNo, 
+			doc.docType, 
+    		doc.docModule, 
+			doccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			rcud.documentid,
+			doc.docRefId,  
+			rcud.DocumentSubId,
+			rcud.documentRefId,
+			rcud.documentUri, 
+			rcud.Remarks1, 
+			rcud.Remarks2, 
+			rcud.Remarks3,
+			rcud.version,
+            rcud.lastmntby,
+            rcud.lastmnton,
+            rcud.recordstatus,
+            rcud.rolecode,
+            rcud.nextrolecode,
+            rcud.taskid,
+            rcud.nexttaskid,
+            rcud.recordtype,
+            rcud.workflowid 
+			from verification_rcu_details_temp rcud
+			inner join documentdetails_view doc on doc.docid = rcud.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			union all
+			select 
+			rcud.verificationId, 
+			rcud.SeqNo, 
+			doc.docType, 
+    		doc.docModule,
+			doccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			rcud.documentid,
+			doc.docRefId, 
+			rcud.DocumentSubId,
+			rcud.documentRefId,
+			rcud.documentUri,  
+			rcud.Remarks1, 
+			rcud.Remarks2, 
+			rcud.Remarks3,
+			rcud.version,
+            rcud.lastmntby,
+            rcud.lastmnton,
+            rcud.recordstatus,
+            rcud.rolecode,
+            rcud.nextrolecode,
+            rcud.taskid,
+            rcud.nexttaskid,
+            rcud.recordtype,
+            rcud.workflowid 
+			from verification_rcu_details rcud
+			inner join verification_rcu rcu on rcu.verificationId = rcud.verificationId
+			inner join documentdetails_view doc on doc.docid = rcud.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			WHERE NOT (EXISTS ( SELECT 1
+					   FROM verification_rcu_details_temp
+					  WHERE verification_rcu_details_temp.verificationId = rcud.verificationId and verification_rcu_details_temp.SeqNo = rcud.SeqNo ))
+			union all
+			select 
+			rcud.verificationId, 
+			rcud.SeqNo, 
+			custdocType docType, 
+    		'Customer' docModule,
+			custdoccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			rcud.documentid, 
+			doc.docRefId,
+			rcud.DocumentSubId, 
+			rcud.documentRefId,
+			rcud.documentUri, 
+			rcud.Remarks1, 
+			rcud.Remarks2, 
+			rcud.Remarks3,
+			rcud.version,
+            rcud.lastmntby,
+            rcud.lastmnton,
+            rcud.recordstatus,
+            rcud.rolecode,
+            rcud.nextrolecode,
+            rcud.taskid,
+            rcud.nexttaskid,
+            rcud.recordtype,
+            rcud.workflowid 
+			from verification_rcu_details_temp rcud
+			inner join customerdocuments_view doc on doc.custid = rcud.documentid and doc.custdoccategory = rcud.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			union all
+			select 
+			rcud.verificationId, 
+			rcud.SeqNo, 
+			custdocType docType,
+    		'Customer' docModule,
+			custdoccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			rcud.documentid, 
+			doc.docRefId,
+			rcud.DocumentSubId, 
+			rcud.documentRefId,
+			rcud.documentUri, 
+			rcud.Remarks1, 
+			rcud.Remarks2, 
+			rcud.Remarks3,
+			rcud.version,
+            rcud.lastmntby,
+            rcud.lastmnton,
+            rcud.recordstatus,
+            rcud.rolecode,
+            rcud.nextrolecode,
+            rcud.taskid,
+            rcud.nexttaskid,
+            rcud.recordtype,
+            rcud.workflowid  
+			from verification_rcu_details_temp rcud
+			inner join customerdocuments_view doc on doc.custid = rcud.documentid and doc.custdoccategory = rcud.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			WHERE NOT (EXISTS ( SELECT 1
+					  FROM verification_rcu_details_temp
+					  WHERE verification_rcu_details_temp.verificationId = rcud.verificationId and verification_rcu_details_temp.SeqNo = rcud.SeqNo))
+			) t
+		</createView>
+	</changeSet>
+</databaseChangeLog>
+ 
