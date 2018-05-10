@@ -886,7 +886,9 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 							&& previous.getAddressType().equals(current.getAddressType())) {
 						if (!isAddressChange(previous, current)) {
 							verification.setStatus(previous.getStatus());
-							verification.setVerificationDate(new Timestamp(previous.getDate().getTime()));
+							if(previous.getDate()!=null){
+								verification.setVerificationDate(new Timestamp(previous.getDate().getTime()));
+							}
 						}
 					}
 				}

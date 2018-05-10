@@ -621,7 +621,9 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 							&& previous.getCollateralRef().equals(current.getCollateralRef())) {
 						if (!isCollateralChanged(previous, current)) {
 							verification.setStatus(previous.getStatus());
-							verification.setVerificationDate(new Timestamp(previous.getDate().getTime()));
+							if (previous.getDate() != null) {
+								verification.setVerificationDate(new Timestamp(previous.getDate().getTime()));
+							}
 						}
 					}
 				}
