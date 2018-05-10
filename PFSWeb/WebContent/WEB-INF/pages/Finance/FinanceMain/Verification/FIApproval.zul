@@ -20,67 +20,64 @@
 				<center sclass="none" autoscroll="true">
 					<div>
 						<div>
-							<listbox id="listBoxFIVerification"
-								fixedLayout="true" sizedByContent="true" span="true"
-								emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
-								multiple="false">
+								<listbox id="listBoxFIVerification" width="100%" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true" rows="5">
 								<listhead sizable="false">
 									<listheader
 										id="listheader_FIVerification_Select"
 										label="${c:l('listheader_FIVerification_Select.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_ApplicantType"
 										label="${c:l('listheader_FIVerification_ApplicantType.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_CIF"
 										label="${c:l('listheader_FIVerification_CIF.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_Name"
 										label="${c:l('listheader_FIVerification_Name.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_AddressType"
 										label="${c:l('listheader_FIVerification_AddressType.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_FIV"
 										label="${c:l('listheader_FIVerification_FIV.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_Agency"
 										label="${c:l('listheader_FIVerification_Agency.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_Reason"
 										label="${c:l('listheader_FIVerification_Reason.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_Remarks"
 										label="${c:l('listheader_FIVerification_Remarks.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_Status"
 										label="${c:l('listheader_FIVerification_Status.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_VrfDate"
 										label="${c:l('listheader_FIVerification_VrfDate.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_Decision"
 										label="${c:l('listheader_FIVerification_Decision.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_ReInitAgency"
 										label="${c:l('listheader_FIVerification_Agency.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_ReInitRemarks"
 										label="${c:l('listheader_FIVerification_Remarks.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 								</listhead>
 							</listbox>
 						</div>

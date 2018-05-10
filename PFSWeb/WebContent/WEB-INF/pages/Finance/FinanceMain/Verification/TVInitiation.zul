@@ -16,51 +16,48 @@
 				<center border="none" id="divCenter">
 				<div>
 					<groupbox id="finBasicdetails" zclass="null"/>
-					<listbox id="listBoxTechnicalVerification" fixedLayout="true"
-						sizedByContent="true" span="true"
-						emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
-						multiple="false">
+					<listbox id="listBoxTechnicalVerification" width="100%" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
 						<listhead sizable="false">
 							<listheader
 								id="listheader_TechnicalVerification_CollateralType"
 								label="${c:l('listheader_TechnicalVerification_CollateralType.label')}"
-								sort="false" hflex="min" />
+								sort="false"/>
 							<listheader
 								id="listheader_TechnicalVerification_DepositorCIF"
 								label="${c:l('listheader_TechnicalVerification_DepositorCIF.label')}"
-								sort="false" hflex="min" />
+								sort="false"/>
 							<listheader
 								id="listheader_TechnicalVerification_DepositorName"
 								label="${c:l('listheader_TechnicalVerification_DepositorName.label')}"
-								sort="false" hflex="min" />
+								sort="false"/>
 							<listheader
 								id="listheader_TechnicalVerification_CollateralReference"
 								label="${c:l('listheader_TechnicalVerification_CollateralReference.label')}"
-								sort="false" hflex="min" />
+								sort="false"/>
 							<listheader
 								id="listheader_TechnicalVerification_TV"
 								label="${c:l('listheader_TechnicalVerification_TV.label')}"
-								sort="false" hflex="min" />
+								sort="false"/>
 							<listheader
 								id="listheader_TechnicalVerification_Agency"
 								label="${c:l('listheader_TechnicalVerification_Agency.label')}"
-								sort="false" hflex="min" />
+								sort="false"/>
 							<listheader
 								id="listheader_TechnicalVerification_Reason"
 								label="${c:l('listheader_TechnicalVerification_Reason.label')}"
-								sort="false" hflex="min" />
+								sort="false"/>
 							<listheader
 								id="listheader_TechnicalVerification_Remarks"
 								label="${c:l('listheader_TechnicalVerification_Remarks.label')}"
-								sort="false" hflex="min" />
+								sort="false"/>
 							<listheader
 								id="listheader_TechnicalVerification_LastStatus"
 								label="${c:l('listheader_TechnicalVerification_LastStatus.label')}"
-								sort="false" hflex="min" />
+								sort="false"/>
 							<listheader
 								id="listheader_TechnicalVerification_LastVrfDate"
 								label="${c:l('listheader_TechnicalVerification_LastVrfDate.label')}"
-								sort="false" hflex="min" />
+								sort="false"/>
 						</listhead>
 					</listbox>
 				</div>

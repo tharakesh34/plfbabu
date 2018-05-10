@@ -851,8 +851,9 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			showMessage(e);
 		}
 		
-		
-		assignCollateralRef.add(aCollateralAssignment.getCollateralRef());
+		if (assignCollateralRef != null) {
+			assignCollateralRef.add(aCollateralAssignment.getCollateralRef());
+		}
 		logger.debug("Leaving");
 	}
 
