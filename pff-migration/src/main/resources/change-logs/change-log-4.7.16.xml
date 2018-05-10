@@ -5540,6 +5540,33 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 		     JOIN reasontypes t3 ON t1.reasontypeid = t3.id;
 	     </createView>
 	</changeSet>
-
+	<changeSet id="126" author="Amit">
+		<createTable tableName="BatchUploadConfig">
+			<column name="Label" type="nvarchar(50)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Url" type="VARCHAR2(500)" >
+			<constraints primaryKey="false" nullable="false" />
+			</column>
+			<column name="IsActive" type="NUMBER(1,0)" defaultValue="1"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="127" author="Amit" >
+		<sql>
+		<![CDATA[Update Bmtdocumenttypes set doctypecode='MOA & AOA' where doctypecode='MOA';]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="128" author="Amit">
+     <addColumn tableName="BatchUploadConfig">
+     	<column name="ExtraHeader" type="nvarchar(50)"/>
+     </addColumn>
+    </changeSet>
+    <changeSet id="113" author="Amit">
+		<sql>
+			Insert into batchuploadconfig values ('ManualPayment','/finInstructionRest/loanInstructionService/manualPayment',1,'');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
