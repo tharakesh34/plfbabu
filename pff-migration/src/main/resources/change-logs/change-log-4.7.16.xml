@@ -5192,20 +5192,20 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 	</changeSet>
 	<changeSet id="109" author="DSK">
 	<createTable tableName="QUERYDETAIL">
-		<column name="Id" type="bigint">
-		<column name="FinReference" type="varchar">
-		<column name="CategoryId" type="bigint">
-		<column name="QryNotes" type="varchar">
-		<column name="AssignedRole" type="varchar">
-		<column name="NotifyTo" type="varchar">
-		<column name="Status" type="varchar">
-		<column name="RaisedBy" type="bigint">
-		<column name="RaisedOn" type="datetime">
-		<column name="ResponsNotes" type="varchar">
-		<column name="ResponseBy" type="bigint">
-		<column name="ResponseOn" type="datetime">
-		<column name="CloserNotes" type="nchar">
-		<column name="CloserBy" type="bigint">
+		<column name="Id" type="bigint"/>
+		<column name="FinReference" type="varchar"/>
+		<column name="CategoryId" type="bigint"/>
+		<column name="QryNotes" type="varchar"/>
+		<column name="AssignedRole" type="varchar"/>
+		<column name="NotifyTo" type="varchar"/>
+		<column name="Status" type="varchar"/>
+		<column name="RaisedBy" type="bigint"/>
+		<column name="RaisedOn" type="datetime"/>
+		<column name="ResponsNotes" type="varchar"/>
+		<column name="ResponseBy" type="bigint"/>
+		<column name="ResponseOn" type="datetime"/>
+		<column name="CloserNotes" type="nchar"/>
+		<column name="CloserBy" type="bigint"/>
 		<column name="CloserOn" type="datetime">
 		<column name="version" type="int"/>
 		<column name="lastmntby" type="bigint"/>
@@ -5224,21 +5224,21 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 
 <changeSet id="110" author="DSK">
 	<createTable tableName="QUERYDETAIL_Temp">
-		<column name="Id" type="bigint">
-		<column name="FinReference" type="varchar">
-		<column name="CategoryId" type="bigint">
-		<column name="QryNotes" type="varchar">
-		<column name="AssignedRole" type="varchar">
-		<column name="NotifyTo" type="varchar">
-		<column name="Status" type="varchar">
-		<column name="RaisedBy" type="bigint">
-		<column name="RaisedOn" type="datetime">
-		<column name="ResponsNotes" type="varchar">
-		<column name="ResponseBy" type="bigint">
-		<column name="ResponseOn" type="datetime">
-		<column name="CloserNotes" type="nchar">
-		<column name="CloserBy" type="bigint">
-		<column name="CloserOn" type="datetime">
+		<column name="Id" type="bigint"/>
+		<column name="FinReference" type="varchar"/>
+		<column name="CategoryId" type="bigint"/>
+		<column name="QryNotes" type="varchar"/>
+		<column name="AssignedRole" type="varchar"/>
+		<column name="NotifyTo" type="varchar"/>
+		<column name="Status" type="varchar"/>
+		<column name="RaisedBy" type="bigint"/>
+		<column name="RaisedOn" type="datetime"/>
+		<column name="ResponsNotes" type="varchar"/>
+		<column name="ResponseBy" type="bigint"/>
+		<column name="ResponseOn" type="datetime"/>
+		<column name="CloserNotes" type="nchar"/>
+		<column name="CloserBy" type="bigint"/>
+		<column name="CloserOn" type="datetime"/>
 		<column name="version" type="int"/>
 		<column name="lastmntby" type="bigint"/>
 		<column name="lastmnton" type="datetime"/>
