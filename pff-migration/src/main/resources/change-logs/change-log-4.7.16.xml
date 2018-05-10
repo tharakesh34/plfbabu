@@ -5330,5 +5330,216 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 		update SeqSecRights set SeqNo = (SeqNo+10+4) ;
 </sql>
 </changeSet>
+
+	<changeSet id="107" author="Durgaprasad G">
+		<dropView viewName="reasontypes_view" />
+	</changeSet>
+
+	<changeSet id="108" author="Durgaprasad G">
+		<dropView viewName="reasontypes_aview" />
+	</changeSet>
+
+	<changeSet id="109" author="Durgaprasad G">
+		<dropView viewName="reasons_view" />
+	</changeSet>
+
+	<changeSet id="110" author="Durgaprasad G">
+		<dropView viewName="reasons_aview" />
+	</changeSet>
+
+
+	<changeSet id="111_Pre" author="Durgaprasad G" dbms="postgresql">
+		<sql>
+			SELECT public.deps_save_and_drop_dependencies('plf','reasontypes');
+		</sql>
+	</changeSet>
+
+	<changeSet id="112_Pre" author="Durgaprasad G" dbms="postgresql">
+		<sql>
+			SELECT public.deps_save_and_drop_dependencies('plf','reasontypes_temp');
+		</sql>
+	</changeSet>
+
+	<changeSet id="113" author="Durgaprasad G" dbms="postgresql">
+		<modifyDataType tableName="REASONTYPES" columnName="Code" newDataType="varchar(10)" />
+	</changeSet>
+
+	<changeSet id="114" author="Durgaprasad G" dbms="postgresql">
+		<modifyDataType tableName="REASONTYPES_TEMP" columnName="Code" newDataType="varchar(10)" />
+	</changeSet>
+
+	<changeSet id="115_Post" author="Durgaprasad G" dbms="postgresql">
+		<sql>
+			SELECT public.deps_restore_dependencies('plf','reasontypes');
+		</sql>
+	</changeSet>
+	
+	<changeSet id="116_Post" author="Durgaprasad G" dbms="postgresql">
+		<sql>
+			SELECT public.deps_restore_dependencies('plf','reasontypes_temp');
+		</sql>
+	</changeSet>
+	
+	<changeSet id="117_Pre" author="Durgaprasad G" dbms="postgresql">
+		<sql>
+			SELECT public.deps_save_and_drop_dependencies('plf','reasoncategory');
+		</sql>
+	</changeSet>
+	<changeSet id="118_Pre" author="Durgaprasad G" dbms="postgresql">
+		<sql>
+			SELECT public.deps_save_and_drop_dependencies('plf','reasoncategory_temp');
+		</sql>
+	</changeSet>
+
+	<changeSet id="119" author="Durgaprasad G" dbms="postgresql">
+		<modifyDataType tableName="reasoncategory" columnName="Code" newDataType="varchar(10)" />
+		<modifyDataType tableName="reasoncategory_temp" columnName="Code" newDataType="varchar(10)" />
+	</changeSet>
+
+	<changeSet id="120_Post" author="Durgaprasad G" dbms="postgresql">
+		<sql>
+			SELECT public.deps_restore_dependencies('plf','reasoncategory');
+		</sql>
+	</changeSet>
+	
+	<changeSet id="121_Post" author="Durgaprasad G" dbms="postgresql">
+		<sql>
+			SELECT public.deps_restore_dependencies('plf','reasoncategory_temp');
+		</sql>
+	</changeSet>
+
+	<changeSet id="122" author="Durgaprasad G">
+		<createView viewName="reasontypes_view" replaceIfExists="true">
+			 SELECT t1.id,
+			    t1.code,
+			    t1.description,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			   FROM reasontypes_temp t1
+			UNION ALL
+			 SELECT t1.id,
+			    t1.code,
+			    t1.description,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			   FROM reasontypes t1
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM reasontypes_temp
+			          WHERE reasontypes_temp.id = t1.id))
+      </createView>
+	</changeSet>
+	
+	<changeSet id="123" author="Durgaprasad G">
+		<createView viewName="reasontypes_aview" replaceIfExists="true">
+			SELECT t1.id,
+		    t1.code,
+		    t1.description,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid
+		   FROM reasontypes t1
+	      </createView>
+	</changeSet>
+	
+	<changeSet id="124" author="Durgaprasad G">
+		<createView viewName="reasons_view" replaceIfExists="true">
+			SELECT t1.id,
+		    t1.reasontypeid,
+		    t1.reasoncategoryid,
+		    t1.code,
+		    t1.description,
+		    t1.active,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.code AS reasoncategorycode,
+		    t3.code AS reasontypecode
+		   FROM reasons_temp t1
+		     JOIN reasoncategory t2 ON t1.reasoncategoryid = t2.id
+		     JOIN reasontypes t3 ON t1.reasontypeid = t3.id
+		UNION ALL
+		 SELECT t1.id,
+		    t1.reasontypeid,
+		    t1.reasoncategoryid,
+		    t1.code,
+		    t1.description,
+		    t1.active,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.code AS reasoncategorycode,
+		    t3.code AS reasontypecode
+		   FROM reasons t1
+		     JOIN reasoncategory t2 ON t1.reasoncategoryid = t2.id
+		     JOIN reasontypes t3 ON t1.reasontypeid = t3.id
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM reasons_temp
+		          WHERE reasons_temp.id = t1.id))
+	     </createView>
+	</changeSet>
+	
+	<changeSet id="125" author="Durgaprasad G">
+		<createView viewName="reasons_aview" replaceIfExists="true">
+			SELECT t1.id,
+		    t1.reasontypeid,
+		    t1.reasoncategoryid,
+		    t1.code,
+		    t1.description,
+		    t1.active,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.code AS reasoncategorycode,
+		    t3.code AS reasontypecode
+		   FROM reasons t1
+		     JOIN reasoncategory t2 ON t1.reasoncategoryid = t2.id
+		     JOIN reasontypes t3 ON t1.reasontypeid = t3.id;
+	     </createView>
+	</changeSet>
+
 </databaseChangeLog>
 	
