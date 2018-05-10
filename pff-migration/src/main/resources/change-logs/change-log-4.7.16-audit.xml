@@ -450,4 +450,47 @@
 </createTable>
 		
 	</changeSet>
+	<changeSet id="24" author="DSK">
+	<createTable tableName="AdtQUERYDETAIL">
+		<column name="AuditId" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="AuditDate" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="AuditSeq" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="AuditImage" type="varchar(20)">
+			<constraints nullable="false" />
+		</column>
+		<column name="Id" type="bigint">
+		<column name="FinReference" type="varchar">
+		<column name="CategoryId" type="bigint">
+		<column name="QryNotes" type="varchar">
+		<column name="AssignedRole" type="varchar">
+		<column name="NotifyTo" type="varchar">
+		<column name="Status" type="varchar">
+		<column name="RaisedBy" type="bigint">
+		<column name="RaisedOn" type="datetime">
+		<column name="ResponsNotes" type="varchar">
+		<column name="ResponseBy" type="bigint">
+		<column name="ResponseOn" type="datetime">
+		<column name="CloserNotes" type="nchar">
+		<column name="CloserBy" type="bigint">
+		<column name="CloserOn" type="datetime">
+		<column name="version" type="int"/>
+		<column name="lastmntby" type="bigint"/>
+		<column name="lastmnton" type="datetime"/>
+		<column name="recordstatus" type="varchar(50)"/>
+		<column name="rolecode" type="varchar(100)"/>
+		<column name="nextrolecode" type="varchar(200)"/>
+		<column name="taskid" type="varchar(50)"/>
+		<column name="nexttaskid" type="varchar(200)"/>
+		<column name="recordtype" type="varchar(50)"/>
+		<column name="workflowid" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>
 	</databaseChangeLog>
