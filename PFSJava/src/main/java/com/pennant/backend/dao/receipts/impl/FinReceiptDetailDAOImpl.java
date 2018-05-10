@@ -43,12 +43,14 @@
 package com.pennant.backend.dao.receipts.impl;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -59,6 +61,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -163,7 +166,7 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 		
 		StringBuilder updateSql = new StringBuilder("Update FinReceiptDetail");
 		updateSql.append(" Set Status=:Status ");
-		updateSql.append(" Where ReceiptID =:ReceiptID AND ReceiptSeqID=:ReceiptSeqID ");
+		updateSql.append(" Where ReceiptID = :ReceiptID AND ReceiptSeqID = :ReceiptSeqID ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
@@ -175,7 +178,7 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 		FinReceiptDetail finReceiptDetail = new FinReceiptDetail();
 		finReceiptDetail.setBankCode(bankCode);
 
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(BankCode)");
 		selectSql.append(" From FinReceiptDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where BankCode =:BankCode");
@@ -188,22 +191,36 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 	}
 	
 	@Override
-	public List<FinReceiptDetail> getFinReceiptDetailByFinRef(String finReferece) {
+	public List<FinReceiptDetail> getFinReceiptDetailByFinRef(String finReference) {
 		logger.debug("Entering");
 
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("Status", "C");
+		source.addValue("ReceiptPurpose", "FeePayment");
+
+		List<FinReceiptDetail> finReceiptDetailsList;
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" select T1.RECEIPTID, T2.TRANSACTIONREF, T2.FAVOURNUMBER ,T1.RECEIPTMODE PaymentType, T2.AMOUNT " );
-		selectSql.append(" From FINRECEIPTHEADER T1 " );
-		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID" );
-		selectSql.append(" where ReceiptPurpose = 'FeePayment' And T2.Status <> 'C' And T1.Reference = '" + finReferece + "'" );
-		
-		BeanPropertySqlParameterSource beanParamSource = new BeanPropertySqlParameterSource(new FinReceiptDetail());
-		
-		logger.debug("selectSql: " + selectSql.toString());
+
+		selectSql.append(" select T1.RECEIPTID, T2.TRANSACTIONREF, T2.FAVOURNUMBER ,T1.RECEIPTMODE PaymentType, T2.AMOUNT ");
+		selectSql.append(" From FINRECEIPTHEADER T1 ");
+		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
+		selectSql.append(" where ReceiptPurpose = :ReceiptPurpose And T2.Status <> :Status And T1.Reference = :FinReference");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+
 		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptDetail.class);
+
+		try {
+			finReceiptDetailsList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			finReceiptDetailsList = new ArrayList<FinReceiptDetail>();
+		}
+
 		logger.debug("Leaving");
-		
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParamSource, typeRowMapper);	
+
+		return finReceiptDetailsList;
 	}
 
 	@Override
