@@ -56,7 +56,7 @@ public class LVDocument extends AbstractWorkflowEntity {
 		excludeFields.add("code");
 		excludeFields.add("lvReq");
 		excludeFields.add("docType");
-		excludeFields.add("docRefId");
+		excludeFields.add("docRefID");
 		excludeFields.add("docUri");
 		excludeFields.add("docName");
 		excludeFields.add("id");

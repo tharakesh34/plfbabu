@@ -533,7 +533,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 
 		DocumentManager docDetails = legalVerificationService.getDocumentById(details.getDocRefID());
 		AMedia amedia = null;
-		if (docDetails.getDocImage() != null) {
+		if (docDetails != null && docDetails.getDocImage() != null) {
 			final InputStream data = new ByteArrayInputStream(docDetails.getDocImage());
 			String docName = details.getDocName();
 			if (details.getDocType().equals(PennantConstants.DOC_TYPE_PDF)) {

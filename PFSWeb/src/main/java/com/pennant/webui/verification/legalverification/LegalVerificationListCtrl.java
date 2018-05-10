@@ -18,7 +18,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.verification.legalverification.model.LegalVerificationListModelItemRender;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -114,11 +113,11 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 		registerButton(button_LegalVerificationList_LegalVerificationSearch);
 
 		registerField("verificationId");
-		//registerField("documentid");
-		//registerField("documentsubid");
 		registerField("cif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
-		registerField("collateralType", listheader_CollateralType, SortOrder.ASC, collateralType, sortOperator_CollateralType, Operators.STRING);
-		registerField("referenceFor", listheader_CollateralReference, SortOrder.ASC, collateralReference, sortOperator_CollateralReference, Operators.STRING);
+		registerField("collateralType", listheader_CollateralType, SortOrder.ASC, collateralType,
+				sortOperator_CollateralType, Operators.STRING);
+		registerField("referenceFor", listheader_CollateralReference, SortOrder.ASC, collateralReference,
+				sortOperator_CollateralReference, Operators.STRING);
 		registerField("keyReference", listheader_LoanReference, SortOrder.ASC, loanReference,
 				sortOperator_LoanReference, Operators.STRING);
 		registerField("createdOn", listheader_CreatedOn, SortOrder.NONE, createdOn, sortOperator_CreatedOn,
@@ -152,33 +151,7 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 		if (!enqiryModule) {
 			this.searchObject.addFilter(new Filter("recordType", "", Filter.OP_NOT_EQUAL));
 		}
-		if (agency.getAttribute("agency") != null) {
-			this.searchObject.removeFiltersOnProperty("agency");
-			long agencyId = Long.parseLong(agency.getAttribute("agency").toString());
-			this.searchObject.addFilter(new Filter("agency", agencyId, Filter.OP_EQUAL));
-		}
-	}
 
-	public void onFulfill$agency(Event event) {
-		logger.debug(Literal.ENTERING);
-		Object dataObject = agency.getObject();
-		if (dataObject instanceof String) {
-			this.agency.setValue(dataObject.toString());
-			this.agency.setDescription("");
-			this.agency.setAttribute("agency", null);
-		} else {
-			VehicleDealer details = (VehicleDealer) dataObject;
-			if (details != null) {
-				this.agency.setAttribute("agency", details.getId());
-			}
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	protected void doReset() {
-		super.doReset();
-		this.agency.setAttribute("agency", null);
 	}
 
 	/**
@@ -216,12 +189,9 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxLegalVerification.getSelectedItem();
 		final long verificationId = (long) selectedItem.getAttribute("verificationId");
-		
-		LegalVerification lv=new LegalVerification();
-	
+		LegalVerification lv = new LegalVerification();
 		lv.setVerificationId(verificationId);
 		lv = legalVerificationService.getLegalVerification(lv);
-
 		if (lv == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
@@ -233,7 +203,6 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 		whereCond.append(" AND  version=");
 		whereCond.append(lv.getVersion());
 
-		
 		if (doCheckAuthority(lv, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && lv.getWorkflowId() == 0) {

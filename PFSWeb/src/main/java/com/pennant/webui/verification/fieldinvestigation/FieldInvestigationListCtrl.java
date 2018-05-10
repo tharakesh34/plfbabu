@@ -30,7 +30,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.verification.fieldinvestigation.model.FieldInvestigationListModelItemRenderer;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -43,9 +42,7 @@ import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServi
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul file.
  * 
  */
 public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigation> {
@@ -83,7 +80,6 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	protected ExtendedCombobox agency;
 	protected Datebox createdOn;
 
-	
 	private String module = "";
 
 	@Autowired
@@ -107,19 +103,18 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_FieldInvestigationList(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		if ("ENQ".equals(this.module)) {
 			enqiryModule = true;
 		}
-		
+
 		doSetFieldProperties();
 		// Set the page level components.
 		setPageComponents(window_FieldInvestigationList, borderLayout_FieldInvestigationList, listBoxFieldInvestigation,
@@ -138,12 +133,12 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 				sortOperator_LoanReference, Operators.STRING);
 		registerField("createdOn", listheader_CreatedOn, SortOrder.NONE, createdOn, sortOperator_CreatedOn,
 				Operators.DATE);
-		registerField("agencyName",listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
+		registerField("agencyName", listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 	}
-	
+
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
@@ -153,11 +148,11 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		this.agency.setModuleName("VerificationAgencies");
 		this.agency.setValueColumn("DealerName");
 		this.agency.setDescColumn("DealerCity");
-		this.agency.setValidateColumns(new String[] { "DealerName" ,"DealerCity" });
+		this.agency.setValidateColumns(new String[] { "DealerName", "DealerCity" });
 		Filter agencyFilter[] = new Filter[1];
 		agencyFilter[0] = new Filter("DealerType", Agencies.FIAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -167,38 +162,11 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		if (!enqiryModule) {
 			this.searchObject.addFilter(new Filter("recordType", "", Filter.OP_NOT_EQUAL));
 		}
-		if (agency.getAttribute("agency") != null) {
-			this.searchObject.removeFiltersOnProperty("agency");
-			long agencyId = Long.parseLong(agency.getAttribute("agency").toString());
-			this.searchObject.addFilter(new Filter("agency", agencyId, Filter.OP_EQUAL));
-		}
+
 	}
 
-	public void onFulfill$agency(Event event) {
-		logger.debug(Literal.ENTERING);
-		Object dataObject = agency.getObject();
-		if (dataObject instanceof String) {
-			this.agency.setValue(dataObject.toString());
-			this.agency.setDescription("");
-			this.agency.setAttribute("agency", null);
-		} else {
-			VehicleDealer details = (VehicleDealer) dataObject;
-			if (details != null) {
-				this.agency.setAttribute("agency", details.getId());
-			}
-		}
-		logger.debug(Literal.LEAVING);
-	}
-	
-	@Override
-	protected void doReset() {
-		super.doReset();
-		this.agency.setAttribute("agency", null);
-	}
-	
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -208,8 +176,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -220,8 +187,8 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -285,8 +252,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

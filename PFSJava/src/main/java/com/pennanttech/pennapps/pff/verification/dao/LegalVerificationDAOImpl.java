@@ -161,7 +161,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
 
-		sql.append(" Select verificationid, agentCode, agentName,  verificationDate, status, reason");
+		sql.append(" Select verificationid, agentCode, agentName,  verificationDate, status, reason, ");
 		sql.append(" remarks, verificationFormName,");
 		if (type.contains("View")) {
 			sql.append(" cif, custid, custName, keyReference, collateralType, referencefor, createdon, ");

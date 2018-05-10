@@ -42,8 +42,6 @@ public class LegalVerificationListModelItemRender implements ListitemRenderer<Le
 		lc = new Listcell(PennantJavaUtil.getLabel(lv.getRecordType()));
 		lc.setParent(item);
 
-		item.setAttribute("documentId", lv.getDocumentId());
-		item.setAttribute("documentSubId", lv.getDocumentSubId());
 		item.setAttribute("verificationId", lv.getVerificationId());
 		
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onLegalVerificationItemDoubleClicked");
