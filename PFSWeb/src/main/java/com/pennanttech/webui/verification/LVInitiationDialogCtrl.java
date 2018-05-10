@@ -512,7 +512,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		Search search = new Search(LVDocument.class);
 		search.addTabelName("verification_legal_doc_view");
 		search.addFilter(new Filter("docType", docType));
-		
+		search.addFilter(new Filter("finReference", verification.getKeyReference()));
 
 		if (collateralRef != null) {
 			search.addFilter(new Filter("collateralRef", collateralRef));
