@@ -281,6 +281,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 		loggedInUser.setLogonTime(DateUtility.getTimestamp(new Date()));
 		loggedInUser.setAuthType(user.getAuthType());
 		loggedInUser.setUserType(user.getUserType());
+		loggedInUser.setCredentialsExpired(user.isUsrCredentialsExp());
 
 		return loggedInUser;
 	}
