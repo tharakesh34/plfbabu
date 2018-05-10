@@ -2055,6 +2055,7 @@
 		<property name="mMAgreementService" ref="mMAgreementService" />
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="securityUserService" ref="securityUserService" />
+		<property name="activityLogService" ref="activityLogService" />
 	</bean>
 
 	<!--============ Indicative Term Sheet Detail ============== -->

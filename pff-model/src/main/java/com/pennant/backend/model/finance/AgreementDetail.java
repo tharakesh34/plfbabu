@@ -1,3 +1,46 @@
+/**
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *
+ * FileName    		:  AgreementDetail.java													*                           
+ *                                                                    
+ * Author      		:  PENNANT TECHONOLOGIES												*
+ *                                                                  
+ * Creation Date    :  27-04-2012															*
+ *                                                                  
+ * Modified Date    :  10-05-2018															*
+ *                                                                  
+ * Description 		:												 						*                                 
+ *                                                                                          
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 10-05-2018       Pennant	                 1.0          Updated as part of Agreements     * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+ */
+
 package com.pennant.backend.model.finance;
 
 import java.util.List;
@@ -7,7 +50,6 @@ import org.apache.commons.lang.StringUtils;
 public class AgreementDetail {
 
 	//=============== Basic Details=============//
-		
 	private String 	userId = "";															// Login User ID
 	private String 	userName = "";														// Login User Name
 	private String 	appDate = "";														// Application Date
@@ -346,6 +388,7 @@ public class AgreementDetail {
 	
 	// =========== Vehicle Finance =============//
 
+	/*
 	private String 	quotationNo ="";													// Quotation Number
 	private String 	quotationDate ="";													// Quotation Date
 	private String 	paymentMode ="";													// Payment Mode
@@ -386,7 +429,7 @@ public class AgreementDetail {
 	private String 	bondNumTo ="";														//bondNumTo	
 	private String 	vehicleReg ="";													    // Emirates of Registration
 	
-	
+	*/
 	
 	//=============Gurantee Details==============//
 	
@@ -431,6 +474,8 @@ public class AgreementDetail {
 		this.guranteeAmtInWords = guranteeAmtInWords;
 	}
 	
+	/*
+	 * Remove fields as not required comments from Raju
 	//=============Home Loan Asset Details==============//
 	private String projectName;
 	private String propertyCategory;
@@ -460,6 +505,8 @@ public class AgreementDetail {
 	private String sellerInternal;
 	private String numberOfUnits;
 	private String numberOfLeasedUnits;
+	
+
 	public String getPlotUnitNumber() {
 		return plotUnitNumber;
 	}
@@ -562,7 +609,7 @@ public class AgreementDetail {
 
 	public void setHomeCountry(String homeCountry) {
 		this.homeCountry = homeCountry;
-	}
+	}*/
 
 	public String getFinMinRate() {
 		return finMinRate;
@@ -964,7 +1011,10 @@ public class AgreementDetail {
 		this.noOfDays = noOfDays;
 	}
 
-	public String getDealerCountry() {
+	/*
+	 * Remove fields as not required comments from Raju
+	 * 
+	 * public String getDealerCountry() {
 		return dealerCountry;
 	}
 
@@ -1028,7 +1078,7 @@ public class AgreementDetail {
 
 	public void setTotalPrice(String totalPrice) {
 		this.totalPrice = totalPrice;
-	}
+	}*/
 
 	public String getCommodityDesc() {
 		return commodityDesc;
@@ -2359,6 +2409,9 @@ private String custAccount ="";
 		this.custPassport = custPassport;
 	}
 	
+	/*
+	 * Remove fields as not required comments from Raju
+	 * 
 	public String getQuotationNo() {
 		return quotationNo;
 	}
@@ -2479,7 +2532,7 @@ private String custAccount ="";
 	}
 	public void setCarRegNo(String carRegNo) {
 		this.carRegNo = carRegNo;
-	}
+	}*/
 	
 	public String getCustEmpProf() {
 		return custEmpProf;
@@ -2600,12 +2653,15 @@ private String custAccount ="";
 		this.downpayAc = downpayAc;
 	}
 	
-	public String getEmiratesReg() {
+	/*
+	 * Remove fields as not required comments from Raju
+	 * 
+	 * public String getEmiratesReg() {
 	    return emiratesReg;
     }
 	public void setEmiratesReg(String emiratesReg) {
 	    this.emiratesReg = emiratesReg;
-    }
+    }*/
 	public String getDownPayBank() {
 	    return downPayBank;
     }
@@ -2651,12 +2707,16 @@ private String custAccount ="";
 		this.custDSR = custDSR;
 	}
 	
+	/*Remove fields as not required comments from Raju
+	 * 
+	 * 
+	 * 
 	public String getSalesPersonName() {
 		return salesPersonName;
 	}
 	public void setSalesPersonName(String salesPersonName) {
 		this.salesPersonName = salesPersonName;
-	}
+	}*/
 	
 	public List<CustomerFinance> getCustomerFinances() {
 		return customerFinances;
@@ -2679,12 +2739,16 @@ private String custAccount ="";
 	    this.custId = custId;
     }
 	
+	
+	/*Remove fields as not required comments from Raju
+	 * 
+	 * 
 	public String getTrafficProfileNo() {
 	    return trafficProfileNo;
     }
 	public void setTrafficProfileNo(String trafficProfileNo) {
 	    this.trafficProfileNo = trafficProfileNo;
-    }
+    }*/
 
 	public String getBankName() {
 	    return bankName;
@@ -3081,7 +3145,12 @@ private String custAccount ="";
 	public void setCustEmail(String custEmail) {
 	    this.custEmail = custEmail;
     }
-
+	
+	
+	/*
+	 * Remove fields as not required comments from Raju
+	 * 
+	 * 
 	public String getVehicleType() {
 	    return vehicleType;
     }
@@ -3094,7 +3163,7 @@ private String custAccount ="";
     }
 	public void setVehicleUsage(String vehicleUsage) {
 	    this.vehicleUsage = vehicleUsage;
-    }
+    }*/
 
 	public String getCalSchdFeeAmt() {
 	    return calSchdFeeAmt;
@@ -3301,6 +3370,9 @@ private String custAccount ="";
 	    this.mMAMLatePayRate = mMAMLatePayRate;
     }
 
+	/*Remove fields as not required comments from Raju
+	 * 
+	 * 
 	public String getDeliveryOfLoc() {
 	    return deliveryOfLoc;
     }
@@ -3313,7 +3385,7 @@ private String custAccount ="";
     }
 	public void setEngineNumber(String engineNumber) {
 	    this.engineNumber = engineNumber;
-    }
+    }*/
 
 	public String getmMAFacilityLimit() {
 	    return mMAFacilityLimit;
@@ -3355,13 +3427,15 @@ private String custAccount ="";
 	    this.leaseTermsWords = leaseTermsWords;
     }
 
+	/*Remove fields as not required comments from Raju
+	 * 
 	public String getDealerCity() {
 	    return dealerCity;
     }
 
 	public void setDealerCity(String dealerCity) {
 	    this.dealerCity = dealerCity;
-    }
+    }*/
 
 	public List<GoodLoanDetails> getGoodsLoanDetails() {
 		return goodsLoanDetails;
@@ -3386,7 +3460,10 @@ private String custAccount ="";
 	public void setAdvPayment(String advPayment) {
 		this.advPayment = advPayment;
 	}
-
+	
+	/*Remove fields as not required comments from Raju
+	 * 
+	 * 
 	public String getBondNumFrom() {
 		return bondNumFrom;
 	}
@@ -3401,7 +3478,7 @@ private String custAccount ="";
 
 	public void setBondNumTo(String bondNumTo) {
 		this.bondNumTo = bondNumTo;
-	}
+	}*/
 
 	public String getRepayAmount() {
 		return repayAmount;
@@ -3451,6 +3528,9 @@ private String custAccount ="";
 		this.finAmountInWords = finAmountInWords;
 	}
 
+	/*Remove fields as not required comments from Raju
+	 * 
+	 * 
 	public String getDealerPhone() {
 		return dealerPhone;
 	}
@@ -3465,7 +3545,7 @@ private String custAccount ="";
 
 	public void setDealerFax(String dealerFax) {
 		this.dealerFax = dealerFax;
-	}
+	}*/
 
 	public List<FinanceScheduleDetail> getScheduleData() {
 		return scheduleData;
@@ -3475,7 +3555,11 @@ private String custAccount ="";
 		this.scheduleData = scheduleData;
 	}
 
-	public String getProjectName() {
+	/*Remove fields as not required comments from Raju
+	 * 
+	 * 
+	 * 
+	 * public String getProjectName() {
 		return projectName;
 	}
 
@@ -3505,7 +3589,7 @@ private String custAccount ="";
 
 	public void setBuildUpAreaEng(String buildUpAreaEng) {
 		this.buildUpAreaEng = buildUpAreaEng;
-	}
+	}*/
 
 	public String getCustJointName() {
 		return custJointName;
@@ -3523,6 +3607,9 @@ private String custAccount ="";
 		this.collateralData = collateralData;
 	}
 
+	/*Remove fields as not required comments from Raju
+	 * 
+	 * 
 	public String getmOUDate() {
 		return mOUDate;
 	}
@@ -3553,7 +3640,7 @@ private String custAccount ="";
 
 	public void setPropertyUse(String propertyUse) {
 		this.propertyUse = propertyUse;
-	}
+	}*/
 
 	public String getTotalRepayAmt() {
 		return totalRepayAmt;
@@ -3571,13 +3658,17 @@ private String custAccount ="";
 		this.secSixTermAmt = secSixTermAmt;
 	}
 
-	public String getUnitAreaInSqft() {
+	/*Remove fields as not required comments from Raju
+	 * 
+	 * 
+	 * 
+	 * public String getUnitAreaInSqft() {
 		return unitAreaInSqft;
 	}
 
 	public void setUnitAreaInSqft(String unitAreaInSqft) {
 		this.unitAreaInSqft = unitAreaInSqft;
-	}
+	}*/
 
 	public String getRepayBaseRate() {
 		return repayBaseRate;
@@ -3667,7 +3758,10 @@ private String custAccount ="";
 		this.llDate = llDate;
 	}
 
-	public String getEmiratesOfReg() {
+	/*Remove fields as not required comments from Raju
+	 * 
+	 * 
+	 * public String getEmiratesOfReg() {
 		return emiratesOfReg;
 	}
 
@@ -3681,7 +3775,7 @@ private String custAccount ="";
 
 	public void setPropertyloc(String propertyloc) {
 		this.propertyloc = propertyloc;
-	}
+	}*/
 
 	public String getFinAmtPertg() {
 		return finAmtPertg;
@@ -3851,13 +3945,16 @@ private String custAccount ="";
 		this.secDeposit = secDeposit;
 	}
 
-	public String getSellerInternal() {
+	/*Remove fields as not required comments from Raju
+	 * 
+	 * 
+	 * public String getSellerInternal() {
 		return sellerInternal;
 	}
 
 	public void setSellerInternal(String sellerInternal) {
 		this.sellerInternal = sellerInternal;
-	}
+	}*/
 
 	public String getCustConInWords() {
 		return custConInWords;
@@ -3883,7 +3980,10 @@ private String custAccount ="";
 		this.buildUpAreaArabic = buildUpAreaArabic;
 	}
 
-	public String getNumberOfUnits() {
+	/*Remove fields as not required comments from Raju
+	 * 
+	 * 
+	 * public String getNumberOfUnits() {
 		return numberOfUnits;
 	}
 
@@ -3896,7 +3996,7 @@ private String custAccount ="";
 	}
 	public void setMarketValueInWords(String marketValueInWords) {
 		this.marketValueInWords = marketValueInWords;
-	}
+	}*/
 
 	public String getSchdAdvPftFirstInstl() {
 		return schdAdvPftFirstInstl;
@@ -4119,13 +4219,16 @@ private String custAccount ="";
 		this.repayFrqDay = repayFrqDay;
 	}
 
-	public String getVehicleReg() {
+	/*Remove fields as not required comments from Raju
+	 * 
+	 * 
+	 * public String getVehicleReg() {
 		return vehicleReg;
 	}
 
 	public void setVehicleReg(String vehicleReg) {
 		this.vehicleReg = vehicleReg;
-	}
+	}*/
 
 	public String getUsrEmailId() {
 		return usrEmailId;
@@ -4149,12 +4252,16 @@ private String custAccount ="";
 		this.custCtgCode = custCtgCode;
 	}
 
-	public String getNumberOfLeasedUnits() {
+	/*Remove fields as not required comments from Raju
+	 * 
+	 * 
+	 * 
+	 * public String getNumberOfLeasedUnits() {
 		return numberOfLeasedUnits;
 	}
 	public void setNumberOfLeasedUnits(String numberOfLeasedUnits) {
 		this.numberOfLeasedUnits = numberOfLeasedUnits;
-	}
+	}*/
 
 	public String getRepayFrqCode() {
 		return repayFrqCode;
@@ -4485,6 +4592,36 @@ private String custAccount ="";
 	
 	private String custFatherName ="";
 	
+	private String custEmpType="";
+	
+	private String custEmpDesignation="";
+	
+	private String existingCustomer="";
+	
+	public String getExistingCustomer() {
+		return existingCustomer;
+	}
+
+	public void setExistingCustomer(String existingCustomer) {
+		this.existingCustomer = existingCustomer;
+	}
+
+	public String getCustEmpDesignation() {
+		return custEmpDesignation;
+	}
+
+	public void setCustEmpDesignation(String custEmpDesignation) {
+		this.custEmpDesignation = custEmpDesignation;
+	}
+
+	public String getCustEmpType() {
+		return custEmpType;
+	}
+
+	public void setCustEmpType(String custEmpType) {
+		this.custEmpType = custEmpType;
+	}
+
 	public String getCustFatherName() {
 		return custFatherName;
 	}
@@ -4927,4 +5064,817 @@ private String custAccount ="";
 			this.emailValue = emailValue;
 		}
 	}
+	
+	private List<AppIncDetail> appIncDetails;
+	
+	public List<AppIncDetail> getAppIncDetails() {
+		return appIncDetails;
+	}
+
+	public void setAppIncDetails(List<AppIncDetail> appIncDetails) {
+		this.appIncDetails = appIncDetails;
+	}
+
+	public class AppIncDetail{
+		private String applicantType="";
+		private String custCIF="";
+		private String custName="";
+		private String incomeCategory="";
+		private String incomeType="";
+		private String amt="";
+		private String amtPrctConsidered="";
+		private String amtConsidered="";
+		
+		public AppIncDetail() {
+		}
+
+		public String getApplicantType() {
+			return applicantType;
+		}
+
+		public void setApplicantType(String applicantType) {
+			this.applicantType = applicantType;
+		}
+
+		public String getCustCIF() {
+			return custCIF;
+		}
+
+		public void setCustCIF(String custCIF) {
+			this.custCIF = custCIF;
+		}
+
+		public String getCustName() {
+			return custName;
+		}
+
+		public void setCustName(String custName) {
+			this.custName = custName;
+		}
+
+		public String getIncomeCategory() {
+			return incomeCategory;
+		}
+
+		public void setIncomeCategory(String incomeCategory) {
+			this.incomeCategory = incomeCategory;
+		}
+
+		public String getIncomeType() {
+			return incomeType;
+		}
+
+		public void setIncomeType(String incomeType) {
+			this.incomeType = incomeType;
+		}
+
+		public String getAmt() {
+			return amt;
+		}
+
+		public void setAmt(String amt) {
+			this.amt = amt;
+		}
+
+		public String getAmtPrctConsidered() {
+			return amtPrctConsidered;
+		}
+
+		public void setAmtPrctConsidered(String amtPrctConsidered) {
+			this.amtPrctConsidered = amtPrctConsidered;
+		}
+
+		public String getAmtConsidered() {
+			return amtConsidered;
+		}
+
+		public void setAmtConsidered(String amtConsidered) {
+			this.amtConsidered = amtConsidered;
+		}
+	}
+	
+	private List<AppExpDetail> appExpDetails;
+	
+	public List<AppExpDetail> getAppExpDetails() {
+		return appExpDetails;
+	}
+
+	public void setAppExpDetails(List<AppExpDetail> appExpDetails) {
+		this.appExpDetails = appExpDetails;
+	}
+
+	public class AppExpDetail{
+		private String applicantType="";
+		private String custName="";
+		private String expenseCategory="";
+		private String expenseType="";
+		private String amt="";
+		private String amtPrctConsidered="";
+		private String amtConsidered="";
+		
+		public AppExpDetail() {
+		}
+
+		public String getApplicantType() {
+			return applicantType;
+		}
+
+		public void setApplicantType(String applicantType) {
+			this.applicantType = applicantType;
+		}
+
+		public String getCustName() {
+			return custName;
+		}
+
+		public void setCustName(String custName) {
+			this.custName = custName;
+		}
+
+		public String getExpenseCategory() {
+			return expenseCategory;
+		}
+
+		public void setExpenseCategory(String expenseCategory) {
+			this.expenseCategory = expenseCategory;
+		}
+
+		public String getExpenseType() {
+			return expenseType;
+		}
+
+		public void setExpenseType(String expenseType) {
+			this.expenseType = expenseType;
+		}
+
+		public String getAmt() {
+			return amt;
+		}
+
+		public void setAmt(String amt) {
+			this.amt = amt;
+		}
+
+		public String getAmtPrctConsidered() {
+			return amtPrctConsidered;
+		}
+
+		public void setAmtPrctConsidered(String amtPrctConsidered) {
+			this.amtPrctConsidered = amtPrctConsidered;
+		}
+
+		public String getAmtConsidered() {
+			return amtConsidered;
+		}
+
+		public void setAmtConsidered(String amtConsidered) {
+			this.amtConsidered = amtConsidered;
+		}
+	}
+	
+	private List<ExternalLiabilityDetail> externalLiabilityDetails;
+	
+	public List<ExternalLiabilityDetail> getExternalLiabilityDetails() {
+		return externalLiabilityDetails;
+	}
+
+	public void setExternalLiabilityDetails(List<ExternalLiabilityDetail> externalLiabilityDetails) {
+		this.externalLiabilityDetails = externalLiabilityDetails;
+	}
+
+	public class ExternalLiabilityDetail{
+		private String custCIF="";
+		private String custName="";
+		private String emiAmt="";
+		private String finInstName="";
+		private String amt="";
+		private String status="";
+		private String loanDate="";
+		private String appType="";
+		private String outStandingAmt="";
+		
+		public ExternalLiabilityDetail() {
+		}
+
+		public String getAppType() {
+			return appType;
+		}
+
+		public void setAppType(String appType) {
+			this.appType = appType;
+		}
+
+		public String getCustCIF() {
+			return custCIF;
+		}
+
+		public void setCustCIF(String custCIF) {
+			this.custCIF = custCIF;
+		}
+
+		public String getCustName() {
+			return custName;
+		}
+
+		public void setCustName(String custName) {
+			this.custName = custName;
+		}
+
+		public String getEmiAmt() {
+			return emiAmt;
+		}
+
+		public void setEmiAmt(String emiAmt) {
+			this.emiAmt = emiAmt;
+		}
+
+		public String getFinInstName() {
+			return finInstName;
+		}
+
+		public void setFinInstName(String finInstName) {
+			this.finInstName = finInstName;
+		}
+
+		public String getAmt() {
+			return amt;
+		}
+
+		public void setAmt(String amt) {
+			this.amt = amt;
+		}
+
+		public String getStatus() {
+			return status;
+		}
+
+		public void setStatus(String status) {
+			this.status = status;
+		}
+
+		public String getLoanDate() {
+			return loanDate;
+		}
+
+		public void setLoanDate(String loanDate) {
+			this.loanDate = loanDate;
+		}
+
+		public String getOutStandingAmt() {
+			return outStandingAmt;
+		}
+
+		public void setOutStandingAmt(String outStandingAmt) {
+			this.outStandingAmt = outStandingAmt;
+		}
+		
+	}
+	
+	private List<InternalLiabilityDetail> internalLiabilityDetails;
+	
+	public List<InternalLiabilityDetail> getInternalLiabilityDetails() {
+		return internalLiabilityDetails;
+	}
+
+	public void setInternalLiabilityDetails(List<InternalLiabilityDetail> internalLiabilityDetails) {
+		this.internalLiabilityDetails = internalLiabilityDetails;
+	}
+
+	public class InternalLiabilityDetail{
+		private String custCIF="";
+		private String custName="";
+		private String emiAmt="";
+		private String lanNumber="";
+		private String amt="";
+		private String status="";
+		private String balTerms="";
+		private String appType="";
+		
+		public InternalLiabilityDetail() {
+		}
+
+		public String getCustCIF() {
+			return custCIF;
+		}
+
+		public void setCustCIF(String custCIF) {
+			this.custCIF = custCIF;
+		}
+
+		public String getCustName() {
+			return custName;
+		}
+
+		public void setCustName(String custName) {
+			this.custName = custName;
+		}
+
+		public String getEmiAmt() {
+			return emiAmt;
+		}
+
+		public void setEmiAmt(String emiAmt) {
+			this.emiAmt = emiAmt;
+		}
+
+		public String getLanNumber() {
+			return lanNumber;
+		}
+
+		public void setLanNumber(String lanNumber) {
+			this.lanNumber = lanNumber;
+		}
+
+		public String getAmt() {
+			return amt;
+		}
+
+		public void setAmt(String amt) {
+			this.amt = amt;
+		}
+
+		public String getStatus() {
+			return status;
+		}
+
+		public void setStatus(String status) {
+			this.status = status;
+		}
+
+		public String getBalTerms() {
+			return balTerms;
+		}
+
+		public void setBalTerms(String balTerms) {
+			this.balTerms = balTerms;
+		}
+
+		public String getAppType() {
+			return appType;
+		}
+
+		public void setAppType(String appType) {
+			this.appType = appType;
+		}
+	}
+	
+	private List<BankingDetail> bankingDetails;
+	
+	public List<BankingDetail> getBankingDetails() {
+		return bankingDetails;
+	}
+
+	public void setBankingDetails(List<BankingDetail> bankingDetails) {
+		this.bankingDetails = bankingDetails;
+	}
+
+	public class BankingDetail{
+		private String applicantType="";
+		private String custCIF="";
+		private String custName="";
+		private String accType="";
+		private String accNo="";
+		private String bankName="";
+		private String totCreditAmt="";
+		private String totDebitAmt="";
+		private String noCheqBounce="";
+		private String avgEODBalance="";
+		
+		public BankingDetail() {
+		}
+
+		public String getApplicantType() {
+			return applicantType;
+		}
+
+		public void setApplicantType(String applicantType) {
+			this.applicantType = applicantType;
+		}
+
+		public String getCustCIF() {
+			return custCIF;
+		}
+
+		public void setCustCIF(String custCIF) {
+			this.custCIF = custCIF;
+		}
+
+		public String getCustName() {
+			return custName;
+		}
+
+		public void setCustName(String custName) {
+			this.custName = custName;
+		}
+
+		public String getAccType() {
+			return accType;
+		}
+
+		public void setAccType(String accType) {
+			this.accType = accType;
+		}
+
+		public String getAccNo() {
+			return accNo;
+		}
+
+		public void setAccNo(String accNo) {
+			this.accNo = accNo;
+		}
+
+		public String getBankName() {
+			return bankName;
+		}
+
+		public void setBankName(String bankName) {
+			this.bankName = bankName;
+		}
+
+		public String getTotCreditAmt() {
+			return totCreditAmt;
+		}
+
+		public void setTotCreditAmt(String totCreditAmt) {
+			this.totCreditAmt = totCreditAmt;
+		}
+
+		public String getTotDebitAmt() {
+			return totDebitAmt;
+		}
+
+		public void setTotDebitAmt(String totDebitAmt) {
+			this.totDebitAmt = totDebitAmt;
+		}
+
+		public String getNoCheqBounce() {
+			return noCheqBounce;
+		}
+
+		public void setNoCheqBounce(String noCheqBounce) {
+			this.noCheqBounce = noCheqBounce;
+		}
+
+		public String getAvgEODBalance() {
+			return avgEODBalance;
+		}
+
+		public void setAvgEODBalance(String avgEODBalance) {
+			this.avgEODBalance = avgEODBalance;
+		}
+	}
+	
+	private List<IrrDetail> irrDetails;
+	
+	public List<IrrDetail> getIrrDetails() {
+		return irrDetails;
+	}
+
+	public void setIrrDetails(List<IrrDetail> irrDetails) {
+		this.irrDetails = irrDetails;
+	}
+
+	public class IrrDetail{
+		private String irrCode="";
+		private String irrDesc="";
+		private String irrPercentage="";
+		
+		public IrrDetail() {
+		}
+
+		public String getIrrCode() {
+			return irrCode;
+		}
+
+		public void setIrrCode(String irrCode) {
+			this.irrCode = irrCode;
+		}
+
+		public String getIrrDesc() {
+			return irrDesc;
+		}
+
+		public void setIrrDesc(String irrDesc) {
+			this.irrDesc = irrDesc;
+		}
+
+		public String getIrrPercentage() {
+			return irrPercentage;
+		}
+
+		public void setIrrPercentage(String irrPercentage) {
+			this.irrPercentage = irrPercentage;
+		}
+		
+	}
+	
+	private List<ActivityDetail> activityDetails;
+	
+	public List<ActivityDetail> getActivityDetails() {
+		return activityDetails;
+	}
+
+	public void setActivityDetails(List<ActivityDetail> activityDetails) {
+		this.activityDetails = activityDetails;
+	}
+
+	public class ActivityDetail{
+		private String workflow="";
+		private String role="";
+		private String submitDate="";
+		private String activityDate="";
+		private String activity="";
+		private String activityUser="";
+		
+		public ActivityDetail() {
+		}
+
+		public String getRole() {
+			return role;
+		}
+
+		public void setRole(String role) {
+			this.role = role;
+		}
+
+		public String getWorkflow() {
+			return workflow;
+		}
+
+		public void setWorkflow(String workflow) {
+			this.workflow = workflow;
+		}
+
+		public String getActivityDate() {
+			return activityDate;
+		}
+
+		public void setActivityDate(String activityDate) {
+			this.activityDate = activityDate;
+		}
+
+		public String getSubmitDate() {
+			return submitDate;
+		}
+
+		public void setSubmitDate(String submitDate) {
+			this.submitDate = submitDate;
+		}
+
+		public String getActivity() {
+			return activity;
+		}
+
+		public void setActivity(String activity) {
+			this.activity = activity;
+		}
+
+		public String getActivityUser() {
+			return activityUser;
+		}
+
+		public void setActivityUser(String activityUser) {
+			this.activityUser = activityUser;
+		}
+	}
+	
+	private List<LoanDeviation> loanDeviations;
+	
+	public List<LoanDeviation> getLoanDeviations() {
+		return loanDeviations;
+	}
+
+	public void setLoanDeviations(List<LoanDeviation> loanDeviations) {
+		this.loanDeviations = loanDeviations;
+	}
+
+	public class LoanDeviation{
+		private String deviationCode="";
+		private String deviationDescription="";
+		private String deviationRaisedDate="";
+		private String deviationApprovedBy="";
+		private String remarks="";
+		private String deviationType="";
+		
+		public LoanDeviation() {
+		}
+
+		public String getDeviationCode() {
+			return deviationCode;
+		}
+
+		public void setDeviationCode(String deviationCode) {
+			this.deviationCode = deviationCode;
+		}
+
+		public String getDeviationDescription() {
+			return deviationDescription;
+		}
+
+		public void setDeviationDescription(String deviationDescription) {
+			this.deviationDescription = deviationDescription;
+		}
+
+		public String getDeviationRaisedDate() {
+			return deviationRaisedDate;
+		}
+
+		public void setDeviationRaisedDate(String deviationRaisedDate) {
+			this.deviationRaisedDate = deviationRaisedDate;
+		}
+
+		public String getDeviationApprovedBy() {
+			return deviationApprovedBy;
+		}
+
+		public void setDeviationApprovedBy(String deviationApprovedBy) {
+			this.deviationApprovedBy = deviationApprovedBy;
+		}
+
+		public String getRemarks() {
+			return remarks;
+		}
+
+		public void setRemarks(String remarks) {
+			this.remarks = remarks;
+		}
+
+		public String getDeviationType() {
+			return deviationType;
+		}
+
+		public void setDeviationType(String deviationType) {
+			this.deviationType = deviationType;
+		}
+	}
+	
+	private List<SourcingDetail> sourcingDetails;
+	
+	public List<SourcingDetail> getSourcingDetails() {
+		return sourcingDetails;
+	}
+
+	public void setSourcingDetails(List<SourcingDetail> sourcingDetails) {
+		this.sourcingDetails = sourcingDetails;
+	}
+
+	public class SourcingDetail{
+		private String sourceChannel="";
+		private String salesPerson="";
+		private String dsaName="";
+		public SourcingDetail() {
+		}
+		public String getSourceChannel() {
+			return sourceChannel;
+		}
+		public void setSourceChannel(String sourceChannel) {
+			this.sourceChannel = sourceChannel;
+		}
+		public String getSalesPerson() {
+			return salesPerson;
+		}
+		public void setSalesPerson(String salesPerson) {
+			this.salesPerson = salesPerson;
+		}
+		public String getDsaName() {
+			return dsaName;
+		}
+		public void setDsaName(String dsaName) {
+			this.dsaName = dsaName;
+		}
+		
+	}
+	
+	private List<ExtendedDetail> extendedDetails;
+	
+	/**
+	 * Get the all the extended details that are configured.
+	 * 
+	 * @return
+	 * 		all the extended detail vlaues
+	 */
+	public List<ExtendedDetail> getExtendedDetails() {
+		return extendedDetails;
+	}
+
+	public void setExtendedDetails(List<ExtendedDetail> extendedDetails) {
+		this.extendedDetails = extendedDetails;
+	}
+
+	/**
+	 * ExtendedDetail contains the extended details field with name and value. 
+	 *
+	 */
+	public class ExtendedDetail{
+		private String key="";
+		private String value="";
+		public ExtendedDetail() {
+		}
+		/**
+		 * Get the name of the extended field
+		 * 
+		 * @return
+		 */
+		public String getKey() {
+			return key;
+		}
+		public void setKey(String key) {
+			this.key = key;
+		}
+		/**
+		 * Get the value of the extended field
+		 * 
+		 * @return
+		 */
+		public String getValue() {
+			return value;
+		}
+		public void setValue(String value) {
+			this.value = value;
+		}
+	}
+	
+	//Required Fields
+	private String carDealer ="";														// Vendor/Seller ID
+	private String assetValue ="";														// Asset Value
+	private String dealerCity ="";														// Vendor/Seller City
+	private String dealerCountry ="";													// Vendor/Seller Country
+	private String dealerName ="";														// Vendor/Seller Name
+	private String lpoDate ="";														//LOP Date
+	private String marketValue="";
+	private String marketValueInWords="";
+	private String totalPrice ="";														//total Price
+	
+	public String getCarDealer() {
+		return carDealer;
+	}
+
+	public void setCarDealer(String carDealer) {
+		this.carDealer = carDealer;
+	}
+
+	public String getAssetValue() {
+		return assetValue;
+	}
+
+	public void setAssetValue(String assetValue) {
+		this.assetValue = assetValue;
+	}
+
+	public String getDealerCity() {
+		return dealerCity;
+	}
+
+	public void setDealerCity(String dealerCity) {
+		this.dealerCity = dealerCity;
+	}
+
+	public String getDealerCountry() {
+		return dealerCountry;
+	}
+
+	public void setDealerCountry(String dealerCountry) {
+		this.dealerCountry = dealerCountry;
+	}
+
+	public String getDealerName() {
+		return dealerName;
+	}
+
+	public void setDealerName(String dealerName) {
+		this.dealerName = dealerName;
+	}
+
+	public String getLpoDate() {
+		return lpoDate;
+	}
+
+	public void setLpoDate(String lpoDate) {
+		this.lpoDate = lpoDate;
+	}
+
+	public String getMarketValue() {
+		return marketValue;
+	}
+
+	public void setMarketValue(String marketValue) {
+		this.marketValue = marketValue;
+	}
+
+	public String getMarketValueInWords() {
+		return marketValueInWords;
+	}
+
+	public void setMarketValueInWords(String marketValueInWords) {
+		this.marketValueInWords = marketValueInWords;
+	}
+
+	public String getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(String totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+	
 }
