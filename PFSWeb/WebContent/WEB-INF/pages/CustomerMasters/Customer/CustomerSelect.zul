@@ -33,7 +33,8 @@
 				</toolbar>
 				<!-- CRUD BUTTONS  -->
 				<toolbar align="end" sclass="toolbar-end">
-					<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
+					<button id="btnHelp" visible="false"
+						label="${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"
 						sclass="z-toolbarbutton" />
 					<button id="btnClose" label="${c:l('label_Close')}"
@@ -83,7 +84,8 @@
 								<listbox id="sortOperator_custMobile"
 									width="43px" mold="select" rows="1" />
 								<hbox>
-									<textbox id="custMobile" width="150px" />
+									<textbox id="custMobile"
+										width="150px" />
 								</hbox>
 							</row>
 							<row>
@@ -92,21 +94,23 @@
 								<listbox id="sortOperator_custEID"
 									width="43px" mold="select" rows="1" />
 								<textbox id="custEid" width="150px" />
-								<label
+								<!-- <label
 									id="label_CustomerSearch_CustPassport"
 									value="${c:l('label_CustomerSearch_CustPassport.value')}" />
-								<listbox id="sortOperator_custPassport"
+									<listbox id="sortOperator_custPassport"
 									width="43px" mold="select" rows="1" />
-								<textbox id="custPassport"
-									width="150px" />
-							</row>
-							<row>
+									<textbox id="custPassport"
+									width="150px" /> -->
 								<label
 									id="label_CustomerSearch_CustType"
 									value="${c:l('label_CustomerSearch_CustType.value')}" />
 								<listbox id="sortOperator_custType"
 									width="43px" mold="select" rows="1" />
 								<textbox id="custType" width="150px" />
+
+							</row>
+							<row>
+
 								<label
 									id="label_CustomerSearch_CustNationality"
 									value="${c:l('label_CustomerSearch_CustNationality.value')}" />
@@ -115,8 +119,7 @@
 									rows="1" />
 								<textbox id="custNationality"
 									width="150px" />
-							</row>
-							<row>
+
 								<label
 									id="label_CustomerSearch_CustCategory"
 									value="${c:l('label_CustomerSearch_CustCategory.value')}" />
@@ -124,16 +127,20 @@
 									width="43px" mold="select" rows="1" />
 								<combobox id="custCategory"
 									width="150px" />
+							</row>
+							<row>
+
 								<label visible="false"
 									id="label_CustomerSearch_CustTarget"
 									value="${c:l('label_CustomerSearch_CustTarget.value')}" />
-								<listbox id="sortOperator_custTarget" visible="false"
-									width="43px" mold="select" rows="1" />
-								<extendedcombobox id="custTarget"  visible="false"/>
+								<listbox id="sortOperator_custTarget"
+									visible="false" width="43px" mold="select" rows="1" />
+								<extendedcombobox id="custTarget"
+									visible="false" />
 							</row>
 						</rows>
 					</grid>
-					<listbox id="listBoxCustomer"  
+					<listbox id="listBoxCustomer"
 						emptyMessage="${c:l('listbox.emptyMessage')}"
 						style="overflow:auto" tooltiptext="${c:l('listbox.tooltiptext1')}"
 						width="99.7%" height="100%" multiple="false" span="true"
@@ -165,7 +172,7 @@
 								hflex="min" />
 							<listheader id="listheader_Target"
 								label="${c:l('listheader_Target.label')}" sort="false"
-								hflex="min" visible="false"/>
+								hflex="min" visible="false" />
 							<listheader id="listheader_CustCategory"
 								label="${c:l('listheader_CustCtgCode.label')}" sort="false"
 								hflex="min" />

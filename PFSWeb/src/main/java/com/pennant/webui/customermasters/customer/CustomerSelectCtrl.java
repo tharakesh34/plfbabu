@@ -103,8 +103,6 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 	protected Listbox sortOperator_custMobile; 			// autowired
 	protected Textbox custEid; 							// autowired
 	protected Listbox sortOperator_custEID; 			// autowired
-	protected Textbox custPassport; 					// autowired
-	protected Listbox sortOperator_custPassport; 		// autowired
 	protected Textbox custType; 						// autowired
 	protected Listbox sortOperator_custType; 			// autowired
 	protected Textbox custNationality; 					// autowired
@@ -183,8 +181,6 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		this.sortOperator_custEID.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custEID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custPassport.setModel(new ListModelList<SearchOperators>(list));
-		this.sortOperator_custPassport.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_custType.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custType.setItemRenderer(new SearchOperatorListModelItemRenderer());
@@ -258,9 +254,6 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				} else if ("CustCRCPR".equals(filter.getProperty())) {
 					SearchOperators.resetOperator(this.sortOperator_custEID, filter);
 					this.custEid.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custEID));
-				} else if ("CustPassportNo".equals(filter.getProperty())) {
-					SearchOperators.resetOperator(this.sortOperator_custPassport, filter);
-					this.custPassport.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custPassport));
 				} else if ("CustTypeCode".equals(filter.getProperty())) {
 					SearchOperators.resetOperator(this.sortOperator_custType, filter);
 					this.custType.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custType));
@@ -436,23 +429,6 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 			}
 		}
 
-		if (StringUtils.isNotBlank(this.custPassport.getValue())) {
-
-			// get the search operator
-			final Listitem itemCustSalutationCode = this.sortOperator_custPassport.getSelectedItem();
-			if (itemCustSalutationCode != null) {
-				final int searchOpId = ((SearchOperators) itemCustSalutationCode.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("CustPassportNo", "%" + this.custPassport.getValue().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == -1) {
-					// do nothing
-				} else {
-					searchObject.addFilter(new Filter("CustPassportNo", this.custPassport.getValue(), searchOpId));
-				}
-			}
-		}
-
 		if (StringUtils.isNotBlank(this.custType.getValue())) {
 
 			// get the search operator
@@ -570,8 +546,6 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		this.sortOperator_custMobile.setSelectedIndex(0);
 		this.custEid.setValue("");
 		this.sortOperator_custEID.setSelectedIndex(0);
-		this.custPassport.setValue("");
-		this.sortOperator_custPassport.setSelectedIndex(0);
 		this.custType.setValue("");
 		this.sortOperator_custType.setSelectedIndex(0);
 		this.custNationality.setValue("");
@@ -595,7 +569,6 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		this.custName.setMaxlength(25);
 		this.custMobile.setMaxlength(10);
 		this.custEid.setMaxlength(20);
-		this.custPassport.setMaxlength(50);
 		this.custType.setMaxlength(8);
 		this.custNationality.setMaxlength(2);
 	}
