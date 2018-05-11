@@ -66,7 +66,6 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.batchupload.fileprocessor.BatchUploadProcessor;
@@ -97,6 +96,9 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	private File file;
 	@Value("${api.authkey}")
 	private String authorization;
+	// ### 10-05-2018---- PSD TCT No :125164 
+	@Value("${api.url}")
+	private String baseurl;
 	private String extraHeader = null;
 	private String apiUrl = null;
 	private String sourceFileName = null;
@@ -124,7 +126,7 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	 */
 	public void onCreate$window_ExternalUploadsList(Event event) {
 		setPageComponents(window_ExternalUploadsList);
-		String baseurl = SysParamUtil.getValueAsString("PFFAPI_SERVICE_URL");
+		//String baseurl = SysParamUtil.getValueAsString("PFFAPI_SERVICE_URL");
 		// String baseurl = "http://192.168.1.160:8080/pff-api/services";
 
 		if (StringUtils.isBlank(baseurl)) {

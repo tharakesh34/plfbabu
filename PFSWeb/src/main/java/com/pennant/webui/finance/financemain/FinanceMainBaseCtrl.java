@@ -6099,9 +6099,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!recSave && "Accounting".equals(getTaskTabs(getTaskId(getRole()))) && accVerificationReq) {
 
 				// check if accounting rules executed or not
-				if (accountingDetailDialogCtrl == null || !accountingDetailDialogCtrl.isAccountingsExecuted()) {
-					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
-					return;
+				if (accountingDetailDialogCtrl == null || (!accountingDetailDialogCtrl.isAccountingsExecuted())) {
+				// ### 10-05-2018---- PSD TCT No :124885 
+					if (!ImplementationConstants.CLIENT_NFL) {
+						MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
+						return;
+					}
 				} else {
 
 					if (accountingDetailDialogCtrl.getDisbCrSum()
