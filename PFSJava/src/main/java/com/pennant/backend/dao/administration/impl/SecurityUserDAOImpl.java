@@ -358,7 +358,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		int recordCount = 0;
 
 		StringBuilder   updateSql = new StringBuilder  (" Update SecUsers");
-		updateSql.append(" Set UsrPwd=:UsrPwd ,UsrToken=:UsrToken,UsrAcExpDt = :UsrAcExpDt, " );
+		updateSql.append(" Set UsrPwd=:UsrPwd ,UsrToken=:UsrToken,UsrAcExpDt = :UsrAcExpDt, UsrCredentialsExp = :UsrCredentialsExp, " );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus ");
 		updateSql.append(" Where UsrID =:UsrID");

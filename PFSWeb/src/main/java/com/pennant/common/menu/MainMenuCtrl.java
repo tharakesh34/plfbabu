@@ -182,18 +182,17 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 		String authType = StringUtils.trimToEmpty(userWorkspace.getLoggedInUser().getAuthType());
 		Date expiredDate = userWorkspace.getLoggedInUser().getAccountExpiredOn();
+		boolean credentialsExpired = userWorkspace.getLoggedInUser().isCredentialsExpired();
 
-		if (!AuthenticationType.DAO.name().equals(authType) || expiredDate == null) {
-			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false,
-					new MenuItemOnCloseListener());
-		} else if (expiredDate.before(DateUtil.getSysDate())) {
+		if (!AuthenticationType.DAO.name().equals(authType)) {
+			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false, new MenuItemOnCloseListener());
+		} else if (credentialsExpired || (expiredDate != null && expiredDate.before(DateUtil.getSysDate()))) {
 			Window win = (Window) Executions.createComponents("/WEB-INF/pages/PasswordReset/changePwd.zul", null, null);
 			win.setWidth("98%");
 			win.setHeight("98%");
 			win.doModal();
 		} else {
-			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false,
-					new MenuItemOnCloseListener());
+			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false, new MenuItemOnCloseListener());
 		}
 
 		logger.trace(Literal.LEAVING);

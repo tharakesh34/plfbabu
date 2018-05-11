@@ -503,14 +503,15 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrCanSignonTo.setValue(aSecurityUser.getUsrCanSignonTo());
 		this.usrCanOverrideLimits.setChecked(aSecurityUser.isUsrCanOverrideLimits());
 		this.usrAcExp.setChecked(aSecurityUser.isUsrAcExp());
-		this.usrCredentialsExp.setChecked(aSecurityUser.isUsrCredentialsExp());
 		this.usrAcLocked.setChecked(aSecurityUser.isUsrAcLocked());
 		this.UsrAcExpDt.setValue(aSecurityUser.getUsrAcExpDt());
 
 		if (securityUser.isNew()) {
 			this.usrDftAppId.setSelectedIndex(0);
+			this.usrCredentialsExp.setChecked(true);
 		} else {
 			this.usrDftAppId.setValue(PennantAppUtil.getlabelDesc(String.valueOf(securityUser.getUsrDftAppId()), PennantStaticListUtil.getAppCodes()));
+			this.usrCredentialsExp.setChecked(aSecurityUser.isUsrCredentialsExp());
 		}
 		fillComboBox(authType, securityUser.getAuthType(), authTypesList, "");
 		this.usrBranchCode.setValue(aSecurityUser.getUsrBranchCode());
@@ -1285,7 +1286,11 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			if (StringUtils.isBlank(aSecurityUser.getRecordType())) {
 				aSecurityUser.setVersion(aSecurityUser.getVersion() + 1);
 				if (isNew) {
-					aSecurityUser.setUsrAcExpDt(DateUtility.addDays(new Date(System.currentTimeMillis()), -1));
+
+					if(aSecurityUser.getUsrAcExpDt() == null){
+						aSecurityUser.setUsrAcExpDt(DateUtility.addDays(new Date(System.currentTimeMillis()), -1));
+					}
+					
 					aSecurityUser.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
 					aSecurityUser.setRecordType(PennantConstants.RECORD_TYPE_UPD);

@@ -61,8 +61,7 @@ public class User extends org.springframework.security.core.userdetails.User imp
 	private long				loginId;
 
 	public User(SecurityUser user, Collection<GrantedAuthority> authorities, List<SecurityRole> roles) {
-		super(user.getUsrLogin(), user.getUsrPwd() == null ? "" : user.getUsrPwd(), user.isUsrEnabled(), user.isAccountNonExpired(), user
-				.isCredentialsNonExpired(), user.isAccountNonLocked(), authorities);
+		super(user.getUsrLogin(), user.getUsrPwd() == null ? "" : user.getUsrPwd(), user.isUsrEnabled(), user.isAccountNonExpired(), true, user.isAccountNonLocked(), authorities);
 
 		this.usrToken = user.getUsrToken();
 		this.userId = user.getId();

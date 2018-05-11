@@ -180,6 +180,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser>  {
 			getSecurityUser().setUserDetails(getUserWorkspace().getLoggedInUser());
 			PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
 			getSecurityUser().setUsrPwd(pwdEncoder.encode(getSecurityUser().getUsrPwd()));
+			getSecurityUser().setUsrCredentialsExp(false);
 			
 			//update the password by calling securityUserService's changePassword method.
 			auditHeader =  getAuditHeader(getSecurityUser(), PennantConstants.TRAN_UPD);
