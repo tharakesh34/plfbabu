@@ -308,7 +308,7 @@ public class DeviationRenderer {
 			listitem.appendChild(listcell);
 			//Approval Remarks
 
-			String lable = "";
+			/*String lable = "";
 			Button button = new Button();
 			if (approverScreen) {
 				if (!approved) {
@@ -332,7 +332,9 @@ public class DeviationRenderer {
 			button.setDisabled(pending);
 			if (StringUtils.isNotBlank(lable)) {
 				listcell.appendChild(button);
-			}
+			}*/
+			String remarks=deviation.getRemarks().substring(0,20);
+			listcell = getNewListCell(remarks+"..", devNotallowed);
 			listitem.appendChild(listcell);
 
 			//DelegatedUserId
