@@ -217,11 +217,14 @@
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="DocumentRefId" type="bigint"/>
 			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="VerificationType" type="int" defaultValue="0"/>
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="PagesEyeballed" type="int" defaultValue="0"/>
+			<column name="PagesSampled" type="int" defaultValue="0"/>
 			<column name="InitRemarks" type="varchar(500)" />
-			<column name="AgentRemarks1" type="varchar(500)" />
-			<column name="AgentRemarks2" type="varchar(500)" />
-			<column name="AgentRemarks3" type="varchar(500)" />
+			<column name="AgentRemarks" type="varchar(500)" />
 			<column name="DecisionRemarks" type="varchar(500)" />
+			
 			<column name="Version" type="int">
 				<constraints nullable="false" />
 			</column>
@@ -250,12 +253,14 @@
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="DocumentRefId" type="bigint"/>
 			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="VerificationType" type="int" defaultValue="0"/>
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="PagesEyeballed" type="int" defaultValue="0"/>
+			<column name="PagesSampled" type="int" defaultValue="0"/>
 			<column name="InitRemarks" type="varchar(500)" />
-			<column name="AgentRemarks1" type="varchar(500)" />
-			<column name="AgentRemarks2" type="varchar(500)" />
-			<column name="AgentRemarks3" type="varchar(500)" />
+			<column name="AgentRemarks" type="varchar(500)" />
 			<column name="DecisionRemarks" type="varchar(500)" />
-				
+			
 			<column name="Version" type="int">
 				<constraints nullable="false" />
 			</column>
@@ -284,10 +289,12 @@
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="DocumentRefId" type="bigint"/>
 			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="VerificationType" type="int" defaultValue="0"/>
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="PagesEyeballed" type="int" defaultValue="0"/>
+			<column name="PagesSampled" type="int" defaultValue="0"/>
 			<column name="InitRemarks" type="varchar(500)" />
-			<column name="AgentRemarks1" type="varchar(500)" />
-			<column name="AgentRemarks2" type="varchar(500)" />
-			<column name="AgentRemarks3" type="varchar(500)" />
+			<column name="AgentRemarks" type="varchar(500)" />
 			<column name="DecisionRemarks" type="varchar(500)" />
 	
 			<column name="Version" type="int">
@@ -410,10 +417,12 @@
 			rcud.DocumentSubId,
 			rcud.documentRefId,
 			rcud.documentUri, 
+			rcud.VerificationType,
+			rcud.Status,
+			rcud.PagesEyeballed,
+			rcud.PagesSampled,
 			rcud.InitRemarks,
-			rcud.AgentRemarks1, 
-			rcud.AgentRemarks2, 
-			rcud.AgentRemarks3,
+			rcud.AgentRemarks, 
 			rcud.DecisionRemarks,
 			rcud.version,
             rcud.lastmntby,
@@ -442,10 +451,12 @@
 			rcud.DocumentSubId,
 			rcud.documentRefId,
 			rcud.documentUri,  
+			rcud.VerificationType,
+			rcud.Status,
+			rcud.PagesEyeballed,
+			rcud.PagesSampled,
 			rcud.InitRemarks,
-			rcud.AgentRemarks1, 
-			rcud.AgentRemarks2, 
-			rcud.AgentRemarks3,
+			rcud.AgentRemarks, 
 			rcud.DecisionRemarks,
 			rcud.version,
             rcud.lastmntby,
@@ -478,10 +489,12 @@
 			rcud.DocumentSubId, 
 			rcud.documentRefId,
 			rcud.documentUri, 
+			rcud.VerificationType,
+			rcud.Status,
+			rcud.PagesEyeballed,
+			rcud.PagesSampled,
 			rcud.InitRemarks,
-			rcud.AgentRemarks1, 
-			rcud.AgentRemarks2, 
-			rcud.AgentRemarks3,
+			rcud.AgentRemarks, 
 			rcud.DecisionRemarks,
 			rcud.version,
             rcud.lastmntby,
@@ -510,10 +523,12 @@
 			rcud.DocumentSubId, 
 			rcud.documentRefId,
 			rcud.documentUri, 
+			rcud.VerificationType,
+			rcud.Status,
+			rcud.PagesEyeballed,
+			rcud.PagesSampled,
 			rcud.InitRemarks,
-			rcud.AgentRemarks1, 
-			rcud.AgentRemarks2, 
-			rcud.AgentRemarks3,
+			rcud.AgentRemarks, 
 			rcud.DecisionRemarks,
 			rcud.version,
             rcud.lastmntby,

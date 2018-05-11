@@ -85,11 +85,14 @@
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="DocumentRefId" type="bigint"/>
 			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="VerificationType" type="int" defaultValue="0"/>
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="PagesEyeballed" type="int" defaultValue="0"/>
+			<column name="PagesSampled" type="int" defaultValue="0"/>
 			<column name="InitRemarks" type="varchar(500)" />
-			<column name="AgentRemarks1" type="varchar(500)" />
-			<column name="AgentRemarks2" type="varchar(500)" />
-			<column name="AgentRemarks3" type="varchar(500)" />
+			<column name="AgentRemarks" type="varchar(500)" />
 			<column name="DecisionRemarks" type="varchar(500)" />
+			
 			<column name="Version" type="int"/>
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
