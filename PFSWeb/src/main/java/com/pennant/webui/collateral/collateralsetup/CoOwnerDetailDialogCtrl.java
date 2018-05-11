@@ -30,9 +30,9 @@
  ********************************************************************************************
  * 10-09-2013       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-05-2013       Sai Krishna              0.2          1. PSD - 126100                   * 
+ *                                                        City not populated for existing   * 
+ *                                                        customer                          * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -94,11 +94,11 @@ import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.ScreenCTL;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.ScreenCTL;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	private static final long			serialVersionUID	= 1L;
@@ -384,6 +384,8 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			this.addrHNbr.setValue(customerAddress.getCustAddrHNbr());
 			this.addrStreet.setValue(customerAddress.getCustAddrStreet());
 			this.cityName.setValue(customerAddress.getCustAddrCity());
+			// ### 11-05-2018 Ticket ID : 126100
+			this.addrCity.setValue(customerAddress.getCustAddrCity());
 			this.addrCity.setDescription(customerAddress.getLovDescCustAddrCityName());
 			this.addrCountry.setValue(customerAddress.getCustAddrCountry());
 			this.addrCountry.setDescription(customerAddress.getLovDescCustAddrCountryName());
