@@ -11384,7 +11384,7 @@
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
 	
-	<!-- QueryDetail -->
+	<!-- QueryDetail 
 	<bean id="queryDetailDAO" class="com.pennant.backend.dao.loanquery.impl.QueryDetailDAOImpl"  parent="basisNextidDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
@@ -11406,5 +11406,5 @@
        <property name="queryDetailDAO" ref="queryDetailDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
-	
+	-->
 </beans>
