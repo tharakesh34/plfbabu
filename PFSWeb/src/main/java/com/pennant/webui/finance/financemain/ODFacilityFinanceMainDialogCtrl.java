@@ -2,7 +2,6 @@ package com.pennant.webui.finance.financemain;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -14,7 +13,6 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -99,13 +97,8 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 		doLoadWorkFlow(financeMain);
 
 		if (isWorkFlowEnabled()) {
-			String recStatus = StringUtils.trimToEmpty(financeMain.getRecordStatus());
-			if(recStatus.equals(PennantConstants.RCD_STATUS_REJECTED)){
-				this.userAction = setRejectRecordStatus(this.userAction);
-			}else {
-				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateMenuRoleAuthorities(getRole(), super.pageRightName, menuItemRightName);	
-			}
+			this.userAction = setListRecordStatus(this.userAction);
+			getUserWorkspace().allocateMenuRoleAuthorities(getRole(), super.pageRightName, menuItemRightName);
 		}else{
 			this.south.setHeight("0px");
 		}

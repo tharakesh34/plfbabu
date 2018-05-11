@@ -1411,15 +1411,15 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		List<ValueLabel> delegators = deviationHelper.getRoleAndDesc(getFinanceReferenceDetail().getFinType(),
 				getFinanceReferenceDetail().getFinEvent(), moduleName);
 
-		String delegatorRoles = "";
+		String roles = "";
 		for (ValueLabel valueLabel : delegators) {
-			if (StringUtils.isNotEmpty(delegatorRoles)) {
-				delegatorRoles = delegatorRoles.concat(";");
+			if (StringUtils.isNotEmpty(roles)) {
+				roles = roles.concat(";");
 			}
 
-			delegatorRoles = delegatorRoles.concat(valueLabel.getValue());
+			roles = roles.concat(valueLabel.getValue());
 		}
-		return delegatorRoles;
+		return roles;
 	}
 	// ### 06-05-2018 - End
 

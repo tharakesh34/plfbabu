@@ -128,9 +128,9 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -308,13 +308,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			doLoadWorkFlow(financeMain.isWorkflow(), financeMain.getWorkflowId(), financeMain.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
-				String recStatus = StringUtils.trimToEmpty(financeMain.getRecordStatus());
-				if (recStatus.equals(PennantConstants.RCD_STATUS_REJECTED)) {
-					this.userAction = setRejectRecordStatus(this.userAction);
-				} else {
-					this.userAction = setListRecordStatus(this.userAction);
-					getUserWorkspace().allocateMenuRoleAuthorities(getRole(), "FinWriteoffDialog", menuItemRightName);
-				}
+				this.userAction = setListRecordStatus(this.userAction);
+				getUserWorkspace().allocateMenuRoleAuthorities(getRole(), "FinWriteoffDialog", menuItemRightName);
 			} else {
 				this.south.setHeight("0px");
 			}

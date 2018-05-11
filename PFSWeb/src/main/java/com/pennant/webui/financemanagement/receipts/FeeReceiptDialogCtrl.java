@@ -122,10 +122,10 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -245,12 +245,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			doLoadWorkFlow(receiptHeader.isWorkflow(), receiptHeader.getWorkflowId(), receiptHeader.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
-				String recStatus = StringUtils.trimToEmpty(receiptHeader.getRecordStatus());
-				if (recStatus.equals(PennantConstants.RCD_STATUS_REJECTED)) {
-					this.userAction = setRejectRecordStatus(this.userAction);
-				} else {
-					this.userAction = setListRecordStatus(this.userAction);
-				}
+				this.userAction = setListRecordStatus(this.userAction);
 			} else {
 				this.south.setHeight("0px");
 			}

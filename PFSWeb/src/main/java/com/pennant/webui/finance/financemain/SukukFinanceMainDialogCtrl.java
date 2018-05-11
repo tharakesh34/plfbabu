@@ -48,7 +48,6 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -56,7 +55,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -82,8 +80,8 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -200,13 +198,8 @@ public class SukukFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		doLoadWorkFlow(financeMain);
 
 		if (isWorkFlowEnabled()) {
-			String recStatus = StringUtils.trimToEmpty(financeMain.getRecordStatus());
-			if(recStatus.equals(PennantConstants.RCD_STATUS_REJECTED)){
-				this.userAction = setRejectRecordStatus(this.userAction);
-			}else {
-				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateMenuRoleAuthorities(getRole(), super.pageRightName, menuItemRightName);	
-			}
+			this.userAction = setListRecordStatus(this.userAction);
+			getUserWorkspace().allocateMenuRoleAuthorities(getRole(), super.pageRightName, menuItemRightName);
 		}else{
 			this.south.setHeight("0px");
 		}

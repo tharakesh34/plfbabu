@@ -150,13 +150,8 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		doLoadWorkFlow(financeMain);
 
 		if (isWorkFlowEnabled()) {
-			String recStatus = StringUtils.trimToEmpty(financeMain.getRecordStatus());
-			if(recStatus.equals(PennantConstants.RCD_STATUS_REJECTED)){
-				this.userAction = setRejectRecordStatus(this.userAction);
-			}else {
-				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateMenuRoleAuthorities(getRole(), super.pageRightName, menuItemRightName);	
-			}
+			this.userAction = setListRecordStatus(this.userAction);
+			getUserWorkspace().allocateMenuRoleAuthorities(getRole(), super.pageRightName, menuItemRightName);
 		}else{
 			this.south.setHeight("0px");
 		}

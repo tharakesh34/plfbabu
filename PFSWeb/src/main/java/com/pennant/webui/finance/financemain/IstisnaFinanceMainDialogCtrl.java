@@ -46,14 +46,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -68,7 +66,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -158,13 +155,8 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		doLoadWorkFlow(financeMain);
 
 		if (isWorkFlowEnabled()) {
-			String recStatus = StringUtils.trimToEmpty(financeMain.getRecordStatus());
-			if(recStatus.equals(PennantConstants.RCD_STATUS_REJECTED)){
-				this.userAction = setRejectRecordStatus(this.userAction);
-			}else {
-				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateMenuRoleAuthorities(getRole(), super.pageRightName, menuItemRightName);	
-			}
+			this.userAction = setListRecordStatus(this.userAction);
+			getUserWorkspace().allocateMenuRoleAuthorities(getRole(), super.pageRightName, menuItemRightName);
 		}else{
 			this.south.setHeight("0px");
 		}

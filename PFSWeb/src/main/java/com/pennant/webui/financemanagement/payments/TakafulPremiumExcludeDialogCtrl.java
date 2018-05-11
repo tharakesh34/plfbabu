@@ -48,7 +48,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
@@ -68,7 +67,6 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -169,13 +167,8 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			doLoadWorkFlow(financeMain.isWorkflow(), financeMain.getWorkflowId(), financeMain.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
-				String recStatus = StringUtils.trimToEmpty(financeMain.getRecordStatus());
-				if(recStatus.equals(PennantConstants.RCD_STATUS_REJECTED)){
-					this.userAction = setRejectRecordStatus(this.userAction);
-				}else {
-					this.userAction = setListRecordStatus(this.userAction);
-					getUserWorkspace().allocateMenuRoleAuthorities(getRole(), "TakafulPremiumExclude", menuItemRightName);	
-				}
+				this.userAction = setListRecordStatus(this.userAction);
+				getUserWorkspace().allocateMenuRoleAuthorities(getRole(), "TakafulPremiumExclude", menuItemRightName);
 			}else{
 				this.south.setHeight("0px");
 			}

@@ -281,13 +281,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			doLoadWorkFlow(financeMain.isWorkflow(), financeMain.getWorkflowId(), financeMain.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
-				String recStatus = StringUtils.trimToEmpty(financeMain.getRecordStatus());
-				if (recStatus.equals(PennantConstants.RCD_STATUS_REJECTED)) {
-					this.userAction = setRejectRecordStatus(this.userAction);
-				} else {
-					this.userAction = setListRecordStatus(this.userAction);
-					getUserWorkspace().allocateMenuRoleAuthorities(getRole(), "FinanceMainDialog", menuItemRightName);
-				}
+				this.userAction = setListRecordStatus(this.userAction);
+				getUserWorkspace().allocateMenuRoleAuthorities(getRole(), "FinanceMainDialog", menuItemRightName);
 			} else {
 				this.south.setHeight("0px");
 			}

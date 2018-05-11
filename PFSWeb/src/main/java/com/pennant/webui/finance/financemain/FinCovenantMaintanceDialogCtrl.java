@@ -191,13 +191,8 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 					this.finMaintainInstruction.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
-				String recStatus = StringUtils.trimToEmpty(finMaintainInstruction.getRecordStatus());
-				if (recStatus.equals(PennantConstants.RCD_STATUS_REJECTED)) {
-					this.userAction = setRejectRecordStatus(this.userAction);
-				} else {
-					this.userAction = setListRecordStatus(this.userAction);
-					getUserWorkspace().allocateMenuRoleAuthorities(getRole(), this.pageRightName, menuItemRightName);
-				}
+				this.userAction = setListRecordStatus(this.userAction);
+				getUserWorkspace().allocateMenuRoleAuthorities(getRole(), this.pageRightName, menuItemRightName);
 			} else {
 				this.south.setHeight("0px");
 			}
