@@ -777,9 +777,10 @@ public class AgreementGeneration implements Serializable {
 				agreement.setIrrDetails(new ArrayList<>());
 			}
 			
-			if(null!=detail.getFinScheduleData()&&null!=detail.getFinScheduleData().getiRRDetails()){
+			if(null!=detail.getFinScheduleData()&&CollectionUtils.isNotEmpty(detail.getFinScheduleData().getiRRDetails())){
 				setIrrDetails(detail, agreement);
-			}else{
+			}
+			if(CollectionUtils.isEmpty(agreement.getIrrDetails())){
 				agreement.getIrrDetails().add(agreement.new IrrDetail());
 			}
 			
@@ -820,9 +821,10 @@ public class AgreementGeneration implements Serializable {
 			if(CollectionUtils.isEmpty(agreement.getCusCharges())){
 				agreement.setCusCharges(new ArrayList<>());
 			}
-			if(null!=detail.getFinScheduleData()&&null!=detail.getFinScheduleData().getFinFeeDetailList()){
+			if(null!=detail.getFinScheduleData()&&CollectionUtils.isNotEmpty(detail.getFinScheduleData().getFinFeeDetailList())){
 				setFeeChargeDetails(agreement, formatter, detail.getFinScheduleData().getFinFeeDetailList());
-			}else{
+			}
+			if(CollectionUtils.isEmpty(agreement.getCusCharges())){
 				agreement.getCusCharges().add(agreement.new CusCharge());
 			}
 			
@@ -862,7 +864,8 @@ public class AgreementGeneration implements Serializable {
 			List<FinCovenantType> covenantTypeList = detail.getCovenantTypeList();
 			if(CollectionUtils.isNotEmpty(covenantTypeList)){
 				setCovenantDetails(agreement,covenantTypeList);
-			}else{
+			}
+			if(CollectionUtils.isEmpty(agreement.getCovenants())){
 				agreement.getCovenants().add(agreement.new Covenant());
 			}
 			
@@ -960,16 +963,6 @@ public class AgreementGeneration implements Serializable {
 	}
 
 	private AgreementDetail populateCustomerExtendedDetails(FinanceDetail detail, AgreementDetail agreement) {
-		/*detail.getCustomerDetails().getExtendedFieldRender().getMapValues().entrySet().forEach((entry) -> {
-			ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
-			extendedDetail.setKey(StringUtils.trimToEmpty(entry.getKey()));
-			if (null != entry.getValue()) {
-				extendedDetail.setKey(StringUtils.trimToEmpty(entry.getValue().toString()));
-			} else {
-				extendedDetail.setKey(StringUtils.EMPTY);
-			}
-			agreement.getExtendedDetails().add(extendedDetail);
-		});*/
 		Map<String, Object> mapValues = detail.getCustomerDetails().getExtendedFieldRender().getMapValues();
 		for (String key : mapValues.keySet()) {
 			ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
@@ -989,16 +982,6 @@ public class AgreementGeneration implements Serializable {
 		Map<String, Object> extendedValues = detail.getExtendedFieldRender().getMapValues();
 		if(CollectionUtils.isNotEmpty(extendedValues.entrySet())){
 			
-			/*extendedValues.entrySet().forEach((entry)->{
-				ExtendedDetail extendedDetail=agreement.new ExtendedDetail();
-				extendedDetail.setKey(StringUtils.trimToEmpty(entry.getKey()));
-				if(null!=entry.getValue()){
-					extendedDetail.setKey(StringUtils.trimToEmpty(entry.getValue().toString()));
-				}else{
-					extendedDetail.setKey(StringUtils.EMPTY);
-				}
-				agreement.getExtendedDetails().add(extendedDetail);
-			});*/
 			Map<String, Object> mapValues = detail.getCustomerDetails().getExtendedFieldRender().getMapValues();
 			for (String key : mapValues.keySet()) {
 				ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
@@ -1603,14 +1586,15 @@ public class AgreementGeneration implements Serializable {
 					CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(collateralAssignment.getCollateralRef(),"", false);
 					if(null!=collateralSetup){
 						com.pennant.backend.model.finance.AgreementDetail.FinCollaterals collateralData = agreement.new FinCollaterals();
-						collateralData.setCollateralType(collateralSetup.getCollateralType());
-						collateralData.setReference(collateralSetup.getCollateralRef());
+						collateralData.setCollateralType(StringUtils.trimToEmpty(collateralSetup.getCollateralType()));
+						collateralData.setReference(StringUtils.trimToEmpty(collateralSetup.getCollateralRef()));
 						collateralData.setCollateralAmt(PennantAppUtil.amountFormate(collateralSetup.getCollateralValue(),formatter));
 						if(null!=collateralSetup.getCollateralStructure()){
-							collateralData.setColDesc(collateralSetup.getCollateralStructure().getCollateralDesc());
-							collateralData.setColLtv(collateralSetup.getCollateralStructure().getLtvPercentage().toString());
+							collateralData.setColDesc(StringUtils.trimToEmpty(collateralSetup.getCollateralStructure().getCollateralDesc()));
+							collateralData.setColLtv(PennantApplicationUtil.formatRate(
+									collateralSetup.getCollateralStructure().getLtvPercentage().doubleValue(), 2));
 						}
-						collateralData.setColAddrCity(collateralSetup.getCollateralLoc());
+						collateralData.setColAddrCity(StringUtils.trimToEmpty(collateralSetup.getCollateralLoc()));
 						collateralData.setCollateralAmt(PennantAppUtil.amountFormate(collateralSetup.getBankValuation(),formatter));			
 						agreement.getCollateralData().add(collateralData);
 						
@@ -1621,16 +1605,6 @@ public class AgreementGeneration implements Serializable {
 						if(CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())){
 							for (ExtendedFieldRender extendedFieldRender : collateralSetup.getExtendedFieldRenderList()) {
 								if(null!=extendedFieldRender&&MapUtils.isNotEmpty(extendedFieldRender.getMapValues())){
-									/*extendedFieldRender.getMapValues().entrySet().forEach((entry)->{
-										ExtendedDetail extendedDetail=agreement.new ExtendedDetail();
-										extendedDetail.setKey(StringUtils.trimToEmpty(entry.getKey()));
-										if(null!=entry.getValue()){
-											extendedDetail.setKey(StringUtils.trimToEmpty(entry.getValue().toString()));
-										}else{
-											extendedDetail.setKey(StringUtils.EMPTY);
-										}
-										agreement.getExtendedDetails().add(extendedDetail);
-									});*/
 									Map<String, Object> mapValues = detail.getCustomerDetails().getExtendedFieldRender().getMapValues();
 									for (String key : mapValues.keySet()) {
 										ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
