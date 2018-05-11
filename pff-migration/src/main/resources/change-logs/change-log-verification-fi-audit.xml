@@ -244,4 +244,12 @@
 	<changeSet id="4.1" author="murthy.y">
 		<modifyDataType tableName="adtamtvehicledealer" columnName="dealertype" newDataType="varchar(10)" />
 	</changeSet>
+	
+	<changeSet id="5.0" author="Durgaprasad g">
+	   <modifyDataType tableName="Adtverification_fi" columnName="Province" newDataType="varchar(8)" />
+    </changeSet>
+	<changeSet id="5.1" author="Durgaprasad g">
+		<modifyDataType tableName="Adtverification_fi" columnName="City" newDataType="varchar(50)" />
+	</changeSet>
+	
 </databaseChangeLog>
