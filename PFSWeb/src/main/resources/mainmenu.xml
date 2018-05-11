@@ -292,6 +292,8 @@
 				rightName="menuItem_ApplicationMaster_RelationshipOfficer" />
 			<menuItem id="menu_Item_ReturnedCheque" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReturnedCheques/ReturnedChequeList.zul" 
 			    rightName="menuItem_ApplicationMaster_ReturnedCheque" /> 
+			 <menuItem id="menu_Item_LoanPurpose" zulNavigation="/WEB-INF/pages/SystemMaster/LoanPurpose/LoanPurposeList.zul"
+				  rightName="menuItem_ApplicationMaster_LoanPurpose"/>
 			<menuItem id="menu_Item_PartnerSource"
 				zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=SOPT"
 				rightName="menuItem_SystemMaster_VehicleDealer" />
