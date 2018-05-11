@@ -1857,7 +1857,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering");
 		if (this.customerPhoneNumberDetailList != null && !this.customerPhoneNumberDetailList.isEmpty()) {
 			for (CustomerPhoneNumber phoneNumber : this.customerPhoneNumberDetailList) {
-				if (PennantConstants.PHONETYPE_MOBILE.equalsIgnoreCase(phoneNumber.getPhoneTypeCode())) {
+				if (String.valueOf(phoneNumber.getPhoneTypePriority()).equals(PennantConstants.EMAILPRIORITY_VeryHigh)) {
 					return PennantApplicationUtil.formatPhoneNumber(phoneNumber.getPhoneCountryCode(),
 							phoneNumber.getPhoneAreaCode(), phoneNumber.getPhoneNumber());
 				}

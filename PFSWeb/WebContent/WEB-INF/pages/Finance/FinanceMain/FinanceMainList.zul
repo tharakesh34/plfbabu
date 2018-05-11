@@ -14,8 +14,7 @@
 				width="100%" widths="30%,40%,30%">
 
 				<!-- COMMON BUTTONS -->
-				<toolbar align="start" sclass="toolbar-start">
-				</toolbar>
+				<toolbar align="start" sclass="toolbar-start"></toolbar>
 
 				<!-- SEARCH AREA -->
 				<toolbar align="center" sclass="toolbar-center">
@@ -44,7 +43,8 @@
 						autodisable="button_FinanceMainList_FinanceMainSearchDialog,button_FinanceMainList_PrintList,button_FinanceMainList_NewFinanceMain,btnRefresh,btnHelp"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}"
 						sclass="z-toolbarbutton" />
-					<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
+					<button id="btnHelp" visible="false"
+						label="${c:l('label_Help')}"
 						autodisable="button_FinanceMainList_FinanceMainSearchDialog,button_FinanceMainList_PrintList,button_FinanceMainList_NewFinanceMain,btnRefresh,btnHelp"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"
 						sclass="z-toolbarbutton" />
@@ -75,7 +75,7 @@
 									width="43px" mold="select" rows="1" />
 								<hbox>
 									<longbox id="custID" width="180px"
-										 visible="false" />
+										visible="false" />
 									<uppercasebox id="custCIF"
 										width="180px" />
 									<button id="btnSearchCustCIF"
@@ -111,19 +111,17 @@
 							<row>
 								<label
 									id="label_FinanceMainSearch_EIDNumber"
-									value="${c:l('label_FinanceMainSearch_EIDNumber.value')}" />
+									value="${c:l('label_CoreCustomerDialog_PrimaryID.value')}" />
 								<listbox id="sortOperator_eidNumber"
 									width="43px" mold="select" rows="1" />
 								<textbox id="finEIDNumber"
 									width="180px" />
-								<label
+								<!-- <label
 									id="label_FinanceMainSearch_Passport"
 									value="${c:l('label_FinanceMainSearch_Passport.value')}" />
-								<listbox id="sortOperator_passPort"
+									<listbox id="sortOperator_passPort"
 									width="43px" mold="select" rows="1" />
-								<textbox id="finPassPort" width="180px" />
-							</row>
-							<row>
+									<textbox id="finPassPort" width="180px" /> -->
 								<label
 									id="label_FinanceMainSearch_FinDateofBirth"
 									value="${c:l('label_FinanceMainSearch_FinDateofBirth.value')}" />
@@ -132,6 +130,9 @@
 									rows="1" />
 								<datebox id="finDateofBirth"
 									width="180px" />
+							</row>
+							<row>
+
 								<label
 									id="label_FinanceMainSearch_FinRequestDate"
 									value="${c:l('label_FinanceMainSearch_FinRequestDate.value')}" />
@@ -140,8 +141,6 @@
 									rows="1" />
 								<datebox id="finRequestDate"
 									width="180px" />
-							</row>
-							<row>
 								<label
 									id="label_FinanceMainSearch_FinType"
 									value="${c:l('label_FinanceMainSearch_FinType.value')}" />
@@ -150,18 +149,22 @@
 								<hbox>
 									<uppercasebox id="finType"
 										width="180px" />
-									<button id="btnSearchFinType" width="37px"
+									<button id="btnSearchFinType"
+										width="37px"
 										tooltiptext="${c:l('label_FinanceMainSelect_btnSearchFinType.tooltiptext')}"
 										image="/images/icons/LOVSearch.png" />
 								</hbox>
+							</row>
+							<row>
+
 								<label
 									id="label_FinanceMainSearch_InitiateDate"
 									value="${c:l('label_FinanceMainSearch_InitiateDate.value')}" />
 								<listbox id="sortOperator_InitiateDate"
 									width="43px" mold="select" rows="1" />
 								<hbox>
-									<datebox id="initiateDate" format="dd/MM/yyyy HH:mm"
-										width="180px" />								
+									<datebox id="initiateDate"
+										format="dd/MM/yyyy HH:mm" width="180px" />
 								</hbox>
 							</row>
 							<row visible="false">
@@ -173,7 +176,7 @@
 								<textbox id="finPromotion"
 									width="180px" />
 							</row>
-							<row visible = "false">
+							<row visible="false">
 								<label
 									id="label_FinanceMainSearch_FinRequestStage"
 									value="${c:l('label_FinanceMainSearch_FinRequestStage.value')}" />
@@ -197,7 +200,8 @@
 									value="${c:l('label_FinanceMainSearch_RecordStatus.value')}" />
 								<listbox id="sortOperator_recordStatus"
 									width="43px" mold="select" rows="1" />
-								<textbox id="recordStatus" width="180px" />
+								<textbox id="recordStatus"
+									width="180px" />
 								<label
 									id="label_FinanceMainSearch_RecordType"
 									value="${c:l('label_FinanceMainSearch_RecordType.value')}" />
@@ -209,7 +213,7 @@
 						</rows>
 					</grid>
 					<listbox id="listBoxFinanceMain" fixedLayout="true"
-						  sizedByContent="true" span="true"
+						sizedByContent="true" span="true"
 						emptyMessage="${c:l('listbox.emptyMessage')}"
 						tooltiptext="${c:l('listbox.tooltiptext')}" height="100%"
 						multiple="false">
@@ -218,8 +222,8 @@
 								label="${c:l('listheader_LovDescCustCIF.label')}" sort="auto"
 								hflex="min" />
 							<listheader id="listheader_CustomerName"
-								label="${c:l('listheader_LovDescCustShrtName.label')}" sort="auto"
-								hflex="min" />
+								label="${c:l('listheader_LovDescCustShrtName.label')}"
+								sort="auto" hflex="min" />
 							<listheader id="listheader_FinReference"
 								label="${c:l('listheader_FinReference.label')}" sort="auto"
 								hflex="min" />
@@ -235,10 +239,10 @@
 							<listheader id="listheader_Terms"
 								label="${c:l('listheader_NumberOfTerms.label')}" sort="auto"
 								hflex="min" visible="false" />
-							<listheader id="listheader_FinAmount" visible="false" 
-								label="${c:l('listheader_FinAmount.label')}" sort="auto"
-								hflex="min" align="right" />
-							<listheader id="listheader_FinancingAmount" 
+							<listheader id="listheader_FinAmount"
+								visible="false" label="${c:l('listheader_FinAmount.label')}"
+								sort="auto" hflex="min" align="right" />
+							<listheader id="listheader_FinancingAmount"
 								label="${c:l('listheader_FinancingAmount.label')}" sort="false"
 								hflex="min" align="right" />
 							<listheader id="listheader_InitiateDate"
@@ -249,7 +253,7 @@
 								sort="auto" hflex="min" />
 							<listheader id="listheader_Priority"
 								label="${c:l('listheader_Priority.label')}" sort="false"
-								hflex="min" visible = "false"/>
+								hflex="min" visible="false" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
 								hflex="min" />

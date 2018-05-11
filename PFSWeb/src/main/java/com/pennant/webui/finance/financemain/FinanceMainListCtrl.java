@@ -63,6 +63,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -143,7 +144,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected Listbox						sortOperator_mobileNumber;											// autoWired
 	protected Textbox						finEIDNumber;														// autoWired
 	protected Listbox						sortOperator_eidNumber;											// autoWired
-	protected Textbox						finPassPort;														// autoWired
 	protected Listbox						sortOperator_passPort;												// autoWired
 	protected Datebox						finDateofBirth;													// autoWired
 	protected Listbox						sortOperator_finDateofBirth;										// autoWired
@@ -203,7 +203,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	private String							CREATE_CIF			= "CREATECIF";
 	private String							CREATE_ACCOUNT		= "CREATACCOUNT";
-	private List<String> 					usrfinRolesList= new ArrayList<String>(); 
+	private List<String> 					usrfinRolesList= new ArrayList<String>();
 	
 	/**
 	 * default constructor.<br>
@@ -245,27 +245,27 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.sortOperator_finType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_custID.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getAlphaNumOperators()));
+				.getSimpleAlphaNumOperators()));
 		this.sortOperator_custID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_custName.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getStringOperators()));
+				.getSimpleStringOperators()));
 		this.sortOperator_custName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_mobileNumber.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getStringOperators()));
+				.getSimpleStringOperators()));
 		this.sortOperator_mobileNumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_eidNumber.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getStringOperators()));
+				.getSimpleStringOperators()));
 		this.sortOperator_eidNumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_passPort.setModel(new ListModelList<SearchOperators>(new SearchOperators()
+		/*this.sortOperator_passPort.setModel(new ListModelList<SearchOperators>(new SearchOperators()
 				.getStringOperators()));
-		this.sortOperator_passPort.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_passPort.setItemRenderer(new SearchOperatorListModelItemRenderer());*/
 
 		this.sortOperator_finDateofBirth.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getNumericOperators()));
+				.getSimpleNumericOperators()));
 		this.sortOperator_finDateofBirth.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_finRequestDate.setModel(new ListModelList<SearchOperators>(new SearchOperators()
@@ -839,7 +839,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.sortOperator_eidNumber.setSelectedIndex(0);
 		this.finEIDNumber.setValue("");
 		this.sortOperator_passPort.setSelectedIndex(0);
-		this.finPassPort.setValue("");
 		this.sortOperator_finDateofBirth.setSelectedIndex(0);
 		this.finDateofBirth.setValue(null);
 		this.sortOperator_finRequestDate.setSelectedIndex(0);
@@ -1016,11 +1015,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 					searchObj.addFilter(new Filter("FinType", this.finType.getValue(), searchOpId));
 				}
 			}
-		}
-		// finPassport
-		if (StringUtils.isNotBlank(this.finPassPort.getValue())) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_passPort.getSelectedItem(), this.finPassPort
-					.getValue().trim(), "lovDescCustPassportNo");
 		}
 		// finDOB
 		if (this.finDateofBirth.getValue() != null) {
