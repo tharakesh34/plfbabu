@@ -424,6 +424,7 @@ public class PennantJavaUtil {
 	private static String VASWF = "VAS_CAN_CREATE";
 	private static String disbWF = "DISB_INSTRUCTIONS";
 	private static String collectionWF="COLLECTIONS";
+	private static String verificationsWF="VERIFICATION_PROCESS";
 
 	public static String getLabel(String label) {
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
@@ -2215,24 +2216,24 @@ public class PennantJavaUtil {
 						new Object[][] { { "Active", "0", 1 } }, 300));
 
 		ModuleUtil.register("FieldInvestigation", new ModuleMapping("FieldInvestigation", FieldInvestigation.class,
-				new String[] { "verification_fi", "verification_fi_AView" }, masterWF, null, null, 600));
+				new String[] { "verification_fi", "verification_fi_AView" }, verificationsWF, null, null, 600));
 
 		ModuleUtil.register("VerificationReasons", new ModuleMapping("VerificationReasons", ReasonCode.class,
 				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
 				new Object[][] { { "Active", "0", 1 } }, 500));
 		
 		ModuleUtil.register("LegalVerification", new ModuleMapping("LegalVerification", LegalVerification.class,
-				new String[] { "verification_lv", "verification_lv_AView" }, masterWF, null, null, 600));
+				new String[] { "verification_lv", "verification_lv_AView" }, verificationsWF, null, null, 600));
 		
 		ModuleUtil.register("LVDocument", new ModuleMapping("LVDocument", LVDocument.class,
 				new String[] { "verification_lv_details", "verification_lv_details_view" }, masterWF, null, null, 600));
 		
 		ModuleUtil.register("RiskContainmentUnit", new ModuleMapping("RiskContainmentUnit", RiskContainmentUnit.class,
-				new String[] { "verification_rcu", "verification_rcu_AView" }, masterWF, null, null, 600));
+				new String[] { "verification_rcu", "verification_rcu_AView" }, verificationsWF, null, null, 600));
 		
 		/*Technical Verification*/
 		ModuleUtil.register("TechnicalVerification", new ModuleMapping("TechnicalVerification", TechnicalVerification.class,
-				new String[] { "Verification_Tv", "Verification_Tv_AView" }, masterWF, null, null, 600));
+				new String[] { "Verification_Tv", "Verification_Tv_AView" }, verificationsWF, null, null, 600));
 		
 		ModuleUtil.register("AuthorizationLimit", new ModuleMapping("AuthorizationLimit", AuthorizationLimit.class, new String[] { "Auth_Limits",
 		"Auth_Limits_AView" }, masterWF, new String[] {"UserID","RoleId","LimitAmount","StartDate","ExpiryDate","Active"},null, 600));
