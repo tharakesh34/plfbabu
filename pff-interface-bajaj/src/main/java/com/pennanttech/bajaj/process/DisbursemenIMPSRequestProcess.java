@@ -83,7 +83,7 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		map.addValue("RECEVIERBANKCITY", rs.getString("BENFICIARY_BRANCH_CITY"));
 		map.addValue("RECEVIERBANKBRANCH", rs.getString("BENFICIARY_BRANCH"));
 		map.addValue("RECEVIERACCOUNTNUMBER", rs.getString("BENFICIARY_ACCOUNT"));
-		map.addValue("AMOUNT", rs.getString("DISBURSEMENT_AMOUNT"));
+		map.addValue("AMOUNT", rs.getBigDecimal("DISBURSEMENT_AMOUNT"));
 		map.addValue("REMARKS", StringUtils.substring(rs.getString("REMARKS"), 0, 9));
 		map.addValue("CHANNELPARTNERREFNO", rs.getString("ID"));
 		map.addValue("PICKUPFLAG", Status.N.name());

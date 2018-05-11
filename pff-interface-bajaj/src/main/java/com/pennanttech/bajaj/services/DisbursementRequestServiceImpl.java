@@ -127,7 +127,7 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 			}
 		}
 
-		if (!stp_IMPS.isEmpty()) {
+		/*if (!stp_IMPS.isEmpty()) {
 			List<Long> idList = null;
 			try {
 				idList = prepareRequest(getPaymentIds(stp_IMPS), type.name());
@@ -147,19 +147,21 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 			}
 			
 			sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId);
-		}
+		}*/
 
 		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT, fileNamePrefix);
 		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS, fileNamePrefix);
 		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, stp_CHEQUE, fileNamePrefix);
 		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.DD.name(), finType, userId, stp_DD, fileNamePrefix);
 		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.I.name(), finType, userId, stp_Other, fileNamePrefix);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.IMPS.name(), finType, userId, stp_IMPS, fileNamePrefix);
 
 		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, other_NEFT, null);
 		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, other_RTGS, null);
 		generateFile("DISB_OTHER_CHEQUE_DD_EXPORT", DisbursementTypes.DD.name(), finType, userId, other_DD, null);
 		generateFile("DISB_OTHER_CHEQUE_DD_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, other_CHEQUE, null);
 		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.I.name(), finType, userId, other_Other, null);
+		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.IMPS.name(), finType, userId, other_IMPS, null);
 
 	}
 
