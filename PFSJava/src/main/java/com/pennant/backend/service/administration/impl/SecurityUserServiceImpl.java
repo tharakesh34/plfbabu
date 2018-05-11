@@ -510,8 +510,8 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		int expDays;
 		//if password is changed by user itself sets UsrAcExpDt is 30days after present date
 		if (securityUser.getLastMntBy() == securityUser.getUsrID()) {
-			expDays = SysParamUtil.getValueAsInt("USR_EXPIRY_DAYS");
-			securityUser.setUsrAcExpDt(DateUtil.addDays(new Date(System.currentTimeMillis()), expDays));
+			/*expDays = SysParamUtil.getValueAsInt("USR_EXPIRY_DAYS");
+			securityUser.setUsrAcExpDt(DateUtil.addDays(new Date(System.currentTimeMillis()), expDays));*/
 			/* save the password for backup */
 			getSecurityUserPasswordsDAO().save(securityUser);
 		} else {
