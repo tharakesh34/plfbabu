@@ -86,7 +86,7 @@ public class ManualDeviationDAOImpl extends BasisNextidDaoImpl<ManualDeviation> 
 		sql.append(" deviationID, code, description, module, categorization, severity, ");
 		sql.append(" active, ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append("categorizationCode,categorizationName,severityCode,severityName,");
+			sql.append("categorizationCode,categorizationName,");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -114,9 +114,9 @@ public class ManualDeviationDAOImpl extends BasisNextidDaoImpl<ManualDeviation> 
 		return manualDeviation;
 	}
 
-	private static final String DESC_QUERY = "select md.code,md.description,md.severity,lv.fieldCodevalue severityCode,lv.valuedesc severityName"
+	private static final String DESC_QUERY = "select md.code,md.description,md.severity"
 			+ " from productDeviations pd inner join manualdeviations md on pd.deviationID=md.deviationID"
-			+ " inner join rmtlovfielddetail  lv on md.severity = lv.fieldcodeid  Where productdevid = :Productdevid";
+			+ " Where productdevid = :Productdevid";
 
 	@Override
 	public ManualDeviation getManualDeviationDesc(long deviationID) {

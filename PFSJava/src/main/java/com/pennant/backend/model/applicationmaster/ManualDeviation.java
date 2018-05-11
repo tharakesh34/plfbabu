@@ -66,8 +66,6 @@ public class ManualDeviation extends AbstractWorkflowEntity implements Entity {
 	private String				categorizationCode;
 	private String				categorizationName;
 	private long				severity;
-	private String				severityCode;
-	private String				severityName;
 	private boolean				active				= false;
 	private boolean				newRecord			= false;
 	private String				lovValue;
@@ -169,13 +167,6 @@ public class ManualDeviation extends AbstractWorkflowEntity implements Entity {
 		this.severity = severity;
 	}
 
-	public String getSeverityName() {
-		return this.severityName;
-	}
-
-	public void setSeverityName(String severityName) {
-		this.severityName = severityName;
-	}
 
 	public boolean isActive() {
 		return active;
@@ -229,12 +220,5 @@ public class ManualDeviation extends AbstractWorkflowEntity implements Entity {
 		this.categorizationCode = categorizationCode;
 	}
 
-	public String getSeverityCode() {
-		return severityCode;
-	}
-
-	public void setSeverityCode(String severityCode) {
-		this.severityCode = severityCode;
-	}
 
 }

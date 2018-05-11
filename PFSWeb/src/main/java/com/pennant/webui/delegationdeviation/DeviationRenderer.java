@@ -403,8 +403,6 @@ public class DeviationRenderer {
 					if (deviation != null) {
 						finDeviations.setDeviationCodeName(deviation.getCode());
 						finDeviations.setDeviationCodeDesc(deviation.getDescription());
-						finDeviations.setSeverityCode(deviation.getSeverityCode());
-						finDeviations.setSeverityName(deviation.getSeverityName());
 						finDeviations.setSeverity(deviation.getSeverity());
 					}
 				}
