@@ -535,12 +535,14 @@
 		<menuItem id="menu_Item_NewFinanceMain"
 			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul?requestSource=Origination"
 			rightName="menuItem_Finance_FinanceMain" />
-			<menuItem id="menu_Item_FinanceDeviations" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceDeviationsList.zul" 
-		rightName="menuItem_Finance_FinanceDeviations" />	
-	<menuItem id="menu_Item_QDEFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/QDEFinanceMainList.zul?requestSource=QDE" 
-		rightName="menuItem_Finance_QDEFinanceMain" />
-	<menuItem id="menu_Item_ReinstateFinance" zulNavigation="/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceList.zul" 
-		rightName="menuItem_FinanceManagement_ReinstateFinance"/> 		
+		<menuItem id="menu_Item_FinanceDeviations" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceDeviationsList.zul" 
+			rightName="menuItem_Finance_FinanceDeviations" />	
+		<menuItem id="menu_Item_QDEFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/QDEFinanceMainList.zul?requestSource=QDE" 
+			rightName="menuItem_Finance_QDEFinanceMain" />
+		<menuItem id="menu_Item_ReinstateFinance" zulNavigation="/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceList.zul" 
+			rightName="menuItem_FinanceManagement_ReinstateFinance"/> 
+		<menuItem id="menu_Item_QueryDetail" zulNavigation="/WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailList.zul" 
+			rightName="menuItem_LoanQuery_QueryDetail"/>		
 	</menu>
 
 	<!-- Verification -->

@@ -281,6 +281,7 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.lmtmasters.ProcessEditorDetail;
 import com.pennant.backend.model.loanquery.QueryCategory;
+import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
@@ -2260,6 +2261,10 @@ public class PennantJavaUtil {
 	
 		ModuleUtil.register("QueryCategory", new ModuleMapping("QueryCategory", QueryCategory.class, new String[] { "BMTQueryCategories",
 		"BMTQueryCategories_AView" }, masterWF, new String[] {"Code","Description","Active"},new Object[][] { { "Active", "0", 1 } }, 600));
+		
+		ModuleUtil.register("QueryDetail", new ModuleMapping("QueryDetail", QueryDetail.class, new String[] { "QUERYDETAIL",
+		"QUERYDETAIL_AView" }, masterWF, new String[] {"FinReference","CategoryId","Status"},null, 600));
+
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

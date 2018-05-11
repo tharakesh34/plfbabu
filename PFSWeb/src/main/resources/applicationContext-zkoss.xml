@@ -5294,4 +5294,12 @@
 		<property name="queryCategoryService" ref="queryCategoryService"/>
 	</bean>
 	
+	<!-- QueryDetail -->
+	<bean id="queryDetailListCtrl" class="com.pennant.webui.loanquery.querydetail.QueryDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="queryDetailService" ref="queryDetailService" />
+	</bean>
+	<bean id="queryDetailDialogCtrl" class="com.pennant.webui.loanquery.querydetail.QueryDetailDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="queryDetailService" ref="queryDetailService"/>
+	</bean>
 </beans>
