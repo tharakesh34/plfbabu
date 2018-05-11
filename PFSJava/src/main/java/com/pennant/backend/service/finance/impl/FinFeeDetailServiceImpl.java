@@ -231,13 +231,13 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		return auditDetails;
 	}
 	
-	private  List<AuditDetail> processFinFeeDetails(List<FinFeeDetail>  finFeeDetails, String tableType, String auditTranType,
-			boolean isApproveRcd,boolean isWIF){
+	private List<AuditDetail> processFinFeeDetails(List<FinFeeDetail> finFeeDetails, String tableType,
+			String auditTranType, boolean isApproveRcd, boolean isWIF) {
 		logger.debug("Entering");
 		
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
+		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
 			int i = 0;
 			boolean saveRecord = false;
 			boolean updateRecord = false;
