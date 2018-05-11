@@ -771,4 +771,9 @@ public class CustomerEligibilityCheck implements Serializable {
 		this.extendedFieldMap.put(fieldName, value);
 	}
 
+	public void addExtendedFieldMap(HashMap<String, Object> ruleMap) {
+		this.extendedFieldMap.putAll(ruleMap);
+	}
+
+	
 }
