@@ -217,9 +217,11 @@
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="DocumentRefId" type="bigint"/>
 			<column name="DocumentUri" type="varchar(2000)"/>
-			<column name="Remarks1" type="varchar(500)" />
-			<column name="Remarks2" type="varchar(500)" />
-			<column name="Remarks3" type="varchar(500)" />
+			<column name="InitRemarks" type="varchar(500)" />
+			<column name="AgentRemarks1" type="varchar(500)" />
+			<column name="AgentRemarks2" type="varchar(500)" />
+			<column name="AgentRemarks3" type="varchar(500)" />
+			<column name="DecisionRemarks" type="varchar(500)" />
 			<column name="Version" type="int">
 				<constraints nullable="false" />
 			</column>
@@ -248,10 +250,12 @@
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="DocumentRefId" type="bigint"/>
 			<column name="DocumentUri" type="varchar(2000)"/>
-			<column name="Remarks1" type="varchar(500)" />
-			<column name="Remarks2" type="varchar(500)" />
-			<column name="Remarks3" type="varchar(500)" />
-	
+			<column name="InitRemarks" type="varchar(500)" />
+			<column name="AgentRemarks1" type="varchar(500)" />
+			<column name="AgentRemarks2" type="varchar(500)" />
+			<column name="AgentRemarks3" type="varchar(500)" />
+			<column name="DecisionRemarks" type="varchar(500)" />
+				
 			<column name="Version" type="int">
 				<constraints nullable="false" />
 			</column>
@@ -280,9 +284,11 @@
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="DocumentRefId" type="bigint"/>
 			<column name="DocumentUri" type="varchar(2000)"/>
-			<column name="Remarks1" type="varchar(500)" />
-			<column name="Remarks2" type="varchar(500)" />
-			<column name="Remarks3" type="varchar(500)" />
+			<column name="InitRemarks" type="varchar(500)" />
+			<column name="AgentRemarks1" type="varchar(500)" />
+			<column name="AgentRemarks2" type="varchar(500)" />
+			<column name="AgentRemarks3" type="varchar(500)" />
+			<column name="DecisionRemarks" type="varchar(500)" />
 	
 			<column name="Version" type="int">
 				<constraints nullable="false" />
@@ -404,9 +410,11 @@
 			rcud.DocumentSubId,
 			rcud.documentRefId,
 			rcud.documentUri, 
-			rcud.Remarks1, 
-			rcud.Remarks2, 
-			rcud.Remarks3,
+			rcud.InitRemarks,
+			rcud.AgentRemarks1, 
+			rcud.AgentRemarks2, 
+			rcud.AgentRemarks3,
+			rcud.DecisionRemarks,
 			rcud.version,
             rcud.lastmntby,
             rcud.lastmnton,
@@ -434,9 +442,11 @@
 			rcud.DocumentSubId,
 			rcud.documentRefId,
 			rcud.documentUri,  
-			rcud.Remarks1, 
-			rcud.Remarks2, 
-			rcud.Remarks3,
+			rcud.InitRemarks,
+			rcud.AgentRemarks1, 
+			rcud.AgentRemarks2, 
+			rcud.AgentRemarks3,
+			rcud.DecisionRemarks,
 			rcud.version,
             rcud.lastmntby,
             rcud.lastmnton,
@@ -468,9 +478,11 @@
 			rcud.DocumentSubId, 
 			rcud.documentRefId,
 			rcud.documentUri, 
-			rcud.Remarks1, 
-			rcud.Remarks2, 
-			rcud.Remarks3,
+			rcud.InitRemarks,
+			rcud.AgentRemarks1, 
+			rcud.AgentRemarks2, 
+			rcud.AgentRemarks3,
+			rcud.DecisionRemarks,
 			rcud.version,
             rcud.lastmntby,
             rcud.lastmnton,
@@ -498,9 +510,11 @@
 			rcud.DocumentSubId, 
 			rcud.documentRefId,
 			rcud.documentUri, 
-			rcud.Remarks1, 
-			rcud.Remarks2, 
-			rcud.Remarks3,
+			rcud.InitRemarks,
+			rcud.AgentRemarks1, 
+			rcud.AgentRemarks2, 
+			rcud.AgentRemarks3,
+			rcud.DecisionRemarks,
 			rcud.version,
             rcud.lastmntby,
             rcud.lastmnton,

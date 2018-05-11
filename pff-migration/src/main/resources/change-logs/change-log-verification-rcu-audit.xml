@@ -85,9 +85,11 @@
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="DocumentRefId" type="bigint"/>
 			<column name="DocumentUri" type="varchar(2000)"/>
-			<column name="Remarks1" type="varchar(500)" />
-			<column name="Remarks2" type="varchar(500)" />
-			<column name="Remarks3" type="varchar(500)" />
+			<column name="InitRemarks" type="varchar(500)" />
+			<column name="AgentRemarks1" type="varchar(500)" />
+			<column name="AgentRemarks2" type="varchar(500)" />
+			<column name="AgentRemarks3" type="varchar(500)" />
+			<column name="DecisionRemarks" type="varchar(500)" />
 			<column name="Version" type="int"/>
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
