@@ -216,6 +216,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	private String eodBalMax;
 	private String eodBalMin;
 	HashMap<String, String> extendedDataMap = new HashMap<String, String>();
+	int finFormatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -228,6 +230,9 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		super.pageRightName = "CreditApplicationReviewDialog";
 	}
 
+	private String unFormat(String amount){
+		return PennantAppUtil.formateAmount(new BigDecimal(amount), finFormatter).toString();
+	}
 
 	/**
 	 * Before binding the data and calling the dialog window we check, if the
@@ -264,11 +269,11 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				}
 				if(arguments.containsKey("creditTranAmt")) {
 					creditTranAmt = (String)arguments.get("creditTranAmt");
-					extendedDataMap.put("EXT_CREDITTRANAMT",creditTranAmt);
+					extendedDataMap.put("EXT_CREDITTRANAMT",unFormat(creditTranAmt == null ? "0" : creditTranAmt));
 				}
 				if(arguments.containsKey("creditTranAvg")) {
 					creditTranAvg = (String)arguments.get("creditTranAvg");
-					extendedDataMap.put("EXT_CREDITTRANAVG",creditTranAvg);
+					extendedDataMap.put("EXT_CREDITTRANAVG",unFormat(creditTranAvg == null ? "0" : creditTranAvg));
 				}
 				if(arguments.containsKey("debitTranNo")) {
 					debitTranNo = (String)arguments.get("debitTranNo");
@@ -276,7 +281,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				}
 				if(arguments.containsKey("debitTranAmt")) {
 					debitTranAmt = (String)arguments.get("debitTranAmt");
-					extendedDataMap.put("EXT_DEBITTRANAMT",debitTranAmt);
+					extendedDataMap.put("EXT_DEBITTRANAMT",unFormat(debitTranAmt == null ? "0" : debitTranAmt));
 				}
 				if(arguments.containsKey("cashDepositNo")) {
 					cashDepositNo = (String)arguments.get("cashDepositNo");
@@ -284,7 +289,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				}
 				if(arguments.containsKey("cashDepositAmt")) {
 					cashDepositAmt = (String)arguments.get("cashDepositAmt");
-					extendedDataMap.put("EXT_CASHDEPOSITAMT",cashDepositAmt);
+					extendedDataMap.put("EXT_CASHDEPOSITAMT",unFormat(cashDepositAmt == null ? "0" : cashDepositAmt));
 				}
 				if(arguments.containsKey("cashWithdrawalNo")) {
 					cashWithdrawalNo = (String)arguments.get("cashWithdrawalNo");
@@ -292,15 +297,15 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				}
 				if(arguments.containsKey("cashWithdrawalAmt")) {
 					cashWithdrawalAmt = (String)arguments.get("cashWithdrawalAmt");
-					extendedDataMap.put("EXT_CASHWITHDRAWALAMT",cashWithdrawalAmt);
+					extendedDataMap.put("EXT_CASHWITHDRAWALAMT",unFormat(cashWithdrawalAmt == null ? "0" : cashWithdrawalAmt));
 				}
 				if(arguments.containsKey("chqDepositNo")) {
 					chqDepositNo = (String)arguments.get("chqDepositNo");
-					extendedDataMap.put("EXT_CHQDEPOSITNO",chqDepositNo);
+					extendedDataMap.put("EXT_CHQDEPOSITNO",chqDepositNo == null ? "0" : chqDepositNo);
 				}
 				if(arguments.containsKey("chqDepositAmt")) {
 					chqDepositAmt = (String)arguments.get("chqDepositAmt");
-					extendedDataMap.put("EXT_CHQDEPOSITAMT",chqDepositAmt);
+					extendedDataMap.put("EXT_CHQDEPOSITAMT",unFormat(chqDepositAmt == null ? "0" : chqDepositAmt));
 				}
 				if(arguments.containsKey("chqIssue")) {
 					chqIssue = (String)arguments.get("chqIssue");
@@ -308,31 +313,31 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				}
 				if(arguments.containsKey("chqIssueAmt")) {
 					chqIssueAmt = (String)arguments.get("chqIssueAmt");
-					extendedDataMap.put("EXT_CHQISSUEAMT",chqIssueAmt);
+					extendedDataMap.put("EXT_CHQISSUEAMT",unFormat(chqIssueAmt == null ? "0" : chqIssueAmt));
 				}
 				if(arguments.containsKey("inwardChqBounceNo")) {
 					inwardChqBounceNo = (String)arguments.get("inwardChqBounceNo");
-					extendedDataMap.put("EXT_INWARDCHQBOUNCENO",inwardChqBounceNo);
+					extendedDataMap.put("EXT_INWARDCHQBOUNCENO",inwardChqBounceNo == null ? "0" : inwardChqBounceNo);
 				}
 				if(arguments.containsKey("outwardChqBounceNo")) {
 					outwardChqBounceNo = (String)arguments.get("outwardChqBounceNo");
-					extendedDataMap.put("EXT_OUTWARDCHQBOUNCENO",outwardChqBounceNo);
+					extendedDataMap.put("EXT_OUTWARDCHQBOUNCENO",outwardChqBounceNo == null ? "0" : outwardChqBounceNo);
 				}
 				if(arguments.containsKey("eodBalAvg")) {
 					eodBalAvg = (String)arguments.get("eodBalAvg");
-					extendedDataMap.put("EXT_EODBALAVG",eodBalAvg);
+					extendedDataMap.put("EXT_EODBALAVG",unFormat(eodBalAvg == null ? "0" : eodBalAvg));
 				}
 				if(arguments.containsKey("eodBalMax")) {
 					eodBalMax = (String)arguments.get("eodBalMax");
-					extendedDataMap.put("EXT_EODBALMAX",eodBalMax);
+					extendedDataMap.put("EXT_EODBALMAX",unFormat(eodBalMax == null ? "0" : eodBalMax));
 				}
 				if(arguments.containsKey("eodBalMin")) {
 					eodBalMin = (String)arguments.get("eodBalMin");
-					extendedDataMap.put("EXT_EODBALMIN",eodBalMin);
+					extendedDataMap.put("EXT_EODBALMIN",unFormat(eodBalMin == null ? "0" : eodBalMin));
 				}
 				if(arguments.containsKey("sumOfEMI")) {
 					sumOfEMI = (BigDecimal)arguments.get("sumOfEMI");
-					extendedDataMap.put("EXT_OBLIGATION",sumOfEMI.toString());
+					extendedDataMap.put("EXT_OBLIGATION",unFormat(sumOfEMI == null ? "0" : sumOfEMI.toString()));
 				}
 				if(arguments.containsKey("numberOfTerms")) {
 					numberOfTerms = (int)arguments.get("numberOfTerms");
@@ -348,15 +353,15 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				}
 				if(arguments.containsKey("finAssetValue")) {
 					finAssetValue = (BigDecimal)arguments.get("finAssetValue");
-					extendedDataMap.put("EXT_FINASSETVALUE",finAssetValue.toString());
+					extendedDataMap.put("EXT_FINASSETVALUE",unFormat(finAssetValue == null ? "0" : finAssetValue.toString()));
 				}
 				if(arguments.containsKey("finAmount")) {
 					finAmount = (BigDecimal)arguments.get("finAmount");
-					extendedDataMap.put("EXT_FINAMOUNT",finAmount.toString());
+					extendedDataMap.put("EXT_FINAMOUNT",unFormat(finAmount == null ? "0" : finAmount.toString()));
 				}
 				if(arguments.containsKey("firstRepay")) {
 					firstRepay = (BigDecimal)arguments.get("firstRepay");
-					extendedDataMap.put("EXT_FIRSTREPAY",firstRepay.toString());
+					extendedDataMap.put("EXT_FIRSTREPAY",unFormat(firstRepay == null ? "0" : firstRepay.toString()));
 				}
 				setTabs(isEnquiry);
 				getBorderLayoutHeight();
