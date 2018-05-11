@@ -5905,5 +5905,70 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
      LEFT JOIN secroles t32 ON t1.nextrolecode = t32.rolecd
    	</createView>
    </changeSet>
+   <changeSet id="131" author="Madhubabu">
+   <comment>  Department data optional through API </comment>
+   	<createView viewName="customerempdetails_view" replaceIfExists="true">
+   		SELECT ce.custempid,
+	    ce.custid,
+	    ce.custempname,
+	    ce.custempfrom,
+	    ce.custempto,
+	    ce.custempdesg,
+	    de.gendesgdesc AS lovdesccustempdesgname,
+	    ce.custempdept,
+	    dp.gendeptdesc AS lovdesccustempdeptname,
+	    ce.custemptype,
+	    et.emptypedesc AS lovdesccustemptypename,
+	    ce.version,
+	    ce.lastmntby,
+	    ce.lastmnton,
+	    ce.recordstatus,
+	    ce.rolecode,
+	    ce.nextrolecode,
+	    ce.taskid,
+	    ce.nexttaskid,
+	    ce.recordtype,
+	    ce.workflowid,
+	    emp.empname AS lovdesccustempname,
+	    ce.currentemployer
+	   FROM customerempdetails_temp ce
+	     JOIN rmtgendesignations de ON ce.custempdesg = de.gendesignation
+	     LEFT JOIN rmtgendepartments dp ON ce.custempdept = dp.gendepartment
+	     JOIN rmtemptypes et ON ce.custemptype = et.emptype
+	     JOIN employerdetail emp ON ce.custempname = emp.employerid
+	UNION ALL
+	 SELECT ce.custempid,
+	    ce.custid,
+	    ce.custempname,
+	    ce.custempfrom,
+	    ce.custempto,
+	    ce.custempdesg,
+	    de.gendesgdesc AS lovdesccustempdesgname,
+	    ce.custempdept,
+	    dp.gendeptdesc AS lovdesccustempdeptname,
+	    ce.custemptype,
+	    et.emptypedesc AS lovdesccustemptypename,
+	    ce.version,
+	    ce.lastmntby,
+	    ce.lastmnton,
+	    ce.recordstatus,
+	    ce.rolecode,
+	    ce.nextrolecode,
+	    ce.taskid,
+	    ce.nexttaskid,
+	    ce.recordtype,
+	    ce.workflowid,
+	    emp.empname AS lovdesccustempname,
+	    ce.currentemployer
+	   FROM customerempdetails ce
+	     JOIN rmtgendesignations de ON ce.custempdesg = de.gendesignation
+	     LEFT JOIN rmtgendepartments dp ON ce.custempdept = dp.gendepartment
+	     JOIN rmtemptypes et ON ce.custemptype = et.emptype
+	     JOIN employerdetail emp ON ce.custempname = emp.employerid
+	  WHERE NOT (EXISTS ( SELECT 1 AS expr1
+           FROM customerempdetails_temp
+          WHERE customerempdetails_temp.custid = ce.custid))
+   	</createView>
+   </changeSet>
 </databaseChangeLog>
 	
