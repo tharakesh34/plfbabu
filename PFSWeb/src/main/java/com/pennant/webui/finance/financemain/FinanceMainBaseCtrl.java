@@ -14668,6 +14668,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}	
 		}
 		
+		// Loan purpose value
+		String finPurpose = " ";
+		if (StringUtils.isNotBlank(financeMain.getFinPurpose())) {
+			finPurpose = financeMain.getFinPurpose();
+		}
+		detail.getCustomerEligibilityCheck().setExtendedFieldMap("finPurpose", finPurpose);
  		
 		// ### 08-05-2018 - End- Development Item 81
 
