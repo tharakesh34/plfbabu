@@ -333,8 +333,13 @@ public class DeviationRenderer {
 			if (StringUtils.isNotBlank(lable)) {
 				listcell.appendChild(button);
 			}*/
-			String remarks=deviation.getRemarks().substring(0,20);
-			listcell = getNewListCell(remarks+"..", devNotallowed);
+			String remarks="";
+			if(!StringUtils.trimToEmpty(deviation.getRemarks()).isEmpty()){				
+				remarks=deviation.getRemarks().substring(0,20);
+				listcell = getNewListCell(remarks+"..", devNotallowed);
+			}else{
+				listcell = getNewListCell("", devNotallowed);
+			}
 			listitem.appendChild(listcell);
 
 			//DelegatedUserId
