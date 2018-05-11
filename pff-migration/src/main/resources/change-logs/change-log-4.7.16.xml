@@ -5839,5 +5839,14 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 		     JOIN rmtlovfielddetail t2 ON t1.categorization = t2.fieldcodeid
 		</createView>
 	</changeSet>
+	
+	<changeSet id="128" author="Durgaprasad G">
+	  <modifyDataType tableName="PRESENTMENT_REQ_DETAILS_TEMP" columnName="accountno" newDataType="varchar(50)" />
+   </changeSet>
+   
+   <changeSet id="129" author="Durgaprasad G">
+	  <modifyDataType tableName="PRESENTMENT_REQ_DETAILS" columnName="accountno" newDataType="varchar(50)" />
+   </changeSet>
+   
 </databaseChangeLog>
 	
