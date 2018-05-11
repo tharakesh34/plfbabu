@@ -9,6 +9,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.servicetask.ServiceTaskDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.model.systemmasters.City;
 
 public interface CreditInterfaceDAO {
 
@@ -26,4 +27,9 @@ public interface CreditInterfaceDAO {
 	public void save(ServiceTaskDetail serviceTaskDetail, String type);
 
 	public List<ServiceTaskDetail> getServiceTaskDetails(String module, String reference, String serviceTaskName);
+	
+	City getCityDetails(final String pCCountry, String pCProvince, String pCCity, String type);
+	
+	
+	
 }

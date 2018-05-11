@@ -5263,6 +5263,13 @@
 		class="com.pennant.webui.solutionfactory.extendedfielddetail.TechnicalValuationDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
 	</bean>
+
+	
+	
+	
+	<bean id="cibilReportViewCtrl" class="com.pennant.webui.cibil.reports.CibilReportViewCtrl"
+		scope="prototype" parent="basisCtrl" />
+
 	
 	<!--============ Legal Verification Module ============== -->
 	<bean id="legalVerificationListCtrl" class="com.pennant.webui.verification.legalverification.LegalVerificationListCtrl" parent="basisListCtrl" scope="prototype"/>
@@ -5284,6 +5291,9 @@
 		<property name="authorizationLimitService" ref="authorizationLimitService"/>
 	</bean>
 
+
+
+
 	
 	<!-- QueryCategory -->
 	<bean id="queryCategoryListCtrl" class="com.pennant.webui.loanquery.querycategory.QueryCategoryListCtrl"
@@ -5293,7 +5303,9 @@
 	<bean id="queryCategoryDialogCtrl" class="com.pennant.webui.loanquery.querycategory.QueryCategoryDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="queryCategoryService" ref="queryCategoryService"/>
 	</bean>
-	
+
+
+
 	<!-- QueryDetail 
 	<bean id="queryDetailListCtrl" class="com.pennant.webui.loanquery.querydetail.QueryDetailListCtrl"
 		parent="basisListCtrl" scope="prototype">
@@ -5303,4 +5315,5 @@
 		<property name="queryDetailService" ref="queryDetailService"/>
 	</bean>
 	-->
+
 </beans>

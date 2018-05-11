@@ -8,6 +8,8 @@ public class InterfaceConstants {
 	public static final String	STATUS_FAILED			= "FAILED";
 	public static final String	STATUS_SUCCESS			= "SUCCESS";
 	public static final String	INTFACE_ERROR_CD		= "99999";
+	public static final boolean	INDIAN_IMPLEMENTATION			= true;
+	public static final boolean	NIYOGIN			= false;
 
 	// Customer Categories
 	public static final String	PFF_CUSTCTG_INDIV		= "RETAIL";
@@ -60,6 +62,7 @@ public class InterfaceConstants {
 		public static final int SCOKET_TIMEOUT = 60000;
 
 		public static final String EndCharacters = "0102**";
+		public static final int EndCharacterLength = 11;
 
 		public static final int CIBIL_REQUEST_USERNAME_PWD_LENGTH = 30;
 		public static final int CIBIL_REQUEST_PWD_LENGTH = 30;
@@ -70,7 +73,7 @@ public class InterfaceConstants {
 		public static final String Enquiry_Header_Segment = "TUEF";
 		public static final int Enquiry_Header_version = 12;
 		public static final String Name_Segment = "PN";
-		public static final int Output_Format = 01;
+		public static final String Output_Format = "01";
 		public static final String Input_Output_Media = "CC";
 		public static final String Authentication_Method = "L";
 		public static final String Identification_Segment = "ID";
@@ -109,6 +112,11 @@ public class InterfaceConstants {
 		public static final String	FIELDTYPE_LISTBOX			= "LISTBOX";
 		public static final String	FIELDTYPE_LISTFIELD			= "LISTFIELD";
 		
+		public static final String DATE_FORMAT = "ddMMyyyy";
+		public static final String dateFormat = "dd/MM/yyyy"; // DateFormat.SHORT_DATE.getPattern()
+
+		public static final String DBTimeFormat = "HH:mm:ss"; // DateFormat.LONG_TIME.getPattern()
+		
 		// Date Default Types
 		public static final String DFTDATETYPE_APPDATE 			= "APPDATE";
 		public static final String DFTDATETYPE_SYSDATE 			= "SYSDATE";
@@ -122,6 +130,18 @@ public class InterfaceConstants {
 		public static final String GENDER = "Gender";
 		public static final String MALE = "MALE";
 		public static final String FEMALE = "FEMALE";
+		public static final String DOB = "DateOfBirth";
+		public static final String cibildateFormat = "ddMMyyyy";
+		public static final String SERVICE_NAME = "CIBIL";
+
+		public static final String	DELIMITER_COMMA		= ",";
+		public static final int		LENGTH_ACCOUNT		= 50;
+		public static final int		LENGTH_FREQUENCY	= 5;
+		
+		public static final String	RSN_CODE			= "ERRORDETAILS";
+		public static final String	REQ_SEND					= "REQSENDEXPBURU";
+
+		public static final String	PANNUMBER					= "PANNUMBER";
 
 
 	

@@ -29,10 +29,13 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.servicetask.ServiceTaskDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.dao.CreditInterfaceDAO;
 
 public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
@@ -91,7 +94,26 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 			customerDetails.setCustomerEMailList(getCustomerEmailByCustomer(customer.getCustID(), type));
 			customerDetails.setCustomerDocumentsList(getCustomerDocumentByCustomer(customer.getCustID(), type));
 			customerDetails.setCustomerPhoneNumList(getCustomerPhoneNumberById(customer.getCustID(), type));
-			
+			customerDetails.setCustomerPhoneNumList(getCustomerPhoneNumberById(customer.getCustID(), type));
+			customerDetails.setExtendedFieldHeader(
+					getExtendedFieldHeaderByModuleName(InterfaceConstants.MODULE_CUSTOMER, customer.getCustCtgCode()));
+			StringBuilder tableName = new StringBuilder("");
+			Map<String, Object> extMapValues = null;
+			if (customerDetails.getExtendedFieldHeader() != null) {
+				ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
+				extendedFieldRender.setReference(customer.getCustCIF());
+
+				tableName.append(InterfaceConstants.MODULE_CUSTOMER);
+				tableName.append("_");
+				tableName.append(customer.getCustCtgCode());
+				tableName.append("_ED");
+				extMapValues = getExtendedField(customer.getCustCIF(), tableName.toString());
+				extendedFieldRender.setSeqNo(Integer.valueOf(extMapValues.get("SeqNo").toString()));
+
+				extendedFieldRender.setMapValues(extMapValues);
+				customerDetails.setExtendedFieldRender(extendedFieldRender);
+				tableName.setLength(0);
+			}
 			customerDetailList.add(customerDetails);
 		}
 		logger.debug(Literal.LEAVING);
@@ -424,6 +446,47 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 			logger.warn(dae);
 			return Collections.emptyList();
 		}
+	}
+	
+	/**
+	 * Fetch the Record City details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return City
+	 */
+	public City getCityDetails(final String pCCountry, String pCProvince, String pCCity, String type) {
+		logger.debug(Literal.ENTERING);
+		City city = new City();
+		city.setPCCountry(pCCountry);
+		city.setPCProvince(pCProvince);
+		city.setPCCity(pCCity);
+
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT PCCountry, PCProvince, PCCity, PCCityName, PCCityClassification, BankRefNo, CityIsActive,");
+		if (type.contains("View")) {
+			selectSql.append(" LovDescPCProvinceName, LovDescPCCountryName,");
+		}
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode,  NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" From RMTProvinceVsCity");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where PCCountry =:PCCountry and PCProvince=:PCProvince and PCCity=:PCCity ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
+		RowMapper<City> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(City.class);
+
+		try {
+			city = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			city = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return city;
 	}
 	
 	/**

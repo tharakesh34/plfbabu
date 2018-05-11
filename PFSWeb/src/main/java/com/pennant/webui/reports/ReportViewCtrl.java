@@ -16,13 +16,15 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 	private static final Logger logger = Logger.getLogger(ReportViewCtrl.class);
 	private Window window_Report;
 
-	protected Tabbox         tabbox;
+	protected Tabbox tabbox;
 	private Iframe report;
 	public byte[] buf = null;
 	Window dialogWindow = null;
 	Window parentWindow = null;
 
+	public String data = null;
 	private boolean isAgreement = false;
+	private boolean isCibil = false;
 	private int docFormat = 0;
 	private String reportName = "PFSReport.pdf";
 	private boolean searchClick = true;
@@ -47,18 +49,24 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 		} else {
 			this.buf = null;
 		}
-		
+
+		if (arguments.containsKey("data")) {
+			this.data = (String) arguments.get("data");
+		} else {
+			this.data = null;
+		}
+
 		if (arguments.containsKey("dialogWindow")) {
 			dialogWindow = (Window) arguments.get("dialogWindow");
 		}
 		if (arguments.containsKey("parentWindow")) {
 			parentWindow = (Window) arguments.get("parentWindow");
 		}
-		
+
 		if (arguments.containsKey("tabbox")) {
 			tabbox = (Tabbox) arguments.get("tabbox");
 		}
-		
+
 		if (arguments.containsKey("reportName")) {
 			reportName = (String) arguments.get("reportName");
 		}
@@ -66,43 +74,51 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 		if (arguments.containsKey("isAgreement")) {
 			isAgreement = (Boolean) arguments.get("isAgreement");
 		}
-		
-		if (arguments.containsKey("docFormat")) {
-			docFormat =Integer.parseInt(arguments.get("docFormat").toString());
+
+		if (arguments.containsKey("isCibil")) {
+			isCibil = (Boolean) arguments.get("isCibil");
 		}
-		
+
+		if (arguments.containsKey("docFormat")) {
+			docFormat = Integer.parseInt(arguments.get("docFormat").toString());
+		}
+
 		if (arguments.containsKey("searchClick")) {
 			searchClick = (Boolean) arguments.get("searchClick");
 		}
-		
+
 		AMedia amedia = null;
-		if(isAgreement){
-			
+		if (isAgreement) {
+
 			if (docFormat == SaveFormat.PDF) {
 				Filedownload.save(new AMedia(reportName, "pdf", "application/pdf", buf));
-			}else{
+			} else {
 				amedia = new AMedia(reportName, "msword", "application/msword", buf);
 			}
 			report.setContent(amedia);
-			
+
 			buf = null;
-			amedia= null;
-		}else{
+			amedia = null;
+		} else if (isCibil) {
+			amedia = new AMedia(reportName, "html", "text/html", data);
+		}
+
+		else {
 			amedia = new AMedia(reportName, "pdf", "application/pdf", buf);
 			report.setContent(amedia);
 			if (dialogWindow != null) {
-				if (parentWindow!=null) {
+				if (parentWindow != null) {
 					this.parentWindow.onClose();
 				}
 				this.dialogWindow.setVisible(false);
 				this.report.setHeight(getBorderLayoutHeight());
 			}
-			
+
 			buf = null;
-			amedia= null;
+			amedia = null;
 			setDialog(DialogType.EMBEDDED);
 		}
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -111,11 +127,11 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 			this.dialogWindow.setVisible(true);
 			setDialog(DialogType.OVERLAPPED);
 		}
-		
-		if(!searchClick){
+
+		if (!searchClick) {
 			tabbox.getSelectedTab().close();
 		}
-		
+
 		closeDialog();
 	}
 }

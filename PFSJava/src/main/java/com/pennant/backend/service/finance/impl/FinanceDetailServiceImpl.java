@@ -4470,7 +4470,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			break;
 		case PennantConstants.WF_CIBIL:
-				creditInformation.getCreditEnquiryDetails(auditHeader);
+				creditInformation.getCreditEnquiryDetails(auditHeader, false);
 			break;	
 		case PennantConstants.method_doCheckDeviations:
 			List<FinanceDeviations> list =new ArrayList<>();

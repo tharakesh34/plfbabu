@@ -4,6 +4,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface CreditInformation {
 
-	AuditHeader getCreditEnquiryDetails(AuditHeader auditHeader) throws Exception;
+	AuditHeader getCreditEnquiryDetails(AuditHeader auditHeader,  boolean isFromCustomer) throws Exception;
 
 }

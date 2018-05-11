@@ -1,5 +1,5 @@
 /**
-o * Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -42,6 +42,8 @@ o * Copyright 2011 - Pennant Technologies
  */
 package com.pennant.webui.customermasters.customer;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -49,12 +51,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
@@ -176,270 +183,273 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
 import com.rits.cloning.Cloner;
 
+import freemarker.cache.StringTemplateLoader;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateExceptionHandler;
+
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/customerDialog.zul file.
  */
 public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
-	private static final long					serialVersionUID				= 9031340167587772517L;
-	private static final Logger					logger							= Logger
-			.getLogger(CustomerDialogCtrl.class);
+	private static final long serialVersionUID = 9031340167587772517L;
+	private static final Logger logger = Logger.getLogger(CustomerDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_CustomerDialog;														// autowired
+	protected Window window_CustomerDialog; // autowired
 
-	protected Tabs								tabsIndexCenter;
-	protected Tabpanels							tabpanelsBoxIndexCenter;
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
 
-	protected North								north;																		// autowired
-	protected South								south;																		// autowired
-	protected Textbox							custCIF;																	// autowired
-	protected Textbox							custCoreBank;																// autowired
-	protected Combobox							custSalutationCode;															// autowired
-	protected Textbox							custShrtName;																// autowired
-	protected Textbox							custFirstName;																// autowired
-	protected Textbox							custMiddleName;																// autowired
-	protected Textbox							custLastName;																// autowired
-	protected Textbox							custArabicName;																// autowired
-	protected Space								space_CustArabicName;														// autowired
-	protected Textbox							motherMaidenName;															// autowired
-	protected ExtendedCombobox					custLng;																	// autowired
-	protected Textbox							custSts;																	// autowired
-	protected ExtendedCombobox					custSector;																	// autowired
-	protected ExtendedCombobox					custIndustry;																// autowired
-	protected ExtendedCombobox					custSegment;																// autowired
-	protected ExtendedCombobox					custCOB;																	// autowired
-	protected ExtendedCombobox					custNationality;															// autowired
-	protected Combobox							custMaritalSts;																// autowired
-	protected Datebox							custDOB;																	// autowired
-	protected Combobox							custGenderCode;																// autowired
-	protected Intbox							noOfDependents;																// autowired
-	protected ExtendedCombobox					target;																		// autowired
-	protected ExtendedCombobox					custCtgCode;																// autowired
-	protected Checkbox							salaryTransferred;															// autowiredOdoed
-	protected ExtendedCombobox					custDftBranch;																// autowired
-	protected ExtendedCombobox					custTypeCode;																// autowired
-	protected ExtendedCombobox					custBaseCcy;																// autowired
-	protected Checkbox							salariedCustomer;															// autowired
-	protected ExtendedCombobox					custRO1;																	// autowired
-	protected Uppercasebox						eidNumber;																	// autowired
-	protected Space	                            space_EidNumber; 															// autowired
-	protected Label								label_CustomerDialog_EIDNumber;												// autowired
-	protected Textbox							custTradeLicenceNum;														// autowired
-	protected Textbox							custRelatedParty;															// autowired
-	protected ExtendedCombobox					custGroupId;																// autowired
-	protected Checkbox							custIsStaff;																// autowired
-	protected Textbox							custStaffID;																// autowired
-	protected Textbox							custDSACode;																// autowired
-	protected ExtendedCombobox					custDSADept;																// autowired
-	protected ExtendedCombobox					custRiskCountry;															// autowired
-	protected ExtendedCombobox					custParentCountry;															// autowired
-	protected ExtendedCombobox					custSubSector;																// autowired
-	protected ExtendedCombobox					custSubSegment;																// autowired
+	protected North north; // autowired
+	protected South south; // autowired
+	protected Textbox custCIF; // autowired
+	protected Textbox custCoreBank; // autowired
+	protected Combobox custSalutationCode; // autowired
+	protected Textbox custShrtName; // autowired
+	protected Textbox custFirstName; // autowired
+	protected Textbox custMiddleName; // autowired
+	protected Textbox custLastName; // autowired
+	protected Textbox custArabicName; // autowired
+	protected Space space_CustArabicName; // autowired
+	protected Textbox motherMaidenName; // autowired
+	protected ExtendedCombobox custLng; // autowired
+	protected Textbox custSts; // autowired
+	protected ExtendedCombobox custSector; // autowired
+	protected ExtendedCombobox custIndustry; // autowired
+	protected ExtendedCombobox custSegment; // autowired
+	protected ExtendedCombobox custCOB; // autowired
+	protected ExtendedCombobox custNationality; // autowired
+	protected Combobox custMaritalSts; // autowired
+	protected Datebox custDOB; // autowired
+	protected Combobox custGenderCode; // autowired
+	protected Intbox noOfDependents; // autowired
+	protected ExtendedCombobox target; // autowired
+	protected ExtendedCombobox custCtgCode; // autowired
+	protected Checkbox salaryTransferred; // autowiredOdoed
+	protected ExtendedCombobox custDftBranch; // autowired
+	protected ExtendedCombobox custTypeCode; // autowired
+	protected ExtendedCombobox custBaseCcy; // autowired
+	protected Checkbox salariedCustomer; // autowired
+	protected ExtendedCombobox custRO1; // autowired
+	protected Uppercasebox eidNumber; // autowired
+	protected Space space_EidNumber; // autowired
+	protected Label label_CustomerDialog_EIDNumber; // autowired
+	protected Textbox custTradeLicenceNum; // autowired
+	protected Textbox custRelatedParty; // autowired
+	protected ExtendedCombobox custGroupId; // autowired
+	protected Checkbox custIsStaff; // autowired
+	protected Textbox custStaffID; // autowired
+	protected Textbox custDSACode; // autowired
+	protected ExtendedCombobox custDSADept; // autowired
+	protected ExtendedCombobox custRiskCountry; // autowired
+	protected ExtendedCombobox custParentCountry; // autowired
+	protected ExtendedCombobox custSubSector; // autowired
+	protected ExtendedCombobox custSubSegment; // autowired
 
 	/** Customer Employer Fields **/
-	protected ExtendedCombobox					empStatus;																	// autowired
-	protected ExtendedCombobox					empSector;																	// autowired
-	protected ExtendedCombobox					profession;																	// autowired
-	protected ExtendedCombobox					empName;																	// autowired
-	protected Hbox								hbox_empNameOther;															// autowired
-	protected Label								label_empNameOther;															// autowired
-	protected Textbox							empNameOther;																// autowired
-	protected Datebox							empFrom;																	// autowired
-	protected ExtendedCombobox					empDesg;																	// autowired
-	protected ExtendedCombobox					empDept;																	// autowired
-	protected CurrencyBox						monthlyIncome;																// autowired
-	protected ExtendedCombobox					otherIncome;																// autowired
-	protected CurrencyBox						additionalIncome;															// autowired
-	protected Label								age;																		// autowired
-	protected Label								exp;																		// autowired
+	protected ExtendedCombobox empStatus; // autowired
+	protected ExtendedCombobox empSector; // autowired
+	protected ExtendedCombobox profession; // autowired
+	protected ExtendedCombobox empName; // autowired
+	protected Hbox hbox_empNameOther; // autowired
+	protected Label label_empNameOther; // autowired
+	protected Textbox empNameOther; // autowired
+	protected Datebox empFrom; // autowired
+	protected ExtendedCombobox empDesg; // autowired
+	protected ExtendedCombobox empDept; // autowired
+	protected CurrencyBox monthlyIncome; // autowired
+	protected ExtendedCombobox otherIncome; // autowired
+	protected CurrencyBox additionalIncome; // autowired
+	protected Label age; // autowired
+	protected Label exp; // autowired
 
-	protected Label								label_CustomerDialog_CustShrtName;
-	protected Label								label_CustomerDialog_SalaryTransfered;
-	protected Label								label_CustomerDialog_EmpSector;
-	protected Label								label_CustomerDialog_Profession;
-	protected Label								label_CustomerDialog_EmpFrom;
-	protected Label								label_CustomerDialog_MonthlyIncome;
-	protected Label								label_CustomerDialog_CustCOB;
-	protected Label								label_CustomerDialog_Target;
-	protected Label								label_ArabicName;
-	protected Label								label_CustSubSegment;
-	protected Row								row_FirstMiddleName;
-	protected Row								row_LastName;
-	protected Row								row_GenderSalutation;
-	protected Row								row_MartialDependents;
-	protected Row								row_EmpName;
-	protected Row								row_DesgDept;
-	protected Row								row_custTradeLicenceNum;
-	protected Row								rowCustEmpSts;
-	protected Row								rowCustCRCPR;
-	protected Row								row_party_segment;
-	protected Row								row_custStatus;
-	protected Row								row_custStaff;
-	protected Row								row_custDSA;
-	protected Row								row_custCountry;
-	protected Row								row_custSub;
-	protected Groupbox							gp_CustEmployeeDetails;
-	protected Hbox								hbox_SalariedCustomer;
-	protected Space								space_CustShrtName;
+	protected Label label_CustomerDialog_CustShrtName;
+	protected Label label_CustomerDialog_SalaryTransfered;
+	protected Label label_CustomerDialog_EmpSector;
+	protected Label label_CustomerDialog_Profession;
+	protected Label label_CustomerDialog_EmpFrom;
+	protected Label label_CustomerDialog_MonthlyIncome;
+	protected Label label_CustomerDialog_CustCOB;
+	protected Label label_CustomerDialog_Target;
+	protected Label label_ArabicName;
+	protected Label label_CustSubSegment;
+	protected Row row_FirstMiddleName;
+	protected Row row_LastName;
+	protected Row row_GenderSalutation;
+	protected Row row_MartialDependents;
+	protected Row row_EmpName;
+	protected Row row_DesgDept;
+	protected Row row_custTradeLicenceNum;
+	protected Row rowCustEmpSts;
+	protected Row rowCustCRCPR;
+	protected Row row_party_segment;
+	protected Row row_custStatus;
+	protected Row row_custStaff;
+	protected Row row_custDSA;
+	protected Row row_custCountry;
+	protected Row row_custSub;
+	protected Groupbox gp_CustEmployeeDetails;
+	protected Hbox hbox_SalariedCustomer;
+	protected Space space_CustShrtName;
 
-	protected Tab								basicDetails;
-	protected Tab								tabkYCDetails;
-	protected Tab								tabbankDetails;
+	protected Tab basicDetails;
+	protected Tab tabkYCDetails;
+	protected Tab tabbankDetails;
 
-	protected Button							btnNew_CustomerDocuments;
-	protected Listbox							listBoxCustomerDocuments;
-	private List<CustomerDocument>				customerDocumentDetailList		= new ArrayList<CustomerDocument>();
+	protected Button btnNew_CustomerDocuments;
+	protected Listbox listBoxCustomerDocuments;
+	private List<CustomerDocument> customerDocumentDetailList = new ArrayList<CustomerDocument>();
 
-	protected Button							btnNew_CustomerAddress;
-	protected Listbox							listBoxCustomerAddress;
-	private List<CustomerAddres>				customerAddressDetailList		= new ArrayList<CustomerAddres>();
+	protected Button btnNew_CustomerAddress;
+	protected Listbox listBoxCustomerAddress;
+	private List<CustomerAddres> customerAddressDetailList = new ArrayList<CustomerAddres>();
 
-	protected Button							btnNew_CustomerPhoneNumber;
-	protected Listbox							listBoxCustomerPhoneNumbers;
-	private List<CustomerPhoneNumber>			customerPhoneNumberDetailList	= new ArrayList<CustomerPhoneNumber>();
-	protected Listheader						listheader_CustPhone_RecordStatus;
-	protected Listheader						listheader_CustPhone_RecordType;
-	private List<CustomerPhoneNumber>			phoneNumberList					= new ArrayList<CustomerPhoneNumber>();
+	protected Button btnNew_CustomerPhoneNumber;
+	protected Listbox listBoxCustomerPhoneNumbers;
+	private List<CustomerPhoneNumber> customerPhoneNumberDetailList = new ArrayList<CustomerPhoneNumber>();
+	protected Listheader listheader_CustPhone_RecordStatus;
+	protected Listheader listheader_CustPhone_RecordType;
+	private List<CustomerPhoneNumber> phoneNumberList = new ArrayList<CustomerPhoneNumber>();
 
-	protected Button							btnNew_CustomerEmail;
-	protected Listbox							listBoxCustomerEmails;
-	private List<CustomerEMail>					customerEmailDetailList			= new ArrayList<CustomerEMail>();
+	protected Button btnNew_CustomerEmail;
+	protected Listbox listBoxCustomerEmails;
+	private List<CustomerEMail> customerEmailDetailList = new ArrayList<CustomerEMail>();
 
-	protected Button							btnNew_BankInformation;
-	protected Groupbox							gp_BankInformationDetail;
-	protected Listbox							listBoxCustomerBankInformation;
-	private List<CustomerBankInfo>				customerBankInfoDetailList		= new ArrayList<CustomerBankInfo>();
+	protected Button btnNew_BankInformation;
+	protected Groupbox gp_BankInformationDetail;
+	protected Listbox listBoxCustomerBankInformation;
+	private List<CustomerBankInfo> customerBankInfoDetailList = new ArrayList<CustomerBankInfo>();
 
-	protected Button							btnNew_ChequeInformation;
-	protected Groupbox							gp_ChequeInformation;
-	protected Listbox							listBoxCustomerChequeInformation;
-	private List<CustomerChequeInfo>			customerChequeInfoDetailList	= new ArrayList<CustomerChequeInfo>();
+	protected Button btnNew_ChequeInformation;
+	protected Groupbox gp_ChequeInformation;
+	protected Listbox listBoxCustomerChequeInformation;
+	private List<CustomerChequeInfo> customerChequeInfoDetailList = new ArrayList<CustomerChequeInfo>();
 
-	protected Listbox							listBoxCustomerFinExposure;
+	protected Listbox listBoxCustomerFinExposure;
 
-	protected Button							btnNew_ExternalLiability;
-	protected Groupbox							gp_ExternalLiability;
-	protected Listbox							listBoxCustomerExternalLiability;
-	private List<CustomerExtLiability>			customerExtLiabilityDetailList	= new ArrayList<CustomerExtLiability>();
+	protected Button btnNew_ExternalLiability;
+	protected Groupbox gp_ExternalLiability;
+	protected Listbox listBoxCustomerExternalLiability;
+	private List<CustomerExtLiability> customerExtLiabilityDetailList = new ArrayList<CustomerExtLiability>();
 
-	protected Listheader						listheader_JointCust;
+	protected Listheader listheader_JointCust;
 
 	// Customer ratings List
-	protected Button							btnNew_CustomerRatings;
-	protected Listbox							listBoxCustomerRating;
-	protected Listheader						listheader_CustRating_RecordStatus;
-	protected Listheader						listheader_CustRating_RecordType;
-	private List<CustomerRating>				ratingsList						= new ArrayList<CustomerRating>();
+	protected Button btnNew_CustomerRatings;
+	protected Listbox listBoxCustomerRating;
+	protected Listheader listheader_CustRating_RecordStatus;
+	protected Listheader listheader_CustRating_RecordType;
+	private List<CustomerRating> ratingsList = new ArrayList<CustomerRating>();
 
 	// Customer Employment List
-	protected Row								row_EmploymentDetails;
-	protected Button							btnNew_CustomerEmploymentDetail;
-	protected Listbox							listBoxCustomerEmploymentDetail;
-	protected Listheader						listheader_CustEmp_RecordStatus;
-	protected Listheader						listheader_CustEmp_RecordType;
-	private List<CustomerEmploymentDetail>		customerEmploymentDetailList	= new ArrayList<CustomerEmploymentDetail>();
-	private List<CustomerEmploymentDetail>		oldVar_EmploymentDetailsList	= new ArrayList<CustomerEmploymentDetail>();
+	protected Row row_EmploymentDetails;
+	protected Button btnNew_CustomerEmploymentDetail;
+	protected Listbox listBoxCustomerEmploymentDetail;
+	protected Listheader listheader_CustEmp_RecordStatus;
+	protected Listheader listheader_CustEmp_RecordType;
+	private List<CustomerEmploymentDetail> customerEmploymentDetailList = new ArrayList<CustomerEmploymentDetail>();
+	private List<CustomerEmploymentDetail> oldVar_EmploymentDetailsList = new ArrayList<CustomerEmploymentDetail>();
 
 	// Customer Income details List
-	protected Button							btnNew_CustomerIncome;
-	protected Listbox							listBoxCustomerIncome;
-	protected Listheader						listheader_CustInc_RecordStatus;
-	protected Listheader						listheader_CustInc_RecordType;
-	private List<CustomerIncome>				incomeList						= new ArrayList<CustomerIncome>();
+	protected Button btnNew_CustomerIncome;
+	protected Listbox listBoxCustomerIncome;
+	protected Listheader listheader_CustInc_RecordStatus;
+	protected Listheader listheader_CustInc_RecordType;
+	private List<CustomerIncome> incomeList = new ArrayList<CustomerIncome>();
 
-	private transient String					oldVar_empStatus;
-	private CustomerDetails						customerDetails;															// overhanded per param
-	private transient CustomerListCtrl			customerListCtrl;															// overhanded per param
+	private transient String oldVar_empStatus;
+	private CustomerDetails customerDetails; // overhanded per param
+	private transient CustomerListCtrl customerListCtrl; // overhanded per param
 
-	private transient boolean					validationOn;
+	private transient boolean validationOn;
 
-	protected Groupbox							gb_keyDetails;																// autowired
-	protected Groupbox							gb_incomeDetails;															// autowired
-	protected Groupbox							gb_rating;																	// autowired
-	protected Groupbox							gb_directorDetails;															// autowired
+	protected Groupbox gb_keyDetails; // autowired
+	protected Groupbox gb_incomeDetails; // autowired
+	protected Groupbox gb_rating; // autowired
+	protected Groupbox gb_directorDetails; // autowired
 
-	protected Tabpanel                          tp_basicDetails;
-	protected Tabpanel 							tp_KYCDetails;
-	protected Tabpanel 							tp_Financials;
-	protected Tabpanel 							tp_directorDetails;
-	protected Tabpanel 						    tp_BankDetails;
+	protected Tabpanel tp_basicDetails;
+	protected Tabpanel tp_KYCDetails;
+	protected Tabpanel tp_Financials;
+	protected Tabpanel tp_directorDetails;
+	protected Tabpanel tp_BankDetails;
 
-	protected Groupbox							gb_Action;
-	protected Groupbox							gb_statusDetails;
-	String										parms[]							= new String[4];
+	protected Groupbox gb_Action;
+	protected Groupbox gb_statusDetails;
+	String parms[] = new String[4];
 
-	private int									countRows						= PennantConstants.listGridSize;
-	protected Tab								tabfinancial;
+	private int countRows = PennantConstants.listGridSize;
+	protected Tab tabfinancial;
 
-	protected Label								label_CustomerDialog_CustDOB;
+	protected Label label_CustomerDialog_CustDOB;
 
 	// Declaration of Service(s) & DAO(s)
-	private transient CustomerDetailsService	customerDetailsService;
-	private transient DedupParmService			dedupParmService;
-	private int									ccyFormatter					= 0;
-	private int									old_ccyFormatter				= 0;
-	private String								moduleType						= "";
-	protected Div								divKeyDetails;
-	protected Grid								grid_KYCDetails;
-	protected Grid								grid_BankDetails;
+	private transient CustomerDetailsService customerDetailsService;
+	private transient DedupParmService dedupParmService;
+	private int ccyFormatter = 0;
+	private int old_ccyFormatter = 0;
+	private String moduleType = "";
+	protected Div divKeyDetails;
+	protected Grid grid_KYCDetails;
+	protected Grid grid_BankDetails;
 
-	private boolean								isRetailCustomer				= false;
-	private boolean								isSMECustomer					= false;
-	private String								empAlocType						= "";
+	private boolean isRetailCustomer = false;
+	private boolean isSMECustomer = false;
+	private String empAlocType = "";
 
-	protected Tab								directorDetails;
+	protected Tab directorDetails;
 	// Customer Directory details List
-	protected Button							btnNew_DirectorDetail;
-	protected Listbox							listBoxCustomerDirectory;
-	protected Listheader						listheader_CustDirector_RecordStatus;
-	protected Listheader						listheader_CustDirector_RecordType;
-	private List<DirectorDetail>				directorList					= new ArrayList<DirectorDetail>();
-	protected Label								label_CustomerDialog_CustNationality;
-	private transient DirectorDetailService		directorDetailService;
-	Date										appDate							= DateUtility.getAppDate();
-	Date										startDate						= SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
+	protected Button btnNew_DirectorDetail;
+	protected Listbox listBoxCustomerDirectory;
+	protected Listheader listheader_CustDirector_RecordStatus;
+	protected Listheader listheader_CustDirector_RecordType;
+	private List<DirectorDetail> directorList = new ArrayList<DirectorDetail>();
+	protected Label label_CustomerDialog_CustNationality;
+	private transient DirectorDetailService directorDetailService;
+	Date appDate = DateUtility.getAppDate();
+	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 
-	private String								empStatus_Temp					= "";
-	private String								empName_Temp					= "";
-	private String								custBaseCcy_Temp				= "";
+	private String empStatus_Temp = "";
+	private String empName_Temp = "";
+	private String custBaseCcy_Temp = "";
 
-	private FinanceDetail						financedetail;
-	private Object								financeMainDialogCtrl;
-	private Object								promotionPickListCtrl;
-	private Tabpanel							panel							= null;
-	private Groupbox							groupbox						= null;
-	private boolean								newFinance						= false;
-	private boolean								isFinanceProcess				= false;
-	private boolean								isNotFinanceProcess				= false;
-	private boolean								isEnqProcess					= false;
-	private boolean								isPromotionPickProcess			= false;
+	private FinanceDetail financedetail;
+	private Object financeMainDialogCtrl;
+	private Object promotionPickListCtrl;
+	private Tabpanel panel = null;
+	private Groupbox groupbox = null;
+	private boolean newFinance = false;
+	private boolean isFinanceProcess = false;
+	private boolean isNotFinanceProcess = false;
+	private boolean isEnqProcess = false;
+	private boolean isPromotionPickProcess = false;
 
-	private FinBasicDetailsCtrl					finBasicDetailsCtrl;
-	private CollateralBasicDetailsCtrl			collateralBasicDetailsCtrl;
-	protected Groupbox							finBasicdetails;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
+	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
+	protected Groupbox finBasicdetails;
 
-	public boolean								validateAllDetails				= true;
-	public boolean								validateCustDocs				= true;
-	private String								moduleName;
-	private List<CustomerBankInfo>				CustomerBankInfoList;
+	public boolean validateAllDetails = true;
+	public boolean validateCustDocs = true;
+	private String moduleName;
+	private List<CustomerBankInfo> CustomerBankInfoList;
 
-	protected Grid								grid_ExtendedDetails;
-	protected Combobox							subCategory;
-	protected ExtendedCombobox					religion;
-	protected ExtendedCombobox					caste;
+	protected Grid grid_ExtendedDetails;
+	protected Combobox subCategory;
+	protected ExtendedCombobox religion;
+	protected ExtendedCombobox caste;
 
 	// Extended fields
-	private ExtendedFieldCtrl					extendedFieldCtrl				= null;
-	private ExternalDocumentManager				externalDocumentManager			= null;
-	
+	private ExtendedFieldCtrl extendedFieldCtrl = null;
+	private ExternalDocumentManager externalDocumentManager = null;
+
 	String primaryIdRegex = null;
 	String primaryIdLabel;
 	boolean primaryIdMandatory = false;
-
-	
+	Map<String, Configuration> TEMPLATES = new HashMap<String, Configuration>();
 
 	/**
 	 * default constructor.<br>
@@ -896,14 +906,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custSubSegment.setValueColumn("SubSegmentCode");
 		this.custSubSegment.setDescColumn("SubSegmentDesc");
 		this.custSubSegment.setValidateColumns(new String[] { "SubSegmentCode" });
-		
+
 		this.custRO1.setTextBoxWidth(121);
 		this.custRO1.setMandatoryStyle(true);
 		this.custRO1.setModuleName("SourceOfficer");
 		this.custRO1.setValueColumn("DealerName");
 		this.custRO1.setDescColumn("DealerCity");
 		this.custRO1.setValidateColumns(new String[] { "DealerName" });
-		
+
 		if (isWorkFlowEnabled()) {
 			this.gb_Action.setVisible(true);
 		} else {
@@ -1279,7 +1289,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
 					.getExtendedFieldRender(aCustomerDetails.getCustomer().getCustCIF());
 
-			this.extendedFieldCtrl.createTab(tabsIndexCenter, tabpanelsBoxIndexCenter);
+			this.extendedFieldCtrl.createTab(tabsIndexCenter, tabpanelsBoxIndexCenter, "424px");
 			aCustomerDetails.setExtendedFieldHeader(extendedFieldHeader);
 			aCustomerDetails.setExtendedFieldRender(extendedFieldRender);
 
@@ -1289,9 +1299,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			extendedFieldCtrl.setCcyFormat(2);
 			extendedFieldCtrl.setReadOnly(enqiryModule);
-			//extendedFieldCtrl.setReadOnly(isReadOnly("CustomerDialog_custFirstName"));
+			// extendedFieldCtrl.setReadOnly(isReadOnly("CustomerDialog_custFirstName"));
 			extendedFieldCtrl.setWindow(this.window_CustomerDialog);
-			//for getting rights in ExtendeFieldGenerator these two fields required.
+			// for getting rights in ExtendeFieldGenerator these two fields required.
 			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
 			extendedFieldCtrl.setUserRole(getRole());
 			extendedFieldCtrl.render();
@@ -1857,7 +1867,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering");
 		if (this.customerPhoneNumberDetailList != null && !this.customerPhoneNumberDetailList.isEmpty()) {
 			for (CustomerPhoneNumber phoneNumber : this.customerPhoneNumberDetailList) {
-				if (String.valueOf(phoneNumber.getPhoneTypePriority()).equals(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+				if (String.valueOf(phoneNumber.getPhoneTypePriority())
+						.equals(PennantConstants.EMAILPRIORITY_VeryHigh)) {
 					return PennantApplicationUtil.formatPhoneNumber(phoneNumber.getPhoneCountryCode(),
 							phoneNumber.getPhoneAreaCode(), phoneNumber.getPhoneNumber());
 				}
@@ -1916,13 +1927,15 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			doEdit();
 		}
 		this.custCIF.focus();
-		
-		if(isRetailCustomer){
-			this.label_CustomerDialog_CustNationality.setValue(Labels.getLabel("label_FinanceCustomerList_CustNationality.value"));
-		}else{
-			this.label_CustomerDialog_CustNationality.setValue(Labels.getLabel("label_CustomerDialog_CustNationality.value"));
+
+		if (isRetailCustomer) {
+			this.label_CustomerDialog_CustNationality
+					.setValue(Labels.getLabel("label_FinanceCustomerList_CustNationality.value"));
+		} else {
+			this.label_CustomerDialog_CustNationality
+					.setValue(Labels.getLabel("label_CustomerDialog_CustNationality.value"));
 		}
-		 
+
 		try {
 			doWriteBeanToComponents(aCustomerDetails);
 			doResetFeeVariables();
@@ -2001,7 +2014,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			this.space_CustShrtName.setSclass("");
 			this.label_CustomerDialog_SalaryTransfered.setVisible(true);
-			//this.label_CustomerDialog_EIDNumber.setValue(Labels.getLabel("label_CoreCustomerDialog_PrimaryID.value"));
+			// this.label_CustomerDialog_EIDNumber.setValue(Labels.getLabel("label_CoreCustomerDialog_PrimaryID.value"));
 			this.label_CustomerDialog_CustShrtName.setValue(Labels.getLabel("label_CustomerDialog_CustShrtName.value"));
 			this.label_CustomerDialog_CustCOB.setValue(Labels.getLabel("label_CustomerDialog_CustCOB.value"));
 			this.directorDetails.setVisible(false);
@@ -2015,7 +2028,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.label_CustomerDialog_Target.setVisible(true);
 			this.target.setVisible(true);
 			this.target.setMandatoryStyle(false);
-			
+
 		} else {
 			this.row_FirstMiddleName.setVisible(false);
 			this.row_LastName.setVisible(false);
@@ -2032,7 +2045,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.label_CustomerDialog_CustShrtName.setValue(Labels.getLabel("label_CustomerDialog_CustomerName.value"));
 			this.label_CustomerDialog_CustDOB
 					.setValue(Labels.getLabel("label_CustomerDialog_CustDateOfIncorporation.value"));
-			//this.label_CustomerDialog_EIDNumber.setValue(Labels.getLabel("label_CoreCustomerDialog_TradeLicenseNumber.value"));
+			// this.label_CustomerDialog_EIDNumber.setValue(Labels.getLabel("label_CoreCustomerDialog_TradeLicenseNumber.value"));
 			this.label_CustomerDialog_CustCOB.setValue(Labels.getLabel("label_CustomerDialog_CustCOI.value"));
 			this.gb_rating.setVisible(getUserWorkspace().isAllowed("CustomerDialog_ShowCustomerRatings"));
 			this.gp_CustEmployeeDetails.setVisible(false);
@@ -2049,19 +2062,19 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// this.custRO1.setMandatoryStyle(false);
 		}
 
-		
-		Map<String, String> attributes = PennantStaticListUtil.getPrimaryIdAttributes(customerDetails.getCustomer().getCustCtgCode());
-		
+		Map<String, String> attributes = PennantStaticListUtil
+				.getPrimaryIdAttributes(customerDetails.getCustomer().getCustCtgCode());
+
 		primaryIdLabel = attributes.get("LABEL");
 		primaryIdMandatory = Boolean.valueOf(attributes.get("MANDATORY"));
 		primaryIdRegex = attributes.get("REGEX");
-		int maxLength = Integer.valueOf(attributes.get("LENGTH")); 
-		
+		int maxLength = Integer.valueOf(attributes.get("LENGTH"));
+
 		label_CustomerDialog_EIDNumber.setValue(Labels.getLabel(primaryIdLabel));
 		space_EidNumber.setSclass(primaryIdMandatory ? PennantConstants.mandateSclass : "");
 		eidNumber.setSclass(PennantConstants.mandateSclass);
 		eidNumber.setMaxlength(maxLength);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -2203,8 +2216,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		// below fields are always mandatory
 
 		if (!this.eidNumber.isReadonly()) {
-			//### 01-05-2018 ToolApp ID : #360
-			this.eidNumber.setConstraint(new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
+			// ### 01-05-2018 ToolApp ID : #360
+			this.eidNumber.setConstraint(
+					new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
 		}
 
 		// below fields are conditional mandatory
@@ -3041,7 +3055,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 
 			if (doProcess(aCustomerDetails, tranType)) {
-				//ExtendedFields Rights Deallocation.
+				// ExtendedFields Rights Deallocation.
 				if (extendedFieldCtrl != null && customerDetails.getExtendedFieldHeader() != null) {
 					extendedFieldCtrl.deAllocateAuthorities();
 				}
@@ -4169,7 +4183,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					}
 					this.eidNumber.setConstraint("");
 				}
-				// ### 01-05-2018  TuleApp ID : #360
+				// ### 01-05-2018 TuleApp ID : #360
 			} else if (SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL_DOC_TYPE").equalsIgnoreCase(idType)) {
 				try {
 					idNumber = this.eidNumber.getValue();
@@ -4180,7 +4194,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.eidNumber.setConstraint("");
 
 			}
-			//### 01-05-2018 TuleApp ID : #360
+			// ### 01-05-2018 TuleApp ID : #360
 			else if (SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP_DOC_TYPE").equalsIgnoreCase(idType)) {
 				try {
 					idNumber = this.eidNumber.getValue();
@@ -5843,6 +5857,70 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		notes.setVersion(getCustomerDetails().getCustomer().getVersion());
 		logger.debug("Leaving");
 		return notes;
+	}
+
+	public void onClickExtbtnVIEWREPORT() throws IOException {
+		logger.debug(Literal.ENTERING);
+
+		customerDetails.getCustomer().getCustCIF();
+		String path = App.getResourcePath("Config", "CIBILFinalTemplate.FTL");
+		File ftlFile = new File(path);
+		StringTemplateLoader loader = new StringTemplateLoader();
+		byte[] cibildata = FileUtils.readFileToByteArray(ftlFile);
+		loader.putTemplate("CIBILFinalTemplate.FTL", new String(cibildata));
+
+		Configuration config = new Configuration();
+		config.setClassForTemplateLoading(CustomerDialogCtrl.class, "CIBILFinalTemplate.FTL");
+		config.setTemplateLoader(loader);
+		config.setDefaultEncoding("UTF-8");
+		config.setLocale(Locale.getDefault());
+		config.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+		TEMPLATES.put("CIBILFinalTemplate.FTL", config);
+
+		String result = null;
+		String response = null;
+		if(getCustomerDetails().getExtendedFieldRender().getMapValues().get("jsonresponse")!= null){
+		 response = (String) getCustomerDetails().getExtendedFieldRender().getMapValues().get("jsonresponse");
+		}
+		JSONObject json = null;
+
+		try {
+			JSONParser parser = new JSONParser();
+			if (response != null) {
+				json = new JSONObject();
+				json = (JSONObject) parser.parse(response);
+			}
+		} catch (Exception e) {
+			logger.error("Exception", e);
+		}
+
+		try {
+			if (json != null) {
+				result = FreeMarkerTemplateUtils.processTemplateIntoString(getTemplate("CIBILFinalTemplate.FTL"), json);
+				HashMap<String, Object> detailMap = new HashMap<String, Object>();
+				detailMap.put("reportData", result);
+				detailMap.put("isCibil", true);
+				detailMap.put("reportName", "CIBIL");
+
+				Executions.createComponents("/WEB-INF/pages/Cibil/CibilReportView.zul", window_CustomerDialog,
+						detailMap);
+			}
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private Template getTemplate(String templateName) throws Exception {
+		Configuration config = null;
+		config = TEMPLATES.get(templateName);
+
+		if (config == null) {
+			throw new Exception("Template not found for the name " + templateName);
+		}
+
+		return config.getTemplate(templateName);
 	}
 
 	/**

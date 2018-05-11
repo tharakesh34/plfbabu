@@ -3,7 +3,6 @@ package com.pennanttech.pff.external.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.pennanttech.dataengine.constants.ValueLabel;
 
@@ -219,6 +218,21 @@ public class StaticListUtil {
 
 		return enqSegmentValueLabl;
 	}
+	
+	
+	public static ArrayList<ValueLabel> getAccountSummary() {
+
+		ArrayList<ValueLabel> accSummaryValueLabl = new ArrayList<ValueLabel>();
+		accSummaryValueLabl = new ArrayList<ValueLabel>();
+		accSummaryValueLabl.add(new ValueLabel("00", "TotalNoofAccounts"));
+		accSummaryValueLabl.add(new ValueLabel("01", "OverDueAccounts"));
+		accSummaryValueLabl.add(new ValueLabel("02", "ZeroBalanceAccounts"));
+		accSummaryValueLabl.add(new ValueLabel("03", "TotalLoansAmount"));
+		accSummaryValueLabl.add(new ValueLabel("04", "TotalLoansBalances"));
+		accSummaryValueLabl.add(new ValueLabel("05", "TotalLoansOverDue"));
+
+		return accSummaryValueLabl;
+	}
 
 	public static ArrayList<ValueLabel> getDrSegmentFieldTypes() {
 
@@ -339,6 +353,27 @@ public class StaticListUtil {
 		telephoneTypes.put("05", "Ration Card Number");
 		telephoneTypes.put("06", "Universal ID Number");
 		return telephoneTypes;
+
+	}
+	
+	public static final HashMap<String, String> getCibilOnwerShipTypes() {
+		HashMap<String, String> ownershipTypes = new HashMap<String, String>();
+		ownershipTypes.put("1", "Individual");
+		ownershipTypes.put("2", "Authorised User");
+		ownershipTypes.put("3", "Guarantor");
+		ownershipTypes.put("4", "Joint");
+		return ownershipTypes;
+
+	}
+	
+	
+	public static final HashMap<String, String> getCibilPaymentFreqTypes() {
+		HashMap<String, String> ownershipTypes = new HashMap<String, String>();
+		ownershipTypes.put("01", "Weekly");
+		ownershipTypes.put("02", "Fortnightly");
+		ownershipTypes.put("03", "Monthly");
+		ownershipTypes.put("04", "Quarterly");
+		return ownershipTypes;
 
 	}
 	

@@ -94,6 +94,9 @@
 															spacing="2px" />
 														<textbox
 															id="custCIF" readonly="true" width="155px" />
+														<button
+															id="btn_GenerateCibil" label="Generate Cibil" visible = "false"
+															sclass="z-toolbarbutton" />
 													</hbox>
 													<label
 														value="${c:l('label_CustomerDialog_CustCoreBank.value')}" />

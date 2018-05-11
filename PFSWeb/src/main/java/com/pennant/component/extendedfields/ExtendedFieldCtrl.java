@@ -13,6 +13,7 @@ import javax.script.ScriptException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Checkbox;
@@ -47,6 +48,7 @@ import com.pennant.backend.service.staticparms.ExtFieldConfigService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
+import com.pennanttech.framework.web.AbstractController;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtendedFieldCtrl {
@@ -524,9 +526,8 @@ public class ExtendedFieldCtrl {
 		}
 		return extendedFieldRenderList;
 	}
-
-	public void createTab(Tabs tabs, Tabpanels tabPanels) {
-		
+	
+	public void createTab(Tabs tabs, Tabpanels tabPanels, String height) {
 		if (tabs.getFellowIfAny("Tab" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName()) != null) {
 			Tab tab = (Tab) tabs.getFellow("Tab" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName());
 			tab.close();
@@ -539,10 +540,14 @@ public class ExtendedFieldCtrl {
 		tabpanel = new Tabpanel();
 		tabpanel.setId("TabPanel" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName());
 		tabpanel.setStyle("overflow:auto");
-		tabpanel.setHeight("100%");
+		tabpanel.setHeight(height);
 		tabpanel.setParent(tabPanels);
 		// it store all tabpanel id (for pdf extraction)
 		tabPanelsMap.put("TabPanel" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName(), tabpanel);
+	}
+
+	public void createTab(Tabs tabs, Tabpanels tabPanels) {
+		createTab(tabs, tabPanels, "100%");
 	}
 	
 	public void createEnquiryTab(Tabpanel tabPanel) {

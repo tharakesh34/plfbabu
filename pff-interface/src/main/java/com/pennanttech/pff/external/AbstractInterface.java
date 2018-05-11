@@ -126,28 +126,4 @@ public class AbstractInterface {
 		this.transDef.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
 		this.transDef.setTimeout(120);
 	}
-
-	protected long getSeq(String seqName) {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = null;
-
-		try {
-			sql = new StringBuilder();
-			sql.append("UPDATE ").append(seqName);
-			sql.append(" SET SEQNO = SEQNO + 1");
-			this.namedJdbcTemplate.update(sql.toString(), new MapSqlParameterSource());
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		try {
-			sql = new StringBuilder();
-			sql.append("SELECT SEQNO FROM ").append(seqName);
-			return this.namedJdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Long.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		return 0;
-	}
-
 }
