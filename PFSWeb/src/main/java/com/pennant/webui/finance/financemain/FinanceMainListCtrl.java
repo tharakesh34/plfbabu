@@ -144,7 +144,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected Listbox						sortOperator_mobileNumber;											// autoWired
 	protected Textbox						finEIDNumber;														// autoWired
 	protected Listbox						sortOperator_eidNumber;											// autoWired
-	protected Listbox						sortOperator_passPort;												// autoWired
 	protected Datebox						finDateofBirth;													// autoWired
 	protected Listbox						sortOperator_finDateofBirth;										// autoWired
 	protected Datebox						finRequestDate;													// autoWired
@@ -838,7 +837,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.finMobileNumber.setValue("");
 		this.sortOperator_eidNumber.setSelectedIndex(0);
 		this.finEIDNumber.setValue("");
-		this.sortOperator_passPort.setSelectedIndex(0);
 		this.sortOperator_finDateofBirth.setSelectedIndex(0);
 		this.finDateofBirth.setValue(null);
 		this.sortOperator_finRequestDate.setSelectedIndex(0);
