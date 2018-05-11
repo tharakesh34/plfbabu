@@ -5975,5 +5975,17 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
    update ManualDeviations set severity = 5 where severity is null;
    </sql>
    </changeSet>
+   
+      <changeSet id="133" author="Durgaprasad g">
+      <comment>Work flow roles for verificationssss</comment>
+	   <sql>
+			Update SeqSecRoles set seqno = (Select Max(roleid) from Secroles);
+			delete from Secroles Where Rolecd = 'VERIFICATION_MAKER';
+			delete from Secroles Where Rolecd = 'VERIFICATION_APPROVER';
+			INSERT INTO SecRoles SELECT (select Max(roleid)+1 from Secroles), 1, 'VERIFICATION_MAKER', 'Verification Maker role Details','',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoles SELECT (select Max(roleid)+1 from Secroles), 1, 'VERIFICATION_APPROVER', 'Verification Approver role Details','',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			Update SeqSecRoles set seqno = (Select Max(roleid) from Secroles);
+	   </sql>
+   </changeSet>
 </databaseChangeLog>
 	
