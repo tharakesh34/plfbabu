@@ -5970,5 +5970,10 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
           WHERE customerempdetails_temp.custid = ce.custid))
    	</createView>
    </changeSet>
+   <changeSet id="132" author="Srikanth">
+   <sql>
+   update ManualDeviations set severity = 5 where severity is null;
+   </sql>
+   </changeSet>
 </databaseChangeLog>
 	
