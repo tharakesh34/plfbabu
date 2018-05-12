@@ -382,7 +382,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 					}
 				}
 			} else {
-				if (customerAddres.getCustAddrPriority() != Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+				if (customerAddres.getCustAddrPriority() != Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Address Details";
 					valueParm[1] = "Address";
@@ -399,9 +399,9 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 				for (CustomerAddres prvCustAddrr : prvCustomerAddrList) {
 					if (StringUtils.equals(prvCustAddrr.getCustAddrType(), customerAddres.getCustAddrType())) {
 						if (prvCustAddrr.getCustAddrPriority() == Integer
-								.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+								.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 							if (customerAddres.getCustAddrPriority() != Integer
-									.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+									.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 								String[] valueParm = new String[2];
 								valueParm[0] = "Address Details";
 								valueParm[1] = "Address should not update";

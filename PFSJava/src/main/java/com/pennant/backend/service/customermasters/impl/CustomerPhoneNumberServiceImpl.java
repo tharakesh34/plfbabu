@@ -401,7 +401,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 			}
 		}
 		} else {
-			if(customerPhoneNumber.getPhoneTypePriority() != Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)){
+			if(customerPhoneNumber.getPhoneTypePriority() != Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)){
 				String[] valueParm = new String[2];
 				valueParm[0] = "Phone Details";
 				valueParm[1] = "Phone";
@@ -418,8 +418,8 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 				for (CustomerPhoneNumber prvCustPhoneNumber : customerPhoneNumberList) {
 					if (StringUtils.equals(prvCustPhoneNumber.getPhoneTypeCode(),
 							customerPhoneNumber.getPhoneTypeCode())) {
-						if (prvCustPhoneNumber.getPhoneTypePriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
-							if (customerPhoneNumber.getPhoneTypePriority() != Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+						if (prvCustPhoneNumber.getPhoneTypePriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+							if (customerPhoneNumber.getPhoneTypePriority() != Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 								String[] valueParm = new String[2];
 								valueParm[0] = "Phone Details";
 								valueParm[1] = "Phone should not update";

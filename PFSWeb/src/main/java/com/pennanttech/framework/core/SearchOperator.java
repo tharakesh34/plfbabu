@@ -97,6 +97,10 @@ public class SearchOperator {
 		 */
 		STRING,
 		/**
+		 * Filter.OP_EQUAL, Filter.OP_NOT_EQUAL, Filter.OP_LIKE
+		 */
+		SIMPLESTRING,
+		/**
 		 * Filter.OP_EQUAL, Filter.OP_NOT_EQUAL
 		 */
 		SIMPLE_NUMARIC,
@@ -128,6 +132,7 @@ public class SearchOperator {
 	private static List<ValueLabel> defaultOperators = new ArrayList<>();
 	private static List<ValueLabel> simpleOperators = new ArrayList<>();
 	private static List<ValueLabel> stringOperators = new ArrayList<>();
+	private static List<ValueLabel> simpleStringOperators = new ArrayList<>();
 	private static List<ValueLabel> simpleNumaricOperators = new ArrayList<>();
 	private static List<ValueLabel> numaricOperators = new ArrayList<>();
 	private static List<ValueLabel> booleanOperators = new ArrayList<>();
@@ -146,6 +151,9 @@ public class SearchOperator {
 		stringOperators.add(new ValueLabel(String.valueOf(Filter.OP_NOT_EQUAL), "<>"));
 		stringOperators.add(new ValueLabel(String.valueOf(Filter.OP_LIKE), "%"));
 
+		simpleStringOperators.add(new ValueLabel(String.valueOf(Filter.OP_EQUAL), "="));
+		simpleStringOperators.add(new ValueLabel(String.valueOf(Filter.OP_LIKE), "%"));
+		
 		simpleNumaricOperators.add(new ValueLabel(String.valueOf(Filter.OP_EQUAL), "="));
 		simpleNumaricOperators.add(new ValueLabel(String.valueOf(Filter.OP_NOT_EQUAL), "<>"));
 
@@ -187,6 +195,9 @@ public class SearchOperator {
 			operators = simpleOperators;
 			break;
 		case STRING:
+			operators = stringOperators;
+			break;
+		case SIMPLESTRING:
 			operators = stringOperators;
 			break;
 		case SIMPLE_NUMARIC:

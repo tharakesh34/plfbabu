@@ -1451,7 +1451,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
 				if (CollectionUtils.isNotEmpty(addressList)) {
 					for (CustomerAddres customerAddres : addressList) {
-						if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+						if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 							toStateCode = customerAddres.getCustAddrProvince();
 							toCountryCode = customerAddres.getCustAddrCountry();
 							break;

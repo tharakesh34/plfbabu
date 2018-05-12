@@ -794,7 +794,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		CustomerPhoneNumber prvCustomerPhoneNumber = customerPhoneNumberService.getApprovedCustomerPhoneNumberById(
 				customerPhoneNumber.getPhoneCustID(), customerPhoneNumber.getPhoneTypeCode());
 		if (prvCustomerPhoneNumber != null) {
-			if (prvCustomerPhoneNumber.getPhoneTypePriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+			if (prvCustomerPhoneNumber.getPhoneTypePriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 				response = new WSReturnStatus();
 				String[] valueParm = new String[2];
 				valueParm[0] = "cannot delete";
@@ -990,7 +990,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		CustomerAddres prvCustomerAddres = customerAddresService.getApprovedCustomerAddresById(
 				customerAddres.getCustID(), customerAddres.getCustAddrType());
 		if (prvCustomerAddres != null) {
-			if (prvCustomerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+			if (prvCustomerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 				response = new WSReturnStatus();
 				String[] valueParm = new String[2];
 				valueParm[0] = "cannot delete";

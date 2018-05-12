@@ -357,7 +357,7 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 					}
 				}
 			} else {
-				if (customerEMail.getCustEMailPriority() != Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+				if (customerEMail.getCustEMailPriority() != Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Email Details";
 					valueParm[1] = "Email";
@@ -374,9 +374,9 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 				for (CustomerEMail prvCustEmail : prvCustomerEmailList) {
 					if (StringUtils.equals(prvCustEmail.getCustEMailTypeCode(), customerEMail.getCustEMailTypeCode())) {
 						if (prvCustEmail.getCustEMailPriority() == Integer
-								.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+								.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 							if (customerEMail.getCustEMailPriority() != Integer
-									.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+									.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 								String[] valueParm = new String[2];
 								valueParm[0] = "Email Details";
 								valueParm[1] = "Email should not update";

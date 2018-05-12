@@ -165,11 +165,11 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		setPageComponents(window_CustomerSelect);
 
 		// DropDown ListBox
-		List<SearchOperators> list = new SearchOperators().getStringOperators();
+		List<SearchOperators> list = new SearchOperators().getSimpleStringOperators();
 		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custDob.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_custDob.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleNumericOperators()));
 		this.sortOperator_custDob.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_custName.setModel(new ListModelList<SearchOperators>(list));

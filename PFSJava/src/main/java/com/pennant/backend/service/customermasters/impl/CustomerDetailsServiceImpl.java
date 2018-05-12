@@ -1807,7 +1807,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90114", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 				}
-				if (adress.getCustAddrPriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+				if (adress.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 					isAddressPrority = true;
 				}
 				int addressPriorityCount = 0;
@@ -1895,7 +1895,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					auditDetail.setErrorDetail(errorDetail);
 				}
 				if (custPhoneDetail.getPhoneTypePriority() == Integer
-						.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+						.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 					isPhonePrority = true;
 				}
 				int phonePriorityCount = 0;
@@ -1964,7 +1964,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90237", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 				}
-				if (custEmail.getCustEMailPriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+				if (custEmail.getCustEMailPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 					isEmailPrority = true;
 				}
 				int emailPriorityCount = 0;

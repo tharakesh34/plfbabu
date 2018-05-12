@@ -1647,7 +1647,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
 				if (CollectionUtils.isNotEmpty(addressList)) {
 					for (CustomerAddres customerAddres : addressList) {
-						if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+						if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 							country = customerAddres.getCustAddrCountry();
 							
 							Customer cust =  customerDAO.getCustomerByID(customerAddres.getCustID());

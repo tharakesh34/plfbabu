@@ -381,11 +381,11 @@ public class PennantConstants {
 	public static final String HOLDTYPE_OVERDUE = "P";
 	public static final String HOLDTYPE_FUTURE = "F";
 
-	public static final String EMAILPRIORITY_VeryHigh = "5";
-	public static final String EMAILPRIORITY_High = "4";
-	public static final String EMAILPRIORITY_Medium = "3";
-	public static final String EMAILPRIORITY_Normal = "2";
-	public static final String EMAILPRIORITY_Low = "1";
+	public static final String KYC_PRIORITY_VERY_HIGH = "5";
+	public static final String KYC_PRIORITY_HIGH = "4";
+	public static final String KYC_PRIORITY_MEDIUM = "3";
+	public static final String KYC_PRIORITY_NORMAL = "2";
+	public static final String KYC_PRIORITY_LOW = "1";
 
 	// Car Loan Details
 	public static final String AHBACCOUNT = "AHBACC";

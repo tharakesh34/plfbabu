@@ -1868,7 +1868,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (this.customerPhoneNumberDetailList != null && !this.customerPhoneNumberDetailList.isEmpty()) {
 			for (CustomerPhoneNumber phoneNumber : this.customerPhoneNumberDetailList) {
 				if (String.valueOf(phoneNumber.getPhoneTypePriority())
-						.equals(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+						.equals(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 					return PennantApplicationUtil.formatPhoneNumber(phoneNumber.getPhoneCountryCode(),
 							phoneNumber.getPhoneAreaCode(), phoneNumber.getPhoneNumber());
 				}
@@ -3462,7 +3462,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			return !isMandAddExist;
 		} else {
 			for (CustomerEMail custEmail : this.customerEmailDetailList) {
-				if (StringUtils.equals(PennantConstants.EMAILPRIORITY_VeryHigh,
+				if (StringUtils.equals(PennantConstants.KYC_PRIORITY_VERY_HIGH,
 						String.valueOf(custEmail.getCustEMailPriority()))) {
 					isMandAddExist = true;
 					break;
@@ -3505,7 +3505,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						}
 					}
 				} else {
-					if (StringUtils.equals(PennantConstants.EMAILPRIORITY_VeryHigh,
+					if (StringUtils.equals(PennantConstants.KYC_PRIORITY_VERY_HIGH,
 							String.valueOf(custAddres.getCustAddrPriority()))
 							&& !StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, custAddres.getRecordType())) {
 						isMandAddExist = true;
@@ -3540,7 +3540,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		boolean isMandAddExist = false;
 		if (this.customerPhoneNumberDetailList != null && !this.customerPhoneNumberDetailList.isEmpty()) {
 			for (CustomerPhoneNumber customerPhone : this.customerPhoneNumberDetailList) {
-				if (StringUtils.equals(PennantConstants.EMAILPRIORITY_VeryHigh,
+				if (StringUtils.equals(PennantConstants.KYC_PRIORITY_VERY_HIGH,
 						String.valueOf(customerPhone.getPhoneTypePriority()))
 						&& !StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerPhone.getRecordType())) {
 					isMandAddExist = true;

@@ -215,7 +215,7 @@ public class FetchCustomerDedupDetails {
 		Customer customer = customerDetails.getCustomer();
 		if (customerDetails.getCustomerPhoneNumList() != null) {
 			for (CustomerPhoneNumber custPhone : customerDetails.getCustomerPhoneNumList()) {
-				if (custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)) {
+				if (String.valueOf(custPhone.getPhoneTypePriority()).equals(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 					mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
 							custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
 					break;
@@ -224,7 +224,7 @@ public class FetchCustomerDedupDetails {
 		}
 		if (customerDetails.getCustomerEMailList() != null) {
 			for (CustomerEMail email : customerDetails.getCustomerEMailList()) {
-				if (String.valueOf(email.getCustEMailPriority()).equals(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+				if (String.valueOf(email.getCustEMailPriority()).equals(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 					emailid = email.getCustEMail();
 					break;
 				}

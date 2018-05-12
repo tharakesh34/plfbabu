@@ -1203,7 +1203,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerAddres.getRecordType()) &&
 						!StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, customerAddres.getRecordType()) && 
 						!StringUtils.equals(customerAddres.getCustAddrType(), aCustomerAddres.getCustAddrType())&& 
-						aCustomerAddres.getCustAddrPriority() == Integer.parseInt(PennantConstants.EMAILPRIORITY_VeryHigh) &&
+						aCustomerAddres.getCustAddrPriority() == Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH) &&
 						customerAddres.getCustAddrPriority() == aCustomerAddres.getCustAddrPriority()) {
 						valueParm[1]=this.custAddrPriority.getSelectedItem().getLabel();
 						errParm[1] = PennantJavaUtil.getLabel("label_CustAddrPriority") + ":"+valueParm[1];

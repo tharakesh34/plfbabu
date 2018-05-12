@@ -1521,11 +1521,11 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getCustomerEmailPriority() { 
 		if(customerEmailPriority == null){
 			customerEmailPriority = new ArrayList<ValueLabel>(5);
-			customerEmailPriority.add(new ValueLabel(PennantConstants.EMAILPRIORITY_VeryHigh, Labels.getLabel("label_EmailPriority_VeryHigh")));
-			customerEmailPriority.add(new ValueLabel(PennantConstants.EMAILPRIORITY_High, Labels.getLabel("label_EmailPriority_High")));
-			customerEmailPriority.add(new ValueLabel(PennantConstants.EMAILPRIORITY_Medium, Labels.getLabel("label_EmailPriority_Medium")));
-			customerEmailPriority.add(new ValueLabel(PennantConstants.EMAILPRIORITY_Normal, Labels.getLabel("label_EmailPriority_Normal")));
-			customerEmailPriority.add(new ValueLabel(PennantConstants.EMAILPRIORITY_Low, Labels.getLabel("label_EmailPriority_Low")));
+			customerEmailPriority.add(new ValueLabel(PennantConstants.KYC_PRIORITY_VERY_HIGH, Labels.getLabel("label_EmailPriority_VeryHigh")));
+			customerEmailPriority.add(new ValueLabel(PennantConstants.KYC_PRIORITY_HIGH, Labels.getLabel("label_EmailPriority_High")));
+			customerEmailPriority.add(new ValueLabel(PennantConstants.KYC_PRIORITY_MEDIUM, Labels.getLabel("label_EmailPriority_Medium")));
+			customerEmailPriority.add(new ValueLabel(PennantConstants.KYC_PRIORITY_NORMAL, Labels.getLabel("label_EmailPriority_Normal")));
+			customerEmailPriority.add(new ValueLabel(PennantConstants.KYC_PRIORITY_LOW, Labels.getLabel("label_EmailPriority_Low")));
 		}
 		return customerEmailPriority;
 	}

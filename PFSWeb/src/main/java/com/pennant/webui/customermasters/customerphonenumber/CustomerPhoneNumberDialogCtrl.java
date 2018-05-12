@@ -916,7 +916,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerPhoneNumber.getRecordType()) &&
 							!StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, customerPhoneNumber.getRecordType()) &&
 							!StringUtils.equals(customerPhoneNumber.getPhoneTypeCode(), aCustomerPhoneNumber.getPhoneTypeCode())&&
-							aCustomerPhoneNumber.getPhoneTypePriority() == Integer.parseInt(PennantConstants.EMAILPRIORITY_VeryHigh) && 
+							aCustomerPhoneNumber.getPhoneTypePriority() == Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH) && 
 							customerPhoneNumber.getPhoneTypePriority() == aCustomerPhoneNumber.getPhoneTypePriority()) {
 						
 						valueParm[1]=this.custPhonePriority.getSelectedItem().getLabel();

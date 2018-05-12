@@ -151,11 +151,11 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		registerButton(button_CustomerList_CustomerSearchDialog);
 
 		registerField("custId");
-		registerField("custCIF", listheader_CustCIF, SortOrder.ASC, custCIF, sortOperator_custCIF, Operators.STRING);
+		registerField("custCIF", listheader_CustCIF, SortOrder.ASC, custCIF, sortOperator_custCIF, Operators.SIMPLESTRING);
 		registerField("custCoreBank", listheader_CustCoreBank, SortOrder.NONE, custCoreBank, sortOperator_custCoreBank,
 				Operators.STRING);
 		registerField("custShrtName", listheader_CustShrtName, SortOrder.NONE, custShrtName, sortOperator_custShrtName,
-				Operators.STRING);
+				Operators.SIMPLESTRING);
 		registerField("custDftBranch", listheader_CustDftBranch, SortOrder.NONE, custDftBranch,
 				sortOperator_custDftBranch, Operators.STRING);
 
