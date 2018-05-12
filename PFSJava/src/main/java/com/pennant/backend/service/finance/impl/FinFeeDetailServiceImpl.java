@@ -367,7 +367,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		
-		if (finFeeReceipts != null && !finFeeReceipts.isEmpty()) {
+		if (CollectionUtils.isNotEmpty(finFeeReceipts)) {
 			int i = 0;
 			boolean saveRecord = false;
 			boolean updateRecord = false;
@@ -458,8 +458,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	@Override
 	public List<AuditDetail> doApprove(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType, boolean isWIF) {
 		logger.debug("Entering");
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditDetails.addAll(processFinFeeDetails(finFeeDetails, tableType, auditTranType, true, isWIF));
 		
 		logger.debug("Leaving");
@@ -587,19 +587,20 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 	
 	@Override
-	public List<AuditDetail> delete(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType, boolean isWIF) {
+	public List<AuditDetail> delete(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType,
+			boolean isWIF) {
 		logger.debug("Entering");
-		
-		String[] fields = null;	
+
+		String[] fields = null;
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		if(finFeeDetails != null && !finFeeDetails.isEmpty()) {
+		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
 			int auditSeq = 1;
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 				getFinFeeScheduleDetailDAO().deleteFeeScheduleBatch(finFeeDetail.getFeeID(), isWIF, tableType);
 				getFinFeeDetailDAO().delete(finFeeDetail, isWIF, tableType);
-				fields = PennantJavaUtil.getFieldDetails(finFeeDetail, finFeeDetail.getExcludeFields());	
-				auditDetails.add(new AuditDetail(auditTranType,auditSeq, fields[0], fields[1], finFeeDetail.getBefImage(), finFeeDetail));
+				fields = PennantJavaUtil.getFieldDetails(finFeeDetail, finFeeDetail.getExcludeFields());
+				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1], finFeeDetail.getBefImage(), finFeeDetail));
 				auditSeq++;
 			}
 		}
@@ -614,7 +615,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String[] fields = null;	
 		
-		if(finFeeReceipts != null && !finFeeReceipts.isEmpty()) {
+		if (CollectionUtils.isNotEmpty(finFeeReceipts)) {
 			int auditSeq = 1;
 			for (FinFeeReceipt finFeeReceipt : finFeeReceipts) {
 				getFinFeeReceiptDAO().delete(finFeeReceipt, tableType);
@@ -833,10 +834,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		valueParm[0]=String.valueOf(finFeeDetail.getFeeTypeDesc());
 		errParm[0]=PennantJavaUtil.getLabel("FeeType")+":"+valueParm[0];
 
-		if (finFeeDetail.isNew()){ // for New record or new record into work flow
+		if (finFeeDetail.isNew()) { // for New record or new record into work flow
 
-			if (!finFeeDetail.isWorkflow()){// With out Work flow only new records  
-				if (befFinFeeDetail !=null){	// Record Already Exists in the table then error  
+			if (!finFeeDetail.isWorkflow()) {// With out Work flow only new records  
+				if (befFinFeeDetail !=null) {	// Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow

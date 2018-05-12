@@ -1095,7 +1095,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					
 					FinFeeReceipt finFeeReceiptTemp = finFeeReceiptsList.get(i);
 					
-					if(StringUtils.isBlank(finFeeReceiptTemp.getRecordType())) {
+					if (StringUtils.isBlank(finFeeReceiptTemp.getRecordType())) {
 						finFeeReceiptTemp.setNewRecord(true);
 						finFeeReceiptTemp.setRecordType(PennantConstants.RCD_ADD);
 					} else if (StringUtils.isBlank(finFeeReceiptTemp.getFeeTypeCode()) && StringUtils.equals(finFeeReceiptTemp.getRecordType(),
@@ -1160,8 +1160,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			for (int count = 0; count < finFeeDetailsList.size(); count++) {
 				FinFeeDetail feeDetail = finFeeDetailsList.get(count);
 				if (StringUtils.equals(feeDetail.getVasReference(), vasReferene)) {
-					finFeeDetailsList.remove(count);	// Removing Finance Fee Detail
 					removeFinFeeReceipt(feeDetail);		//Removing Finance Fee Receipts
+					finFeeDetailsList.remove(count);	// Removing Finance Fee Detail
 					break;
 				}
 				
@@ -1169,7 +1169,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 		
 		doFillFinFeeDetailList(finFeeDetailsList);
-		setFinFeeDetailList(finFeeDetailsList);
 		this.dataChanged = true;
 
 		logger.debug("Leaving");

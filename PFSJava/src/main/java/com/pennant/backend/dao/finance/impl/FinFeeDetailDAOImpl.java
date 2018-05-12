@@ -360,7 +360,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 	 * 
 	 */
 	@Override
-	public void delete(FinFeeDetail finFeeDetail,boolean isWIF,String type) {
+	public void delete(FinFeeDetail finFeeDetail, boolean isWIF, String type) {
 		logger.debug("Entering");
 		
 		StringBuilder deleteSql = new StringBuilder();
@@ -370,7 +370,12 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 			deleteSql.append("Delete From FinFeeDetail");
 		}
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference = :FinReference and OriginationFee = :OriginationFee and FinEvent = :FinEvent and FeeTypeID = :FeeTypeID");
+		deleteSql.append(" Where FinReference = :FinReference And OriginationFee = :OriginationFee And FinEvent = :FinEvent And FeeTypeID = :FeeTypeID And FeeID = :FeeID");
+		
+		if (StringUtils.isNotBlank(finFeeDetail.getVasReference())) {
+			deleteSql.append(" And VasReference = :VasReference");
+		}
+		
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
