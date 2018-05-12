@@ -10,19 +10,22 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class RCUDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private long verificationId = Long.MIN_VALUE;
+	private long verificationId;
 	private int seqNo;
 	private Long documentId;
 	private String documentSubId;
-	private String docCategory;
-	private String docModule;
+	private Long documentRefId;
+	private String documentUri;
+	private int verificationType;
+	private int status;
 	private int pagesEyeballed;
 	private int pagesSampled;
-	private String remarks;
-	private String verificationType;
-	private String rcuStatus;
+	private String initRemarks;
+	private String agentRemarks;
+	private String decisionRemarks;
 
-	private Long docRefId;
+	private String docCategory;
+	private String docModule;
 	private String code;
 	private String description;
 	private boolean rcuReq;
@@ -31,9 +34,8 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	private String docName;
 	private String collateralRef;
 	private boolean newRecord = false;
-
 	private LoggedInUser userDetails;
-	private Verification befImage;
+	private RCUDocument befImage;
 
 	public RCUDocument() {
 		super();
@@ -58,9 +60,17 @@ public class RCUDocument extends AbstractWorkflowEntity {
 		excludeFields.add("docTypeId");
 		return excludeFields;
 	}
-
+	
 	public boolean isNew() {
 		return isNewRecord();
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
 	}
 
 	public long getVerificationId() {
@@ -95,20 +105,36 @@ public class RCUDocument extends AbstractWorkflowEntity {
 		this.documentSubId = documentSubId;
 	}
 
-	public String getDocCategory() {
-		return docCategory;
+	public Long getDocumentRefId() {
+		return documentRefId;
 	}
 
-	public void setDocCategory(String docCategory) {
-		this.docCategory = docCategory;
+	public void setDocumentRefId(Long documentRefId) {
+		this.documentRefId = documentRefId;
 	}
 
-	public String getDocModule() {
-		return docModule;
+	public String getDocumentUri() {
+		return documentUri;
 	}
 
-	public void setDocModule(String docModule) {
-		this.docModule = docModule;
+	public void setDocumentUri(String documentUri) {
+		this.documentUri = documentUri;
+	}
+
+	public int getVerificationType() {
+		return verificationType;
+	}
+
+	public void setVerificationType(int verificationType) {
+		this.verificationType = verificationType;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 	public int getPagesEyeballed() {
@@ -127,36 +153,44 @@ public class RCUDocument extends AbstractWorkflowEntity {
 		this.pagesSampled = pagesSampled;
 	}
 
-	public String getRemarks() {
-		return remarks;
+	public String getInitRemarks() {
+		return initRemarks;
 	}
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
+	public void setInitRemarks(String initRemarks) {
+		this.initRemarks = initRemarks;
 	}
 
-	public String getVerificationType() {
-		return verificationType;
+	public String getAgentRemarks() {
+		return agentRemarks;
 	}
 
-	public void setVerificationType(String verificationType) {
-		this.verificationType = verificationType;
+	public void setAgentRemarks(String agentRemarks) {
+		this.agentRemarks = agentRemarks;
 	}
 
-	public String getRcuStatus() {
-		return rcuStatus;
+	public String getDecisionRemarks() {
+		return decisionRemarks;
 	}
 
-	public void setRcuStatus(String rcuStatus) {
-		this.rcuStatus = rcuStatus;
+	public void setDecisionRemarks(String decisionRemarks) {
+		this.decisionRemarks = decisionRemarks;
 	}
 
-	public Long getDocRefId() {
-		return docRefId;
+	public String getDocCategory() {
+		return docCategory;
 	}
 
-	public void setDocRefId(Long docRefId) {
-		this.docRefId = docRefId;
+	public void setDocCategory(String docCategory) {
+		this.docCategory = docCategory;
+	}
+
+	public String getDocModule() {
+		return docModule;
+	}
+
+	public void setDocModule(String docModule) {
+		this.docModule = docModule;
 	}
 
 	public String getCode() {
@@ -207,12 +241,12 @@ public class RCUDocument extends AbstractWorkflowEntity {
 		this.docName = docName;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
+	public String getCollateralRef() {
+		return collateralRef;
 	}
 
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
+	public void setCollateralRef(String collateralRef) {
+		this.collateralRef = collateralRef;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -223,20 +257,14 @@ public class RCUDocument extends AbstractWorkflowEntity {
 		this.userDetails = userDetails;
 	}
 
-	public Verification getBefImage() {
+	public RCUDocument getBefImage() {
 		return befImage;
 	}
 
-	public void setBefImage(Verification befImage) {
+	public void setBefImage(RCUDocument befImage) {
 		this.befImage = befImage;
 	}
-
-	public String getCollateralRef() {
-		return collateralRef;
-	}
-
-	public void setCollateralRef(String collateralRef) {
-		this.collateralRef = collateralRef;
-	}
+	
+	
 
 }

@@ -43,7 +43,9 @@
 package com.pennanttech.pennapps.pff.verification.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
@@ -55,7 +57,11 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -66,6 +72,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.verification.Decision;
+import com.pennanttech.pennapps.pff.verification.Module;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.Status;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -73,6 +80,7 @@ import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
 import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
+import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 
@@ -95,33 +103,38 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	@Autowired
 	private RiskContainmentUnitService riskContainmentUnitService;
 
-	public List<AuditDetail> saveOrUpdate(Verification verification, String tableType, String auditTranType,
+	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType, String tableType, String auditTranType,
 			boolean isInitTab) {
 		logger.debug(Literal.ENTERING);
 
 		List<Long> idList = null;
 		List<CustomerDetails> customerDetailsList = null;
 		List<CollateralSetup> collateralSetupList = null;
-
-		VerificationType verificationType = VerificationType.getRequestType(verification.getVerificationType());
-
-		String[] fields = PennantJavaUtil.getFieldDetails(verification, verification.getExcludeFields());
-
+		Verification verification = null;
+		
 		if (verificationType == VerificationType.FI) {
+			verification = financeDetail.getFiVerification();
 			customerDetailsList = verification.getCustomerDetailsList();
 			idList = fieldInvestigationService.getFieldInvestigationIds(verification.getVerifications(),
 					verification.getKeyReference());
 		} else if (verificationType == VerificationType.TV) {
+			verification = financeDetail.getTvVerification();
 			collateralSetupList = verification.getCollateralSetupList();
 			idList = technicalVerificationService.getTechnicalVerificaationIds(verification.getVerifications(),
 					verification.getKeyReference());
 		} else if (verificationType == VerificationType.LV) {
+			verification = financeDetail.getLvVerification();
 			idList = legalVerificationService.getLegalVerficationIds(verification.getVerifications(),
 					verification.getKeyReference());
 		} else if (verificationType == VerificationType.RCU) {
+			verification = financeDetail.getRcuVerification();
 			idList = riskContainmentUnitService.getRCUVerificaationIds(verification.getVerifications(),
 					verification.getKeyReference());
 		}
+
+		String[] fields = PennantJavaUtil.getFieldDetails(verification, verification.getExcludeFields());
+
+		
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
 		WorkflowEngine engine = new WorkflowEngine(
@@ -152,6 +165,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					item.setReinitid(null);
 				}
 				if (item.isNew()) {
+					setVerificationData(financeDetail, item, verificationType);
 					verificationDAO.save(item, TableType.MAIN_TAB);
 				} else {
 					verificationDAO.update(item, TableType.MAIN_TAB);
@@ -167,11 +181,11 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 						} else if (verificationType == VerificationType.LV) {
 							saveLV(item);
 						} else if (verificationType == VerificationType.RCU) {
-							saveRCU(item);
+							saveRCU(financeDetail, item);
 						}
 					}
 				} else if (verificationType == VerificationType.RCU) {
-					saveRCUInStage(item);
+					saveRCUInStage(financeDetail, item);
 				}
 
 			} else {
@@ -206,7 +220,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					} else if (verificationType == VerificationType.LV) {
 						saveLV(item);
 					} else if (verificationType == VerificationType.RCU) {
-						saveRCU(item);
+						saveRCU(financeDetail, item);
 					}
 				} else {
 					verificationDAO.update(item, TableType.MAIN_TAB);
@@ -310,17 +324,46 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		}
 	}
 
-	private void saveRCU(Verification item) {
+	private void saveRCU(FinanceDetail financeDetail, Verification item) {
 		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
+			saveRCUInStage(financeDetail, item);
+			
 			riskContainmentUnitService.save(item, TableType.TEMP_TAB);
-			riskContainmentUnitService.saveDocuments(item.getRcuVerification().getRcuDocuments(), TableType.TEMP_TAB);
+			riskContainmentUnitService.saveDocuments(item.getRcuDocuments(), TableType.TEMP_TAB);
 		}
 	}
 
-	private void saveRCUInStage(Verification item) {
+	private void saveRCUInStage(FinanceDetail financeDetail, Verification item) {
+		setDocumentDetails(financeDetail, item);
+
+		//delete documents
+		riskContainmentUnitService.deleteDocuments(item.getId(), TableType.MAIN_TAB);
+
 		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
+			//RCU Verification
 			riskContainmentUnitService.save(item, TableType.STAGE_TAB);
-			riskContainmentUnitService.saveDocuments(item.getRcuVerification().getRcuDocuments(), TableType.STAGE_TAB);
+			//Rcu Documents
+			riskContainmentUnitService.saveDocuments(item.getRcuDocuments(), TableType.STAGE_TAB);
+		}
+	}
+
+	private void setDocumentDetails(FinanceDetail financeDetail, Verification item) {
+		List<CustomerDocument> custDocuemnts = financeDetail.getCustomerDetails().getCustomerDocumentsList();
+		Map<String, CustomerDocument> custDocMap = new HashMap<>();
+
+		for (CustomerDocument custDoc : custDocuemnts) {
+			custDocMap.put(custDoc.getCustDocCategory(), custDoc);
+		}
+
+		CustomerDocument customerDocument;
+		for (RCUDocument rcuDocument : item.getRcuDocuments()) {
+			if (rcuDocument.getDocumentRefId() == null || rcuDocument.getDocumentUri() == null) {
+				customerDocument = custDocMap.get(rcuDocument.getDocCategory());
+				rcuDocument.setDocumentId(customerDocument.getCustID());
+				rcuDocument.setDocumentSubId(customerDocument.getCustDocCategory());
+				rcuDocument.setDocumentRefId(customerDocument.getDocRefId());
+				rcuDocument.setDocumentUri(customerDocument.getDocUri());
+			}
 		}
 	}
 
@@ -553,5 +596,40 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	@Override
 	public Long getVerificationIdByReferenceFor(String finReference, String referenceFor, int verificationType) {
 		return verificationDAO.getVerificationIdByReferenceFor(finReference, referenceFor, verificationType);
+	}
+	
+	private void setVerificationData(FinanceDetail financeDetail, Verification verification,
+			VerificationType verificationType) {
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		Customer customer = financeDetail.getCustomerDetails().getCustomer();
+		verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+		verification.setModule(Module.LOAN.getKey());
+		verification.setKeyReference(financeMain.getFinReference());
+		verification.setCustId(customer.getCustID());
+		verification.setCustomerName(customer.getCustShrtName());
+		verification.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
+		
+		if (verificationType == VerificationType.FI) {
+			if (verification.getReference() != null) {
+				verification.setReference(customer.getCustCIF());
+			}
+		} else if (verificationType == VerificationType.TV) {
+
+		} else if (verificationType == VerificationType.LV) {
+
+		} else if (verificationType == VerificationType.TV) {
+			
+		} else if (verificationType == VerificationType.RCU) {
+			if (verification.getReference() == null) {
+				verification.setReference(customer.getCustCIF());
+			}
+			
+			if (verification.getRequestType() != RequestType.INITIATE.getKey()) {
+				//verification.getRcuDocument();
+				//verification.setReference(customer.getCustCIF());
+			}
+			
+		}
+		
 	}
 }

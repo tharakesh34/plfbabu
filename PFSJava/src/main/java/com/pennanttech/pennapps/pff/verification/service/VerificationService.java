@@ -46,12 +46,13 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 
 public interface VerificationService {
 
-	List<AuditDetail> saveOrUpdate(Verification verification, String tableType, String auditTranType,
-			boolean isInitTab);
+	List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType, String tableType, String auditTranType, boolean isInitTab);
 
 	List<Verification> getVerifications(String keyReference, int verificationType);
 

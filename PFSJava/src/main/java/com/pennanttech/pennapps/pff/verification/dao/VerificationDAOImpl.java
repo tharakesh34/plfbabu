@@ -79,6 +79,9 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		} else if (verificationType == VerificationType.LV.getKey()) {
 			parameterSource.addValue("dealerType", Agencies.LVAGENCY.getKey());
 			parameterSource.addValue("reasontypecode", WaiverReasons.LVWRES.getKey());
+		} else if (verificationType == VerificationType.RCU.getKey()) {
+			parameterSource.addValue("dealerType", Agencies.RCUVAGENCY.getKey());
+			parameterSource.addValue("reasontypecode", WaiverReasons.RCUWRES.getKey());
 		}
 
 		parameterSource.addValue("keyReference", keyReference);
@@ -142,8 +145,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		sql.append(" set verificationType = :verificationType, module = :module, keyReference = :keyReference, ");
 		sql.append(" referenceType = :referenceType, reference = :reference, referenceFor = :referenceFor, ");
 		sql.append(" requestType = :requestType, reinitid = :reinitid, agency = :agency, ");
-		sql.append(" reason = :reason, remarks = :remarks, createdBy = :createdBy, ");
-		sql.append(" createdOn = :createdOn, status = :status, agencyRemarks = :agencyRemarks, ");
+		sql.append(" reason = :reason, remarks = :remarks, status = :status, agencyRemarks = :agencyRemarks, ");
 		sql.append(" agencyReason = :agencyReason, decision = :decision, verificationDate = :verificationDate, ");
 		sql.append(" decisionRemarks = :decisionRemarks, ");
 		sql.append(

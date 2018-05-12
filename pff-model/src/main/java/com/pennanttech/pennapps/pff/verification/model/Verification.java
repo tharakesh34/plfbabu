@@ -56,7 +56,6 @@ public class Verification extends AbstractWorkflowEntity {
 	private boolean approveTab;
 	private int docType;
 	private String docName;
-	private RCUDocument rcuDocument;
 
 	private String cif;
 	private String customerName;
@@ -64,6 +63,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private String agencyCity;
 	private String reasonName;
 	private List<LVDocument> lvDocuments = new ArrayList<>();
+	private RCUDocument rcuDocument;
 	private List<RCUDocument> rcuDocuments = new ArrayList<>();
 
 	private List<Verification> verifications = new ArrayList<>();
@@ -471,5 +471,4 @@ public class Verification extends AbstractWorkflowEntity {
 		this.rcuDocument = rcuDocument;
 	}
 
-	
 }

@@ -69,6 +69,9 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	// New proeprty added for holding the DocumentManager table's ID
 	private long docRefId = Long.MIN_VALUE;
 
+	// Verification Fields
+	private int doumentType;
+	
 	public DocumentDetails() {
 		super();
 	}
@@ -103,6 +106,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("pdfPassWord");
 		excludeFields.add("docIsPdfExtRequired");
 		excludeFields.add("docImage");
+		excludeFields.add("doumentType");
 		return excludeFields;
 	}
 
@@ -397,6 +401,14 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setDocIsPdfExtRequired(boolean docIsPdfExtRequired) {
 		this.docIsPdfExtRequired = docIsPdfExtRequired;
+	}
+
+	public int getDoumentType() {
+		return doumentType;
+	}
+
+	public void setDoumentType(int doumentType) {
+		this.doumentType = doumentType;
 	}
 
 }

@@ -377,7 +377,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.customerName.setValue(rcu.getCustomerName());
 		this.rcuReference.setValue(rcu.getRcuReference());
 
-		this.verificationDate.setValue(rcu.getDate());
+		this.verificationDate.setValue(rcu.getVerificationDate());
 		this.agentCode.setValue(rcu.getAgentCode());
 		this.agentName.setValue(rcu.getAgentName());
 		this.recommendations.setValue(String.valueOf(rcu.getStatus()));
@@ -439,7 +439,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				lc.setId("RCUStatus".concat(String.valueOf(i)));
 				Combobox rcuStatus = new Combobox();
 				rcuStatus.setReadonly(isReadOnly("RiskContainmentUnitDialog_RCUStatus"));
-				rcuStatus.setValue(document.getRcuStatus());
+				rcuStatus.setValue(document.getStatus());
 				lc.appendChild(rcuStatus);
 				lc.setParent(item);
 
@@ -720,7 +720,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		}
 
 		try {
-			rcu.setDate(this.verificationDate.getValue());
+			rcu.setVerificationDate(this.verificationDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

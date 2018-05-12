@@ -181,6 +181,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
+import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
 
 import freemarker.cache.StringTemplateLoader;
@@ -450,6 +451,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	String primaryIdLabel;
 	boolean primaryIdMandatory = false;
 	Map<String, Configuration> TEMPLATES = new HashMap<String, Configuration>();
+	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
 
 	/**
 	 * default constructor.<br>
@@ -569,7 +571,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			} else {
 				setCustomerListCtrl(null);
 			}
-
+			
 			if (StringUtils.isNotEmpty(this.customerDetails.getCustomer().getCustCtgCode()) && StringUtils
 					.equals(this.customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 				isRetailCustomer = true;
@@ -4803,6 +4805,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		map.put("isFinanceProcess", isFinanceProcess);
 		map.put("roleCode", getRole());
 		map.put("isRetailCustomer", isRetailCustomer);
+		
 		if (getFinanceMainDialogCtrl() != null) {
 			map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());
 		}
@@ -4913,6 +4916,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerDocumentItemDoubleClicked");
 					this.listBoxCustomerDocuments.appendChild(item);
 				}
+				
+				if (rcuVerificationDialogCtrl != null) {
+					rcuVerificationDialogCtrl.addCustomerDocuments(custDocumentDetails);
+				}
+				
 			}
 			setCustomerDocumentDetailList(custDocumentDetails);
 		}
@@ -6331,4 +6339,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.externalDocumentManager = externalDocumentManager;
 	}
 
-}
+	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
+		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
+	}
+	
+	}

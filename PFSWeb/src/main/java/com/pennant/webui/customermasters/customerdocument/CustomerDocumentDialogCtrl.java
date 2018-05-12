@@ -127,6 +127,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
 
 /**
@@ -221,6 +222,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private boolean   isIssuedAuth=false;
 	private boolean   isDocuploadMand=false;
 	private DeviationExecutionCtrl deviationExecutionCtrl; 
+	private List<DocumentDetails> verificationDocuments;
+	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
+	
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -360,6 +365,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 			if (arguments.containsKey("enqiryModule")) {
 				this.enqiryModule = (Boolean) arguments.get("enqiryModule");
+			}
+			
+			if (arguments.containsKey("verificationDocuments")) {
+				this.verificationDocuments = (List<DocumentDetails>) arguments.get("verificationDocuments");
 			}
 
 			if (enqiryModule) {
@@ -801,6 +810,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		aCustomerDocument.setDocIsMandatory(isDocuploadMand);
 		aCustomerDocument.setRecordStatus(this.recordStatus.getValue());
 		setCustomerDocument(aCustomerDocument);
+		
 		logger.debug("Leaving");
 	}
 
@@ -2410,4 +2420,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.customerViewDialogCtrl = customerViewDialogCtrl;
 	}
 
+	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
+		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
+	}
+	
 }

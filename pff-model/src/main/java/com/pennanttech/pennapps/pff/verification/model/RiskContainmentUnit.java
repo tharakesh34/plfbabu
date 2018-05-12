@@ -18,29 +18,29 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class RiskContainmentUnit extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private String cif;
 	private String keyReference;
 	private String customerName;
 	private String rcuReference;
-	
+
 	private long verificationId;
-	private Date date;
+	private Date verificationDate;
 	private String agentCode;
 	private String agentName;
 	private int status;
 	private Long reason;
 	private String reasonCode;
 	private String reasonDesc;
-	private String remarks; 
-	
+	private String remarks;
+
 	private Date createdOn;
 	private Long custId;
 	private String agencyName;
 	private Long documentId;
 	private String documentSubId;
-	
-	private List<DocumentDetails> documents					= null;
+
+	private List<DocumentDetails> documents = null;
 	private List<RCUDocument> rcuDocuments = new ArrayList<>();
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
@@ -53,7 +53,7 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-	
+
 	public RiskContainmentUnit() {
 		super();
 	}
@@ -65,7 +65,7 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
-		
+
 		excludeFields.add("keyReference");
 		excludeFields.add("cif");
 		excludeFields.add("createdOn");
@@ -134,12 +134,12 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 		this.verificationId = verificationId;
 	}
 
-	public Date getDate() {
-		return date;
+	public Date getVerificationDate() {
+		return verificationDate;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setVerificationDate(Date verificationDate) {
+		this.verificationDate = verificationDate;
 	}
 
 	public String getAgentCode() {
@@ -309,5 +309,5 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
-	
+
 }

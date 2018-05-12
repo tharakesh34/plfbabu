@@ -912,6 +912,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
 	private String isCreditRevTabReq = SysParamUtil.getValueAsString(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ);
 	private List<String> assignCollateralRef = new ArrayList<>();
+	private List<DocumentDetails> verificationDocuments = new ArrayList<>();
 	
 	/**
 	 * default constructor.<br>
@@ -2257,6 +2258,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
 					map.put("isEnqProcess", isEnquiry);
 				}
+				map.put("rcuVerificationDialogCtrl", rcuVerificationDialogCtrl);
 				customerWindow = Executions.createComponents(
 						"/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
@@ -6246,7 +6248,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// RCU Init Verification Detail
 		Tab rcuInitTab = getTab(AssetConstants.UNIQUE_ID_RCUINITIATION);
 		if ((rcuInitTab != null && rcuInitTab.isVisible()) && rcuVerificationDialogCtrl != null) {
-			rcuVerificationDialogCtrl.doSave_RcuVerification(aFinanceDetail, rcuInitTab, recSave);
+			rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuInitTab, recSave);
 		}
 		
 		//Validation For Mandatory Recommendation
@@ -6799,7 +6801,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				//show pop up to take confirmation and stop if any un allowed deviation
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("roleCode", getRole());
-				map.put("financeMainDialogCtrl", this);
+				map.put("do", this);
 				map.put("financeDetail", aFinanceDetail);
 				map.put("enquiry", "");
 				map.put("finHeaderList", getFinBasicDetails());
@@ -16647,6 +16649,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
 		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
+		customerDialogCtrl.setRcuVerificationDialogCtrl(rcuVerificationDialogCtrl);
 	}
 
 	/**
@@ -16950,11 +16953,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			map.put("financeMainBaseCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
-			map.put("verification", financeDetail.getRcuVerification());
 			map.put("financeDetail", financeDetail);
 			map.put("InitType", true);
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUInitiation.zul",
-					getTabpanel(AssetConstants.UNIQUE_ID_RCUINITIATION), map);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUInitiation.zul", getTabpanel(AssetConstants.UNIQUE_ID_RCUINITIATION), map);
 		}
 		logger.debug(Literal.LEAVING);
 	}

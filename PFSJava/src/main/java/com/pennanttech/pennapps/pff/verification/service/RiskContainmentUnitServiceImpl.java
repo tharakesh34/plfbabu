@@ -27,9 +27,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
-import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.RiskContainmentUnitDAO;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
@@ -112,7 +112,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		}
 
 		// LV Documents
-		if (rcu.getRcuDocuments() != null && !rcu.getRcuDocuments().isEmpty()) {
+		if (rcu.getDocuments() != null && !rcu.getDocuments().isEmpty()) {
 			List<AuditDetail> details = rcu.getAuditDetailMap().get("RCUDocumentDetails");
 			details = processingRCUDocumnets(details, rcu, tableType.getSuffix());
 			auditDetails.addAll(details);
@@ -425,12 +425,12 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 				tranType = PennantConstants.TRAN_ADD;
 				rcu.setRecordType("");
 				riskContainmentUnitDAO.save(rcu, TableType.MAIN_TAB);
-				verificationDAO.updateVerifiaction(rcu.getId(), rcu.getDate(), rcu.getStatus());
+				verificationDAO.updateVerifiaction(rcu.getId(), rcu.getVerificationDate(), rcu.getStatus());
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				rcu.setRecordType("");
 				riskContainmentUnitDAO.update(rcu, TableType.MAIN_TAB);
-				verificationDAO.updateVerifiaction(rcu.getId(), rcu.getDate(), rcu.getStatus());
+				verificationDAO.updateVerifiaction(rcu.getId(), rcu.getVerificationDate(), rcu.getStatus());
 			}
 
 			// Extended field Details
@@ -458,7 +458,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			}
 
 			// RCU Document Details
-			List<RCUDocument> rcuDocuments = rcu.getRcuDocuments();
+			List<DocumentDetails> rcuDocuments = rcu.getDocuments();
 			if (rcuDocuments != null && !rcuDocuments.isEmpty()) {
 				List<AuditDetail> details = rcu.getAuditDetailMap().get("RCUDocumentDetails");
 				details = processingRCUDocumnets(details, rcu, "");
@@ -657,7 +657,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		}
 
 		// RCU Document Details
-		if (rcu.getRcuDocuments() != null && !rcu.getRcuDocuments().isEmpty()) {
+		if (rcu.getDocuments() != null && !rcu.getDocuments().isEmpty()) {
 			auditDetailMap.put("RCUDocumentDetails", setRCUDocumentDetailsAuditData(rcu, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("RCUDocumentDetails"));
 		}
@@ -675,11 +675,11 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
-		RCUDocument rcuDocument = new RCUDocument();
+		DocumentDetails rcuDocument = new DocumentDetails();
 		String[] fields = PennantJavaUtil.getFieldDetails(rcuDocument, rcuDocument.getExcludeFields());
 
-		for (int i = 0; i < rcu.getRcuDocuments().size(); i++) {
-			RCUDocument rcuDocumentDetails = rcu.getRcuDocuments().get(i);
+		for (int i = 0; i < rcu.getDocuments().size(); i++) {
+			DocumentDetails rcuDocumentDetails = rcu.getDocuments().get(i);
 
 			if (StringUtils.isEmpty(StringUtils.trimToEmpty(rcuDocumentDetails.getRecordType()))) {
 				continue;
@@ -813,7 +813,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	@Override
 	public void save(Verification verification, TableType tableType) {
 		setRcuFields(verification);
-		setRcuDocumentWorkFlowFields(verification.getRcuVerification());
+		setRcuDocumentWorkFlowFields(verification);
 		riskContainmentUnitDAO.save(verification.getRcuVerification(), tableType);
 	}
 
@@ -835,7 +835,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	}
 
 	private void setWorkflowFields(RiskContainmentUnit rcu) {
-		String workFlowType = ModuleUtil.getWorkflowType("LegalVerification");
+		String workFlowType = "MSTGRP1";//ModuleUtil.getWorkflowType("MSTGRP1");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workFlowType);
 		WorkflowEngine engine = new WorkflowEngine(
 				WorkFlowUtil.getWorkflow(workFlowDetails.getWorkFlowId()).getWorkFlowXml());
@@ -849,18 +849,20 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		rcu.setNextTaskId(engine.getUserTaskId(rcu.getNextRoleCode()) + ";");
 	}
 
-	private void setRcuDocumentWorkFlowFields(RiskContainmentUnit rcu) {
-		for (RCUDocument rcuDocument : rcu.getRcuDocuments()) {
-			rcuDocument.setVersion(rcu.getVersion());
-			rcuDocument.setLastMntBy(rcu.getLastMntBy());
-			rcuDocument.setLastMntOn(rcu.getLastMntOn());
-			rcuDocument.setRecordStatus(rcu.getRecordStatus());
-			rcuDocument.setRecordType(rcu.getRecordType());
-			rcuDocument.setWorkflowId(rcu.getWorkflowId());
-			rcuDocument.setRoleCode(rcu.getRoleCode());
-			rcuDocument.setNextRoleCode(rcu.getNextRoleCode());
-			rcuDocument.setTaskId(rcu.getTaskId());
-			rcuDocument.setNextTaskId(rcu.getNextTaskId());
+	private void setRcuDocumentWorkFlowFields(Verification verification) {
+		RiskContainmentUnit rcu = verification.getRcuVerification();
+		for (RCUDocument docuemnt : verification.getRcuDocuments()) {
+			docuemnt.setVerificationId(rcu.getVerificationId());
+			docuemnt.setVersion(rcu.getVersion());
+			docuemnt.setLastMntBy(rcu.getLastMntBy());
+			docuemnt.setLastMntOn(rcu.getLastMntOn());
+			docuemnt.setRecordStatus(rcu.getRecordStatus());
+			docuemnt.setRecordType(rcu.getRecordType());
+			docuemnt.setWorkflowId(rcu.getWorkflowId());
+			docuemnt.setRoleCode(rcu.getRoleCode());
+			docuemnt.setNextRoleCode(rcu.getNextRoleCode());
+			docuemnt.setTaskId(rcu.getTaskId());
+			docuemnt.setNextTaskId(rcu.getNextTaskId());
 		}
 	}
 
@@ -869,4 +871,16 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		riskContainmentUnitDAO.saveDocuments(rcuDocuments, tableType);
 
 	}
+
+	@Override
+	public void deleteDocuments(long verificationId, TableType tableType) {
+		riskContainmentUnitDAO.deleteDocuments(verificationId, tableType);
+
+	}
+
+	@Override
+	public List<RCUDocument> getDocuments(String keyReference, TableType tableType, DocumentType documentType) {
+		return riskContainmentUnitDAO.getDocuments(keyReference, tableType, documentType);
+	}
+
 }

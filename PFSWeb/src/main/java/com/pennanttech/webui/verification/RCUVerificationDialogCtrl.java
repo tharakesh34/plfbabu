@@ -1,13 +1,17 @@
 package com.pennanttech.webui.verification;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -36,8 +40,9 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
-import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -52,12 +57,16 @@ import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.Status;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
+import com.pennanttech.pennapps.pff.verification.service.RiskContainmentUnitService;
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
+import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 
 @Component(value = "rcuVerificationDialogCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -74,17 +83,22 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private Verification verification;
 	private FinanceDetail financeDetail;
-	private List<String> collateralRefList = new ArrayList<>();
 
 	private transient boolean validationOn;
 	private transient boolean initType;
 
 	@Autowired
+	private RiskContainmentUnitService riskContainmentUnitService;
+	@Autowired
 	private TechnicalVerificationService technicalVerificationService;
+	@Autowired
+	private VerificationService verificationService;
 	@Autowired
 	private SearchProcessor searchProcessor;
 
 	protected Radiogroup tv;
+	
+	private Map<String, Verification> customerDocuemnts = new LinkedHashMap<>();
 
 	/**
 	 * default constructor.<br>
@@ -105,18 +119,13 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		appendFinBasicDetails(arguments.get("finHeaderList"));
 
-		verification = (Verification) arguments.get("verification");
+		financeDetail = (FinanceDetail) arguments.get("financeDetail");
+
+		verification = financeDetail.getRcuVerification();
 
 		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
+		financeMainDialogCtrl.setRcuVerificationDialogCtrl(this);
 
-		if (arguments.containsKey("financeDetail")) {
-			this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
-			if (!financeDetail.getCollateralAssignmentList().isEmpty()) {
-				for (CollateralAssignment item : financeDetail.getCollateralAssignmentList()) {
-					collateralRefList.add(item.getCollateralRef());
-				}
-			}
-		}
 
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
@@ -129,47 +138,209 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private void doShowDialog() {
 		logger.debug(Literal.ENTERING);
-
-		financeMainDialogCtrl.setRcuVerificationDialogCtrl(this);
-
 		setScreenVerifications();
-		renderTechnicalVerificationList(verification);
-
-		this.window_RCUVerificationDialog.setHeight(this.borderLayoutHeight - 80 + "px");
-		int part = (this.borderLayoutHeight - 80) / 3;
-		this.listBoxRCUVerification.setHeight(2.5 * part + "px");
+		//this.listBoxRCUVerification.setHeight(this.borderLayoutHeight - 600 - 90 + "px");
+		this.window.setHeight(this.borderLayoutHeight - 80 + "px");
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void setScreenVerifications() {
-		Verification vrf;
-		List<RCUDocument> documents = (List<RCUDocument>) getDocuments();
-		for (RCUDocument document : documents) {
-			if (document.getDocTypeId() != DocumentType.COLLATRL.getKey()
-					|| (StringUtils.isNotBlank(document.getCollateralRef())
-							&& collateralRefList.contains(document.getCollateralRef()))) {
-				vrf = new Verification();
-				vrf.setReferenceFor(StringUtils.trimToEmpty(document.getDocumentSubId()));
-				vrf.setDocName(document.getDescription());
-				vrf.setReferenceType(document.getCode());
-				vrf.setDocType(document.getDocTypeId());
-				vrf.setReference(verification.getCif());
-				vrf.setCustId(verification.getCustId());
-				vrf.setModule(verification.getModule());
-				vrf.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
-				if (StringUtils.isNotBlank(document.getCollateralRef())) {
-					vrf.setReferenceFor(document.getCollateralRef());
-				}
-				//set RCU Required
-				if (document.isRcuReq()) {
-					vrf.setRequestType(RequestType.INITIATE.getKey());
-				} else {
-					vrf.setRequestType(RequestType.NOT_REQUIRED.getKey());
-				}
-				vrf.setRcuDocument(document);
-				this.verification.getVerifications().add(vrf);
+		if (financeDetail.getCustomerDetails().getCustomerDocumentsList() != null) {
+			setCustomerDocuments(financeDetail.getCustomerDetails().getCustomerDocumentsList());
+		}
+	}
+
+	private void setCustomerDocuments(List<CustomerDocument> customerDocuments) {	
+		customerDocuemnts.clear();
+		verification.getVerifications().clear();
+		
+		List<String> requiredDocs = getRequiredDocs();
+		
+		// Prepare the Customer Documents
+		for (CustomerDocument document : customerDocuments) {
+			if (isNotDeleted(document.getRecordType())) {
+				Verification verification = getVerification(requiredDocs, document);				
+				customerDocuemnts.put(document.getCustDocCategory(), verification);
 			}
 		}
+		
+		Map<String, Verification> oldVerifications = getOldVerifications(DocumentType.CUSTOMER);
+		for (Entry<String, Verification> entrySet : customerDocuemnts.entrySet()) {
+			Verification verification = oldVerifications.get(entrySet.getKey());
+			Verification screenVerification = entrySet.getValue();
+			if (verification != null) {
+				screenVerification.setId(verification.getId());
+				screenVerification.setRequestType(verification.getRequestType());
+				screenVerification.setAgency(verification.getAgency());
+				screenVerification.setAgencyName(verification.getAgencyName());
+				screenVerification.setReason(verification.getReason());
+				screenVerification.setRemarks(verification.getRemarks());
+				screenVerification.setReference(verification.getReference());
+				screenVerification.setNewRecord(false);
+			}
+		}
+		
+		/*
+		
+		
+		
+		
+		List<Verification> list = new ArrayList<>();
+		String reference;
+		String rucDocReference;
+		RCUDocument rcuDocument;
+
+		List<Verification> oldVerifications = getOldVerifications();
+
+		if (verification.getVerifications().isEmpty()) {
+			for (CustomerDocument document : customerDocuments) {
+				reference = document.getCustID() + StringUtils.trimToEmpty(document.getCustDocCategory());
+				Verification verification = getVerification(requiredDocs, document);
+				for (Verification item : oldVerifications) {
+					rcuDocument = item.getRcuDocument();
+					if (item.getRequestType() == RequestType.INITIATE.getKey()) {
+						rucDocReference = rcuDocument.getDocumentId()
+								+ StringUtils.trimToEmpty(rcuDocument.getDocumentSubId());
+						if (StringUtils.equals(reference, rucDocReference)) {
+							BeanUtils.copyProperties(item, verification);
+							verification.setDocName(document.getLovDescCustDocCategory());
+							verification.setReferenceType((document.getCustDocCategory()));
+							verification.setDocType(DocumentType.CUSTOMER.getKey());
+							rcuDocument.setDocCategory(document.getCustDocCategory());
+							break;
+						}
+					} else {
+						verification.setRemarks(item.getRemarks());
+						break;
+					}
+
+				}
+				
+				if(isNotDeleted(document.getRecordType())) {
+					list.add(verification);
+				}
+				
+				
+			}
+		} else {
+			boolean newItem = true;
+			for (CustomerDocument document : customerDocuments) {
+				reference = document.getCustID() + StringUtils.trimToEmpty(document.getCustDocCategory());
+				for (Verification rendered : verification.getVerifications()) {
+					rcuDocument = rendered.getRcuDocument();
+					rucDocReference = rcuDocument.getDocumentId()
+							+ StringUtils.trimToEmpty(rcuDocument.getDocumentSubId());
+					if (StringUtils.equals(reference, rucDocReference)) {
+						newItem = false;
+						break;
+					}
+				}
+
+				if (newItem && isNotDeleted(document.getRecordType())) {
+					list.add(getVerification(requiredDocs, document));
+				}
+
+				newItem = true;
+
+			}
+		}*/
+		
+		renderVerifications(customerDocuemnts.values());
+	}
+
+	private boolean isNotDeleted(String recordType) {
+		return !(PennantConstants.RECORD_TYPE_DEL.equals(recordType) || PennantConstants.RECORD_TYPE_CAN.equals(recordType));
+	}
+
+	private Verification getVerification(List<String> requiredDocs, CustomerDocument document) {
+		RCUDocument rcuDocument = new RCUDocument();
+		Verification verification = new Verification();
+
+		verification.setNewRecord(true);
+		verification.setDocName(document.getCustDocCategory().concat(" - ").concat(document.getLovDescCustDocCategory()));
+		verification.setReferenceType(DocumentType.CUSTOMER.getValue());
+		verification.setDocType(DocumentType.CUSTOMER.getKey());
+		verification.setVerificationType(this.verification.getVerificationType());
+		verification.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
+		verification.setReferenceFor(document.getCustDocCategory());
+
+		//set RCU Required
+		if (requiredDocs.contains(document.getCustDocCategory())) {
+			verification.setRequestType(RequestType.INITIATE.getKey());
+		} else {
+			verification.setRequestType(RequestType.NOT_REQUIRED.getKey());
+		}
+		
+		rcuDocument.setDocCategory(document.getCustDocCategory());
+		verification.setRcuDocument(rcuDocument);
+		return verification;
+	}
+
+	private List<Verification> compareVerifications() {/*
+														 * List<Verification> oldVerifications = getOldVerifications();
+														 * List<Verification> screenVerifications = new ArrayList<>();
+														 * screenVerifications.addAll(this.verification.getVerifications
+														 * ());
+														 * 
+														 * for (Verification screenVrf : screenVerifications) { for
+														 * (Verification oldVrf : oldVerifications) { String screenDocId
+														 * = screenVrf.getRcuDocument().getDocumentId() +
+														 * StringUtils.trimToEmpty(screenVrf.getRcuDocument().
+														 * getDocumentSubId());
+														 * 
+														 * if (oldVrf.getRequestType() == RequestType.INITIATE.getKey())
+														 * { String oldDocId =
+														 * screenVrf.getRcuDocument().getDocumentId() +
+														 * StringUtils.trimToEmpty(screenVrf.getRcuDocument().
+														 * getDocumentSubId()); if (oldDocId.equals(screenDocId)) {
+														 * oldVrf.setDocName(screenVrf.getDocName());
+														 * this.verification.getVerifications().remove(screenVrf); } }
+														 * else if (screenDocId.equals(oldVrf.getReferenceFor())) {
+														 * oldVrf.setDocName(screenVrf.getDocName());
+														 * oldVrf.setRcuDocument(screenVrf.getRcuDocument());
+														 * this.verification.getVerifications().remove(screenVrf); }
+														 * 
+														 * } } return oldVerifications;
+														 */
+		return null;
+	}
+
+	private Map<String, Verification> getOldVerifications(DocumentType documentType) {
+		Map<String, Verification> verificationMap = new HashMap<>();
+		List<Verification> list = new ArrayList<>();
+		List<Verification> verifications = verificationService.getVerifications(this.verification.getKeyReference(), VerificationType.RCU.getKey());
+		List<RCUDocument> oldDocuments = riskContainmentUnitService.getDocuments(verification.getKeyReference(), TableType.STAGE_TAB, documentType);
+
+		for (Verification verification : verifications) {
+			if (verification.getRequestType() != RequestType.INITIATE.getKey()) {
+				list.add(verification);
+			}
+		}
+
+		for (RCUDocument document : oldDocuments) {
+			for (Verification verification : verifications) {
+				if (verification.getRequestType() == RequestType.INITIATE.getKey()) {
+					if (verification.getId() == document.getVerificationId()) {
+						Verification item = new Verification();
+						BeanUtils.copyProperties(verification, item);
+						item.setRcuDocument(document);
+						list.add(item);
+					}
+				}
+			}
+		}
+				
+		for (Verification verification : list) {
+			String reference = verification.getReferenceFor();
+			if(verification.getRcuDocument() != null) {
+				reference = verification.getRcuDocument().getDocCategory();
+			}
+			
+			verificationMap.put(reference, verification);
+		}
+		
+
+		return verificationMap;
 	}
 
 	/**
@@ -332,7 +503,12 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		} else {
 			MessageUtil.showMessage("Initiation request not available in Technical Verification Module.");
 		}
+	}
 
+	public void addCustomerDocuments(List<CustomerDocument> documents) {
+		if (documents != null) {
+			setCustomerDocuments(documents);
+		}
 	}
 
 	/**
@@ -340,36 +516,32 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * 
 	 * @param customer
 	 */
-	public void renderTechnicalVerificationList(Verification verification) {
+	public void renderVerifications(Collection<Verification> verifications) {
 		logger.debug(Literal.ENTERING);
 		Listgroup group;
 		Listcell cell;
 		List<Integer> docTypes = DocumentType.getKeys();
 
-		this.verification = verification;
+		this.verification.getVerifications().clear();
+		this.verification.getVerifications().addAll(verifications);
+		
 
 		if (listBoxRCUVerification.getItems() != null) {
 			listBoxRCUVerification.getItems().clear();
 		}
 
 		int i = 0;
-		for (Verification vrf : verification.getVerifications()) {
+		DocumentType documentType;
+		for (Verification vrf : verifications) {
 			if (docTypes.contains(vrf.getDocType())) {
-
+				documentType = DocumentType.getType(vrf.getDocType());
 				// Creating list group for DocType.
 				group = new Listgroup();
-				if (vrf.getDocType() == DocumentType.CUSTOMER.getKey()) {
-					cell = new Listcell(DocumentType.getType(vrf.getDocType()).getValue() + ": "
-							+ verification.getReference() + " - " + verification.getCustomerName());
-				} else if (vrf.getDocType() == DocumentType.COLLATRL.getKey()) {
-					cell = new Listcell(
-							DocumentType.getType(vrf.getDocType()).getValue() + ": " + verification.getReferenceFor());
-				} else {
-					cell = new Listcell(
-							DocumentType.getType(vrf.getDocType()).getValue() + ": " + verification.getKeyReference());
-				}
+				cell = new Listcell(documentType.getValue());
 				cell.setStyle("font-weight:bold;");
 				group.appendChild(cell);
+				group.setAttribute("empty", "empty");
+				//listBoxRCUVerification.setInnerWidth("100%");
 				listBoxRCUVerification.appendChild(group);
 				docTypes.remove((Object) vrf.getDocType());
 			}
@@ -382,7 +554,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Listitem item = new Listitem();
 			Listcell listCell;
 			if (!initType) {
-
 				//Select
 				listCell = new Listcell();
 				listCell.setId("select".concat(String.valueOf(i)));
@@ -393,11 +564,10 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				listCell.setParent(item);
 			}
 
-			//Document Type
-			listCell = new Listcell();
-			listCell.setId("ReferenceType".concat(String.valueOf(i)));
-			listCell.appendChild(new Label(vrf.getReferenceType()));
-			listCell.setParent(item);
+			/*
+			 * //Document Type listCell = new Listcell(); listCell.setId("ReferenceType".concat(String.valueOf(i)));
+			 * listCell.appendChild(new Label(vrf.getReferenceType())); listCell.setParent(item);
+			 */
 
 			//Document Name
 			listCell = new Listcell();
@@ -552,22 +722,25 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			cell = new Listcell(DocumentType.getType(docType).getValue());
 			cell.setStyle("font-weight:bold;");
 			group.appendChild(cell);
+			group.setAttribute("empty", "empty");
 			listBoxRCUVerification.appendChild(group);
 			Listitem item = new Listitem();
 			cell = new Listcell("No Records Available");
 			cell.setSpan(20);
 			cell.setStyle("text-align:center;");
 			item.appendChild(cell);
+			item.setAttribute("empty", "empty");
 			listBoxRCUVerification.appendChild(item);
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private List<RCUDocument> getDocuments() {
-		Search search = new Search(RCUDocument.class);
-		search.addTabelName("verification_rcu_doc_view");
-		search.addFilter(new Filter("FinReference", this.verification.getKeyReference()));
+	private List<String> getRequiredDocs() {
+		Search search = new Search(String.class);
+		search.addField("doctypecode");
+		search.addTabelName("BMTDocumentTypes");
+		search.addFilter(new Filter("rcureq", true));
 
 		return searchProcessor.getResults(search);
 	}
@@ -621,13 +794,16 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	@Override
 	protected void doClearMessage() {
 		for (Listitem listitem : listBoxRCUVerification.getItems()) {
-			Combobox fivComboBox = (Combobox) getComponent(listitem, "RequestType");
+			if (listitem.getAttribute("empty") != null && listitem.getAttribute("empty").equals("empty")) {
+				continue;
+			}
+			Combobox rcuComboBox = (Combobox) getComponent(listitem, "RequestType");
 			ExtendedCombobox agencyComboBox = (ExtendedCombobox) getComponent(listitem, "Agency");
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
 			Combobox decision = (Combobox) getComponent(listitem, "Decision");
 			ExtendedCombobox reInitagencyComboBox = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 
-			fivComboBox.clearErrorMessage();
+			rcuComboBox.clearErrorMessage();
 			agencyComboBox.clearErrorMessage();
 			reasonComboBox.clearErrorMessage();
 
@@ -648,6 +824,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		setValidationOn(true);
 
 		for (Listitem listitem : listBoxRCUVerification.getItems()) {
+			if (listitem.getAttribute("empty") != null && listitem.getAttribute("empty").equals("empty")) {
+				continue;
+			}
 			Combobox rcuComboBox = (Combobox) getComponent(listitem, "RequestType");
 			ExtendedCombobox agencyComboBox = (ExtendedCombobox) getComponent(listitem, "Agency");
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
@@ -748,6 +927,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		for (Listitem listitem : listBoxRCUVerification.getItems()) {
+			if (listitem.getAttribute("empty") != null && listitem.getAttribute("empty").equals("empty")) {
+				continue;
+			}
 			try {
 				setValue(listitem, "RequestType");
 			} catch (WrongValueException we) {
@@ -794,6 +976,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		setValidationOn(false);
 		for (Listitem listitem : listBoxRCUVerification.getItems()) {
+			if (listitem.getAttribute("empty") != null && listitem.getAttribute("empty").equals("empty")) {
+				continue;
+			}
 			Combobox fivComboBox = (Combobox) getComponent(listitem, "RequestType");
 			ExtendedCombobox agencyComboBox = (ExtendedCombobox) getComponent(listitem, "Agency");
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
@@ -850,8 +1035,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public void doSave_RcuVerification(FinanceDetail financeDetail, Tab tab, boolean recSave)
-			throws InterruptedException {
+	public void doSave(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
 		logger.debug("Entering");
 
 		doClearMessage();
@@ -864,7 +1048,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		showErrorDetails(wve, tab);
-
+		List<Verification> vrfs = getVerifications();
+		verification.getVerifications().clear();
+		verification.setVerifications(vrfs);
 		this.verification.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		financeDetail.setRcuVerification(this.verification);
 
@@ -880,15 +1066,19 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (vrf.getRequestType() != RequestType.INITIATE.getKey()) {
 				verifications.add(vrf);
 			}
-			if (!map.containsKey(vrf.getAgency())) {
+			if (vrf.getAgency() != null && !map.containsKey(vrf.getAgency())) {
 				map.put(vrf.getAgency(), vrf);
 			}
 		}
 
 		for (Verification vrf : this.verification.getVerifications()) {
+			RCUDocument document = vrf.getRcuDocument();
+			document.setInitRemarks(vrf.getRemarks());
 			if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
 				verification = map.get(vrf.getAgency());
-				verification.getRcuDocuments().add(vrf.getRcuDocument());
+				verification.getRcuDocuments().add(document);
+			} else {
+				//vrf.setReferenceFor(document.getDocumentId() + StringUtils.trimToEmpty(document.getDocumentSubId()));
 			}
 		}
 		verifications.addAll(map.values());
@@ -918,4 +1108,5 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 }

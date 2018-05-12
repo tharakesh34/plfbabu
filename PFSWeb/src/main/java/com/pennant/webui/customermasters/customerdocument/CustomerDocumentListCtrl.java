@@ -42,6 +42,7 @@
  */
 package com.pennant.webui.customermasters.customerdocument;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -59,13 +60,14 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.customermasters.customerdocument.model.CustomerDocumentListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentList.zul file.
@@ -102,6 +104,7 @@ public class CustomerDocumentListCtrl extends GFCBaseListCtrl<CustomerDocument> 
 	protected Button button_CustomerDocumentList_CustomerDocumentSearchDialog;
 
 	private transient CustomerDocumentService customerDocumentService;
+	private List<DocumentDetails> verificationDocuments;
 
 	/**
 	 * default constructor.<br>
@@ -128,8 +131,8 @@ public class CustomerDocumentListCtrl extends GFCBaseListCtrl<CustomerDocument> 
 		// Set the page level components.
 		setPageComponents(window_CustomerDocumentList, borderLayout_CustomerDocumentList, listBoxCustomerDocument,
 				pagingCustomerDocumentList);
-		setItemRender(new CustomerDocumentListModelItemRenderer());
-
+		setItemRender(new CustomerDocumentListModelItemRenderer(verificationDocuments));
+		
 		// Register buttons and fields.
 		registerButton(button_CustomerDocumentList_NewCustomerDocument,
 				"button_CustomerDocumentList_NewCustomerDocument", true);
@@ -246,6 +249,8 @@ public class CustomerDocumentListCtrl extends GFCBaseListCtrl<CustomerDocument> 
 		arg.put("customerDocument", customerDocument);
 		arg.put("customerDocumentListCtrl", this);
 		arg.put("newRecord", customerDocument.isNew());
+		arg.put("verificationDocuments", verificationDocuments);
+		
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul",

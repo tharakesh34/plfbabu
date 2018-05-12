@@ -664,7 +664,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		
 		// RCU Verification Initiation
 		if (financeDetail.isRcuInitTab()) {
-			Verification verfication=new Verification();
+			Verification verfication = new Verification();
 			verfication.setVerificationType(VerificationType.RCU.getKey());
 			setVerificationData(financeDetail, verfication);
 			financeDetail.setRcuVerification(verfication);
@@ -750,6 +750,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		verification.setKeyReference(financeMain.getFinReference());
 		verification.setCustId(customer.getCustID());
 		verification.setCustomerName(customer.getCustShrtName());
+		verification.setReference(customer.getCustCIF());
 		verification.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
 	}
 
@@ -2572,38 +2573,29 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// save FI Initiation details
 			//=======================================
 			if (financeDetail.isFiInitTab()) {
-				Verification verification = financeDetail.getFiVerification();
-				verification.setKeyReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
-				verification.setVerificationType(VerificationType.FI.getKey());
 				adtVerifications.addAll(
-						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));
+						verificationService.saveOrUpdate(financeDetail, VerificationType.FI, tableType.getSuffix(), auditTranType, true));
 			}
 
 			// save FI Approval details
 			//=======================================
 			if (financeDetail.isFiApprovalTab()) {
-				Verification verification = financeDetail.getFiVerification();
-				verification.setVerificationType(VerificationType.FI.getKey());
 				adtVerifications.addAll(
-						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, false));
+						verificationService.saveOrUpdate(financeDetail, VerificationType.FI, tableType.getSuffix(), auditTranType, false));
 			}
 
 			// save TV Initiation details
 			//=======================================
 			if (financeDetail.isTvInitTab()) {
-				Verification verification = financeDetail.getTvVerification();
-				verification.setVerificationType(VerificationType.TV.getKey());
 				adtVerifications.addAll(
-						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));
+						verificationService.saveOrUpdate(financeDetail, VerificationType.TV, tableType.getSuffix(), auditTranType, true));
 			}
 
 			// save TV Approval details
 			//=======================================
 			if (financeDetail.isTvApprovalTab()) {
-				Verification verification = financeDetail.getTvVerification();
-				verification.setVerificationType(VerificationType.TV.getKey());
 				adtVerifications.addAll(
-						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, false));
+						verificationService.saveOrUpdate(financeDetail, VerificationType.TV, tableType.getSuffix(), auditTranType, false));
 			}
 			
 			// save LV Initiation details
@@ -2625,16 +2617,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				verification.setVerifications(verificationsList);
 				verificationService.setLVDetails(verification.getVerifications());
 				adtVerifications.addAll(
-						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));
+						verificationService.saveOrUpdate(financeDetail, VerificationType.LV, tableType.getSuffix(), auditTranType, true));
 			}
 			
 			// save RCU Initiation details
 			//=======================================
 			if (financeDetail.isRcuInitTab()) {
-				Verification verification = financeDetail.getRcuVerification();
-				verification.setVerificationType(VerificationType.RCU.getKey());
 				adtVerifications.addAll(
-						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));
+						verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, tableType.getSuffix(), auditTranType, true));
 			}
 						
 			// preparing audit seqno for same table(adtverifications)
