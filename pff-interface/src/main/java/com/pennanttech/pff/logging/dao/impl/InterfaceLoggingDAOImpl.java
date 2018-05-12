@@ -63,7 +63,7 @@ public class InterfaceLoggingDAOImpl implements InterfaceLoggingDAO {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		StringBuilder selectsql = new StringBuilder();
-		selectsql.append("SELECT RESPONSE  FROM INTERFACELOGDETAILS WHERE SERVICENAME = :SERVICENAME");
+		selectsql.append("SELECT REQUEST  FROM INTERFACELOGDETAILS WHERE SERVICENAME = :SERVICENAME");
 		selectsql.append(" AND STATUS = :STATUS AND REFERENCE = :REFERENCE");
 
 		paramMap.addValue("SERVICENAME", service);
