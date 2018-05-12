@@ -4612,7 +4612,7 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 	<changeSet id="74.02" author="Prasad">
 	<sql>drop view irrfeetypes_aview</sql>
 	</changeSet>
-	<changeSet id="74_Pre1" author="Jayant">
+	<changeSet id="74_Pre1" author="Jayant" dbms="postgresql">
 		<sql>
 			SELECT public.deps_save_and_drop_dependencies('plf','irrfeetypes');
 			SELECT public.deps_save_and_drop_dependencies('plf','irrfeetypes_temp');
@@ -4622,7 +4622,7 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		<modifyDataType tableName="IRRFeeTypes" columnName="feepercentage" newDataType="decimal(5,2)"/>
 		<modifyDataType tableName="IRRFeeTypes_Temp" columnName="feepercentage" newDataType="decimal(5,2)"/>
 	</changeSet>
-	<changeSet id="74_Post" author="Jayant">
+	<changeSet id="74_Post" author="Jayant" dbms="postgresql">
 		<sql>
 			SELECT public.deps_restore_dependencies('plf','irrfeetypes');
 			SELECT public.deps_restore_dependencies('plf','irrfeetypes_temp');
@@ -5024,11 +5024,23 @@ UNION ALL
 		update financedeviations set markdeleted = 0;
 	</sql>
 </changeSet>
-	<changeSet id="94" author="Srikanth">
+	<changeSet id="94" author="Srikanth" dbms="postgresql">
 		<addDefaultValue tableName="financedeviations_temp"
 			columnName="markdeleted" defaultValue="0" />
 		<addDefaultValue tableName="financedeviations"
 			columnName="markdeleted" defaultValue="0" />
+	</changeSet>
+	<changeSet id="94" author="Srikanth" dbms="oracle">
+		<addDefaultValue tableName="financedeviations_temp"
+			columnName="markdeleted" defaultValue="0" />
+		<addDefaultValue tableName="financedeviations"
+			columnName="markdeleted" defaultValue="0" />
+	</changeSet>
+	<changeSet id="94" author="Jayant" dbms="mssql">
+		<sql>
+			ALTER TABLE financedeviations_temp ADD CONSTRAINT DF_markdeleted_T DEFAULT 0 FOR markdeleted;
+			ALTER TABLE financedeviations ADD CONSTRAINT DF_markdeleted DEFAULT 0 FOR markdeleted;
+		</sql>
 	</changeSet>
 <changeSet id="95" author="Srikanth">
 <!--  Deleting the manual deviation severities as these will be moved to application static list. -->
@@ -5088,8 +5100,14 @@ insert into limitcodedetail values ((select max(limitid) + 1 from limitcodedetai
 			update AccountsHistory set OpeningBal = 0;
 		</sql>
 	</changeSet>
-	<changeSet id="100" author="Sai Krishna">
+	<changeSet id="100" author="Sai Krishna" dbms="oracle">
 		<addNotNullConstraint tableName="AccountsHistory" columnName="OpeningBal" />
+	</changeSet>
+	<changeSet id="100" author="Sai Krishna" dbms="postgresql">
+		<addNotNullConstraint tableName="AccountsHistory" columnName="OpeningBal" />
+	</changeSet>
+	<changeSet id="100" author="Sai Krishna" dbms="mssql">
+		<addNotNullConstraint tableName="AccountsHistory" columnName="OpeningBal" columnDataType="decimal(18,0)"/>
 	</changeSet>
 		<changeSet id="101" author="Jayant">
 		<createTable tableName="BMTQueryCategories">
@@ -5770,8 +5788,14 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="126" author="Vinay">
+	<changeSet id="126" author="Vinay" dbms="oracle">
 	<dropNotNullConstraint tableName="INT_DSBIMPS_REQUEST" columnName="CHANNELPARTNERID"/>
+	</changeSet>
+		<changeSet id="126" author="Vinay" dbms="postgresql">
+	<dropNotNullConstraint tableName="INT_DSBIMPS_REQUEST" columnName="CHANNELPARTNERID"/>
+	</changeSet>
+		<changeSet id="126" author="Vinay" dbms="mssql">
+	<dropNotNullConstraint tableName="INT_DSBIMPS_REQUEST" columnName="CHANNELPARTNERID" columnDataType="varchar(50)"/>
 	</changeSet>
 	
 		<changeSet id="127" author="Vinay">
@@ -5892,7 +5916,7 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 	    T8.CasteDesc, 
 	    T9.ReligionCode,
 	    T9.ReligionDesc,
-	    COALESCE(t32.roledesc, fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage
+	    COALESCE(t32.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage
 	   	FROM customers t1
 	     LEFT JOIN customerphonenumbers t2 ON t1.custid = t2.phonecustid AND t2.phonetypepriority = 5
 	     LEFT JOIN customeremails t3 ON t1.custid = t3.custid AND t3.custemailtypecode = 'OFFICE'

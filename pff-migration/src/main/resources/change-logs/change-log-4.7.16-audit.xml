@@ -11,6 +11,9 @@
 	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
 	<property name="call.auditdb" value=" " dbms="oracle" />
 	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
 	<property name="call.concatenate" value="+" dbms="mssql" />
 	<property name="call.concatenate" value="||" dbms="oracle" />
 	<property name="call.concatenate" value="||" dbms="postgresql" />
@@ -26,7 +29,9 @@
 	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
 	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
 	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
-	
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
 	
 	 <changeSet id="pre_run_for_pgp1" author="Jayant" runAlways="true"
 		dbms="postgresql">
@@ -550,14 +555,14 @@
 	<changeSet id="29" author="Durgaprasad G">
 		 <sql>
 		 	<![CDATA[ 
-			    CREATE OR REPLACE VIEW adtreasoncategory_view AS
+			    ${call.replaceView} VIEW adtreasoncategory_view AS
 			    SELECT th.auditid,
 			    th.auditdate AS auditdatetime,
-			    to_char(th.auditdate, 'DD-MON-YYYY'::text) AS auditdate,
-			    to_char(th.auditdate, 'HH24:MI:SS'::text) AS audittime,
+			    ${call.adtdate} AS auditdate,
+			    ${call.adttime} AS audittime,
 			    COALESCE(aft.auditseq, bef.auditseq) AS auditseq,
 			    th.auditusrid,
-			    (t1.usrfname::text || t1.usrmname::text) || t1.usrlname::text AS auditusername,
+			    (t1.usrfname ${call.concatenate} t1.usrmname) ${call.concatenate} t1.usrlname AS auditusername,
 			    th.audittrantype,
 			    aft.id AS aftid,
 			    aft.code AS aftcode,
@@ -565,11 +570,11 @@
 			    bef.id AS befid,
 			    bef.code AS befcode,
 			    bef.description AS befdescription
-			    FROM plfaudit.auditheader th
-			    JOIN plfaudit.secusers_view t1 ON th.auditusrid = t1.usrid
-			    LEFT JOIN plfaudit.adtreasoncategory aft ON th.auditid = aft.auditid AND th.auditdate = aft.auditdate AND aft.auditimage::text = 'A'::text
-			    FULL JOIN plfaudit.adtreasoncategory bef ON th.auditid = bef.auditid AND th.auditdate = bef.auditdate AND bef.auditimage::text = 'B'::text
-			    WHERE th.audittrantype <> 'W'::bpchar AND th.auditmodule::text = 'ReasonCategory'::text
+			    FROM auditheader th
+			    JOIN secusers_view t1 ON th.auditusrid = t1.usrid
+			    LEFT JOIN adtreasoncategory aft ON th.auditid = aft.auditid AND th.auditdate = aft.auditdate AND aft.auditimage = 'A'
+			    FULL JOIN adtreasoncategory bef ON th.auditid = bef.auditid AND th.auditdate = bef.auditdate AND bef.auditimage = 'B'
+			    WHERE th.audittrantype <> 'W' AND th.auditmodule = 'ReasonCategory'
 		 	 ]]>
 		 </sql>
     </changeSet>
@@ -577,14 +582,14 @@
 	<changeSet id="30" author="Durgaprasad G">
 		 <sql>
 		 	<![CDATA[ 
-				CREATE OR REPLACE VIEW adtreasontypes_view AS
+				CREATE  VIEW adtreasontypes_view AS
 			    SELECT th.auditid,
 			    th.auditdate AS auditdatetime,
-			    to_char(th.auditdate, 'DD-MON-YYYY'::text) AS auditdate,
-			    to_char(th.auditdate, 'HH24:MI:SS'::text) AS audittime,
+			    ${call.adtdate} AS auditdate,
+			    ${call.adttime} AS audittime,
 			    COALESCE(aft.auditseq, bef.auditseq) AS auditseq,
 			    th.auditusrid,
-			    (t1.usrfname::text || t1.usrmname::text) || t1.usrlname::text AS auditusername,
+			    (t1.usrfname ${call.concatenate} t1.usrmname) ${call.concatenate} t1.usrlname AS auditusername,
 			    th.audittrantype,
 			    aft.id AS aftid,
 			    aft.code AS aftcode,
@@ -592,17 +597,15 @@
 			    bef.id AS befid,
 			    bef.code AS befcode,
 			    bef.description AS befdescription
-			    FROM plfaudit.auditheader th
-			    JOIN plfaudit.secusers_view t1 ON th.auditusrid = t1.usrid
-			    LEFT JOIN plfaudit.adtreasontypes aft ON th.auditid = aft.auditid AND th.auditdate = aft.auditdate AND aft.auditimage::text = 'A'::text
-			    FULL JOIN plfaudit.adtreasontypes bef ON th.auditid = bef.auditid AND th.auditdate = bef.auditdate AND bef.auditimage::text = 'B'::text
-			    WHERE th.audittrantype <> 'W'::bpchar AND th.auditmodule::text = 'ReasonTypes'::text
+			    FROM auditheader th
+			    JOIN secusers_view t1 ON th.auditusrid = t1.usrid
+			    LEFT JOIN adtreasontypes aft ON th.auditid = aft.auditid AND th.auditdate = aft.auditdate AND aft.auditimage = 'A'
+			    FULL JOIN adtreasontypes bef ON th.auditid = bef.auditid AND th.auditdate = bef.auditdate AND bef.auditimage = 'B'
+			    WHERE th.audittrantype <> 'W' AND th.auditmodule = 'ReasonTypes'
 		 	 ]]>
 		 </sql>
 	</changeSet>
 	<changeSet id="31" author="Vijaykumar.l">
-	<sql>
-	 alter table adtloanpurposes alter column loanpurposeisactive TYPE smallint using  loanpurposeisactive::smallint
-	</sql>
+		<modifyDataType tableName="adtloanpurposes" columnName="loanpurposeisactive" newDataType="BOOLEAN"/>
 	</changeSet>
 	</databaseChangeLog>
