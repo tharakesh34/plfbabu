@@ -431,6 +431,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
+	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
 	protected Groupbox finBasicdetails;
 
 	public boolean validateAllDetails = true;
@@ -451,8 +452,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	String primaryIdLabel;
 	boolean primaryIdMandatory = false;
 	Map<String, Configuration> TEMPLATES = new HashMap<String, Configuration>();
-	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
-
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -4920,8 +4920,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (rcuVerificationDialogCtrl != null) {
 					rcuVerificationDialogCtrl.addCustomerDocuments(custDocumentDetails);
 				}
-				
 			}
+			
 			setCustomerDocumentDetailList(custDocumentDetails);
 		}
 		logger.debug("Leaving");
@@ -6326,6 +6326,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void setCollateralBasicDetailsCtrl(CollateralBasicDetailsCtrl collateralBasicDetailsCtrl) {
 		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
 	}
+	
+	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
+		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
+	}
 
 	public List<CustomerBankInfo> getCustomerBankInfoList() {
 		return CustomerBankInfoList;
@@ -6337,10 +6341,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
 		this.externalDocumentManager = externalDocumentManager;
-	}
-
-	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
-		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
 	}
 	
 	}
