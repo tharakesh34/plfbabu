@@ -47,20 +47,20 @@ public class FileImport {
 	public int row_NumberOfCells;
 	
 	//key fields need to map according to the responseFile format.
-	private static int						pos_BranchCode		= 6;
-	private static int						pos_AgreementNo		= 8;
-	private static int						pos_InstalmentNo	= 0;
-	private static int						pos_BFLReferenceNo	= 6;
-	private static int						pos_Batchid			= 1;
-	private static int						pos_AmountCleared	= 3;
-	private static int						pos_ClearingDate	= 4;
-	private static int						pos_Status			= 9;
-	private static int						pos_ReasonCode		= 10;
-	private static int						pos_Name			= 0;
-	private static int						pos_UMRNNo			= 2;
-	private static int						pos_AccountType		= 5;
-	private static int						pos_PaymentDue		= 7;
-	private static int						pos_FailureReasons	= 11;
+	public static int						pos_BranchCode		= 6;
+	public static int						pos_AgreementNo		= 8;
+	public static int						pos_InstalmentNo	= 0;
+	public static int						pos_BFLReferenceNo	= 6;
+	public static int						pos_Batchid			= 1;
+	public static int						pos_AmountCleared	= 3;
+	public static int						pos_ClearingDate	= 4;
+	public static int						pos_Status			= 9;
+	public static int						pos_ReasonCode		= 10;
+	public static int						pos_Name			= 0;
+	public static int						pos_UMRNNo			= 2;
+	public static int						pos_AccountType		= 5;
+	public static int						pos_PaymentDue		= 7;
+	public static int						pos_FailureReasons	= 11;
 
 	/**
 	 * Include the success records in the BatchLog, if BatchFileImport.isLogStatus() is true, default false
