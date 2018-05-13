@@ -73,7 +73,7 @@
 	   								<extendedcombobox id ="agency" />
 	   								<label id="label_FieldInvestigationList_CreatedOn" value="${c:l('label_FieldInvestigationList_CreatedOn.value')}" />
 									<listbox id="sortOperator_CreatedOn" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-	   								<datebox id ="createdOn" />
+	   								<datebox id ="createdOn" width="105px" />
 	   							</row>
 								<row>
 									<label id="label_FieldInvestigationList_RecordStatus" value="${c:l('label_FieldInvestigationList_RecordStatus.value')}" />

@@ -434,7 +434,6 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				lc = new Listcell();
 				lc.setId("VerificationType".concat(String.valueOf(i)));
 				Combobox verificationType = new Combobox();
-				verificationType.setSclass("mandatory");
 				verificationType.setDisabled(isReadOnly("RiskContainmentUnitDialog_VerificationType"));
 				verificationType.setReadonly(true);
 				verificationType.setValue(String.valueOf(document.getVerificationType()));
@@ -446,7 +445,6 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				lc = new Listcell();
 				lc.setId("Status".concat(String.valueOf(i)));
 				Combobox rcuDocStatus = new Combobox();
-				rcuDocStatus.setSclass("mandatory");
 				rcuDocStatus.setDisabled(isReadOnly("RiskContainmentUnitDialog_RCUStatus"));
 				rcuDocStatus.setReadonly(true);
 				rcuDocStatus.setValue(String.valueOf(document.getStatus()));

@@ -30,7 +30,6 @@ import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.RiskContainmentUnitDAO;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
-import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -517,11 +516,11 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		// RCU Document Details.
 		List<AuditDetail> rcuDocuments = rcu.getAuditDetailMap().get("RCUDocumentDetails");
 		if (rcuDocuments != null && !rcuDocuments.isEmpty()) {
-			LVDocument document = new LVDocument();
-			List<LVDocument> documents = new ArrayList<>();
+			RCUDocument document = new RCUDocument();
+			List<RCUDocument> documents = new ArrayList<>();
 			String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
 			for (int i = 0; i < rcuDocuments.size(); i++) {
-				document = (LVDocument) rcuDocuments.get(i).getModelData();
+				document = (RCUDocument) rcuDocuments.get(i).getModelData();
 				document.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 				documents.add(document);
 				auditList.add(

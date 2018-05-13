@@ -75,7 +75,7 @@
 	   								<extendedcombobox id ="agency" />
 	   								<label id="label_TechnicalVerificationList_CreadtedOn" value="${c:l('label_TechnicalVerificationList_CreadtedOn.value')}" />
 									<listbox id="sortOperator_CreadtedOn" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-	   								<datebox id ="CreadtedOn" />
+	   								<datebox id ="CreadtedOn" width="105px" />
 	   							</row>
 	   							
 								<row>

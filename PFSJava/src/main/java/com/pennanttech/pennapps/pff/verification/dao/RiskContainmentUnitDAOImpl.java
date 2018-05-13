@@ -24,7 +24,6 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
-import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pff.core.TableType;
@@ -98,7 +97,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from verification_rcu");
 		sql.append(tableType.getSuffix());
-		sql.append(" where id = :id ");
+		sql.append(" where verificationId = :verificationId ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
@@ -221,7 +220,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from verification_rcu_details");
 		sql.append(tableType);
-		sql.append(" where lvid = :lvid and seqno = :seqno");
+		sql.append(" where verificationId = :verificationId and seqno = :seqno");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -241,12 +240,12 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 	}
 
 	@Override
-	public void deleteRCUDocumentsList(List<LVDocument> documents, String tableType) {
+	public void deleteRCUDocumentsList(List<RCUDocument> documents, String tableType) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder deleteSql = new StringBuilder("Delete From verification_rcu_details");
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
-		deleteSql.append(" Where lvid = :lvId ");
+		deleteSql.append(" Where verificationId = :verificationId ");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(documents.toArray());
