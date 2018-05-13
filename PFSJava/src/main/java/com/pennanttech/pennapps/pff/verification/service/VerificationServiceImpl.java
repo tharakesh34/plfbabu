@@ -77,7 +77,6 @@ import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.Status;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
-import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
@@ -189,18 +188,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 			} else {
 				if (item.getDecision() == Decision.RE_INITIATE.getKey()) {
-					item.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
-					item.setCreatedBy(item.getLastMntBy());
-
+					
 					Verification reInit = new Verification();
 					reInit.setId(item.getId());
 					reInit.setLastMntOn(item.getLastMntOn());
 					reInit.setLastMntBy(item.getLastMntBy());
 
-					if (verificationType == VerificationType.FI) {
-						item.setStatus(FIStatus.SELECT.getKey());
-					}
-
+					item.setStatus(0);
+					item.setCreatedBy(item.getLastMntBy());
 					item.setVerificationDate(null);
 					item.setDecision(Decision.SELECT.getKey());
 					item.setAgency(item.getReInitAgency());
@@ -227,8 +222,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					}
 				}
 			}
-
-			auditDetails.add(new AuditDetail(auditTranType, ++i, fields[0], fields[1], item.getBefImage(), item));
+			if (item.getId() != 0) {
+				auditDetails.add(new AuditDetail(auditTranType, ++i, fields[0], fields[1], item.getBefImage(), item));
+			}
 		}
 
 		return auditDetails;

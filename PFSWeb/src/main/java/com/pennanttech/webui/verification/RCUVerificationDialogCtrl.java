@@ -64,7 +64,6 @@ import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.RiskContainmentUnitService;
-import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
@@ -90,8 +89,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	@Autowired
 	private RiskContainmentUnitService riskContainmentUnitService;
-	@Autowired
-	private TechnicalVerificationService technicalVerificationService;
 	@Autowired
 	private VerificationService verificationService;
 	@Autowired
@@ -209,7 +206,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (initType) {
 			map = getOldVerifications(documentType, TableType.STAGE_TAB);
 		} else {
-			map = getOldVerifications(documentType, TableType.TEMP_TAB);
+			map = getOldVerifications(documentType, TableType.BOTH_TAB);
 		}
 		
 		for (Entry<String, Verification> entrySet : loanDocuments.entrySet()) {
@@ -272,6 +269,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setVerificationType(this.verification.getVerificationType());
 		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 		item.setReferenceFor(document.getDocCategory());
+		item.setVerificationType(VerificationType.RCU.getKey());
 
 		// set RCU Required
 		if (requiredDocs.contains(document.getDocCategory())) {
@@ -281,6 +279,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		rcuDocument.setDocCategory(document.getDocCategory());
+		rcuDocument.setDocumentType(documentType.getKey());
 		item.setRcuDocument(rcuDocument);
 		return item;
 	}
@@ -491,8 +490,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				rcuInquiry.getChildren().clear();
 			}
 			Executions.createComponents(
-					"/WEB-INF/pages/Verification/TechnicalVerification/RiskContainmentUnitDialog.zul", rcuInquiry,
-					map);
+					"/WEB-INF/pages/Verification/TechnicalVerification/RiskContainmentUnitDialog.zul", rcuInquiry, map);
 		} else {
 			MessageUtil.showMessage("Initiation request not available in RCU Verification Module.");
 		}
@@ -570,7 +568,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				listCell = new Listcell();
 				listCell.setId("select".concat(String.valueOf(i)));
 				Radio select = new Radio();
-				select.setRadiogroup(tv);
+				select.setRadiogroup(rcuRadioGroup);
 				select.setValue(vrf.getId());
 				listCell.appendChild(select);
 				listCell.setParent(item);
@@ -670,6 +668,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 							new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
 					decisionList
 							.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
+					if(vrf.getDecision()== Decision.SELECT.getKey()){
+						vrf.setDecision(Decision.APPROVE.getKey());
+					}
 					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
 				} else if (vrf.getStatus() == Status.NOTCMPLTD.getKey()
 						|| vrf.getStatus() == Status.NEGATIVE.getKey()) {
@@ -724,24 +725,27 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		// Creating empty list groups.
-		for (int docType : docTypes) {
-			group = new Listgroup();
-			cell = new Listcell(DocumentType.getType(docType).getValue());
-			cell.setStyle("font-weight:bold;");
-			group.appendChild(cell);
-			group.setAttribute("empty", "empty");
-			listBoxRCUVerification.appendChild(group);
-			Listitem item = new Listitem();
-			cell = new Listcell("No Records Available");
-			cell.setSpan(20);
-			cell.setStyle("text-align:center;");
-			item.appendChild(cell);
-			item.setAttribute("empty", "empty");
-			listBoxRCUVerification.appendChild(item);
-		}
+	// Creating empty list groups.
+	for(
 
-		logger.debug(Literal.LEAVING);
+	int docType:docTypes)
+	{
+		group = new Listgroup();
+		cell = new Listcell(DocumentType.getType(docType).getValue());
+		cell.setStyle("font-weight:bold;");
+		group.appendChild(cell);
+		group.setAttribute("empty", "empty");
+		listBoxRCUVerification.appendChild(group);
+		Listitem item = new Listitem();
+		cell = new Listcell("No Records Available");
+		cell.setSpan(20);
+		cell.setStyle("text-align:center;");
+		item.appendChild(cell);
+		item.setAttribute("empty", "empty");
+		listBoxRCUVerification.appendChild(item);
+	}
+
+	logger.debug(Literal.LEAVING);
 	}
 
 	private List<String> getRequiredDocs() {
@@ -893,7 +897,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			break;
 		case "Decision":
 			Combobox combobox = (Combobox) getComponent(listitem, "Decision");
-			int decision = Integer.parseInt(getComboboxValue(combobox));
+			int decision = Integer.parseInt(getComboboxValue(combobox).toString());
 			verification.setDecision(decision);
 			if (!combobox.isDisabled() && decision == 0) {
 				throw new WrongValueException(combobox,

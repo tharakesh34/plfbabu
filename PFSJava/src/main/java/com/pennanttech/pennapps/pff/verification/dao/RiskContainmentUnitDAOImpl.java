@@ -409,30 +409,39 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select verificationid , seqno, documentid, documentsubid, documentrefid, documenturi,");
-		if(documentType == DocumentType.CUSTOMER) {
+		if (documentType == DocumentType.CUSTOMER) {
 			sql.append(" custdoccategory as docCategory");
 		} else {
 			sql.append(" doccategory as docCategory");
 		}
 		sql.append(" From verification_rcu_details");
-		sql.append(tableType.getSuffix());
+
+		if (tableType == TableType.BOTH_TAB) {
+			sql.append("_view");
+		} else {
+			sql.append(tableType.getSuffix());
+		}
 		sql.append(" rcu ");
-		
-		if(documentType == DocumentType.CUSTOMER) {
+
+		if (documentType == DocumentType.CUSTOMER) {
 			sql.append(" inner join customerdocuments_view doc");
 			sql.append(" on doc.custid = rcu.documentId and rcu.documentsubid = doc.custdoccategory");
 		} else {
 			sql.append(" inner join documentdetails_view doc");
 			sql.append(" on doc.docid = rcu.documentId");
 		}
-			
-		sql.append(" Where verificationId in (select verificationId from verifications where keyReference =:keyReference)");
+
+		sql.append(
+				" Where verificationId in (select verificationId from verifications where keyReference =:keyReference)");
+		
+		sql.append(" and documentType = :documentType");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("keyReference", keyReference);
+		paramSource.addValue("documentType", documentType.getKey());
 
 		RowMapper<RCUDocument> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RCUDocument.class);
 

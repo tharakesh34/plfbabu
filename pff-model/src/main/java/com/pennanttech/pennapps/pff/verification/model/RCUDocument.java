@@ -13,6 +13,7 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	private long verificationId;
 	private int seqNo;
 	private Long documentId;
+	private int documentType;
 	private String documentSubId;
 	private Long documentRefId;
 	private String documentUri;
@@ -60,7 +61,7 @@ public class RCUDocument extends AbstractWorkflowEntity {
 		excludeFields.add("docTypeId");
 		return excludeFields;
 	}
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -263,6 +264,14 @@ public class RCUDocument extends AbstractWorkflowEntity {
 
 	public void setBefImage(RCUDocument befImage) {
 		this.befImage = befImage;
+	}
+
+	public int getDocumentType() {
+		return documentType;
+	}
+
+	public void setDocumentType(int documentType) {
+		this.documentType = documentType;
 	}
 
 }

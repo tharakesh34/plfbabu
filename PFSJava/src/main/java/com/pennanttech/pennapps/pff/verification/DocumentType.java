@@ -22,7 +22,7 @@ import com.pennant.backend.model.ValueLabel;
  *
  */
 public enum DocumentType {
-	COLLATRL(1, "Collateral Documents"), LOAN(2, "Loan Documents"), CUSTOMER(3, "Customer Documents");
+	COLLATRL(1, "Collateral"), LOAN(2, "Loan"), CUSTOMER(3, "Customer");
 
 	private final Integer key;
 	private final String value;

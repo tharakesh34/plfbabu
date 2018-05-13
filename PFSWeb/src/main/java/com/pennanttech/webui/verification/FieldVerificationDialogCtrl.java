@@ -146,7 +146,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				continue;
 			}
 
-			id=id.replaceAll("\\d","");
+			id = id.replaceAll("\\d", "");
 			if (StringUtils.equals(id, listcellId)) {
 				return listcell.getFirstChild();
 			}
@@ -428,6 +428,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 							new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
 					decisionList
 							.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
+					if (vrf.getDecision() == Decision.SELECT.getKey()) {
+						vrf.setDecision(Decision.APPROVE.getKey());
+					}
 					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
 				} else if (vrf.getStatus() == Status.NOTCMPLTD.getKey()
 						|| vrf.getStatus() == Status.NEGATIVE.getKey()) {
@@ -496,7 +499,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 			}
 			if (flag) {
-			decisionList.add(decValueLabel);
+				decisionList.add(decValueLabel);
 			}
 			flag = true;
 		}
@@ -624,7 +627,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			break;
 		case "Decision":
 			Combobox combobox = (Combobox) getComponent(listitem, "Decision");
-			int decision = Integer.parseInt(getComboboxValue(combobox));
+			int decision = Integer.parseInt(getComboboxValue(combobox).toString());
 			verification.setDecision(decision);
 			if (!combobox.isDisabled() && decision == 0) {
 				throw new WrongValueException(combobox,

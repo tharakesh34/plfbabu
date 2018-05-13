@@ -55,25 +55,26 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 @Component(value = "tVerificationDialogCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
-	private static final long	serialVersionUID		= 8661799804403963415L;
-	private static final Logger	logger					= LogManager.getLogger(TVerificationDialogCtrl.class);
+	private static final long serialVersionUID = 8661799804403963415L;
+	private static final Logger logger = LogManager.getLogger(TVerificationDialogCtrl.class);
 
-	protected Window			window_TVerificationDialog;
-	protected Groupbox			finBasicdetails;
-	protected Listbox			listBoxTechnicalVerification;
-	protected Groupbox			tvInquiry;
+	protected Window window_TVerificationDialog;
+	protected Groupbox finBasicdetails;
+	protected Listbox listBoxTechnicalVerification;
+	protected Groupbox tvInquiry;
 
-	private FinBasicDetailsCtrl	finBasicDetailsCtrl;
-	private FinanceMainBaseCtrl	financeMainDialogCtrl	= null;
-	private Verification		verification;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
+	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
+	private Verification verification;
 
-	private transient boolean	validationOn;
-	private transient boolean	initType;
-	
+	private transient boolean validationOn;
+	private transient boolean initType;
+
 	@Autowired
 	private TechnicalVerificationService technicalVerificationService;
 
 	protected Radiogroup tv;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -144,7 +145,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (id == null) {
 				continue;
 			}
-			id=id.replaceAll("\\d","");
+			id = id.replaceAll("\\d", "");
 			if (StringUtils.equals(id, listcellId)) {
 				return listcell.getFirstChild();
 			}
@@ -224,7 +225,6 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	
 	public void onChangeReInitAgency(ForwardEvent event) throws Exception {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox agency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
@@ -240,7 +240,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 	}
-	
+
 	public void onChangeDecision(ForwardEvent event) throws Exception {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox reInitAgency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
@@ -254,7 +254,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			throw new WrongValueException(decisionBox,
 					Labels.getLabel("STATIC_INVALID", new String[] { value + " is not valid," }));
 		}
-		
+
 		if (decision.getKey() == Decision.RE_INITIATE.getKey()) {
 			reInitAgency.setReadonly(false);
 		} else {
@@ -265,7 +265,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	public void onCheck$tv(Event event) {
 		final HashMap<String, Object> map = new HashMap<>();
-		TechnicalVerification technicalVerification = technicalVerificationService.getTechnicalVerification(tv.getSelectedItem().getValue());
+		TechnicalVerification technicalVerification = technicalVerificationService
+				.getTechnicalVerification(tv.getSelectedItem().getValue());
 		if (technicalVerification != null) {
 			map.put("LOAN_ORG", true);
 			map.put("technicalVerification", technicalVerification);
@@ -305,11 +306,11 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Listitem item = new Listitem();
 			Listcell listCell;
 			if (!initType) {
-				
+
 				//Select
 				listCell = new Listcell();
 				listCell.setId("select".concat(String.valueOf(i)));
-				Radio select=new Radio();
+				Radio select = new Radio();
 				select.setRadiogroup(tv);
 				select.setValue(vrf.getId());
 				listCell.appendChild(select);
@@ -413,7 +414,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
-				
+
 				List<ValueLabel> decisionList = new ArrayList<>();
 				if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()
 						|| vrf.getStatus() == Status.POSITIVE.getKey()) {
@@ -421,6 +422,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 							new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
 					decisionList
 							.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
+					if (vrf.getDecision() == Decision.SELECT.getKey()) {
+						vrf.setDecision(Decision.APPROVE.getKey());
+					}
 					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
 				} else if (vrf.getStatus() == Status.NOTCMPLTD.getKey()
 						|| vrf.getStatus() == Status.NEGATIVE.getKey()) {
@@ -437,7 +441,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 				decision.setParent(listCell);
 				listCell.setParent(item);
-				
+
 				//Re-Initiation Agency
 				listCell = new Listcell();
 				listCell.setId("ReInitAgency".concat(String.valueOf(i)));
@@ -505,7 +509,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		Filter agencyFilter[] = new Filter[1];
 		agencyFilter[0] = new Filter("DealerType", Agencies.TVAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -541,7 +545,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (decision != null) {
 				decision.clearErrorMessage();
 			}
-			if(reInitagencyComboBox !=null){
+			if (reInitagencyComboBox != null) {
 				reInitagencyComboBox.clearErrorMessage();
 			}
 		}
@@ -561,8 +565,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			ExtendedCombobox reInitAgencyComboBox = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 
 			if (!tvComboBox.isDisabled()) {
-				tvComboBox.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_TechnicalVerificationDialog_TV.value"), null, true));
+				tvComboBox.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_TechnicalVerificationDialog_TV.value"), null, true));
 			}
 
 			if (!agencyComboBox.isReadonly()) {
@@ -574,7 +578,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				reasonComboBox.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_TechnicalVerificationDialog_Reason.value"), null, true, true));
 			}
-			
+
 			if (!initType && !reInitAgencyComboBox.isReadonly()) {
 				reInitAgencyComboBox.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_TechnicalVerificationDialog_Agency.value"), null, true, true));
@@ -618,7 +622,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			break;
 		case "Decision":
 			Combobox combobox = (Combobox) getComponent(listitem, "Decision");
-			int decision = Integer.parseInt(getComboboxValue(combobox));
+			int decision = Integer.parseInt(getComboboxValue(combobox).toString());
 			verification.setDecision(decision);
 			if (!combobox.isDisabled() && decision == 0) {
 				throw new WrongValueException(combobox,
@@ -724,7 +728,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 
 	}
-	
+
 	private void fillComboBox(Combobox combobox, int value, List<ValueLabel> list) {
 		combobox.getChildren().clear();
 		for (ValueLabel valueLabel : list) {
