@@ -904,7 +904,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private VehicleDealerService                            vehicleDealerService;
 	
 	@Autowired
-	private FieldInvestigationService						fieldInvestigationService;
+	private FieldInvestigationService fieldInvestigationService;
 	@Autowired
 	TechnicalVerificationService technicalVerificationService;
 	@Autowired
@@ -912,7 +912,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
 	private String isCreditRevTabReq = SysParamUtil.getValueAsString(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ);
 	private List<String> assignCollateralRef = new ArrayList<>();
-	private List<DocumentDetails> verificationDocuments = new ArrayList<>();
 	
 	/**
 	 * default constructor.<br>
@@ -16419,6 +16418,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setCollateralHeaderDialogCtrl(CollateralHeaderDialogCtrl collateralHeaderDialogCtrl) {
 		this.collateralHeaderDialogCtrl = collateralHeaderDialogCtrl;
+		this.collateralHeaderDialogCtrl.setRcuVerificationDialogCtrl(rcuVerificationDialogCtrl);
 	}
 
 	public Label getLabel_FinanceMainDialog_TDSApplicable() {

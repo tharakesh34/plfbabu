@@ -81,6 +81,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/CollateralHeaderDialog.zul file.
@@ -109,7 +110,8 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 	private Component 						parent = null;
 
-	private Object 							financeMainDialogCtrl = null;
+	private FinanceMainBaseCtrl financeMainDialogCtrl;
+	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
 	private String 							roleCode = "";
 	private String 							finType = "";
 	private BigDecimal 						totalValue = BigDecimal.ZERO;
@@ -187,7 +189,8 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 			
 			if (arguments.containsKey("financeMainDialogCtrl")) {
-				this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
+				this.financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
+				financeMainDialogCtrl.setCollateralHeaderDialogCtrl(this);
 			}
 
 			if (arguments.containsKey("roleCode")) {
@@ -639,6 +642,11 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		ruleMap.put("Collaterals_Total_Assigned ", totAssignedColValue);
 		ruleMap.put("Collaterals_Total_UN_Assigned", balanceAssignedValue);
 		//### 10-05-2018 End  Development Item 82
+		
+		if (rcuVerificationDialogCtrl != null) {
+			rcuVerificationDialogCtrl.addCollateralDocuments(collateralAssignments);
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -782,7 +790,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
-	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
+	public void setFinanceMainDialogCtrl(FinanceMainBaseCtrl financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
 
@@ -833,4 +841,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
 	}
 
+	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
+		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
+	}
 }

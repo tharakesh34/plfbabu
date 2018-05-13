@@ -36,12 +36,15 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
+import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
@@ -52,7 +55,6 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
-import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
@@ -86,18 +88,20 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private transient boolean validationOn;
 	private transient boolean initType;
-
-	@Autowired
-	private RiskContainmentUnitService riskContainmentUnitService;
-	@Autowired
-	private VerificationService verificationService;
-	@Autowired
 	private SearchProcessor searchProcessor;
 	protected Radiogroup rcuRadioGroup;
 	
 	
 	Map<String, Verification> customerDocuments = new LinkedHashMap<>();
-	Map<String, Verification> loanDocuments = new LinkedHashMap<>();	
+	Map<String, Verification> loanDocuments = new LinkedHashMap<>();
+	Map<String, Verification> collateralDocuments = new LinkedHashMap<>();	
+	
+	@Autowired
+	private RiskContainmentUnitService riskContainmentUnitService;
+	@Autowired
+	private VerificationService verificationService;
+	@Autowired
+	private DocumentDetailsDAO documentDetailsDAO;
 
 	/**
 	 * default constructor.<br>
@@ -150,6 +154,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		
 		List<CustomerDocument> customerDocumentList = financeDetail.getCustomerDetails().getCustomerDocumentsList();
 		List<DocumentDetails> loanDocumentList = financeDetail.getDocumentDetailsList();
+		List<CollateralAssignment> collaterls = financeDetail.getCollateralAssignmentList();
 		
 		
 		if (customerDocumentList != null) {
@@ -158,6 +163,10 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		
 		if (loanDocumentList != null) {
 			setDocumentDetails(loanDocumentList, requiredDocs, DocumentType.LOAN);
+		}
+		
+		if (collaterls != null) {
+			setDocumentDetails(getCollateralDocuments(collaterls), requiredDocs, DocumentType.LOAN);
 		}
 		
 		renderVerifications();
@@ -189,18 +198,25 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 	
-	private void setDocumentDetails(List<DocumentDetails> documents, List<String> requiredDocs,  DocumentType documentType) {	
+	private void setDocumentDetails(List<DocumentDetails> documents, List<String> requiredDocs,
+			DocumentType documentType) {
+
+		Map<String, Verification> documentMap;
+
+		if (documentType == DocumentType.LOAN) {
+			documentMap = loanDocuments;
+		} else {
+			documentMap = collateralDocuments;
+		}
+
 		// Prepare the Customer Documents
 		for (DocumentDetails document : documents) {
-			if(DocumentCategories.CUSTOMER.getKey().equals(document.getCategoryCode())) {
-				continue;
-			}
 			if (isNotDeleted(document.getRecordType())) {
 				Verification object = getVerification(requiredDocs, document, documentType);
-				loanDocuments.put(document.getDocCategory(), object);
+				documentMap.put(document.getDocCategory(), object);
 			}
 		}
-		
+
 		// Set the old verification fields back.
 		Map<String, Verification> map;
 		if (initType) {
@@ -208,14 +224,14 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		} else {
 			map = getOldVerifications(documentType, TableType.BOTH_TAB);
 		}
-		
-		for (Entry<String, Verification> entrySet : loanDocuments.entrySet()) {
+
+		for (Entry<String, Verification> entrySet : documentMap.entrySet()) {
 			Verification current = map.get(entrySet.getKey());
 			Verification previous = entrySet.getValue();
 			if (current != null) {
 				setOldVerificationFields(current, previous);
 			}
-		}	
+		}
 	}
 
 	private void setOldVerificationFields(Verification previous, Verification current) {
@@ -510,6 +526,28 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			List<String> requiredDocs = getRequiredDocs();
 			setDocumentDetails(documents, requiredDocs, DocumentType.LOAN);
 		}
+	}
+	
+	public void addCollateralDocuments(List<CollateralAssignment> collaterals) {
+		if (collaterals != null) {
+			List<String> requiredDocs = getRequiredDocs();
+			setDocumentDetails(getCollateralDocuments(collaterals), requiredDocs, DocumentType.COLLATRL);
+		}
+	}
+
+	private List<DocumentDetails> getCollateralDocuments(List<CollateralAssignment> collaterals) {
+		List<DocumentDetails> documents = new ArrayList<>();
+
+		for (CollateralAssignment collateral : collaterals) {
+			List<DocumentDetails> list = documentDetailsDAO.getDocumentDetailsByRef(collateral.getCollateralRef(),
+					CollateralConstants.MODULE_NAME, "", "_AView");
+
+			if (list != null) {
+				documents.addAll(list);
+			}
+		}
+
+		return documents;
 	}
 
 	/**
