@@ -104,5 +104,6 @@
 <include file="change-logs/change-log-verification-fi.xml" />
 	<!-- <include file="change-logs/change-log-verification-tv.xml" /> -->
 	<include file="change-logs/change-log-verification-lv.xml" />
+	<include file="change-logs/change-log-verification-rcu.xml" />
 	
 </databaseChangeLog>
