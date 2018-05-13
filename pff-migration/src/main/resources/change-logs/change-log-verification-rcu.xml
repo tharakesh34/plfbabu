@@ -360,12 +360,10 @@
 				c.custId, 
 				c.custcif, 
 				c.custshrtname as custname,
-				cs.collateralType,
 				a.dealerName agencyName
 			from verification_rcu_temp rcu
 			inner join verifications v on v.id = rcu.verificationId
 			inner join customers c on c.custCif = v.reference
-			inner join collateralsetup cs on cs.collateralref = v.referenceFor
 			left join reasons_aview r1 on r1.id = rcu.reason
 			left join amtvehicledealer a on a.dealerid = v.agency
 			union all 
@@ -398,12 +396,10 @@
 				c.custId, 
 				c.custcif, 
 				c.custshrtname as custname,
-				cs.collateralType,
 				a.dealerName agencyName
 			from verification_rcu rcu
 			inner join verifications v on v.id = rcu.verificationId
 			inner join customers c on c.custCif = v.reference
-			inner join collateralsetup cs on cs.collateralref = v.referenceFor
 			left join reasons_aview r1 on r1.id = rcu.reason
 			left join amtvehicledealer a on a.dealerid = v.agency
 			 where not (exists ( select 1 from verification_rcu_temp where verification_rcu_temp.verificationId = rcu.verificationId))
