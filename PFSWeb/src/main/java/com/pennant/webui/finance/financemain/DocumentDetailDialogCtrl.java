@@ -48,6 +48,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -94,6 +95,7 @@ import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
+import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/ScheduleDetailDialog.zul file.
@@ -106,22 +108,24 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_documentDetailDialog; // autoWired
-	protected Borderlayout borderlayoutDocumentDetail; // autoWired
+	protected Window window_documentDetailDialog;
+	protected Borderlayout borderlayoutDocumentDetail;
 
-	protected Button btnNew_DocumentDetails; // autoWired
-	protected Listbox listBoxDocumentDetails; // autoWired
+	protected Button btnNew_DocumentDetails;
+	protected Listbox listBoxDocumentDetails;
 	protected Map<String, DocumentDetails> docDetailMap = null;
-	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+	private List<DocumentDetails> documentDetailsList = new ArrayList<>();
 	private transient FinanceDetailService financeDetailService = null;
 	private transient CustomerDocumentService customerDocumentService = null;
 	private ExternalDocumentManager externalDocumentManager = null;
 
-	private Object financeMainDialogCtrl = null;
+	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
+	
 	private FinanceDetail financeDetail = null;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
+	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
 	protected Groupbox finBasicdetails;
 
 	private boolean headerNotrequired = false;
@@ -176,7 +180,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				setRole((String) arguments.get("roleCode"));
 			}
 			if (arguments.containsKey("financeMainDialogCtrl")) {
-				this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
+				this.financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
+				financeMainDialogCtrl.setDocumentDetailDialogCtrl(this);
 			}
 			if (arguments.containsKey("headerNotrequired")) {
 				headerNotrequired = true;
@@ -411,11 +416,11 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public void doFillDocumentDetails(List<DocumentDetails> documentDetails) {
 		logger.debug("Entering");
 
-		docDetailMap = new HashMap<String, DocumentDetails>();
+		docDetailMap = new HashMap<>();
 		this.listBoxDocumentDetails.getItems().clear();
 		setDocumentDetailsList(documentDetails);
 		ArrayList<ValueLabel> documentTypes = PennantAppUtil.getDocumentTypes();
-		List<DocumentDetails> sortdocumentDetails = new ArrayList<DocumentDetails>();
+		List<DocumentDetails> sortdocumentDetails = new ArrayList<>();
 		sortdocumentDetails.addAll(sortDocumentDetails(documentDetails));
 
 		for (DocumentDetails documentDetail : sortdocumentDetails) {
@@ -436,6 +441,19 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			}
 			docDetailMap.put(documentDetail.getDocCategory(), documentDetail);
 		}
+		
+		if (rcuVerificationDialogCtrl != null) {
+			List<DocumentDetails> loandocuments = new ArrayList<>();
+
+			for (Entry<String, DocumentDetails> entrySet : docDetailMap.entrySet()) {
+				if (!(DocumentCategories.CUSTOMER.getKey().equals(entrySet.getValue().getCategoryCode()))) {
+					loandocuments.add(entrySet.getValue());
+				}
+			}
+
+			rcuVerificationDialogCtrl.addLoanDocuments(loandocuments);
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -753,7 +771,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		return financeMainDialogCtrl;
 	}
 
-	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
+	public void setFinanceMainDialogCtrl(FinanceMainBaseCtrl financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
 
@@ -811,6 +829,10 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	public void setCollateralBasicDetailsCtrl(CollateralBasicDetailsCtrl collateralBasicDetailsCtrl) {
 		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
+	}
+	
+	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
+		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
 	}
 
 	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {

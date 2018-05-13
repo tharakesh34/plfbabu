@@ -15841,6 +15841,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setDocumentDetailDialogCtrl(DocumentDetailDialogCtrl documentDetailDialogCtrl) {
 		this.documentDetailDialogCtrl = documentDetailDialogCtrl;
+		this.documentDetailDialogCtrl.setRcuVerificationDialogCtrl(rcuVerificationDialogCtrl);
 	}
 
 	public AccountingDetailDialogCtrl getAccountingDetailDialogCtrl() {
@@ -16660,13 +16661,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.lVerificationCtrl = lVerificationCtrl;
 	}
 
-	public RCUVerificationDialogCtrl getRcuVerificationDialogCtrl() {
+	public RCUVerificationDialogCtrl getRcuVerificationDialogCtrl() {	
 		return rcuVerificationDialogCtrl;
 	}
 
 	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
 		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
-		customerDialogCtrl.setRcuVerificationDialogCtrl(rcuVerificationDialogCtrl);
+		this.customerDialogCtrl.setRcuVerificationDialogCtrl(rcuVerificationDialogCtrl);
 	}
 
 	/**
