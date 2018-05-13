@@ -635,9 +635,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			break;
 		case "ReInitRemarks":
 			Textbox textbox = (Textbox) getComponent(listitem, "ReInitRemarks");
-			verification.setReInitRemarks(textbox.getValue());
+			verification.setDecisionRemarks(textbox.getValue());
 			if (verification.getDecision() == Decision.OVERRIDE.getKey()
-					&& StringUtils.isEmpty(verification.getReInitRemarks())) {
+					&& StringUtils.isEmpty(verification.getDecisionRemarks())) {
 				throw new WrongValueException(textbox, "Remarks is mandatory");
 			}
 			break;
