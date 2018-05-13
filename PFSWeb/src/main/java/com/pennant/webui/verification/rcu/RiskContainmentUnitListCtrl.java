@@ -111,7 +111,7 @@ public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainment
 
 		registerButton(button_RiskContainmentUnitList_RiskContainmentUnitSearch);
 
-		registerField("id");
+		registerField("verificationId");
 		registerField("cif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
 		registerField("keyReference", listheader_LoanReference, SortOrder.ASC, loanReference,
 				sortOperator_LoanReference, Operators.STRING);
@@ -211,17 +211,11 @@ public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainment
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxRiskContainmentUnit.getSelectedItem();
-		final long id = (long) selectedItem.getAttribute("id");
-		final long documentId = (long) selectedItem.getAttribute("documentId");
-		final String documentSubId = (String) selectedItem.getAttribute("documentSubId");
 		final long verificationId = (long) selectedItem.getAttribute("verificationId");
 		
 		RiskContainmentUnit rcu=new RiskContainmentUnit();
 		
-		rcu.setId(id);
-		rcu.setDocumentId(documentId);
-		rcu.setDocumentSubId(documentSubId);
-		rcu.setVerificationId(verificationId);
+		rcu.setId(verificationId);
 	    rcu = riskContainmentUnitService.getRiskContainmentUnit(rcu);
 
 		if (rcu == null) {
@@ -230,7 +224,7 @@ public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainment
 		}
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  Id = ");
+		whereCond.append("  AND  verificationId = ");
 		whereCond.append(rcu.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(rcu.getVersion());
