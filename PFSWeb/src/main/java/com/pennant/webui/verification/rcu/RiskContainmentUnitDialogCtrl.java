@@ -36,7 +36,9 @@ import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.North;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.South;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -114,7 +116,10 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	protected Combobox recommendations;
 	protected ExtendedCombobox reason;
 	protected Textbox remarks;
-	
+
+	protected North north;
+	protected South south;
+
 	private RiskContainmentUnit riskContainmentUnit;
 	protected Map<String, DocumentDetails> docDetailMap = null;
 	private List<DocumentDetails> documentDetailsList = new ArrayList<>();
@@ -128,6 +133,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	@Autowired
 	private transient CustomerDetailsService customerDetailsService;
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
+
+	private boolean fromLoanOrg;
 
 	/**
 	 * default constructor.<br>
@@ -172,6 +179,11 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
 
+			if (arguments.get("LOAN_ORG") != null) {
+				fromLoanOrg = true;
+				enqiryModule = true;
+			}
+
 			// Store the before image.
 			RiskContainmentUnit rcu = new RiskContainmentUnit();
 			BeanUtils.copyProperties(this.riskContainmentUnit, rcu);
@@ -184,6 +196,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
+			} else if (fromLoanOrg) {
+				setWorkFlowEnabled(true);
 			}
 
 			doSetFieldProperties();
@@ -485,7 +499,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 						pagesSampled.setDisabled(true);
 					}
 				}
-				
+
 				item.setAttribute("data", document);
 				this.listBoxRiskContainmentUnitDocuments.appendChild(item);
 			}
@@ -848,7 +862,18 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			this.btnNotes.setVisible(false);
 		}
 
+		if (fromLoanOrg) {
+			north.setVisible(false);
+			south.setVisible(false);
+		}
+
 		doWriteBeanToComponents(rcu);
+
+		if (!fromLoanOrg) {
+			setDialog(DialogType.EMBEDDED);
+		} else {
+			window_RiskContainmentUnitDialog.setHeight("100%");
+		}
 
 		logger.debug(Literal.LEAVING);
 	}

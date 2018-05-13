@@ -60,7 +60,7 @@ import com.pennanttech.pennapps.pff.verification.Status;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
-import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
+import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.RiskContainmentUnitService;
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
@@ -96,7 +96,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	@Autowired
 	private SearchProcessor searchProcessor;
 
-	protected Radiogroup tv;
+	protected Radiogroup rcuRadioGroup;
 
 	private Map<String, Verification> customerDocuemnts = new LinkedHashMap<>();
 
@@ -402,21 +402,21 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onCheck$tv(Event event) {
+	public void onCheck$rcuRadioGroup(Event event) {
 		final HashMap<String, Object> map = new HashMap<>();
-		TechnicalVerification technicalVerification = technicalVerificationService
-				.getTechnicalVerification(tv.getSelectedItem().getValue());
-		if (technicalVerification != null) {
+		RiskContainmentUnit riskContainmentUnit = riskContainmentUnitService
+				.getRiskContainmentUnit(rcuRadioGroup.getSelectedItem().getValue());
+		if (riskContainmentUnit != null) {
 			map.put("LOAN_ORG", true);
-			map.put("technicalVerification", technicalVerification);
+			map.put("riskContainmentUnit", riskContainmentUnit);
 			if (rcuInquiry.getChildren() != null) {
 				rcuInquiry.getChildren().clear();
 			}
 			Executions.createComponents(
-					"/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationDialog.zul", rcuInquiry,
+					"/WEB-INF/pages/Verification/TechnicalVerification/RiskContainmentUnitDialog.zul", rcuInquiry,
 					map);
 		} else {
-			MessageUtil.showMessage("Initiation request not available in Technical Verification Module.");
+			MessageUtil.showMessage("Initiation request not available in RCU Verification Module.");
 		}
 	}
 
