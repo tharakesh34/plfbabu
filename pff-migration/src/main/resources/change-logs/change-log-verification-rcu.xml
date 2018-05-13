@@ -149,7 +149,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="2.1" author="durgaprasad.g" dbms="oracle">
+	<changeSet id="2.1" author="durgaprasad.g">
 		<createTable tableName="verification_rcu_temp">
 			<column name="VerificationID" type="bigint">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_temp_rcu_vrfid"/>
@@ -176,7 +176,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="2.2" author="durgaprasad.g" dbms="oracle">
+	<changeSet id="2.2" author="durgaprasad.g">
 		<createTable tableName="verification_rcu_stage">
 			<column name="VerificationID" type="bigint">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verifica_stage_rcu_vrfid"/>
@@ -203,7 +203,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="2.3" author="durgaprasad.g" dbms="oracle">
+	<changeSet id="2.3" author="durgaprasad.g">
 		<createTable tableName="verification_rcu_details">
 			<column name="VerificationID" type="bigint">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det"/>
@@ -214,6 +214,9 @@
 			<column name="DocumentId" type="bigint">
 				<constraints nullable="false" />
 			</column>
+			<column name="DocumentType" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="DocumentRefId" type="bigint"/>
 			<column name="DocumentUri" type="varchar(2000)"/>
@@ -239,7 +242,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="2.4" author="durgaprasad.g" dbms="oracle">
+	<changeSet id="2.4" author="durgaprasad.g">
 		<createTable tableName="verification_rcu_details_temp">
 			<column name="VerificationID" type="bigint" >
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det_t"/>
@@ -250,6 +253,9 @@
 			<column name="DocumentId" type="bigint">
 				<constraints nullable="false" />
 			</column>
+			<column name="DocumentType" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="DocumentRefId" type="bigint"/>
 			<column name="DocumentUri" type="varchar(2000)"/>
@@ -275,7 +281,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="2.5" author="durgaprasad.g" dbms="oracle">
+	<changeSet id="2.5" author="durgaprasad.g">
 		<createTable tableName="verification_rcu_details_stage">
 			<column name="VerificationID" type="bigint">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det_s"/>
@@ -286,166 +292,7 @@
 			<column name="DocumentId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="DocumentSubId" type="varchar(50)"/>
-			<column name="DocumentRefId" type="bigint"/>
-			<column name="DocumentUri" type="varchar(2000)"/>
-			<column name="VerificationType" type="int" defaultValue="0"/>
-			<column name="Status" type="int" defaultValue="0"/>
-			<column name="PagesEyeballed" type="int" defaultValue="0"/>
-			<column name="PagesSampled" type="int" defaultValue="0"/>
-			<column name="InitRemarks" type="varchar(500)" />
-			<column name="AgentRemarks" type="varchar(500)" />
-			<column name="DecisionRemarks" type="varchar(500)" />
-	
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>
-	</changeSet>
-	<changeSet id="2.1" author="durgaprasad.g" dbms="postgresql">
-		<createTable tableName="verification_rcu_temp">
-			<column name="VerificationID" type="bigint">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_temp_rcu_vrfid"/>
-			</column>
-			<column name="VerificationFormName" type="varchar(30)"/>
-			<column name="AgentCode" type="varchar(20)" />
-			<column name="AgentName" type="varchar(50)" />
-			<column name="Status" type="int" defaultValue="0"/>
-			<column name="Reason" type="bigint" />
-			<column name="Remarks" type="varchar(500)" />
-			<column name="VerificationDate" type="datetime" />
-	
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>
-	</changeSet>
-	<changeSet id="2.2" author="durgaprasad.g" dbms="postgresql">
-		<createTable tableName="verification_rcu_stage">
-			<column name="VerificationID" type="bigint">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verifica_stage_rcu_vrfid"/>
-			</column>
-			<column name="VerificationFormName" type="varchar(30)"/>
-			<column name="AgentCode" type="varchar(20)" />
-			<column name="AgentName" type="varchar(50)" />
-			<column name="Status" type="int" defaultValue="0"/>
-			<column name="Reason" type="bigint" />
-			<column name="Remarks" type="varchar(500)" />
-			<column name="VerificationDate" type="datetime" />
-	
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>
-	</changeSet>
-	<changeSet id="2.3" author="durgaprasad.g" dbms="postgresql">
-		<createTable tableName="verification_rcu_details">
-			<column name="VerificationID" type="bigint">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det"/>
-			</column>
-			<column name="Seqno" type="int">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det"/>
-			</column>
-			<column name="DocumentId" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="DocumentSubId" type="varchar(50)"/>
-			<column name="DocumentRefId" type="bigint"/>
-			<column name="DocumentUri" type="varchar(2000)"/>
-			<column name="VerificationType" type="int" defaultValue="0"/>
-			<column name="Status" type="int" defaultValue="0"/>
-			<column name="PagesEyeballed" type="int" defaultValue="0"/>
-			<column name="PagesSampled" type="int" defaultValue="0"/>
-			<column name="InitRemarks" type="varchar(500)" />
-			<column name="AgentRemarks" type="varchar(500)" />
-			<column name="DecisionRemarks" type="varchar(500)" />
-			
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>
-	</changeSet>
-	<changeSet id="2.4" author="durgaprasad.g" dbms="postgresql">
-		<createTable tableName="verification_rcu_details_temp">
-			<column name="VerificationID" type="bigint" >
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det_t"/>
-			</column>
-			<column name="Seqno" type="int">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det_t"/>
-			</column>
-			<column name="DocumentId" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="DocumentSubId" type="varchar(50)"/>
-			<column name="DocumentRefId" type="bigint"/>
-			<column name="DocumentUri" type="varchar(2000)"/>
-			<column name="VerificationType" type="int" defaultValue="0"/>
-			<column name="Status" type="int" defaultValue="0"/>
-			<column name="PagesEyeballed" type="int" defaultValue="0"/>
-			<column name="PagesSampled" type="int" defaultValue="0"/>
-			<column name="InitRemarks" type="varchar(500)" />
-			<column name="AgentRemarks" type="varchar(500)" />
-			<column name="DecisionRemarks" type="varchar(500)" />
-			
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>
-	</changeSet>
-	<changeSet id="2.5" author="durgaprasad.g" dbms="postgresql">
-		<createTable tableName="verification_rcu_details_stage">
-			<column name="VerificationID" type="bigint">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det_s"/>
-			</column>
-			<column name="Seqno" type="int">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det_s"/>
-			</column>
-			<column name="DocumentId" type="bigint">
+			<column name="DocumentType" type="int" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 			<column name="DocumentSubId" type="varchar(50)"/>
@@ -472,185 +319,6 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
-	</changeSet>
-	<changeSet id="2.1" author="durgaprasad.g" dbms="mssql">
-		<createTable tableName="verification_rcu_temp">
-			<column name="VerificationID" type="bigint">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_temp_rcu_vrfid"/>
-			</column>
-			<column name="VerificationFormName" type="varchar(30)"/>
-			<column name="AgentCode" type="varchar(20)" />
-			<column name="AgentName" type="varchar(50)" />
-			<column name="Status" type="int"/>
-			<column name="Reason" type="bigint" />
-			<column name="Remarks" type="varchar(500)" />
-			<column name="VerificationDate" type="datetime" />
-	
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>
-	</changeSet>
-	<changeSet id="2.2" author="durgaprasad.g" dbms="mssql">
-		<createTable tableName="verification_rcu_stage">
-			<column name="VerificationID" type="bigint">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verifica_stage_rcu_vrfid"/>
-			</column>
-			<column name="VerificationFormName" type="varchar(30)"/>
-			<column name="AgentCode" type="varchar(20)" />
-			<column name="AgentName" type="varchar(50)" />
-			<column name="Status" type="int"/>
-			<column name="Reason" type="bigint" />
-			<column name="Remarks" type="varchar(500)" />
-			<column name="VerificationDate" type="datetime" />
-	
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>
-	</changeSet>
-	<changeSet id="2.3" author="durgaprasad.g" dbms="mssql">
-		<createTable tableName="verification_rcu_details">
-			<column name="VerificationID" type="bigint">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det"/>
-			</column>
-			<column name="Seqno" type="int">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det"/>
-			</column>
-			<column name="DocumentId" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="DocumentSubId" type="varchar(50)"/>
-			<column name="DocumentRefId" type="bigint"/>
-			<column name="DocumentUri" type="varchar(2000)"/>
-			<column name="VerificationType" type="int"/>
-			<column name="Status" type="int"/>
-			<column name="PagesEyeballed" type="int"/>
-			<column name="PagesSampled" type="int"/>
-			<column name="InitRemarks" type="varchar(500)" />
-			<column name="AgentRemarks" type="varchar(500)" />
-			<column name="DecisionRemarks" type="varchar(500)" />
-			
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>
-	</changeSet>
-	<changeSet id="2.4" author="durgaprasad.g" dbms="mssql">
-		<createTable tableName="verification_rcu_details_temp">
-			<column name="VerificationID" type="bigint" >
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det_t"/>
-			</column>
-			<column name="Seqno" type="int">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det_t"/>
-			</column>
-			<column name="DocumentId" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="DocumentSubId" type="varchar(50)"/>
-			<column name="DocumentRefId" type="bigint"/>
-			<column name="DocumentUri" type="varchar(2000)"/>
-			<column name="VerificationType" type="int"/>
-			<column name="Status" type="int"/>
-			<column name="PagesEyeballed" type="int"/>
-			<column name="PagesSampled" type="int"/>
-			<column name="InitRemarks" type="varchar(500)" />
-			<column name="AgentRemarks" type="varchar(500)" />
-			<column name="DecisionRemarks" type="varchar(500)" />
-			
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>
-	</changeSet>
-	<changeSet id="2.5" author="durgaprasad.g" dbms="mssql">
-		<createTable tableName="verification_rcu_details_stage">
-			<column name="VerificationID" type="bigint">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det_s"/>
-			</column>
-			<column name="Seqno" type="int">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_rcu_det_s"/>
-			</column>
-			<column name="DocumentId" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="DocumentSubId" type="varchar(50)"/>
-			<column name="DocumentRefId" type="bigint"/>
-			<column name="DocumentUri" type="varchar(2000)"/>
-			<column name="VerificationType" type="int"/>
-			<column name="Status" type="int"/>
-			<column name="PagesEyeballed" type="int"/>
-			<column name="PagesSampled" type="int"/>
-			<column name="InitRemarks" type="varchar(500)" />
-			<column name="AgentRemarks" type="varchar(500)" />
-			<column name="DecisionRemarks" type="varchar(500)" />
-	
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>
-	</changeSet>
-	<changeSet id="DF_Post" author="Jayant" dbms="mssql">
-		<sql>
-			alter table verification_rcu_temp add constraint df_status_t default 0 for status;
-			alter table verification_rcu_stage add constraint df_status_st default 0 for status;
-			alter table verification_rcu_details add constraint df_status_dt default 0 for status;
-			alter table verification_rcu_details_temp add constraint df_status_dt_t default 0 for status;
-			alter table verification_rcu_details_stage add constraint df_status_dt_st default 0 for status;
-			alter table verification_rcu_details add constraint df_VerificationType default 0 for VerificationType;
-			alter table verification_rcu_details add constraint df_PagesEyeballed default 0 for PagesEyeballed;
-			alter table verification_rcu_details add constraint df_PagesSampled default 0 for PagesSampled;
-			alter table verification_rcu_details_temp add constraint df_VerificationType_t default 0 for VerificationType;
-			alter table verification_rcu_details_temp add constraint df_PagesEyeballed_t default 0 for PagesEyeballed;
-			alter table verification_rcu_details_stage add constraint df_PagesSampled_t default 0 for PagesSampled;
-			alter table verification_rcu_details_stage add constraint df_VerificationType_st default 0 for VerificationType;
-			alter table verification_rcu_details_stage add constraint df_PagesEyeballed_st default 0 for PagesEyeballed;
-		</sql>	
 	</changeSet>
  	<changeSet id="2.6" author="durgaprasad.g">
 		<addForeignKeyConstraint constraintName="fk_verf_rcu_vrfid" baseTableName="verification_rcu" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
@@ -754,6 +422,7 @@
 			dt.doctypecode code,
 			dt.doctypedesc description,
 			rcud.documentid,
+			rcud.documenttype,
 			doc.docRefId,  
 			rcud.DocumentSubId,
 			rcud.documentRefId,
@@ -788,6 +457,7 @@
 			dt.doctypecode code,
 			dt.doctypedesc description, 
 			rcud.documentid,
+			rcud.documenttype,
 			doc.docRefId, 
 			rcud.DocumentSubId,
 			rcud.documentRefId,
@@ -825,7 +495,8 @@
 			custdoccategory docName,
 			dt.doctypecode code,
 			dt.doctypedesc description, 
-			rcud.documentid, 
+			rcud.documentid,
+			rcud.documenttype,
 			doc.docRefId,
 			rcud.DocumentSubId, 
 			rcud.documentRefId,
@@ -859,7 +530,8 @@
 			custdoccategory docName, 
 			dt.doctypecode code,
 			dt.doctypedesc description,
-			rcud.documentid, 
+			rcud.documentid,
+			rcud.documenttype,
 			doc.docRefId,
 			rcud.DocumentSubId, 
 			rcud.documentRefId,
@@ -881,7 +553,7 @@
             rcud.nexttaskid,
             rcud.recordtype,
             rcud.workflowid  
-			from verification_rcu_details_temp rcud
+			from verification_rcu_details rcud
 			inner join customerdocuments_view doc on doc.custid = rcud.documentid and doc.custdoccategory = rcud.DocumentSubId
 			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
 			WHERE NOT (EXISTS ( SELECT 1

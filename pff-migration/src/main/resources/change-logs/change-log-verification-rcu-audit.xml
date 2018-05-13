@@ -82,6 +82,7 @@
 			<column name="VerificationID" type="bigint"/>
 			<column name="seqno" type="int"/>
 			<column name="DocumentId" type="bigint"/>
+			<column name="DocumentType" type="int"/>
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="DocumentRefId" type="bigint"/>
 			<column name="DocumentUri" type="varchar(2000)"/>
