@@ -47,7 +47,7 @@
 									sort="false" />
 								<listheader
 									id="listheader_RCUVerification_LastStatus"
-									label="${c:l('listheader_RCUVerification_LastStatus.label')}"
+									label="${c:l('listheader_RCUVerification_Status.label')}"
 									sort="false" />
 								<listheader
 									id="listheader_RCUVerification_LastVrfDate"

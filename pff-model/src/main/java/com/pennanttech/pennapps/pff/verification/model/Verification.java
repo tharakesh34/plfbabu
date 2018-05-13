@@ -71,7 +71,6 @@ public class Verification extends AbstractWorkflowEntity {
 	private List<CustomerDetails> customerDetailsList = new ArrayList<>();
 	private boolean newRecord = false;
 	private Long reInitAgency;
-	private String reInitRemarks;
 	private List<CollateralSetup> collateralSetupList = new ArrayList<>();
 	private TechnicalVerification technicalVerification;
 	private LegalVerification legalVerification;
@@ -97,7 +96,6 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("applicant");
 		excludeFields.add("coApplicant");
 		excludeFields.add("reInitAgency");
-		excludeFields.add("reInitRemarks");
 		excludeFields.add("technicalVerification");
 		excludeFields.add("lvDocuments");
 		excludeFields.add("legalVerification");
@@ -373,14 +371,6 @@ public class Verification extends AbstractWorkflowEntity {
 
 	public void setReInitAgency(Long reInitAgency) {
 		this.reInitAgency = reInitAgency;
-	}
-
-	public String getReInitRemarks() {
-		return reInitRemarks;
-	}
-
-	public void setReInitRemarks(String reInitRemarks) {
-		this.reInitRemarks = reInitRemarks;
 	}
 
 	public List<CollateralSetup> getCollateralSetupList() {

@@ -6254,7 +6254,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuInitTab, recSave);
 		}
 		
-		// TV Approval Verification Detail
+		// RCU Approval Verification Detail
 		Tab rcuApprovalTab = getTab(AssetConstants.UNIQUE_ID_RCUAPPROVAL);
 		if ((rcuApprovalTab != null && rcuApprovalTab.isVisible()) && rcuVerificationDialogCtrl != null) {
 			rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuApprovalTab, recSave);

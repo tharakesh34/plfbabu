@@ -103,15 +103,15 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	@Autowired
 	private RiskContainmentUnitService riskContainmentUnitService;
 
-	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType, String tableType, String auditTranType,
-			boolean isInitTab) {
+	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType,
+			String tableType, String auditTranType, boolean isInitTab) {
 		logger.debug(Literal.ENTERING);
 
 		List<Long> idList = null;
 		List<CustomerDetails> customerDetailsList = null;
 		List<CollateralSetup> collateralSetupList = null;
 		Verification verification = null;
-		
+
 		if (verificationType == VerificationType.FI) {
 			verification = financeDetail.getFiVerification();
 			customerDetailsList = verification.getCustomerDetailsList();
@@ -134,10 +134,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 		String[] fields = PennantJavaUtil.getFieldDetails(verification, verification.getExcludeFields());
 
-		
-
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		
+
 		WorkflowEngine engine = new WorkflowEngine(
 				WorkFlowUtil.getWorkflow(verification.getWorkflowId()).getWorkFlowXml());
 		int i = 0;
@@ -206,7 +204,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					item.setVerificationDate(null);
 					item.setDecision(Decision.SELECT.getKey());
 					item.setAgency(item.getReInitAgency());
-					item.setRemarks(item.getReInitRemarks());
+					item.setRemarks(item.getDecisionRemarks());
 					item.setRequestType(RequestType.INITIATE.getKey());
 					item.setReason(null);
 					verificationDAO.save(item, TableType.MAIN_TAB);
@@ -224,7 +222,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 						saveRCU(financeDetail, item);
 					}
 				} else {
-					verificationDAO.update(item, TableType.MAIN_TAB);
+					if (item.getId() != 0) {
+						verificationDAO.update(item, TableType.MAIN_TAB);
+					}
 				}
 			}
 
@@ -328,7 +328,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private void saveRCU(FinanceDetail financeDetail, Verification item) {
 		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
 			saveRCUInStage(financeDetail, item);
-			
+
 			riskContainmentUnitService.save(item, TableType.TEMP_TAB);
 			riskContainmentUnitService.saveDocuments(item.getRcuDocuments(), TableType.TEMP_TAB);
 		}
@@ -598,7 +598,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	public Long getVerificationIdByReferenceFor(String finReference, String referenceFor, int verificationType) {
 		return verificationDAO.getVerificationIdByReferenceFor(finReference, referenceFor, verificationType);
 	}
-	
+
 	private void setVerificationData(FinanceDetail financeDetail, Verification verification,
 			VerificationType verificationType) {
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -609,7 +609,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		verification.setCustId(customer.getCustID());
 		verification.setCustomerName(customer.getCustShrtName());
 		verification.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
-		
+
 		if (verificationType == VerificationType.FI) {
 			if (verification.getReference() != null) {
 				verification.setReference(customer.getCustCIF());
@@ -619,18 +619,18 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		} else if (verificationType == VerificationType.LV) {
 
 		} else if (verificationType == VerificationType.TV) {
-			
+
 		} else if (verificationType == VerificationType.RCU) {
 			if (verification.getReference() == null) {
 				verification.setReference(customer.getCustCIF());
 			}
-			
+
 			if (verification.getRequestType() != RequestType.INITIATE.getKey()) {
 				//verification.getRcuDocument();
 				//verification.setReference(customer.getCustCIF());
 			}
-			
+
 		}
-		
+
 	}
 }
