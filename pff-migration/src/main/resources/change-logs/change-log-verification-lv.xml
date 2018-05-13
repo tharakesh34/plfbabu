@@ -2299,5 +2299,72 @@
 			) t
 		</createView>
 	</changeSet>
+	<changeSet id="13" author="lakshmi.n">
+	   <sql> 
+			<![CDATA[ 
+			Delete from SecRoleGroups where roleid in(Select roleid from secroles where rolecd in('MSTGRP1_MAKER','MSTGRP1_APPROVER')) and grpid in(Select grpid from secgroups where grpcode IN('RiskContainmentUnit_MAKER','RiskContainmentUnit_APPROVER'));
+			Delete from Secgrouprights where grpid in(Select grpid from secgroups where grpcode IN('RiskContainmentUnit_MAKER','RiskContainmentUnit_APPROVER')) and rightid in(Select rightid from SecRights where Page IN('RiskContainmentUnitDialog','RiskContainmentUnitList'));
+			Delete from Secgrouprights where grpid in(Select grpid from secgroups where grpcode IN('RiskContainmentUnit_MAKER','RiskContainmentUnit_APPROVER')) and rightid in(Select rightid from SecRights where RightName = 'menuItem_Verification_RiskContainmentUnit_Enquiry');
+			Delete from Secgrouprights where grpid in(Select grpid from secgroups where grpcode IN('RiskContainmentUnit_MAKER','RiskContainmentUnit_APPROVER')) and rightid in(Select rightid from SecRights where RightName = 'menuItem_Verification_RiskContainmentUnit');
+			Delete from SecGroups where GrpCode IN('RiskContainmentUnit_MAKER','RiskContainmentUnit_APPROVER');
+			Delete from SecRights where page IN('RiskContainmentUnitDialog','RiskContainmentUnitList');
+			Delete from SecRights where RightName = 'menuItem_Verification_RiskContainmentUnit';
+			Delete from SecRights where RightName = 'menuItem_Verification_RiskContainmentUnit_Enquiry';
+			
+			INSERT INTO SecRights VALUES ((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Verification_RiskContainmentUnit', 'MENU',  1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecRights VALUES ((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Verification_RiskContainmentUnit_Enquiry', 'MENU',  1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_RiskContainmentUnitList_btnNew', 'RiskContainmentUnitList', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_RiskContainmentUnitDialog_btnEdit', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_RiskContainmentUnitDialog_btnDelete', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_RiskContainmentUnitDialog_btnSave', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_VerificationType', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_RCUStatus', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_PagesEyeBalled', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_PagesSampled', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_Remarks', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_VerificationDate', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_AgentCode', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_AgentName', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_Recommendations', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_Reason', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_SummaryRemarks', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_Documents', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_RiskContainmentUnitExtFields', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			
+			Insert Into secGroups values((Select MAX(GrpID)+1 From secGroups),'RiskContainmentUnit_MAKER','WF Maker for  RiskContainmentUnit',0 ,1000,current_timestamp,'Approved','','','','','',0);
+			Insert Into secGroups values((Select MAX(GrpID)+1 From secGroups),'RiskContainmentUnit_APPROVER','WF Approver for RiskContainmentUnit',0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='menuItem_Verification_RiskContainmentUnit'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='menuItem_Verification_RiskContainmentUnit_Enquiry'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='button_RiskContainmentUnitDialog_btnEdit'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='button_RiskContainmentUnitDialog_btnDelete'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='button_RiskContainmentUnitDialog_btnSave'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_VerificationType'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_RCUStatus'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_PagesEyeBalled'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_PagesSampled'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_Remarks'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_VerificationDate'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_AgentCode'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_AgentName'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_Recommendations'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_Reason'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_SummaryRemarks'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_Documents'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_RiskContainmentUnitExtFields'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_APPROVER'),(select RightId from secRights where RightName='menuItem_Verification_RiskContainmentUnit'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_APPROVER'),(select RightId from secRights where RightName='menuItem_Verification_RiskContainmentUnit_Enquiry'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_APPROVER'),(select RightId from secRights where RightName='button_RiskContainmentUnitDialog_btnSave'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='RiskContainmentUnit_MAKER'),(select RoleID from secRoles where RoleCd='MSTGRP1_MAKER'),0,1000,current_timestamp,'Approved','','','','','',0);
+			Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='RiskContainmentUnit_APPROVER'),(select RoleID from secRoles where RoleCd='MSTGRP1_APPROVER'),0,1000,current_timestamp,'Approved','','','','','',0);
+			
+			delete from REPORTLIST Where Code = 'RiskContainmentUnit'; 
+			INSERT INTO REPORTLIST Values ('RiskContainmentUnit','RiskContainmentUnit','listheader_CIF.label,listheader_LoanReference.label,listheader_Agency.label,listheader_CreatedOn.label', 'cif,keyReference,agencyName,createdOn','String,String,String,Date',' ','ReportList04','Risk Containment Unit','Risk Containment Unit'
+			,0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0)
+			]]>
+		</sql> 
+	</changeSet>
 </databaseChangeLog>
  
