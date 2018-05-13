@@ -1557,6 +1557,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//RCU Initiation Tab
 		appendRCUInitiationTab(onLoad);
+		
+		//RCU Approval Tab
+		appendRCUApprovalTab(onLoad);
 				
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
 
@@ -6249,6 +6252,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		Tab rcuInitTab = getTab(AssetConstants.UNIQUE_ID_RCUINITIATION);
 		if ((rcuInitTab != null && rcuInitTab.isVisible()) && rcuVerificationDialogCtrl != null) {
 			rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuInitTab, recSave);
+		}
+		
+		// TV Approval Verification Detail
+		Tab rcuApprovalTab = getTab(AssetConstants.UNIQUE_ID_RCUAPPROVAL);
+		if ((rcuApprovalTab != null && rcuApprovalTab.isVisible()) && rcuVerificationDialogCtrl != null) {
+			rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuApprovalTab, recSave);
+			for (Verification verification : aFinanceDetail.getRcuVerification().getVerifications()) {
+				if (verification.getDecision() == Decision.RE_INITIATE.getKey()
+						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)) {
+					MessageUtil
+							.showError("RCU Verification Re-Initiation is allowed only when user action is save");
+					return;
+				}
+			}
 		}
 		
 		//Validation For Mandatory Recommendation
@@ -16956,6 +16973,34 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("financeDetail", financeDetail);
 			map.put("InitType", true);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUInitiation.zul", getTabpanel(AssetConstants.UNIQUE_ID_RCUINITIATION), map);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	/**
+	 * Method for Rendering RCU Approval Data in finance
+	 */
+	protected void appendRCUApprovalTab(boolean onLoadProcess) {
+		logger.debug(Literal.ENTERING);
+		boolean createTab = false;
+		if (!getFinanceDetail().isRcuApprovalTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_RCUAPPROVAL) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_RCUAPPROVAL, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_RCUAPPROVAL);
+		}
+		if (getFinanceDetail().isRcuApprovalTab() && !onLoadProcess) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			map.put("financeMainBaseCtrl", this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("financeDetail", financeDetail);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUApproval.zul", getTabpanel(AssetConstants.UNIQUE_ID_RCUAPPROVAL), map);
 		}
 		logger.debug(Literal.LEAVING);
 	}

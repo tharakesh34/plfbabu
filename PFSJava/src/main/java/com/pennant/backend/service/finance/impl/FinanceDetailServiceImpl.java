@@ -669,6 +669,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			setVerificationData(financeDetail, verfication);
 			financeDetail.setRcuVerification(verfication);
 		}
+		
+		// RCU Verification Approval
+		if (financeDetail.isRcuApprovalTab()) {
+			Verification verfication = new Verification();
+			verfication.setVerificationType(VerificationType.RCU.getKey());
+			setVerificationData(financeDetail, verfication);
+			financeDetail.setRcuVerification(verfication);
+		}
+		
 		logger.debug("Leaving");
 		return financeDetail;
 	}
@@ -2564,7 +2573,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			
 			// RCU Verification details
-			if (financeDetail.isRcuInitTab() /* || financeDetail.isLvApprovalTab() */) {
+			if (financeDetail.isRcuInitTab() || financeDetail.isRcuApprovalTab()) {
 				setVerificationWorkflowDetails(financeDetail.getRcuVerification(), financeMain);
 			}
 						
@@ -2625,6 +2634,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.isRcuInitTab()) {
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, tableType.getSuffix(), auditTranType, true));
+			}
+			
+			// save RCU Approval details
+			//=======================================
+			if (financeDetail.isRcuApprovalTab()) {
+				adtVerifications.addAll(
+						verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, tableType.getSuffix(), auditTranType, false));
 			}
 						
 			// preparing audit seqno for same table(adtverifications)

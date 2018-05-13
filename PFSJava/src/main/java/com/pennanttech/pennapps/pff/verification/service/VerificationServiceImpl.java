@@ -137,6 +137,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
+		
 		WorkflowEngine engine = new WorkflowEngine(
 				WorkFlowUtil.getWorkflow(verification.getWorkflowId()).getWorkFlowXml());
 		int i = 0;
