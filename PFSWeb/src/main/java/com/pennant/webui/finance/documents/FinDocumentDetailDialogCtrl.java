@@ -863,7 +863,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 		
 		if (VerificationType.FI.getValue().equals(moduleName) || VerificationType.TV.getValue().equals(moduleName)
-				|| VerificationType.LV.getValue().equals(moduleName)) {
+				|| VerificationType.LV.getValue().equals(moduleName) || VerificationType.RCU.getValue().equals(moduleName)) {
 			this.btnDelete.setVisible(isEditable);
 			this.btnSave.setVisible(isEditable);
 			this.documnetName.setDisabled(true);

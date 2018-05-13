@@ -11,8 +11,10 @@ import com.pennanttech.pff.core.TableType;
 
 public interface RiskContainmentUnitDAO extends BasicCrudDao<RiskContainmentUnit> {
 
-	RiskContainmentUnit getRiskContainmentUnit(long id, long documetId, String documentSubId, String type);
-
+	RiskContainmentUnit getRiskContainmentUnit(long verificationId, String type);
+	
+	List<RCUDocument> getRCUDocuments(long id, String type);
+	
 	void saveDocuments(RCUDocument rcuDocument, String tableType);
 
 	void updateDocuments(RCUDocument rcuDocument, String tableType);

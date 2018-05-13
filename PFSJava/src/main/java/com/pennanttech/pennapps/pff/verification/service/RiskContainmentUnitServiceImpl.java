@@ -18,11 +18,8 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
-import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
-import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
-import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -57,9 +54,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	@Autowired
 	private CustomerDocumentDAO customerDocumentDAO;
 	private DocumentDetailValidation documentValidation;
-	@Autowired
-	private ExtendedFieldDetailsService extendedFieldDetailsService;
-
+	
 	public RiskContainmentUnitServiceImpl() {
 		super();
 	}
@@ -91,19 +86,6 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			riskContainmentUnitDAO.update(rcu, tableType);
 		}
 
-		// Extended field Details
-		if (rcu.getExtendedFieldRender() != null) {
-			List<AuditDetail> details = rcu.getAuditDetailMap().get("ExtendedFieldDetails");
-			StringBuilder tableName = new StringBuilder();
-			tableName.append(CollateralConstants.VERIFICATION_MODULE);
-			tableName.append("_");
-			tableName.append(rcu.getExtendedFieldHeader().getSubModuleName());
-			tableName.append("_ED");
-			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details, tableName.toString(),
-					tableType.getSuffix());
-			auditDetails.addAll(details);
-		}
-
 		// Documents
 		if (rcu.getDocuments() != null && !rcu.getDocuments().isEmpty()) {
 			List<AuditDetail> details = rcu.getAuditDetailMap().get("DocumentDetails");
@@ -111,8 +93,8 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			auditDetails.addAll(details);
 		}
 
-		// LV Documents
-		if (rcu.getDocuments() != null && !rcu.getDocuments().isEmpty()) {
+		// RCU Documents
+		if (rcu.getRcuDocuments() != null && !rcu.getRcuDocuments().isEmpty()) {
 			List<AuditDetail> details = rcu.getAuditDetailMap().get("RCUDocumentDetails");
 			details = processingRCUDocumnets(details, rcu, tableType.getSuffix());
 			auditDetails.addAll(details);
@@ -342,10 +324,15 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 
 	@Override
 	public RiskContainmentUnit getRiskContainmentUnit(RiskContainmentUnit rcu) {
-		RiskContainmentUnit riskContainmentUnit = riskContainmentUnitDAO.getRiskContainmentUnit(rcu.getId(),
-				rcu.getDocumentId(), rcu.getDocumentSubId(), "_View");
+		RiskContainmentUnit riskContainmentUnit = riskContainmentUnitDAO.getRiskContainmentUnit(rcu.getVerificationId(),
+				"_View");
 		if (riskContainmentUnit != null) {
-			// FI Document Details
+
+			// RCU Document Details
+			List<RCUDocument> rcuDocuments = riskContainmentUnitDAO.getRCUDocuments(rcu.getVerificationId(), "_View");
+			riskContainmentUnit.setRcuDocuments(rcuDocuments);
+
+			// Document Details
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
 					String.valueOf(rcu.getVerificationId()), VerificationType.RCU.getCode(), "", "_View");
 			if (riskContainmentUnit.getDocuments() != null && !riskContainmentUnit.getDocuments().isEmpty()) {
@@ -359,8 +346,8 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	}
 
 	@Override
-	public RiskContainmentUnit getApprovedRiskContainmentUnit(long id, long documnetId, String documnetSubId) {
-		return riskContainmentUnitDAO.getRiskContainmentUnit(id, documnetId, documnetSubId, "");
+	public RiskContainmentUnit getApprovedRiskContainmentUnit(long verificationId) {
+		return riskContainmentUnitDAO.getRiskContainmentUnit(verificationId, "");
 	}
 
 	@Override
@@ -406,8 +393,8 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		BeanUtils.copyProperties((RiskContainmentUnit) auditHeader.getAuditDetail().getModelData(), rcu);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(rcu.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(riskContainmentUnitDAO.getRiskContainmentUnit(rcu.getId(),
-					rcu.getDocumentId(), rcu.getDocumentSubId(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(riskContainmentUnitDAO.getRiskContainmentUnit(rcu.getVerificationId(), ""));
 		}
 
 		if (rcu.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -433,22 +420,6 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 				verificationDAO.updateVerifiaction(rcu.getId(), rcu.getVerificationDate(), rcu.getStatus());
 			}
 
-			// Extended field Details
-			if (rcu.getExtendedFieldRender() != null) {
-				List<AuditDetail> details = rcu.getAuditDetailMap().get("ExtendedFieldDetails");
-
-				// Table Name
-				StringBuilder tableName = new StringBuilder();
-				tableName.append(CollateralConstants.VERIFICATION_MODULE);
-				tableName.append("_");
-				tableName.append(rcu.getExtendedFieldHeader().getSubModuleName());
-				tableName.append("_ed");
-
-				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details, tableName.toString(),
-						TableType.MAIN_TAB.getSuffix());
-				auditDetails.addAll(details);
-			}
-
 			// Document Details
 			List<DocumentDetails> documentsList = rcu.getDocuments();
 			if (documentsList != null && documentsList.size() > 0) {
@@ -458,7 +429,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			}
 
 			// RCU Document Details
-			List<DocumentDetails> rcuDocuments = rcu.getDocuments();
+			List<RCUDocument> rcuDocuments = rcu.getRcuDocuments();
 			if (rcuDocuments != null && !rcuDocuments.isEmpty()) {
 				List<AuditDetail> details = rcu.getAuditDetailMap().get("RCUDocumentDetails");
 				details = processingRCUDocumnets(details, rcu, "");
@@ -527,20 +498,6 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 
 		List<AuditDetail> auditList = new ArrayList<>();
 
-		// Extended field Render Details.
-		List<AuditDetail> extendedDetails = rcu.getAuditDetailMap().get("ExtendedFieldDetails");
-		if (extendedDetails != null && !extendedDetails.isEmpty()) {
-			// Table Name
-			StringBuilder tableName = new StringBuilder();
-			tableName.append(CollateralConstants.VERIFICATION_MODULE);
-			tableName.append("_");
-			tableName.append(rcu.getExtendedFieldHeader().getSubModuleName());
-			tableName.append("_ED");
-			auditList.addAll(extendedFieldDetailsService.delete(rcu.getExtendedFieldHeader(),
-					String.valueOf(rcu.getVerificationId()), tableName.toString(), tableType, auditTranType,
-					extendedDetails));
-		}
-
 		// Document Details.
 		List<AuditDetail> documentDetails = rcu.getAuditDetailMap().get("DocumentDetails");
 		if (documentDetails != null && documentDetails.size() > 0) {
@@ -589,21 +546,6 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		RiskContainmentUnit rcu = (RiskContainmentUnit) auditDetail.getModelData();
 		String usrLanguage = rcu.getUserDetails().getLanguage();
 
-		// Extended field details Validation
-		if (rcu.getExtendedFieldRender() != null) {
-			List<AuditDetail> details = rcu.getAuditDetailMap().get("ExtendedFieldDetails");
-			ExtendedFieldHeader extHeader = rcu.getExtendedFieldHeader();
-
-			StringBuilder tableName = new StringBuilder();
-			tableName.append(CollateralConstants.VERIFICATION_MODULE);
-			tableName.append("_");
-			tableName.append(extHeader.getSubModuleName());
-			tableName.append("_ED");
-
-			details = extendedFieldDetailsService.vaildateDetails(details, method, usrLanguage, tableName.toString());
-			auditDetails.addAll(details);
-		}
-
 		// Document details Validation
 		List<DocumentDetails> docuemnts = rcu.getDocuments();
 		if (docuemnts != null && !docuemnts.isEmpty()) {
@@ -643,13 +585,6 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			}
 		}
 
-		// Extended Field Details
-		if (rcu.getExtendedFieldRender() != null) {
-			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(rcu.getExtendedFieldRender(), auditTranType, method));
-			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
-		}
-
 		// Document Details
 		if (rcu.getDocuments() != null && rcu.getDocuments().size() > 0) {
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(rcu, auditTranType, method));
@@ -657,7 +592,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		}
 
 		// RCU Document Details
-		if (rcu.getDocuments() != null && !rcu.getDocuments().isEmpty()) {
+		if (rcu.getRcuDocuments() != null && !rcu.getRcuDocuments().isEmpty()) {
 			auditDetailMap.put("RCUDocumentDetails", setRCUDocumentDetailsAuditData(rcu, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("RCUDocumentDetails"));
 		}
@@ -675,11 +610,11 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
-		DocumentDetails rcuDocument = new DocumentDetails();
+		RCUDocument rcuDocument = new RCUDocument();
 		String[] fields = PennantJavaUtil.getFieldDetails(rcuDocument, rcuDocument.getExcludeFields());
 
-		for (int i = 0; i < rcu.getDocuments().size(); i++) {
-			DocumentDetails rcuDocumentDetails = rcu.getDocuments().get(i);
+		for (int i = 0; i < rcu.getRcuDocuments().size(); i++) {
+			RCUDocument rcuDocumentDetails = rcu.getRcuDocuments().get(i);
 
 			if (StringUtils.isEmpty(StringUtils.trimToEmpty(rcuDocumentDetails.getRecordType()))) {
 				continue;

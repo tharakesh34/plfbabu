@@ -561,7 +561,8 @@
 		zulNavigation="/WEB-INF/pages/Verification/LegalVerification/LegalVerificationList.zul"
 		rightName="menuItem_Verification_LegalVerification" /> 	
 		<menuItem id="menu_Item_RiskContainmentUnit"
-			zulNavigation="/WEB-INF/pages/Verification/RiskContainmentUnit/RiskContainmentUnitList.zul" /> 	
+			zulNavigation="/WEB-INF/pages/Verification/RiskContainmentUnit/RiskContainmentUnitList.zul" 
+		    rightName="menuItem_Verification_RiskContainmentUnit" /> 	
 	</menu>
 
 	<!-- Loan Management -->
@@ -883,6 +884,9 @@
 			<menuItem id="menu_Item_LegalVerification_Enquiry"
 				zulNavigation="/WEB-INF/pages/Verification/LegalVerification/LegalVerificationList.zul?module=ENQ"
 				rightName="menuItem_Verification_LegalVerification_Enquiry" />
+			<menuItem id="menu_Item_RiskContainmentUnit_Enquiry"
+				zulNavigation="/WEB-INF/pages/Verification/RiskContainmentUnit/RiskContainmentUnitList.zul?module=ENQ"
+				rightName="menuItem_Verification_RiskContainmentUnit_Enquiry" /> 
 		</menu>
 		<menu id="menu_Category_BulkProcessingEnquiry">
 			<menuItem id="menu_Item_PresentmentHeaderEnquiry"

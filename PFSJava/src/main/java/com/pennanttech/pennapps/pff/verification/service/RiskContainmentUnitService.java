@@ -16,8 +16,8 @@ public interface RiskContainmentUnitService {
 
 	RiskContainmentUnit getRiskContainmentUnit(RiskContainmentUnit rcu);
 
-	RiskContainmentUnit getApprovedRiskContainmentUnit(long id, long documetId, String documentSubId);
-
+	RiskContainmentUnit getApprovedRiskContainmentUnit(long verificationId);
+	
 	AuditHeader delete(AuditHeader auditHeader);
 
 	AuditHeader doApprove(AuditHeader auditHeader);

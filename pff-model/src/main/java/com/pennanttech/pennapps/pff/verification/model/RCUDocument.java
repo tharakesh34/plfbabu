@@ -264,7 +264,5 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	public void setBefImage(RCUDocument befImage) {
 		this.befImage = befImage;
 	}
-	
-	
 
 }

@@ -663,7 +663,8 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		}
 		
 		try {
-			if ("0".equals(getComboboxValue(this.recommendations))) {
+			if (!this.recommendations.isDisabled()
+					&& TVStatus.SELECT.getKey().equals(Integer.parseInt(getComboboxValue(this.recommendations)))) {
 				throw new WrongValueException(this.recommendations, Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("label_TechnicalVerificationDialog_Recommendations.value") }));
 			} else {
 				tv.setStatus(Integer.parseInt(getComboboxValue(this.recommendations)));

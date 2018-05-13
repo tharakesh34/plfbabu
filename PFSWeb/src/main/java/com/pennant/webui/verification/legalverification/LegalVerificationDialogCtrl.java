@@ -721,7 +721,8 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			wve.add(we);
 		}
 		try {
-			if ("0".equals(getComboboxValue(this.recommendations))) {
+			if (!this.recommendations.isDisabled()
+					&& LVStatus.SELECT.getKey().equals(Integer.parseInt(getComboboxValue(this.recommendations)))) {
 				throw new WrongValueException(this.recommendations, Labels.getLabel("STATIC_INVALID",
 						new String[] { Labels.getLabel("label_FieldInvestigationDialog_Recommendations.value") }));
 			} else {

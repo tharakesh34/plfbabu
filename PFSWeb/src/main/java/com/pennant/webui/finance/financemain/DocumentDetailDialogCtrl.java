@@ -258,7 +258,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			this.window_documentDetailDialog.setHeight(this.borderLayoutHeight - 80 + "px");
 
 			if (VerificationType.FI.getValue().equals(moduleName) || VerificationType.TV.getValue().equals(moduleName)
-					|| VerificationType.LV.getValue().equals(moduleName)) {
+					|| VerificationType.LV.getValue().equals(moduleName) || VerificationType.RCU.getValue().equals(moduleName)) {
 				this.btnNew_DocumentDetails.setVisible(isEditable);
 			}
 

@@ -31,9 +31,7 @@ public class RiskContainmentUnitListModelItemRender implements ListitemRenderer<
 		lc.setParent(item);									
 		lc = new Listcell(PennantJavaUtil.getLabel(rcu.getRecordType()));
 		lc.setParent(item);
-		item.setAttribute("id", rcu.getId());
-		item.setAttribute("documentId", rcu.getDocumentId());
-		item.setAttribute("documentSubId", rcu.getDocumentSubId());
+
 		item.setAttribute("verificationId", rcu.getVerificationId());
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onRiskContainmentUnitItemDoubleClicked");

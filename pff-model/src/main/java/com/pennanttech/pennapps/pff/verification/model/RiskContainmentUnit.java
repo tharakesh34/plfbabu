@@ -1,5 +1,6 @@
 package com.pennanttech.pennapps.pff.verification.model;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 
 	private String cif;
 	private String keyReference;
-	private String customerName;
+	private String custName;
 	private String rcuReference;
 
 	private long verificationId;
@@ -77,6 +78,8 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 		excludeFields.add("rcuDocuments");
 		excludeFields.add("documentId");
 		excludeFields.add("documentSubId");
+		excludeFields.add("custName");
+		excludeFields.add("rcuReference");
 		excludeFields.add("extendedFieldHeader");
 		excludeFields.add("extendedFieldRender");
 		return excludeFields;
@@ -110,12 +113,12 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 		this.keyReference = keyReference;
 	}
 
-	public String getCustomerName() {
-		return customerName;
+	public String getCustName() {
+		return custName;
 	}
 
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
+	public void setCustName(String custName) {
+		this.custName = custName;
 	}
 
 	public String getRcuReference() {
@@ -298,6 +301,10 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 		return userDetails;
 	}
 
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
+	
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

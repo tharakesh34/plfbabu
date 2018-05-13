@@ -7,15 +7,15 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.model.ValueLabel;
 
-public enum RCUStatus {
-	
-	SELECT(0, Labels.getLabel("Combo.Select")), NONE(1, "None"), POSITIVE(2, "Positive"), NEGATIVE(3,
-			"Negative"), NOT_COMPLETED(4, "RCU Not Completed");
+public enum RCUDocVerificationType {
+
+	SELECT(0, Labels.getLabel("Combo.Select")), SAMPLED(1, "Sampled"), EYEBALLED(2, "Eyeballed"), SCREENED(3,
+			"Screened");
 
 	private final Integer key;
 	private final String value;
 
-	private RCUStatus(Integer key, String value) {
+	private RCUDocVerificationType(Integer key, String value) {
 		this.key = key;
 		this.value = value;
 	}
@@ -30,11 +30,10 @@ public enum RCUStatus {
 
 	public static List<ValueLabel> getList() {
 		List<ValueLabel> list = new ArrayList<>();
-		for (RCUStatus status : values()) {
+		for (RCUDocVerificationType status : values()) {
 			list.add(new ValueLabel(String.valueOf(status.getKey()), status.getValue()));
 		}
 		return list;
 	}
-
-
+	
 }

@@ -616,7 +616,8 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			wve.add(we);
 		}
 		try {
-			if ("0".equals(getComboboxValue(this.recommendations))) {
+			if (!this.recommendations.isDisabled()
+					&& FIStatus.SELECT.getKey().equals(Integer.parseInt(getComboboxValue(this.recommendations)))) {
 				throw new WrongValueException(this.recommendations, Labels.getLabel("STATIC_INVALID",
 						new String[] { Labels.getLabel("label_FieldInvestigationDialog_Recommendations.value") }));
 			} else {

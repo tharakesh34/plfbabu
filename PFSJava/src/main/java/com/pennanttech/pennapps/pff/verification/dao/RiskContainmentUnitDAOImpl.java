@@ -70,12 +70,12 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		StringBuilder sql = new StringBuilder("update verification_rcu");
 		sql.append(tableType.getSuffix());
 		sql.append(
-				" set verificationId = :verificationId, verificationDate = :verificationDate, agentCode = :agentCode, agentName = :agentName, status = :status, ");
+				" set verificationDate = :verificationDate, agentCode = :agentCode, agentName = :agentName, status = :status, ");
 		sql.append(" reason = :reason, remarks = :remarks, Version = :Version, LastMntBy = :LastMntBy,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where id = :id ");
+		sql.append(" where verificationId = :verificationId ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
@@ -119,28 +119,27 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 	}
 
 	@Override
-	public RiskContainmentUnit getRiskContainmentUnit(long id, long documetId, String documentSubId, String type) {
+	public RiskContainmentUnit getRiskContainmentUnit(long verificationId, String type) {
 
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
 
-		sql.append(" Select id, verificationid, agentCode, agentName,  verificationDate, status, reason, documentId,");
+		sql.append(" Select verificationid, agentCode, agentName,  verificationdate, status, reason,");
 		sql.append(" remarks,");
 		if (type.contains("View")) {
-			sql.append(" cif, custId, custName, keyReference, rcureference, createdon, ");
+			sql.append(" cif, custId, custName, keyReference, createdon, ");
 			sql.append(" reasonCode, reasonDesc,");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" FROM  Verification_lv");
+		sql.append(" FROM  Verification_rcu");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where id = :id and documentId = :documentId ");
+		sql.append(" Where verificationId = :verificationId");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
-		source.addValue("id", id);
-		source.addValue("documentId", documetId);
+		source.addValue("verificationId", verificationId);
 
 		RowMapper<RiskContainmentUnit> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(RiskContainmentUnit.class);
@@ -163,12 +162,13 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into verification_rcu_details");
 		sql.append(tableType);
-		sql.append("(lvid, seqno, documentid, documentsubid, remarks1,");
-		sql.append(" remarks2, remarks3,");
+		sql.append("(verificationId, seqno, documentid, documentsubid, documentrefid, documenturi, ");
+		sql.append(" verificationtype, status, pageseyeballed, pagessampled, agentremarks, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-
-		sql.append("values (:lvId, :seqNo, :documentId, :documentSubId,:remarks1, :remarks2, :remarks3,");
+		
+		sql.append("values (:verificationId, :seqNo, :documentId, :documentSubId, :documentRefId, :documentUri, ");
+		sql.append(" :verificationType , :status, :pagesEyeballed, :pagesSampled, :agentRemarks,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -193,12 +193,13 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update verification_rcu_details");
 		sql.append(tableType);
-		sql.append(" set remarks1 = :remarks1, remarks2 = :remarks2, remarks3 = :remarks3, ");
+		sql.append(" set verificationtype = :verificationType, status = :status, pageseyeballed = :pagesEyeballed, ");
+		sql.append(" pagessampled = :pagesSampled, agentremarks = :agentRemarks,");
 		sql.append(" Version = :Version, LastMntBy = :LastMntBy,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where lvid = :lvId AND seqno = :seqNo");
+		sql.append(" where verificationId = :verificationId and seqno = :seqNo");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -330,6 +331,43 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		logger.debug(Literal.LEAVING);
 
 	}
+
+	@Override
+	public List<RCUDocument> getRCUDocuments(long verificationId, String type) {
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+		sql = new StringBuilder();
+
+		sql.append(" Select verificationId, documentid, documentsubid,");
+		if (type.contains("View")) {
+			sql.append(
+					" code, description, docmodule, documentrefid, seqno, docname, doctype,  ");
+			sql.append(
+					" verificationtype, status, pageseyeballed, pagessampled, agentremarks, ");
+		}
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" FROM  verification_rcu_details");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where verificationId = :verificationId");
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("verificationId", verificationId);
+
+		RowMapper<RCUDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RCUDocument.class);
+		try {
+			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
 
 	@Override
 	public void deleteDocuments(long verificationId, TableType tableType) {
