@@ -88,7 +88,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private transient boolean validationOn;
 	private transient boolean initType;
-	private SearchProcessor searchProcessor;
 	protected Radiogroup rcuRadioGroup;
 	
 	
@@ -96,6 +95,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	Map<String, Verification> loanDocuments = new LinkedHashMap<>();
 	Map<String, Verification> collateralDocuments = new LinkedHashMap<>();	
 	
+	@Autowired
+	private SearchProcessor searchProcessor;
 	@Autowired
 	private RiskContainmentUnitService riskContainmentUnitService;
 	@Autowired
