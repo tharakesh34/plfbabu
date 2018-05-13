@@ -1,7 +1,6 @@
 package com.pennanttech.webui.verification;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,6 +40,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -52,6 +52,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
@@ -95,10 +96,11 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private VerificationService verificationService;
 	@Autowired
 	private SearchProcessor searchProcessor;
-
 	protected Radiogroup rcuRadioGroup;
-
-	private Map<String, Verification> customerDocuemnts = new LinkedHashMap<>();
+	
+	
+	Map<String, Verification> customerDocuments = new LinkedHashMap<>();
+	Map<String, Verification> loanDocuments = new LinkedHashMap<>();	
 
 	/**
 	 * default constructor.<br>
@@ -147,46 +149,87 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private void setScreenVerifications() {
-		if (financeDetail.getCustomerDetails().getCustomerDocumentsList() != null) {
-			setCustomerDocuments(financeDetail.getCustomerDetails().getCustomerDocumentsList());
+		List<String> requiredDocs = getRequiredDocs();
+		
+		List<CustomerDocument> customerDocumentList = financeDetail.getCustomerDetails().getCustomerDocumentsList();
+		List<DocumentDetails> loanDocumentList = financeDetail.getDocumentDetailsList();
+		
+		
+		if (customerDocumentList != null) {
+			setCustomerDocuments(customerDocumentList, requiredDocs);
 		}
+		
+		if (loanDocumentList != null) {
+			setDocumentDetails(loanDocumentList, requiredDocs, DocumentType.LOAN);
+		}
+		
+		renderVerifications();
 	}
 
-	private void setCustomerDocuments(List<CustomerDocument> customerDocuments) {
-		Map<String, Verification> oldVerifications;
-		customerDocuemnts.clear();
-		verification.getVerifications().clear();
-
-		List<String> requiredDocs = getRequiredDocs();
-
+	private void setCustomerDocuments(List<CustomerDocument> documents, List<String> requiredDocs) {		
 		// Prepare the Customer Documents
-		for (CustomerDocument document : customerDocuments) {
+		for (CustomerDocument document : documents) {
 			if (isNotDeleted(document.getRecordType())) {
-				Verification verification = getVerification(requiredDocs, document);
-				customerDocuemnts.put(document.getCustDocCategory(), verification);
+				Verification object = getVerification(requiredDocs, document, DocumentType.CUSTOMER);
+				customerDocuments.put(document.getCustDocCategory(), object);
 			}
 		}
+		
+		// Set the old verification fields back.
+		Map<String, Verification> map;
 		if (initType) {
-			oldVerifications = getOldVerifications(DocumentType.CUSTOMER, TableType.STAGE_TAB);
+			map = getOldVerifications(DocumentType.CUSTOMER, TableType.STAGE_TAB);
 		} else {
-			oldVerifications = getOldVerifications(DocumentType.CUSTOMER, TableType.TEMP_TAB);
+			map = getOldVerifications(DocumentType.CUSTOMER, TableType.TEMP_TAB);
 		}
-		for (Entry<String, Verification> entrySet : customerDocuemnts.entrySet()) {
-			Verification verification = oldVerifications.get(entrySet.getKey());
-			Verification screenVerification = entrySet.getValue();
-			if (verification != null) {
-				screenVerification.setId(verification.getId());
-				screenVerification.setRequestType(verification.getRequestType());
-				screenVerification.setAgency(verification.getAgency());
-				screenVerification.setAgencyName(verification.getAgencyName());
-				screenVerification.setReason(verification.getReason());
-				screenVerification.setRemarks(verification.getRemarks());
-				screenVerification.setReference(verification.getReference());
-				screenVerification.setNewRecord(false);
+		
+		for (Entry<String, Verification> entrySet : customerDocuments.entrySet()) {
+			Verification previous = map.get(entrySet.getKey());
+			Verification current = entrySet.getValue();
+			if (previous != null) {
+				setOldVerificationFields(previous, current);
 			}
 		}
+	}
+	
+	private void setDocumentDetails(List<DocumentDetails> documents, List<String> requiredDocs,  DocumentType documentType) {	
+		// Prepare the Customer Documents
+		for (DocumentDetails document : documents) {
+			if(DocumentCategories.CUSTOMER.getKey().equals(document.getCategoryCode())) {
+				continue;
+			}
+			if (isNotDeleted(document.getRecordType())) {
+				Verification object = getVerification(requiredDocs, document, documentType);
+				loanDocuments.put(document.getDocCategory(), object);
+			}
+		}
+		
+		// Set the old verification fields back.
+		Map<String, Verification> map;
+		if (initType) {
+			map = getOldVerifications(documentType, TableType.STAGE_TAB);
+		} else {
+			map = getOldVerifications(documentType, TableType.TEMP_TAB);
+		}
+		
+		for (Entry<String, Verification> entrySet : loanDocuments.entrySet()) {
+			Verification current = map.get(entrySet.getKey());
+			Verification previous = entrySet.getValue();
+			if (current != null) {
+				setOldVerificationFields(current, previous);
+			}
+		}	
+	}
 
-		renderVerifications(customerDocuemnts.values());
+	private void setOldVerificationFields(Verification previous, Verification current) {
+		current.setId(previous.getId());
+		current.setRequestType(previous.getRequestType());
+		current.setAgency(previous.getAgency());
+		current.setAgencyName(previous.getAgencyName());
+		current.setReason(previous.getReason());
+		current.setRemarks(previous.getRemarks());
+		current.setReference(previous.getReference());
+		current.setNewRecord(false);
 	}
 
 	private boolean isNotDeleted(String recordType) {
@@ -194,29 +237,64 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				|| PennantConstants.RECORD_TYPE_CAN.equals(recordType));
 	}
 
-	private Verification getVerification(List<String> requiredDocs, CustomerDocument document) {
+	private Verification getVerification(List<String> requiredDocs, CustomerDocument document, DocumentType documentType) {
 		RCUDocument rcuDocument = new RCUDocument();
-		Verification verification = new Verification();
+		Verification item = new Verification();
 
-		verification.setNewRecord(true);
-		verification
-				.setDocName(document.getCustDocCategory().concat(" - ").concat(document.getLovDescCustDocCategory()));
-		verification.setReferenceType(DocumentType.CUSTOMER.getValue());
-		verification.setDocType(DocumentType.CUSTOMER.getKey());
-		verification.setVerificationType(this.verification.getVerificationType());
-		verification.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
-		verification.setReferenceFor(document.getCustDocCategory());
+		item.setNewRecord(true);
+		item.setDocName(getDocumentName(document.getCustDocCategory(), document.getLovDescCustDocCategory()));
+		item.setReferenceType(documentType.getValue());
+		item.setDocType(documentType.getKey());
+		item.setVerificationType(this.verification.getVerificationType());
+		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
+		item.setReferenceFor(document.getCustDocCategory());
 
 		//set RCU Required
 		if (requiredDocs.contains(document.getCustDocCategory())) {
-			verification.setRequestType(RequestType.INITIATE.getKey());
+			item.setRequestType(RequestType.INITIATE.getKey());
 		} else {
-			verification.setRequestType(RequestType.NOT_REQUIRED.getKey());
+			item.setRequestType(RequestType.NOT_REQUIRED.getKey());
 		}
 
 		rcuDocument.setDocCategory(document.getCustDocCategory());
-		verification.setRcuDocument(rcuDocument);
-		return verification;
+		item.setRcuDocument(rcuDocument);
+		return item;
+	}
+	
+	private Verification getVerification(List<String> requiredDocs, DocumentDetails document, DocumentType documentType) {
+		RCUDocument rcuDocument = new RCUDocument();
+		Verification item = new Verification();
+
+		item.setNewRecord(true);
+		item.setDocName(getDocumentName(document.getDocCategory(), document.getLovDescDocCategoryName()));
+		item.setReferenceType(documentType.getValue());
+		item.setDocType(documentType.getKey());
+		item.setVerificationType(this.verification.getVerificationType());
+		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
+		item.setReferenceFor(document.getDocCategory());
+
+		// set RCU Required
+		if (requiredDocs.contains(document.getDocCategory())) {
+			item.setRequestType(RequestType.INITIATE.getKey());
+		} else {
+			item.setRequestType(RequestType.NOT_REQUIRED.getKey());
+		}
+
+		rcuDocument.setDocCategory(document.getDocCategory());
+		item.setRcuDocument(rcuDocument);
+		return item;
+	}
+	
+	private String getDocumentName(String code, String description) {
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(code);
+		if (description != null) {
+			builder.append(" - ");
+			builder.append(description);
+		}
+
+		return builder.toString();
 	}
 
 	private Map<String, Verification> getOldVerifications(DocumentType documentType, TableType tableType) {
@@ -234,11 +312,11 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		for (RCUDocument document : oldDocuments) {
-			for (Verification verification : verifications) {
-				if (verification.getRequestType() == RequestType.INITIATE.getKey()) {
-					if (verification.getId() == document.getVerificationId()) {
+			for (Verification ver : verifications) {
+				if (ver.getRequestType() == RequestType.INITIATE.getKey()) {
+					if (ver.getId() == document.getVerificationId()) {
 						Verification item = new Verification();
-						BeanUtils.copyProperties(verification, item);
+						BeanUtils.copyProperties(ver, item);
 						item.setRcuDocument(document);
 						list.add(item);
 					}
@@ -246,13 +324,13 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		for (Verification verification : list) {
-			String reference = verification.getReferenceFor();
-			if (verification.getRcuDocument() != null) {
-				reference = verification.getRcuDocument().getDocCategory();
+		for (Verification ver : list) {
+			String reference = ver.getReferenceFor();
+			if (ver.getRcuDocument() != null) {
+				reference = ver.getRcuDocument().getDocCategory();
 			}
 
-			verificationMap.put(reference, verification);
+			verificationMap.put(reference, ver);
 		}
 
 		return verificationMap;
@@ -422,7 +500,17 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	public void addCustomerDocuments(List<CustomerDocument> documents) {
 		if (documents != null) {
-			setCustomerDocuments(documents);
+			List<String> requiredDocs = getRequiredDocs();
+			setCustomerDocuments(documents, requiredDocs);
+		}
+		
+		renderVerifications();
+	}
+	
+	public void addLoanDocuments(List<DocumentDetails> documents) {
+		if (documents != null) {
+			List<String> requiredDocs = getRequiredDocs();
+			setDocumentDetails(documents, requiredDocs, DocumentType.LOAN);
 		}
 	}
 
@@ -431,11 +519,17 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * 
 	 * @param customer
 	 */
-	public void renderVerifications(Collection<Verification> verifications) {
+	public void renderVerifications() {
 		logger.debug(Literal.ENTERING);
 		Listgroup group;
 		Listcell cell;
 		List<Integer> docTypes = DocumentType.getKeys();
+		
+		List<Verification> verifications = new ArrayList<>();
+		
+		
+		verifications.addAll(customerDocuments.values());
+		verifications.addAll(loanDocuments.values());
 
 		this.verification.getVerifications().clear();
 		this.verification.getVerifications().addAll(verifications);
@@ -1022,5 +1116,4 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
-
 }
