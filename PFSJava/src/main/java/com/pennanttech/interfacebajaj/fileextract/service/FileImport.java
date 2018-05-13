@@ -44,6 +44,24 @@ public class FileImport {
 	protected long userId;
 	private int totalRecords;
 	private boolean backUp = true;
+	public int row_NumberOfCells;
+	
+	//key fields need to map according to the responseFile format.
+	private static int						pos_BranchCode		= 6;
+	private static int						pos_AgreementNo		= 8;
+	private static int						pos_InstalmentNo	= 0;
+	private static int						pos_BFLReferenceNo	= 6;
+	private static int						pos_Batchid			= 1;
+	private static int						pos_AmountCleared	= 3;
+	private static int						pos_ClearingDate	= 4;
+	private static int						pos_Status			= 9;
+	private static int						pos_ReasonCode		= 10;
+	private static int						pos_Name			= 0;
+	private static int						pos_UMRNNo			= 2;
+	private static int						pos_AccountType		= 5;
+	private static int						pos_PaymentDue		= 7;
+	private static int						pos_FailureReasons	= 11;
+
 	/**
 	 * Include the success records in the BatchLog, if BatchFileImport.isLogStatus() is true, default false
 	 */
@@ -204,9 +222,10 @@ public class FileImport {
 			}
 
 			Row row = sheet.getRow(0);
-
-			if (row.getPhysicalNumberOfCells() != 12) {
-				throw new Exception("The file has invalid header columns. the columns should be 12.");
+			
+			if (row.getPhysicalNumberOfCells() != row_NumberOfCells) {
+				throw new Exception(
+						"The file has invalid header columns. the columns should be " + row_NumberOfCells + " .");
 			}
 			totalRecords = sheet.getPhysicalNumberOfRows() - 1;
 

@@ -142,6 +142,7 @@ public class InterfaceConstants {
 		public static final String	REQ_SEND					= "REQSENDEXPBURU";
 
 		public static final String	PANNUMBER					= "PANNUMBER";
+		public static final String	ALLOW_PRESENTMENT_DOWNLOAD			= "ALLOW_PRESENTMENT_DOWNLOAD";
 
 
 	

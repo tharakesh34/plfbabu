@@ -62,4 +62,5 @@ public class SMTParameterConstants {
 	public static final String	RPYHCY_ON_NPA		= "RPYHCY_ON_NPA";
 	public static final String	DISB_PAID_STATUS	= "DISB_PAID_STATUS";
 	public static final String	IS_CREDITREVIEW_TAB_REQ	= "IS_CREDITREVIEW_TAB_REQ";
+	public static final String	PRESENTMENT_RESPONSE_ROW_LENGTH	= "PRESENTMENT_RESPONSE_ROW_LENGTH";
 }

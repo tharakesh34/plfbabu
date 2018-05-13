@@ -113,7 +113,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				row = sheet.getRow(i);
 
 				try {
-					if (i == 0 && (row != null && row.getPhysicalNumberOfCells() < 12)) {
+					if (i == 0 && (row != null && row.getPhysicalNumberOfCells() < row_NumberOfCells)) {
 						throw new Exception("Record is invalid at line :" + lineNumber);
 					}
 
@@ -127,23 +127,31 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					}
 
 					map = new MapSqlParameterSource();
-					map.addValue("BranchCode", getCellValue(row, 6));
-					map.addValue("AgreementNo", getCellValue(row, 8));
+					map.addValue("BranchCode", getCellValue(row, pos_BranchCode));
+					map.addValue("AgreementNo", getCellValue(row, pos_AgreementNo));
 					map.addValue("InstalmentNo", "0");
-					map.addValue("BFLReferenceNo", getCellValue(row, 6));
-					map.addValue("Batchid", getCellValue(row, 1));
-					map.addValue("AmountCleared", getCellValue(row, 3));
-					map.addValue("ClearingDate",getDateValue(row, 4),Types.DATE);
-					map.addValue("Status", getCellValue(row, 9));
-					map.addValue("ReasonCode", getCellValue(row, 10));
+					map.addValue("BFLReferenceNo", getCellValue(row, pos_BFLReferenceNo));
+					map.addValue("Batchid", getCellValue(row, pos_Batchid));
+					map.addValue("AmountCleared", getCellValue(row, pos_AmountCleared));
+					map.addValue("ClearingDate",getDateValue(row, pos_ClearingDate),Types.DATE);
+					map.addValue("Status", getCellValue(row, pos_Status));
 
-					map.addValue("Name", getCellValue(row, 0));
-					map.addValue("UMRNNo", getCellValue(row, 2));
-					map.addValue("AccountType", getCellValue(row, 5));
-					map.addValue("PaymentDue", getDateValue(row, 7),Types.DATE);
+					map.addValue("Name", getCellValue(row, pos_Name));
+					map.addValue("UMRNNo", getCellValue(row, pos_UMRNNo));
+					map.addValue("AccountType", getCellValue(row, pos_AccountType));
+					map.addValue("PaymentDue", getDateValue(row, pos_PaymentDue),Types.DATE);
+					
+					//ReasonCode unformatting 
+					String reasonCode = getCellValue(row, pos_ReasonCode);
+					if (StringUtils.isNotBlank(reasonCode)) {
+						map.addValue("ReasonCode", getFieldValue(reasonCode, 0, 3));
+					} else {
+						map.addValue("ReasonCode", reasonCode);
+					}
 
-					if (row.getPhysicalNumberOfCells() > 11) {
-						map.addValue("Failure reason", StringUtils.trimToNull(row.getCell(11).getStringCellValue()));
+					//TODO:check set the value
+					if (row.getPhysicalNumberOfCells() > pos_FailureReasons) {
+						map.addValue("Failure reason", StringUtils.trimToNull(row.getCell(pos_FailureReasons).getStringCellValue()));
 					}
 				} catch (Exception e) {
 					logger.error("Exception {}", e);
@@ -223,8 +231,12 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 		// ReasonCode
 		Object reasonCode = map.getValue("ReasonCode");
-		if (reasonCode == null) {
-			throw new Exception("ReasonCode should be mandatory.");
+		if (!StringUtils.equals(RepayConstants.PAYMENT_SUCCESS, status.toString())) {
+			if (reasonCode == null) {
+				throw new Exception("ReasonCode should be mandatory.");
+			} else if (reasonCode.toString().length() != 3) {
+				throw new Exception("ReasonCode length should be 3.");
+			}
 		}
 	}
 
@@ -1106,6 +1118,5 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		}
 		return presentmentDetail;
 	}
- 
-	
+
 }

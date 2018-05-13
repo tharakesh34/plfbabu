@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -17,9 +17,12 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.model.presentment.Presentment;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.PresentmentProcess;
 import com.pennanttech.pff.external.PresentmentResponse;
@@ -78,10 +81,40 @@ public class AbstractPresentmentProcess extends AbstractInterface implements Pre
 				}
 				updatePresentmentDetails(idList, "A");
 			}
+
+			boolean isPresentMentFileDownnloadReq = false;
+			String presentmentReq = (String) getSMTParameter(InterfaceConstants.ALLOW_PRESENTMENT_DOWNLOAD,
+					String.class);
+			if (StringUtils.isNotBlank(presentmentReq)) {
+				isPresentMentFileDownnloadReq = presentmentReq.equalsIgnoreCase("Y");
+			}
+
+			if (isPresentMentFileDownnloadReq && !isBatchFail) {
+				prepareRequestFile();
+			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
 
+	/**
+	 * Method for creating PRESENTMENT_REQUEST file.
+	 * 
+	 * @throws Exception
+	 */
+	public void prepareRequestFile() throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		try {
+			DataEngineExport dataEngine = null;
+			dataEngine = new DataEngineExport(dataSource, new Long(1000), App.DATABASE.name(), true, getValueDate());
+			dataEngine.exportData("PRESENTMENT_REQUEST");
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 	private StringBuilder getSqlQuery() {
 		StringBuilder sql = new StringBuilder();
 		sql = new StringBuilder();

@@ -15,7 +15,9 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -93,6 +95,11 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	 */
 	public void onUpload$btnUpload(UploadEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
+		int row_NumberOfCells = 12;
+		Object valu = SysParamUtil.getValue(SMTParameterConstants.PRESENTMENT_RESPONSE_ROW_LENGTH);
+		if (valu != null) {
+			row_NumberOfCells = Integer.parseInt(valu.toString());
+		}
 
 		txtFileName.setText("");
 		errorMsg = null;
@@ -104,6 +111,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 				fileImport = null;
 				txtFileName.setText(media.getName());
 				setFileImportData(media.getName().substring(media.getName().lastIndexOf('.')));
+				fileImport.row_NumberOfCells=row_NumberOfCells;
 				fileImport.setExcelMedia(media);
 				fileImport.loadExcelFile(true);
 				renderPannel();
