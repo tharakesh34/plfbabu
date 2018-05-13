@@ -30,7 +30,7 @@
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
  * 13-01-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
+ * 13-05-2018       Satish                                   Accrual value display removed                                               * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -221,7 +221,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 		boolean showZeroEndBal = false;
 		boolean isGrcBaseRate = false;
 		boolean isRpyBaseRate = false;
-		if(accrueValue != null){
+/*		if(accrueValue != null){
 
 			Date lastAccrueDate = DateUtility.getAppDate();
 			if((!lastRec && lastAccrueDate.compareTo(prvSchDetail.getSchDate()) >= 0 && 
@@ -235,7 +235,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				count = 1;
 			}
 		}
-
+*/
 		if (lastRec) {
 
 			isEditable = false;
@@ -2712,7 +2712,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 			}
 
 			// Accrual Value
-			if (aFinScheduleData.getAccrueValue() != null
+/*			if (aFinScheduleData.getAccrueValue() != null
 					&& aFinScheduleData.getAccrueValue().compareTo(BigDecimal.ZERO) > 0) {
 
 				if ((!lastRec && appDate.compareTo(prvSchDetail.getSchDate()) >= 0
@@ -2735,7 +2735,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					reportList.add(data);
 
 				}
-			}
+			}*/
 
 		}
 		
