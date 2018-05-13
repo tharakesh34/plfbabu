@@ -161,12 +161,12 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into verification_rcu_details");
 		sql.append(tableType);
-		sql.append("(verificationId, seqno, documentid, documentsubid, documentrefid, documenturi, ");
+		sql.append("(verificationId, seqno, documentid, documenttype, documentsubid, documentrefid, documenturi, ");
 		sql.append(" verificationtype, status, pageseyeballed, pagessampled, agentremarks, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		
-		sql.append("values (:verificationId, :seqNo, :documentId, :documentSubId, :documentRefId, :documentUri, ");
+		sql.append("values (:verificationId, :seqNo, :documentId, :documenttype, :documentSubId, :documentRefId, :documentUri, ");
 		sql.append(" :verificationType , :status, :pagesEyeballed, :pagesSampled, :agentRemarks,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
@@ -289,10 +289,10 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		sql.append("Insert Into verification_rcu_details");
 		sql.append(tableType.getSuffix());
 
-		sql.append(" (verificationId, seqNo, documentId, documentSubId, documentrefid, documenturi, initremarks");
+		sql.append(" (verificationId, seqNo, documentId, documenttype, documentSubId, documentrefid, documenturi, initremarks");
 		sql.append(
 				" ,Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(" ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug("insertSql: " + sql.toString());
@@ -304,20 +304,21 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 				ps.setLong(1, document.getVerificationId());
 				ps.setInt(2, i + 1);
 				ps.setLong(3, document.getDocumentId());
-				ps.setString(4, document.getDocumentSubId());
-				ps.setLong(5, document.getDocumentRefId());
-				ps.setString(6, document.getDocumentUri());
-				ps.setString(7, document.getInitRemarks());
-				ps.setInt(8, document.getVersion());
-				ps.setTimestamp(9, document.getLastMntOn());
-				ps.setLong(10, document.getLastMntBy());
-				ps.setString(11, document.getRecordStatus());
-				ps.setString(12, document.getRoleCode());
-				ps.setString(13, document.getNextRoleCode());
-				ps.setString(14, document.getTaskId());
-				ps.setString(15, document.getNextTaskId());
-				ps.setString(16, document.getRecordType());
-				ps.setLong(17, document.getWorkflowId());
+				ps.setInt(4, document.getDocumentType());
+				ps.setString(5, document.getDocumentSubId());
+				ps.setLong(6, document.getDocumentRefId());
+				ps.setString(7, document.getDocumentUri());
+				ps.setString(8, document.getInitRemarks());
+				ps.setInt(9, document.getVersion());
+				ps.setTimestamp(10, document.getLastMntOn());
+				ps.setLong(11, document.getLastMntBy());
+				ps.setString(12, document.getRecordStatus());
+				ps.setString(13, document.getRoleCode());
+				ps.setString(14, document.getNextRoleCode());
+				ps.setString(15, document.getTaskId());
+				ps.setString(16, document.getNextTaskId());
+				ps.setString(17, document.getRecordType());
+				ps.setLong(18, document.getWorkflowId());
 			}
 
 			@Override

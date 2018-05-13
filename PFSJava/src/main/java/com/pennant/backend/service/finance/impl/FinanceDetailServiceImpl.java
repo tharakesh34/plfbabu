@@ -1852,13 +1852,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
 								FinanceConstants.PROCEDT_VERIFICATION_LV_APPR)) {
 							financeDetail.setLvApprovalTab(true);
-						}/*else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
+						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
 								FinanceConstants.PROCEDT_VERIFICATION_RCU_INIT)) {
 							financeDetail.setRcuInitTab(true);
 						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
 								FinanceConstants.PROCEDT_VERIFICATION_RCU_APPR)) {
 							financeDetail.setRcuApprovalTab(true);
-						}*/
+						} 
 					}
 				}
 			}
@@ -1918,7 +1918,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		//TODO: Need to Modify Based on Product Level for Finance Origination Extended fields
+		// TODO: Need to Modify Based on Product Level for Finance Origination
+		// Extended fields
 		if (financeMain.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
 
 			// Fetching Finance Asset Additional Fields
