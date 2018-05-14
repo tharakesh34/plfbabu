@@ -261,7 +261,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setNewRecord(true);
 		item.setReferenceType(documentType.getValue());
 		item.setDocType(documentType.getKey());
-		item.setVerificationType(this.verification.getVerificationType());
+		item.setVerificationType(VerificationType.RCU.getKey());
 		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 
 		//set RCU Required
@@ -285,7 +285,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setDocName(getDocumentName(document.getDocCategory(), document.getLovDescDocCategoryName()));
 		item.setReferenceType(documentType.getValue());
 		item.setDocType(documentType.getKey());
-		item.setVerificationType(this.verification.getVerificationType());
 		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 		item.setReferenceFor(document.getDocCategory());
 		item.setVerificationType(VerificationType.RCU.getKey());

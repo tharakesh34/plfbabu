@@ -16,36 +16,36 @@
 				<center border="none" id="divCenter" autoscroll="true">
 					<groupbox style="border:none;">
 						<groupbox id="finBasicdetails" zclass="null"/>
-						<listbox id="listBoxRCUVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
-							<listhead sizable="false" >
+						<listbox id="listBoxRCUVerification" width="100%" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true" multiple="false">
+							<listhead sizable="false" width="100%">
 								<listheader
 									id="listheader_RCUVerification_DocumentName"
 									label="Document Type - Name"
-									sort="false"/>
+									sort="false" width="20%"/>
 								<listheader
 									id="listheader_RCUVerification_RCU"
 									label="${c:l('listheader_RCUVerification_RCU.label')}"
-									sort="false"/>
+									sort="false" width="15%"/>
 								<listheader
 									id="listheader_RCUVerification_Agency"
 									label="${c:l('listheader_RCUVerification_Agency.label')}"
-									sort="false"/>
+									sort="false" width="15%"/>
 								<listheader
 									id="listheader_RCUVerification_Reason"
 									label="${c:l('listheader_RCUVerification_Reason.label')}"
-									sort="false"/>
+									sort="false" width="15%"/>
 								<listheader
 									id="listheader_RCUVerification_Remarks"
 									label="${c:l('listheader_RCUVerification_Remarks.label')}"
-									sort="false"/>
+									sort="false" width="10%"/>
 								<listheader
 									id="listheader_RCUVerification_LastStatus"
 									label="${c:l('listheader_RCUVerification_LastStatus.label')}"
-									sort="false"/>
+									sort="false" width="10%"/>
 								<listheader
 									id="listheader_RCUVerification_LastVrfDate"
 									label="${c:l('listheader_RCUVerification_LastVrfDate.label')}"
-									sort="false"/>
+									sort="false" width="15%"/>
 							</listhead>
 						</listbox>
 				</groupbox>
