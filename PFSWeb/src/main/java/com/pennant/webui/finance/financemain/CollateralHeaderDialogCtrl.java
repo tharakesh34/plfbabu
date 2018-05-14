@@ -130,14 +130,14 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	private long							customerId;
 	private List<String> assignCollateralRef;
 	//### 10-05-2018 Start Development Item 82
-	private HashMap<String, Object> ruleMap = new HashMap<String, Object>();
+	private Map<String, Object> rules = new HashMap<>();
 	
-	public HashMap<String, Object> getRuleMap() {
-		return ruleMap;
+	public Map<String, Object> getRules() {
+		return rules;
 	}
 
-	public void setRuleMap(HashMap<String, Object> ruleMap) {
-		this.ruleMap = ruleMap;
+	public void setRules(Map<String, Object> rules) {
+		this.rules = rules;
 	}
 	//### 10-05-2018 End Development Item 82
 	/**
@@ -638,9 +638,9 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		//### 10-05-2018 Start Development Item 82
 		balanceAssignedValue = totalBankValuation.subtract(totAssignedColValue);
 		
-		ruleMap.put("Collateral_Bank_Valuation", totalBankValuation);
-		ruleMap.put("Collaterals_Total_Assigned ", totAssignedColValue);
-		ruleMap.put("Collaterals_Total_UN_Assigned", balanceAssignedValue);
+		rules.put("Collateral_Bank_Valuation", totalBankValuation);
+		rules.put("Collaterals_Total_Assigned ", totAssignedColValue);
+		rules.put("Collaterals_Total_UN_Assigned", balanceAssignedValue);
 		//### 10-05-2018 End  Development Item 82
 		
 		if (rcuVerificationDialogCtrl != null) {

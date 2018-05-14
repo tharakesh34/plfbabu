@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 public class CustomerEligibilityCheck implements Serializable {
 
@@ -148,7 +149,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	private BigDecimal  custPDLive180D = BigDecimal.ZERO;
 	private BigDecimal  custPDLive180DP = BigDecimal.ZERO;*/
 
-	HashMap<String, Object> extendedFieldMap = new HashMap<String, Object>();
+	Map<String, Object> extendedFields = new HashMap<>();
 	
 	public CustomerEligibilityCheck() {
 		
@@ -540,8 +541,8 @@ public class CustomerEligibilityCheck implements Serializable {
 		
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				if("extendedFieldMap".equals(this.getClass().getDeclaredFields()[i].getName())){
-					customerEligibityMap.putAll(extendedFieldMap);
+				if("extendedFields".equals(this.getClass().getDeclaredFields()[i].getName())){
+					customerEligibityMap.putAll(extendedFields);
 				}else if(!"serialVersionUID".equals(this.getClass().getDeclaredFields()[i].getName())){
 					customerEligibityMap.put(this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));	
 				}
@@ -767,12 +768,12 @@ public class CustomerEligibilityCheck implements Serializable {
 	}
 
 
-	public void setExtendedFieldMap(String fieldName, Object value) {
-		this.extendedFieldMap.put(fieldName, value);
+	public void addExtendedField(String fieldName, Object value) {
+		this.extendedFields.put(fieldName, value);
 	}
 
-	public void addExtendedFieldMap(HashMap<String, Object> ruleMap) {
-		this.extendedFieldMap.putAll(ruleMap);
+	public void setExtendedFields(Map<String, Object> ruleMap) {
+		this.extendedFields.putAll(ruleMap);
 	}
 
 	

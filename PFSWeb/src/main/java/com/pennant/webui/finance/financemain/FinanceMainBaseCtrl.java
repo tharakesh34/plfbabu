@@ -11986,6 +11986,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	/**
+	 * Method to validate Extended details
+	 * 
+	 * @return
+	 * @throws ParseException
+	 * @throws InterruptedException
+	 */
+	public boolean doExtendedDetailsValidation() throws ParseException, InterruptedException {
+		logger.debug("Entering");
+		// Extended Field validations
+		if(getFinanceDetail().getExtendedFieldHeader() != null) {
+			getFinanceDetail().setExtendedFieldRender(extendedFieldCtrl.save());			
+		}
+		logger.debug("Leaving");
+		return true;
+	}
+
+	/**
 	 * Method to set user details values to asset objects
 	 * 
 	 * @param aFinanceDetail
@@ -14668,7 +14685,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			for (ExtendedFieldDetail fieldDetail : detail.getCustomerDetails().getExtendedFieldHeader().getExtendedFieldDetails()) {
 				if(fieldDetail.isAllowInRule()){
 					Object value = detail.getCustomerDetails().getExtendedFieldRender().getMapValues().get(fieldDetail.getFieldName());
-					detail.getCustomerEligibilityCheck().setExtendedFieldMap(fieldDetail.getLovDescModuleName()+"_"+fieldDetail.getLovDescSubModuleName()+"_"+fieldDetail.getFieldName(), value);
+					detail.getCustomerEligibilityCheck().addExtendedField(fieldDetail.getLovDescModuleName()+"_"+fieldDetail.getLovDescSubModuleName()+"_"+fieldDetail.getFieldName(), value);
 				}
 			}
 			
@@ -14681,7 +14698,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			for (ExtendedFieldDetail fieldDetail : detail.getExtendedFieldHeader().getExtendedFieldDetails()) {
 				if(fieldDetail.isAllowInRule()){
 					Object value = detail.getExtendedFieldRender().getMapValues().get(fieldDetail.getFieldName());
-					detail.getCustomerEligibilityCheck().setExtendedFieldMap(fieldDetail.getLovDescModuleName()+"_"+fieldDetail.getLovDescSubModuleName()+"_"+fieldDetail.getFieldName(), value);
+					detail.getCustomerEligibilityCheck().addExtendedField(fieldDetail.getLovDescModuleName()+"_"+fieldDetail.getLovDescSubModuleName()+"_"+fieldDetail.getFieldName(), value);
 				}
 			}	
 		}
@@ -14691,17 +14708,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isNotBlank(financeMain.getFinPurpose())) {
 			finPurpose = financeMain.getFinPurpose();
 		}
-		detail.getCustomerEligibilityCheck().setExtendedFieldMap("finPurpose", finPurpose);
+		detail.getCustomerEligibilityCheck().addExtendedField("finPurpose", finPurpose);
  		
 		// ### 08-05-2018 - End- Development Item 81
 
 		// ### 10-05-2018 - Start- Development Item 82
 		if(jointAccountDetailDialogCtrl!=null){
-			detail.getCustomerEligibilityCheck().addExtendedFieldMap(jointAccountDetailDialogCtrl.getRuleMap());
+			detail.getCustomerEligibilityCheck().setExtendedFields(jointAccountDetailDialogCtrl.getRules());
 		}
 
 		if(collateralHeaderDialogCtrl!=null){
-			detail.getCustomerEligibilityCheck().addExtendedFieldMap(collateralHeaderDialogCtrl.getRuleMap());
+			detail.getCustomerEligibilityCheck().setExtendedFields(collateralHeaderDialogCtrl.getRules());
 		}
 		// ### 10-05-2018 - End - Development Item 82
 		setFinanceDetail(detail);

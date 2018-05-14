@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -119,14 +120,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private boolean enquiry;
 	private	boolean fromApproved;
 	//### 10-05-2018 Start Development Item 82
-	private HashMap<String, Object> ruleMap = new HashMap<String, Object>();
+	private Map<String, Object> rules= new HashMap<>();
 	
-	public HashMap<String, Object> getRuleMap() {
-		return ruleMap;
+	public Map<String, Object> getRules() {
+		return rules;
 	}
 
-	public void setRuleMap(HashMap<String, Object> ruleMap) {
-		this.ruleMap = ruleMap;
+	public void setRules(Map<String, Object> rules) {
+		this.rules = rules;
 	}
 
 	//### 10-05-2018 End Development Item 82
@@ -368,7 +369,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.listBoxJountAccountDetails.getItems().clear();
 		setJountAccountDetailList(jountAccountDetails);
 		//### 10-05-2018 Development Item 82
-		ruleMap.put("Co_Applicants_Count", jountAccountDetails.size());
+		rules.put("Co_Applicants_Count", jountAccountDetails.size());
 		
 		for (JointAccountDetail jountAccountDetail : jountAccountDetails) {
 			Listitem listitem = new Listitem();
@@ -541,9 +542,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		}
 		
 		//### 10-05-2018 Start Development Item 82
-		ruleMap.put("Guarantors_Bank_CustomerCount", customerCount);
-		ruleMap.put("Guarantors_Other_CustomerCount", otherCount);
-		ruleMap.put("Guarantors_Total_Count", customerCount+otherCount);
+		rules.put("Guarantors_Bank_CustomerCount", customerCount);
+		rules.put("Guarantors_Other_CustomerCount", otherCount);
+		rules.put("Guarantors_Total_Count", customerCount+otherCount);
 		//### 10-05-2018 End Development Item 82
 		logger.debug("Leaving");
 	}
