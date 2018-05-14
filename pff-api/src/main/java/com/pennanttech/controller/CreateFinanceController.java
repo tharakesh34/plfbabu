@@ -775,7 +775,9 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		// validate Disbursement instruction total amount
-		validateDisbInstAmount(financeDetail);
+		if (financeDetail.getAdvancePaymentsList() != null && financeDetail.getAdvancePaymentsList().size() > 0) {
+			validateDisbInstAmount(financeDetail);
+		}
 
 		// Step Policy Details
 		if(financeMain.isStepFinance()) {
@@ -890,11 +892,13 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.getMandate().setMandateCcy(SysParamUtil.getAppCurrency());
 
 			//workflow
-			financeDetail.getMandate().setWorkflowId(financeMain.getWorkflowId());
-			financeDetail.getMandate().setRoleCode(financeMain.getRoleCode());
-			financeDetail.getMandate().setNextRoleCode(financeMain.getNextRoleCode());
-			financeDetail.getMandate().setTaskId(financeMain.getTaskId());
-			financeDetail.getMandate().setNextTaskId(financeMain.getNextTaskId());
+			/*
+			 * financeDetail.getMandate().setWorkflowId(financeMain.getWorkflowId());
+			 * financeDetail.getMandate().setRoleCode(financeMain.getRoleCode());
+			 * financeDetail.getMandate().setNextRoleCode(financeMain.getNextRoleCode());
+			 * financeDetail.getMandate().setTaskId(financeMain.getTaskId());
+			 * financeDetail.getMandate().setNextTaskId(financeMain.getNextTaskId());
+			 */
 
 			// mandate details
 			financeDetail.getMandate().setCustCIF(financeMain.getLovDescCustCIF());
