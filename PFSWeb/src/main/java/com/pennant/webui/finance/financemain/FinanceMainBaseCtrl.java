@@ -6250,13 +6250,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// RCU Init Verification Detail
 		Tab rcuInitTab = getTab(AssetConstants.UNIQUE_ID_RCUINITIATION);
 		if ((rcuInitTab != null && rcuInitTab.isVisible()) && rcuVerificationDialogCtrl != null) {
-			rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuInitTab, recSave);
+			rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuInitTab);
 		}
 		
 		// RCU Approval Verification Detail
 		Tab rcuApprovalTab = getTab(AssetConstants.UNIQUE_ID_RCUAPPROVAL);
 		if ((rcuApprovalTab != null && rcuApprovalTab.isVisible()) && rcuVerificationDialogCtrl != null) {
-			rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuApprovalTab, recSave);
+			rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuApprovalTab);
 			for (Verification verification : aFinanceDetail.getRcuVerification().getVerifications()) {
 				if (verification.getDecision() == Decision.RE_INITIATE.getKey()
 						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)) {
