@@ -112,7 +112,7 @@ public class CibilEnquiryProcess extends AbstractInterface implements CreditInfo
 		String cibilReq = (String) getSMTParameter("CBIL_PROCESS_REQ", String.class);
 
 		if ("N".equals(cibilReq)) {
-			//return auditHeader;
+			return auditHeader;
 		}
 		 
 
@@ -951,15 +951,14 @@ public class CibilEnquiryProcess extends AbstractInterface implements CreditInfo
 
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
-			return "TUEF12AVANSE                     0000NB69961001_UATC2C3            000214857486312052018193413PN03N010107SAM REZ07080905199008012PT03T01011098766467480302019001YSC10CIBILTUSCR0102010202100308120520180405000-1PA03A010108234 TEST06021607067990010802021008120520189001YES0700002830102**‼";
-
+			throw e;
 		} finally {
 
 			/*
 			 * if (socket != null && !socket.isClosed()) { socket.close(); }
 			 */
 		}
-		return "TUEF12AVANSE                     0000NB69961001_UATC2C3            000214857486312052018193413PN03N010107SAM REZ07080905199008012PT03T01011098766467480302019001YSC10CIBILTUSCR0102010202100308120520180405000-1PA03A010108234 TEST06021607067990010802021008120520189001YES0700002830102**‼";
+		return builder.toString();
 	}
 
 	private void parseErrorResponse(String response) throws Exception {
