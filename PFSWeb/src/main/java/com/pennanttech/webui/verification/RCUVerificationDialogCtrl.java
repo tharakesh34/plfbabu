@@ -500,7 +500,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void onCheck$rcuRadioGroup(Event event) {
 		final HashMap<String, Object> map = new HashMap<>();
 		RiskContainmentUnit riskContainmentUnit = riskContainmentUnitService
-				.getRiskContainmentUnit(rcuRadioGroup.getSelectedItem().getValue());
+				.getRiskContainmentUnit(Long.parseLong(rcuRadioGroup.getSelectedItem().getValue().toString()));
 		if (riskContainmentUnit != null) {
 			map.put("LOAN_ORG", true);
 			map.put("riskContainmentUnit", riskContainmentUnit);

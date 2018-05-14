@@ -1852,13 +1852,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
 								FinanceConstants.PROCEDT_VERIFICATION_LV_APPR)) {
 							financeDetail.setLvApprovalTab(true);
-						} /*else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
+						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
 								FinanceConstants.PROCEDT_VERIFICATION_RCU_INIT)) {
 							financeDetail.setRcuInitTab(true);
 						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
 								FinanceConstants.PROCEDT_VERIFICATION_RCU_APPR)) {
 							financeDetail.setRcuApprovalTab(true);
-						} */
+						} 
 					}
 				}
 			}

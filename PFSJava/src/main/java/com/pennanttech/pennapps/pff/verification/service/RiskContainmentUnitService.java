@@ -35,4 +35,6 @@ public interface RiskContainmentUnitService {
 	void deleteDocuments(long verificationId, TableType tableType);
 
 	List<RCUDocument> getDocuments(String keyReference, TableType tableType, DocumentType documentType);
+	
+	RiskContainmentUnit getRiskContainmentUnit(long verificationId);
 }

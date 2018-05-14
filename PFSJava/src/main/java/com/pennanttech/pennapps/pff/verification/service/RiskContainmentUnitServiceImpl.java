@@ -350,6 +350,11 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	}
 
 	@Override
+	public RiskContainmentUnit getRiskContainmentUnit(long verificationId) {
+		return riskContainmentUnitDAO.getRiskContainmentUnit(verificationId, "_view");
+	}
+	
+	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 

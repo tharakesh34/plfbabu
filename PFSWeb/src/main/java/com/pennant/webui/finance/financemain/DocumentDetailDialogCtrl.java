@@ -119,7 +119,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private transient CustomerDocumentService customerDocumentService = null;
 	private ExternalDocumentManager externalDocumentManager = null;
 
-	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
+	private Object financeMainDialogCtrl = null;
 	
 	private FinanceDetail financeDetail = null;
 
@@ -180,8 +180,11 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				setRole((String) arguments.get("roleCode"));
 			}
 			if (arguments.containsKey("financeMainDialogCtrl")) {
-				this.financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
-				financeMainDialogCtrl.setDocumentDetailDialogCtrl(this);
+				this.financeMainDialogCtrl = arguments.get("financeMainDialogCtrl");
+
+				if (financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
+					((FinanceMainBaseCtrl)financeMainDialogCtrl).setDocumentDetailDialogCtrl(this);
+				}
 			}
 			if (arguments.containsKey("headerNotrequired")) {
 				headerNotrequired = true;
