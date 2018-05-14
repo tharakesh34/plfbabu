@@ -979,20 +979,16 @@ public class AgreementGeneration implements Serializable {
 	}
 
 	private AgreementDetail populateExtendedDetails(FinanceDetail detail, AgreementDetail agreement) {
-		Map<String, Object> extendedValues = detail.getExtendedFieldRender().getMapValues();
-		if(CollectionUtils.isNotEmpty(extendedValues.entrySet())){
-			
-			Map<String, Object> mapValues = detail.getCustomerDetails().getExtendedFieldRender().getMapValues();
-			for (String key : mapValues.keySet()) {
-				ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
-				extendedDetail.setKey(StringUtils.trimToEmpty(key));
-				if (null != mapValues.get(key)) {
-					extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
-				} else {
-					extendedDetail.setValue(StringUtils.EMPTY);
-				}
-				agreement.getExtendedDetails().add(extendedDetail);
+		Map<String, Object> mapValues = detail.getExtendedFieldRender().getMapValues();
+		for (String key : mapValues.keySet()) {
+			ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
+			extendedDetail.setKey(StringUtils.trimToEmpty(key));
+			if (null != mapValues.get(key)) {
+				extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
+			} else {
+				extendedDetail.setValue(StringUtils.EMPTY);
 			}
+			agreement.getExtendedDetails().add(extendedDetail);
 		}
 		return agreement;
 	}
@@ -1605,7 +1601,7 @@ public class AgreementGeneration implements Serializable {
 						if(CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())){
 							for (ExtendedFieldRender extendedFieldRender : collateralSetup.getExtendedFieldRenderList()) {
 								if(null!=extendedFieldRender&&MapUtils.isNotEmpty(extendedFieldRender.getMapValues())){
-									Map<String, Object> mapValues = detail.getCustomerDetails().getExtendedFieldRender().getMapValues();
+									Map<String, Object> mapValues = extendedFieldRender.getMapValues();
 									for (String key : mapValues.keySet()) {
 										ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
 										extendedDetail.setKey(StringUtils.trimToEmpty(key));
