@@ -425,10 +425,10 @@ public class PennantJavaUtil {
 	private static String VASWF = "VAS_CAN_CREATE";
 	private static String disbWF = "DISB_INSTRUCTIONS";
 	private static String collectionWF="COLLECTIONS";
-	private final static String WF_VERIFICATION_FI="VERIFICATION_PROCESS";
-	private final static String WF_VERIFICATION_TV="MSTGRP1";
-	private final static String WF_VERIFICATION_LV="MSTGRP1";
-	private final static String WF_VERIFICATION_RCU="MSTGRP1";
+	private final static String WF_VERIFICATION_FI="VERIFICATION_FI";
+	private final static String WF_VERIFICATION_TV="VERIFICATION_TV";
+	private final static String WF_VERIFICATION_LV="VERIFICATION_LV";
+	private final static String WF_VERIFICATION_RCU="VERIFICATION_RCU";
 
 	public static String getLabel(String label) {
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
