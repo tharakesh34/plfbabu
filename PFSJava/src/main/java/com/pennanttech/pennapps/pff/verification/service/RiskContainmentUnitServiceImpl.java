@@ -351,7 +351,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 
 	@Override
 	public RiskContainmentUnit getRiskContainmentUnit(long verificationId) {
-		return riskContainmentUnitDAO.getRiskContainmentUnit(verificationId, "_view");
+		return riskContainmentUnitDAO.getRiskContainmentUnit(verificationId, "_View");
 	}
 	
 	@Override
