@@ -6,6 +6,7 @@
 
 	<property name="add.schema" value="dbo." dbms="mssql" />
 	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="add.schema" value=" " dbms="postgresql" />
 	<property name="call.substr" value="substring" dbms="mssql" />
 	<property name="call.substr" value="substr" dbms="oracle" />
 	<property name="call.substr" value="substring" dbms="postgresql" />
