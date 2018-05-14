@@ -508,7 +508,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				rcuInquiry.getChildren().clear();
 			}
 			Executions.createComponents(
-					"/WEB-INF/pages/Verification/TechnicalVerification/RiskContainmentUnitDialog.zul", rcuInquiry, map);
+					"/WEB-INF/pages/Verification/RiskContainmentUnit/RiskContainmentUnitDialog.zul", rcuInquiry, map);
 		} else {
 			MessageUtil.showMessage("Initiation request not available in RCU Verification Module.");
 		}
