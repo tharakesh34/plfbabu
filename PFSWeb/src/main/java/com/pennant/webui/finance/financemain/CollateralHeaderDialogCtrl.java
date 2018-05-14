@@ -639,7 +639,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		balanceAssignedValue = totalBankValuation.subtract(totAssignedColValue);
 		
 		rules.put("Collateral_Bank_Valuation", totalBankValuation);
-		rules.put("Collaterals_Total_Assigned ", totAssignedColValue);
+		rules.put("Collaterals_Total_Assigned", totAssignedColValue);
 		rules.put("Collaterals_Total_UN_Assigned", balanceAssignedValue);
 		//### 10-05-2018 End  Development Item 82
 		
