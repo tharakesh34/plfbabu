@@ -824,7 +824,6 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		}
 
 		doWriteBeanToComponents(rcu);
-		setDialog(DialogType.EMBEDDED);
 
 		if (!fromLoanOrg) {
 			setDialog(DialogType.EMBEDDED);
