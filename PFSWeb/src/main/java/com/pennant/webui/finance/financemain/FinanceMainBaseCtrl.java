@@ -14685,7 +14685,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			for (ExtendedFieldDetail fieldDetail : detail.getCustomerDetails().getExtendedFieldHeader().getExtendedFieldDetails()) {
 				if(fieldDetail.isAllowInRule()){
 					Object value = detail.getCustomerDetails().getExtendedFieldRender().getMapValues().get(fieldDetail.getFieldName());
+					if(StringUtils.equals("CURRENCY",fieldDetail.getFieldType())){
+						value  = PennantAppUtil.formateAmount((BigDecimal) value,CurrencyUtil.getFormat(detail.getCustomerDetails().getCustomer().getCustBaseCcy()));
+					}
 					detail.getCustomerEligibilityCheck().addExtendedField(fieldDetail.getLovDescModuleName()+"_"+fieldDetail.getLovDescSubModuleName()+"_"+fieldDetail.getFieldName(), value);
+
+					
 				}
 			}
 			
