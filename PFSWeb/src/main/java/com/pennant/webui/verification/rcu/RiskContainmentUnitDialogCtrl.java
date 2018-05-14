@@ -718,7 +718,6 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	}
 
 	private void setValue(Listitem listitem, String comonentId) {
-		try {
 			RCUDocument rcuDocument = null;
 
 			rcuDocument = (RCUDocument) listitem.getAttribute("data");
@@ -769,11 +768,6 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				break;
 			}
 			rcuDocument.setRecordStatus(this.recordStatus.getValue());
-		} catch (WrongValueException e) {
-			e.printStackTrace();
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private org.zkoss.zk.ui.Component getComponent(Listitem listitem, String listcellId) {
