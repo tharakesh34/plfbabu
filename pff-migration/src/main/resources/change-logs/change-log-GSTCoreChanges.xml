@@ -1090,4 +1090,202 @@
 		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="UGST_RATE" newDataType="decimal(5,2)" />
 	</changeSet>
 	
+	<changeSet id="67" author="Kesav">
+		<comment>coalesce added in TaxApplicable column for GST changes</comment>
+		<createView viewName="Manualadvise_View" replaceIfExists="true">
+			SELECT t1.adviseid,
+			    t1.advisetype,
+			    t1.finreference,
+			    t1.feetypeid,
+			    t1.sequence,
+			    t1.adviseamount,
+			    t1.paidamount,
+			    t1.waivedamount,
+			    t1.remarks,
+			    t1.valuedate,
+			    t1.postdate,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.feetypedesc,
+			    t2.feetypecode,
+			    t1.bounceid,
+			    t1.receiptid,
+			    t3.bouncecode,
+			    t1.reservedamt,
+			    t1.balanceamt,
+			    t3.reason AS bouncecodedesc,
+			    coalesce(t2.TaxApplicable,'0') TaxApplicable,
+			    t2.TaxComponent
+			   FROM manualadvise_temp t1
+			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
+			UNION ALL
+			 SELECT t1.adviseid,
+			    t1.advisetype,
+			    t1.finreference,
+			    t1.feetypeid,
+			    t1.sequence,
+			    t1.adviseamount,
+			    t1.paidamount,
+			    t1.waivedamount,
+			    t1.remarks,
+			    t1.valuedate,
+			    t1.postdate,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.feetypedesc,
+			    t2.feetypecode,
+			    t1.bounceid,
+			    t1.receiptid,
+			    t3.bouncecode,
+			    t1.reservedamt,
+			    t1.balanceamt,
+			    t3.reason AS bouncecodedesc,
+			    coalesce(t2.TaxApplicable,'0') TaxApplicable,
+			    t2.TaxComponent
+			   FROM manualadvise t1
+			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM manualadvise_temp
+			          WHERE manualadvise_temp.adviseid = t1.adviseid))			
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="68" author="Kesav">
+		<comment>coalesce added in TaxApplicable column for GST changes</comment>
+		<createView viewName="manualadvise_tview" replaceIfExists="true">
+			SELECT t1.adviseid,
+			    t1.advisetype,
+			    t1.finreference,
+			    t1.feetypeid,
+			    t1.sequence,
+			    t1.adviseamount,
+			    t1.paidamount,
+			    t1.waivedamount,
+			    t1.remarks,
+			    t1.valuedate,
+			    t1.postdate,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.feetypedesc,
+			    t2.feetypecode,
+			    t1.bounceid,
+			    t1.receiptid,
+			    t3.bouncecode,
+			    t1.reservedamt,
+			    t1.balanceamt,
+			    t3.reason AS bouncecodedesc,
+				coalesce(t2.TaxApplicable,'0') TaxApplicable,
+			    t2.TaxComponent
+			   FROM manualadvise_temp t1
+			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid			
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="69" author="Kesav">
+		<comment>coalesce added in TaxApplicable column for GST changes</comment>
+		<createView viewName="manualadvise_lview" replaceIfExists="true">
+			SELECT t1.adviseid,
+			    t1.advisetype,
+			    t1.finreference,
+			    t1.feetypeid,
+			    t1.sequence,
+			    t1.adviseamount,
+			    t1.paidamount,
+			    t1.waivedamount,
+			    t1.remarks,
+			    t1.valuedate,
+			    t1.postdate,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.feetypedesc,
+			    t2.feetypecode,
+			    t1.bounceid,
+			    t1.receiptid,
+			    t3.bouncecode,
+			    t1.reservedamt,
+			    t1.balanceamt,
+			    t3.reason AS bouncecodedesc,
+				coalesce(t2.TaxApplicable,'0') TaxApplicable,
+			    t2.TaxComponent
+			   FROM manualadvise t1
+			     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid			
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="70" author="Kesav">
+		<comment>coalesce added in TaxApplicable column for GST changes</comment>
+		<createView viewName="manualadvise_aview" replaceIfExists="true">
+			SELECT t1.adviseid,
+			    t1.advisetype,
+			    t1.finreference,
+			    t1.feetypeid,
+			    t1.sequence,
+			    t1.adviseamount,
+			    t1.paidamount,
+			    t1.waivedamount,
+			    t1.remarks,
+			    t1.valuedate,
+			    t1.postdate,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.feetypedesc,
+			    t2.feetypecode,
+			    t1.bounceid,
+			    t1.receiptid,
+			    t3.bouncecode,
+			    t1.reservedamt,
+			    t1.balanceamt,
+			    t3.reason AS bouncecodedesc,
+				coalesce(t2.TaxApplicable,'0') TaxApplicable,
+			    t2.TaxComponent
+			   FROM manualadvise t1
+			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid			
+		</createView>	
+	</changeSet>
+	
 </databaseChangeLog>
