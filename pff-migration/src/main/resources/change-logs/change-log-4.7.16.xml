@@ -6050,5 +6050,51 @@ update workflowdetails set WorkFlowActive='0' where WorkFlowType='VERIFICATION_P
 		UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
 	</sql>
 </changeSet>
+
+<changeSet id="136" author="vijaykumar.l">
+	<sql>
+Delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'finPurpose';
+
+ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+('ELGRULE','ELGRULE','finPurpose','Loan Purpose','nvarchar',8,'0','1','LoanPurposes','static,dbvalue','LoanPurpose');
+
+Delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Co_Applicants_Count';
+
+Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+('ELGRULE','ELGRULE','Co_Applicants_Count','Loan Co Applicants Count','int',10,'0','0','LoanPurposes','static',null);
+
+Delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Guarantors_Bank_CustomerCount';
+
+Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+('ELGRULE','ELGRULE','Guarantors_Bank_CustomerCount','Guarantors Bank Customer Count','int',10,'0','0','LoanPurposes','static',null);
+
+
+Delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Guarantors_Other_CustomerCount';
+
+Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+('ELGRULE','ELGRULE','Guarantors_Other_CustomerCount','Guarantors Other Customer Count','int',10,'0','0','LoanPurposes','static',null);
+
+Delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Guarantors_Total_Count';
+
+Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+('ELGRULE','ELGRULE','Guarantors_Total_Count','Guarantors Total Count','int',10,'0','0','LoanPurposes','static',null);
+
+Delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Collateral_Bank_Valuation';
+
+Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+('ELGRULE','ELGRULE','Collateral_Bank_Valuation','Collateral Bank Valuation','decimal',18,'0','0','LoanPurposes','static',null);
+
+Delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Collaterals_Total_Assigned';
+
+Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+('ELGRULE','ELGRULE','Collaterals_Total_Assigned','Collaterals Total Assigned Amount','decimal',18,'0','0','LoanPurposes','static',null);
+
+Delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Collaterals_Total_UN_Assigned';
+
+Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+('ELGRULE','ELGRULE','Collaterals_Total_UN_Assigned','Collaterals Total UN Assigned Amount','decimal',18,'0','0','LoanPurposes','static',null);
+
+	</sql>
+   </changeSet>
 </databaseChangeLog>
 	
