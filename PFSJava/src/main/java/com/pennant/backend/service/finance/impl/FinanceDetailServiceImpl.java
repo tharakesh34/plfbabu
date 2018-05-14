@@ -2179,6 +2179,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER.equals(taxDetail.getApplicableFor())
 					|| PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(taxDetail.getApplicableFor())
 					|| PennantConstants.TAXAPPLICABLEFOR_GUARANTOR.equals(taxDetail.getApplicableFor())) {
+				
+				//if we take new customer case
+				if (taxDetail.getTaxCustId() <= 0 && PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER.equals(taxDetail.getApplicableFor())) {
+					taxDetail.setTaxCustId(financeMain.getCustID());
+				}
+				
 				taxDetail.setFinReference(finReference);
 				taxDetail.setTaskId(financeMain.getTaskId());
 				taxDetail.setNextTaskId(financeMain.getNextTaskId());
