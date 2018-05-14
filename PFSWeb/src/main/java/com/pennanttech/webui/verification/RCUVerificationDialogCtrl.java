@@ -93,7 +93,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private Map<String, Verification> customerDocuments = new LinkedHashMap<>();
 	private Map<String, Verification> loanDocuments = new LinkedHashMap<>();
 	private Map<String, Verification> collateralDocuments = new LinkedHashMap<>();
-	private List<String> rcurequiredDocs = getRCURequiredDocs();
+	private List<String> rcurequiredDocs;
 	
 	@Autowired
 	private SearchProcessor searchProcessor;
@@ -133,6 +133,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
+		
+		rcurequiredDocs = getRCURequiredDocs();
 
 		doShowDialog();
 
@@ -817,7 +819,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		agency.setModuleName("VerificationAgencies");
 		agency.setValueColumn("DealerName");
 		agency.setValidateColumns(new String[] { "DealerName" });
-		Filter agencyFilter[] = new Filter[1];
+		Filter[] agencyFilter = new Filter[1];
 		agencyFilter[0] = new Filter("DealerType", Agencies.RCUVAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
 
@@ -830,7 +832,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		reason.setModuleName("VerificationWaiverReason");
 		reason.setValueColumn("Code");
 		reason.setValidateColumns(new String[] { "Code" });
-		Filter reasonFilter[] = new Filter[1];
+		Filter[] reasonFilter = new Filter[1];
 		reasonFilter[0] = new Filter("ReasonTypecode", WaiverReasons.RCUWRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
 
@@ -1069,7 +1071,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		doRemoveValidation();
 
-		if (wve.size() > 0) {
+		if (!wve.isEmpty()) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
 			if (tab != null) {
 				tab.setSelected(true);
@@ -1084,7 +1086,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doSave(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
+	public void doSave(FinanceDetail financeDetail, Tab tab)  {
 		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
@@ -1109,7 +1111,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private List<Verification> getVerifications() {
 		Map<Long, Verification> map = new HashMap<>();
 		List<Verification> verifications = new ArrayList<>();
-		Verification verification = null;
+		Verification aVerification = null;
 
 		for (Verification vrf : this.verification.getVerifications()) {
 			if (vrf.getRequestType() != RequestType.INITIATE.getKey()) {
@@ -1124,11 +1126,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			RCUDocument document = vrf.getRcuDocument();
 			document.setInitRemarks(vrf.getRemarks());
 			if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
-				verification = map.get(vrf.getAgency());
-				verification.getRcuDocuments().add(document);
-			} else {
-				//vrf.setReferenceFor(document.getDocumentId() + StringUtils.trimToEmpty(document.getDocumentSubId()));
-			}
+				aVerification = map.get(vrf.getAgency());
+				aVerification.getRcuDocuments().add(document);
+			} 
 		}
 		verifications.addAll(map.values());
 		return verifications;
