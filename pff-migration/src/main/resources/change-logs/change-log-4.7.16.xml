@@ -6096,5 +6096,56 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 
 	</sql>
    </changeSet>
+   
+   <changeSet id="137" author="Durga Prasad G">
+		   <sql>
+					delete from Secroles Where Rolecd = 'VERIFICATION_FI_MAKER';
+					delete from Secroles Where Rolecd = 'VERIFICATION_FI_APPROVER';
+					delete from Secroles Where Rolecd = 'VERIFICATION_LV_MAKER';
+					delete from Secroles Where Rolecd = 'VERIFICATION_LV_APPROVER';
+					delete from Secroles Where Rolecd = 'VERIFICATION_TV_MAKER';
+					delete from Secroles Where Rolecd = 'VERIFICATION_TV_APPROVER';
+					delete from Secroles Where Rolecd = 'VERIFICATION_RCU_MAKER';
+					delete from Secroles Where Rolecd = 'VERIFICATION_RCU_APPROVER';
+					
+					Update SeqSecRoles set seqno = (Select Max(roleid) from Secroles_view);
+					INSERT INTO SecRoles SELECT (select seqno+1 from SeqSecRoles), 1, 'VERIFICATION_FI_MAKER', 'Field Invistigation Verification Maker Role',null,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SeqSecRoleGroups WHERE 0=0;
+					INSERT INTO SecRoles SELECT (select seqno+2 from SeqSecRoles), 1, 'VERIFICATION_FI_APPROVER', 'Field Invistigation Verification Approver Role',null,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SeqSecRoleGroups WHERE 0=0;
+					INSERT INTO SecRoles SELECT (select seqno+3 from SeqSecRoles), 1, 'VERIFICATION_LV_MAKER', 'Legal Verification  Maker Role',null,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SeqSecRoleGroups WHERE 0=0;
+					INSERT INTO SecRoles SELECT (select seqno+4 from SeqSecRoles), 1, 'VERIFICATION_LV_APPROVER', 'Legal Verification Approver Role',null,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SeqSecRoleGroups WHERE 0=0;
+					INSERT INTO SecRoles SELECT (select seqno+5 from SeqSecRoles), 1, 'VERIFICATION_TV_MAKER', 'Technical Verification Maker Role',null,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SeqSecRoleGroups WHERE 0=0;
+					INSERT INTO SecRoles SELECT (select seqno+6 from SeqSecRoles), 1, 'VERIFICATION_TV_APPROVER', 'Technical Verification Approver Role',null,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SeqSecRoleGroups WHERE 0=0;
+					INSERT INTO SecRoles SELECT (select seqno+7 from SeqSecRoles), 1, 'VERIFICATION_RCU_MAKER', 'RCU Verification Maker Role',null,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SeqSecRoleGroups WHERE 0=0;
+					INSERT INTO SecRoles SELECT (select seqno+8 from SeqSecRoles), 1, 'VERIFICATION_RCU_APPROVER', 'RCU Verification Approver Role',null,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SeqSecRoleGroups WHERE 0=0;
+					Update SeqSecRoles set seqno = (Select Max(roleid) from Secroles_view);
+					
+							
+					Delete from SecRoleGroups where roleid in(Select roleid from secroles where rolecd in('MSTGRP1_MAKER','MSTGRP1_APPROVER')) and grpid in(Select grpid from secgroups where grpcode IN('TECHNICALVERIFICATION_MAKER','TECHNICALVERIFICATION_APPROVER'));
+					Delete from SecRoleGroups where roleid in(Select roleid from secroles where rolecd in('MSTGRP1_MAKER','MSTGRP1_APPROVER')) and grpid in(Select grpid from secgroups where grpcode IN('FIELDINVESTIGATION_MAKER','FIELDINVESTIGATION_APPROVER'));
+					Delete from SecRoleGroups where roleid in(Select roleid from secroles where rolecd in('MSTGRP1_MAKER','MSTGRP1_APPROVER')) and grpid in(Select grpid from secgroups where grpcode IN('RCU_VERIFICATION_MAKER','RCU_VERIFICATION_APPROVER'));
+					Delete from SecRoleGroups where roleid in(Select roleid from secroles where rolecd in('MSTGRP1_MAKER','MSTGRP1_APPROVER')) and grpid in(Select grpid from secgroups where grpcode IN('LEGALVERIFICATION_MAKER','LEGALVERIFICATION_APPROVER'));
+					
+					UPDATE seqSecRoleGroups SET seqno= (SELECT MAX(rolegrpid) FROM secrolegroups_view);
+					Insert into secRoleGroups values ((select seqno+1 from SeqSecRoles),(select GrpID from SecGroups where grpCode='TECHNICALVERIFICATION_MAKER'),(select RoleID from secRoles where RoleCd='VERIFICATION_TV_MAKER'), 0,1000,current_timestamp,'Approved','','','','','',0);
+					Insert into secRoleGroups values ((select seqno+2 from SeqSecRoles),(select GrpID from SecGroups where grpCode='TECHNICALVERIFICATION_APPROVER'),(select RoleID from secRoles where RoleCd='VERIFICATION_TV_APPROVER'), 0,1000,current_timestamp,'Approved','','','','','',0);
+					Insert into secRoleGroups values((select seqno+3 from SeqSecRoles),(select GrpID from SecGroups where grpCode='RCU_VERIFICATION_MAKER'),(select RoleID from secRoles where RoleCd='VERIFICATION_RCU_MAKER'),0,1000,current_timestamp,'Approved','','','','','',0);
+					Insert into secRoleGroups values((select seqno+4 from SeqSecRoles),(select GrpID from SecGroups where grpCode='RCU_VERIFICATION_APPROVER'),(select RoleID from secRoles where RoleCd='VERIFICATION_RCU_APPROVER'),0,1000,current_timestamp,'Approved','','','','','',0);   						
+					Insert into secrolegroups values ((select seqno+5 from SeqSecRoles), (select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'), (select roleid from secroles where rolecd='VERIFICATION_FI_MAKER'), 0,1000, current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
+					Insert into secrolegroups values ((select seqno+6 from SeqSecRoles), (select grpid from secgroups where grpcode='FIELDINVESTIGATION_APPROVER'), (select roleid from secroles where rolecd='VERIFICATION_FI_APPROVER'), 0,1000, current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
+					Insert into secRoleGroups values((select seqno+7 from SeqSecRoles),(select GrpID from SecGroups where grpCode='LEGALVERIFICATION_MAKER'),(select RoleID from secRoles where RoleCd='VERIFICATION_LV_MAKER'),0,1000,current_timestamp,'Approved','','','','','',0);
+					Insert into secRoleGroups values((select seqno+8 from SeqSecRoles),(select GrpID from SecGroups where grpCode='LEGALVERIFICATION_APPROVER'),(select RoleID from secRoles where RoleCd='VERIFICATION_LV_APPROVER'),0,1000,current_timestamp,'Approved','','','','','',0);
+					update seqsecrolegroups set seqno=(select max(rolegrpid) from secrolegroups_view);
+					
+					
+					Update secgroups Set grpcode = 'VERIFICATION_TV_MAKER' Where grpcode = 'TECHNICALVERIFICATION_MAKER';
+					Update secgroups Set grpcode = 'VERIFICATION_TV_APPROVER' Where grpcode = 'TECHNICALVERIFICATION_APPROVER';
+					Update secgroups Set grpcode = 'VERIFICATION_RCU_MAKER' Where grpcode = 'RCU_VERIFICATION_MAKER';
+					Update secgroups Set grpcode = 'VERIFICATION_RCU_APPROVER' Where grpcode = 'RCU_VERIFICATION_APPROVER';
+					Update secgroups Set grpcode = 'VERIFICATION_FI_MAKER' Where grpcode = 'FIELDINVESTIGATION_MAKER';
+					Update secgroups Set grpcode = 'VERIFICATION_FI_APPROVER' Where grpcode = 'FIELDINVESTIGATION_APPROVER';
+					Update secgroups Set grpcode = 'VERIFICATION_LV_MAKER' Where grpcode = 'LEGALVERIFICATION_MAKER';
+					Update secgroups Set grpcode = 'VERIFICATION_LV_APPROVER' Where grpcode = 'LEGALVERIFICATION_APPROVER';
+		   </sql>
+   </changeSet>
 </databaseChangeLog>
 	
