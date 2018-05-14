@@ -472,6 +472,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.gb_GSTDetails.setVisible(true);
 			FinanceDetail  financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinReference(), "", false);
 			
+			// For Calculating the GST amount, converting fees as FinFeeDetail and FinTypeFees and this is for inquiry purpose only, these values are not saving.
+			// GST Calculation is having FinFeeDetailService, so we just use the existing functionality and display the GST amounts.
 			if (financeDetail != null) {
 				BigDecimal adviseAmount = BigDecimal.ZERO;
 				FinFeeDetail finFeeDetail = new FinFeeDetail();
