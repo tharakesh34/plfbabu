@@ -387,8 +387,8 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		this.corpCreditWoth.setVisible(false);
 		this.label_ScoreSummary.setVisible(true);
 		this.label_ScoreSummaryVal.setVisible(true);
-		this.label_ClientCalScore.setVisible(true);
-		this.label_ClientCalScoreVal.setVisible(true);
+		this.label_ClientCalScore.setVisible(false);
+		this.label_ClientCalScoreVal.setVisible(false);
 		this.btnScoringGroup.setVisible(false);
 		
 		List<FinanceScoreHeader> scoringHeaderList = getFinanceDetail().getFinScoreHeaderList();
@@ -502,8 +502,8 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		this.corpCreditWoth.setVisible(true);
 		this.label_ScoreSummary.setVisible(true);
 		this.label_ScoreSummaryVal.setVisible(true);
-		this.label_ClientCalScore.setVisible(true);
-		this.label_ClientCalScoreVal.setVisible(true);
+		this.label_ClientCalScore.setVisible(false);
+		this.label_ClientCalScoreVal.setVisible(false);
 
 		totalExecScore = BigDecimal.ZERO;
 		this.btnScoringGroup.setVisible(false);
