@@ -4142,7 +4142,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void onChange$eidNumber(Event event) {
 		logger.debug("Entering");
 		if (isRetailCustomer) {
-			this.eidNumber.setValue(PennantApplicationUtil.formatEIDNumber(this.eidNumber.getValue()));
+			this.eidNumber.setValue(this.eidNumber.getValue());
 		}
 		logger.debug("Leaving");
 	}
