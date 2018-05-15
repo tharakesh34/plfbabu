@@ -542,6 +542,8 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		//### 10-05-2018 Start Development Item 82
 		BigDecimal totalBankValuation= new BigDecimal(0);
 		BigDecimal balanceAssignedValue= new BigDecimal(0);
+		BigDecimal totalAssignedValue= new BigDecimal(0);
+				
 		//### 10-05-2018 End Development Item 82
 		
 		int totCollateralCount = 0;
@@ -571,8 +573,11 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				listcell.setStyle("text-align:right;");
 				listitem.appendChild(listcell);
 				
+				totalBankValuation = totalBankValuation.add(PennantAppUtil.formateAmount(collateralAssignment.getBankValuation(), ccyFormat));
+				
 				BigDecimal curAssignValue =(collateralAssignment.getBankValuation().multiply(collateralAssignment.getAssignPerc())).divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN);
 				
+				totalAssignedValue = totalAssignedValue.add(PennantAppUtil.formateAmount(curAssignValue, ccyFormat));
 				
 				listcell = new Listcell(PennantAppUtil.amountFormate(curAssignValue, ccyFormat));
 				listcell.setStyle("text-align:right;");
@@ -585,9 +590,13 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				if(availAssignValue.compareTo(BigDecimal.ZERO) < 0){
 					availAssignValue = BigDecimal.ZERO;
 				}
+				
+				balanceAssignedValue = balanceAssignedValue.add(PennantAppUtil.formateAmount(availAssignValue, ccyFormat));
+				
 				listcell = new Listcell(PennantAppUtil.amountFormate(availAssignValue, ccyFormat));
 				listcell.setStyle("text-align:right;");
 				listitem.appendChild(listcell);
+				
 				
 				BigDecimal utlzedAmt = BigDecimal.ZERO;
 				if(loanAssignedValue.compareTo(BigDecimal.ZERO) > 0){
@@ -619,7 +628,6 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				listitem.setAttribute("data", collateralAssignment);
 				ComponentsCtrl.applyForward(listitem, "onDoubleClick=onCollateralAssignItemDoubleClicked");
 				this.listBoxCollateralAssignments.appendChild(listitem);
-				totalBankValuation		= 	totalBankValuation.add(collateralAssignment.getBankValuation());
 			}
 		}
 
@@ -636,11 +644,11 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		}
 
 		//### 10-05-2018 Start Development Item 82
-		balanceAssignedValue = totalBankValuation.subtract(totAssignedColValue);
 		
-		rules.put("Collateral_Bank_Valuation", totalBankValuation);
-		rules.put("Collaterals_Total_Assigned", totAssignedColValue);
+		rules.put("Collaterals_Total_Assigned", totalAssignedValue);
 		rules.put("Collaterals_Total_UN_Assigned", balanceAssignedValue);
+		rules.put("Collateral_Bank_Valuation", totalBankValuation);
+		
 		//### 10-05-2018 End  Development Item 82
 		
 		if (rcuVerificationDialogCtrl != null) {
