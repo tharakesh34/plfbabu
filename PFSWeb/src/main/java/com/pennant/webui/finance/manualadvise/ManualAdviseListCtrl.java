@@ -61,7 +61,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.finance.ManualAdviseService;
@@ -106,7 +106,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 	protected Listbox sortOperator_FeeTypeID;
 	
 	private transient ManualAdviseService manualAdviseService;
-	private List<ValueLabel> listAdviseType=PennantStaticListUtil.getManualAdviseTypes();
+	private List<Property> listAdviseType = PennantStaticListUtil.getManualAdvisePropertyTypes();
 	private FinanceMain financeMain =null;
 	/**
 	 * default constructor.<br>
@@ -155,7 +155,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		registerField("feeTypeDesc", listheader_FeeTypeID, SortOrder.NONE, feeTypeID, sortOperator_FeeTypeID, Operators.STRING);
  	
 		//comboBox list
-		fillComboBox(this.adviseType, "", listAdviseType,"");
+		fillList(adviseType, listAdviseType, null);
 		// Render the page and display the data.
 		doRenderPage();
 		search();
