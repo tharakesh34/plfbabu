@@ -240,7 +240,7 @@ public class PennantRegularExpressions {
 			put(REGEX_AREA_MAXLENGTH, "[0-9]{0,6}\\.[0-9]{0,2}");
 			put(REGEX_PASSPORT, "[a-zA-z0-9]{50}");
 			put(REGEX_CORP_CUST, "^[A-Za-z0-9]+[A-Za-z0-9.\\@\\&\\'\\s]*");
-			put(REGEX_AADHAR_NUMBER, "^(?![0-0-0]*$)+[0-9]{4}\\-[0-9]{4}\\-[0-9]{4}");
+			put(REGEX_AADHAR_NUMBER, "^(?![0-0-0]*$)+[0-9]{12}");
 			put(REGEX_UPPBOX_ALPHA_FL3, "[A-z]{3}");
 			put(REGEX_UPPBOX_ALPHANUM_FL3, "[A-z0-9]{3}");
 			put(REGEX_ACCOUNTNUMBER, "^(?![a-zA-Z]*$)+[a-zA-Z0-9]+$");
