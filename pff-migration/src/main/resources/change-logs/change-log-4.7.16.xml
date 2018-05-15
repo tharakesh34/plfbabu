@@ -6273,8 +6273,8 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
 			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
             <column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
-			<column name="WorkFlowRoles">VERIFICATION_TV_MAKER;VERIFICATION_TV_APPROVER</column>
-			<column name="FirstTaskOwner">VERIFICATION_TV_MAKER</column>
+			<column name="WorkFlowRoles">VERIFICATION_RCU_MAKER;VERIFICATION_RCU_APPROVER</column>
+			<column name="FirstTaskOwner">VERIFICATION_RCU_MAKER</column>
 			<column name="WorkFlowActive">1</column>
 			<column name="Version">0</column>
 			<column name="LastMntBy">1000</column>		
