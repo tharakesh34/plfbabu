@@ -1623,8 +1623,8 @@
 			rightName="menuItem_StaticParms_InterestRateBasisCode" /> -->
 		<!-- <menuItem id="menu_Item_Frequency" zulNavigation="/WEB-INF/pages/StaticParms/Frequency/FrequencyList.zul" 
 			rightName="menuItem_StaticParms_Frequency" /> -->
-		<!-- <menuItem id="menu_Item_Language" zulNavigation="/WEB-INF/pages/StaticParms/Language/LanguageList.zul" 
-			rightName="menuItem_StaticParms_Language" /> -->
+		<menuItem id="menu_Item_Language" zulNavigation="/WEB-INF/pages/StaticParms/Language/LanguageList.zul" 
+			rightName="menuItem_StaticParms_Language" />
 		<!-- <menuItem id="menu_Item_ScheduleMethod" zulNavigation="/WEB-INF/pages/StaticParms/ScheduleMethod/ScheduleMethodList.zul" 
 			rightName="menuItem_StaticParms_ScheduleMethod" /> -->
 	</menu>
