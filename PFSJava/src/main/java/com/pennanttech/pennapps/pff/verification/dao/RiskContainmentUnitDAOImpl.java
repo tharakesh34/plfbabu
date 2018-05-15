@@ -166,7 +166,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		
-		sql.append("values (:verificationId, :seqNo, :documentId, :documenttype, :documentSubId, :documentRefId, :documentUri, ");
+		sql.append("values (:verificationId, :seqNo, :documentId, :documentType, :documentSubId, :documentRefId, :documentUri, ");
 		sql.append(" :verificationType , :status, :pagesEyeballed, :pagesSampled, :agentRemarks,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
