@@ -223,8 +223,9 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		
 		FinanceRepayments financeRepayments = new FinanceRepayments();
 		financeRepayments.setFinReference(finReference);
+		financeRepayments.setFinSchdDate(finSchdDate);
 		
-		StringBuilder selectSql = new StringBuilder(" Select T1.FinReference, T1.FinPostDate,");
+		StringBuilder selectSql = new StringBuilder(" Select T1.FinReference, T1.FinPostDate,T1.finSchdDate,");
 		selectSql.append(" T1.FinValueDate,T1.FinSchdPriPaid, T1.FinSchdPftPaid, T1.FinSchdTdsPaid, T1.FinTotSchdPaid ");
 		selectSql.append(" From FinRepayDetails");
 		selectSql.append(" T1 where T1.FinReference=:FinReference and T1.FinSchdDate=:FinSchdDate ");

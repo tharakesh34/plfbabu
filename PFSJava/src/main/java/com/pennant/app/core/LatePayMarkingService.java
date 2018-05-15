@@ -104,7 +104,9 @@ public class LatePayMarkingService extends ServiceHelper {
 					latePayMarking(finmain, fod, penaltyRate, finScheduleDetails, repayments, curSchd, valueDate,valueDate);
 
 				}
-				resetLPPToZero(fod, curSchd, repayments, zeroIfpaid,valueDate);
+				if(DateUtility.compare(valueDate, curSchd.getSchDate())<=0){					
+					resetLPPToZero(fod, curSchd, repayments, zeroIfpaid,valueDate);
+				}
 			} else {
 				//if there is no schedule for od now then there is no penla
 				fod.setFinODTillDate(valueDate);
