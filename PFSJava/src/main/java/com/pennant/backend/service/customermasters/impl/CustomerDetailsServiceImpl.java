@@ -1323,7 +1323,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
 
 			Customer aCustomer = customerDetails.getCustomer();
-			if (aCustomer.isNewRecord()) {
+			if (aCustomer.isNewRecord() || extendedFieldRender.getReference() == null) {
 				isSaveRecord = true;
 			}
 			if (isSaveRecord) {
