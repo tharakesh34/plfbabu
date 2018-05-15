@@ -72,7 +72,6 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.StatuReasons;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
-import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
 import com.pennanttech.pennapps.pff.verification.fi.RCUDocStatus;
 import com.pennanttech.pennapps.pff.verification.fi.RCUDocVerificationType;
 import com.pennanttech.pennapps.pff.verification.fi.RCUStatus;
@@ -977,7 +976,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		if (!this.recommendations.isDisabled()) {
 			this.recommendations.setConstraint(
 					new PTListValidator(Labels.getLabel("label_RiskContainmentUnitDialog_Recommendations.value"),
-							FIStatus.getList(), true));
+							RCUStatus.getList(), true));
 		}
 		if (!this.remarks.isReadonly()) {
 			this.remarks.setConstraint(
