@@ -107,7 +107,6 @@ public class PTStringValidator implements Constraint{
 
 		String compValue=null;
 		boolean validRegex=false;
-		String expression=null;
 		
 		if(value!=null){
 			compValue= value.toString();
@@ -123,30 +122,28 @@ public class PTStringValidator implements Constraint{
 		} else{
 			
 			if(regExp!=null){
-				expression =PennantRegularExpressions.getRegexMapper(regExp);
-			}
+				String expression=PennantRegularExpressions.getRegexMapper(regExp);
 			
-			if(expression==null){
-				return Labels.getLabel("REGEX_INVALID", new String[] {regExp});
-			}
-			
-			
-		
-			Pattern pattern=null;
-			try {
-				pattern = Pattern.compile(expression);
-			} catch (Exception e) {
-				logger.error("Exception: ", e);
-				return Labels.getLabel("REGEX_INVALID", new String[] {expression});
-			}
-			
-			Matcher matcher =  pattern.matcher(compValue);
+				if(expression==null){
+					return Labels.getLabel("REGEX_INVALID", new String[] {regExp});
+				}
+				
+				Pattern pattern=null;
+				try {
+					pattern = Pattern.compile(expression);
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+					return Labels.getLabel("REGEX_INVALID", new String[] {regExp});
+				}
+				
+				Matcher matcher =  pattern.matcher(compValue);
 				validRegex=matcher.matches();
 	
 				if(!validRegex){
 						return Labels.getLabel(regExp, new String[] {fieldParm});
 				}
 				
+			}
 			if(minLenValid && maxLenValid){
 				
 				
