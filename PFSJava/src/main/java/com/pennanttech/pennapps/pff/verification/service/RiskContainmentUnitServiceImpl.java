@@ -24,6 +24,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
+import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
@@ -774,7 +775,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	}
 
 	private void setWorkflowFields(RiskContainmentUnit rcu) {
-		String workFlowType = "MSTGRP1";//ModuleUtil.getWorkflowType("MSTGRP1");
+		String workFlowType = ModuleUtil.getWorkflowType("RiskContainmentUnit");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workFlowType);
 		WorkflowEngine engine = new WorkflowEngine(
 				WorkFlowUtil.getWorkflow(workFlowDetails.getWorkFlowId()).getWorkFlowXml());

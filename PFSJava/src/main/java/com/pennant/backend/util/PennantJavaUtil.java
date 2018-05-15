@@ -2230,13 +2230,13 @@ public class PennantJavaUtil {
 				new String[] { "verification_lv", "verification_lv_AView" }, WF_VERIFICATION_LV, null, null, 600));
 		
 		ModuleUtil.register("LVDocument", new ModuleMapping("LVDocument", LVDocument.class,
-				new String[] { "verification_lv_details", "verification_lv_details_view" }, masterWF, null, null, 600));
+				new String[] { "verification_lv_details", "verification_lv_details_view" }, WF_VERIFICATION_LV, null, null, 600));
 		
 		ModuleUtil.register("RiskContainmentUnit", new ModuleMapping("RiskContainmentUnit", RiskContainmentUnit.class,
 				new String[] { "verification_rcu", "verification_rcu_AView" }, WF_VERIFICATION_RCU, null, null, 600));
 		
 		ModuleUtil.register("RCUDocument", new ModuleMapping("RCUDocument", RCUDocument.class,
-				new String[] { "verification_rcu_details", "verification_rcu_details_view" }, masterWF, null, null, 600));
+				new String[] { "verification_rcu_details", "verification_rcu_details_view" }, WF_VERIFICATION_RCU, null, null, 600));
 		
 		/*Technical Verification*/
 		ModuleUtil.register("TechnicalVerification", new ModuleMapping("TechnicalVerification", TechnicalVerification.class,
