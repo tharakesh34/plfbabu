@@ -46,6 +46,8 @@ package com.pennant.backend.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.pennanttech.pennapps.core.App;
+
 /**
  * This stores all constants required for running the application
  */
@@ -256,6 +258,10 @@ public class PennantRegularExpressions {
 
 
 	public static String getRegexMapper(String regConstant) {
+
+		if(App.getRegex(regConstant)!=null){
+			return App.getRegex(regConstant);	
+		}
 		return regexMapper.get(regConstant);
 	}
 

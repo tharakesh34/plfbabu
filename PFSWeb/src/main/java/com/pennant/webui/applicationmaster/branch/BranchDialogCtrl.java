@@ -84,6 +84,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.framework.security.core.User;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -871,7 +872,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		}
 		if (!this.bankRefNo.isReadonly()) {
 			this.bankRefNo.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BankRefNo.value"),
-					PennantRegularExpressions.REGEX_NUMERIC, false));
+					"REGEXP_BRANCH_BANKREFERENCE", false));
 		}
 		if (this.miniBranch.isChecked()) {
 			this.parentBranch.setConstraint(
