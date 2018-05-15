@@ -619,8 +619,8 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		map.put("maxSeqNo", maxSeqNo);
 		map.put("roleCode", getRole());
 		//### 08-05-2018 Start Development Iteam 81
-		map.put("moduleDesc", this.moduleDesc.getValue());
-		map.put("subModuleDesc", this.subModuleDesc.getValue());
+		map.put("moduleDesc", getExtendedFieldHeader().getModuleName());
+		map.put("subModuleDesc", getExtendedFieldHeader().getSubModuleName());
 		//### 08-05-2018 End Development Iteam 81
 		try {
 			Executions.createComponents(
@@ -649,8 +649,8 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 			map.put("firstTaskRole", this.firstTaskRole);
 			map.put("layoutDesign", numberOfColumns.getSelectedItem().getValue());
 			//### 08-05-2018 Start Development Iteam 81
-			map.put("moduleDesc", this.moduleDesc.getValue());
-			map.put("subModuleDesc", this.subModuleDesc.getValue());
+			map.put("moduleDesc", getExtendedFieldHeader().getModuleName());
+			map.put("subModuleDesc", getExtendedFieldHeader().getSubModuleName());
 			//### 08-05-2018 End Development Iteam 81
 			// call the zul-file with the parameters packed in a map
 			try {
