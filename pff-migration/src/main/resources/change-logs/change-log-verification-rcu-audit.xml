@@ -44,7 +44,7 @@
 			<column name="VerificationFormName" type="varchar(30)"/>
 			<column name="AgentCode" type="varchar(20)" />
 			<column name="AgentName" type="varchar(50)" />
-			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Status" type="int"/>
 			<column name="Reason" type="bigint" />
 			<column name="Remarks" type="varchar(500)" />
 			<column name="VerificationDate" type="datetime" />	
@@ -59,6 +59,17 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+	<changeSet id="1.1_Post" author="Jayant" dbms="oracle">
+		<addDefaultValue columnName="Status" tableName="adtverification_rcu" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="1.1_Post" author="Jayant" dbms="postgresql">
+		<addDefaultValue columnName="Status" tableName="adtverification_rcu" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="1.1_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table adtverification_rcu add constraint df_adtvr_status default 0 for Status;
+		</sql>
 	</changeSet>
 	<changeSet id="1.2" author="murthy.y">
 		<addPrimaryKey tableName="adtverification_rcu"
@@ -105,6 +116,29 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+	<changeSet id="4.3_Post" author="Jayant" dbms="oracle">
+		<addDefaultValue columnName="DocumentType" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="VerificationType" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="Status" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="PagesEyeballed" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="PagesSampled" tableName="adtverification_rcu_details" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="4.3_Post" author="Jayant" dbms="postgresql">
+		<addDefaultValue columnName="DocumentType" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="VerificationType" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="Status" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="PagesEyeballed" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="PagesSampled" tableName="adtverification_rcu_details" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="4.3_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table adtverification_rcu_details add constraint df_avrd_DocumentType default 0 for DocumentType;
+			alter table adtverification_rcu_details add constraint df_avrd_VerificationType default 0 for VerificationType;
+			alter table adtverification_rcu_details add constraint df_avrd_status default 0 for Status;
+			alter table adtverification_rcu_details add constraint df_avrd_PagesEyeballed default 0 for PagesEyeballed;
+			alter table adtverification_rcu_details add constraint df_avrd_PagesSampled default 0 for PagesSampled;
+		</sql>
 	</changeSet>
 	<changeSet id="4.4" author="durgaprasad g">
 		<addPrimaryKey tableName="adtverification_rcu_details"
