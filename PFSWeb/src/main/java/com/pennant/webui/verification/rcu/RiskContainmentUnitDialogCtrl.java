@@ -455,7 +455,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				Intbox pagesEyeBalled = new Intbox();
 				pagesEyeBalled.setReadonly(isReadOnly("RiskContainmentUnitDialog_PagesEyeBalled"));
 				pagesEyeBalled.setValue(document.getPagesEyeballed());
-				pagesEyeBalled.setMaxlength(2);
+				pagesEyeBalled.setMaxlength(4);
 				pagesEyeBalled.setConstraint("no empty: Pages Eyeballed must be greater than zero");
 				lc.appendChild(pagesEyeBalled);
 				lc.setParent(item);
@@ -465,7 +465,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				Intbox pagesSampled = new Intbox();
 				pagesSampled.setReadonly(isReadOnly("RiskContainmentUnitDialog_PagesSampled"));
 				pagesSampled.setValue(document.getPagesSampled());
-				pagesSampled.setMaxlength(2);
+				pagesSampled.setMaxlength(4);
 				pagesSampled.setConstraint("no empty: Pages Sampled must be greater than zero");
 				lc.appendChild(pagesSampled);
 				lc.setParent(item);
@@ -743,9 +743,9 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			case "PagesEyeBalled":
 				Intbox textBox = (Intbox) getComponent(listitem, "PagesEyeBalled");
 				int pagesEyeballed = textBox.getValue();
-				if (!textBox.isReadonly() && !(pagesEyeballed > 0)) {
-					throw new WrongValueException(textBox, Labels.getLabel("FIELD_NO_NEGATIVE",
-							new String[] { Labels.getLabel("label_RiskContainmentUnitDialog_PagesEyeBalled.value") }));
+				if (!textBox.isReadonly() && !(pagesEyeballed > 0 && pagesEyeballed <= 1000)) {
+					throw new WrongValueException(textBox, Labels.getLabel("FIELD_RANGE",
+							new Object[] { Labels.getLabel("label_RiskContainmentUnitDialog_PagesEyeBalled.value"),1,1000 }));
 				}
 				rcuDocument.setPagesEyeballed(pagesEyeballed);
 
@@ -753,9 +753,9 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			case "PagesSampled":
 				Intbox textBox1 = (Intbox) getComponent(listitem, "PagesSampled");
 				int pagesSampled = textBox1.getValue();
-				if (!textBox1.isReadonly() && !(pagesSampled > 0)) {
-					throw new WrongValueException(textBox1, Labels.getLabel("FIELD_NO_NEGATIVE",
-							new String[] { Labels.getLabel("label_RiskContainmentUnitDialog_PagesSampled.value") }));
+				if (!textBox1.isReadonly() && !(pagesSampled > 0 && pagesSampled <= 1000)) {
+					throw new WrongValueException(textBox1, Labels.getLabel("FIELD_RANGE",
+							new Object[] { Labels.getLabel("label_RiskContainmentUnitDialog_PagesSampled.value"),1,1000 }));
 				}
 				rcuDocument.setPagesSampled(pagesSampled);
 				break;
