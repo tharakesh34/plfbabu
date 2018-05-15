@@ -209,6 +209,12 @@ public class InstallmentDueService extends ServiceHelper {
 			if (financeScheduleDetail.getDefSchdDate().compareTo(DateUtility.getAppDate()) > 0) {
 				break;
 			}
+			
+			if (StringUtils.equals(FinanceConstants.FLAG_BPI, financeScheduleDetail.getBpiOrHoliday())) {
+				if (main.isAlwBPI() && StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, main.getBpiTreatment())) {
+					continue;
+				}
+			}
 
 			FinanceScheduleDetail curSchd = financeScheduleDetail;
 			// Installment Due Exist
