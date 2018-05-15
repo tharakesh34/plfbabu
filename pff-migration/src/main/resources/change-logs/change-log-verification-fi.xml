@@ -2520,4 +2520,11 @@
 			 where not exists ( select 1 from verification_fi_temp where verification_fi_temp.verificationid = fi.verificationid)
 		</createView>
 	</changeSet>
+	<changeSet   id="13.0" author="vijay">
+	<modifyDataType tableName="Verifications" columnName="nexttaskid" newDataType="character varying(500)"/>
+	</changeSet>
+	
+<changeSet   id="14.0" author="vijay">
+	<modifyDataType tableName="Verifications" columnName="nextrolecode" newDataType="character varying(500)"/>
+	</changeSet>
 </databaseChangeLog>
