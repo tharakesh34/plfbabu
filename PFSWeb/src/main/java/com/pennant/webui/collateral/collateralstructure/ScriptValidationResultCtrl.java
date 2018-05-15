@@ -101,6 +101,7 @@ public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 				row.setParent(rows_Fields);
 			}
 		}
+		this.window.setHeight(variables.size() * 35 + "px");
 		this.window_ScriptValidationResult.doModal();
 		logger.debug("Leaving" + event.toString());
 	}
