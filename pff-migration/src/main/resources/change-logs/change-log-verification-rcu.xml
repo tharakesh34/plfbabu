@@ -157,7 +157,7 @@
 			<column name="VerificationFormName" type="varchar(30)"/>
 			<column name="AgentCode" type="varchar(20)" />
 			<column name="AgentName" type="varchar(50)" />
-			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Status" type="int"/>
 			<column name="Reason" type="bigint" />
 			<column name="Remarks" type="varchar(500)" />
 			<column name="VerificationDate" type="datetime" />
@@ -176,6 +176,17 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	<changeSet id="2.1_Post" author="Jayant" dbms="oracle">
+		<addDefaultValue columnName="Status" tableName="verification_rcu_temp" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="2.1_Post" author="Jayant" dbms="postgresql">
+		<addDefaultValue columnName="Status" tableName="verification_rcu_temp" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="2.1_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table verification_rcu_temp add constraint df_vrt_status default 0 for Status;
+		</sql>
+	</changeSet>
 	<changeSet id="2.2" author="durgaprasad.g">
 		<createTable tableName="verification_rcu_stage">
 			<column name="VerificationID" type="bigint">
@@ -184,7 +195,7 @@
 			<column name="VerificationFormName" type="varchar(30)"/>
 			<column name="AgentCode" type="varchar(20)" />
 			<column name="AgentName" type="varchar(50)" />
-			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Status" type="int"/>
 			<column name="Reason" type="bigint" />
 			<column name="Remarks" type="varchar(500)" />
 			<column name="VerificationDate" type="datetime" />
@@ -202,6 +213,17 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+	<changeSet id="2.2_Post" author="Jayant" dbms="oracle">
+		<addDefaultValue columnName="Status" tableName="verification_rcu_stage" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="2.2_Post" author="Jayant" dbms="postgresql">
+		<addDefaultValue columnName="Status" tableName="verification_rcu_stage" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="2.2_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table verification_rcu_stage add constraint df_vrs_status default 0 for Status;
+		</sql>
 	</changeSet>
 	<changeSet id="2.3" author="durgaprasad.g">
 		<createTable tableName="verification_rcu_details">
@@ -214,16 +236,16 @@
 			<column name="DocumentId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="DocumentType" type="int" defaultValue="0">
+			<column name="DocumentType" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="DocumentRefId" type="bigint"/>
 			<column name="DocumentUri" type="varchar(2000)"/>
-			<column name="VerificationType" type="int" defaultValue="0"/>
-			<column name="Status" type="int" defaultValue="0"/>
-			<column name="PagesEyeballed" type="int" defaultValue="0"/>
-			<column name="PagesSampled" type="int" defaultValue="0"/>
+			<column name="VerificationType" type="int"/>
+			<column name="Status" type="int"/>
+			<column name="PagesEyeballed" type="int" />
+			<column name="PagesSampled" type="int" />
 			<column name="InitRemarks" type="varchar(500)" />
 			<column name="AgentRemarks" type="varchar(500)" />
 			<column name="DecisionRemarks" type="varchar(500)" />
@@ -241,6 +263,29 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+	<changeSet id="2.3_Post" author="Jayant" dbms="oracle">
+		<addDefaultValue columnName="DocumentType" tableName="verification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="VerificationType" tableName="verification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="Status" tableName="verification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="PagesEyeballed" tableName="verification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="PagesSampled" tableName="verification_rcu_details" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="2.3_Post" author="Jayant" dbms="postgresql">
+		<addDefaultValue columnName="DocumentType" tableName="verification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="VerificationType" tableName="verification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="Status" tableName="verification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="PagesEyeballed" tableName="verification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="PagesSampled" tableName="verification_rcu_details" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="2.3_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table verification_rcu_details add constraint df_vrd_DocumentType default 0 for DocumentType;
+			alter table verification_rcu_details add constraint df_vrd_VerificationType default 0 for VerificationType;
+			alter table verification_rcu_details add constraint df_vrd_status default 0 for Status;
+			alter table verification_rcu_details add constraint df_vrd_PagesEyeballed default 0 for PagesEyeballed;
+			alter table verification_rcu_details add constraint df_vrd_PagesSampled default 0 for PagesSampled;
+		</sql>
 	</changeSet>
 	<changeSet id="2.4" author="durgaprasad.g">
 		<createTable tableName="verification_rcu_details_temp">
@@ -253,16 +298,16 @@
 			<column name="DocumentId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="DocumentType" type="int" defaultValue="0">
+			<column name="DocumentType" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="DocumentRefId" type="bigint"/>
 			<column name="DocumentUri" type="varchar(2000)"/>
-			<column name="VerificationType" type="int" defaultValue="0"/>
-			<column name="Status" type="int" defaultValue="0"/>
-			<column name="PagesEyeballed" type="int" defaultValue="0"/>
-			<column name="PagesSampled" type="int" defaultValue="0"/>
+			<column name="VerificationType" type="int"/>
+			<column name="Status" type="int"/>
+			<column name="PagesEyeballed" type="int"/>
+			<column name="PagesSampled" type="int"/>
 			<column name="InitRemarks" type="varchar(500)" />
 			<column name="AgentRemarks" type="varchar(500)" />
 			<column name="DecisionRemarks" type="varchar(500)" />
@@ -281,6 +326,29 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	<changeSet id="2.4_Post" author="Jayant" dbms="oracle">
+		<addDefaultValue columnName="DocumentType" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="VerificationType" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="Status" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="PagesEyeballed" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="PagesSampled" tableName="verification_rcu_details_temp" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="2.4_Post" author="Jayant" dbms="postgresql">
+		<addDefaultValue columnName="DocumentType" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="VerificationType" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="Status" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="PagesEyeballed" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="PagesSampled" tableName="verification_rcu_details_temp" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="2.4_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table verification_rcu_details_temp add constraint df_vrd_t_DocumentType default 0 for DocumentType;
+			alter table verification_rcu_details_temp add constraint df_vrd_t_VerificationType default 0 for VerificationType;
+			alter table verification_rcu_details_temp add constraint df_vrd_t_status default 0 for Status;
+			alter table verification_rcu_details_temp add constraint df_vrd_t_PagesEyeballed default 0 for PagesEyeballed;
+			alter table verification_rcu_details_temp add constraint df_vrd_t_PagesSampled default 0 for PagesSampled;
+		</sql>
+	</changeSet>
 	<changeSet id="2.5" author="durgaprasad.g">
 		<createTable tableName="verification_rcu_details_stage">
 			<column name="VerificationID" type="bigint">
@@ -292,16 +360,16 @@
 			<column name="DocumentId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="DocumentType" type="int" defaultValue="0">
+			<column name="DocumentType" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="DocumentSubId" type="varchar(50)"/>
 			<column name="DocumentRefId" type="bigint"/>
 			<column name="DocumentUri" type="varchar(2000)"/>
-			<column name="VerificationType" type="int" defaultValue="0"/>
-			<column name="Status" type="int" defaultValue="0"/>
-			<column name="PagesEyeballed" type="int" defaultValue="0"/>
-			<column name="PagesSampled" type="int" defaultValue="0"/>
+			<column name="VerificationType" type="int"/>
+			<column name="Status" type="int"/>
+			<column name="PagesEyeballed" type="int"/>
+			<column name="PagesSampled" type="int"/>
 			<column name="InitRemarks" type="varchar(500)" />
 			<column name="AgentRemarks" type="varchar(500)" />
 			<column name="DecisionRemarks" type="varchar(500)" />
@@ -319,6 +387,29 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+	<changeSet id="2.5_Post" author="Jayant" dbms="oracle">
+		<addDefaultValue columnName="DocumentType" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="VerificationType" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="Status" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="PagesEyeballed" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="PagesSampled" tableName="verification_rcu_details_temp" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="2.5_Post" author="Jayant" dbms="postgresql">
+		<addDefaultValue columnName="DocumentType" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="VerificationType" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="Status" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="PagesEyeballed" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="PagesSampled" tableName="verification_rcu_details_temp" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="2.5_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table verification_rcu_details_temp add constraint df_vrd_DocumentType default 0 for DocumentType;
+			alter table verification_rcu_details_temp add constraint df_vrd_VerificationType default 0 for VerificationType;
+			alter table verification_rcu_details_temp add constraint df_vrd_status default 0 for Status;
+			alter table verification_rcu_details_temp add constraint df_vrd_PagesEyeballed default 0 for PagesEyeballed;
+			alter table verification_rcu_details_temp add constraint df_vrd_PagesSampled default 0 for PagesSampled;
+		</sql>
 	</changeSet>
  	<changeSet id="2.6" author="durgaprasad.g">
 		<addForeignKeyConstraint constraintName="fk_verf_rcu_vrfid" baseTableName="verification_rcu" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
