@@ -371,6 +371,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			doSetFieldProperties();
 			doShowDialog(getMandate());
 		} catch (Exception e) {
+			closeDialog();
 			MessageUtil.showError(e);
 		}
 

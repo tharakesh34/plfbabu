@@ -53,6 +53,7 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -62,6 +63,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.ExtendedCombobox.Type;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
@@ -109,6 +111,7 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected Datebox schdate; 
 	protected Datebox presentmentDate;
 	protected Textbox bankCode;
+	protected Label label_PresentmentHeaderList_BankCode;
 	protected ExtendedCombobox entityCode;
 	
 	protected Listbox sortOperator_Reference;
@@ -180,6 +183,12 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		registerField("id");
 		registerField("partnerBankCode");
 		registerField("partnerBankName");
+		if (!ImplementationConstants.GROUP_BATCH_BY_BANK) {
+			listheader_BankCode.setVisible(false);
+			this.label_PresentmentHeaderList_BankCode.setVisible(false);
+			this.sortOperator_BankCode.setVisible(false);
+			this.bankCode.setVisible(false);
+		}
 		
 		this.row_AlwWorkflow.setVisible(false);
 		// Render the page and display the data.

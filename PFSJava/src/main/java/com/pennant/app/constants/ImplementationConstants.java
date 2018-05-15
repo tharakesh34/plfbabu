@@ -38,9 +38,9 @@ public class ImplementationConstants {
 	// I = Profit
 	public static final String	REPAY_INTEREST_HIERARCHY		= "LI";
 	//Calculate PastDue on Day zero
-	public static final boolean	LP_MARK_FIRSTDAY				= false;
+	public static final boolean	LP_MARK_FIRSTDAY				= true;
 	//penalty calculated on SOD i.e 
-	public static final boolean	LPP_CALC_SOD					=true;
+	public static final boolean	LPP_CALC_SOD					= true;
 	//Re payment methods
 	public static final boolean	AUTO_ALLOWED					= false;
 	public static final boolean	DDA_ALLOWED						= false;
@@ -121,4 +121,5 @@ public class ImplementationConstants {
 	
 	public static final boolean	ALLOW_FEES_RECALCULATE     		= true;		//Fees Recalculate always
 	public static final boolean	ALLOW_PAID_FEE_SCHEDULE_METHOD	= false;	//Fee Schedule Methods for Paid by customer and Waved by Bank.
+	public static final boolean	GROUP_BATCH_BY_BANK				= false;	
 }

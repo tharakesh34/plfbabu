@@ -44,7 +44,10 @@
 package com.pennant.webui.mandate.mandate.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
+import org.apache.commons.lang.StringUtils;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -53,8 +56,12 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
@@ -67,6 +74,8 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 
 	private static final long serialVersionUID = 1L;
 	boolean multiselect=false;
+	private ArrayList<ValueLabel> statusTypeList = PennantStaticListUtil.getStatusTypeList();
+	String customMandateStatus = SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS);
 
 	
 	public MandateListModelItemRenderer(boolean multiselect) {
@@ -102,7 +111,13 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getStatus(), PennantStaticListUtil.getStatusTypeList()));
+		String status = PennantAppUtil.getlabelDesc(mandate.getStatus(), statusTypeList);
+		if (StringUtils.isEmpty(status)) {
+			if (StringUtils.isEmpty(mandate.getStatus()) || StringUtils.equals(mandate.getStatus(), PennantConstants.List_Select)) {
+				status=Labels.getLabel("label_Mandate_" + customMandateStatus);
+			}
+		}
+		lc = new Listcell(status);
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(mandate.getInputDate()));
 		lc.setParent(item);

@@ -57,6 +57,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
@@ -275,7 +276,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				String bankCode = rs.getString("BANKCODE");
 				String entity   = rs.getString("ENTITYCODE");
 				if (defSchDate != null) {
-					if (!map.containsKey(defSchDate) || !map.containsKey(bankCode) || !map.containsKey(entity)) {
+					if (!map.containsKey(defSchDate) || (!map.containsKey(bankCode) && ImplementationConstants.GROUP_BATCH_BY_BANK ) || !map.containsKey(entity)) {
 						header.setSchdate(defSchDate);
 						header.setBankCode(bankCode);
 						header.setEntityCode(entity);
