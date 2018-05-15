@@ -43,12 +43,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 		</dependency>
-		<!-- Data-Engine -->
-		<dependency>
-			<groupId>com.pennanttech.framework.components</groupId>
-			<artifactId>data-engine</artifactId>
-			<version>2.1.11</version>
-		</dependency>
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc8</artifactId>
