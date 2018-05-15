@@ -750,6 +750,7 @@ public class PennantAppUtil {
 		moduleList.add("Locality");
 		moduleList.add("LoanPurpose");
 		moduleList.add("PRelationCode");
+		moduleList.add("PropertyType");
 		
 		ArrayList<ValueLabel> moduleName = new ArrayList<ValueLabel>();
 
