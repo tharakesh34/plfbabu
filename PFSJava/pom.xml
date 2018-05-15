@@ -28,7 +28,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${pff.groupId}</groupId>
-			<artifactId>pff-niyogin</artifactId>
+			<artifactId>${pff.client.artifactId}</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<!-- Aspose -->

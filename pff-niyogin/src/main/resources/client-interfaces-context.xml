@@ -11,6 +11,7 @@
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 		http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+        <import resource="classpath:pff-interfaces-context.xml"/>
 
 	<bean id="niyoginService" class="com.pennanttech.pff.external.service.NiyoginService"
 		abstract="true">
@@ -93,12 +94,7 @@
 		class="com.pennanttech.niyogin.postings.service.PostingDownloadServiceImpl" parent="niyoginService">
 		<property name="dataSource" ref="dataSource"/>
 		<property name="serviceUrl" value="${niyogin.tally.url}" />
-	</bean>	
-
-	<bean id="abstractMandateProcess" class="com.pennanttech.pff.external.mandate.AbstractMandateProcess" abstract="true">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-	
+	</bean>		
 	<bean id="mandateProcess" class="com.pennanttech.niyogin.mandate.MandateProcess"  parent="abstractMandateProcess"/>
 	
 </beans>

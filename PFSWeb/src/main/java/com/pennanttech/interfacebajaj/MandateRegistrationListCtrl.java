@@ -181,7 +181,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 	private Map<Long, String> mandateIdMap = new HashMap<Long, String>();
 	
-	@Autowired
+	@Autowired(required =true)
 	private MandateProcess mandateProcess;
 	protected JdbcSearchObject<Customer>	custCIFSearchObject;
 	/**
@@ -823,9 +823,12 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		@Override
 		public void run() {
 			try {
-				mandateProcess.sendReqest(mandateIdList, this.fromDate, this.toDate, getUserWorkspace()
-						.getLoggedInUser().getUserId(), getUserWorkspace().getLoggedInUser().getUserName(),
-						this.branchDetails, this.entity);
+				
+				if (mandateProcess != null) {
+					mandateProcess.sendReqest(mandateIdList, this.fromDate, this.toDate,
+							getUserWorkspace().getLoggedInUser().getUserId(),
+							getUserWorkspace().getLoggedInUser().getUserName(), this.branchDetails, this.entity);
+				}
 			} catch (Exception e) {
 				logger.error("Exception", e);
 			}

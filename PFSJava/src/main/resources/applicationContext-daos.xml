@@ -3377,7 +3377,6 @@
 		<property name="policeCaseDAO" ref="policeCaseDAO" />
 		<property name="customerDedupDAO" ref="customerDedupDAO" />
 		<property name="customerInterfaceService" ref="customerInterfaceService" />
-		<property name="customerDedupService" ref="customerDedupService" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 

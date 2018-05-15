@@ -47,14 +47,9 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>${pff.groupId}</groupId>
-			<artifactId>pff-interface-bajaj</artifactId>
-			<version>${project.version}</version>
-		</dependency>
- 		<dependency>
-			<groupId>${pff.groupId}</groupId>
-			<artifactId>pff-niyogin</artifactId>
-			<version>${project.version}</version>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<version>2.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -182,7 +177,7 @@
 			<artifactId>freemarker</artifactId>
 			<version>2.3.23</version>
 		</dependency>
-		 <dependency>
+		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
 			<version>2.2.2</version>
@@ -242,21 +237,21 @@
 			<artifactId>infinispan-embedded</artifactId>
 			<version>9.0.0.Final</version>
 		</dependency>
-		 <dependency>
+		<dependency>
 			<groupId>com.pennanttech.document</groupId>
 			<artifactId>document-parser</artifactId>
 			<version>1.0.7</version>
 			<exclusions>
-			<exclusion>
-				<groupId>org.slf4j</groupId>
-    			<artifactId>log4j-over-slf4j</artifactId>
-			</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>log4j-over-slf4j</artifactId>
+				</exclusion>
 				<exclusion>
 					<groupId>bouncycastle</groupId>
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency> 
+		</dependency>
 		<!-- Jasper Reports -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>

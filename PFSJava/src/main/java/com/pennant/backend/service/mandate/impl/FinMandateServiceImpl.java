@@ -106,7 +106,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 	@Autowired
 	private DocumentManagerDAO documentManagerDAO;
 
-	@Autowired
+	@Autowired (required=false)
 	private MandateProcess mandateProcess;
 	private MandateCheckDigitDAO  mandateCheckDigitDAO;
 	private BankBranchDAO bankBranchDAO;
@@ -245,18 +245,23 @@ public class FinMandateServiceImpl implements FinMandateService {
 								mandate.setEmailId(customerEMail.getCustEMail());
 							}
 						}
-
-						boolean register = mandateProcess.registerMandate(mandate);
-						if (register) {
-							mandate.setStatus(MandateConstants.STATUS_INPROCESS);
-							mandateDAO.updateStatusAfterRegistration(mandate.getMandateID(),
-									MandateConstants.STATUS_INPROCESS);
-							mandateStatus.setMandateID(mandate.getMandateID());
-							mandateStatus.setStatus(mandate.getStatus());
-							mandateStatus.setReason(mandate.getReason());
-							mandateStatus.setChangeDate(mandate.getInputDate());
-							mandateStatusDAO.save(mandateStatus, "");
+						
+						if (mandateProcess != null) {
+							boolean register = mandateProcess.registerMandate(mandate);
+							if (register) {
+								mandate.setStatus(MandateConstants.STATUS_INPROCESS);
+								mandateDAO.updateStatusAfterRegistration(mandate.getMandateID(),
+										MandateConstants.STATUS_INPROCESS);
+								mandateStatus.setMandateID(mandate.getMandateID());
+								mandateStatus.setStatus(mandate.getStatus());
+								mandateStatus.setReason(mandate.getReason());
+								mandateStatus.setChangeDate(mandate.getInputDate());
+								mandateStatusDAO.save(mandateStatus, "");
+							}
+						} else {
+							logger.warn("MandateProcess not configured.");
 						}
+						
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
 					}

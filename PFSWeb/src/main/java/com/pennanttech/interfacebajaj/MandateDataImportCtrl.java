@@ -36,32 +36,32 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.MandateProcess;
 
 public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
-	private static final long	serialVersionUID	= 1297405999029019920L;
-	private static final Logger	logger				= Logger.getLogger(MandateDataImportCtrl.class);
+	private static final long serialVersionUID = 1297405999029019920L;
+	private static final Logger logger = Logger.getLogger(MandateDataImportCtrl.class);
 
-	protected Window			window_MandateDataImportCtrl;
-	protected Button			btnImport;
-	protected Button			btnFileUpload;
+	protected Window window_MandateDataImportCtrl;
+	protected Button btnImport;
+	protected Button btnFileUpload;
 
-	protected Textbox			fileName;
-	protected Combobox			fileConfiguration;
-	protected Combobox			serverFileName;
+	protected Textbox fileName;
+	protected Combobox fileConfiguration;
+	protected Combobox serverFileName;
 
-	protected Row				row1;
-	protected Rows				panelRows;
+	protected Row row1;
+	protected Rows panelRows;
 
-	protected Timer				timer;
-	private Media				media				= null;
-	private File				file				= null;
+	protected Timer timer;
+	private Media media = null;
+	private File file = null;
 
-	protected DataEngineConfig	dataEngineConfig;
-	private List<ValueLabel>	serverFiles			= null;
+	protected DataEngineConfig dataEngineConfig;
+	private List<ValueLabel> serverFiles = null;
 
-	private long				userId;
+	private long userId;
 
-	private Configuration		config				= null;
+	private Configuration config = null;
 
-	@Autowired
+	@Autowired(required = false)
 	private MandateProcess mandateProcess;
 
 	/**
@@ -104,7 +104,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 				this.config = config;
 				menuList.add(valueLabel);
 				DataEngineStatus status = dataEngineConfig.getLatestExecution(config.getName());
-				
+
 				if (status != null) {
 					BeanUtils.copyProperties(MandateProcess.MANDATES_IMPORT, status);
 				}
@@ -170,8 +170,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 		if (StringUtils.equalsIgnoreCase(ConfigUtil.CLIENT_FILE_LOCATION, uploadLoc)) {
 			setComponentsVisibility(true);
-		} else if (StringUtils.equalsIgnoreCase(ConfigUtil.SERVER_FILE_LOCATION,
-				uploadLoc)) {
+		} else if (StringUtils.equalsIgnoreCase(ConfigUtil.SERVER_FILE_LOCATION, uploadLoc)) {
 			setComponentsVisibility(false);
 			serverFiles = new ArrayList<ValueLabel>();
 			File file = new File(path);
@@ -312,7 +311,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		} else {
 			Hbox hbox = null;
 			List<Hbox> item = rows.getChildren();
-			hbox = (Hbox) item.get(0);
+			hbox = item.get(0);
 			if (hbox.getChildren().size() == 2) {
 				rows = new Row();
 				rows.setStyle("overflow: visible !important");
@@ -328,18 +327,20 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	}
 
 	public class ProcessData implements Runnable {
-		private long				userId;
-		
+		private long userId;
+
 		public ProcessData(long userId) {
 			this.userId = userId;
 		}
 
-		byte[]	fileData;
+		byte[] fileData;
 
 		@Override
 		public void run() {
 			try {
-				mandateProcess.processResponseFile(userId, file, media);
+				if(mandateProcess != null) {
+					mandateProcess.processResponseFile(userId, file, media);
+				}
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

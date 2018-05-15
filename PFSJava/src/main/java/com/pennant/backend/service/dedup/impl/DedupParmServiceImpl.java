@@ -53,6 +53,7 @@ import javax.ws.rs.ProcessingException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
@@ -89,7 +90,7 @@ import com.pennanttech.model.DedupCustomerDetail;
 import com.pennanttech.model.DedupCustomerResponse;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.service.CustomerDedupService;
+import com.pennanttech.pff.external.CustomerDedupService;
 
 /**
  * Service implementation for methods that depends on <b>DedupParm</b>.<br>
@@ -105,6 +106,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	private CustomerInterfaceService customerInterfaceService;
 	private PoliceCaseDAO policeCaseDAO;
 	private CustomerDedupDAO customerDedupDAO;
+	
+	@Autowired(required=false)
 	private CustomerDedupService customerDedupService;
 
 	public DedupParmServiceImpl() {
@@ -162,9 +165,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	public void setCustomerInterfaceService(CustomerInterfaceService customerInterfaceService) {
 		this.customerInterfaceService = customerInterfaceService;
 	}
-	public void setCustomerDedupService(CustomerDedupService customerDedupService) {
-		this.customerDedupService = customerDedupService;
-	}
+	
 	@SuppressWarnings("rawtypes")
 	@Override
 	public List validate(String resultQuery,CustomerDedup customerDedup ) {
@@ -1460,6 +1461,11 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	
 	@Override
 	public List<CustomerDedup> getDedupCustomerDetails(CustomerDetails details,String finType,String ref) {
+		
+		if(customerDedupService == null) {
+			return null;
+		}
+		
 		DedupCustomerDetail dedupCustomerDetail = preparededupRequest(details,finType,ref);
 		DedupCustomerResponse response = new DedupCustomerResponse();
 		try {
@@ -1486,7 +1492,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 	
 	private List<CustomerDedup> getDedupData(DedupCustomerResponse response,CustomerDetails details) {
-		List<CustomerDedup> custDedupList = new ArrayList<CustomerDedup>();
+		List<CustomerDedup> custDedupList = new ArrayList<>();
 		if(response != null && response.getDedupCustomerDetails() != null) {
 			for(DedupCustomerDetail dedupDetail:response.getDedupCustomerDetails()) {
 				CustomerDedup customerDedup = new CustomerDedup();
