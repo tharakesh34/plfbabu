@@ -124,15 +124,6 @@
 													<textbox
 														id="customerName" width="155px" readonly="true" />
 												</hbox>
-												<label
-													id="label_RCUReference"
-													value="${c:l('label_RiskContainmentUnitDialog_RCUReference.value')}" />
-												<hbox>
-													<space
-														id="space_RCUReference" spacing="2px" />
-													<textbox
-														id="rcuReference" width="155px" readonly="true" />
-												</hbox>
 											</row>
 
 										</rows>

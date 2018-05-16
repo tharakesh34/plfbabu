@@ -95,7 +95,6 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	protected Textbox custCIF;
 	protected Textbox finReference;
 	protected Textbox customerName;
-	protected Textbox rcuReference;
 
 	protected Listbox listBoxRiskContainmentUnitDocuments;
 	protected Tabpanel observationsFieldTabPanel;
@@ -383,7 +382,6 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.custCIF.setValue(rcu.getCif());
 		this.finReference.setValue(rcu.getKeyReference());
 		this.customerName.setValue(rcu.getCustName());
-		this.rcuReference.setValue(rcu.getRcuReference());
 
 		this.verificationDate.setValue(rcu.getVerificationDate());
 		this.agentCode.setValue(rcu.getAgentCode());
@@ -631,7 +629,6 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		rcu.setCif(this.custCIF.getValue());
 		rcu.setKeyReference(this.finReference.getValue());
 		rcu.setCustName(this.customerName.getValue());
-		rcu.setRcuReference(this.rcuReference.getValue());
 
 		for (Listitem listitem : listBoxRiskContainmentUnitDocuments.getItems()) {
 			try {
@@ -881,7 +878,6 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.custCIF.setReadonly(true);
 		this.finReference.setReadonly(true);
 		this.customerName.setReadonly(true);
-		this.rcuReference.setReadonly(true);
 
 		this.agentCode.setReadonly(true);
 		this.agentName.setReadonly(true);

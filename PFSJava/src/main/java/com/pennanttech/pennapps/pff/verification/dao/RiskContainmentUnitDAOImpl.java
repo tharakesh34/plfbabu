@@ -338,7 +338,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
 
-		sql.append(" Select verificationId, documentid, documentsubid,");
+		sql.append(" Select verificationId, documentid, documentsubid, documentType,");
 		if (type.contains("View")) {
 			sql.append(
 					" code, description, docmodule, documentrefid, seqno, docname, doctype,  ");

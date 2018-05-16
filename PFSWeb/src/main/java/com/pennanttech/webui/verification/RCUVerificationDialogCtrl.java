@@ -506,6 +506,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		RiskContainmentUnit riskContainmentUnit = riskContainmentUnitService
 				.getRiskContainmentUnit(Long.parseLong(rcuRadioGroup.getSelectedItem().getValue().toString()));
 		if (riskContainmentUnit != null) {
+			riskContainmentUnit = riskContainmentUnitService.getRiskContainmentUnit(riskContainmentUnit);
+		}
+		if (riskContainmentUnit != null) {
 			map.put("LOAN_ORG", true);
 			map.put("riskContainmentUnit", riskContainmentUnit);
 			if (rcuInquiry.getChildren() != null) {

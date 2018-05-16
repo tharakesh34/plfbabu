@@ -50,7 +50,6 @@ public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainment
 	protected Listheader listheader_LoanReference;
 	protected Listheader listheader_Agency;
 	protected Listheader listheader_CreatedOn;
-	protected Listheader listheader_RCUReference;
 
 	// checkRights
 	protected Button button_RiskContainmentUnitList_RiskContainmentUnitSearch;
@@ -60,13 +59,11 @@ public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainment
 	protected Listbox sortOperator_LoanReference;
 	protected Listbox sortOperator_Agency;
 	protected Listbox sortOperator_CreatedOn;
-	protected Listbox sortOperator_RCUReference;
 
 	protected Textbox cif;
 	protected Textbox loanReference;
 	protected ExtendedCombobox agency;
 	protected Datebox createdOn;
-	protected Textbox rcuReference;
 
 	private String module = "";
 
@@ -118,8 +115,7 @@ public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainment
 		registerField("createdOn", listheader_CreatedOn, SortOrder.NONE, createdOn, sortOperator_CreatedOn,
 				Operators.DATE);
 		registerField("agencyName", listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
-		/*registerField("rcuReference", listheader_RCUReference, SortOrder.ASC, rcuReference, sortOperator_RCUReference,
-				Operators.STRING);*/
+		
 		// Render the page and display the data.
 		doRenderPage();
 		search();

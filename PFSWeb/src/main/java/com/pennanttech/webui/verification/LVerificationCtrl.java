@@ -277,6 +277,11 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	public void onCheck$lv(Event event) {
 		final HashMap<String, Object> map = new HashMap<>();
 		LegalVerification legalVerification = lv.getSelectedItem().getValue();
+		
+		if (legalVerification != null) {
+			legalVerification = legalVerificationService.getLegalVerification(legalVerification);
+		}
+
 		if (legalVerification != null) {
 			map.put("LOAN_ORG", true);
 			map.put("legalVerification", legalVerification);
