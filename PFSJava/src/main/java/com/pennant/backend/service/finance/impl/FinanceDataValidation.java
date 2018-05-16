@@ -1206,6 +1206,13 @@ public class FinanceDataValidation {
 					valueParm[1] = LengthConstants.LEN_REF + " characters";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm));
 				}
+				boolean exists = financeDetailService.isFinReferenceExits(finReference, "_View", false);
+				if (exists) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "FinReference";
+					valueParm[1] = finReference;
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30506", valueParm));
+				}
 			}
 		}
 		finScheduleData.getFinanceMain().setFinReference(finReference);
