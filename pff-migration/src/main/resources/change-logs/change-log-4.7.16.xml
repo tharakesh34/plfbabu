@@ -6503,5 +6503,24 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
           WHERE collateralassignment_temp.collateralref = ca.collateralref AND collateralassignment_temp.module = ca.module AND collateralassignment_temp.reference = ca.reference))
 	</createView>
 </changeSet>
+<changeSet id="151" author="Satish" dbms="postgresql">	
+	<comment> missed in postgresql databases </comment>
+		<createTable tableName="FinanceRateReview">
+			<column name="FinReference" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RateType" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Currency" type="varchar(3)" />
+			<column name="ValueDate" type="datetime" />
+			<column name="EffectiveDate" type="datetime" />
+			<column name="EventFromDate" type="datetime" />
+			<column name="EventToDate" type="datetime" />
+			<column name="RecalFromdate" type="datetime" />
+			<column name="RecalToDate" type="datetime" />
+			<column name="EMIAmount" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
 	
