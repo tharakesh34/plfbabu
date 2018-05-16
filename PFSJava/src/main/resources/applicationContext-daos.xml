@@ -5515,6 +5515,7 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
+		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
 	</bean>
 
 

@@ -444,18 +444,28 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 				lc.setParent(item);
 				lc = new Listcell(detail.getMandRoleDesc());
 				lc.setParent(item);
+				
 				Checkbox cb = new Checkbox();
 				cb.setDisabled(true);
 				cb.setChecked(detail.isAlwWaiver());
 				lc = new Listcell();
 				cb.setParent(lc);
 				lc.setParent(item);
+				
 				cb = new Checkbox();
 				cb.setDisabled(true);
 				cb.setChecked(detail.isAlwPostpone());
 				lc = new Listcell();
 				cb.setParent(lc);
 				lc.setParent(item);
+				
+				cb = new Checkbox();
+				cb.setDisabled(true);
+				cb.setChecked(detail.isAlwOtc());
+				lc = new Listcell();
+				cb.setParent(lc);
+				lc.setParent(item);
+				
 				lc = new Listcell(detail.getRecordStatus());
 				lc.setParent(item);
 				lc = new Listcell(PennantJavaUtil.getLabel(detail.getRecordType()));

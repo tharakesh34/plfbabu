@@ -198,6 +198,14 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				lc = new Listcell();
 				cb.setParent(lc);
 				lc.setParent(item);
+				
+				cb = new Checkbox();
+				cb.setDisabled(true);
+				cb.setChecked(detail.isAlwOtc());
+				lc = new Listcell();
+				cb.setParent(lc);
+				lc.setParent(item);
+				
 				lc = new Listcell(DateUtility.formatDate(detail.getReceivableDate(), DateFormat.LONG_DATE.getPattern()));
 				lc.setParent(item);
 				lc = new Listcell(DateUtility.formatDate(detail.getDocReceivedDate(), DateFormat.LONG_DATE.getPattern()));

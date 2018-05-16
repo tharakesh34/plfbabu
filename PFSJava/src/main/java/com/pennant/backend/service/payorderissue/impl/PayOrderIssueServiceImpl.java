@@ -30,8 +30,8 @@
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
  * 12-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-05-2018       Madhubabu                  0.2          added the validation for        * 
+ *                                                        disbursement  by checking Otc/PDD * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -52,6 +52,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -59,6 +60,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
+import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
@@ -67,6 +69,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
@@ -96,6 +99,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private DisbursementPostings	disbursementPostings;
 	@Autowired
 	private DocumentDetailsDAO		documentDetailsDAO;
+	private FinCovenantTypeDAO      finCovenantTypeDAO;
 
 	public PayOrderIssueServiceImpl() {
 		super();
@@ -119,6 +123,14 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 	public void setPayOrderIssueHeaderDAO(PayOrderIssueHeaderDAO payOrderIssueHeaderDAO) {
 		this.payOrderIssueHeaderDAO = payOrderIssueHeaderDAO;
+	}
+	
+	public FinCovenantTypeDAO getFinCovenantTypeDAO() {
+		return finCovenantTypeDAO;
+	}
+
+	public void setFinCovenantTypeDAO(FinCovenantTypeDAO finCovenantTypeDAO) {
+		this.finCovenantTypeDAO = finCovenantTypeDAO;
 	}
 
 	/**
@@ -539,7 +551,33 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				}
 			}
 		}
-
+		
+		
+		if (payOrderIssueHeader.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
+			List<FinCovenantType> covenantList = finCovenantTypeDAO
+					.getFinCovenantTypeByFinRef(payOrderIssueHeader.getFinReference(), "_View", false);
+			boolean isOtc = false;
+			boolean isOverdue = false;
+			String[] valParm = new String[1];
+			// validate the covenant against the disbursements
+			for (FinCovenantType covenanttype : covenantList) {
+				isOtc = covenanttype.isAlwOtc();
+				isOverdue = DateUtility.compare(covenanttype.getReceivableDate(), DateUtility.getAppDate()) < 0;
+				if(isOverdue || isOtc){
+					break;
+				}
+			}
+			if (isOverdue || isOtc) {
+				List<FinAdvancePayments> advpayments = payOrderIssueHeader.getFinAdvancePaymentsList();
+				for (FinAdvancePayments finAdvancePayments : advpayments) {
+					if (finAdvancePayments.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						valParm[0] = finAdvancePayments.getPaymentType();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41103", valParm)));
+					}
+				}
+			}
+		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !payOrderIssueHeader.isWorkflow()) {

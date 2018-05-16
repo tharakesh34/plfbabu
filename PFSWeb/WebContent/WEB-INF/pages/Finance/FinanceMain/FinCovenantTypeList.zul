@@ -68,6 +68,10 @@
 									label="${c:l('listheader_FinCovenantType_AlwPostpone.label')}"
 									sort="false" hflex="min" />
 								<listheader
+									id="listheader_FinCovenantType_AlwOtc"  
+									label="${c:l('listheader_FinCovenantType_AlwOtc.label')}"
+									sort="false" hflex="min" />
+								<listheader
 									id="listheader_FinCovenantType_RecordStatus"
 									label="${c:l('listheader_RecordStatus.label')}" sort="false"
 									hflex="min" visible="false" />

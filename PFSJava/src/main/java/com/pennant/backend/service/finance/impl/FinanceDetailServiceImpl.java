@@ -20,7 +20,11 @@
  * Date Author Version Comments *
  ******************************************************************************************** 
  * 15-11-2011 Pennant 0.1 * * * * * * * * *
- ******************************************************************************************** 
+ * 08-05-2018 Vinay   0.2  As per mail from Raju ,subject : Daily status call : 19 April  
+ * 						   added validations in Disbursement and Covenant types
+ ********************************************************************************************
+ *16-05-2018 Madhu Babu 0.3******************
+ *As per mail from Raju added the validations to proceed with loan approval and disbursement basd on PDD/OTC 
  */
 package com.pennant.backend.service.finance.impl;
 
@@ -47,6 +51,7 @@ import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.AccountEventConstants;
@@ -125,6 +130,7 @@ import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.BundledProductsDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
+import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
@@ -1036,6 +1042,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeDetail.setFinanceCollaterals(getFinCollateralService()
 					.getFinCollateralsByRef(finReference, "_TView"));
 		}
+		
+		financeDetail.setCovenantTypeList(getFinCovenantTypeService().getFinCovenantTypeById(financeMain.getFinReference(), "_View", false));
 
 		logger.debug("Leaving");
 
@@ -2600,7 +2608,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						verificationService.saveOrUpdate(financeDetail, VerificationType.FI, tableType.getSuffix(), auditTranType, false));
 			}
 
-			// save TV Initiation details
+			// save TV Initiation details 
+			//TO-DO 
+			//FIXME - To be uncommented while merging
 			//=======================================
 			if (financeDetail.isTvInitTab()) {
 				adtVerifications.addAll(
@@ -5876,8 +5886,48 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getCovenantTypeList() != null) {
 				auditDetails.addAll(getFinCovenantTypeService().validate(financeDetail.getCovenantTypeList(),
 						financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
+				validateDisbursements(financeDetail,auditDetails);
+				
+				
 			}
-
+			
+			// ####_0.2
+			// Not allowed to approve loan with Disbursement type if it is not in  the configured OTC Types
+			String[] valueParm = new String[2];
+			boolean isOTCPayment = false;
+			
+			String alwrepayMethods=(String)SysParamUtil.getValue("COVENANT_REPAY_OTC_TYPE");
+			if (alwrepayMethods!=null) {
+				String[] repaymethod = alwrepayMethods.split(",");
+				if (financeDetail.getAdvancePaymentsList() != null
+						&& financeDetail.getAdvancePaymentsList().size() > 0) {
+					for (String rpymethod : repaymethod) {
+						for (FinAdvancePayments finAdvancePayments : financeDetail.getAdvancePaymentsList()) {
+								valueParm[0] = finAdvancePayments.getPaymentType();
+							if (!StringUtils.equals(finAdvancePayments.getPaymentType(), rpymethod)) {
+								isOTCPayment = true;
+								break;
+							}
+						}
+						break;
+					}
+					if (isOTCPayment) {
+						if (financeDetail.getCovenantTypeList() != null && financeDetail.getCovenantTypeList().size() > 0) {
+							for (FinCovenantType covenantType : financeDetail.getCovenantTypeList()) {
+								if (covenantType.isAlwOtc()) {
+									valueParm[1] = Labels.getLabel("label_FinCovenantTypeDialog_AlwOTC.value");
+									auditDetails.get(0)
+											.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41101", valueParm)));
+									break;
+									
+								}
+							}
+						}
+					} 
+				}
+				
+				
+			}
 			//Collateral Assignments details
 			//=======================================
 			if (financeDetail.getCollateralAssignmentList() != null
@@ -6071,6 +6121,40 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+/*
+ * validates to allow for disbursements in case of Otc or PDD
+ * 
+ */
+	private List<AuditDetail> validateDisbursements(FinanceDetail financeDetail, List<AuditDetail> auditDetails) {
+		boolean isOtc = false;
+		boolean isOverdue = false;
+		String[] valueParm = new String[1];
+		FinanceMain financemain = financeDetail.getFinScheduleData().getFinanceMain();
+		if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())
+				&& financemain.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
+			// validate the covenant against the disbursements
+			for (FinCovenantType covenanttype : financeDetail.getCovenantTypeList()) {
+				isOtc = covenanttype.isAlwOtc();
+				isOverdue = DateUtility.compare(covenanttype.getReceivableDate(), DateUtility.getAppDate()) < 0;
+				if(covenanttype.getDocReceivedDate()!=null && (isOverdue || isOtc)){
+					break;
+				}
+			}
+			if (isOverdue || isOtc) {
+				List<FinAdvancePayments> advpayments = financeDetail.getAdvancePaymentsList();
+				for (FinAdvancePayments finAdvancePayments : advpayments) {
+					if (finAdvancePayments.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						valueParm[0] = finAdvancePayments.getPaymentType();
+						AuditDetail detail = new AuditDetail();
+						detail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41103", valueParm)));
+						auditDetails.add(detail);
+
+					}
+				}
+			}
+		}
+		return auditDetails;
 	}
 
 	/**

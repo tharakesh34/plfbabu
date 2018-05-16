@@ -116,6 +116,15 @@
 										<intbox id="postponeDays" width="45px" style="text-align:right;" />
 									</hbox>
 								</row>
+								<row id="row_AlwOTC">
+									<label
+										id="label_FinCovenantTypeDialog_AlwOTC"
+										value="${c:l('label_FinCovenantTypeDialog_AlwOTC.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="alwOtc" />
+									</hbox>
+								</row>
 							</rows>
 						</grid>
 					</groupbox>

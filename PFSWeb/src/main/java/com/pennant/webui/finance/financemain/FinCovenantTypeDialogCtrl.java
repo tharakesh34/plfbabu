@@ -31,9 +31,12 @@
  ********************************************************************************************
  * 14-08-2013       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-05-2018       Vinay					 0.2		As per mail from Raju ,				*
+ * 													subject : Daily status call : 19 April  * 
+ *                                                  added OTC field  with validation from   *
+ *                                                 	Document Types master based on          *
+ *                                                 	PDC and OTC is required or not.         * 
+ *16-05-2018       Madhu                     0.3    added OTC/PDD functionality.            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -44,6 +47,7 @@ package com.pennant.webui.finance.financemain;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -67,6 +71,8 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -107,6 +113,9 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	protected Checkbox alwWaiver;
 	protected Checkbox alwPostpone;
 	protected Row  row_Postpone;
+	// ###_ 0.2
+	protected Checkbox alwOtc;
+	protected Row  row_AlwOTC;
 
 	protected Label label_postponeDays;
 	protected Hbox hbox_postponeDays;
@@ -418,16 +427,23 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				this.mandRole.setVisible(false);
 				this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
 			}
+			// ###_ 0.2
+			this.alwPostpone.setDisabled(true);
+			this.alwOtc.setDisabled(true);
+			this.receivableDate.setDisabled(true);
+			this.mandRole.setReadonly(false);
 			
 		} else {
 			this.covenantType.setReadonly(true);
+			// ###_ 0.2
+			this.alwPostpone.setDisabled(isReadOnly("FinCovenantTypeDialog_alwPostpone"));
+			this.alwOtc.setDisabled(isReadOnly("FinCovenantTypeDialog_alwOtc"));
+			this.alwWaiver.setDisabled(isReadOnly("FinCovenantTypeDialog_alwWaiver"));
+			this.receivableDate.setDisabled(isReadOnly("FinCovenantTypeDialog_receivableDate"));
 			this.mandRole.setReadonly(isReadOnly("FinCovenantTypeDialog_mandRole"));
 		}
 		
 		this.description.setReadonly(isReadOnly("FinCovenantTypeDialog_description"));
-		this.alwWaiver.setDisabled(isReadOnly("FinCovenantTypeDialog_alwWaiver"));
-		this.alwPostpone.setDisabled(isReadOnly("FinCovenantTypeDialog_alwPostpone"));
-		this.receivableDate.setDisabled(isReadOnly("FinCovenantTypeDialog_receivableDate"));
 		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -479,6 +495,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		this.description.setReadonly(true);
 		this.alwWaiver.setDisabled(true);
 		this.alwPostpone.setDisabled(true);
+		this.alwOtc.setDisabled(true);
 		this.receivableDate.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
@@ -574,30 +591,34 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	public void doWriteBeanToComponents(FinCovenantType aFinAdvnancePayments) {
 		logger.debug("Entering");
 
-		if(aFinAdvnancePayments.getMandRole()==null){
+		/*if(aFinAdvnancePayments.getMandRole()==null){
 			this.mandRole.setVisible(false);
 			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
 		}
-		
+		*/
 		this.covenantType.setValue(aFinAdvnancePayments.getCovenantType());
 		this.covenantType.setDescription(aFinAdvnancePayments.getCovenantTypeDesc());
 		this.mandRole.setValue(aFinAdvnancePayments.getMandRole(),aFinAdvnancePayments.getMandRoleDesc());
 		this.description.setValue(aFinAdvnancePayments.getDescription());
 		this.alwWaiver.setChecked(aFinAdvnancePayments.isAlwWaiver());
 		this.alwPostpone.setChecked(aFinAdvnancePayments.isAlwPostpone());
+		this.alwOtc.setChecked(aFinAdvnancePayments.isAlwOtc());
 		if (aFinAdvnancePayments.getReceivableDate() != null) {
 			this.receivableDate.setValue(aFinAdvnancePayments.getReceivableDate());
 		}
 
 		this.recordStatus.setValue(aFinAdvnancePayments.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aFinAdvnancePayments.getRecordType()));
-
-		doSetWaiverProp();
 		
+		doSetWaiverProp();
+		doSetOTCProp();
 		doSetPostponeProp();
+			
 
 		logger.debug("Leaving");
 	}
+
+	
 
 	/**
 	 * Writes the components values to the bean.<br>
@@ -615,7 +636,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			aFinCovenantType.setCovenantTypeDesc(this.covenantType.getDescription());
 			aFinCovenantType.setCovenantType(this.covenantType.getValidatedValue());
 		} catch (WrongValueException we) {
-			wve.add(we);
+			wve.add(we);	
 		}
 
 		try {
@@ -644,6 +665,12 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 
 		try {
 			aFinCovenantType.setAlwPostpone(this.alwPostpone.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			aFinCovenantType.setAlwOtc(this.alwOtc.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -679,22 +706,35 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
+		Date maxCovreceiveDate =DateUtility.addDays(DateUtility.getAppDate(), +SysParamUtil.getValueAsInt("FUTUREDAYS_COV_RECEIVED_DATE"));
 
 		if (!this.description.isReadonly()) {
-			this.description.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinCovenantTypeDialog_Description.value"), null, false));
+			this.description.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinCovenantTypeDialog_Description.value"), null, false));
 		}
-		
-		if (this.alwPostpone.isChecked() && !this.receivableDate.isDisabled()){
-			this.receivableDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value"),true));
+
+		if (this.alwPostpone.isChecked() && !this.receivableDate.isDisabled()) {
+			this.receivableDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value"), true));
 		}
-		
-		if(this.receivableDate.getValue()!=null){
-		if (DateUtility.compare(this.receivableDate.getValue(), DateUtility.getAppDate()) == -1) {
-			throw new WrongValueException(this.receivableDate,Labels.getLabel("DATE_PAST",
-					new String[] {Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value") }));
+
+		if (this.receivableDate.isVisible() && this.receivableDate.getValue() != null) {
+			if (DateUtility.compare(this.receivableDate.getValue(), DateUtility.getAppDate()) == -1) {
+				throw new WrongValueException(this.receivableDate, Labels.getLabel("DATE_PAST",
+						new String[] { Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value") }));
+			}
+			if (StringUtils.equals(moduleDefiner, "")) {
+				this.receivableDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value"), true,
+								DateUtility.getAppDate(), maxCovreceiveDate, true));
+			} else {
+				 maxCovreceiveDate =DateUtility.addDays(this.receivableDate.getValue(), +SysParamUtil.getValueAsInt("FUTUREDAYS_SER_COV_RECEIVED_DATE"));
+				this.receivableDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value"), true,
+								this.receivableDate.getValue(), maxCovreceiveDate, true));
+			}
+
 		}
-	}
 		logger.debug("Leaving");
 	}
 
@@ -997,26 +1037,99 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	public void onCheck$alwWaiver(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		doSetWaiverProp();
-		
+
 		this.alwPostpone.setChecked(false);
+		this.alwOtc.setChecked(false);
 		this.receivableDate.setValue(null);
 		this.mandRole.setValue("", "");
 		this.space_receivableDate.setSclass("");
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void onCheck$alwPostpone(Event event) throws Exception {
+		doSetPostponeProp();
+	}
+
+	public void onCheck$alwOtc(Event event) throws Exception {
+		doSetOTCProp();
+	}
+
 	private void doSetWaiverProp() {
 		if (this.alwWaiver.isChecked()) {
 			this.alwPostpone.setChecked(false);
+			this.alwOtc.setChecked(false);
 			this.row_Postpone.setVisible(false);
+			this.row_AlwOTC.setVisible(false);
 			this.mandRole.setVisible(false);
 			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
-		} else{
-			if(!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)){				
+		} else {
+			if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
 				this.mandRole.setVisible(true);
 				this.label_FinCovenantTypeDialog_MandRole.setVisible(true);
+				this.mandRole.setReadonly(isReadOnly("FinCovenantTypeDialog_mandRole"));
 			}
 			this.row_Postpone.setVisible(true);
+			this.row_AlwOTC.setVisible(true);
+		}
+	}
+
+	private void doSetPostponeProp() {
+		if (this.alwPostpone.isChecked()) {
+
+			// this.mandRole.setVisible(false);
+			// this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
+			this.mandRole.setValue("", "");
+			this.space_receivableDate.setSclass("mandatory");
+			this.label_FinCovenantTypeDialog_RecvbleDate.setVisible(true);	
+			this.receivableDate.setVisible(true);
+			this.receivableDate.setDisabled(isReadOnly("FinCovenantTypeDialog_receivableDate"));
+			this.mandRole.setReadonly(true);
+			this.alwOtc.setChecked(false);
+			if (!moduleDefiner.equals("")) {
+				 this.alwOtc.setDisabled(true);
+			}
+		} else {
+			if (this.alwWaiver.isChecked()) {
+				this.mandRole.setVisible(false);
+				this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
+			} else {
+				if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
+					this.mandRole.setVisible(true);
+					this.label_FinCovenantTypeDialog_MandRole.setVisible(true);
+					this.alwOtc.setDisabled(true);
+					if(getFinCovenantType().isAlwOtc()){
+						this.alwOtc.setChecked(true);
+					}
+				}
+			}
+			this.mandRole.setReadonly(isReadOnly("FinCovenantTypeDialog_mandRole"));
+			this.space_receivableDate.setSclass("");
+			this.receivableDate.setErrorMessage("");
+			this.receivableDate.setConstraint("");
+			this.receivableDate.setValue(null);
+			this.label_FinCovenantTypeDialog_RecvbleDate.setVisible(false);
+			this.receivableDate.setVisible(false);
+			this.space_receivableDate.setSclass("");
+		}
+		if(enqModule){
+			this.mandRole.setReadonly(true);	
+			this.alwWaiver.setDisabled(true);
+			this.receivableDate.setDisabled(true);
+		}
+	}
+
+	private void doSetOTCProp() {
+		if (this.alwOtc.isChecked()) {
+			this.alwPostpone.setChecked(false);
+			this.label_FinCovenantTypeDialog_RecvbleDate.setVisible(false);
+			this.receivableDate.setVisible(false);
+			this.space_receivableDate.setSclass("");
+			this.alwWaiver.setChecked(false);
+			this.mandRole.setReadonly(true);
+			this.receivableDate.setValue(null);
+		} else {
+			this.mandRole.setReadonly(isReadOnly("FinCovenantTypeDialog_mandRole"));
+			this.alwWaiver.setDisabled(isReadOnly("FinCovenantTypeDialog_alwWaiver"));
 		}
 	}
 	
@@ -1031,6 +1144,10 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		if (StringUtils.isBlank(this.covenantType.getValue())) {
 			this.covenantType.setValue("");
 			this.covenantType.setDescription();
+			this.alwPostpone.setDisabled(true);
+			this.alwOtc.setDisabled(true);
+			this.alwPostpone.setChecked(false);
+			this.alwOtc.setChecked(false);
 		} else {
 			DocumentType dcoType = (DocumentType) this.covenantType.getObject();
 			if (dcoType != null) {
@@ -1042,6 +1159,38 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 
 		logger.debug("Leaving");
 	}
+
+	/**
+	 * Change the branch for the Account on changing the finance Branch
+	 * 
+	 * @param event
+	 */
+	public void onFulfill$mandRole(Event event) {
+		logger.debug("Entering");
+
+		if (StringUtils.isBlank(this.mandRole.getValue())) {
+			this.mandRole.setValue("");
+			this.mandRole.setDescription();
+			this.alwPostpone.setDisabled(false);
+			this.alwOtc.setDisabled(false);
+			this.alwWaiver.setDisabled(false);
+			this.alwPostpone.setChecked(false);
+			this.alwOtc.setChecked(false);
+		} else {
+			SecurityRole role = (SecurityRole) this.mandRole.getObject();
+			if (role != null) {
+				this.mandRole.setValue(role.getRoleCd());
+				this.mandRole.setDescription(role.getRoleDesc());
+				this.alwPostpone.setDisabled(true);
+				this.alwOtc.setDisabled(true);
+				this.alwWaiver.setDisabled(true);
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+	
+	
 
 	/**
 	 * 
@@ -1074,47 +1223,32 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 					this.covenantType.setValue("");
 					this.covenantType.setDescription("");
 					this.covenantType.setObject("");
+					isDocNotfound=true;
 					MessageUtil
 							.showError(dcoType.getDocTypeDesc() + " : is Already Captured.Please Check in Documents");
 				}
 			}
 
 		}
+		
+		// ###_0.2
+		if(!isDocNotfound){
+			if(dcoType.isPdd()){
+				this.alwPostpone.setDisabled(false);
+			}
+			if(dcoType.isOtc()){
+				this.alwOtc.setDisabled(false);
+			}
 
+			this.alwWaiver.setDisabled(false);
+		}
+		
+		if (!moduleDefiner.equals("")) {
+			 this.alwOtc.setDisabled(true);
+		}
 		logger.debug("Leaving");
 	}
 
-	public void onCheck$alwPostpone(Event event) throws Exception {
-		doSetPostponeProp();
-	}
-	
-	private void doSetPostponeProp() {
-		if (this.alwPostpone.isChecked()) {
-			this.mandRole.setVisible(false);
-			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
-			this.mandRole.setValue("", "");
-			this.space_receivableDate.setSclass("mandatory");
-			this.label_FinCovenantTypeDialog_RecvbleDate.setVisible(true);
-			this.receivableDate.setVisible(true);
-			
-		} else {
-			if(this.alwWaiver.isChecked()){
-				this.mandRole.setVisible(false);
-				this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
-			}else{
-				if(!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)){							
-					this.mandRole.setVisible(true);
-					this.label_FinCovenantTypeDialog_MandRole.setVisible(true);
-				}
-			}
-			this.space_receivableDate.setSclass("");
-			this.receivableDate.setErrorMessage("");
-			this.receivableDate.setConstraint("");
-			this.label_FinCovenantTypeDialog_RecvbleDate.setVisible(false);
-			this.receivableDate.setVisible(false);
-			this.space_receivableDate.setSclass("");
-		}
-	}
 	
 
 	// WorkFlow Components

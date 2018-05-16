@@ -700,6 +700,12 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 				lc = new Listcell();
 				cb.setParent(lc);
 				lc.setParent(item);
+				cb = new Checkbox();
+				cb.setDisabled(true);
+				cb.setChecked(detail.isAlwOtc());
+				lc = new Listcell();
+				cb.setParent(lc);
+				lc.setParent(item);
 				lc = new Listcell(detail.getRecordStatus());
 				lc.setParent(item);
 				lc = new Listcell(PennantJavaUtil.getLabel(detail.getRecordType()));

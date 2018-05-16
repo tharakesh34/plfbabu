@@ -30,7 +30,7 @@
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
  * 13-10-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
+ * 16-05-2018       Pennant                  0.2           Added Property Alwotc.                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -77,6 +77,8 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	private boolean alwWaiver;
 	@XmlElement
 	private boolean alwPostpone;
+	@XmlElement
+	private boolean alwOtc;
 	@XmlElement
 	private int postponeDays;
 
@@ -241,6 +243,14 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 
 	public void setCategoryCode(String categoryCode) {
 		this.categoryCode = categoryCode;
+	}
+
+	public boolean isAlwOtc() {
+		return alwOtc;
+	}
+
+	public void setAlwOtc(boolean alwOtc) {
+		this.alwOtc = alwOtc;
 	}
 
 }
