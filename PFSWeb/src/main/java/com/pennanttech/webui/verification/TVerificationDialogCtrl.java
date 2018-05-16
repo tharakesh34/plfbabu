@@ -415,29 +415,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
 
-				List<ValueLabel> decisionList = new ArrayList<>();
-				if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-						|| vrf.getStatus() == Status.POSITIVE.getKey()) {
-					decisionList.add(
-							new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
-					decisionList
-							.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
-					if (vrf.getDecision() == Decision.SELECT.getKey()) {
-						vrf.setDecision(Decision.APPROVE.getKey());
-					}
-					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-				} else if (vrf.getStatus() == Status.NOTCMPLTD.getKey()
-						|| vrf.getStatus() == Status.NEGATIVE.getKey()) {
-					decisionList.add(
-							new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
-					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-				} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
-					decisionList.add(
-							new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
-					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-				} else {
-					fillComboBox(decision, vrf.getDecision(), Decision.getList());
-				}
+				fillDecision(vrf, decision);
 
 				decision.setParent(listCell);
 				listCell.setParent(item);
@@ -481,6 +459,26 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void fillDecision(Verification vrf, Combobox decision) {
+		List<ValueLabel> decisionList = new ArrayList<>();
+		if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey() || vrf.getStatus() == Status.POSITIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
+			decisionList.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
+			if (vrf.getDecision() == Decision.SELECT.getKey()) {
+				vrf.setDecision(Decision.APPROVE.getKey());
+			}
+			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+		} else if (vrf.getStatus() == Status.NOTCMPLTD.getKey() || vrf.getStatus() == Status.NEGATIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
+			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+		} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
+			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+		} else {
+			fillComboBox(decision, vrf.getDecision(), Decision.getList());
+		}
 	}
 
 	private List<ValueLabel> filterDecisions(List<ValueLabel> list) {

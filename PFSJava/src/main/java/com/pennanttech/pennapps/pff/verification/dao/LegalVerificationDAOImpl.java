@@ -237,12 +237,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				LVDocument document = lvDocuments.get(i);
 				ps.setLong(1, document.getVerificationId());
-				if (tableType == TableType.MAIN_TAB) {
-					ps.setInt(2, i + 1);
-				} else {
-					ps.setInt(2, document.getSeqNo());
-				}
-
+				ps.setInt(2, i + 1);
 				if (document.getDocumentId() == null) {
 					ps.setLong(3, 0);
 				} else {

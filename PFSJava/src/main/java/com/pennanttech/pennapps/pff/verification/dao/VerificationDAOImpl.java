@@ -175,7 +175,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update verifications");
 		sql.append(tableType.getSuffix());
-		sql.append(" set reinitid = :reinitid, Version = :Version,");
+		sql.append(" set reinitid = :reinitid, Version = :Version, decision=:decision,");
 		sql.append(" LastMntBy = :LastMntBy, LastMntOn = :LastMntOn where id = :id ");
 
 		// Execute the SQL, binding the arguments.

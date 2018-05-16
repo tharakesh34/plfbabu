@@ -21,6 +21,8 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
@@ -35,6 +37,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.customermasters.Customer;
@@ -50,6 +53,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.Module;
 import com.pennanttech.pennapps.pff.verification.RequestType;
@@ -76,6 +80,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	protected Groupbox lvInquiry;
 	protected Button btnNew_Initiation;
 	protected Button btnNew_Waiver;
+	protected Button btnNew_ReinitWaiver;
 	protected Toolbar toolbar_Waiver;
 	protected Toolbar toolbar_Initiation;
 
@@ -156,8 +161,8 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		this.listBoxWaiver.setHeight(borderlayoutHeights - 30 + "px");
 		this.window_LVerificationDialog.setHeight(this.borderLayoutHeight - 80 + "px");
 		if (!initType) {
-			this.toolbar_Waiver.setVisible(false);
 			this.toolbar_Initiation.setVisible(false);
+			this.toolbar_Waiver.setVisible(false);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -183,6 +188,30 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		verification.setVerificationType(VerificationType.LV.getKey());
 		verification.setRequestType(RequestType.INITIATE.getKey());
 		doShowDialogPage(verification);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onClick$btnNew_ReinitWaiver(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		// Create a new entity.
+		Verification vrf = new Verification();
+		BeanUtils.copyProperties(this.verification, vrf);
+		vrf.getLvDocuments().clear();
+		vrf.setNewRecord(true);
+		vrf.setVerificationType(VerificationType.LV.getKey());
+		vrf.setRequestType(RequestType.INITIATE.getKey());
+		vrf.setNewRecord(true);
+		vrf.setWaiveTab(true);
+		vrf.setApproveTab(true);
+		doShowDialogPage(vrf);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -374,6 +403,18 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			listCell.setParent(item);
 
 			if (!initType) {
+				//Decision
+				listCell = new Listcell();
+				listCell.setId("Decision".concat(String.valueOf(i)));
+				Combobox decision = new Combobox();
+				if (Decision.getType(vrf.getDecision()) != null) {
+					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
+				}
+
+				fillDecision(vrf, decision);
+				decision.setParent(listCell);
+				listCell.setParent(item);
+
 				//ReInitiate
 				listCell = new Listcell();
 				listCell.setId("IReInitiate".concat(String.valueOf(i)));
@@ -384,6 +425,12 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 				item.setAttribute("verification", vrf);
 				btnReInit.addForward("onClick", self, "onClickReInitiate", item);
+				decision.addForward("onChange", self, "onChangeInitDecision", item);
+
+				if (vrf.getDecision() == Decision.RE_INITIATE.getKey()) {
+					decision.setDisabled(true);
+					btnReInit.setVisible(false);
+				}
 			}
 
 			if (initType) {
@@ -394,6 +441,56 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void fillDecision(Verification vrf, Combobox decision) {
+		List<ValueLabel> decisionList = new ArrayList<>();
+		if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey() || vrf.getStatus() == Status.POSITIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
+			decisionList.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
+			if (vrf.getDecision() == Decision.SELECT.getKey()) {
+				vrf.setDecision(Decision.APPROVE.getKey());
+			}
+			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+		} else if (vrf.getStatus() == Status.NOTCMPLTD.getKey() || vrf.getStatus() == Status.NEGATIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
+			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+		} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
+			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+		} else {
+			fillComboBox(decision, vrf.getDecision(), Decision.getList());
+		}
+	}
+
+	private void fillComboBox(Combobox combobox, int value, List<ValueLabel> list) {
+		combobox.getChildren().clear();
+		for (ValueLabel valueLabel : list) {
+			Comboitem comboitem = new Comboitem();
+			comboitem.setValue(valueLabel.getValue());
+			comboitem.setLabel(valueLabel.getLabel());
+			combobox.appendChild(comboitem);
+			if (Integer.parseInt(valueLabel.getValue()) == value) {
+				combobox.setSelectedItem(comboitem);
+			}
+		}
+	}
+
+	private List<ValueLabel> filterDecisions(List<ValueLabel> list) {
+		boolean flag = true;
+		List<ValueLabel> decisionList = new ArrayList<>();
+		for (ValueLabel decValueLabel : Decision.getList()) {
+			for (ValueLabel valueLabel : list) {
+				if (Integer.parseInt(valueLabel.getValue()) == Integer.parseInt(decValueLabel.getValue())) {
+					flag = false;
+				}
+			}
+			if (flag) {
+				decisionList.add(decValueLabel);
+			}
+			flag = true;
+		}
+		return decisionList;
 	}
 
 	private void setScreenDocuments() {
@@ -598,19 +695,32 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			listCell.setParent(item);
 
 			if (!initType) {
-				//ReInitiate
+				//Decision
 				listCell = new Listcell();
-				listCell.setId("WReInitiate".concat(String.valueOf(i)));
-				Button btnReInit = new Button("ReInitiate");
-				listCell.appendChild(btnReInit);
-				listCell.setStyle("text-align:right;");
+				listCell.setId("WDecision".concat(String.valueOf(i)));
+				Combobox decision = new Combobox();
+				if (Decision.getType(vrf.getDecision()) != null) {
+					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
+				}
+
+				fillDecision(vrf, decision);
+				decision.setParent(listCell);
 				listCell.setParent(item);
 
-				btnReInit.addForward("onClick", self, "onClickReInitiate", item);
+				decision.addForward("onChange", self, "onChangeWaiveDecision", item);
+
+				if (vrf.getDecision() == Decision.RE_INITIATE.getKey()) {
+					decision.setReadonly(true);
+				}
 			}
 
 			item.setAttribute("vrf", vrf);
 			reason.addForward("onFulfill", self, "onChangeReason", item);
+
+			if (!initType) {
+				reason.setReadonly(true);
+				remarks.setReadonly(true);
+			}
 
 			this.listBoxWaiver.appendChild(item);
 
@@ -653,10 +763,41 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	private void doClearMessage() {
 		for (Listitem listitem : listBoxWaiver.getItems()) {
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
+			Combobox decision = (Combobox) getComponent(listitem, "WDecision");
 
 			reasonComboBox.clearErrorMessage();
-
+			if (decision != null) {
+				decision.clearErrorMessage();
+			}
 		}
+	}
+
+	public void onChangeInitDecision(ForwardEvent event) throws Exception {
+		Listitem listitem = (Listitem) event.getData();
+		Combobox decisionBox = (Combobox) getComponent(listitem, "Decision");
+		try {
+			Decision.getType(Integer.parseInt(decisionBox.getSelectedItem().getValue()));
+		} catch (Exception e) {
+			String value = decisionBox.getValue();
+			decisionBox.setValue("");
+			throw new WrongValueException(decisionBox,
+					Labels.getLabel("STATIC_INVALID", new String[] { value + " is not valid," }));
+		}
+
+	}
+
+	public void onChangeWaiveDecision(ForwardEvent event) throws Exception {
+		Listitem listitem = (Listitem) event.getData();
+		Combobox decisionBox = (Combobox) getComponent(listitem, "WDecision");
+		try {
+			Decision.getType(Integer.parseInt(decisionBox.getSelectedItem().getValue()));
+		} catch (Exception e) {
+			String value = decisionBox.getValue();
+			decisionBox.setValue("");
+			throw new WrongValueException(decisionBox,
+					Labels.getLabel("STATIC_INVALID", new String[] { value + " is not valid," }));
+		}
+
 	}
 
 	/**
@@ -671,27 +812,44 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 			if (!reasonComboBox.isReadonly()) {
 				reasonComboBox.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_FIVerificationDialog_Reason.value"), null, true, true));
+						Labels.getLabel("label_LegalVerificationDialog_Reason.value"), null, true, true));
 			}
 
 		}
 		logger.debug("Leaving");
 	}
 
-	private Verification updateWaiverVerification(Listitem listitem) {
+	private Verification updateWaiverVerification(Listitem listitem, ArrayList<WrongValueException> wve) {
 		Verification verification = null;
 
 		verification = (Verification) listitem.getAttribute("vrf");
 
 		ExtendedCombobox reason = ((ExtendedCombobox) getComponent(listitem, "Reason"));
+		try {
 
-		if (StringUtils.isNotEmpty(reason.getValue())) {
-			verification.setReason(Long.parseLong(reason.getAttribute("reasonId").toString()));
-		} else {
-			verification.setReason(null);
+			if (StringUtils.isNotEmpty(reason.getValue())) {
+				verification.setReason(Long.parseLong(reason.getAttribute("reasonId").toString()));
+			} else {
+				verification.setReason(null);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
 
 		verification.setRemarks(((Textbox) getComponent(listitem, "WRemarks")).getValue());
+		try {
+			if (!initType) {
+				Combobox combobox = (Combobox) getComponent(listitem, "WDecision");
+				int decision = Integer.parseInt(getComboboxValue(combobox).toString());
+				verification.setDecision(decision);
+				if (!combobox.isDisabled() && decision == 0) {
+					throw new WrongValueException(combobox,
+							Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
+				}
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		return verification;
 	}
 
@@ -708,12 +866,10 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 		this.verification.getVerifications().clear();
 		for (Listitem listitem : listBoxWaiver.getItems()) {
-			this.verification.getVerifications().add(updateWaiverVerification(listitem));
+			this.verification.getVerifications().add(updateWaiverVerification(listitem, wve));
 		}
 
 		doRemoveValidation();
-
-		//this.verification.setKeyReference(financeMainDialogCtrl.getFinanceDetail().getFinReference());
 
 		logger.debug("Leaving");
 		return wve;
@@ -725,7 +881,13 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		setValidationOn(false);
 		for (Listitem listitem : listBoxWaiver.getItems()) {
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
+			Combobox decision = (Combobox) getComponent(listitem, "WDecision");
+
 			reasonComboBox.setConstraint("");
+			if (decision != null) {
+				decision.setConstraint("");
+			}
+
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -834,4 +996,11 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		setVerificationData(financeDetail);
 	}
 
+	public Button getBtnNew_ReinitWaiver() {
+		return btnNew_ReinitWaiver;
+	}
+
+	public void setBtnNew_ReinitWaiver(Button btnNew_ReinitWaiver) {
+		this.btnNew_ReinitWaiver = btnNew_ReinitWaiver;
+	}
 }

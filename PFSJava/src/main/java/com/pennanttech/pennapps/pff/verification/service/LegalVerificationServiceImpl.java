@@ -40,7 +40,8 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
-public class LegalVerificationServiceImpl extends GenericService<LegalVerification> implements LegalVerificationService {
+public class LegalVerificationServiceImpl extends GenericService<LegalVerification>
+		implements LegalVerificationService {
 	private static final Logger logger = Logger.getLogger(LegalVerificationServiceImpl.class);
 
 	@Autowired
@@ -133,14 +134,15 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 
 	@Override
 	public LegalVerification getLegalVerification(LegalVerification lv) {
-		LegalVerification legalVerification = legalVerificationDAO.getLegalVerification(lv.getVerificationId(), "_View");
+		LegalVerification legalVerification = legalVerificationDAO.getLegalVerification(lv.getVerificationId(),
+				"_View");
 		if (legalVerification != null) {
 			List<LVDocument> lvDocuments = legalVerificationDAO.getLVDocuments(lv.getVerificationId(), "_View");
 			legalVerification.setLvDocuments(lvDocuments);
-			
+
 			// LV Document Details
-			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(String.valueOf(lv.getVerificationId()),
-					VerificationType.LV.getCode(), "", "_View");
+			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
+					String.valueOf(lv.getVerificationId()), VerificationType.LV.getCode(), "", "_View");
 			if (legalVerification.getDocuments() != null && !legalVerification.getDocuments().isEmpty()) {
 				legalVerification.getDocuments().addAll(documentList);
 			} else {
@@ -159,6 +161,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	public boolean isLVExists(long id) {
 		return legalVerificationDAO.isLVExists(id);
 	}
+
 	/**
 	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
@@ -218,8 +221,8 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 		BeanUtils.copyProperties((LegalVerification) auditHeader.getAuditDetail().getModelData(), lv);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(lv.getRecordType())) {
-			auditHeader.getAuditDetail()
-					.setBefImage(legalVerificationDAO.getLegalVerification(lv.getVerificationId(), TableType.MAIN_TAB.getSuffix()));
+			auditHeader.getAuditDetail().setBefImage(
+					legalVerificationDAO.getLegalVerification(lv.getVerificationId(), TableType.MAIN_TAB.getSuffix()));
 		}
 
 		if (lv.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -328,7 +331,8 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 			tableName.append(lv.getExtendedFieldHeader().getSubModuleName());
 			tableName.append("_ED");
 			auditList.addAll(extendedFieldDetailsService.delete(lv.getExtendedFieldHeader(),
-					String.valueOf(lv.getVerificationId()), tableName.toString(), tableType, auditTranType, extendedDetails));
+					String.valueOf(lv.getVerificationId()), tableName.toString(), tableType, auditTranType,
+					extendedDetails));
 		}
 
 		// Document Details.
@@ -789,12 +793,13 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	@Override
 	public void save(Verification verification, TableType tableType) {
 		setLvFields(verification);
-		setLVDocumentWorkFlowFields(verification.getLegalVerification());
+		setLVDocumentWorkFlowFields(verification);
 		legalVerificationDAO.save(verification.getLegalVerification(), tableType);
 	}
 
-	private void setLVDocumentWorkFlowFields(LegalVerification legalVerification) {
-		for (LVDocument lvDocument : legalVerification.getLvDocuments()) {
+	private void setLVDocumentWorkFlowFields(Verification verification) {
+		LegalVerification legalVerification = verification.getLegalVerification();
+		for (LVDocument lvDocument : verification.getLvDocuments()) {
 			lvDocument.setVersion(legalVerification.getVersion());
 			lvDocument.setLastMntBy(legalVerification.getLastMntBy());
 			lvDocument.setLastMntOn(legalVerification.getLastMntOn());
@@ -873,7 +878,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 		}
 		return lvIds;
 	}
-	
+
 	@Override
 	public List<LVDocument> getDocuments(String keyReference, TableType tableType, DocumentType documentType) {
 		return legalVerificationDAO.getDocuments(keyReference, tableType, documentType);

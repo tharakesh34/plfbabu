@@ -195,35 +195,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 			} else {
 				if (item.getDecision() == Decision.RE_INITIATE.getKey()) {
-					Verification reInit = new Verification();
-					reInit.setId(item.getId());
-					reInit.setLastMntOn(item.getLastMntOn());
-					reInit.setLastMntBy(item.getLastMntBy());
-
-					item.setStatus(0);
-					item.setCreatedBy(item.getLastMntBy());
-					item.setVerificationDate(null);
-					item.setDecision(Decision.SELECT.getKey());
-					item.setAgency(item.getReInitAgency());
-					item.setRemarks(item.getDecisionRemarks());
-					item.setRequestType(RequestType.INITIATE.getKey());
-					item.setReason(null);
-					setVerificationData(financeDetail, item, verificationType);
-
-					verificationDAO.save(item, TableType.MAIN_TAB);
-
-					reInit.setReinitid(item.getId());
-					verificationDAO.updateReInit(reInit, TableType.MAIN_TAB);
-
-					if (verificationType == VerificationType.FI) {
-						saveFI(customerDetailsList, item);
-					} else if (verificationType == VerificationType.TV) {
-						saveTV(collateralSetupList, item);
-					} else if (verificationType == VerificationType.LV) {
-						saveLV(financeDetail, item);
-					} else if (verificationType == VerificationType.RCU) {
-						saveRCU(financeDetail, item);
-					}
+					reInitVerification(financeDetail, verificationType, customerDetailsList, collateralSetupList, item);
 				} else {
 					if (item.getId() != 0) {
 						verificationDAO.update(item, TableType.MAIN_TAB);
@@ -237,6 +209,43 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		return auditDetails;
 	}
 
+	private void reInitVerification(FinanceDetail financeDetail, VerificationType verificationType,
+			List<CustomerDetails> customerDetailsList, List<CollateralSetup> collateralSetupList, Verification item) {
+		Verification reInit = new Verification();
+		reInit.setId(item.getId());
+		reInit.setLastMntOn(item.getLastMntOn());
+		reInit.setLastMntBy(item.getLastMntBy());
+
+		if (item.isApproveTab()) {
+			reInit.setDecision(Decision.RE_INITIATE.getKey());
+		} else {
+			item.setAgency(item.getReInitAgency());
+			item.setRemarks(item.getDecisionRemarks());
+		}
+		item.setStatus(0);
+		item.setCreatedBy(item.getLastMntBy());
+		item.setVerificationDate(null);
+		item.setDecision(Decision.SELECT.getKey());
+		item.setRequestType(RequestType.INITIATE.getKey());
+		item.setReason(null);
+		setVerificationData(financeDetail, item, verificationType);
+
+		verificationDAO.save(item, TableType.MAIN_TAB);
+
+		reInit.setReinitid(item.getId());
+		verificationDAO.updateReInit(reInit, TableType.MAIN_TAB);
+
+		if (verificationType == VerificationType.FI) {
+			saveFI(customerDetailsList, item);
+		} else if (verificationType == VerificationType.TV) {
+			saveTV(collateralSetupList, item);
+		} else if (verificationType == VerificationType.LV) {
+			saveLV(financeDetail, item);
+		} else if (verificationType == VerificationType.RCU) {
+			saveRCU(financeDetail, item);
+		}
+	}
+
 	@Override
 	public void saveLegalVerification(Verification verification) {
 		if (verification.getRequestType() == RequestType.WAIVE.getKey()) {
@@ -244,6 +253,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		} else {
 			saveLVInit(verification);
 		}
+	}
+
+	@Override
+	public void savereInitLegalVerification(FinanceDetail financeDetail, Verification verification) {
+		reInitVerification(financeDetail, VerificationType.LV, null, null, verification);
+		saveLVInit(verification);
+
 	}
 
 	private void saveLVWaive(Verification verification) {
@@ -255,7 +271,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			item.setReferenceFor(lvDocument.getDocumentSubId());
 			item.setReferenceType(lvDocument.getDocumentSubId());
 
-			Long verificationId = getVerificationIdByReferenceFor(item.getKeyReference(), item.getReferenceFor(), VerificationType.LV.getKey());
+			Long verificationId = getVerificationIdByReferenceFor(item.getKeyReference(), item.getReferenceFor(),
+					VerificationType.LV.getKey());
 
 			if (verificationId != null) {
 				item.setId(verificationId);
@@ -267,19 +284,21 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	private void saveLVInit(Verification verification) {
-		Long verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getKeyReference(),
-				verification.getReferenceFor(), VerificationType.LV.getKey());
+		if (!verification.isApproveTab()) {
+			Long verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getKeyReference(),
+					verification.getReferenceFor(), VerificationType.LV.getKey());
 
-		if (verification.isNewRecord() && verificationId != null) {
-			throw new AppException(String.format("Collateral %s already initiated", verification.getReferenceFor()));
+			if (verification.isNewRecord() && verificationId != null) {
+				throw new AppException(
+						String.format("Collateral %s already initiated", verification.getReferenceFor()));
+			}
+			if (verificationId != null) {
+				verification.setId(verificationId);
+				verificationDAO.update(verification, TableType.MAIN_TAB);
+			} else {
+				verificationDAO.save(verification, TableType.MAIN_TAB);
+			}
 		}
-		if (verificationId != null) {
-			verification.setId(verificationId);
-			verificationDAO.update(verification, TableType.MAIN_TAB);
-		} else {
-			verificationDAO.save(verification, TableType.MAIN_TAB);
-		}
-
 		// delete documents
 		legalVerificationService.deleteDocuments(verification.getReferenceFor(), TableType.MAIN_TAB);
 
@@ -322,7 +341,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
 			legalVerificationService.save(item, TableType.TEMP_TAB);
 			setLVDocumentDetails(financeDetail, item);
-			legalVerificationService.saveDocuments(item.getLegalVerification().getLvDocuments(), TableType.TEMP_TAB);
+			for (LVDocument lvDocument : item.getLvDocuments()) {
+				lvDocument.setVerificationId(item.getId());
+			}
+			legalVerificationService.saveDocuments(item.getLvDocuments(), TableType.TEMP_TAB);
 		}
 	}
 
@@ -353,13 +375,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		List<CustomerDocument> customerDocuemnts = financeDetail.getCustomerDetails().getCustomerDocumentsList();
 		List<DocumentDetails> loanDocuments = financeDetail.getDocumentDetailsList();
 		List<DocumentDetails> collateralDocumentList = new ArrayList<>();
-		
+
 		List<DocumentDetails> list = null;
 		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
 			list = documentDetailsDAO.getDocumentDetailsByRef(item.getReferenceFor(), CollateralConstants.MODULE_NAME,
 					"", "_View");
 		}
-		
+
 		if (list != null) {
 			collateralDocumentList.addAll(list);
 		}
@@ -370,7 +392,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			customerDoumentMap.put(document.getCustDocCategory(), document);
 		}
 
-		for (LVDocument lvDocument : item.getLegalVerification().getLvDocuments()) {
+		for (LVDocument lvDocument : item.getLvDocuments()) {
 			if (lvDocument.getDocumentType() == DocumentType.CUSTOMER.getKey()) {
 				CustomerDocument document = customerDoumentMap.get(lvDocument.getDocumentSubId());
 				lvDocument.setDocumentId(document.getId());
@@ -386,7 +408,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			loanDocumentMap.put(document.getDocCategory(), document);
 		}
 
-		for (LVDocument lvDocument : item.getLegalVerification().getLvDocuments()) {
+		for (LVDocument lvDocument : item.getLvDocuments()) {
 			if (lvDocument.getDocumentType() == DocumentType.LOAN.getKey()) {
 				DocumentDetails document = loanDocumentMap.get(lvDocument.getDocumentSubId());
 				lvDocument.setDocumentId(document.getId());
@@ -402,7 +424,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			collateralDocumentMap.put(document.getDocId(), document);
 		}
 
-		for (LVDocument lvDocument : item.getLegalVerification().getLvDocuments()) {
+		for (LVDocument lvDocument : item.getLvDocuments()) {
 			if (lvDocument.getDocumentType() == DocumentType.COLLATRL.getKey()) {
 				DocumentDetails document = collateralDocumentMap.get(lvDocument.getDocumentId());
 				lvDocument.setDocumentId(document.getId());
@@ -678,6 +700,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 			if (lv != null) {
 				lv.setLvDocuments(legalVerificationService.getLVDocumentsFromStage(verification.getId()));
+				verification.setLvDocuments(lv.getLvDocuments());
 			}
 
 			verification.setLegalVerification(lv);
@@ -728,9 +751,11 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		} else if (verificationType == VerificationType.TV) {
 
 		} else if (verificationType == VerificationType.LV) {
-
+			if (verification.getReference() == null) {
+				verification.setReference(customer.getCustCIF());
+			}
 		} else if (verificationType == VerificationType.TV) {
-
+			
 		} else if (verificationType == VerificationType.RCU) {
 			if (verification.getReference() == null) {
 				verification.setReference(customer.getCustCIF());

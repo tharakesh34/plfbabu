@@ -2646,6 +2646,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						verificationService.saveOrUpdate(financeDetail, VerificationType.LV, tableType.getSuffix(), auditTranType, true));
 			}
 			
+			// save LV Initiation details
+			//=======================================
+			if (financeDetail.isLvApprovalTab()) {
+				adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.LV,
+						tableType.getSuffix(), auditTranType, false));
+			}
+			
 			// save RCU Initiation details
 			//=======================================
 			if (financeDetail.isRcuInitTab()) {

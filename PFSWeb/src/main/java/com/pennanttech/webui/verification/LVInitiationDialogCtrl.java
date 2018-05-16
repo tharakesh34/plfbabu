@@ -470,6 +470,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 
 		List<String> documentCategories = new ArrayList<>();
+		List<String> idList = new ArrayList<>();
 
 		if (initiation) {
 			listbox.getItems().clear();
@@ -480,36 +481,35 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				documentCategories.add(verification.getReferenceFor());
 			}
 		}
+		if (!this.verification.isApproveTab()) {
+			List<LVDocument> oldDocumentIds = legalVerificationService.getLVDocuments(verification.getKeyReference());
+			oldDocumentIds.addAll(getWaiveDocIds(verificationService.getVerifications(verification.getKeyReference(),
+					VerificationType.LV.getKey())));
 
-		List<LVDocument> oldDocumentIds = legalVerificationService.getLVDocuments(verification.getKeyReference());
-		oldDocumentIds.addAll(getWaiveDocIds(verificationService.getVerifications(verification.getKeyReference(), VerificationType.LV.getKey())));
-		
-		
-		List<String> idList = new ArrayList<>();
-		
-		for (LVDocument lvDocument : oldDocumentIds) {			
-			if ("W".equals(lvDocument.getDocModule())
-					|| (lvDocument.getDocumentType() != DocumentType.COLLATRL.getKey())) {
-				idList.add(lvDocument.getDocumentSubId());
-			} else {
-				idList.add(String.valueOf(lvDocument.getDocumentId()));
+			for (LVDocument lvDocument : oldDocumentIds) {
+				if ("W".equals(lvDocument.getDocModule())
+						|| (lvDocument.getDocumentType() != DocumentType.COLLATRL.getKey())) {
+					idList.add(lvDocument.getDocumentSubId());
+				} else {
+					idList.add(String.valueOf(lvDocument.getDocumentId()));
+				}
 			}
 		}
-		
-		for (LVDocument document : documents) {			
+
+		for (LVDocument document : documents) {
 			if (docType.getKey() != document.getDocumentType()) {
 				continue;
 			}
-			
+
 			String reference = document.getDocumentSubId();
-			if(document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
-				if(StringUtils.isNotEmpty(collateralRef) && !collateralRef.equals(document.getCollateralRef())){
+			if (document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
+				if (StringUtils.isNotEmpty(collateralRef) && !collateralRef.equals(document.getCollateralRef())) {
 					continue;
 				} else {
 					reference = String.valueOf(document.getDocumentId());
 				}
 			}
-		
+
 			if (idList.contains(reference) && !documentCategories.contains(reference)) {
 				continue;
 			}
@@ -531,7 +531,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listbox.appendChild(item);
 		}
 
-			logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING);
 	}
 
 	private String getDocumentName(String code, String description) {
@@ -652,7 +652,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		if (this.verification.getLvDocuments().isEmpty()) {
-			throw new WrongValueException(listBoxCollateralDocuments, Labels.getLabel("ATLEAST_ONE", new String[] { "Document" }));
+			throw new WrongValueException(listBoxCollateralDocuments,
+					Labels.getLabel("ATLEAST_ONE", new String[] { "Document" }));
 		}
 
 	}
@@ -811,6 +812,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			this.collateral.setReadonly(false);
 			if (verification.isApproveTab() && verification.getRequestType() == RequestType.INITIATE.getKey()) {
 				this.collateral.setReadonly(true);
+			}
+			if (verification.isWaiveTab()) {
+				this.collateral.setReadonly(false);
 			}
 		} else {
 			this.btnCancel.setVisible(true);
@@ -1066,7 +1070,11 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 						verificationService.delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						verificationService.saveLegalVerification(verification);
+						if (this.verification.isApproveTab()) {
+							verificationService.savereInitLegalVerification(financeDetail, verification);
+						} else {
+							verificationService.saveLegalVerification(verification);
+						}
 					}
 
 				} else {

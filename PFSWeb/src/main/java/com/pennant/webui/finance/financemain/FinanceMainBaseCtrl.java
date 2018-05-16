@@ -6246,6 +6246,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (lvInitTab != null && lvInitTab.isVisible() && lVerificationCtrl != null) {
 			lVerificationCtrl.doSave_LVVerification(aFinanceDetail, lvInitTab);
 		}
+		
+		// LV Approval Verification Detail
+		Tab lvApprovalTab = getTab(AssetConstants.UNIQUE_ID_LVAPPROVAL);
+		if (lvApprovalTab != null && lvApprovalTab.isVisible() && lVerificationCtrl != null) {
+			lVerificationCtrl.doSave_LVVerification(aFinanceDetail, lvApprovalTab);
+		}
 
 		// RCU Init Verification Detail
 		Tab rcuInitTab = getTab(AssetConstants.UNIQUE_ID_RCUINITIATION);
