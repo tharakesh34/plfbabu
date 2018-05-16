@@ -6522,5 +6522,182 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 			<column name="EMIAmount" type="decimal(18,0)" />
 		</createTable>
 	</changeSet>
+	<changeSet id="153" author="Madhubabu">
+		<comment> Providing group rights to FinCovenantTypeDialog_alwOtc</comment>
+		<sql>
+			INSERT INTO SMTPARAMETERS VALUES ('FUTUREDAYS_COV_RECEIVED_DATE','covenant max allowed future days','int',1,'10','200',0, NULL, NULL, 'covenant max allowed future days',1,1000,CURRENT_TIMESTAMP,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+			INSERT INTO SMTPARAMETERS VALUES ('FUTUREDAYS_SER_COV_RECEIVED_DATE','covenant max allowed future days','int',1,'10','200',0, NULL, NULL, 'covenant max allowed future days',1,1000,CURRENT_TIMESTAMP,'Approved',NULL,	NULL,NULL,NULL,NULL,0);
+			
+			INSERT INTO SMTPARAMETERS VALUES ('COVENANT_REPAY_OTC_TYPE','Repayment type from covenant to proceed to disbursement ','String',1,'DD,CHEQUE','200',0, NULL, NULL, 'covenant max allowed future days',1,1000,CURRENT_TIMESTAMP,'Approved',NULL,	NULL,NULL,NULL,NULL,0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_alwOtc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), 
+			(SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMER_DDE_MAKER') ,
+			(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_alwOtc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), 
+			(SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINCOVENANTDETAIL_SER') ,
+			(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_alwOtc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), 
+			(SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LAP_SSO') ,
+			(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_alwOtc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO ErrorDetails VALUES('41101','EN','E','{1} are not alowed for Disbursment Type : {0}','','Approved','','','','','',0,NUll,1000,0);
+			INSERT INTO ErrorDetails VALUES('S41103','EN','E','Disbursement can’t be done for disbursement type : {0} with pending Covenant PDD Over Due or OTC.','','Approved','','','','','',0,NUll,1000,0);
+		</sql>
+	</changeSet>
+	<changeSet id="154" author="Madhubabu">
+		<comment> alwotc added </comment>
+		<createView viewName="fincovenanttype_eaview" replaceIfExists="true">
+			SELECT t.finreference,
+		    t.custid,
+		    t.covenanttype,
+		    t.description,
+		    t.mandrole,
+		    t.alwwaiver,
+		    t.alwpostpone,
+		    t.alwotc,
+		    t.postponedays,
+		    t.covenanttypedesc,
+		    t.categorycode,
+		    t.receivabledate,
+		    t.version,
+		    t.lastmntby,
+		    t.lastmnton,
+		    t.recordstatus,
+		    t.rolecode,
+		    t.nextrolecode,
+		    t.taskid,
+		    t.nexttaskid,
+		    t.recordtype,
+		    t.workflowid,
+        CASE
+            WHEN t.docreceiveddate IS NULL THEN cd.lastmnton
+            ELSE t.docreceiveddate
+        END AS docreceiveddate
+   FROM ( SELECT t1.finreference,
+            t4.custid,
+            t1.covenanttype,
+            t1.description,
+            t1.mandrole,
+            t1.alwwaiver,
+            t1.alwpostpone,
+         	t1.alwotc,
+            t1.postponedays,
+            t3.doctypedesc AS covenanttypedesc,
+            t5.code AS categorycode,
+            t1.receivabledate,
+            t1.version,
+            t1.lastmntby,
+            t1.lastmnton,
+            t1.recordstatus,
+            t1.rolecode,
+            t1.nextrolecode,
+            t1.taskid,
+            t1.nexttaskid,
+            t1.recordtype,
+            t1.workflowid,
+            t7.docreceiveddate
+           FROM fincovenanttype t1
+             JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
+             LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
+             JOIN financemain t4 ON t4.finreference = t1.finreference
+             LEFT JOIN documentdetails t7 ON t7.referenceid = t1.finreference AND t1.covenanttype = t7.doccategory) t
+     		LEFT JOIN customerdocuments cd ON cd.custid = t.custid AND t.covenanttype = cd.custdoccategory
+		</createView>
+	</changeSet>
+	<changeSet id="155" author="Madhubabu">
+		<comment> alwotc added </comment>
+		<createView viewName="fincovenanttype_eview" replaceIfExists="true">
+			SELECT t.finreference,
+		    t.custid,
+		    t.covenanttype,
+		    t.description,
+		    t.mandrole,
+		    t.alwwaiver,
+		    t.alwpostpone,
+		    t.alwotc,
+		    t.postponedays,
+		    t.covenanttypedesc,
+		    t.categorycode,
+		    t.receivabledate,
+		    t.version,
+		    t.lastmntby,
+		    t.lastmnton,
+		    t.recordstatus,
+		    t.rolecode,
+		    t.nextrolecode,
+		    t.taskid,
+		    t.nexttaskid,
+		    t.recordtype,
+		    t.workflowid,
+        CASE
+            WHEN t.docreceiveddate IS NULL THEN cd.lastmnton
+            ELSE t.docreceiveddate
+        END AS docreceiveddate
+   FROM ( SELECT t1.finreference,
+            t4.custid,
+            t1.covenanttype,
+            t1.description,
+            t1.mandrole,
+            t1.alwwaiver,
+            t1.alwpostpone,
+            t1.postponedays,
+         	t1.alwotc,
+            t3.doctypedesc AS covenanttypedesc,
+            t5.code AS categorycode,
+            t1.receivabledate,
+            t1.version,
+            t1.lastmntby,
+            t1.lastmnton,
+            t1.recordstatus,
+            t1.rolecode,
+            t1.nextrolecode,
+            t1.taskid,
+            t1.nexttaskid,
+            t1.recordtype,
+            t1.workflowid,
+            t7.docreceiveddate
+           FROM fincovenanttype_temp t1
+             JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
+             LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
+             JOIN financemain t4 ON t4.finreference = t1.finreference
+             LEFT JOIN documentdetails t7 ON t7.referenceid = t1.finreference AND t1.covenanttype = t7.doccategory
+        UNION ALL
+         SELECT t1.finreference,
+            t4.custid,
+            t1.covenanttype,
+            t1.description,
+            t1.mandrole,
+            t1.alwwaiver,
+            t1.alwpostpone,
+            t1.postponedays,
+         	t1.alwotc,
+            t3.doctypedesc AS covenanttypedesc,
+            t5.code AS categorycode,
+            t1.receivabledate,
+            t1.version,
+            t1.lastmntby,
+            t1.lastmnton,
+            t1.recordstatus,
+            t1.rolecode,
+            t1.nextrolecode,
+            t1.taskid,
+            t1.nexttaskid,
+            t1.recordtype,
+            t1.workflowid,
+            t7.docreceiveddate
+           FROM fincovenanttype t1
+             JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
+             LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
+             JOIN financemain t4 ON t4.finreference = t1.finreference
+             LEFT JOIN documentdetails t7 ON t7.referenceid = t1.finreference AND t1.covenanttype = t7.doccategory
+          WHERE NOT (EXISTS ( SELECT 1
+                   FROM fincovenanttype_temp
+                  WHERE fincovenanttype_temp.finreference = t1.finreference AND fincovenanttype_temp.covenanttype = t1.covenanttype))) t
+     LEFT JOIN customerdocuments cd ON cd.custid = t.custid AND t.covenanttype = cd.custdoccategory
+		</createView>
+	</changeSet>
 </databaseChangeLog>
 	
