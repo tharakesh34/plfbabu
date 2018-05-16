@@ -95,6 +95,7 @@ import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
+import com.pennanttech.webui.verification.LVerificationCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 
 /**
@@ -126,6 +127,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
 	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
+	private LVerificationCtrl lVerificationCtrl;
 	protected Groupbox finBasicdetails;
 
 	private boolean headerNotrequired = false;
@@ -446,18 +448,24 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 		
 		if (rcuVerificationDialogCtrl != null) {
-			List<DocumentDetails> loandocuments = new ArrayList<>();
+			rcuVerificationDialogCtrl.addLoanDocuments(getLoanDocumentsFromScreen());
+		}
 
-			for (Entry<String, DocumentDetails> entrySet : docDetailMap.entrySet()) {
-				if (!(DocumentCategories.CUSTOMER.getKey().equals(entrySet.getValue().getCategoryCode()))) {
-					loandocuments.add(entrySet.getValue());
-				}
-			}
-
-			rcuVerificationDialogCtrl.addLoanDocuments(loandocuments);
+		if (lVerificationCtrl != null) {
+			lVerificationCtrl.addLoanDocuments(getLoanDocumentsFromScreen());
 		}
 		
 		logger.debug("Leaving");
+	}
+
+	private List<DocumentDetails> getLoanDocumentsFromScreen() {
+		List<DocumentDetails> loandocuments = new ArrayList<>();
+		for (Entry<String, DocumentDetails> entrySet : docDetailMap.entrySet()) {
+			if (!(DocumentCategories.CUSTOMER.getKey().equals(entrySet.getValue().getCategoryCode()))) {
+				loandocuments.add(entrySet.getValue());
+			}
+		}
+		return loandocuments;
 	}
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
@@ -840,6 +848,14 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
 		this.externalDocumentManager = externalDocumentManager;
+	}
+
+	public LVerificationCtrl getlVerificationCtrl() {
+		return lVerificationCtrl;
+	}
+
+	public void setlVerificationCtrl(LVerificationCtrl lVerificationCtrl) {
+		this.lVerificationCtrl = lVerificationCtrl;
 	}
 
 }

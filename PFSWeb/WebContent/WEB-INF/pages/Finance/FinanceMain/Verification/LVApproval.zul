@@ -109,7 +109,7 @@
 							</groupbox>
 						</div>
 						<div>
-							<groupbox id="lvInquiry" zclass="null" height="330px" />
+							<groupbox id="lvInquiry" zclass="null" height="450px" />
 						</div>
 					</div>
 				</center>

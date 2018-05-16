@@ -161,7 +161,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into verification_rcu_details");
 		sql.append(tableType);
-		sql.append("(verificationId, seqno, documentid, documenttype, documentsubid, documentrefid, documenturi, ");
+		sql.append("(verificationId, seqno, documentid, documenttype, documentsubid, documentrefid, documenturi,");
 		sql.append(" verificationtype, status, pageseyeballed, pagessampled, agentremarks, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");

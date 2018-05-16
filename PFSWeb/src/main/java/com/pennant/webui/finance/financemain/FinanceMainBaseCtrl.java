@@ -15359,7 +15359,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				deviationExecutionCtrl.checkFeeDeviations(getFinanceDetail());
 			}
 		}
-
+		if(lVerificationCtrl !=null){
+			lVerificationCtrl.setFinanceDetail(getFinanceDetail());
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -15867,6 +15869,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setDocumentDetailDialogCtrl(DocumentDetailDialogCtrl documentDetailDialogCtrl) {
 		this.documentDetailDialogCtrl = documentDetailDialogCtrl;
 		this.documentDetailDialogCtrl.setRcuVerificationDialogCtrl(rcuVerificationDialogCtrl);
+		this.documentDetailDialogCtrl.setlVerificationCtrl(lVerificationCtrl);
 	}
 
 	public AccountingDetailDialogCtrl getAccountingDetailDialogCtrl() {
@@ -16445,6 +16448,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setCollateralHeaderDialogCtrl(CollateralHeaderDialogCtrl collateralHeaderDialogCtrl) {
 		this.collateralHeaderDialogCtrl = collateralHeaderDialogCtrl;
 		this.collateralHeaderDialogCtrl.setRcuVerificationDialogCtrl(rcuVerificationDialogCtrl);
+		this.collateralHeaderDialogCtrl.setlVerificationCtrl(lVerificationCtrl);
 	}
 
 	public Label getLabel_FinanceMainDialog_TDSApplicable() {
@@ -16679,12 +16683,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.tVerificationDialogCtrl = tVerificationDialogCtrl;
 	}
 
-	public LVerificationCtrl getLegalVerificationListCtrl() {
+	public LVerificationCtrl getLVerificationCtrl() {
 		return lVerificationCtrl;
 	}
 
-	public void setLegalVerificationListCtrl(LVerificationCtrl lVerificationCtrl) {
+	public void setLVerificationCtrl(LVerificationCtrl lVerificationCtrl) {
 		this.lVerificationCtrl = lVerificationCtrl;
+		this.customerDialogCtrl.setlVerificationCtrl(lVerificationCtrl);
 	}
 
 	public RCUVerificationDialogCtrl getRcuVerificationDialogCtrl() {	

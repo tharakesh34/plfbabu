@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -37,12 +38,14 @@ public interface LegalVerificationService {
 
 	DocumentManager getDocumentById(long id);
 
-	List<String> getLVDocumentsIds(String keyReference);
+	List<LVDocument> getLVDocuments(String keyReference);
 
 	boolean isLVExists(long id);
 
 	List<LegalVerification> getList(String keyReference);
 
 	List<LVDocument> getLVDocuments(long id);
+
+	List<LVDocument> getDocuments(String keyReference, TableType tableType, DocumentType documentType);
 
 }

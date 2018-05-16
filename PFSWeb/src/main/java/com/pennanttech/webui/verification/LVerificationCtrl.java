@@ -34,8 +34,15 @@ import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
+import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -43,10 +50,13 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.verification.DocumentType;
+import com.pennanttech.pennapps.pff.verification.Module;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.Status;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
+import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.LegalVerificationService;
@@ -77,10 +87,17 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	private transient boolean initType;
 	private FinanceDetail financeDetail;
 
+	private List<LVDocument> customerDocuments = new ArrayList<>();
+	private List<LVDocument> loanDocuments = new ArrayList<>();
+	private List<LVDocument> collateralDocuments = new ArrayList<>();
+
 	@Autowired
 	private VerificationService verificationService;
 	@Autowired
 	private LegalVerificationService legalVerificationService;
+	@Autowired
+	private transient DocumentDetailsDAO documentDetailsDAO;
+
 	protected Radiogroup lv;
 
 	/**
@@ -102,8 +119,10 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 		appendFinBasicDetails(arguments.get("finHeaderList"));
 
-		verification = (Verification) arguments.get("verification");
-		verification.setReference(verification.getCif());
+		this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
+		this.verification = financeDetail.getLvVerification();
+
+		//verification.setReference(verification.getCif());
 
 		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
 
@@ -111,9 +130,10 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			initType = (Boolean) arguments.get("InitType");
 		}
 
-		if (arguments.containsKey("financeDetail")) {
-			this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
-		}
+		/*
+		 * if (arguments.containsKey("financeDetail")) { this.financeDetail = (FinanceDetail)
+		 * arguments.get("financeDetail"); }
+		 */
 
 		doShowDialog();
 
@@ -123,11 +143,12 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	private void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 
-		financeMainDialogCtrl.setLegalVerificationListCtrl(this);
+		financeMainDialogCtrl.setLVerificationCtrl(this);
 
 		//render Initiation and Waiver Lists
 		renderLVInitiationList();
 		renderLVWaiverList();
+		setScreenDocuments();
 
 		int divHeight = this.borderLayoutHeight - 80;
 		int borderlayoutHeights = divHeight / 3;
@@ -150,13 +171,17 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	 */
 	public void onClick$btnNew_Initiation(Event event) {
 		logger.debug(Literal.ENTERING);
-
+		if (this.verification.getKeyReference() == null) {
+			MessageUtil.showError("Loan Refererence not available. Schedule must be generated");
+			return;
+		}
 		// Create a new entity.
 		Verification verification = new Verification();
 		BeanUtils.copyProperties(this.verification, verification);
-		verification.setNewRecord(true);
-		verification.setRequestType(RequestType.INITIATE.getKey());
 		verification.getLvDocuments().clear();
+		verification.setNewRecord(true);
+		verification.setVerificationType(VerificationType.LV.getKey());
+		verification.setRequestType(RequestType.INITIATE.getKey());
 		doShowDialogPage(verification);
 
 		logger.debug(Literal.LEAVING);
@@ -171,15 +196,21 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	public void onClick$btnNew_Waiver(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		Verification verification = new Verification();
-		BeanUtils.copyProperties(this.verification, verification);
-		verification.setRequestType(RequestType.WAIVE.getKey());
-		verification.setNewRecord(true);
+		if (this.verification.getKeyReference() == null) {
+			MessageUtil.showError("Loan Refererence not available. Schedule must be generated");
+			return;
+		}
+		Verification item = new Verification();
+		BeanUtils.copyProperties(this.verification, item);
+		item.setVerificationType(VerificationType.LV.getKey());
+		item.setRequestType(RequestType.WAIVE.getKey());
+		item.setNewRecord(true);
 
 		// Display the dialog page.
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("verification", verification);
+		arg.put("verification", item);
 		arg.put("legalVerificationListCtrl", this);
+		arg.put("lvDocuments", getDocuments());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVInitiationDialog.zul", null,
@@ -252,7 +283,8 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			if (lvInquiry.getChildren() != null) {
 				lvInquiry.getChildren().clear();
 			}
-			Executions.createComponents("/WEB-INF/pages/Verification/LegalVerification/LegalVerificationDialog.zul", lvInquiry, map);
+			Executions.createComponents("/WEB-INF/pages/Verification/LegalVerification/LegalVerificationDialog.zul",
+					lvInquiry, map);
 		} else {
 			MessageUtil.showMessage("Initiation request not available in Lagal Verification Module.");
 		}
@@ -291,7 +323,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 				listCell = new Listcell();
 				listCell.setId("select".concat(String.valueOf(i)));
 				Radio select = new Radio();
-				
+
 				select.setRadiogroup(lv);
 				select.setValue(vrf.getLegalVerification());
 				listCell.appendChild(select);
@@ -359,6 +391,89 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void setScreenDocuments() {
+		List<CustomerDocument> customerDocumentList = financeDetail.getCustomerDetails().getCustomerDocumentsList();
+		List<DocumentDetails> loanDocumentList = financeDetail.getDocumentDetailsList();
+		List<CollateralAssignment> collaterls = financeDetail.getCollateralAssignmentList();
+
+		if (customerDocumentList != null) {
+			addCustomerDocuments(customerDocumentList);
+		}
+
+		if (loanDocumentList != null) {
+			addLoanDocuments(loanDocumentList);
+		}
+
+		if (collaterls != null) {
+			addCollateralDocuments(collaterls);
+		}
+	}
+
+	private List<LVDocument> getDocuments() {
+		List<LVDocument> documents = new ArrayList<>();
+		documents.addAll(customerDocuments);
+		documents.addAll(loanDocuments);
+		documents.addAll(collateralDocuments);
+
+		return documents;
+	}
+
+	public void addCustomerDocuments(List<CustomerDocument> documents) {
+		customerDocuments.clear();
+		for (CustomerDocument document : documents) {
+			LVDocument lvDocument = new LVDocument();
+			lvDocument.setDocumentId(document.getId());
+			lvDocument.setDocumentSubId(document.getCustDocCategory());
+			lvDocument.setDocumentType(DocumentType.CUSTOMER.getKey());
+			lvDocument.setDescription(document.getLovDescCustDocCategory());
+
+			customerDocuments.add(lvDocument);
+		}
+	}
+
+	public void addLoanDocuments(List<DocumentDetails> documents) {
+		loanDocuments.clear();
+		for (DocumentDetails document : documents) {
+			LVDocument lvDocument = new LVDocument();
+			lvDocument.setDocumentId(document.getId());
+			lvDocument.setDocumentSubId(document.getDocCategory());
+			lvDocument.setDocumentType(DocumentType.LOAN.getKey());
+			lvDocument.setDescription(document.getLovDescDocCategoryName());
+			loanDocuments.add(lvDocument);
+		}
+	}
+
+	public void addCollateralDocuments(List<CollateralAssignment> collaterals) {
+		collateralDocuments.clear();
+		List<DocumentDetails> documents = getCollateralDocuments(collaterals);
+
+		for (DocumentDetails document : documents) {
+			LVDocument lvDocument = new LVDocument();
+			lvDocument.setDocumentId(document.getId());
+			lvDocument.setDocumentSubId(document.getDocCategory());
+			lvDocument.setDocumentType(DocumentType.COLLATRL.getKey());
+			lvDocument.setDescription(document.getLovDescDocCategoryName());
+			lvDocument.setCollateralRef(document.getReferenceId());
+
+			collateralDocuments.add(lvDocument);
+		}
+	}
+
+	private List<DocumentDetails> getCollateralDocuments(List<CollateralAssignment> collaterals) {
+		List<DocumentDetails> documents = new ArrayList<>();
+
+		for (CollateralAssignment collateral : collaterals) {
+			List<DocumentDetails> list = documentDetailsDAO.getDocumentDetailsByRef(collateral.getCollateralRef(),
+					CollateralConstants.MODULE_NAME, "", "_View");
+
+			if (list != null) {
+				documents.addAll(list);
+			}
+		}
+
+		return documents;
+	}
+
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -378,11 +493,11 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		// Get the selected entity.
 		long id = (long) selectedItem.getAttribute("id");
 		Verification vrf = verificationService.getVerificationById(id);
-
 		if (vrf == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
+
 		doShowDialogPage(vrf);
 
 		logger.debug("Leaving");
@@ -397,6 +512,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		arg.put("verification", vrf);
 		arg.put("legalVerificationListCtrl", this);
 		arg.put("financeDetail", financeDetail);
+		arg.put("lvDocuments", getDocuments());
 		arg.put("financeMainBaseCtrl", this.financeMainDialogCtrl);
 
 		try {
@@ -591,7 +707,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		}
 
 		doRemoveValidation();
-		
+
 		//this.verification.setKeyReference(financeMainDialogCtrl.getFinanceDetail().getFinReference());
 
 		logger.debug("Leaving");
@@ -672,6 +788,18 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		return verifications;
 	}
 
+	private void setVerificationData(FinanceDetail financeDetail) {
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		Customer customer = financeDetail.getCustomerDetails().getCustomer();
+		verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+		verification.setModule(Module.LOAN.getKey());
+		verification.setKeyReference(financeMain.getFinReference());
+		verification.setCustId(customer.getCustID());
+		verification.setCustomerName(customer.getCustShrtName());
+		verification.setReference(customer.getCustCIF());
+		verification.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
+	}
+
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
 		finBasicDetailsCtrl.doWriteBeanToComponents(finHeaderList);
 	}
@@ -694,6 +822,11 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+		setVerificationData(financeDetail);
 	}
 
 }

@@ -30,6 +30,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.LegalVerificationDAO;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
@@ -808,7 +809,6 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	}
 
 	private void setLvFields(Verification verification) {
-
 		LegalVerification lv = verification.getLegalVerification();
 
 		if (lv == null) {
@@ -873,6 +873,11 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 		}
 		return lvIds;
 	}
+	
+	@Override
+	public List<LVDocument> getDocuments(String keyReference, TableType tableType, DocumentType documentType) {
+		return legalVerificationDAO.getDocuments(keyReference, tableType, documentType);
+	}
 
 	@Override
 	public DocumentManager getDocumentById(long id) {
@@ -880,8 +885,8 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	}
 
 	@Override
-	public List<String> getLVDocumentsIds(String keyReference) {
-		return legalVerificationDAO.getLVDocumentsIds(keyReference);
+	public List<LVDocument> getLVDocuments(String keyReference) {
+		return legalVerificationDAO.getLVDocuments(keyReference);
 	}
 
 	@Override

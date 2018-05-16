@@ -3,6 +3,7 @@ package com.pennanttech.pennapps.pff.verification.dao;
 import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
+import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pff.core.TableType;
@@ -42,8 +43,10 @@ public interface LegalVerificationDAO extends BasicCrudDao<LegalVerification> {
 
 	void saveDocuments(LVDocument lvDocument, String tableType);
 
-	List<String> getLVDocumentsIds(String keyReference);
-	
+	List<LVDocument> getLVDocuments(String keyReference);
+
 	boolean isLVExists(long id);
+
+	List<LVDocument> getDocuments(String keyReference, TableType tableType, DocumentType documentType);
 
 }

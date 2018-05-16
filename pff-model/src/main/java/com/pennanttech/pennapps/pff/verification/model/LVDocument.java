@@ -40,9 +40,11 @@ public class LVDocument extends AbstractWorkflowEntity {
 	private String docUri;
 	private String code;
 	private String description;
-	private boolean lvReq;
+	private int documentType;
+	private String documentUri;
 	private String docType;
 	private String docName;
+	private String collateralRef;
 	private boolean newRecord = false;
 	private LoggedInUser userDetails;
 	private LVDocument befImage;
@@ -54,7 +56,6 @@ public class LVDocument extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("code");
-		excludeFields.add("lvReq");
 		excludeFields.add("docType");
 		excludeFields.add("docRefID");
 		excludeFields.add("docUri");
@@ -68,6 +69,9 @@ public class LVDocument extends AbstractWorkflowEntity {
 		excludeFields.add("documentRefId");
 		excludeFields.add("description");
 		excludeFields.add("docUri");
+		excludeFields.add("documentType");
+		excludeFields.add("documentUri");
+		excludeFields.add("collateralRef");
 		return excludeFields;
 	}
 
@@ -163,14 +167,6 @@ public class LVDocument extends AbstractWorkflowEntity {
 		this.code = code;
 	}
 
-	public boolean isLvReq() {
-		return lvReq;
-	}
-
-	public void setLvReq(boolean lvReq) {
-		this.lvReq = lvReq;
-	}
-
 	public String getDocType() {
 		return docType;
 	}
@@ -241,6 +237,30 @@ public class LVDocument extends AbstractWorkflowEntity {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public int getDocumentType() {
+		return documentType;
+	}
+
+	public void setDocumentType(int documentType) {
+		this.documentType = documentType;
+	}
+
+	public String getDocumentUri() {
+		return documentUri;
+	}
+
+	public void setDocumentUri(String documentUri) {
+		this.documentUri = documentUri;
+	}
+
+	public String getCollateralRef() {
+		return collateralRef;
+	}
+
+	public void setCollateralRef(String collateralRef) {
+		this.collateralRef = collateralRef;
 	}
 
 }

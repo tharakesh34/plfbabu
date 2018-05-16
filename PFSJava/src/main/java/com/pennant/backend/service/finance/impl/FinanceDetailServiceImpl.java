@@ -393,8 +393,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public FinanceDetail getOriginationFinance(String finReference, String nextRoleCode, String procEdtEvent,
 			String userrole) {
 		logger.debug("Entering");
-
 		//Finance Details
+
 		FinanceMain financeMain = getFinanceMainDAO().getFinanceMain(finReference, nextRoleCode, "_TView");
 		if (financeMain == null) {
 			return null;

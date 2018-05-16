@@ -181,6 +181,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
+import com.pennanttech.webui.verification.LVerificationCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
 
@@ -431,6 +432,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
+	private LVerificationCtrl lVerificationCtrl;
 	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
 	protected Groupbox finBasicdetails;
 
@@ -452,7 +454,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	String primaryIdLabel;
 	boolean primaryIdMandatory = false;
 	Map<String, Configuration> TEMPLATES = new HashMap<String, Configuration>();
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -571,7 +573,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			} else {
 				setCustomerListCtrl(null);
 			}
-			
+
 			if (StringUtils.isNotEmpty(this.customerDetails.getCustomer().getCustCtgCode()) && StringUtils
 					.equals(this.customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 				isRetailCustomer = true;
@@ -4805,7 +4807,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		map.put("isFinanceProcess", isFinanceProcess);
 		map.put("roleCode", getRole());
 		map.put("isRetailCustomer", isRetailCustomer);
-		
+
 		if (getFinanceMainDialogCtrl() != null) {
 			map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());
 		}
@@ -4916,12 +4918,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerDocumentItemDoubleClicked");
 					this.listBoxCustomerDocuments.appendChild(item);
 				}
-				
+
 				if (rcuVerificationDialogCtrl != null) {
 					rcuVerificationDialogCtrl.addCustomerDocuments(custDocumentDetails);
 				}
+
+				if (lVerificationCtrl != null) {
+					lVerificationCtrl.addCustomerDocuments(custDocumentDetails);
+				}
 			}
-			
+
 			setCustomerDocumentDetailList(custDocumentDetails);
 		}
 		logger.debug("Leaving");
@@ -5887,8 +5893,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		String result = null;
 		String response = null;
-		if(getCustomerDetails().getExtendedFieldRender().getMapValues().get("jsonresponse")!= null){
-		 response = (String) getCustomerDetails().getExtendedFieldRender().getMapValues().get("jsonresponse");
+		if (getCustomerDetails().getExtendedFieldRender().getMapValues().get("jsonresponse") != null) {
+			response = (String) getCustomerDetails().getExtendedFieldRender().getMapValues().get("jsonresponse");
 		}
 		JSONObject json = null;
 
@@ -6326,9 +6332,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void setCollateralBasicDetailsCtrl(CollateralBasicDetailsCtrl collateralBasicDetailsCtrl) {
 		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
 	}
-	
+
 	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
 		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
+	}
+
+	public void setlVerificationCtrl(LVerificationCtrl lVerificationCtrl) {
+		this.lVerificationCtrl = lVerificationCtrl;
 	}
 
 	public List<CustomerBankInfo> getCustomerBankInfoList() {
@@ -6342,5 +6352,5 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
 		this.externalDocumentManager = externalDocumentManager;
 	}
-	
-	}
+
+}

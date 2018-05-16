@@ -81,6 +81,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.webui.verification.LVerificationCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 
 /**
@@ -110,8 +111,9 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 	private Component 						parent = null;
 
-	private FinanceMainBaseCtrl financeMainDialogCtrl;
-	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
+	private FinanceMainBaseCtrl 			financeMainDialogCtrl;
+	private RCUVerificationDialogCtrl	 	rcuVerificationDialogCtrl;
+	private LVerificationCtrl 				lVerificationCtrl;
 	private String 							roleCode = "";
 	private String 							finType = "";
 	private BigDecimal 						totalValue = BigDecimal.ZERO;
@@ -655,6 +657,10 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			rcuVerificationDialogCtrl.addCollateralDocuments(collateralAssignments);
 		}
 		
+		if (lVerificationCtrl != null) {
+			lVerificationCtrl.addCollateralDocuments(collateralAssignments);
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -852,4 +858,9 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
 		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
 	}
+
+	public void setlVerificationCtrl(LVerificationCtrl lVerificationCtrl) {
+		this.lVerificationCtrl = lVerificationCtrl;
+	}
+	
 }
