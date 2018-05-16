@@ -64,6 +64,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
@@ -178,7 +179,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
 		fillComboBox(this.accType, "", PennantStaticListUtil.getAccTypeList(), "");
-		fillComboBox(this.status, "", PennantStaticListUtil.getStatusTypeList(), Collections.singletonList(MandateConstants.STATUS_FIN));
+		fillComboBox(this.status, "", PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS)), Collections.singletonList(MandateConstants.STATUS_FIN));
 
 		registerField("mandateID", listheader_MandateId, SortOrder.ASC, mandateID,  sortOperator_MandateID, Operators.NUMERIC);
 		registerField("custCIF", listheader_CustCIF, SortOrder.ASC, custCIF,sortOperator_CustCIF, Operators.STRING);

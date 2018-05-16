@@ -466,7 +466,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		}
 		// validate status
 		if (StringUtils.isNotBlank(mandate.getStatus())) {
-			List<ValueLabel> status = PennantStaticListUtil.getStatusTypeList();
+			List<ValueLabel> status = PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
 			boolean sts = false;
 			for (ValueLabel value : status) {
 				if (StringUtils.equals(value.getValue(), mandate.getStatus())) {

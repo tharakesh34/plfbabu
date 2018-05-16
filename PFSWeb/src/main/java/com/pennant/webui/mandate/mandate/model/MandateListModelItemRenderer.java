@@ -74,7 +74,7 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 
 	private static final long serialVersionUID = 1L;
 	boolean multiselect=false;
-	private ArrayList<ValueLabel> statusTypeList = PennantStaticListUtil.getStatusTypeList();
+	private ArrayList<ValueLabel> statusTypeList = PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
 	String customMandateStatus = SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS);
 
 	

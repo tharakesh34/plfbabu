@@ -88,6 +88,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
@@ -216,7 +217,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
 		fillComboBox(this.accType, "", PennantStaticListUtil.getAccTypeList(), "");
-		fillComboBox(this.status, "", PennantStaticListUtil.getStatusTypeList(),
+		fillComboBox(this.status, "", PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS)),
 				Collections.singletonList(MandateConstants.STATUS_FIN));
 
 		registerField("inputDate");
@@ -369,7 +370,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
 			lc.setParent(item);
 			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getStatus(),
-					PennantStaticListUtil.getStatusTypeList()));
+					PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS))));
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getInputDate()));
 			lc.setParent(item);

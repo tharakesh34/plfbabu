@@ -210,7 +210,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private final List<ValueLabel>					mandateTypeList			= PennantStaticListUtil
 																					.getMandateTypeList();
 	private final List<ValueLabel>					accTypeList				= PennantStaticListUtil.getAccTypeList();
-	private final List<ValueLabel>					statusTypeList			= PennantStaticListUtil.getStatusTypeList();
+	private final List<ValueLabel>					statusTypeList			= PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
 
 	public transient int							ccyFormatter			= 0;
 	private boolean									registration			= false;
@@ -1160,7 +1160,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.finReference.setValue(aMandate.getOrgReference());
 
 		if (!StringUtils.equals(aMandate.getStatus(), PennantConstants.List_Select)) {
-			this.regStatus.setValue(PennantAppUtil.getlabelDesc(aMandate.getStatus(), PennantStaticListUtil.getStatusTypeList()));
+			this.regStatus.setValue(PennantAppUtil.getlabelDesc(aMandate.getStatus(), PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS))));
 		} 
 
 		this.amountInWords.setValue(AmtInitialCap());

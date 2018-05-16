@@ -2324,7 +2324,7 @@ public class PennantStaticListUtil {
 		return accTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getStatusTypeList() {
+	public static ArrayList<ValueLabel> getStatusTypeList(String customMandateStatus) {
 		if(statusTypeList == null){
 			statusTypeList = new ArrayList<ValueLabel>(7);
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_NEW,Labels.getLabel("label_Mandate_NEW")));
@@ -2337,7 +2337,6 @@ public class PennantStaticListUtil {
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_CANCEL,Labels.getLabel("label_Mandate_CANCEL")));
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_INPROCESS,Labels.getLabel("label_Mandate_INPROCESS")));
 			//Added custom mandate status to the list if sysprams contains custom mandate Status.
-			String customMandateStatus = SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS);
 			if (StringUtils.isNotBlank(customMandateStatus)) {
 				statusTypeList.add(
 						new ValueLabel(customMandateStatus, Labels.getLabel("label_Mandate_" + customMandateStatus)));
@@ -2345,6 +2344,7 @@ public class PennantStaticListUtil {
 		}
 		return statusTypeList;
 	}
+
 
 
 	public static ArrayList<ValueLabel> getRepayMethods() {

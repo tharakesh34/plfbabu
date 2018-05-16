@@ -13,13 +13,10 @@
         <dependent-module archiveName="PFSJava-4.7.14-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/PFSJava/PFSJava">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-interface-bajaj-4.7.14-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-interface-bajaj/pff-interface-bajaj">
+        <dependent-module archiveName="pff-niyogin-4.7.14-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-niyogin/pff-niyogin">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="pff-interface-4.7.14-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-interface/pff-interface">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="pff-niyogin-4.7.14-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-niyogin/pff-niyogin">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="pff-model-4.7.14-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-model/pff-model">
