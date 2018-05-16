@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  CollateralSetupDialogCtrl.java                                                   * 	  
+ * FileName    		:  CollateralSetupDialogCtrl.java                                       * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -31,6 +31,7 @@
  ********************************************************************************************
  * 13-12-2016       PENNANT	                 0.1                                            * 
  *                                                                                          * 
+ * 13-12-2016       Srinivasa Varma          0.2          Development Item 82               *
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -112,10 +113,12 @@ import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.AssetConstants;
@@ -132,6 +135,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -759,9 +763,14 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				fieldValue = (String) detail.get("PROPERTYTYPE");
 			}
 			declaredMap.put("ct_propertyType", fieldValue);
+			// ### 16-05-2018 - Development Item 82
+			declaredMap.putAll(prepareExtendedData(detail, getCollateralSetup().getCollateralStructure().getExtendedFieldHeader(),aCollateralSetup.getCollateralCcy()));
 		}else{
 			declaredMap.put("ct_propertyType", "");
+			// ### 16-05-2018 - Development Item 82
+			declaredMap.putAll(prepareExtendedData(new HashMap<>() , getCollateralSetup().getCollateralStructure().getExtendedFieldHeader(),aCollateralSetup.getCollateralCcy()));
 		}
+		
 		try {
 			ruleResult = getRuleExecutionUtil().executeRule(structure.getSQLRule(), declaredMap, 
 					aCollateralSetup.getCollateralCcy(), RuleReturnType.DECIMAL);
@@ -772,6 +781,23 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		this.bankLtv.setValue(ruleResult == null ? "0" : ruleResult.toString());
 	}
 
+	// ### 16-05-2018 - Start- Development Item 82
+	private HashMap<String, Object> prepareExtendedData(Map<String, Object> detail,ExtendedFieldHeader header,String ccy ){
+		
+		HashMap<String, Object> declaredMap = new HashMap<>();
+		//declaredMap.put("COLLATERAL_GLAP_PROPTYPE", detail.get("PROPTYPE"));
+		for (ExtendedFieldDetail fieldDetail : header.getExtendedFieldDetails()) {
+			if(fieldDetail.isAllowInRule()){
+				Object value = detail.get(fieldDetail.getFieldName());
+				if(StringUtils.equals("CURRENCY",fieldDetail.getFieldType())){
+					value  = PennantAppUtil.formateAmount((BigDecimal) value,CurrencyUtil.getFormat(ccy));
+				}
+				declaredMap.put(fieldDetail.getLovDescModuleName()+"_"+fieldDetail.getLovDescSubModuleName()+"_"+fieldDetail.getFieldName(), value);
+			}
+		}	
+		return declaredMap;
+	}
+	// ### 16-05-2018 - End- Development Item 82
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the border layout.
 	 * 
