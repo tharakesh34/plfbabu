@@ -1637,7 +1637,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		String[] lovefields = moduleMapping.getLovFields();
 		if (lovefields.length >= 2) {
 			extendedCombobox.setProperties(detail.getFieldList(), lovefields[0], lovefields[1],
-					detail.isFieldMandatory(), 8);
+					detail.isFieldMandatory(), detail.getFieldLength(), 150);
 		}
 
 		//Data Setting
