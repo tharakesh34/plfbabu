@@ -2650,6 +2650,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				for (AuditDetail auditDetail : details) {
 					ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) auditDetail.getModelData();
 					extendedFieldRender.setNewRecord(false);
+					if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+						extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+						extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+						extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					}
 				}
 				
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
