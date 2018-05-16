@@ -622,11 +622,6 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				listitem.appendChild(listcell);
 				listcell = new Listcell(PennantJavaUtil.getLabel(collateralAssignment.getRecordType()));
 				listitem.appendChild(listcell);
-				if (!(StringUtils.equals(collateralAssignment.getRecordType(), PennantConstants.RECORD_TYPE_DEL) || 
-						StringUtils.equals(collateralAssignment.getRecordType(), PennantConstants.RECORD_TYPE_CAN))) {
-					totCollateralCount = totCollateralCount + 1;
-					totAssignedColValue = totAssignedColValue.add(curAssignValue);
-				}
 				listitem.setAttribute("data", collateralAssignment);
 				ComponentsCtrl.applyForward(listitem, "onDoubleClick=onCollateralAssignItemDoubleClicked");
 				this.listBoxCollateralAssignments.appendChild(listitem);
@@ -636,6 +631,9 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 						StringUtils.equals(collateralAssignment.getRecordType(), PennantConstants.RECORD_TYPE_CAN))) {
 					logger.debug(collateralAssignment.getRecordType());
 				}else{	
+					totCollateralCount = totCollateralCount + 1;
+					totAssignedColValue = totAssignedColValue.add(curAssignValue);
+
 					totalAssignedValue = totalAssignedValue.add(PennantAppUtil.formateAmount(curAssignValue, ccyFormat));
 					totalBankValuation = totalBankValuation.add(PennantAppUtil.formateAmount(collateralAssignment.getBankValuation(), ccyFormat));
 					assignedCount= assignedCount+1;
