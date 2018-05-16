@@ -482,7 +482,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				lc.setParent(item);
 
 				lc = new Listcell();
-				lc.setId("Remarks1".concat(String.valueOf(i)));
+				lc.setId("RemarksFin".concat(String.valueOf(i)));
 				Textbox remarks1 = new Textbox();
 				remarks1.setReadonly(isReadOnly("LegalVerificationDialog_Remarks1"));
 				remarks1.setValue(document.getRemarks1());
@@ -494,7 +494,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				lc.setParent(item);
 
 				lc = new Listcell();
-				lc.setId("Remarks2".concat(String.valueOf(i)));
+				lc.setId("RemarksCol".concat(String.valueOf(i)));
 				Textbox remarks2 = new Textbox();
 				remarks2.setReadonly(isReadOnly("LegalVerificationDialog_Remarks2"));
 				remarks2.setValue(document.getRemarks2());
@@ -506,7 +506,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				lc.setParent(item);
 
 				lc = new Listcell();
-				lc.setId("Remarks3".concat(String.valueOf(i)));
+				lc.setId("RemarksCust".concat(String.valueOf(i)));
 				Textbox remarks3 = new Textbox();
 				remarks3.setReadonly(isReadOnly("LegalVerificationDialog_Remarks3"));
 				remarks3.setValue(document.getRemarks3());
@@ -683,18 +683,18 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 
 		for (Listitem listitem : listBoxLegalVerificationDocuments.getItems()) {
 			try {
-				setValue(listitem, "Remarks1");
+				setValue(listitem, "RemarksFin");
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 			try {
-				setValue(listitem, "Remarks2");
+				setValue(listitem, "RemarksCol");
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 
 			try {
-				setValue(listitem, "Remarks3");
+				setValue(listitem, "RemarksCust");
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -763,14 +763,14 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 
 		lvDoc = (LVDocument) listitem.getAttribute("data");
 		switch (comonentId) {
-		case "Remarks1":
-			lvDoc.setRemarks1(((Textbox) getComponent(listitem, "Remarks1")).getValue());
+		case "RemarksFin":
+			lvDoc.setRemarks1(((Textbox) getComponent(listitem, "RemarksFin")).getValue());
 			break;
-		case "Remarks2":
-			lvDoc.setRemarks2(((Textbox) getComponent(listitem, "Remarks2")).getValue());
+		case "RemarksCol":
+			lvDoc.setRemarks2(((Textbox) getComponent(listitem, "RemarksCol")).getValue());
 			break;
-		case "Remarks3":
-			lvDoc.setRemarks3(((Textbox) getComponent(listitem, "Remarks3")).getValue());
+		case "RemarksCust":
+			lvDoc.setRemarks3(((Textbox) getComponent(listitem, "RemarksCust")).getValue());
 			break;
 
 		default:
@@ -789,7 +789,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				continue;
 			}
 
-			id = id.substring(0, id.length() - 1);
+			id = id.replaceAll("\\d", "");
 			if (StringUtils.equals(id, listcellId)) {
 				return listcell.getFirstChild();
 			}
