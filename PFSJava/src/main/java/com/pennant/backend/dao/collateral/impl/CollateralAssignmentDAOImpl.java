@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  CollateralAssignmentDAOImpl.java                                                   * 	  
+ * FileName    		:  CollateralAssignmentDAOImpl.java                                     * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -31,7 +31,7 @@
  ********************************************************************************************
  * 07-05-2016       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 16-05-2018       Srinivasa Varma          0.2          Development Item 82               * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -230,7 +230,8 @@ public class CollateralAssignmentDAOImpl extends BasisNextidDaoImpl<CollateralMo
 
 		StringBuilder selectSql = new StringBuilder("Select Module , Reference , CollateralRef , AssignPerc , Active, ");
 		if(type.contains("View")){
-			selectSql.append(" CollateralCcy , CollateralValue , BankValuation , TotAssignPerc TotAssignedPerc , UtilizedAmount,");
+			//### 16-05-2018 Development Item 82
+			selectSql.append(" CollateralCcy , CollateralValue , BankValuation , TotAssignPerc TotAssignedPerc , UtilizedAmount, bankLTV, specialLTV,");
  		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");

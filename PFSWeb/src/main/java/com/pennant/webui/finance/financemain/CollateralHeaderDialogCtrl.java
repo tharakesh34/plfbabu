@@ -32,7 +32,7 @@
  *                                                                                          * 
  * 10-05-2019		Srinivasa Varma			 0.2		  Development Item 82              	* 
  *                                                                                          * 
- *                                                                                          * 
+ * 16-05-2019		Srinivasa Varma			 0.3		  Development Item 82 Corrections	* 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -548,6 +548,11 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				
 		//### 10-05-2018 End Development Item 82
 		
+		//### 16-05-2018 Start Development Item 82
+		BigDecimal totalLtv			= new BigDecimal(0);
+		int assignedCount =0;
+		//### 16-05-2018 End Development Item 82
+		
 		int totCollateralCount = 0;
 		BigDecimal totAssignedColValue = BigDecimal.ZERO;
 		
@@ -575,11 +580,8 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				listcell.setStyle("text-align:right;");
 				listitem.appendChild(listcell);
 				
-				totalBankValuation = totalBankValuation.add(PennantAppUtil.formateAmount(collateralAssignment.getBankValuation(), ccyFormat));
 				
 				BigDecimal curAssignValue =(collateralAssignment.getBankValuation().multiply(collateralAssignment.getAssignPerc())).divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN);
-				
-				totalAssignedValue = totalAssignedValue.add(PennantAppUtil.formateAmount(curAssignValue, ccyFormat));
 				
 				listcell = new Listcell(PennantAppUtil.amountFormate(curAssignValue, ccyFormat));
 				listcell.setStyle("text-align:right;");
@@ -592,8 +594,6 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				if(availAssignValue.compareTo(BigDecimal.ZERO) < 0){
 					availAssignValue = BigDecimal.ZERO;
 				}
-				
-				balanceAssignedValue = balanceAssignedValue.add(PennantAppUtil.formateAmount(availAssignValue, ccyFormat));
 				
 				listcell = new Listcell(PennantAppUtil.amountFormate(availAssignValue, ccyFormat));
 				listcell.setStyle("text-align:right;");
@@ -630,7 +630,28 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				listitem.setAttribute("data", collateralAssignment);
 				ComponentsCtrl.applyForward(listitem, "onDoubleClick=onCollateralAssignItemDoubleClicked");
 				this.listBoxCollateralAssignments.appendChild(listitem);
+				
+				//### 16-05-2018 Start Development Item 82
+				if ((StringUtils.equals(collateralAssignment.getRecordType(), PennantConstants.RECORD_TYPE_DEL) || 
+						StringUtils.equals(collateralAssignment.getRecordType(), PennantConstants.RECORD_TYPE_CAN))) {
+					logger.debug(collateralAssignment.getRecordType());
+				}else{	
+					totalAssignedValue = totalAssignedValue.add(PennantAppUtil.formateAmount(curAssignValue, ccyFormat));
+					totalBankValuation = totalBankValuation.add(PennantAppUtil.formateAmount(collateralAssignment.getBankValuation(), ccyFormat));
+					assignedCount= assignedCount+1;
+					if(collateralAssignment.getSpecialLTV().compareTo(BigDecimal.ZERO)==0){
+						totalLtv =  totalLtv.add(collateralAssignment.getBankLTV());	
+					}else{
+						totalLtv =  totalLtv.add(collateralAssignment.getSpecialLTV());
+					}
+				}
+				//### 16-05-2018 End Development Item 82
 			}
+		}
+
+		balanceAssignedValue = totalBankValuation.subtract(totalAssignedValue);
+		if(assignedCount>1){
+			totalLtv = totalLtv.divide(new BigDecimal(assignedCount));
 		}
 
 		this.collateralCount.setValue(PennantApplicationUtil.amountFormate(loanAssignedValue, getFormat()));
@@ -652,7 +673,9 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		rules.put("Collateral_Bank_Valuation", totalBankValuation);
 		
 		//### 10-05-2018 End  Development Item 82
-		
+		//### 16-05-2018 Development Item 82
+		rules.put("Collateral_Average_LTV", totalLtv);
+
 		if (rcuVerificationDialogCtrl != null) {
 			rcuVerificationDialogCtrl.addCollateralDocuments(collateralAssignments);
 		}

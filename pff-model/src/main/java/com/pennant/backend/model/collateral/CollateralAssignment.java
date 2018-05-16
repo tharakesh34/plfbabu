@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  CollateralAssignment.java                                                   * 	  
+ * FileName    		:  CollateralAssignment.java                                            * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -31,7 +31,7 @@
  ********************************************************************************************
  * 07-05-2016       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 16-05-2018       Srinivasa Varma          0.2          Development Item 82               * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -83,6 +83,11 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	private boolean newRecord;
 	private String lovValue;
 	private CollateralAssignment befImage;
+
+	//### 16-05-2018 Start Development Item 82
+	private BigDecimal			specialLTV = BigDecimal.ZERO;
+	private BigDecimal			bankLTV = BigDecimal.ZERO;
+	//### 16-05-2018 End Development Item 82
 	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -94,6 +99,10 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 		excludeFields.add("availableAssignPerc");
 		excludeFields.add("availableAssignValue");
 		excludeFields.add("totAssignedPerc");
+		//### 16-05-2018 Start Development Item 82
+		excludeFields.add("specialLTV");
+		excludeFields.add("bankLTV");
+		//### 16-05-2018 End Development Item 82
 		
 		return excludeFields;
 	}
@@ -221,5 +230,24 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+
+	//### 16-05-2018 Start Development Item 82
+	public BigDecimal getSpecialLTV() {
+		return specialLTV;
+	}
+
+	public void setSpecialLTV(BigDecimal specialLTV) {
+		this.specialLTV = specialLTV;
+	}
+
+	public BigDecimal getBankLTV() {
+		return bankLTV;
+	}
+
+	public void setBankLTV(BigDecimal bankLTV) {
+		this.bankLTV = bankLTV;
+	}
 	
+	//### 16-05-2018 End Development Item 82
+
 }
