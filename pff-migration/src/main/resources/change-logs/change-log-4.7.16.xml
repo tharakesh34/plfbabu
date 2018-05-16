@@ -6321,5 +6321,187 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
      	JOIN manualdeviations t2 ON t1.deviationid = t2.deviationid
 	</createView>
 </changeSet>
+<changeSet id="148" author="pasvarma">
+	<comment> specialltv and bankltv added</comment>
+	<createView viewName="collateralassignment_aview" replaceIfExists="true">
+		SELECT ca.module,
+	    ca.reference,
+	    ca.collateralref,
+	    ca.assignperc,
+	    cs.collateralccy,
+	    ca.active,
+	    cs.collateralvalue,
+	    cs.bankvaluation,
+	    t.totassignperc - ca.assignperc AS totassignperc,
+	    COALESCE(fm.fincurrassetvalue - fm.downpayment + fm.feechargeamt + fm.insuranceamt - fm.finrepaymentamount, cm.cmtutilizedamount) AS utilizedamount,
+	    ca.version,
+	    ca.lastmntby,
+	    ca.lastmnton,
+	    ca.recordstatus,
+	    ca.rolecode,
+	    ca.nextrolecode,
+	    ca.taskid,
+	    ca.nexttaskid,
+	    ca.recordtype,
+	    ca.workflowid,
+	    cs.specialltv,
+	    cs.bankltv
+	   FROM collateralassignment ca
+     JOIN collateralsetup cs ON ca.collateralref = cs.collateralref
+     LEFT JOIN ( SELECT t1.collateralref,
+            sum(t1.assignperc) AS totassignperc
+           FROM ( SELECT collateralassignment_temp.reference,
+                    collateralassignment_temp.collateralref,
+                    collateralassignment_temp.assignperc
+                   FROM collateralassignment_temp
+                UNION
+                 SELECT ca_1.reference,
+                    ca_1.collateralref,
+                    ca_1.assignperc
+                   FROM collateralassignment ca_1
+                  WHERE NOT (EXISTS ( SELECT 1
+                           FROM collateralassignment_temp
+                          WHERE collateralassignment_temp.collateralref = ca_1.collateralref AND collateralassignment_temp.module = ca_1.module AND collateralassignment_temp.reference = ca_1.reference))) t1
+          GROUP BY t1.collateralref) t ON t.collateralref = ca.collateralref
+     LEFT JOIN financemain fm ON ca.reference = fm.finreference
+     LEFT JOIN commitments cm ON cm.cmtreference = ca.reference
+	</createView>
+</changeSet>
+<changeSet id="149" author="pasvarma">
+	<comment> specialltv and bankltv added</comment>
+	<createView viewName="collateralassignment_tview" replaceIfExists="true">
+		SELECT ca.module,
+	    ca.reference,
+	    ca.collateralref,
+	    ca.assignperc,
+	    cs.collateralccy,
+	    ca.active,
+	    cs.collateralvalue,
+	    cs.bankvaluation,
+	    t.totassignperc - ca.assignperc AS totassignperc,
+	    fm.fincurrassetvalue - fm.downpayment + fm.feechargeamt + fm.insuranceamt - fm.finrepaymentamount AS utilizedamount,
+	    ca.version,
+	    ca.lastmntby,
+	    ca.lastmnton,
+	    ca.recordstatus,
+	    ca.rolecode,
+	    ca.nextrolecode,
+	    ca.taskid,
+	    ca.nexttaskid,
+	    ca.recordtype,
+	    ca.workflowid,
+	    cs.specialltv,
+	    cs.bankltv
+	   FROM collateralassignment_temp ca
+     JOIN collateralsetup cs ON ca.collateralref = cs.collateralref
+     LEFT JOIN ( SELECT t1.collateralref,
+            sum(t1.assignperc) AS totassignperc
+           FROM ( SELECT collateralassignment_temp.reference,
+                    collateralassignment_temp.collateralref,
+                    collateralassignment_temp.assignperc
+                   FROM collateralassignment_temp
+                UNION
+                 SELECT ca_1.reference,
+                    ca_1.collateralref,
+                    ca_1.assignperc
+                   FROM collateralassignment ca_1
+                  WHERE NOT (EXISTS ( SELECT 1
+                           FROM collateralassignment_temp
+                          WHERE collateralassignment_temp.collateralref = ca_1.collateralref AND collateralassignment_temp.module = ca_1.module AND collateralassignment_temp.reference = ca_1.reference))) t1
+          GROUP BY t1.collateralref) t ON t.collateralref = ca.collateralref
+     LEFT JOIN financemain_temp fm ON ca.reference = fm.finreference
+	</createView>
+</changeSet>
+<changeSet id="150" author="pasvarma">
+	<comment> specialltv and bankltv added</comment>
+	<createView viewName="collateralassignment_view" replaceIfExists="true">
+		SELECT ca.module,
+	    ca.reference,
+	    ca.collateralref,
+	    ca.assignperc,
+	    cs.collateralccy,
+	    ca.active,
+	    cs.collateralvalue,
+	    cs.bankvaluation,
+	    t.totassignperc - ca.assignperc AS totassignperc,
+	    COALESCE(fm.fincurrassetvalue - fm.downpayment + fm.feechargeamt + fm.insuranceamt - fm.finrepaymentamount, cm.cmtutilizedamount) AS utilizedamount,
+	    ca.version,
+	    ca.lastmntby,
+	    ca.lastmnton,
+	    ca.recordstatus,
+	    ca.rolecode,
+	    ca.nextrolecode,
+	    ca.taskid,
+	    ca.nexttaskid,
+	    ca.recordtype,
+	    ca.workflowid,
+	    cs.specialltv,
+	    cs.bankltv
+	   FROM collateralassignment_temp ca
+     JOIN collateralsetup cs ON ca.collateralref = cs.collateralref
+     LEFT JOIN ( SELECT t1.collateralref,
+            sum(t1.assignperc) AS totassignperc
+           FROM ( SELECT collateralassignment_temp.reference,
+                    collateralassignment_temp.collateralref,
+                    collateralassignment_temp.assignperc
+                   FROM collateralassignment_temp
+                UNION
+                 SELECT ca_1.reference,
+                    ca_1.collateralref,
+                    ca_1.assignperc
+                   FROM collateralassignment ca_1
+                  WHERE NOT (EXISTS ( SELECT 1
+                           FROM collateralassignment_temp
+                          WHERE collateralassignment_temp.collateralref = ca_1.collateralref AND collateralassignment_temp.module = ca_1.module AND collateralassignment_temp.reference = ca_1.reference))) t1
+          GROUP BY t1.collateralref) t ON t.collateralref = ca.collateralref
+     LEFT JOIN financemain_temp fm ON ca.reference = fm.finreference
+     LEFT JOIN commitments_temp cm ON cm.cmtreference = ca.reference
+	UNION ALL
+	 SELECT ca.module,
+	    ca.reference,
+	    ca.collateralref,
+	    ca.assignperc,
+	    cs.collateralccy,
+	    ca.active,
+	    cs.collateralvalue,
+	    cs.bankvaluation,
+	    t.totassignperc - ca.assignperc AS totassignperc,
+	    COALESCE(fm.fincurrassetvalue - fm.downpayment + fm.feechargeamt + fm.insuranceamt - fm.finrepaymentamount, cm.cmtutilizedamount) AS utilizedamount,
+	    ca.version,
+	    ca.lastmntby,
+	    ca.lastmnton,
+	    ca.recordstatus,
+	    ca.rolecode,
+	    ca.nextrolecode,
+	    ca.taskid,
+	    ca.nexttaskid,
+	    ca.recordtype,
+	    ca.workflowid,
+	    cs.specialltv,
+	    cs.bankltv
+	   FROM collateralassignment ca
+     JOIN collateralsetup cs ON ca.collateralref = cs.collateralref
+     LEFT JOIN ( SELECT t1.collateralref,
+            sum(t1.assignperc) AS totassignperc
+           FROM ( SELECT collateralassignment_temp.reference,
+                    collateralassignment_temp.collateralref,
+                    collateralassignment_temp.assignperc
+                   FROM collateralassignment_temp
+                UNION
+                 SELECT ca_1.reference,
+                    ca_1.collateralref,
+                    ca_1.assignperc
+                   FROM collateralassignment ca_1
+                  WHERE NOT (EXISTS ( SELECT 1
+                           FROM collateralassignment_temp
+                          WHERE collateralassignment_temp.collateralref = ca_1.collateralref AND collateralassignment_temp.module = ca_1.module AND collateralassignment_temp.reference = ca_1.reference))) t1
+          GROUP BY t1.collateralref) t ON t.collateralref = ca.collateralref
+     LEFT JOIN financemain fm ON ca.reference = fm.finreference
+     LEFT JOIN commitments cm ON cm.cmtreference = ca.reference
+  		WHERE NOT (EXISTS ( SELECT 1
+           FROM collateralassignment_temp
+          WHERE collateralassignment_temp.collateralref = ca.collateralref AND collateralassignment_temp.module = ca.module AND collateralassignment_temp.reference = ca.reference))
+	</createView>
+</changeSet>
 </databaseChangeLog>
 	
