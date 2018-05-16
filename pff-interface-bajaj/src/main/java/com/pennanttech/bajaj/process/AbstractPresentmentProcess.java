@@ -5,7 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -90,7 +92,7 @@ public class AbstractPresentmentProcess extends AbstractInterface implements Pre
 			}
 
 			if (isPresentMentFileDownnloadReq && !isBatchFail) {
-				prepareRequestFile();
+				prepareRequestFile(idList);
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -101,12 +103,15 @@ public class AbstractPresentmentProcess extends AbstractInterface implements Pre
 	 * 
 	 * @throws Exception
 	 */
-	public void prepareRequestFile() throws Exception {
+	public void prepareRequestFile(List<Long> idList) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		try {
 			DataEngineExport dataEngine = null;
 			dataEngine = new DataEngineExport(dataSource, new Long(1000), App.DATABASE.name(), true, getValueDate());
+			Map<String, Object> filterMap = new HashMap<>();
+			filterMap.put("TXN_REF", idList);
+			dataEngine.setFilterMap(filterMap);
 			dataEngine.exportData("PRESENTMENT_REQUEST");
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -118,7 +123,7 @@ public class AbstractPresentmentProcess extends AbstractInterface implements Pre
 	private StringBuilder getSqlQuery() {
 		StringBuilder sql = new StringBuilder();
 		sql = new StringBuilder();
-		sql.append(" SELECT  T2.FINBRANCH, T1.FINREFERENCE, T4.MICR, T3.ACCTYPE, ");
+		sql.append(" SELECT  T2.FINBRANCH, T1.FINREFERENCE, T4.MICR, T3.ACCTYPE, T1.SCHDATE, ");
 		sql.append(" T3.ACCNUMBER, T5.CUSTSHRTNAME,T5.CUSTCOREBANK,T3.ACCHOLDERNAME, T6.BANKCODE, ");
 		sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
 		sql.append(" T0.PRESENTMENTDATE, T3.MANDATEREF, T4.IFSC, ");
@@ -197,11 +202,13 @@ public class AbstractPresentmentProcess extends AbstractInterface implements Pre
 			}
 			presement.setTxnReference(rs.getLong("ID"));
 
-			if (StringUtils.isNumeric(rs.getString("CUSTCOREBANK"))) {
-				presement.setCustomerId(Long.valueOf(rs.getString("CUSTCOREBANK")));
+			String string = rs.getString("CUSTCOREBANK");
+			if (StringUtils.isNotBlank(string) && StringUtils.isNumeric(string)) {
+				presement.setCustomerId(Long.valueOf(string));
 			}
 
 			presement.setAccountNo(rs.getString("ACCNUMBER"));
+			presement.setCycleDate(rs.getDate("SCHDATE"));
 
 			return presement;
 		}
@@ -214,7 +221,7 @@ public class AbstractPresentmentProcess extends AbstractInterface implements Pre
 		sql.append(" (TXN_REF, Entity_Code, CYCLE_TYPE, INSTRUMENT_MODE,PRESENTATIONDATE,BANK_CODE,PRODUCT_CODE,");
 		sql.append(" CustomerId, AGREEMENTNO, CHEQUEAMOUNT, EMI_NO, TXN_TYPE_CODE, SOURCE_CODE, BR_CODE,");
 		sql.append(" UMRN_NO , BANK_NAME, MICR_CODE, AccountNo, DEST_ACC_HOLDER, ACC_TYPE, BANK_ADDRESS, RESUB_FLAG,");
-		sql.append(" ORGIN_SYSTEM, DATA_GEN_DATE ,USERID, BATCHID,job_Id ,PICKUP_BATCHID)");
+		sql.append(" ORGIN_SYSTEM, DATA_GEN_DATE ,USERID, BATCHID,job_Id ,PICKUP_BATCHID, CycleDate)");
 		sql.append(" values( :TxnReference,");
 		
 		if (presentment.getEntityCode() == 0) {
@@ -226,7 +233,7 @@ public class AbstractPresentmentProcess extends AbstractInterface implements Pre
 		sql.append(" :CycleType, :InstrumentMode, :PresentationDate, :BankCode, :ProductCode,");
 		sql.append(" :CustomerId, :AgreementNo, :ChequeAmount, :EmiNo, :TxnTypeCode, :SourceCode, :BrCode,");
 		sql.append(" :UmrnNo , :BankName, :MicrCode, :AccountNo, :DestAccHolder, :AccType, :BankAddress, :ResubFlag,");
-		sql.append(" :OrginSystem, :DataGenDate , :UserID, :BatchId, :JobId , :PickupBatchId)");
+		sql.append(" :OrginSystem, :DataGenDate , :UserID, :BatchId, :JobId , :PickupBatchId, :CycleDate)");
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentment);
 		try {

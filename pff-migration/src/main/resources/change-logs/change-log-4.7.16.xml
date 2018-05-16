@@ -6699,5 +6699,15 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
      LEFT JOIN customerdocuments cd ON cd.custid = t.custid AND t.covenanttype = cd.custdoccategory
 		</createView>
 	</changeSet>
+		<changeSet id="156" author="Ganesh.p">
+		<addColumn tableName="PRESENTMENT_REQ_DETAILS">
+			<column name="CycleDate" type="datetime"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="157" author="Ganesh.p">
+		<addColumn tableName="PRESENTMENT_REQ_DETAILS_TEMP">
+			<column name="CycleDate" type="datetime"></column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
 	
