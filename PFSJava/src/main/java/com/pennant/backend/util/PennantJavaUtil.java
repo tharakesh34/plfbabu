@@ -394,7 +394,6 @@ import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 
-
 public class PennantJavaUtil {
 	private static String excludeFields = "serialVersionUID,newRecord,lovValue,befImage,userDetails,userAction,loginAppCode,loginUsrId,loginGrpCode,loginRoleCd,customerQDE,auditDetailMap,lastMaintainedUser,lastMaintainedOn,";
 
@@ -643,8 +642,11 @@ public class PennantJavaUtil {
 						"AcctTypeLevel", "GroupCode", "GroupDescription" }, new Object[][] { { "GroupIsActive", "0",
 						1} }, 400));
 
-		ModuleUtil.register("Mandate", new ModuleMapping("Mandate", Mandate.class, new String[] { "Mandates",
-				"Mandates_AView" }, manadateWF, new String[] { "BankCode","BankName","BranchCode","BranchDesc","MICR","IFSC" }, null, 700));
+		ModuleUtil.register("Mandate",
+				new ModuleMapping("Mandate",
+						Mandate.class, new String[] { "Mandates", "Mandates_AView" }, manadateWF, new String[] {
+								"MandateID", "BankCode", "BankName", "BranchCode", "BranchDesc", "MICR", "IFSC" },
+						null, 750));
 		
 		ModuleUtil.register("MandateStatus", new ModuleMapping("MandateStatus", MandateStatus.class, new String[] { "MandatesStatus",
 		"MandatesStatus_View" }, masterWF, new String[] { "MandateID", "Status" }, null, 300));

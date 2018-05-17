@@ -58,7 +58,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.ExtendedCombobox.Type;
 import com.pennant.backend.model.systemmasters.BuilderCompany;
 import com.pennant.backend.service.systemmasters.BuilderCompanyService;
 import com.pennant.component.Uppercasebox;
@@ -67,6 +66,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -175,7 +175,7 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 		this.segmentation.setValidateColumns(new String[] {"FieldCodeValue"});
 		this.groupId.setModuleName("BuilderGroup");
 		this.groupId.setValueColumn("Id");
-		this.groupId.setValueType(Type.LONG);
+		this.groupId.setValueType(DataType.LONG);
 		this.groupId.setDescColumn("Name");
 		this.groupId.setValidateColumns(new String[]{"Id"});
 		

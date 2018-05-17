@@ -62,7 +62,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.ExtendedCombobox.Type;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
@@ -73,6 +72,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -205,7 +205,7 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		this.partnerBank.setModuleName("PartnerBank");
 		this.partnerBank.setValueColumn("PartnerBankId");
 		this.partnerBank.setDescColumn("PartnerBankCode");
-		this.partnerBank.setValueType(Type.LONG);
+		this.partnerBank.setValueType(DataType.LONG);
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 		
 		this.entityCode.setModuleName("Entity");

@@ -63,6 +63,8 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
+import com.pennanttech.pennapps.jdbc.DataType;
+import com.pennanttech.pennapps.jdbc.DataTypeUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
@@ -84,7 +86,7 @@ public class ExtendedCombobox extends Hbox {
 	private String						moduleName;														//mandatory
 	private int							displayStyle		= 1;										//mandatory 	
 	private String						valueColumn;													//mandatory
-	private Type valueType;
+	private DataType valueType;
 	private boolean						isdisplayError		= true;										//mandatory
 	private boolean						inputAllowed		= true;										//mandatory
 	private boolean						isWindowOpened		= false;									//mandatory
@@ -100,10 +102,6 @@ public class ExtendedCombobox extends Hbox {
 	private String						whereClause			= null;
 	private String						rateModule			= "";
 	private List<?>						list				= null;
-
-	public enum Type {
-		LONG, STRING;
-	}
 
 	public List<?> getList() {
 		return list;
@@ -264,7 +262,7 @@ public class ExtendedCombobox extends Hbox {
 							object = ExtendedSearchListBox.show(this, moduleName, filters, this.textbox.getValue());
 						} else {
 							object = ExtendedSearchListBox.show(this, moduleName, this.textbox.getValue(), filters,
-									whereClause);
+									whereClause, valueColumn, valueType);
 						}
 					} else {
 						if (StringUtils.equals(this.whereClause, "")) {
@@ -381,7 +379,7 @@ public class ExtendedCombobox extends Hbox {
 
 			for (String field : searchFieldArray) {
 				if (field.equals(getValueColumn())) {
-					fieldValue = getValueAsObject(textbox.getValue());
+					fieldValue = DataTypeUtil.getValueAsObject(textbox.getValue(), valueType);
 				} else {
 					fieldValue = textbox.getValue();
 				}
@@ -531,7 +529,7 @@ public class ExtendedCombobox extends Hbox {
 	}
 
 	public Object getActualValue() {
-		return getValueAsObject(getValue());
+		return DataTypeUtil.getValueAsObject(getValue(), valueType);
 	}
 
 	/**
@@ -808,11 +806,11 @@ public class ExtendedCombobox extends Hbox {
 		this.valueColumn = valueColumn;
 	}
 
-	public Type getValueType() {
+	public DataType getValueType() {
 		return valueType;
 	}
 
-	public void setValueType(Type valueType) {
+	public void setValueType(DataType valueType) {
 		this.valueType = valueType;
 	}
 
@@ -911,24 +909,6 @@ public class ExtendedCombobox extends Hbox {
 		setTextBoxWidth(txtbxWidth);
 		if (this.validateColumns == null) {
 			this.validateColumns = new String[] { valueColumn }.clone();
-		}
-	}
-
-	public Object getValueAsObject(String value) {
-		value = StringUtils.trimToNull(value);
-
-		if (value == null) {
-			return null;
-		}
-
-		if (valueType == Type.LONG) {
-			if (StringUtils.isNumeric(value)) {
-				return Long.valueOf(value);
-			} else {
-				return null;
-			}
-		} else {
-			return value;
 		}
 	}
 }

@@ -60,7 +60,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.ExtendedCombobox.Type;
 import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennant.backend.service.systemmasters.BuilderProjcetService;
 import com.pennant.component.Uppercasebox;
@@ -69,6 +68,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -164,7 +164,7 @@ public class BuilderProjcetListCtrl extends GFCBaseListCtrl<BuilderProjcet> {
 			this.name.setMaxlength(50);
 			this.builderId.setModuleName("BuilderCompany");
 			this.builderId.setValueColumn("Id");
-		builderId.setValueType(Type.LONG);
+		builderId.setValueType(DataType.LONG);
 			this.builderId.setDescColumn("Name");
 			this.builderId.setValidateColumns(new String[] {"Id"});
 			this.apfNo.setMaxlength(20);

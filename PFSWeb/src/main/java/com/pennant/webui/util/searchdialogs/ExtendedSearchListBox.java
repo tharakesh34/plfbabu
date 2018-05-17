@@ -82,6 +82,8 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.jdbc.DataType;
+import com.pennanttech.pennapps.jdbc.DataTypeUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
@@ -119,6 +121,8 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	private String searchString;
 	private String whereClause = null;
 	private static boolean searchRequired = true;
+	private String valueColumn;
+	private DataType valueType;
 
 	public ExtendedSearchListBox() {
 		super();
@@ -175,6 +179,21 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		createBox(search);
 	}
 
+	private ExtendedSearchListBox(Component parent, String listCode, Filter[] filters, String searchValue,
+			String whereClause, String valueColumn, DataType valueType) {
+		super();
+
+		this.filters = filters;
+		this.searchString = searchValue;
+		this.whereClause = whereClause;
+		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
+		setParent(parent);
+		this.valueColumn = valueColumn;
+		this.valueType = valueType;
+
+		createBox(true);
+	}
+
 	/**
 	 * The Call method.
 	 * 
@@ -210,6 +229,14 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 			String whereClause) {
 		searchRequired = true;
 		return new ExtendedSearchListBox(parent, listCode, filters, searchValue, whereClause).getObject();
+	}
+
+	public static Object show(Component parent, String listCode, String searchValue, Filter[] filters,
+			String whereClause, String valueColumn, DataType valueType) {
+		searchRequired = true;
+
+		return new ExtendedSearchListBox(parent, listCode, filters, searchValue, whereClause, valueColumn, valueType)
+				.getObject();
 	}
 
 	/**
@@ -401,18 +428,29 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		 * The ResultObject is a helper class that holds the generic list and the totalRecord count as int value.
 		 */
 		if (doSearch) {
-			logger.debug("Before fetch jdbc Search");
 			setJdbcSearchObject(0);
 			final String searchText = ExtendedSearchListBox.this._textbox.getValue();
-			if (StringUtils.isNotBlank(searchText)) {
 
-				Filter[] filters = new Filter[fieldString.length];
+			// Add the search filters.
+			if (StringUtils.isNotBlank(searchText)) {
+				Filter[] searchFilters = new Filter[fieldString.length];
 
 				for (int i = 0; i < fieldString.length; i++) {
-					filters[i] = new Filter(fieldString[i], "%" + searchText + "%", Filter.OP_LIKE);
+					if (valueColumn != null && valueType != null && valueColumn.equals(fieldString[i])) {
+						if (valueType == DataType.LONG) {
+							searchFilters[i] = new Filter(fieldString[i],
+									DataTypeUtil.getValueAsObject(searchText, DataType.LONG), Filter.OP_EQUAL);
+						} else {
+							searchFilters[i] = new Filter(fieldString[i], "%" + searchText + "%", Filter.OP_LIKE);
+						}
+					} else {
+						searchFilters[i] = new Filter(fieldString[i], "%" + searchText + "%", Filter.OP_LIKE);
+					}
 				}
-				this.jdbcSearchObject.addFilterOr(filters);
+
+				jdbcSearchObject.addFilterOr(searchFilters);
 			}
+
 			String[] lovFields = getModuleMapping().getLovFields();
 			if (lovFields != null && lovFields.length > 0) {
 				this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
