@@ -3674,7 +3674,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						return false;
 					}
 				}
-				if (StringUtils.equals(PennantConstants.PANNUMBER, custDocument.getCustDocCategory())) {
+				if (StringUtils.equals(PennantConstants.PANNUMBER, custDocument.getCustDocCategory())
+						|| StringUtils.equals(PennantConstants.CPRCODE, custDocument.getCustDocCategory())) {
 					isMandateIDDocExist = true;
 					if (StringUtils.isNotBlank(this.eidNumber.getValue())) {
 						if (!StringUtils.equals(this.eidNumber.getValue(), custDocument.getCustDocTitle())) {
@@ -4896,11 +4897,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						lc = new Listcell(customerDocument.getLovDescCustDocCategory());
 					}
 					lc.setParent(item);
-					if (StringUtils.equals(customerDocument.getCustDocCategory(), PennantConstants.CPRCODE)) {
-						lc = new Listcell(PennantApplicationUtil.formatEIDNumber(customerDocument.getCustDocTitle()));
-					} else {
-						lc = new Listcell(customerDocument.getCustDocTitle());
-					}
+					lc = new Listcell(customerDocument.getCustDocTitle());
 					lc.setParent(item);
 					lc = new Listcell(customerDocument.getLovDescCustDocIssuedCountry());
 					lc.setParent(item);
