@@ -86,7 +86,7 @@ public class CustomerSelectItemRenderer implements ListitemRenderer<Customer>, S
 	  	lc = new Listcell(PennantApplicationUtil.formatPhoneNumber(
 	  			customer.getPhoneCountryCode(), customer.getPhoneAreaCode(), customer.getPhoneNumber()));
 		lc.setParent(item);
-	  	lc = new Listcell(PennantApplicationUtil.formatEIDNumber(customer.getCustCRCPR()));
+		lc = new Listcell(customer.getCustCRCPR());
 		lc.setParent(item);
 	  	lc = new Listcell(customer.getCustPassportNo());
 		lc.setParent(item);
