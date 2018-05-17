@@ -36,6 +36,7 @@ import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -410,8 +411,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
-
-				fillDecision(vrf, decision);
+				fillDecision(vrf,decision);
 				decision.setParent(listCell);
 				listCell.setParent(item);
 
@@ -445,22 +445,9 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 	private void fillDecision(Verification vrf, Combobox decision) {
 		List<ValueLabel> decisionList = new ArrayList<>();
-		if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey() || vrf.getStatus() == Status.POSITIVE.getKey()) {
-			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
-			decisionList.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
-			if (vrf.getDecision() == Decision.SELECT.getKey()) {
-				vrf.setDecision(Decision.APPROVE.getKey());
-			}
-			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-		} else if (vrf.getStatus() == Status.NOTCMPLTD.getKey() || vrf.getStatus() == Status.NEGATIVE.getKey()) {
-			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
-			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-		} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
-			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
-			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-		} else {
-			fillComboBox(decision, vrf.getDecision(), Decision.getList());
-		}
+		decisionList
+				.add(new ValueLabel(String.valueOf(Decision.RE_INITIATE.getKey()), Decision.RE_INITIATE.getValue()));
+		fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
 	}
 
 	private void fillComboBox(Combobox combobox, int value, List<ValueLabel> list) {
@@ -702,8 +689,8 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
-
-				fillDecision(vrf, decision);
+				
+				fillDecision(vrf,decision);
 				decision.setParent(listCell);
 				listCell.setParent(item);
 
@@ -964,7 +951,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		verification.setCustId(customer.getCustID());
 		verification.setCustomerName(customer.getCustShrtName());
 		verification.setReference(customer.getCustCIF());
-		verification.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
+		verification.setCreatedOn(DateUtility.getAppDate());
 	}
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {

@@ -53,6 +53,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -74,7 +75,6 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.Module;
@@ -82,9 +82,11 @@ import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.Status;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
+import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
+import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 
@@ -225,6 +227,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		item.setStatus(0);
 		item.setCreatedBy(item.getLastMntBy());
 		item.setVerificationDate(null);
+		item.setDecisionRemarks("");
 		item.setDecision(Decision.SELECT.getKey());
 		item.setRequestType(RequestType.INITIATE.getKey());
 		item.setReason(null);
@@ -319,9 +322,16 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				fieldInvestigationService.save(customerDetails, customerDetails.getCustomerPhoneNumList(), item);
 			}
 		} else if (item.getRequestType() == RequestType.INITIATE.getKey()) {
-			item.getFieldInvestigation().setVerificationId(item.getId());
-			item.getFieldInvestigation().setLastMntOn(item.getLastMntOn());
-			fieldInvestigationService.save(item.getFieldInvestigation(), TableType.TEMP_TAB);
+			FieldInvestigation fi = item.getFieldInvestigation();
+			fi.setVerificationId(item.getId());
+			fi.setLastMntOn(item.getLastMntOn());
+			fi.setAgentCode("");
+			fi.setAgencyName("");
+			fi.setDate(null);
+			fi.setReason(0L);
+			fi.setSummaryRemarks("");
+			fi.setStatus(0);
+			fieldInvestigationService.save(fi, TableType.TEMP_TAB);
 		}
 	}
 
@@ -331,9 +341,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				technicalVerificationService.save(collateralSetup, item);
 			}
 		} else if (item.getRequestType() == RequestType.INITIATE.getKey()) {
-			item.getTechnicalVerification().setVerificationId(item.getId());
-			item.getTechnicalVerification().setLastMntOn(item.getLastMntOn());
-			technicalVerificationService.save(item.getTechnicalVerification(), TableType.TEMP_TAB);
+			TechnicalVerification technicalVerification = new TechnicalVerification();
+
+			technicalVerification.setVerificationId(item.getId());
+			technicalVerification.setLastMntOn(item.getLastMntOn());
+			technicalVerification.setCollateralRef(item.getTechnicalVerification().getCollateralRef());
+			technicalVerification.setCollateralType(item.getTechnicalVerification().getCollateralType());
+
+			technicalVerificationService.save(technicalVerification, TableType.TEMP_TAB);
 		}
 	}
 
@@ -742,7 +757,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		verification.setKeyReference(financeMain.getFinReference());
 		verification.setCustId(customer.getCustID());
 		verification.setCustomerName(customer.getCustShrtName());
-		verification.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
+		verification.setCreatedOn(DateUtility.getAppDate());
 
 		if (verificationType == VerificationType.FI) {
 			if (verification.getReference() != null) {
@@ -755,7 +770,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				verification.setReference(customer.getCustCIF());
 			}
 		} else if (verificationType == VerificationType.TV) {
-			
+
 		} else if (verificationType == VerificationType.RCU) {
 			if (verification.getReference() == null) {
 				verification.setReference(customer.getCustCIF());

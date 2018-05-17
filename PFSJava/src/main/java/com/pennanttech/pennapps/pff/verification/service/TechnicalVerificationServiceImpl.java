@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
@@ -569,7 +570,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			vrf.setNewRecord(true);
 			vrf.setReference(vrf.getCif());
 			vrf.setRecordType(collateralSetup.getRecordType());
-			vrf.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+			vrf.setCreatedOn(DateUtility.getAppDate());
 			setTvFields(vrf, collateralSetup);
 			verifications.add(vrf);
 

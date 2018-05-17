@@ -388,6 +388,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell = new Listcell();
 			listCell.setId("Remarks".concat(String.valueOf(i)));
 			Textbox remarks = new Textbox(vrf.getRemarks());
+			remarks.setMaxlength(500);
 			listCell.appendChild(remarks);
 			listCell.setParent(item);
 
@@ -433,6 +434,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				listCell = new Listcell();
 				listCell.setId("ReInitRemarks".concat(String.valueOf(i)));
 				Textbox reInitRemarks = new Textbox();
+				reInitRemarks.setValue(vrf.getDecisionRemarks());
+				reInitRemarks.setMaxlength(500);
 				listCell.appendChild(reInitRemarks);
 				listCell.setParent(item);
 
@@ -640,7 +643,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			verification.setDecisionRemarks(textbox.getValue());
 			if (verification.getDecision() == Decision.OVERRIDE.getKey()
 					&& StringUtils.isEmpty(verification.getDecisionRemarks())) {
-				throw new WrongValueException(textbox, "Remarks is mandatory");
+				throw new WrongValueException(textbox, "Remarks are mandatory when Decision is Override");
 			}
 			break;
 		default:
@@ -692,8 +695,11 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
-
-				setValue(listitem, "ReInitRemarks");
+				try {
+					setValue(listitem, "ReInitRemarks");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
 			}
 		}
 

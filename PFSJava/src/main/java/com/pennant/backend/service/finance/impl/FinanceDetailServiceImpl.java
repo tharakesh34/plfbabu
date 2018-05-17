@@ -227,7 +227,6 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.verification.Module;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -766,7 +765,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		verification.setCustId(customer.getCustID());
 		verification.setCustomerName(customer.getCustShrtName());
 		verification.setReference(customer.getCustCIF());
-		verification.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
+		verification.setCreatedOn(DateUtility.getAppDate());
 	}
 
 	/**

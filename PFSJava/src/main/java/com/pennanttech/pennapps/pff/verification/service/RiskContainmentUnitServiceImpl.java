@@ -54,7 +54,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	@Autowired
 	private CustomerDocumentDAO customerDocumentDAO;
 	private DocumentDetailValidation documentValidation;
-	
+
 	public RiskContainmentUnitServiceImpl() {
 		super();
 	}
@@ -354,7 +354,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	public RiskContainmentUnit getRiskContainmentUnit(long verificationId) {
 		return riskContainmentUnitDAO.getRiskContainmentUnit(verificationId, "_View");
 	}
-	
+
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -758,20 +758,14 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	}
 
 	private void setRcuFields(Verification verification) {
-
 		RiskContainmentUnit rcu = verification.getRcuVerification();
-
-		if (rcu == null) {
-			rcu = new RiskContainmentUnit();
-			verification.setRcuVerification(rcu);
-		}
-
+		rcu = new RiskContainmentUnit();
 		rcu.setVerificationId(verification.getId());
 		rcu.setVersion(1);
 		rcu.setLastMntBy(verification.getLastMntBy());
 		rcu.setLastMntOn(verification.getLastMntOn());
 		setWorkflowFields(rcu);
-
+		verification.setRcuVerification(rcu);
 	}
 
 	private void setWorkflowFields(RiskContainmentUnit rcu) {
@@ -808,6 +802,13 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 
 	@Override
 	public void saveDocuments(List<RCUDocument> rcuDocuments, TableType tableType) {
+		for (RCUDocument rcuDocument : rcuDocuments) {
+			rcuDocument.setVerificationType(0);
+			rcuDocument.setStatus(0);
+			rcuDocument.setPagesEyeballed(0);
+			rcuDocument.setPagesEyeballed(0);
+			rcuDocument.setAgentRemarks("");
+		}
 		riskContainmentUnitDAO.saveDocuments(rcuDocuments, tableType);
 
 	}

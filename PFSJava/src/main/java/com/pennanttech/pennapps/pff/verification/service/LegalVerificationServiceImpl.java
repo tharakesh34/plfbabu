@@ -815,17 +815,13 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 
 	private void setLvFields(Verification verification) {
 		LegalVerification lv = verification.getLegalVerification();
-
-		if (lv == null) {
-			lv = new LegalVerification();
-			verification.setLegalVerification(lv);
-		}
-
+		lv = new LegalVerification();
 		lv.setVerificationId(verification.getId());
 		lv.setVersion(1);
 		lv.setLastMntBy(verification.getLastMntBy());
 		lv.setLastMntOn(verification.getLastMntOn());
 		setAudit(lv);
+		verification.setLegalVerification(lv);
 
 	}
 
@@ -846,6 +842,11 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 
 	@Override
 	public void saveDocuments(List<LVDocument> lvDocuments, TableType tableType) {
+		for (LVDocument lvDocument : lvDocuments) {
+			lvDocument.setRemarks1("");
+			lvDocument.setRemarks2("");
+			lvDocument.setRemarks3("");
+		}
 		legalVerificationDAO.saveDocuments(lvDocuments, tableType);
 	}
 
