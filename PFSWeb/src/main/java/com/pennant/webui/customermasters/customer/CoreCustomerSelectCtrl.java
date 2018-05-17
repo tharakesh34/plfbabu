@@ -81,8 +81,8 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.rmtmasters.CustomerTypeService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -192,7 +192,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private void doSetPrimaryIdAttributes() {
 		// ### 01-05-2018 - Start - TuleApp ID : #360
 
-		Map<String, String> attributes = PennantStaticListUtil.getPrimaryIdAttributes(getComboboxValue(custCtgType));
+		Map<String, String> attributes = PennantApplicationUtil.getPrimaryIdAttributes(getComboboxValue(custCtgType));
 		
 		primaryIdLabel = attributes.get("LABEL");
 		primaryIdMandatory = Boolean.valueOf(attributes.get("MANDATORY"));

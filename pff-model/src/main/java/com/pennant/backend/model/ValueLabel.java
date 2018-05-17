@@ -44,8 +44,6 @@ package com.pennant.backend.model;
 
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.backend.util.PennantConstants;
-
 
 public class ValueLabel {
 	private String value;
@@ -56,7 +54,7 @@ public class ValueLabel {
 		label = newLabel;
 	}
 	public ValueLabel() {
-		value = PennantConstants.List_Select;
+		value = "#";
 		label = Labels.getLabel("common.Select");
 	}
 	

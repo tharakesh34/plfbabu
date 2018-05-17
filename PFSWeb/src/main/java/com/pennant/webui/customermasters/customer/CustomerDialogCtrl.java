@@ -2066,7 +2066,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// this.custRO1.setMandatoryStyle(false);
 		}
 
-		Map<String, String> attributes = PennantStaticListUtil
+		Map<String, String> attributes = PennantApplicationUtil
 				.getPrimaryIdAttributes(customerDetails.getCustomer().getCustCtgCode());
 
 		primaryIdLabel = attributes.get("LABEL");

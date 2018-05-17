@@ -5,31 +5,32 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
-import com.pennanttech.bajaj.process.collections.model.CollectionConstants;
-import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
+@Component("appList")
+@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class PennantStaticListUtil {
 	
 	// List Declarations for Static Initializations
@@ -67,7 +68,6 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> statusTypeList;
 	private static ArrayList<ValueLabel> reportNameList;
 	private static ArrayList<ValueLabel> waiverDeciders;
-	private static ArrayList<ValueLabel> schCalCodesList;
 	private static ArrayList<ValueLabel> schCalOnList;
 	private static ArrayList<ValueLabel> chargeTypes;
 	private static ArrayList<ValueLabel> overDueCalOnList;
@@ -170,7 +170,6 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> stepTypes;
 	private static ArrayList<ValueLabel> ltvTypes;
 	private static ArrayList<ValueLabel> recAgainstTypes;
-	private static ArrayList<ValueLabel> dftBpiTreatment;
 	private static ArrayList<ValueLabel> pftDueSchOn;
 	private static ArrayList<ValueLabel> feeTypes;
 	private static ArrayList<ValueLabel> ruleModulesList;
@@ -760,17 +759,17 @@ public class PennantStaticListUtil {
 
 		if(mathOperators == null){
 			mathOperators = new ArrayList<ValueLabel>(11);
-			mathOperators.add(new ValueLabel(" += ", PennantJavaUtil.getLabel("Add and assign")));
-			mathOperators.add(new ValueLabel(" -= ", PennantJavaUtil.getLabel("Subtract and assign")));
-			mathOperators.add(new ValueLabel(" *= ", PennantJavaUtil.getLabel("Multiply and assign")));
-			mathOperators.add(new ValueLabel(" /= ", PennantJavaUtil.getLabel("Divide and assign")));
-			mathOperators.add(new ValueLabel(" %= ", PennantJavaUtil.getLabel("Modulus and assign")));
-			mathOperators.add(new ValueLabel(" + ", PennantJavaUtil.getLabel("Addition")));
-			mathOperators.add(new ValueLabel(" - ", PennantJavaUtil.getLabel("Subtraction")));
-			mathOperators.add(new ValueLabel(" * ", PennantJavaUtil.getLabel("Multiplication")));
-			mathOperators.add(new ValueLabel(" / ", PennantJavaUtil.getLabel("Division")));
-			mathOperators.add(new ValueLabel(" % ", PennantJavaUtil.getLabel("Modulus (Remainder of division)")));
-			mathOperators.add(new ValueLabel(" = ", PennantJavaUtil.getLabel("Assignment")));
+			mathOperators.add(new ValueLabel(" += ", getLabel("Add and assign")));
+			mathOperators.add(new ValueLabel(" -= ", getLabel("Subtract and assign")));
+			mathOperators.add(new ValueLabel(" *= ", getLabel("Multiply and assign")));
+			mathOperators.add(new ValueLabel(" /= ", getLabel("Divide and assign")));
+			mathOperators.add(new ValueLabel(" %= ", getLabel("Modulus and assign")));
+			mathOperators.add(new ValueLabel(" + ", getLabel("Addition")));
+			mathOperators.add(new ValueLabel(" - ", getLabel("Subtraction")));
+			mathOperators.add(new ValueLabel(" * ", getLabel("Multiplication")));
+			mathOperators.add(new ValueLabel(" / ", getLabel("Division")));
+			mathOperators.add(new ValueLabel(" % ", getLabel("Modulus (Remainder of division)")));
+			mathOperators.add(new ValueLabel(" = ", getLabel("Assignment")));
 		}
 		return mathOperators;
 	}
@@ -785,23 +784,6 @@ public class PennantStaticListUtil {
 			revRateAppPeriods.add(new ValueLabel(CalculationConstants.RATEREVIEW_NORVW, Labels.getLabel("label_All_Current_No_Auto_Rate_Review")));
 		}
 		return revRateAppPeriods;
-	}
-
-	public static ArrayList<ValueLabel> getSchCalCodes() {
-
-		if(schCalCodesList == null){
-			schCalCodesList = new ArrayList<ValueLabel>(6);
-			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_CURPRD, Labels.getLabel("label_Current_Period")));
-			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_TILLMDT, Labels.getLabel("label_Till_Maturity")));
-			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_ADJMDT, Labels.getLabel("label_Adj_To_Maturity")));
-			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_TILLDATE, Labels.getLabel("label_Till_Date")));
-			//schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_ADDTERM, Labels.getLabel("label_Add_Terms")));
-			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_ADDRECAL, Labels.getLabel("label_Add_Recal")));
-			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_STEPPOS, Labels.getLabel("label_POSStep")));
-			/*schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_ADDLAST, Labels.getLabel("label_Add_Last")));
-			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_ADJTERMS, Labels.getLabel("label_Adj_Terms")));*/
-		}
-		return schCalCodesList;
 	}
 
 	public static ArrayList<ValueLabel> getScreenCodes() {
@@ -986,8 +968,8 @@ public class PennantStaticListUtil {
 
 		if(templateFormats == null){
 			templateFormats = new ArrayList<ValueLabel>(2);
-			templateFormats.add(new ValueLabel(NotificationConstants.TEMPLATE_FORMAT_PLAIN, PennantJavaUtil.getLabel("common.template.format.plain")));
-			templateFormats.add(new ValueLabel(NotificationConstants.TEMPLATE_FORMAT_HTML, PennantJavaUtil.getLabel("common.template.format.html")));
+			templateFormats.add(new ValueLabel(NotificationConstants.TEMPLATE_FORMAT_PLAIN, getLabel("common.template.format.plain")));
+			templateFormats.add(new ValueLabel(NotificationConstants.TEMPLATE_FORMAT_HTML, getLabel("common.template.format.html")));
 		}
 		return templateFormats ;
 	}
@@ -1068,10 +1050,10 @@ public class PennantStaticListUtil {
 			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_VASM, "VAS Manufacturer"));
 			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_PARTNER, "Partner Source"));
 
-			dealerType.add(new ValueLabel(Agencies.FIAGENCY.getKey(), Agencies.FIAGENCY.getValue()));
-			dealerType.add(new ValueLabel(Agencies.LVAGENCY.getKey(), Agencies.LVAGENCY.getValue()));
-			dealerType.add(new ValueLabel(Agencies.RCUVAGENCY.getKey(), Agencies.RCUVAGENCY.getValue()));
-			dealerType.add(new ValueLabel(Agencies.TVAGENCY.getKey(), Agencies.TVAGENCY.getValue()));
+			dealerType.add(new ValueLabel("FIAGENCY", Labels.getLabel("label_Field_Investigation")));
+			dealerType.add(new ValueLabel("LVAGENCY", Labels.getLabel("label_Legal_Verification")));
+			dealerType.add(new ValueLabel("RCUVAGENCY", Labels.getLabel("label_RCU_Verification")));
+			dealerType.add(new ValueLabel("TVAGENCY", Labels.getLabel("label_Technical_Verification")));
 		}
 		return dealerType;
 	}
@@ -2451,19 +2433,6 @@ public class PennantStaticListUtil {
 		return recAgainstTypes;
 	}
 
-	public static ArrayList<ValueLabel> getDftBpiTreatment() {
-
-		if(dftBpiTreatment == null){
-			dftBpiTreatment = new ArrayList<ValueLabel>(5);
-			dftBpiTreatment.add(new ValueLabel(FinanceConstants.BPI_NO, Labels.getLabel("label_NO_BPI")));
-			dftBpiTreatment.add(new ValueLabel(FinanceConstants.BPI_DISBURSMENT, Labels.getLabel("label_DISBURSMENT_BPI")));
-			dftBpiTreatment.add(new ValueLabel(FinanceConstants.BPI_SCHEDULE, Labels.getLabel("label_SCHD_BPI")));
-			dftBpiTreatment.add(new ValueLabel(FinanceConstants.BPI_CAPITALIZE, Labels.getLabel("label_CAPITALIZE_BPI")));
-			dftBpiTreatment.add(new ValueLabel(FinanceConstants.BPI_SCHD_FIRSTEMI, Labels.getLabel("label_SCHD_BPI_FRSTEMI")));
-		}
-		return dftBpiTreatment;
-	}
-
 	public static ArrayList<ValueLabel> getpftDueSchOn() {
 
 		if(pftDueSchOn == null){
@@ -3065,16 +3034,16 @@ public class PennantStaticListUtil {
 		return responseStatus;
 	}
 	
-	public static List<ValueLabel> getMontEnds() {
-		List<ValueLabel> monthEndList = new ArrayList<ValueLabel>();
+	public static List<ValueLabel> getMontEnds(Date date) {
+		List<ValueLabel> monthEndList = new ArrayList<>();
 
 		SimpleDateFormat valueDateFormat = new SimpleDateFormat(PennantConstants.DBDateFormat);
 		SimpleDateFormat displayDateFormat = new SimpleDateFormat(DateFormat.LONG_MONTH.getPattern());
 
 		GregorianCalendar gc = null;
 
-		int month = DateUtil.getMonth(DateUtility.getAppDate());
-		int year = DateUtil.getYear(DateUtility.getAppDate());
+		int month = DateUtil.getMonth(date);
+		int year = DateUtil.getYear(date);
 
 		for (int i = 1; i <= 12; i++) {
 			if (month == 0) {
@@ -3193,15 +3162,6 @@ public class PennantStaticListUtil {
 		return feeTaxTypes;
 	}
 
-	public static ArrayList<ValueLabel> getCollectionTableNames() {
-
-		if (collections == null) {
-			collections = new ArrayList<ValueLabel>(1);
-			collections.add(new ValueLabel(CollectionConstants.INTERFACE_COLLECTION, Labels.getLabel("label_CollectionList_Collection")));
-		}
-		return collections;
-	}
-
 	public static ArrayList<ValueLabel> getExpenseCalculatedOnList(){
 		if(expenseCalculatedOn == null){
 			expenseCalculatedOn = new ArrayList<ValueLabel>(2);
@@ -3284,46 +3244,6 @@ public class PennantStaticListUtil {
 		return financeClosingStatusList;
 	}
 	
-	public static Map<String, String> getPrimaryIdAttributes(String custCategory) {
-		Map<String, String> result = new HashMap<>();
-
-		switch (custCategory) {
-		case "RETAIL":
-			result.put("TYPE", SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL"));
-			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID_Retl.value");
-			result.put("MANDATORY", "Y".equals(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_REQ")) ? "true" : "false");
-			result.put("REGEX", "REGEX_" + SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL") + "_NUMBER");
-			break;
-		case "CORP":
-		case "SME":
-			result.put("TYPE", SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP"));
-			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID_Corp.value");
-			result.put("MANDATORY", "Y".equals(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_REQ")) ? "true" : "false");
-			result.put("REGEX", "REGEX_" + SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP") + "_NUMBER");
-			break;
-		default:
-			result.put("TYPE", "");
-			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID.value");
-			result.put("MANDATORY", "false");
-			result.put("REGEX", "");
-		}
-		
-		String type = result.get("TYPE");
-		int maxLength = 100;
-		
-		if ("PAN".equals(type)) {
-			maxLength =  LengthConstants.LEN_PAN;
-		} else if ("AADHAAR".equals(type)) {
-			maxLength = LengthConstants.LEN_AADHAAR;
-		} else if ("EID".equals(type)) {
-			maxLength = LengthConstants.LEN_EID;
-		}
-		
-		result.put("LENGTH", String.valueOf(maxLength));
-
-		return result;
-	}
-
 	/**
 	 * Gets the list of manual deviation severities.
 	 * 
@@ -3340,5 +3260,65 @@ public class PennantStaticListUtil {
 		}
 
 		return manualDeviationSeverities;
+	}
+	
+	private static String getLabel(String label) {
+		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
+			return "";
+		}
+		String returnValue = Labels.getLabel(label);
+		if (StringUtils.isBlank(returnValue)) {
+			returnValue = label;
+		}
+		return returnValue;
+	}
+	
+	
+	// Change to customize the drop down list
+	private static Map<String, ValueLabel> scheduleCalculationCodes = new HashMap<>();
+	private static Map<String, ValueLabel> bpimethods = new HashMap<>();
+
+	public static List<ValueLabel> getSchCalCodes() {
+		return new ArrayList<>(scheduleCalculationCodes.values());
+	}
+	
+	public static List<ValueLabel> getDftBpiTreatment() {
+		return new ArrayList<>(bpimethods.values());
+	}
+	
+	static {
+		// Schedule Calculation codes
+		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_CURPRD, new ValueLabel(CalculationConstants.RPYCHG_CURPRD, Labels.getLabel("label_Current_Period")));
+		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_TILLMDT, new ValueLabel(CalculationConstants.RPYCHG_TILLMDT, Labels.getLabel("label_Till_Maturity")));
+		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_ADJMDT, new ValueLabel(CalculationConstants.RPYCHG_ADJMDT, Labels.getLabel("label_Adj_To_Maturity")));
+		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_TILLDATE, new ValueLabel(CalculationConstants.RPYCHG_TILLDATE, Labels.getLabel("label_Till_Date")));
+		//schedulCalculationCodes.put(CalculationConstants.RPYCHG_ADDTERM, new ValueLabel(CalculationConstants.RPYCHG_ADDTERM, Labels.getLabel("label_Add_Terms")));
+		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_ADDRECAL, new ValueLabel(CalculationConstants.RPYCHG_ADDRECAL, Labels.getLabel("label_Add_Recal")));
+		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_STEPPOS, new ValueLabel(CalculationConstants.RPYCHG_STEPPOS, Labels.getLabel("label_POSStep")));
+		/*schedulCalculationCodes.put(CalculationConstants.RPYCHG_ADDLAST, new ValueLabel(CalculationConstants.RPYCHG_ADDLAST, Labels.getLabel("label_Add_Last")));
+		schedulCalculationCodes.put(CalculationConstants.RPYCHG_ADJTERMS, new ValueLabel(CalculationConstants.RPYCHG_ADJTERMS, Labels.getLabel("label_Adj_Terms")));*/
+		
+		// BPI Treatment
+		bpimethods.put(FinanceConstants.BPI_NO, new ValueLabel(FinanceConstants.BPI_NO, Labels.getLabel("label_NO_BPI")));
+		bpimethods.put(FinanceConstants.BPI_DISBURSMENT, new ValueLabel(FinanceConstants.BPI_DISBURSMENT, Labels.getLabel("label_DISBURSMENT_BPI")));
+		bpimethods.put(FinanceConstants.BPI_SCHEDULE, new ValueLabel(FinanceConstants.BPI_SCHEDULE, Labels.getLabel("label_SCHD_BPI")));
+		bpimethods.put(FinanceConstants.BPI_CAPITALIZE, new ValueLabel(FinanceConstants.BPI_CAPITALIZE, Labels.getLabel("label_CAPITALIZE_BPI")));
+		bpimethods.put(FinanceConstants.BPI_SCHD_FIRSTEMI, new ValueLabel(FinanceConstants.BPI_SCHD_FIRSTEMI, Labels.getLabel("label_SCHD_BPI_FRSTEMI")));
+	}
+
+	public void removeScheduleCalculationCode(String scheduleCalculationCode) {
+		if(scheduleCalculationCode == null) {
+			return;
+		}
+		
+		scheduleCalculationCodes.remove(scheduleCalculationCode);
+	}
+	
+	public void removeBpiMethods(String scheduleCalculationCode) {
+		if(scheduleCalculationCode == null) {
+			return;
+		}
+		
+		bpimethods.remove(scheduleCalculationCode);
 	}
 }

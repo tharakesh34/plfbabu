@@ -2038,9 +2038,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		Map<String, String> attributes = new HashMap<>();
 
 		if (isRetailCustomer) {
-			attributes = PennantStaticListUtil.getPrimaryIdAttributes(PennantConstants.PFF_CUSTCTG_INDIV);
+			attributes = PennantApplicationUtil.getPrimaryIdAttributes(PennantConstants.PFF_CUSTCTG_INDIV);
 		} else {
-			attributes = PennantStaticListUtil.getPrimaryIdAttributes(PennantConstants.PFF_CUSTCTG_CORP);
+			attributes = PennantApplicationUtil.getPrimaryIdAttributes(PennantConstants.PFF_CUSTCTG_CORP);
 
 		}
 

@@ -25,7 +25,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.collection.Collection;
 import com.pennant.backend.service.collection.CollectionService;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.bajaj.process.collections.CollectionProcess;
@@ -52,7 +51,8 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 	
 	private   Thread 					thread = null; 
 
-	private List<ValueLabel>			collectionTablesList		= PennantStaticListUtil.getCollectionTableNames();
+	private static ArrayList<ValueLabel> collections;
+	private List<ValueLabel> collectionTablesList = getCollectionTableNames();
 
 	private transient CollectionService	collectionService;
 	private transient CollectionProcess collectionProcess;
@@ -302,6 +302,15 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 		this.interfaceName.setConstraint("");
 		
 		logger.debug("Leaving");
+	}
+	
+	public static List<ValueLabel> getCollectionTableNames() {
+		if (collections == null) {
+			collections = new ArrayList<>(1);
+			collections.add(new ValueLabel(CollectionConstants.INTERFACE_COLLECTION,
+					Labels.getLabel("label_CollectionList_Collection")));
+		}
+		return collections;
 	}
 
 	/**

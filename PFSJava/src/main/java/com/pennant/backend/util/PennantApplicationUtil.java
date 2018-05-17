@@ -5,7 +5,9 @@ import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -14,6 +16,7 @@ import org.zkoss.zkplus.spring.SpringUtil;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -699,6 +702,46 @@ public class PennantApplicationUtil {
 			pageName = extendedFieldHeader.getModuleName() + "_" + extendedFieldHeader.getSubModuleName();
 		}
 		return pageName;
+	}
+	
+	public static Map<String, String> getPrimaryIdAttributes(String custCategory) {
+		Map<String, String> result = new HashMap<>();
+
+		switch (custCategory) {
+		case "RETAIL":
+			result.put("TYPE", SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL"));
+			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID_Retl.value");
+			result.put("MANDATORY", "Y".equals(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_REQ")) ? "true" : "false");
+			result.put("REGEX", "REGEX_" + SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL") + "_NUMBER");
+			break;
+		case "CORP":
+		case "SME":
+			result.put("TYPE", SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP"));
+			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID_Corp.value");
+			result.put("MANDATORY", "Y".equals(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_REQ")) ? "true" : "false");
+			result.put("REGEX", "REGEX_" + SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP") + "_NUMBER");
+			break;
+		default:
+			result.put("TYPE", "");
+			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID.value");
+			result.put("MANDATORY", "false");
+			result.put("REGEX", "");
+		}
+		
+		String type = result.get("TYPE");
+		int maxLength = 100;
+		
+		if ("PAN".equals(type)) {
+			maxLength =  LengthConstants.LEN_PAN;
+		} else if ("AADHAAR".equals(type)) {
+			maxLength = LengthConstants.LEN_AADHAAR;
+		} else if ("EID".equals(type)) {
+			maxLength = LengthConstants.LEN_EID;
+		}
+		
+		result.put("LENGTH", String.valueOf(maxLength));
+
+		return result;
 	}
 
  }

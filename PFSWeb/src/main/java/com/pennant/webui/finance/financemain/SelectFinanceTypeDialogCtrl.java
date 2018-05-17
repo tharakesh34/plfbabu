@@ -1679,7 +1679,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	
 	
 	private void doSetPrimaryIdAttributes() {
-		Map<String, String> attributes = PennantStaticListUtil.getPrimaryIdAttributes(getComboboxValue(custCtgType));
+		Map<String, String> attributes = PennantApplicationUtil.getPrimaryIdAttributes(getComboboxValue(custCtgType));
 		
 		primaryIdLabel = attributes.get("LABEL");
 		primaryIdMandatory = Boolean.valueOf(attributes.get("MANDATORY"));
