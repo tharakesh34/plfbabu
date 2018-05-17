@@ -634,6 +634,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell = new Listcell();
 			listCell.setId("RequestType".concat(String.valueOf(i)));
 			Combobox requestType = new Combobox();
+			requestType.setReadonly(true);
 			requestType.setValue(String.valueOf(vrf.getRequestType()));
 			List<ValueLabel> list = new ArrayList<>();
 			if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {
@@ -702,6 +703,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				listCell = new Listcell();
 				listCell.setId("Decision".concat(String.valueOf(i)));
 				Combobox decision = new Combobox();
+				decision.setReadonly(true);
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}

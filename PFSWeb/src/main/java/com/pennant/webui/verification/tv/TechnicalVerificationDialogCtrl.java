@@ -51,6 +51,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -245,7 +246,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(20);
-		this.summaryRemarks.setMaxlength(50);
+		this.summaryRemarks.setMaxlength(500);
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.valuationAmount.setProperties(true, PennantConstants.defaultCCYDecPos);
 		setStatusDetails();
@@ -414,7 +415,11 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		this.contactNumber2.setValue(tv.getContactNumber2());
 		
 		//Summary Details
-		this.verificationDate.setValue(tv.getDate());
+		if (getFirstTaskOwner().equals(getRole()) && tv.getDate() == null) {
+			this.verificationDate.setValue(DateUtility.getAppDate());
+		} else {
+			this.verificationDate.setValue(tv.getDate());
+		}
 		this.agentCode.setValue(tv.getAgentCode());
 		this.agentName.setValue(tv.getAgentName());
 		this.valuationAmount.setValue(PennantApplicationUtil.formateAmount(tv.getValuationAmount(), PennantConstants.defaultCCYDecPos));
@@ -851,7 +856,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			this.verificationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_TechnicalVerificationDialog_VerificationDate.value"), true,
 							DateUtil.getDatePart(technicalVerification.getCreatedOn()),
-							DateUtil.getDatePart(DateUtil.getSysDate()), true));
+							DateUtil.getDatePart(DateUtility.getAppDate()), true));
 		}
 		
 		if (!this.agentCode.isReadonly()) {

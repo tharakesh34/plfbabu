@@ -47,6 +47,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -65,6 +66,7 @@ import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
+import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -220,6 +222,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.RCUSRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
 
+		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(20);
 		this.remarks.setMaxlength(500);
@@ -383,7 +386,11 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.finReference.setValue(rcu.getKeyReference());
 		this.customerName.setValue(rcu.getCustName());
 
-		this.verificationDate.setValue(rcu.getVerificationDate());
+		if (getFirstTaskOwner().equals(getRole()) && rcu.getVerificationDate() == null) {
+			this.verificationDate.setValue(DateUtility.getAppDate());
+		} else {
+			this.verificationDate.setValue(rcu.getVerificationDate());
+		}
 		this.agentCode.setValue(rcu.getAgentCode());
 		this.agentName.setValue(rcu.getAgentName());
 		this.recommendations.setValue(String.valueOf(rcu.getStatus()));
@@ -957,7 +964,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			this.verificationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_RiskContainmentUnitDialog_VerificationDate.value"), true,
 							DateUtil.getDatePart(riskContainmentUnit.getCreatedOn()),
-							DateUtil.getDatePart(DateUtil.getSysDate()), true));
+							DateUtil.getDatePart(DateUtility.getAppDate()), true));
 		}
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(

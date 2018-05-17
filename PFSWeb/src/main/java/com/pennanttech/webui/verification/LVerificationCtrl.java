@@ -408,6 +408,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 				listCell = new Listcell();
 				listCell.setId("Decision".concat(String.valueOf(i)));
 				Combobox decision = new Combobox();
+				decision.setReadonly(true);
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
@@ -686,6 +687,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 				listCell = new Listcell();
 				listCell.setId("WDecision".concat(String.valueOf(i)));
 				Combobox decision = new Combobox();
+				decision.setReadonly(true);
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}

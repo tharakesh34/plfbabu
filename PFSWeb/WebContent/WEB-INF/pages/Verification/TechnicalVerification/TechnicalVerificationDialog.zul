@@ -256,21 +256,27 @@
 														id="reason" />
 												</hbox>
 												<label
-													id="label_summaryRemarks"
-													value="${c:l('label_TechnicalVerificationDialog_Remarks.value')}" />
-												<hbox>
-													<space
-														id="space_AgentRemarks" spacing="2px" />
-													<textbox
-														id="summaryRemarks" width="155px" />
-												</hbox>
-											</row>
-											<row>
-												<label
 													id="label_ValuationAmount"
 													value="${c:l('label_TechnicalVerificationDialog_ValuationAmount.value')}" />
 												<currencyBox
 													id="valuationAmount" />
+											</row>
+
+											<row id="row11">
+												<cell>
+													<label
+														id="label_summaryRemarks"
+														value="${c:l('label_FieldInvestigationDialog_Remarks.value')}" />
+												</cell>
+												<cell colspan="4">
+													<hbox>
+														<space
+															id="space_AgentRemarks" spacing="2px" />
+														<textbox
+															multiline="true" id="summaryRemarks" width="850px"
+															height="80px" />
+													</hbox>
+												</cell>
 											</row>
 										</rows>
 									</grid>

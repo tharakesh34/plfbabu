@@ -50,6 +50,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -243,6 +244,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		reason.setFilters(reasonFilter);
 
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.summaryRemarks.setMaxlength(500);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -417,7 +419,11 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.contactNumber1.setValue(fi.getContactNumber1());
 		this.contactNumber2.setValue(fi.getContactNumber2());
 
-		this.verificationDate.setValue(fi.getDate());
+		if (getFirstTaskOwner().equals(getRole()) && fi.getDate() == null) {
+			this.verificationDate.setValue(DateUtility.getAppDate());
+		} else {
+			this.verificationDate.setValue(fi.getDate());
+		}
 		this.agentCode.setValue(fi.getAgentCode());
 		this.agentName.setValue(fi.getAgentName());
 		this.recommendations.setValue(String.valueOf(fi.getStatus()));
@@ -758,7 +764,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			this.verificationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_FieldInvestigationDialog_VerificationDate.value"), true,
 							DateUtil.getDatePart(fieldInvestigation.getCreatedOn()),
-							DateUtil.getDatePart(DateUtil.getSysDate()), true));
+							DateUtil.getDatePart(DateUtility.getAppDate()), true));
 		}
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(

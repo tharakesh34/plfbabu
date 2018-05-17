@@ -46,6 +46,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -71,6 +72,7 @@ import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
+import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -231,10 +233,10 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.LVSRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
 
+		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(20);
 		this.remarks.setMaxlength(500);
-
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -432,7 +434,11 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.collateralType.setValue(lv.getCollateralType());
 		this.collateralReference.setValue(lv.getReferenceFor());
 
-		this.verificationDate.setValue(lv.getVerificationDate());
+		if (getFirstTaskOwner().equals(getRole()) && lv.getVerificationDate() == null) {
+			this.verificationDate.setValue(DateUtility.getAppDate());
+		} else {
+			this.verificationDate.setValue(lv.getVerificationDate());
+		}
 		this.agentCode.setValue(lv.getAgentCode());
 		this.agentName.setValue(lv.getAgentName());
 		this.recommendations.setValue(String.valueOf(lv.getStatus()));
@@ -923,7 +929,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			this.verificationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_LegalVerificationDialog_VerificationDate.value"), true,
 							DateUtil.getDatePart(legalVerification.getCreatedOn()),
-							DateUtil.getDatePart(DateUtil.getSysDate()), true));
+							DateUtil.getDatePart(DateUtility.getAppDate()), true));
 		}
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(
