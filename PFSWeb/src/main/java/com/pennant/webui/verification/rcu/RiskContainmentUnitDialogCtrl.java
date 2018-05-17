@@ -386,10 +386,11 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.finReference.setValue(rcu.getKeyReference());
 		this.customerName.setValue(rcu.getCustName());
 
-		if (getFirstTaskOwner().equals(getRole()) && rcu.getVerificationDate() == null) {
-			this.verificationDate.setValue(DateUtility.getAppDate());
-		} else {
-			this.verificationDate.setValue(rcu.getVerificationDate());
+		this.verificationDate.setValue(rcu.getVerificationDate());
+		if (!fromLoanOrg) {
+			if (getFirstTaskOwner().equals(getRole()) && rcu.getVerificationDate() == null) {
+				this.verificationDate.setValue(DateUtility.getAppDate());
+			}
 		}
 		this.agentCode.setValue(rcu.getAgentCode());
 		this.agentName.setValue(rcu.getAgentName());

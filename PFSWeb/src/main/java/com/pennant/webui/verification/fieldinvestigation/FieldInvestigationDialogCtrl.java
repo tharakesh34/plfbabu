@@ -418,11 +418,12 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.zipCode.setValue(fi.getZipCode());
 		this.contactNumber1.setValue(fi.getContactNumber1());
 		this.contactNumber2.setValue(fi.getContactNumber2());
-
-		if (getFirstTaskOwner().equals(getRole()) && fi.getDate() == null) {
-			this.verificationDate.setValue(DateUtility.getAppDate());
-		} else {
-			this.verificationDate.setValue(fi.getDate());
+		
+		this.verificationDate.setValue(fi.getDate());
+		if (!fromLoanOrg) {
+			if (getFirstTaskOwner().equals(getRole()) && fi.getDate() == null) {
+				this.verificationDate.setValue(DateUtility.getAppDate());
+			} 
 		}
 		this.agentCode.setValue(fi.getAgentCode());
 		this.agentName.setValue(fi.getAgentName());

@@ -434,10 +434,11 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.collateralType.setValue(lv.getCollateralType());
 		this.collateralReference.setValue(lv.getReferenceFor());
 
-		if (getFirstTaskOwner().equals(getRole()) && lv.getVerificationDate() == null) {
-			this.verificationDate.setValue(DateUtility.getAppDate());
-		} else {
-			this.verificationDate.setValue(lv.getVerificationDate());
+		this.verificationDate.setValue(lv.getVerificationDate());
+		if (!fromLoanOrg) {
+			if (getFirstTaskOwner().equals(getRole()) && lv.getVerificationDate() == null) {
+				this.verificationDate.setValue(DateUtility.getAppDate());
+			}
 		}
 		this.agentCode.setValue(lv.getAgentCode());
 		this.agentName.setValue(lv.getAgentName());

@@ -415,10 +415,11 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		this.contactNumber2.setValue(tv.getContactNumber2());
 		
 		//Summary Details
-		if (getFirstTaskOwner().equals(getRole()) && tv.getDate() == null) {
-			this.verificationDate.setValue(DateUtility.getAppDate());
-		} else {
-			this.verificationDate.setValue(tv.getDate());
+		this.verificationDate.setValue(tv.getDate());
+		if (!fromLoanOrg) {
+			if (getFirstTaskOwner().equals(getRole()) && tv.getDate() == null) {
+				this.verificationDate.setValue(DateUtility.getAppDate());
+			}
 		}
 		this.agentCode.setValue(tv.getAgentCode());
 		this.agentName.setValue(tv.getAgentName());
