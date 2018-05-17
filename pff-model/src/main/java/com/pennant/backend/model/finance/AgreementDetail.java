@@ -4350,7 +4350,7 @@ private String custAccount ="";
 		private String custAddrPhone ="";
 		private String custEmail="";
 		private String gstNo="";
-		private String applicantType;
+		private String applicantType="";
 
 		public CoApplicant() {
 			

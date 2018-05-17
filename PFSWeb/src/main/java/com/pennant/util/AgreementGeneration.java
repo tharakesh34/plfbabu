@@ -53,7 +53,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -705,7 +704,7 @@ public class AgreementGeneration implements Serializable {
 						populateAppIncExpDetails(custdetails.getCustomerIncomeList(), agreement, formatter, "Co-Applicant");
 					}
 					if(null!=custdetails&&CollectionUtils.isNotEmpty(custdetails.getCustomerBankInfoList())){
-						populateBankingDetails(agreement, formatter, "Co-Applicant", detail.getCustomerDetails());
+						populateBankingDetails(agreement, formatter, "Co-Applicant", custdetails);
 					}
 					
 					populateInternalLiabilities(detail, agreement, formatter, custdetails, "Co-Applicant");
@@ -715,8 +714,8 @@ public class AgreementGeneration implements Serializable {
 						if(null!=extLiability){
 							ExternalLiabilityDetail externalLiabilityDetail=agreement.new ExternalLiabilityDetail();
 							externalLiabilityDetail.setAppType("Co-Applicant");
-							if(null!=detail.getCustomerDetails() && null!=detail.getCustomerDetails().getCustomer()){
-								Customer customer=detail.getCustomerDetails().getCustomer();
+							if(null!=custdetails.getCustomer()){
+								Customer customer=custdetails.getCustomer();
 								externalLiabilityDetail.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
 								externalLiabilityDetail.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 							}
@@ -1002,8 +1001,8 @@ public class AgreementGeneration implements Serializable {
 					InternalLiabilityDetail internalLiabilityDetail=agreement.new InternalLiabilityDetail();
 					
 					internalLiabilityDetail.setAppType(StringUtils.trimToEmpty(applicantType));
-					if(null!=detail.getCustomerDetails() && null!=detail.getCustomerDetails().getCustomer()){
-						Customer customer=detail.getCustomerDetails().getCustomer();
+					if(null!=custdetails.getCustomer()){
+						Customer customer=custdetails.getCustomer();
 						internalLiabilityDetail.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
 						internalLiabilityDetail.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 					}
@@ -1065,7 +1064,7 @@ public class AgreementGeneration implements Serializable {
 		for(CustomerBankInfo customerBankInfo: customerBankInfoList){
 			BankingDetail bankingDetail=agreement.new BankingDetail();
 			bankingDetail.setApplicantType(StringUtils.trimToEmpty(applicantType));
-			if(null!=custdetails.getCustomer()){
+			if(null!=custdetails && null!=custdetails.getCustomer()){
 				bankingDetail.setCustCIF(StringUtils.trimToEmpty(custdetails.getCustomer().getCustCIF()));
 				bankingDetail.setCustName(StringUtils.trimToEmpty(custdetails.getCustomer().getCustShrtName()));
 			}
