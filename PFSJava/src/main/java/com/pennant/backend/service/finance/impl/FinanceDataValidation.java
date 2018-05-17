@@ -197,10 +197,10 @@ public class FinanceDataValidation {
 		errorDetails = nonFinanceValidation(vldGroup, finScheduleData, isAPICall);
 
 		// validate FinReference
-		/*ErrorDetail error = validateFinReference(finScheduleData.getFinanceMain().getFinReference(), finScheduleData);
+		ErrorDetail error = validateFinReference(finScheduleData.getFinReference(), finScheduleData,vldGroup);
 		if(error != null) {
 			errorDetails.add(error);
-		}*/
+		}
 
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
@@ -957,25 +957,11 @@ public class FinanceDataValidation {
 			}
 		}
 		// validate FinReference
-		ErrorDetail error = validateFinReference(financeDetail.getFinReference(), finScheduleData);
+		ErrorDetail error = validateFinReference(financeDetail.getFinScheduleData().getFinReference(), finScheduleData,vldGroup);
 		if(error != null) {
 			errorDetails.add(error);
 		}
-		
-		if(!finScheduleData.getFinanceType().isFinIsGenRef()) {
-			if(StringUtils.isBlank(financeDetail.getFinReference())) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "FinReference";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-			} else {
-				if (financeDetail.getFinReference().length() > LengthConstants.LEN_REF) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "FinReference";
-					valueParm[1] = LengthConstants.LEN_REF + " characters";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
-				}
-			}
-		}
+
 		// Validate customer
 		if ((isCreateLoan || StringUtils.isNotBlank(finMain.getLovDescCustCIF()))) {
 			Customer customer = customerDAO.getCustomerByCIF(finMain.getLovDescCustCIF(), "");
@@ -1192,7 +1178,7 @@ public class FinanceDataValidation {
 	 * @param finScheduleData
 	 * @return
 	 */
-	private ErrorDetail validateFinReference(String finReference, FinScheduleData finScheduleData) {
+	private ErrorDetail validateFinReference(String finReference, FinScheduleData finScheduleData, String vldGroup ) {
 		ErrorDetail errorDetail = null;
 		if (!finScheduleData.getFinanceType().isFinIsGenRef()) {
 			if (StringUtils.isBlank(finReference)) {
@@ -1206,7 +1192,8 @@ public class FinanceDataValidation {
 					valueParm[1] = LengthConstants.LEN_REF + " characters";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm));
 				}
-				boolean exists = financeDetailService.isFinReferenceExits(finReference, "_View", false);
+				boolean exists = financeDetailService.isFinReferenceExits(finReference, "_View",
+						StringUtils.equals(PennantConstants.VLD_CRT_LOAN, vldGroup) ? false : true);
 				if (exists) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "FinReference";
