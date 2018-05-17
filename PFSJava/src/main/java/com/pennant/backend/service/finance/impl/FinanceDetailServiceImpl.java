@@ -5900,6 +5900,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// ####_0.2
 			// Not allowed to approve loan with Disbursement type if it is not in  the configured OTC Types
 			String[] valueParm = new String[2];
+			boolean isFound = false;
 			boolean isOTCPayment = false;
 			
 			String alwrepayMethods=(String)SysParamUtil.getValue("COVENANT_REPAY_OTC_TYPE");
@@ -5907,15 +5908,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				String[] repaymethod = alwrepayMethods.split(",");
 				if (financeDetail.getAdvancePaymentsList() != null
 						&& financeDetail.getAdvancePaymentsList().size() > 0) {
-					for (String rpymethod : repaymethod) {
-						for (FinAdvancePayments finAdvancePayments : financeDetail.getAdvancePaymentsList()) {
-								valueParm[0] = finAdvancePayments.getPaymentType();
-							if (!StringUtils.equals(finAdvancePayments.getPaymentType(), rpymethod)) {
-								isOTCPayment = true;
+					for (FinAdvancePayments finAdvancePayments : financeDetail.getAdvancePaymentsList()) {
+						isFound = false;
+						for (String rpymethod : repaymethod) {
+							if (StringUtils.equals(finAdvancePayments.getPaymentType(), rpymethod)) {
+								isFound = true;
 								break;
-							}
+ 							}
 						}
-						break;
+						if (!isFound) {
+							valueParm[0] = finAdvancePayments.getPaymentType();
+							isOTCPayment = true;
+							break;
+						}
 					}
 					if (isOTCPayment) {
 						if (financeDetail.getCovenantTypeList() != null && financeDetail.getCovenantTypeList().size() > 0) {
@@ -5923,16 +5928,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 								if (covenantType.isAlwOtc()) {
 									valueParm[1] = Labels.getLabel("label_FinCovenantTypeDialog_AlwOTC.value");
 									auditDetails.get(0)
-											.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41101", valueParm)));
+									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41101", valueParm)));
 									break;
-									
+
 								}
 							}
 						}
 					} 
 				}
-				
-				
 			}
 			//Collateral Assignments details
 			//=======================================

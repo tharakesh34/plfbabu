@@ -36,7 +36,6 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.component.Uppercasebox;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptRealizationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
@@ -94,9 +93,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private FeeReceiptService feeReceiptService;
 
 	//Added Promotion details 
-	protected Uppercasebox transactionRef;
 	protected Listbox sortOperator_FeeReceiptSearchTranRef;
-	protected Listheader listheader_FeeReceipt_PromotionCode;
 	protected Listheader listheader_FeeReceipt_ReceiptRef;
 	protected Listheader listheader_FeeReceipt_ReceiptDate;
 		
@@ -151,8 +148,6 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				sortOperator_FeeReceiptFinType, Operators.STRING);
 		registerField("finBranch", listheader_FeeReceiptFinBranch, SortOrder.NONE, finBranch, sortOperator_FeeReceiptFinBranch,
 				Operators.STRING);
-		registerField("transactionRef",listheader_FeeReceipt_ReceiptRef, SortOrder.NONE, transactionRef, sortOperator_FeeReceiptSearchTranRef, Operators.STRING);
-		registerField("promotionCode", listheader_FeeReceipt_PromotionCode, SortOrder.NONE);
 		registerField("receiptDate", listheader_FeeReceipt_ReceiptDate, SortOrder.NONE);
 		// Render the page and display the data.
 		doRenderPage();

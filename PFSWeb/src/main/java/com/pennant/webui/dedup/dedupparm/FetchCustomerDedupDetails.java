@@ -232,7 +232,7 @@ public class FetchCustomerDedupDetails {
 		}
 		if (customerDetails.getCustomerDocumentsList() != null) {
 			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
-				if (document.getCustDocCategory().equals(PennantConstants.EMAILTYPE_ADHRCRD)) {
+				if (document.getCustDocCategory().equals(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 					aadharId = document.getCustDocTitle();
 					break;
 				}

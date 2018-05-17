@@ -86,7 +86,7 @@
 											width="150px" />
 										<button id="btnSearchCustCIF"
 											tooltiptext="${c:l('label_FeeReceiptSearch_btnSearchCustCIF.tooltiptext')}"
-											image="/images/icons/more.png" />
+											image="/images/icons/LOVSearch.png" />
 									</hbox>
 								</row>
 								<row>
@@ -144,6 +144,13 @@
 											tooltiptext="${c:l('label_FeeReceiptSearch_btnSearchBranch.tooltiptext')}"
 											image="/images/icons/LOVSearch.png" />
 									</hbox>
+									<label
+										id="label_FeeReceiptSearch_TranRef"
+										value="${c:l('label_FeeReceiptSearch_TranRef.value')}" />
+									<listbox
+										id="sortOperator_FeeReceiptSearchTranRef" width="43px"
+										mold="select" rows="1" />
+									<uppercasebox id="transactionRef" width="150px" />
 								</row>
 								<row>
 									<label
@@ -190,6 +197,9 @@
 									id="listheader_FeeReceiptReference"
 									label="${c:l('listheader_FeeReceiptReference.label')}"
 									sort="auto" hflex="min" />
+								<listheader id="listheader_FeeReceipt_PromotionCode"
+									label="${c:l('listheader_FeeReceipt_PromotionCode')}" 
+									sort="auto" hflex="min" />
 								<listheader
 									id="listheader_FeeReceiptPurpose" visible="false"
 									label="${c:l('listheader_FeeReceiptPurpose.label')}"
@@ -198,6 +208,12 @@
 									id="listheader_FeeReceiptMode"
 									label="${c:l('listheader_FeeReceiptMode.label')}" sort="auto"
 									hflex="min" />
+								<listheader id="listheader_FeeReceipt_ReceiptRef"
+									label="${c:l('listheader_FeeReceipt_ReceiptRef')}" 
+									sort="auto" hflex="min" />
+								<listheader id="listheader_FeeReceipt_ReceiptDate"
+									label="${c:l('listheader_FeeReceipt_ReceiptDate')}" 
+									sort="auto" hflex="min" />
 								<listheader
 									id="listheader_FeeReceiptAmount" align="right"
 									label="${c:l('listheader_FeeReceiptAmount.label')}" sort="auto"
