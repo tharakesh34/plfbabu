@@ -1089,8 +1089,31 @@
 		<comment> data type modified from NUMBER(5,2) to decimal(5,2)</comment>
 		<modifyDataType tableName="GST_Invoice_Txn_Details" columnName="UGST_RATE" newDataType="decimal(5,2)" />
 	</changeSet>
-	
-	<changeSet id="67" author="Kesav">
+	<changeSet id="67" author="Jayant" dbms="postgresql">
+		<sql>
+			select deps_save_and_drop_dependencies('plf','feetypes');
+		</sql>
+	</changeSet>
+	<changeSet id="68" author="Jayant" dbms="postgresql">
+		<sql>
+			select deps_save_and_drop_dependencies('plf','feetypes_temp');
+		</sql>
+	</changeSet>
+	<changeSet id="69" author="Jayant">
+		<modifyDataType tableName="feetypes" columnName="TaxApplicable" newDataType="boolean"/>
+		<modifyDataType tableName="feetypes_temp" columnName="TaxApplicable" newDataType="boolean"/>
+	</changeSet>
+	<changeSet id="70" author="Jayant" dbms="postgresql">
+		<sql>
+			select deps_restore_dependencies('plf','feetypes');
+		</sql>
+	</changeSet>
+	<changeSet id="71" author="Jayant" dbms="postgresql">
+		<sql>
+			select deps_restore_dependencies('plf','feetypes_temp');
+		</sql>
+	</changeSet>
+	<changeSet id="72" author="Kesav">
 		<comment>coalesce added in TaxApplicable column for GST changes</comment>
 		<createView viewName="Manualadvise_View" replaceIfExists="true">
 			SELECT t1.adviseid,
@@ -1122,7 +1145,7 @@
 			    t1.reservedamt,
 			    t1.balanceamt,
 			    t3.reason AS bouncecodedesc,
-			    coalesce(t2.TaxApplicable,'0') TaxApplicable,
+			    coalesce(t2.TaxApplicable,0) TaxApplicable,
 			    t2.TaxComponent
 			   FROM manualadvise_temp t1
 			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
@@ -1157,7 +1180,7 @@
 			    t1.reservedamt,
 			    t1.balanceamt,
 			    t3.reason AS bouncecodedesc,
-			    coalesce(t2.TaxApplicable,'0') TaxApplicable,
+			    coalesce(t2.TaxApplicable,0) TaxApplicable,
 			    t2.TaxComponent
 			   FROM manualadvise t1
 			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
@@ -1168,7 +1191,7 @@
 		</createView>	
 	</changeSet>
 	
-	<changeSet id="68" author="Kesav">
+	<changeSet id="73" author="Kesav">
 		<comment>coalesce added in TaxApplicable column for GST changes</comment>
 		<createView viewName="manualadvise_tview" replaceIfExists="true">
 			SELECT t1.adviseid,
@@ -1200,7 +1223,7 @@
 			    t1.reservedamt,
 			    t1.balanceamt,
 			    t3.reason AS bouncecodedesc,
-				coalesce(t2.TaxApplicable,'0') TaxApplicable,
+				coalesce(t2.TaxApplicable,0) TaxApplicable,
 			    t2.TaxComponent
 			   FROM manualadvise_temp t1
 			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
@@ -1208,7 +1231,7 @@
 		</createView>	
 	</changeSet>
 	
-	<changeSet id="69" author="Kesav">
+	<changeSet id="74" author="Kesav">
 		<comment>coalesce added in TaxApplicable column for GST changes</comment>
 		<createView viewName="manualadvise_lview" replaceIfExists="true">
 			SELECT t1.adviseid,
@@ -1240,7 +1263,7 @@
 			    t1.reservedamt,
 			    t1.balanceamt,
 			    t3.reason AS bouncecodedesc,
-				coalesce(t2.TaxApplicable,'0') TaxApplicable,
+				coalesce(t2.TaxApplicable,0) TaxApplicable,
 			    t2.TaxComponent
 			   FROM manualadvise t1
 			     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
@@ -1248,7 +1271,7 @@
 		</createView>	
 	</changeSet>
 	
-	<changeSet id="70" author="Kesav">
+	<changeSet id="75" author="Kesav">
 		<comment>coalesce added in TaxApplicable column for GST changes</comment>
 		<createView viewName="manualadvise_aview" replaceIfExists="true">
 			SELECT t1.adviseid,
@@ -1280,7 +1303,7 @@
 			    t1.reservedamt,
 			    t1.balanceamt,
 			    t3.reason AS bouncecodedesc,
-				coalesce(t2.TaxApplicable,'0') TaxApplicable,
+				coalesce(t2.TaxApplicable,0) TaxApplicable,
 			    t2.TaxComponent
 			   FROM manualadvise t1
 			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
