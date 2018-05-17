@@ -2886,11 +2886,19 @@ public class ScheduleCalculator {
 		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 		int indexStart = finMain.getIndexStart();
 
+		BigDecimal bpiBalance = BigDecimal.ZERO;
+		
 		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
 		for (int i = indexStart; i < sdSize; i++) {
 			curSchd = finSchdDetails.get(i);
 			Date curSchdDate = curSchd.getSchDate();
 
+			if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
+				if (finMain.getBpiTreatment().equals(FinanceConstants.BPI_SCHD_FIRSTEMI)) {
+					bpiBalance = curSchd.getProfitCalc();	
+				}
+			}
+			
 			// Added for setting Schedule method in case of Different
 			// frequencies for PFT,CPZ & RVW
 			if (DateUtility.compare(curSchdDate, fromDate) < 0) {
@@ -2912,7 +2920,8 @@ public class ScheduleCalculator {
 
 				if (curSchd.isRepayOnSchDate()) {
 					if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
-						curSchd.setRepayAmount(instructAmount);
+						curSchd.setRepayAmount(instructAmount.add(bpiBalance));
+						bpiBalance = BigDecimal.ZERO;
 					} else if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)) {
 						curSchd.setRepayAmount(BigDecimal.ZERO);
 					} else {
