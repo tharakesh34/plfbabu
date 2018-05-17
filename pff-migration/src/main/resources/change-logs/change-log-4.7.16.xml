@@ -6843,5 +6843,11 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 	          WHERE fincovenanttype_temp.finreference = t1.finreference AND fincovenanttype_temp.covenanttype = t1.covenanttype))
 	 </createView>
 	</changeSet>
+	
+ <changeSet id="161" author="Ganesh.p">
+	<sql>
+		INSERT INTO ErrorDetails VALUES('65032','EN','W','loan start date and disbursment date should be on the same date.','','Approved','','','','','',0,current_timestamp,1000,0);
+	</sql>
+</changeSet>	
 </databaseChangeLog>
 	

@@ -5884,7 +5884,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//=======================================
 			if (financeDetail.getAdvancePaymentsList() != null) {
 				auditDetails.addAll(getFinAdvancePaymentsService().validate(financeDetail.getAdvancePaymentsList(),
-						financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
+						financeMain.getWorkflowId(), method, auditTranType, usrLanguage, financeMain));
 			}
 
 			//Covenant Type details

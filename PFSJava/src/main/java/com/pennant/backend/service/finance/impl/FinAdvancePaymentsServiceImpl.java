@@ -333,12 +333,12 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	@Override
 	public List<AuditDetail> validate(List<FinAdvancePayments> finAdvancePayments, long workflowId, String method,
-			String auditTranType, String usrLanguage) {
-		return doValidation(finAdvancePayments, workflowId, method, auditTranType, usrLanguage);
+			String auditTranType, String usrLanguage, FinanceMain financeMain) {
+		return doValidation(finAdvancePayments, workflowId, method, auditTranType, usrLanguage, financeMain);
 	}
 
 	private List<AuditDetail> doValidation(List<FinAdvancePayments> finAdvancePayments, long workflowId, String method,
-			String auditTranType, String usrLanguage) {
+			String auditTranType, String usrLanguage, FinanceMain financeMain) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
@@ -346,7 +346,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			List<AuditDetail> advancePayAuditDetails = getAdvancePaymentAuditDetail(finAdvancePayments, auditTranType,
 					method, workflowId);
 			for (AuditDetail auditDetail : advancePayAuditDetails) {
-				validateAdvancePayment(auditDetail, method, usrLanguage);
+				validateAdvancePayment(auditDetail, method, usrLanguage, financeMain);
 			}
 			auditDetails.addAll(advancePayAuditDetails);
 		}
@@ -355,7 +355,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		return auditDetails;
 	}
 
-	private AuditDetail validateAdvancePayment(AuditDetail auditDetail, String usrLanguage, String method) {
+	private AuditDetail validateAdvancePayment(AuditDetail auditDetail, String usrLanguage, String method,
+			FinanceMain financeMain) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinAdvancePayments finAdvancePay = (FinAdvancePayments) auditDetail.getModelData();
@@ -424,6 +425,12 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 							"41005", errParm, valueParm), usrLanguage));
 				}
 			}
+		}
+		//validation related to loanStartDate and first DisbursmentDate should be same.
+		if (DateUtility.compare(financeMain.getFinStartDate(), finAdvancePay.getLlDate()) != 0
+				&& finAdvancePay.getPaymentSeq() == 1) {
+			ErrorDetail errorDetail = new ErrorDetail("65032");
+			auditDetail.setErrorDetail(errorDetail);
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

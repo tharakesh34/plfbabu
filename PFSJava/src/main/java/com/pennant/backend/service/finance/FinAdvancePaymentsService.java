@@ -57,7 +57,8 @@ public interface FinAdvancePaymentsService {
 	List<AuditDetail> saveOrUpdate(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType, String auditTranType);
 	List<AuditDetail> doApprove(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType, String auditTranType);
 	List<AuditDetail> delete(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType, String auditTranType);
-	List<AuditDetail> validate(List<FinAdvancePayments> finAdvancePaymentDetails, long workflowId, String method, String auditTranType, String  usrLanguage);
+	List<AuditDetail> validate(List<FinAdvancePayments> finAdvancePaymentDetails, long workflowId, String method,
+			String auditTranType, String usrLanguage, FinanceMain financeMain);
 	void processDisbursments(FinanceDetail financeDetail);
 	List<AuditDetail> processQuickDisbursment(FinanceDetail financeDetail, String tableType, String auditTranType);
 	void doCancel(FinanceDetail financeDetail);
