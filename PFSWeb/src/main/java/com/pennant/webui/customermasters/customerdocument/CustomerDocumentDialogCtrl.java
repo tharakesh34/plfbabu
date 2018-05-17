@@ -926,7 +926,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		// ### 01-05-2018 TuleApp ID : #360
 		if (!this.custDocTitle.isReadonly()) {
 			if (StringUtils.trimToEmpty(this.custDocType.getValue())
-					.equalsIgnoreCase(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL_DOC_TYPE"))) {
+					.equalsIgnoreCase(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL_DOC_TYPE"))
+					&& !StringUtils.trimToEmpty(this.custDocType.getValue())
+							.equalsIgnoreCase(PennantConstants.CPRCODE)) {
 				this.custDocTitle.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
 								primaryIdRegex, isIdNumMand));
