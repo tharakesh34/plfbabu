@@ -6522,31 +6522,18 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 			<column name="EMIAmount" type="decimal(18,0)" />
 		</createTable>
 	</changeSet>
-	<!-- <changeSet id="153" author="Madhubabu">
+	 <changeSet id="153" author="Madhubabu">
 		<comment> Providing group rights to FinCovenantTypeDialog_alwOtc</comment>
 		<sql>
 			INSERT INTO SMTPARAMETERS VALUES ('FUTUREDAYS_COV_RECEIVED_DATE','covenant max allowed future days','int',1,'10','200',0, NULL, NULL, 'covenant max allowed future days',1,1000,CURRENT_TIMESTAMP,'Approved',NULL,NULL,NULL,NULL,NULL,0);
 			INSERT INTO SMTPARAMETERS VALUES ('FUTUREDAYS_SER_COV_RECEIVED_DATE','covenant max allowed future days','int',1,'10','200',0, NULL, NULL, 'covenant max allowed future days',1,1000,CURRENT_TIMESTAMP,'Approved',NULL,	NULL,NULL,NULL,NULL,0);
 			
 			INSERT INTO SMTPARAMETERS VALUES ('COVENANT_REPAY_OTC_TYPE','Repayment type from covenant to proceed to disbursement ','String',1,'DD,CHEQUE','200',0, NULL, NULL, 'covenant max allowed future days',1,1000,CURRENT_TIMESTAMP,'Approved',NULL,	NULL,NULL,NULL,NULL,0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_alwOtc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), 
-			(SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMER_DDE_MAKER') ,
-			(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_alwOtc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), 
-			(SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINCOVENANTDETAIL_SER') ,
-			(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_alwOtc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), 
-			(SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LAP_SSO') ,
-			(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_alwOtc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 			
 			INSERT INTO ErrorDetails VALUES('41101','EN','E','{1} are not alowed for Disbursment Type : {0}','','Approved','','','','','',0,NUll,1000,0);
 			INSERT INTO ErrorDetails VALUES('S41103','EN','E','Disbursement can’t be done for disbursement type : {0} with pending Covenant PDD Over Due or OTC.','','Approved','','','','','',0,NUll,1000,0);
 		</sql>
-	</changeSet> -->
+	</changeSet>
 	<changeSet id="154.1" author="Vinay">
 		<addColumn tableName="FinCovenantType">
 			<column name="alwOtc" type="boolean" defaultValue="0" />
