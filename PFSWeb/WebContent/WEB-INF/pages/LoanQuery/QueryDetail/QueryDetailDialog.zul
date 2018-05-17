@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	
+	<window id="window_QueryDetailDialog" border="normal"
+			apply="${queryDetailDialogCtrl}" width="100%" height="100%" sizable="false">
+
+		<borderlayout id="borderlayoutQueryDetail">
+			<north>
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew" visible="false" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"/>
+							<button id="btnEdit" visible="false" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"/>
+							<button id="btnDelete" visible="false" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"/>
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"/>
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"/>
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"/>
+						</toolbar>
+				<!-- SEARCH AREA -->
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_QueryDetailDialog.title')}" sclass="label-heading" />
+						</toolbar>
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" visible="false" />
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false">
+			<div width="100%" height="100%">
+	<groupbox id="finBasicdetails">
+	
+		<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+					<columns>
+						<column width="15%" />
+						<column width="35%" />
+						<column width="15%" />
+						<column width="35%" />
+					</columns>
+					<rows>
+						<row id ="row0" >
+							<label id = "label_FinReference" value="${c:l('label_QueryDetailDialog_FinReference.value')}" />
+									<extendedcombobox id = "finReference"/>
+							
+						</row>
+					</rows>
+		</grid>
+	</groupbox>				
+	<tabbox width="100%" >
+		<tabs id="tabsIndexCenter">
+			<tab label="${c:l('label_QueryDetailDialog_QueryTab.value')}" id="queryDetails" />
+			<tab label="${c:l('label_QueryDetailDialog_DocumentTab.value')}" id="documentDetails" />
+		</tabs>
+		<tabpanels id="tabpanelsBoxIndexCenter">
+			<tabpanel style="overflow:auto" id="tp_queryDetails">
+				<div id="divKeyDetails">
+			<groupbox id="gb_basicDetails" sclass="gb-dialog">
+			
+				<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+					<columns>
+							<column width="15%" />
+							<column width="35%" />
+							<column width="15%" />
+							<column width="35%" />
+						</columns>
+					<rows>
+						
+						<row id ="row1" >
+							<label id = "label_RaisedBy" value="${c:l('label_QueryDetailDialog_RaisedBy.value')}" />
+							<longbox id = "raisedBy" width="300px"  maxlength="26"  readonly="true" />
+							<label id = "label_RaisedOn" value="${c:l('label_QueryDetailDialog_RaisedOn.value')}" />
+							<datebox id="raisedOn" format="dd/MM/yyyy HH:mm" width="300px"  readonly="true" />
+						</row>
+						
+						<row id ="row2" >
+							<label id = "label_QryCategory" value="${c:l('label_QueryDetailDialog_QryCategory.value')}" />
+							<textbox id = "QryCategory" maxlength="100" width="300px"  readonly="true" />
+							<label id = "label_AssignedRole" value="${c:l('label_QueryDetailDialog_AssignedRole.value')}" />
+							<textbox id = "assignedRole" maxlength="100" width="300px"  readonly="true" />
+						</row>
+						
+						<row id ="row3" >
+							<label id = "label_NotifyTo" value="${c:l('label_QueryDetailDialog_NotifyTo.value')}" />
+							<textbox id = "notifyTo" maxlength="1000" width="300px"  readonly="true" />
+							<label id = "label_Status" value="${c:l('label_QueryDetailDialog_Status.value')}" />
+							<textbox id = "status" maxlength="8" width="300px"  readonly="true" />
+						</row>
+						
+						<row id ="row4" >
+							<label id = "label_QryNotes" value="${c:l('label_QueryDetailDialog_QryNotes.value')}" />
+							<textbox id = "qryNotes" maxlength="2000" width="300px"  rows="5" cols="40"  readonly="true" />
+							
+						</row>
+						
+						<row id ="row5" >
+							<label id = "label_ResponsNotes" value="${c:l('label_QueryDetailDialog_ResponsNotes.value')}" />
+							<textbox id = "responsNotes"  maxlength="2000" width="300px"   rows="5" cols="40"/>
+						</row>
+						
+						<row id ="row6"  visible="false">
+							<label id = "label_ResponseBy" value="${c:l('label_QueryDetailDialog_ResponseBy.value')}" />
+							<longbox id = "responseBy" width="171px"  maxlength="26" />
+							<label id = "label_ResponseOn" value="${c:l('label_QueryDetailDialog_ResponseOn.value')}" />
+							<datebox id = "responseOn"  format="dd/MM/yyyy HH:mm" width="180px" />
+						</row>
+						<row id ="row7" >
+							<label id = "label_CloserNotes" value="${c:l('label_QueryDetailDialog_CloserNotes.value')}" />
+							<textbox id = "closerNotes" maxlength="2000" width="300px"  rows="5" cols="40"/>
+						</row>
+						
+						<row id ="row8"  visible="false">
+							<label id = "label_CloserBy" value="${c:l('label_QueryDetailDialog_CloserBy.value')}" />
+							<longbox id = "closerBy" width="171px"  maxlength="26" />
+							<label id = "label_CloserOn" value="${c:l('label_QueryDetailDialog_CloserOn.value')}" />
+							<datebox id = "closerOn"  format="dd/MM/yyyy HH:mm" width="180px" />
+						</row>
+						
+						<row id ="row9" visible="false">
+						<label id = "label_CategoryId" value="${c:l('label_QueryDetailDialog_CategoryId.value')}" />
+							<extendedcombobox id = "categoryId"/>
+						</row>
+					</rows>
+				</grid>
+			</groupbox>
+			</div>
+			</tabpanel>
+			
+			<tabpanel style="overflow:auto" id="tp_DocumentDetails">
+			<div id="divDocDetails">
+			<groupbox id="gb_DocumentDetails" closable="true" mold="3d" >
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
+							<columns>
+								<column width="150px" />
+								<column />
+								<column width="150px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									
+									<label
+										id="label_QueryDetailDialog_Attachment"
+										value="${c:l('label_QueryDetailDialog_Attachment.value')}" />
+									<hbox>
+										<space spacing="0px" id = "space_documentName"
+											/>
+										<textbox id="documnetName" width="250px" maxlength="200" readonly="true" />
+										<button upload="true" label="${c:l('btBrowse_label')}" id="btnUploadDoc" hflex="1" />
+										<a id="btnDownload"/>
+									</hbox>
+								</row>
+								
+								<row>
+								<label
+										id="label_QueryDetailDialog_Remarks"
+										value="${c:l('label_QueryDetailDialog_Remarks.value')}" />
+									<hbox>
+										<textbox id = "docCategory" maxlength="50" width="250px"/>
+									</hbox>
+								</row>
+
+								<row>
+								<label id="label_QueryDetailDialog_btnUpload" value="" />
+								<hbox>
+									<button upload="false" label="${c:l('label_WorkFlowDialog_WorkFlowUpload.value')}" id="btnUploadDocs" hflex="1" sclass="z-toolbarbutton" />
+									<a id="btnUpload"/>
+								</hbox>
+								<label />
+								<label />
+								</row>
+								
+								<row>
+									<label />
+									<label />
+									<label />
+									<label />
+									<hbox>
+										<button upload="false" label="${c:l('btnDelete.tooltiptext')}" id="btnremoveDocs" hflex="1" sclass="z-toolbarbutton" />
+										<a id="btnremoveDoc"/>
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxQueryDetail" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" 
+						multiple="false" sizedByContent="true" span="true">
+							<listhead sizable="true">
+								<listheader id="listheader_RadioButton" label="${c:l('label_QueryDetailDialog_RadioButton.value')}" sort="auto"  hflex="min"  />
+								<listheader id="listheader_FinReference" label="${c:l('label_QueryDetailDialog_UploadedBy.value')}" sort="auto" hflex="min"  />
+								<listheader id="listheader_Id" label="${c:l('label_QueryDetailDialog_FileName.value')}" sort="auto" hflex="min"  />
+								<listheader id="listheader_UsrLogin" label="${c:l('label_QueryDetailDialog_Remarks.value')}" sort="auto" hflex="min"  />
+								<listheader id="listheader_RaisedOn" label="${c:l('label_QueryDetailDialog_Action.value')}" sort="auto"  hflex="min"  />
+							</listhead>	
+						</listbox>
+					</groupbox>
+					</div>
+					</tabpanel>
+			</tabpanels>
+			
+			</tabbox>
+			</div>
+		</center>
+		<south sclass="south-dialog">
+			<groupbox id="groupboxWf" width="99%">
+				<caption label="${c:l('Action')}" />
+				<hbox width="95%">
+					<radiogroup id="userAction" name="action" />
+					<label id="label_RecordStatus"  value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
+					<label id="recordStatus" />
+				</hbox>
+			</groupbox>
+		</south>
+	</borderlayout>
+</window>
+</zk> 

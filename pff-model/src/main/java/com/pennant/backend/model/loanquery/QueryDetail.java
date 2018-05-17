@@ -60,8 +60,11 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>QueryDetail table</b>.<br>
  *
  */
-@XmlType(propOrder = {"id","finReference","categoryId","qryNotes","assignedRole","notifyTo","status","raisedBy","raisedOn","responsNotes"
-,"responseBy","responseOn","closerNotes","closerBy","closerOn"})
+@XmlType(propOrder = {
+		"finReference","id","usrLogin","raisedOn","description","qryNotes","status",
+		"raisedBy","code","categoryId","assignedRole","notifyTo","responsNotes","responseBy",
+		"responseOn","closerNotes","closerBy","closerOn"})
+
 @XmlAccessorType(XmlAccessType.FIELD)
 public class QueryDetail extends AbstractWorkflowEntity  implements Entity {
 private static final long serialVersionUID = 1L;
@@ -76,6 +79,8 @@ private String assignedRole;
 private String notifyTo;
 private String status;
 private long raisedBy= 0;
+private String usrLogin;
+
 //	@XmlJavaTypeAdapter(TimestampFormatterAdapter.class)
 private Timestamp raisedOn;
 private String responsNotes;
@@ -83,7 +88,8 @@ private long responseBy= 0;
 //	@XmlJavaTypeAdapter(TimestampFormatterAdapter.class)
 private Timestamp responseOn;
 private String closerNotes;
-
+private String code;
+private String description;
 private long closerBy= 0;
 //	@XmlJavaTypeAdapter(TimestampFormatterAdapter.class)
 private Timestamp closerOn;
@@ -112,7 +118,6 @@ private Timestamp closerOn;
 	
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
-			//excludeFields.add("finReferenceName");
 			excludeFields.add("categoryIdName");
 			excludeFields.add("categoryCode");
 	return excludeFields;
@@ -132,15 +137,7 @@ private Timestamp closerOn;
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-	/*
-	public String getFinReferenceName() {
-		return this.finReferenceName;
-	}
-
-	public void setFinReferenceName (String finReferenceName) {
-		this.finReferenceName = finReferenceName;
-	}
-	*/
+	
 	public long getCategoryId() {
 		return categoryId;
 	}
@@ -271,6 +268,22 @@ private Timestamp closerOn;
 		this.userDetails = userDetails;
 	}
 
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
 	public String getCategoryCode() {
 		return categoryCode;
 	}
@@ -278,7 +291,16 @@ private Timestamp closerOn;
 	public void setCategoryCode(String categoryCode) {
 		this.categoryCode = categoryCode;
 	}
+	
 
+	public String getUsrLogin() {
+		return usrLogin;
+	}
+	
+	public void setUsrLogin(String usrLogin) {
+		this.usrLogin = usrLogin;
+	}
+	
 	public String getCategoryDescription() {
 		return categoryDescription;
 	}
