@@ -186,7 +186,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (initType) {
 			map = getOldVerifications(DocumentType.CUSTOMER, TableType.STAGE_TAB);
 		} else {
-			map = getOldVerifications(DocumentType.CUSTOMER, TableType.TEMP_TAB);
+			map = getOldVerifications(DocumentType.CUSTOMER, TableType.BOTH_TAB);
 		}
 
 		for (Entry<String, Verification> entrySet : customerDocuments.entrySet()) {

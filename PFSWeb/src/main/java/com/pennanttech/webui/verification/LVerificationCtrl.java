@@ -307,7 +307,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	public void onCheck$lv(Event event) {
 		final HashMap<String, Object> map = new HashMap<>();
 		LegalVerification legalVerification = lv.getSelectedItem().getValue();
-		
+
 		if (legalVerification != null) {
 			legalVerification = legalVerificationService.getLegalVerification(legalVerification);
 		}
@@ -412,7 +412,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
-				fillDecision(vrf,decision);
+				fillDecision(vrf, decision);
 				decision.setParent(listCell);
 				listCell.setParent(item);
 
@@ -691,8 +691,8 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
-				
-				fillDecision(vrf,decision);
+
+				fillDecision(vrf, decision);
 				decision.setParent(listCell);
 				listCell.setParent(item);
 
