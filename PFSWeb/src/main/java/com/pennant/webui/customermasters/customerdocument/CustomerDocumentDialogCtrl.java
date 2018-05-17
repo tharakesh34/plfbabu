@@ -596,11 +596,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		}
 		this.custDocType.setValue(aCustomerDocument.getCustDocCategory());
 
-		if(PennantConstants.CPRCODE.equalsIgnoreCase(aCustomerDocument.getCustDocCategory())){
-			this.custDocTitle.setValue(PennantApplicationUtil.formatEIDNumber(aCustomerDocument.getCustDocTitle()));
-		}else{
-			this.custDocTitle.setValue(aCustomerDocument.getCustDocTitle());
-		}
+		this.custDocTitle.setValue(aCustomerDocument.getCustDocTitle());
 
 		this.custDocSysName.setValue(aCustomerDocument.getCustDocSysName());
 		this.pdfPassword.setValue(aCustomerDocument.getPdfPassWord());
@@ -713,8 +709,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 	public void onChange$custDocTitle(Event event){
 		logger.debug("Entering");
-		if(PennantConstants.CPRCODE.equalsIgnoreCase(this.custDocType.getValue())){
-			this.custDocTitle.setValue(PennantApplicationUtil.formatEIDNumber(this.custDocTitle.getValue()));
+		if (PennantConstants.CPRCODE.equalsIgnoreCase(this.custDocType.getValue())) {
+			this.custDocTitle.setValue(this.custDocTitle.getValue());
 		}
 		logger.debug("Leaving");
 	}
