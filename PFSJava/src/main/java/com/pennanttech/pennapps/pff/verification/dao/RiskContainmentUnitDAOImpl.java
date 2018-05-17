@@ -162,12 +162,12 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		StringBuilder sql = new StringBuilder("insert into verification_rcu_details");
 		sql.append(tableType);
 		sql.append("(verificationId, seqno, documentid, documenttype, documentsubid, documentrefid, documenturi,");
-		sql.append(" verificationtype, status, pageseyeballed, pagessampled, agentremarks, ");
+		sql.append(" verificationtype, status, pageseyeballed, pagessampled, agentremarks,initRemarks, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		
 		sql.append("values (:verificationId, :seqNo, :documentId, :documentType, :documentSubId, :documentRefId, :documentUri, ");
-		sql.append(" :verificationType , :status, :pagesEyeballed, :pagesSampled, :agentRemarks,");
+		sql.append(" :verificationType , :status, :pagesEyeballed, :pagesSampled, :agentRemarks,:initRemarks,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -338,7 +338,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
 
-		sql.append(" Select verificationId, documentid, documentsubid, documentType,");
+		sql.append(" Select verificationId, documentid, documentsubid, documentType,initRemarks,");
 		if (type.contains("View")) {
 			sql.append(
 					" code, description, docmodule, documentrefid, seqno, docname, doctype,  ");
@@ -409,7 +409,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select verificationid , seqno, documentid, documentsubid, documentrefid, documenturi,");
+		sql.append(" select verificationid , seqno, documentid, documentsubid, documentrefid, documenturi, initRemarks,");
 		if (documentType == DocumentType.CUSTOMER) {
 			sql.append(" custdoccategory as docCategory");
 		} else {
