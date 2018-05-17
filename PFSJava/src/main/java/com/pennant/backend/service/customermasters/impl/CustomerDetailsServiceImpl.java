@@ -140,7 +140,6 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.pff.service.customer.CustomerServiceExtension;
 import com.pennanttech.pff.external.Crm;
 import com.rits.cloning.Cloner;
 
