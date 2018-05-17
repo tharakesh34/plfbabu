@@ -28,5 +28,17 @@
 			<column name="natureService" type="varchar(100)"/>
 		</addColumn>
 	</changeSet>
-	
+	<changeSet id="3" author="Jayant" dbms="postgresql">
+		<sql>
+			select deps_save_and_drop_dependencies('plfaudit','adtfeetypes');
+		</sql>
+	</changeSet>
+	<changeSet id="4" author="Jayant">
+		<modifyDataType tableName="adtfeetypes" columnName="TaxApplicable" newDataType="boolean"/>
+	</changeSet>
+	<changeSet id="5" author="Jayant" dbms="postgresql">
+		<sql>
+			select deps_restore_dependencies('plfaudit','adtfeetypes');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
