@@ -94,9 +94,9 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
+import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
-import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -705,8 +705,14 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 		logger.debug("Entering ");
 
 		List<FinanceDeviations> chkDeviations = new ArrayList<FinanceDeviations>();
-		if (getFinanceDetail().getFinRefDetailsList() != null) {
-			for (FinanceReferenceDetail aFinRefDetail : getFinanceDetail().getFinRefDetailsList()) {
+		List<FinanceReferenceDetail> refList = null;
+		if (isNotFinanceProcess) {
+			refList = getRefDetailsList();
+		} else {
+			refList = getFinanceDetail().getFinRefDetailsList();
+		}
+		if (refList != null) {
+			for (FinanceReferenceDetail aFinRefDetail : refList) {
 
 				boolean valid = true;
 				long min = aFinRefDetail.getLovDescCheckMinCount();
