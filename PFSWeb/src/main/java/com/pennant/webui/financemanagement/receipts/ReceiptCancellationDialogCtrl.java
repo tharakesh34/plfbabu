@@ -285,7 +285,12 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			doLoadWorkFlow(receiptHeader.isWorkflow(), receiptHeader.getWorkflowId(), receiptHeader.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
-				this.userAction = setListRecordStatus(this.userAction);
+				String recStatus = StringUtils.trimToEmpty(receiptHeader.getRecordStatus());
+				if (recStatus.equals(PennantConstants.RCD_STATUS_REJECTED)) {
+					this.userAction = setRejectRecordStatus(this.userAction);
+				} else {
+					this.userAction = setListRecordStatus(this.userAction);
+				}
 			} else {
 				this.south.setHeight("0px");
 			}

@@ -2,8 +2,10 @@ package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
 
-public class ReceiptAllocationDetail {
+import com.pennant.backend.model.Entity;
 
+public class ReceiptAllocationDetail implements Entity{
+    
 	private long receiptAllocationid = Long.MIN_VALUE;
 	private long receiptID = 0;
 	private int allocationID = 0;
@@ -12,6 +14,7 @@ public class ReceiptAllocationDetail {
 	private long allocationTo;
 	private BigDecimal paidAmount = BigDecimal.ZERO;
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
+	private String waiverAccepted = "";
 	
 	public ReceiptAllocationDetail() {
 		
@@ -78,6 +81,26 @@ public class ReceiptAllocationDetail {
 	}
 	public void setReceiptAllocationid(long receiptAllocationid) {
 		this.receiptAllocationid = receiptAllocationid;
+	}
+
+	public boolean isNew() {
+		return false;
+	}
+
+	public long getId() {
+		return receiptID;
+	}
+
+	public void setId(long id) {
+		this.receiptID=id;
+	}
+
+	public String getWaiverAccepted() {
+		return waiverAccepted;
+	}
+
+	public void setWaiverAccepted(String waiverAccepted) {
+		this.waiverAccepted = waiverAccepted;
 	}
 	
 }

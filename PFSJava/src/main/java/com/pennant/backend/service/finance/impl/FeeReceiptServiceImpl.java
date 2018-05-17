@@ -371,34 +371,37 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		if (receiptHeader.isWorkflow()) {
 			tempReceiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptHeader.getReceiptID(), "_Temp");
 		}
-		FinReceiptHeader beFinReceiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptHeader.getReceiptID(), "");
+		FinReceiptHeader beFinReceiptHeader = getFinReceiptHeaderDAO()
+				.getReceiptHeaderByID(receiptHeader.getReceiptID(), "");
 		FinReceiptHeader oldReceiptHeader = receiptHeader.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
 		valueParm[0] = String.valueOf(receiptHeader.getReference());
 		errParm[0] = PennantJavaUtil.getLabel("label_Reference") + ":" + valueParm[0];
-		if (receiptHeader.isNew()) { // for New record or new record into work flow
-			
+		if (receiptHeader.isNew()) { // for New record or new record into work
+										// flow
+
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
-				if (beFinReceiptHeader != null) { // Record Already Exists in the
+				if (beFinReceiptHeader != null) { // Record Already Exists in
+													// the
 					// table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (receiptHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
 					// records type is new
 					if (beFinReceiptHeader != null || tempReceiptHeader != null) { // if
 						// records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (beFinReceiptHeader == null || tempReceiptHeader != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -408,19 +411,23 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 			if (!receiptHeader.isWorkflow()) { // With out Work flow for update
 				// and delete
 
-				if (beFinReceiptHeader == null) { // if records not exists in the
+				if (beFinReceiptHeader == null) { // if records not exists in
+													// the
 					// main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (oldReceiptHeader != null && !oldReceiptHeader.getLastMntOn().equals(beFinReceiptHeader.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+					if (oldReceiptHeader != null
+							&& !oldReceiptHeader.getLastMntOn().equals(beFinReceiptHeader.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
@@ -428,23 +435,24 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 
 				if (tempReceiptHeader == null) { // if records not exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempReceiptHeader != null && oldReceiptHeader != null
 						&& !oldReceiptHeader.getLastMntOn().equals(tempReceiptHeader.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
-		
+
 		// Duplicate FEEReceipt reference and purpose
-		if (!PennantConstants.RCD_STATUS_RESUBMITTED.equals(receiptHeader.getRecordStatus()) &&
-				!PennantConstants.RCD_STATUS_REJECTED.equals(receiptHeader.getRecordStatus()) &&
-				!PennantConstants.RCD_STATUS_CANCELLED.equals(receiptHeader.getRecordStatus())) {
-			if (getFeeReceiptExist(receiptHeader.getReference(), receiptHeader.getReceiptPurpose(),receiptHeader.getReceiptID())) {
+		if (!PennantConstants.RCD_STATUS_RESUBMITTED.equals(receiptHeader.getRecordStatus())
+				&& !PennantConstants.RCD_STATUS_REJECTED.equals(receiptHeader.getRecordStatus())
+				&& !PennantConstants.RCD_STATUS_CANCELLED.equals(receiptHeader.getRecordStatus())) {
+			if (getFeeReceiptExist(receiptHeader.getReference(), receiptHeader.getReceiptPurpose(),
+					receiptHeader.getReceiptID())) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65014", errParm, valueParm));
 			}
 		}

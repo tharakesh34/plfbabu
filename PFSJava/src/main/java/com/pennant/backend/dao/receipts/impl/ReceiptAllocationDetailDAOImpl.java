@@ -64,7 +64,7 @@ import com.pennanttech.pff.core.TableType;
  * DAO methods implementation for the <b>Finance Repayments</b> class.<br>
  * 
  */
-public class ReceiptAllocationDetailDAOImpl  implements ReceiptAllocationDetailDAO {
+public class ReceiptAllocationDetailDAOImpl extends BasisNextidDaoImpl<ReceiptAllocationDetail> implements ReceiptAllocationDetailDAO {
 	private static Logger	           logger	= Logger.getLogger(ReceiptAllocationDetailDAOImpl.class);
 	
 	// Spring Named JDBC Template
@@ -126,7 +126,14 @@ public class ReceiptAllocationDetailDAOImpl  implements ReceiptAllocationDetailD
 
 		StringBuilder insertSql = new StringBuilder();
 
-		insertSql.append("Insert Into ReceiptAllocationDetail");
+		for (ReceiptAllocationDetail receiptAllocationDetail : allocations) {
+			if (receiptAllocationDetail.getReceiptAllocationid() == Long.MIN_VALUE) {
+				receiptAllocationDetail
+						.setReceiptAllocationid(getNextidviewDAO().getNextId("SeqReceiptAllocationDetail"));
+				logger.debug("get NextID:" + receiptAllocationDetail.getReceiptAllocationid());
+			}
+		}
+        insertSql.append("Insert Into ReceiptAllocationDetail");
 		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount)");
 		insertSql.append(" Values(:ReceiptAllocationid,:ReceiptID , :AllocationID , :AllocationType , :AllocationTo , :PaidAmount , :WaivedAmount)");

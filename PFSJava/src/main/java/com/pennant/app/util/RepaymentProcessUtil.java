@@ -348,6 +348,21 @@ public class RepaymentProcessUtil {
 		scheduleDetails = doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, finFeeDetailList, scheduleData,
 				valuedate,postDate);
 		
+		// Preparing Total Principal Amount
+		BigDecimal totPriPaid = BigDecimal.ZERO;
+		for (FinReceiptDetail receiptDetail : receiptDetails) {
+			if(receiptDetail.getRepayHeaders() != null && !receiptDetail.getRepayHeaders().isEmpty()){
+				for (FinRepayHeader repayHeader : receiptDetail.getRepayHeaders()) {
+					if(repayHeader.getRepayScheduleDetails() != null && !repayHeader.getRepayScheduleDetails().isEmpty()){
+						for (RepayScheduleDetail rpySchd : repayHeader.getRepayScheduleDetails()) {
+							totPriPaid = totPriPaid.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
+						}
+					}
+				}
+			}
+		}
+		financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(totPriPaid));
+		
 		FinanceScheduleDetail curSchd = null;
 		
 		for (FinanceScheduleDetail financeScheduleDetail : scheduleDetails) {
@@ -687,17 +702,10 @@ public class RepaymentProcessUtil {
 					throw new InterfaceException("9999", errParm);
 				}
 				
-				// Preparing Total Principal Amount
-				BigDecimal totPriPaid = BigDecimal.ZERO;
-				for (RepayScheduleDetail rpySchd : repaySchdList) {
-					totPriPaid = totPriPaid.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
-				}
-
 				//Update Linked Transaction ID
 				linkedTranId = (long) returnList.get(1);
 				repayHeader.setLinkedTranId(linkedTranId);
 				repayHeader.setValueDate(postDate);
-				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(totPriPaid));
 				scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(2);
 				repaySchdList = null;
 			}
@@ -738,38 +746,6 @@ public class RepaymentProcessUtil {
 			List<ManualAdviseMovements> movements, String postBranch,Map<String, BigDecimal> extDataMap, Date dateValueDate) throws InterfaceException, IllegalAccessException, InvocationTargetException{
 		logger.debug("Entering");
 
-		// Summing Same Type of Fee Types to Single Field
-		HashMap<String, BigDecimal> movementMap = new HashMap<>(); 
-		for (int m = 0; m < movements.size(); m++) {
-			ManualAdviseMovements movement = movements.get(m);
-			
-			BigDecimal amount = BigDecimal.ZERO;
-			if(StringUtils.isEmpty(movement.getFeeTypeCode())){
-				
-				if(movementMap.containsKey("bounceChargePaid")){
-					amount = movementMap.get("bounceChargePaid");
-				}
-				movementMap.put("bounceChargePaid", amount.add(movement.getPaidAmount()));
-
-				amount = BigDecimal.ZERO;
-				if(movementMap.containsKey("bounceChargeWaived")){
-					amount = movementMap.get("bounceChargeWaived");
-				}
-				movementMap.put("bounceChargeWaived",  amount.add(movement.getWaivedAmount()));
-			}else{
-				if(movementMap.containsKey(movement.getFeeTypeCode() + "_P")){
-					amount = movementMap.get(movement.getFeeTypeCode() + "_P");
-				}
-				movementMap.put(movement.getFeeTypeCode() + "_P", amount.add(movement.getPaidAmount()));
-
-				amount = BigDecimal.ZERO;
-				if(movementMap.containsKey(movement.getFeeTypeCode() + "_W")){
-					amount = movementMap.get(movement.getFeeTypeCode() + "_W");
-				}
-				movementMap.put(movement.getFeeTypeCode() + "_W",  amount.add(movement.getWaivedAmount()));
-			}
-		}
-
 		// Accounting Postings Process Execution
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -802,7 +778,7 @@ public class RepaymentProcessUtil {
 		amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
-		dataMap.putAll(movementMap);
+		dataMap.putAll(prepareMovementMap(movements));
 		if(extDataMap != null){
 			dataMap.putAll(extDataMap);
 		}
@@ -812,6 +788,42 @@ public class RepaymentProcessUtil {
 		getPostingsPreparationUtil().postAccounting(aeEvent);
 
 		logger.debug("Leaving");
+	}
+	
+	private Map<String, BigDecimal> prepareMovementMap(List<ManualAdviseMovements> movements){
+		
+		// Summing Same Type of Fee Types to Single Field
+		HashMap<String, BigDecimal> movementMap = new HashMap<>(); 
+		for (int m = 0; m < movements.size(); m++) {
+			ManualAdviseMovements movement = movements.get(m);
+
+			BigDecimal amount = BigDecimal.ZERO;
+			if(StringUtils.isEmpty(movement.getFeeTypeCode())){
+
+				if(movementMap.containsKey("bounceChargePaid")){
+					amount = movementMap.get("bounceChargePaid");
+				}
+				movementMap.put("bounceChargePaid", amount.add(movement.getPaidAmount()));
+
+				amount = BigDecimal.ZERO;
+				if(movementMap.containsKey("bounceChargeWaived")){
+					amount = movementMap.get("bounceChargeWaived");
+				}
+				movementMap.put("bounceChargeWaived",  amount.add(movement.getWaivedAmount()));
+			}else{
+				if(movementMap.containsKey(movement.getFeeTypeCode() + "_P")){
+					amount = movementMap.get(movement.getFeeTypeCode() + "_P");
+				}
+				movementMap.put(movement.getFeeTypeCode() + "_P", amount.add(movement.getPaidAmount()));
+
+				amount = BigDecimal.ZERO;
+				if(movementMap.containsKey(movement.getFeeTypeCode() + "_W")){
+					amount = movementMap.get(movement.getFeeTypeCode() + "_W");
+				}
+				movementMap.put(movement.getFeeTypeCode() + "_W",  amount.add(movement.getWaivedAmount()));
+			}
+		}
+		return movementMap;
 	}
 	
 	/**
@@ -1023,6 +1035,7 @@ public class RepaymentProcessUtil {
 			List<FinRepayHeader> rpyHeaderList = receiptDetail.getRepayHeaders();
 			for (FinRepayHeader rpyHeader : rpyHeaderList) {
 				rpyHeader.setReceiptSeqID(receiptSeqID);
+				rpyHeader.setFinReference(receiptHeader.getReference());
 
 				//Save Repay Header details
 				long repayID = getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, TableType.MAIN_TAB.getSuffix());
@@ -1032,6 +1045,7 @@ public class RepaymentProcessUtil {
 					for (int i = 0; i < rpySchdList.size(); i++) {
 
 						RepayScheduleDetail rpySchd = rpySchdList.get(i);
+						rpySchd.setFinReference(receiptHeader.getReference());
 						rpySchd.setRepayID(repayID);
 						rpySchd.setRepaySchID(i + 1);
 						rpySchd.setLinkedTranId(rpyHeader.getLinkedTranId());

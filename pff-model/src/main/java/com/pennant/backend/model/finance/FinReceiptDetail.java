@@ -39,6 +39,7 @@ public class FinReceiptDetail implements Entity {
 	private String						chequeAcNo;
 	@XmlElement(name="fundingAccount")
 	private long						fundingAc		= 0;
+	private String						fundingAcCode;
 	private String						fundingAcDesc;
 	@XmlElement
 	private Date						receivedDate;
@@ -51,11 +52,10 @@ public class FinReceiptDetail implements Entity {
 	private String						partnerBankAc;
 	private String						partnerBankAcType;
 	private String						reference;					// only for Fees
+	private String						feeTypeCode;
 	private String						feeTypeDesc;
 	private boolean 					noReserve;
-	private String						fundingAcCode;
-	private String						feeTypeCode;
-
+	private String						receiptPurpose;
 	private List<FinRepayHeader>		repayHeaders	= new ArrayList<FinRepayHeader>(1);
 	private List<ManualAdviseMovements>	advMovements	= new ArrayList<ManualAdviseMovements>(1);
 	
@@ -86,6 +86,7 @@ public class FinReceiptDetail implements Entity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("noReserve");
+		excludeFields.add("receiptPurpose");
 		return excludeFields;
 	}
 
@@ -363,7 +364,15 @@ public class FinReceiptDetail implements Entity {
 	public void setNoReserve(boolean noReserve) {
 		this.noReserve = noReserve;
 	}
-	
+
+	public String getFeeTypeCode() {
+		return feeTypeCode;
+	}
+
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
+	}
+
 	public String getFundingAcCode() {
 		return fundingAcCode;
 	}
@@ -371,13 +380,13 @@ public class FinReceiptDetail implements Entity {
 	public void setFundingAcCode(String fundingAcCode) {
 		this.fundingAcCode = fundingAcCode;
 	}
-	
-	public String getFeeTypeCode() {
-		return feeTypeCode;
+
+	public String getReceiptPurpose() {
+		return receiptPurpose;
 	}
 
-	public void setFeeTypeCode(String feeTypeCode) {
-		this.feeTypeCode = feeTypeCode;
+	public void setReceiptPurpose(String receiptPurpose) {
+		this.receiptPurpose = receiptPurpose;
 	}
 
 }

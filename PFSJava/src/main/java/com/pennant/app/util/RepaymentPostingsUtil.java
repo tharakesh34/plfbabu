@@ -76,6 +76,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
@@ -117,7 +118,8 @@ public class RepaymentPostingsUtil implements Serializable {
 	private LatePayMarkingService		latePayMarkingService;
 	private LatePayBucketService		latePayBucketService;
 	private AccrualService 				accrualService;
-
+	private ManualAdviseDAO             manualAdviseDAO;
+	
 	public RepaymentPostingsUtil() {
 		super();
 	}
@@ -563,6 +565,15 @@ public class RepaymentPostingsUtil implements Serializable {
 				}
 			}
 		}
+		
+		// Check Receivable Advises paid Fully or not
+		if (fullyPaid) {
+			BigDecimal adviseBal = getManualAdviseDAO().getBalanceAmt(finReference);
+			// Penalty Not fully Paid
+			if (adviseBal!=null && adviseBal.compareTo(BigDecimal.ZERO) > 0) {
+				fullyPaid = false;
+			}
+		}
 
 		return fullyPaid;
 	}
@@ -636,7 +647,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		amountCodes.setPftWaived(rpyQueueHeader.getPftWaived().add(rpyQueueHeader.getLatePftWaived()));
 		amountCodes.setFeeWaived(rpyQueueHeader.getFeeWaived());
 		amountCodes.setInsWaived(rpyQueueHeader.getInsWaived());
-		
+
 		// Accrual & Future Paid Details
 		if(StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_EARLYSTL)){
 			
@@ -675,7 +686,6 @@ public class RepaymentPostingsUtil implements Serializable {
 			if(amountCodes.getPriWaived().compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0){
 				amountCodes.setPriDuePaid(amountCodes.getRpPri());
 			}else{
-
 				amountCodes.setPriDuePaid(amountCodes.getRpPri().subtract(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())).add(amountCodes.getPriWaived()));
 			}
 			
@@ -714,17 +724,6 @@ public class RepaymentPostingsUtil implements Serializable {
 					
 					unaccrue = lastSchd.getProfitSchd().subtract(lastSchd.getSchdPftPaid()).add(totalPftFromPrvSchd);
 				}else{
-					amountCodes.setAccruedPaid(acrTillMonthEndFromLastDue);
-				}
-
-				// Accrual Waived
-				if(amountCodes.getPftWaived().compareTo(lastSchd.getProfitSchd().subtract(acrTillMonthEndFromLastDue)) > 0){
-					BigDecimal diff = amountCodes.getPftWaived().subtract(lastSchd.getProfitSchd().subtract(acrTillMonthEndFromLastDue));
-					if(diff.compareTo(acrTillMonthEndFromLastDue) > 0){
-						amountCodes.setAccrueWaived(acrTillMonthEndFromLastDue);
-					}else{
-						amountCodes.setAccrueWaived(acrTillMonthEndFromLastDue.subtract(diff));
-
 					unaccrue = (lastSchd.getProfitSchd().divide(new BigDecimal(curDays), 9, RoundingMode.HALF_DOWN)).multiply(new BigDecimal(daysTillTodayFromMS));
 					if(lastSchd.getSchdPftPaid().compareTo(lastSchd.getProfitSchd().subtract(unaccrue)) > 0){
 						BigDecimal diff = lastSchd.getSchdPftPaid().subtract(lastSchd.getProfitSchd().subtract(unaccrue));
@@ -745,7 +744,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			}
 
 			// UnAccrue Waived
-			if(amountCodes.getPftWaived().compareTo(unaccrue) > 0){
+			if(amountCodes.getPftWaived().compareTo(unaccrue) >= 0){
 				amountCodes.setUnAccrueWaived(unaccrue);
 			}else{
 				amountCodes.setUnAccrueWaived(amountCodes.getPftWaived());
@@ -787,7 +786,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			}else{
 				amountCodes.setFuturePriWaived(amountCodes.getPriWaived());
 			}
-		
+			
 			if(financeMain.isTDSApplicable()){
 				// TDS for Last Installment
 				BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
@@ -798,6 +797,13 @@ public class RepaymentPostingsUtil implements Serializable {
 			}else{
 				amountCodes.setLastSchTds(BigDecimal.ZERO);
 				amountCodes.setDueTds(BigDecimal.ZERO);
+			}
+		}
+		
+		
+		if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_REPAY)){
+			if (financeProfitDetail.getTotalPftPaid().add(rpyQueueHeader.getProfit()).compareTo(financeProfitDetail.getTotalPftSchd())>=0){
+				amountCodes.setUnAccruedPaid(financeProfitDetail.getTotalPftSchd().subtract(financeProfitDetail.getPrvMthAmz()));
 			}
 		}
 		
@@ -829,7 +835,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		if (finFeeDetailList != null) {
 
 			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-				if(!finFeeDetail.isRcdVisible()){
+				if(StringUtils.startsWith(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_ADDDBS)){
 					continue;
 				}
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
@@ -1493,6 +1499,14 @@ public class RepaymentPostingsUtil implements Serializable {
 
 	public void setLatePayBucketService(LatePayBucketService latePayBucketService) {
 		this.latePayBucketService = latePayBucketService;
+	}
+
+	public ManualAdviseDAO getManualAdviseDAO() {
+		return manualAdviseDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 }

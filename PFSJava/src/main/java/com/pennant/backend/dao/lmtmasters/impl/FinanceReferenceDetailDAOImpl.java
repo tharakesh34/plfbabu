@@ -346,8 +346,6 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		
-	
-
 		StringBuilder selectSql = new StringBuilder("Select FinRefId , LovDescCodeLov ");
 		selectSql.append(" From LMTFinRefDetail_ATView ");
 		selectSql.append(" Where FinType =:FinType AND FinEvent =:FinEvent ");

@@ -5688,7 +5688,7 @@
 	<!--============ Receipt Allocation Details ============== -->
 
 	<bean id="receiptAllocationDetailDAO"
-		class="com.pennant.backend.dao.receipts.impl.ReceiptAllocationDetailDAOImpl" >
+		class="com.pennant.backend.dao.receipts.impl.ReceiptAllocationDetailDAOImpl" parent="basisNextidDao" >
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
@@ -6553,6 +6553,7 @@
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="latePayBucketService" ref="latePayBucketService" />
 		<property name="accrualService" ref="accrualService" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 	</bean>
 
 	<!--============ Finance Repayment Process Util ============== -->

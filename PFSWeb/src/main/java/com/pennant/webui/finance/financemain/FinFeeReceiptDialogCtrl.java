@@ -280,7 +280,8 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
-		//this.listBoxReciptFeeDetail.setHeight(this.borderLayoutHeight - (this.listBoxReciptFeeDetail.getItemCount() * 20) + "px");
+		this.listBoxReciptFeeDetail
+				.setHeight(this.borderLayoutHeight - (this.listBoxReciptFeeDetail.getItemCount() * 20) + "px");
 
 		logger.debug("Leaving");
 	}

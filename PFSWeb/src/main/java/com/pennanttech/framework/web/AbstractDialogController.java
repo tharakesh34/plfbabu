@@ -72,6 +72,26 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	public Radiogroup setListRecordStatus(Radiogroup userAction) {
 		return setListRecordStatus(userAction, true);
 	}
+	
+	public Radiogroup setRejectRecordStatus(Radiogroup userAction) {
+		String sequences = "";
+
+		if (this.role.equals(this.workFlow.allFirstTaskOwners())) {
+			sequences = workFlow.getUserActionsAsString(workFlow.firstTaskId());
+		} else {
+			sequences = workFlow.getUserActionsAsString(getTaskId(getRole()));
+		}
+
+		String[] list = sequences.split("/");
+		for (int i = 0; i < list.length; i++) {
+			String[] a = list[i].split("=");
+			if (a[1].equalsIgnoreCase(PennantConstants.RCD_STATUS_REJECTED)) {
+				userAction.appendItem(a[0], a[1]);
+			}
+		}
+		userAction.setSelectedIndex(0);
+		return userAction;
+	}
 
 	public Radiogroup setListRecordStatus(Radiogroup userAction, boolean defaultSave) {
 		String sequences = "";

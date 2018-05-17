@@ -791,4 +791,24 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
+	
+
+	@Override
+	public BigDecimal getBalanceAmt(String finReference) {
+		logger.debug("Entering");
+		BigDecimal balance = BigDecimal.ZERO;
+		ManualAdvise manualAdvise = new ManualAdvise();
+		manualAdvise.setFinReference(finReference);
+		manualAdvise.setAdviseType(1);
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT sum(adviseamount-paidamount-waivedamount) from manualAdvise");
+		selectSql.append(" Where FinReference =:FinReference and AdviseType =:AdviseType");
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
+
+		balance = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), paramSource, BigDecimal.class);
+		logger.debug("Leaving");
+		return balance;
+
+	}
 }	

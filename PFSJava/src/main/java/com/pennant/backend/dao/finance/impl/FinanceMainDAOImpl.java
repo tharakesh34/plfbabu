@@ -3229,4 +3229,28 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		return recordCount > 0 ? true : false;
 	}
+	
+	@Override
+	public String getEarlyPayMethodsByFinRefernce(String finReference) {
+		logger.debug("Entering");
+
+		String alwEarlyPayMethods = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		StringBuilder sql = new StringBuilder("Select AlwEarlyPayMethods from RMTFinanceTypes");
+		sql.append(" Where FinType = (Select FinType from FinanceMain Where FinReference = :FinReference)");
+		logger.debug("selectSql: " + sql.toString());
+
+		try {
+			alwEarlyPayMethods = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			alwEarlyPayMethods = null;
+		}
+
+		logger.debug("Leaving");
+
+		return alwEarlyPayMethods;
+	}
+
 }

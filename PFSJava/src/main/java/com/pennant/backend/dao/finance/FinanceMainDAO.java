@@ -290,4 +290,6 @@ public interface FinanceMainDAO {
 	
 	boolean isLoanPurposeExits(String purposeCode, String string);
 
+	String getEarlyPayMethodsByFinRefernce(String finReference);
+
 }
