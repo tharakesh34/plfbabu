@@ -220,9 +220,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	@Autowired(required = false)
 	private Crm crm;
 	
-	@Autowired(required=false)
+/*	@Autowired(required=false)
 	private CustomerServiceExtension<Customer> customerServiceExtension;
-	
+	*/
 	public CustomerDetailsServiceImpl() {
 		super();
 	}
