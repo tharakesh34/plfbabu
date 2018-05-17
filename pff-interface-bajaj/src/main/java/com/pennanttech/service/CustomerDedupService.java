@@ -25,7 +25,7 @@ import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.model.DedupCustomerDetail;
 import com.pennanttech.model.DedupCustomerResponse;
 
-public class CustomerDedupService extends BajajService {
+public class CustomerDedupService extends BajajService implements com.pennanttech.pff.external.CustomerDedupService {
 
 	private static final Logger logger = Logger.getLogger(CustomerDedupService.class);
 
