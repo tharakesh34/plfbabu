@@ -4142,14 +4142,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onChange$eidNumber(Event event) {
-		logger.debug("Entering");
-		if (isRetailCustomer) {
-			this.eidNumber.setValue(this.eidNumber.getValue());
-		}
-		logger.debug("Leaving");
-	}
-
 	public String getCustIDNumber(String idType) {
 		logger.debug("Entering");
 		String idNumber = "";
