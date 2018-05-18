@@ -834,17 +834,17 @@ public class AccrualService extends ServiceHelper {
 				if (curMonthEnd.compareTo(curSchdDate) < 0) {
 
 					// Months Between schedules
-					curPftAmz = calProfitAmz(curSchd, prvSchdDate, nextMonthStart, curMonthStart, finMain);
+					curPftAmz = calProfitAmz(curSchd, prvSchd, nextMonthStart, curMonthStart, finMain);
 				} else {
 
 					// Profit Calculation From MonthEnd to CurSchdDate 
 					if (curMonthEnd.compareTo(prvSchdDate) >= 0 && curMonthEnd.compareTo(nextSchdDate) < 0) {
-						curPftAmz = calProfitAmz(nextSchd, curSchdDate, nextMonthStart, curSchdDate, finMain);
+						curPftAmz = calProfitAmz(nextSchd, curSchd, nextMonthStart, curSchdDate, finMain);
 					}
 
 					// Profit Calculation From CurSchdDate to Previous MonthEnd
 					if (prvMonthEnd != null && !isSchdPftAmz) {
-						prvPftAmz = calProfitAmz(curSchd, prvSchdDate, curSchdDate, curMonthStart, finMain);
+						prvPftAmz = calProfitAmz(curSchd, prvSchd, curSchdDate, curMonthStart, finMain);
 					}
 				}
 
@@ -901,18 +901,20 @@ public class AccrualService extends ServiceHelper {
 	 * @return
 	 * 
 	 */
-	private static BigDecimal calProfitAmz(FinanceScheduleDetail schdDetail, Date prvSchdDate, Date date1, Date date2, FinanceMain finMain) {
+	private static BigDecimal calProfitAmz(FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd, Date date1, Date date2, FinanceMain finMain) {
 
 		BigDecimal pftAmz = BigDecimal.ZERO;
 
 		int days = DateUtility.getDaysBetween(date1, date2);
-		int daysInCurPeriod = DateUtility.getDaysBetween(schdDetail.getSchDate(), prvSchdDate);
-		pftAmz = schdDetail.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod),9, RoundingMode.HALF_DOWN);
+		int daysInCurPeriod = DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchd.getSchDate());
+		
+		BigDecimal amzForCal = curSchd.getProfitCalc().add(curSchd.getProfitFraction().subtract(prvSchd.getProfitFraction()));
+		pftAmz = amzForCal.multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod),9, RoundingMode.HALF_DOWN);
+		pftAmz = pftAmz.add(prvSchd.getProfitFraction());
 		pftAmz=CalculationUtil.roundAmount(pftAmz, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
-
 		return pftAmz;
 	}
-
+	
 	/**
 	 * 
 	 * @param date
