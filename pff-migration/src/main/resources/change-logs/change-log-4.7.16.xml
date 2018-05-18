@@ -6857,6 +6857,24 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 <changeSet id="163" author="Ganesh.p">
 		<modifyDataType tableName="FinGuarantorsDetails_Temp" columnName="GuarantorIDType" newDataType="VARCHAR(50)"/>
 </changeSet>
-	
+
+<changeSet id="162" author="Vinay">
+	<addColumn tableName="SecUsers">
+		<column name="PwdExpDt" type="datetime"/>
+	</addColumn>
+</changeSet>	
+
+<changeSet id="163" author="Vinay">
+	<addColumn tableName="SecUsers_Temp">
+		<column name="PwdExpDt" type="datetime"/>
+	</addColumn>
+</changeSet>
+
+<changeSet id="164" author="Vinay">
+	<addColumn tableName="secusers_rtemp">
+		<column name="PwdExpDt" type="datetime"/>
+	</addColumn>
+</changeSet>
+
 </databaseChangeLog>
 	
