@@ -608,4 +608,8 @@
 	<changeSet id="31" author="Vijaykumar.l">
 		<modifyDataType tableName="adtloanpurposes" columnName="loanpurposeisactive" newDataType="BOOLEAN"/>
 	</changeSet>
+	
+<changeSet id="163" author="Ganesh.p">
+		<modifyDataType tableName="ADTFinGuarantorsDetails" columnName="GuarantorIDType" newDataType="VARCHAR(50)"/>
+</changeSet>	
 	</databaseChangeLog>

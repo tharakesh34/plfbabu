@@ -6848,6 +6848,15 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 	<sql>
 		INSERT INTO ErrorDetails VALUES('65032','EN','W','loan start date and disbursment date should be on the same date.','','Approved','','','','','',0,current_timestamp,1000,0);
 	</sql>
-</changeSet>	
+</changeSet>
+
+<changeSet id="162" author="Ganesh.p">
+		<modifyDataType tableName="FinGuarantorsDetails" columnName="GuarantorIDType" newDataType="VARCHAR(50)"/>
+</changeSet>
+
+<changeSet id="163" author="Ganesh.p">
+		<modifyDataType tableName="FinGuarantorsDetails_Temp" columnName="GuarantorIDType" newDataType="VARCHAR(50)"/>
+</changeSet>
+	
 </databaseChangeLog>
 	
