@@ -7150,5 +7150,12 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 		     LEFT JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
 	</createView>
 </changeSet>
+
+<changeSet id="166" author="Vinay">
+	<dropColumn tableName="secusers_temp" columnName="usrcredentialsexp"/>
+	<dropColumn tableName="secusers_rtemp" columnName="usrcredentialsexp"/>
+	<dropColumn tableName="secusers" columnName="usrcredentialsexp"/>
+</changeSet>
+
 </databaseChangeLog>
 	
