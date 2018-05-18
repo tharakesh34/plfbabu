@@ -1311,4 +1311,96 @@
 		</createView>	
 	</changeSet>
 	
+	<changeSet author="Kesav" id="76">
+		<comment> new columns added for GST calculations</comment>
+		<addColumn tableName="ManualAdvise_Temp">
+			<column name="PaidCgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidSgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidUgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidIgst" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="77">
+		<comment> new columns added for GST calculations</comment>
+		<addColumn tableName="ManualAdvise">
+			<column name="PaidCgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidSgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidUgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidIgst" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="78" author="Kesav">
+		<comment> Old fields updated </comment>
+		<sql>
+			Update ManualAdvise set PaidCgst = 0 where PaidCgst is null; 
+			Update ManualAdvise set PaidSgst = 0 where PaidSgst is null; 
+			Update ManualAdvise set PaidUgst = 0 where PaidUgst is null; 
+			Update ManualAdvise set PaidIgst = 0 where PaidIgst is null; 
+			
+			Update ManualAdvise_Temp set PaidCgst = 0 where PaidCgst is null; 
+			Update ManualAdvise_Temp set PaidSgst = 0 where PaidSgst is null; 
+			Update ManualAdvise_Temp set PaidUgst = 0 where PaidUgst is null; 
+			Update ManualAdvise_Temp set PaidIgst = 0 where PaidIgst is null; 
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="79">
+		<comment> new columns added for GST calculations</comment>
+		<addColumn tableName="manualadvisemovements_Temp">
+			<column name="PaidCgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidSgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidUgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidIgst" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="80">
+		<comment> new columns added for GST calculations</comment>
+		<addColumn tableName="manualadvisemovements">
+			<column name="PaidCgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidSgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidUgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidIgst" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="81" author="Kesav">
+		<comment> Old fields updated </comment>
+		<sql>
+			Update manualadvisemovements set PaidCgst = 0 where PaidCgst is null; 
+			Update manualadvisemovements set PaidSgst = 0 where PaidSgst is null; 
+			Update manualadvisemovements set PaidUgst = 0 where PaidUgst is null; 
+			Update manualadvisemovements set PaidIgst = 0 where PaidIgst is null; 
+			
+			Update manualadvisemovements_Temp set PaidCgst = 0 where PaidCgst is null; 
+			Update manualadvisemovements_Temp set PaidSgst = 0 where PaidSgst is null; 
+			Update manualadvisemovements_Temp set PaidUgst = 0 where PaidUgst is null; 
+			Update manualadvisemovements_Temp set PaidIgst = 0 where PaidIgst is null; 
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="82">
+		<comment> new columns added for GST calculations</comment>
+		<addColumn tableName="receiptallocationdetail_Temp">
+			<column name="PaidGST" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="83">
+		<comment> new columns added for GST calculations</comment>
+		<addColumn tableName="receiptallocationdetail">
+			<column name="PaidGST" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="84" author="Kesav">
+		<comment> Old fields updated </comment>
+		<sql>
+			Update receiptallocationdetail set PaidGST = 0 where PaidGST is null; 
+			Update receiptallocationdetail_Temp set PaidGST = 0 where PaidGST is null; 
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

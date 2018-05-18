@@ -41,4 +41,24 @@
 			select deps_restore_dependencies('plfaudit','adtfeetypes');
 		</sql>
 	</changeSet>
+	
+	<changeSet author="Kesav" id="6">
+		<comment> new columns added for GST calculations</comment>
+		<addColumn tableName="AdtManualAdvise">
+			<column name="PaidCgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidSgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidUgst" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PaidIgst" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="7" author="Kesav">
+		<comment> Old fields updated </comment>
+		<sql>
+			Update AdtManualAdvise set PaidCgst = 0 where PaidCgst is null; 
+			Update AdtManualAdvise set PaidSgst = 0 where PaidSgst is null; 
+			Update AdtManualAdvise set PaidUgst = 0 where PaidUgst is null; 
+			Update AdtManualAdvise set PaidIgst = 0 where PaidIgst is null; 
+		</sql>
+	</changeSet>
 </databaseChangeLog>
