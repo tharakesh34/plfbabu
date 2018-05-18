@@ -5897,45 +5897,47 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				
 			}
 			
-			// ####_0.2
-			// Not allowed to approve loan with Disbursement type if it is not in  the configured OTC Types
-			String[] valueParm = new String[2];
-			boolean isFound = false;
-			boolean isOTCPayment = false;
-			
-			String alwrepayMethods=(String)SysParamUtil.getValue("COVENANT_REPAY_OTC_TYPE");
-			if (alwrepayMethods!=null) {
-				String[] repaymethod = alwrepayMethods.split(",");
-				if (financeDetail.getAdvancePaymentsList() != null
-						&& financeDetail.getAdvancePaymentsList().size() > 0) {
-					for (FinAdvancePayments finAdvancePayments : financeDetail.getAdvancePaymentsList()) {
-						isFound = false;
-						for (String rpymethod : repaymethod) {
-							if (StringUtils.equals(finAdvancePayments.getPaymentType(), rpymethod)) {
-								isFound = true;
-								break;
- 							}
-						}
-						if (!isFound) {
-							valueParm[0] = finAdvancePayments.getPaymentType();
-							isOTCPayment = true;
-							break;
-						}
-					}
-					if (isOTCPayment) {
-						if (financeDetail.getCovenantTypeList() != null && financeDetail.getCovenantTypeList().size() > 0) {
-							for (FinCovenantType covenantType : financeDetail.getCovenantTypeList()) {
-								if (covenantType.isAlwOtc()) {
-									valueParm[1] = Labels.getLabel("label_FinCovenantTypeDialog_AlwOTC.value");
-									auditDetails.get(0)
-									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41101", valueParm)));
+			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
+				// ####_0.2
+				// Not allowed to approve loan with Disbursement type if it is not in  the configured OTC Types
+				String[] valueParm = new String[2];
+				boolean isFound = false;
+				boolean isOTCPayment = false;
+				String alwrepayMethods = (String) SysParamUtil.getValue("COVENANT_REPAY_OTC_TYPE");
+				if (alwrepayMethods != null) {
+					String[] repaymethod = alwrepayMethods.split(",");
+					if (financeDetail.getAdvancePaymentsList() != null
+							&& financeDetail.getAdvancePaymentsList().size() > 0) {
+						for (FinAdvancePayments finAdvancePayments : financeDetail.getAdvancePaymentsList()) {
+							isFound = false;
+							for (String rpymethod : repaymethod) {
+								if (StringUtils.equals(finAdvancePayments.getPaymentType(), rpymethod)) {
+									isFound = true;
 									break;
+								}
+							}
+							if (!isFound) {
+								valueParm[0] = finAdvancePayments.getPaymentType();
+								isOTCPayment = true;
+								break;
+							}
+						}
+						if (isOTCPayment) {
+							if (financeDetail.getCovenantTypeList() != null
+									&& financeDetail.getCovenantTypeList().size() > 0) {
+								for (FinCovenantType covenantType : financeDetail.getCovenantTypeList()) {
+									if (covenantType.isAlwOtc()) {
+										valueParm[1] = Labels.getLabel("label_FinCovenantTypeDialog_AlwOTC.value");
+										auditDetails.get(0).setErrorDetail(
+												ErrorUtil.getErrorDetail(new ErrorDetail("41101", valueParm)));
+										break;
 
+									}
 								}
 							}
 						}
-					} 
-				}
+					}
+				} 
 			}
 			//Collateral Assignments details
 			//=======================================
@@ -6146,7 +6148,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			for (FinCovenantType covenanttype : financeDetail.getCovenantTypeList()) {
 				isOtc = covenanttype.isAlwOtc();
 				isOverdue = DateUtility.compare(covenanttype.getReceivableDate(), DateUtility.getAppDate()) < 0;
-				if(covenanttype.getDocReceivedDate()!=null && (isOverdue || isOtc)){
+				if((isOverdue || isOtc)){
 					break;
 				}
 			}
