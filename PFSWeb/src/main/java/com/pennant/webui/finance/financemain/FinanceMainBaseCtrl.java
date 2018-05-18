@@ -6265,7 +6265,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuApprovalTab);
 			for (Verification verification : aFinanceDetail.getRcuVerification().getVerifications()) {
 				if (verification.getDecision() == Decision.RE_INITIATE.getKey()
-						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)) {
+						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED) && verification.getReinitid()==null) {
 					MessageUtil
 							.showError("RCU Verification Re-Initiation is allowed only when user action is save");
 					return;

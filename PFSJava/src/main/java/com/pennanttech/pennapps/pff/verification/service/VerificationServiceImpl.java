@@ -201,13 +201,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				} else {
 					if (item.getId() != 0) {
 						verificationDAO.update(item, TableType.MAIN_TAB);
-						
+
 						if (verificationType == VerificationType.LV) {
-							
+
 						} else if (verificationType == VerificationType.RCU) {
 							riskContainmentUnitService.updateRemarks(item);
 						}
-						
+
 					}
 				}
 			}
@@ -257,7 +257,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		} else if (verificationType == VerificationType.LV) {
 			saveLV(financeDetail, item);
 		} else if (verificationType == VerificationType.RCU) {
-			saveRCU(financeDetail, item);
+			if (item.getReinitid() == null) {
+				saveRCU(financeDetail, item);
+			}
 		}
 	}
 

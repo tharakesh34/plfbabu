@@ -1210,10 +1210,14 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					aVerification.getRcuDocuments().add(document);
 				} else if (vrf.getRequestType() == vrf.getOldRequestType()) {
 					aVerification = map.get(vrf.getAgency());
-					aVerification.getRcuDocuments().add(document);
+					if (aVerification != null) {
+						aVerification.getRcuDocuments().add(document);
+					}
 				} else {
 					aVerification = other.get(vrf.getAgency());
-					aVerification.getRcuDocuments().add(document);
+					if (aVerification != null) {
+						aVerification.getRcuDocuments().add(document);
+					}
 				}
 			}
 		}
