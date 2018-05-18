@@ -279,7 +279,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 				continue;
 			}
 
-			id = id.substring(0, id.length() - 1);
+			id = id.replaceAll("\\d", "");
 			if (StringUtils.equals(id, listcellId)) {
 				return listcell.getFirstChild();
 			}
@@ -809,7 +809,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			for (Listitem listitem : listBoxInitiation.getItems()) {
 				Combobox decisionBox = (Combobox) getComponent(listitem, "Decision");
 
-				if (!decisionBox.isReadonly()) {
+				if (!decisionBox.isDisabled()) {
 					decisionBox.setConstraint(new PTStringValidator(
 							Labels.getLabel("label_LVInitiationDialog_Decision.value"), null, true, true));
 				}
