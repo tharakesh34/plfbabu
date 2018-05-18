@@ -612,4 +612,10 @@
 <changeSet id="163" author="Ganesh.p">
 		<modifyDataType tableName="ADTFinGuarantorsDetails" columnName="GuarantorIDType" newDataType="VARCHAR(50)"/>
 </changeSet>	
+
+<changeSet id="32" author="Vinay">
+	<addColumn tableName="AdtSecUsers">
+		<column name="PwdExpDt" type="datetime"/>
+	</addColumn>
+</changeSet>	
 	</databaseChangeLog>
