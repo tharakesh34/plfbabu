@@ -7171,5 +7171,28 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 	</createTable>
 </changeSet>
 
+
+<changeSet id="168" author="Vinay">
+	<dropTable tableName="MASTER_DEF"/>
+</changeSet>
+
+<changeSet id="169" author="Vinay">
+	<createTable tableName="MASTER_DEF">
+		<column name="Master_Type" type="varchar(50)" >
+			<constraints nullable="false"/>
+		</column>
+		<column name="Key_Type" type="varchar(50)" >
+			<constraints nullable="false"/>
+		</column>
+		<column name="Key_Code" type="varchar(50)" >
+			<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>
+
+<changeSet id="170" author="Vinay">
+	<addPrimaryKey columnNames="Master_Type, Key_Type"
+			constraintName="PK_MASTER_DEF" tableName="MASTER_DEF" />
+</changeSet>
 </databaseChangeLog>
 	
