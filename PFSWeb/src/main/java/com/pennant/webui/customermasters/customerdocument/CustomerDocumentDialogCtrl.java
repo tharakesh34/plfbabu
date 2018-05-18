@@ -87,7 +87,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -106,7 +105,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -181,13 +179,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 	private transient boolean validationOn;
 
-	protected Button btnSearchPRCustid; 
-
-
-	String primaryIdRegex = null;
-
-	String primaryIdLabel = null;
-
+	protected Button btnSearchPRCustid;
 
 	// ServiceDAOs / Domain Classes
 	private transient CustomerDocumentService customerDocumentService;
@@ -919,24 +911,15 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		if (!this.custID.isReadonly()){
 			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocCIF.value"),null,true));
 		}
+
 		// ### 01-05-2018 TuleApp ID : #360
 		if (!this.custDocTitle.isReadonly()) {
-			if (StringUtils.trimToEmpty(this.custDocType.getValue())
-					.equalsIgnoreCase(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL_DOC_TYPE"))
-					&& !StringUtils.trimToEmpty(this.custDocType.getValue())
-							.equalsIgnoreCase(PennantConstants.CPRCODE)) {
-				this.custDocTitle.setConstraint(
+			if (StringUtils.equals(custDocType.getValue(), PennantConstants.PANNUMBER)) {
+				custDocTitle.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
-								primaryIdRegex, isIdNumMand));
-
-			} else if (StringUtils.trimToEmpty(this.custDocType.getValue())
-					.equalsIgnoreCase(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP_DOC_TYPE"))) {
-				this.custDocTitle.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
-								primaryIdRegex, isIdNumMand));
-			} else if (StringUtils.trimToEmpty(this.custDocType.getValue())
-					.equalsIgnoreCase(PennantConstants.CPRCODE)) {
-				this.custDocTitle.setConstraint(
+								PennantRegularExpressions.REGEX_PANNUMBER, isIdNumMand));
+			} else if (StringUtils.equals(custDocType.getValue(), PennantConstants.CPRCODE)) {
+				custDocTitle.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
 								PennantRegularExpressions.REGEX_AADHAR_NUMBER, isIdNumMand));
 			} else {
@@ -945,7 +928,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 								PennantRegularExpressions.REGEX_ALPHANUM_CODE, isIdNumMand));
 			}
 		}
-
 
 		if (!this.custDocSysName.isReadonly()){
 			this.custDocSysName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocSysName.value"), 
@@ -1608,12 +1590,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 							}
 							newCustDocList.add(aCustomerDocument);
 							getCustomerDialogCtrl().doFillDocumentDetails(newCustDocList);
-							if(isRetailCustomer){
-								if(StringUtils.equals(PennantConstants.CPRCODE,this.custDocType.getValue())){
-									getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
+							if (isRetailCustomer) {
+								if (StringUtils.equals(custDocType.getValue(),
+										SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL_DOC_TYPE"))) {
+									getCustomerDialogCtrl().setMandatoryIDNumber(custDocTitle.getValue());
 								}
-							}else{
-								if(StringUtils.equals(PennantConstants.TRADELICENSE,this.custDocType.getValue())){
+							} else {
+								if (StringUtils.equals(custDocType.getValue(),
+										SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP_DOC_TYPE"))) {
 									getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
 									getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
 								}
@@ -1627,31 +1611,22 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		if(getCustomerDialogCtrl() != null){
-			if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
-				if(isRetailCustomer){
-					if(StringUtils.equals(PennantConstants.CPRCODE,this.custDocType.getValue())){
-						getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
-					}
-				}else{
-					if(StringUtils.equals(PennantConstants.TRADELICENSE,this.custDocType.getValue())){
-						getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
-						getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
-					}
-				}
-			}else{
-				if(isRetailCustomer){
-					if(StringUtils.equals(PennantConstants.PANNUMBER,this.custDocType.getValue())){
-						getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
-					}
-				}else{
-					if(StringUtils.equals(PennantConstants.TRADELICENSE,this.custDocType.getValue())){
-						getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
-					}
-				}
 
+		if (getCustomerDialogCtrl() != null) {
+			if (isRetailCustomer) {
+				if (StringUtils.equals(custDocType.getValue(),
+						SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL_DOC_TYPE"))) {
+					getCustomerDialogCtrl().setMandatoryIDNumber(custDocTitle.getValue());
+				}
+			} else {
+				if (StringUtils.equals(custDocType.getValue(),
+						SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP_DOC_TYPE"))) {
+					getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
+					getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
+				}
 			}
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -2034,18 +2009,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				this.custDocTitle.setValue(getCustomerDialogCtrl().getCustIDNumber(this.custDocType.getValue()));
 			}
 		}
-		
-		Map<String, String> attributes = new HashMap<>();
-
-		if (isRetailCustomer) {
-			attributes = PennantApplicationUtil.getPrimaryIdAttributes(PennantConstants.PFF_CUSTCTG_INDIV);
-		} else {
-			attributes = PennantApplicationUtil.getPrimaryIdAttributes(PennantConstants.PFF_CUSTCTG_CORP);
-
-		}
-
-		primaryIdRegex = attributes.get("REGEX");
-		
 		// ### 01-05-2018 - End	
 
 		
