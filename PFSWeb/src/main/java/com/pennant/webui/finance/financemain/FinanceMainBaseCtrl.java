@@ -74,13 +74,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -239,6 +242,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
+import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -912,6 +916,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
 	private String isCreditRevTabReq = SysParamUtil.getValueAsString(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ);
 	private List<String> assignCollateralRef = new ArrayList<>();
+	private CollateralSetupService collateralSetupService;
+	
 	
 	/**
 	 * default constructor.<br>
@@ -14691,12 +14697,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			for (ExtendedFieldDetail fieldDetail : detail.getCustomerDetails().getExtendedFieldHeader().getExtendedFieldDetails()) {
 				if(fieldDetail.isAllowInRule()){
 					Object value = detail.getCustomerDetails().getExtendedFieldRender().getMapValues().get(fieldDetail.getFieldName());
-					if(StringUtils.equals("CURRENCY",fieldDetail.getFieldType())){
-						value  = PennantAppUtil.formateAmount((BigDecimal) value,CurrencyUtil.getFormat(detail.getCustomerDetails().getCustomer().getCustBaseCcy()));
-					}
+					value  = getRuleValue(value, fieldDetail.getFieldType(), detail.getCustomerDetails().getCustomer().getCustBaseCcy());
 					detail.getCustomerEligibilityCheck().addExtendedField(fieldDetail.getLovDescModuleName()+"_"+fieldDetail.getLovDescSubModuleName()+"_"+fieldDetail.getFieldName(), value);
-
-					
 				}
 			}
 			
@@ -14709,15 +14711,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			for (ExtendedFieldDetail fieldDetail : detail.getExtendedFieldHeader().getExtendedFieldDetails()) {
 				if(fieldDetail.isAllowInRule()){
 					Object value = detail.getExtendedFieldRender().getMapValues().get(fieldDetail.getFieldName());
-					if(StringUtils.equals("CURRENCY",fieldDetail.getFieldType())){
-						value  = PennantAppUtil.formateAmount((BigDecimal) value,CurrencyUtil.getFormat(detail.getCustomerDetails().getCustomer().getCustBaseCcy()));
-					}
-					
+					value  = getRuleValue(value, fieldDetail.getFieldType(), detail.getCustomerDetails().getCustomer().getCustBaseCcy());
 					detail.getCustomerEligibilityCheck().addExtendedField(fieldDetail.getLovDescModuleName()+"_"+fieldDetail.getLovDescSubModuleName()+"_"+fieldDetail.getFieldName(), value);
 				}
 			}	
 		}
-		
 		// Loan purpose value
 		String finPurpose = " ";
 		if (StringUtils.isNotBlank(financeMain.getFinPurpose())) {
@@ -14736,11 +14734,83 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			detail.getCustomerEligibilityCheck().setExtendedFields(collateralHeaderDialogCtrl.getRules());
 		}
 		// ### 10-05-2018 - End - Development Item 82
+		detail.getCustomerEligibilityCheck().setExtendedFields(setCollateralRuleValues(detail));
+		
+		int maturityAge = 0;
+		if(customer.getCustDOB()!=null && maturityDate_two.getValue()!=null){
+			maturityAge =  DateUtility.getYearsBetween(customer.getCustDOB(), maturityDate_two.getValue());
+		}
+		
+		detail.getCustomerEligibilityCheck().addExtendedField("maturityAge",maturityAge );
+		
+		
 		setFinanceDetail(detail);
 		logger.debug("Leaving");
 		return getFinanceDetail();
 	}
 
+	private Object getRuleValue(Object value,String fieldType,String currency){
+	
+		if(value==null){
+			switch (ExtendedFieldConstants.FieldType.valueOf(fieldType)) {
+				case BOOLEAN:
+					return false;
+				case INT:
+				case LONG:
+					return "0";
+				case DATE:
+				case DATETIME:
+				case TIME:
+					return null;
+				case ACTRATE:
+				case DECIMAL:
+				case PERCENTAGE:
+				case BASERATE:
+				case CURRENCY:
+					return BigDecimal.ZERO;
+				default:
+					value= "";
+				}
+		}else  if(StringUtils.equals("CURRENCY",fieldType)){
+			value  = PennantAppUtil.formateAmount((BigDecimal) value,CurrencyUtil.getFormat(currency));
+		}
+		return value;
+	}
+
+	private Map<String, Object> setCollateralRuleValues(FinanceDetail detail){
+		Map<String, Object> ruleValues= new HashMap<>();
+		if(collateralHeaderDialogCtrl==null){
+			return ruleValues;
+		}
+		
+		if(CollectionUtils.isNotEmpty(collateralHeaderDialogCtrl.getCollateralAssignments())){
+			for (CollateralAssignment assignment : collateralHeaderDialogCtrl.getCollateralAssignments()) {
+				CollateralSetup setup= getCollateralSetupService().getCollateralSetupByRef(assignment.getCollateralRef(), curNextRoleCode, isEnquiry);
+				if(setup!=null && setup.getCollateralStructure()!=null){
+					
+					for 	(ExtendedFieldDetail fieldDetail : setup.getCollateralStructure().getExtendedFieldHeader().getExtendedFieldDetails()) {
+						if(fieldDetail.isAllowInRule()){
+							String key=fieldDetail.getLovDescModuleName()+"_"+fieldDetail.getLovDescSubModuleName()+"_"+fieldDetail.getFieldName();
+							
+							if(CollectionUtils.isNotEmpty(setup.getExtendedFieldRenderList())){
+								for (ExtendedFieldRender extendedFieldRender : setup.getExtendedFieldRenderList()) {
+									// FIXME currently it  is available for the first REcord only 
+									if(!ruleValues.containsKey(key)){
+										Object value = extendedFieldRender.getMapValues().get(fieldDetail.getFieldName());
+										value  = getRuleValue(value, fieldDetail.getFieldType(), setup.getCollateralCcy());
+										ruleValues.put(key, value);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+ 
+		}
+			return ruleValues;
+	}
+	
 	public String getCodeValue(String fieldCodeId) {
 		if (!StringUtils.equals(fieldCodeId, PennantConstants.List_Select)) {
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
@@ -17053,5 +17123,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public List<String> getAssignCollateralRef() {
 		return assignCollateralRef;
+	}
+
+	public CollateralSetupService getCollateralSetupService() {
+		return collateralSetupService;
+	}
+
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
 	}	
 }

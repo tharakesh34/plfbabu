@@ -3,6 +3,11 @@ package com.pennant.backend.util;
 
 public class ExtendedFieldConstants {
 	
+	public static enum FieldType {
+		TEXT, UPPERTEXT, STATICCOMBO, MULTISTATICCOMBO, EXTENDEDCOMBO, MULTIEXTENDEDCOMBO, DATE, DATETIME, 
+		TIME, INT, LONG, ACTRATE, DECIMAL, CURRENCY, RADIO, PERCENTAGE, BOOLEAN, MULTILINETEXT, 
+		ACCOUNT, FREQUENCY, BASERATE, ADDRESS, PHONE, LISTFIELD
+	}
 	// Unique ID for Module Generation
 	public static final String 	UNIQUE_ID_EXTENDEDFIELDS   = "EXTENDEDFIELDS";
 

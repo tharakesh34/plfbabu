@@ -116,6 +116,7 @@ import com.pennant.backend.model.systemmasters.MaritalStatusCode;
 import com.pennant.backend.model.systemmasters.Salutation;
 import com.pennant.backend.model.systemmasters.SubSegment;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -129,11 +130,6 @@ import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class PennantAppUtil {
-	private static enum FieldType {
-		TEXT, UPPERTEXT, STATICCOMBO, MULTISTATICCOMBO, EXTENDEDCOMBO, MULTIEXTENDEDCOMBO, DATE, DATETIME, 
-		TIME, INT, LONG, ACTRATE, DECIMAL, CURRENCY, RADIO, PERCENTAGE, BOOLEAN, MULTILINETEXT, 
-		ACCOUNT, FREQUENCY, BASERATE, ADDRESS, PHONE, LISTFIELD
-	}
 	
 	public static ArrayList<ValueLabel> getProductByCtg(Filter[] filters) {
 		ArrayList<ValueLabel> productList = new ArrayList<ValueLabel>();
@@ -947,7 +943,7 @@ public class PennantAppUtil {
 	
 	private static String getExternalFieldType(String fieldType){
 		
-		switch (FieldType.valueOf(fieldType)) {
+		switch (ExtendedFieldConstants.FieldType.valueOf(fieldType)) {
 		case TEXT:
 		case UPPERTEXT:
 		case MULTILINETEXT:
