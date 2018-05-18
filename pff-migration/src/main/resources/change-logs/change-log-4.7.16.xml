@@ -7157,5 +7157,19 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 	<dropColumn tableName="secusers" columnName="usrcredentialsexp"/>
 </changeSet>
 
+<changeSet id="167" author="Vinay">
+	<createTable tableName="MASTER_DEF">
+		<column name="MandateType" type="varchar(50)" >
+			<constraints nullable="false"/>
+		</column>
+		<column name="KeyTypw" type="varchar(50)" >
+			<constraints nullable="false"/>
+		</column>
+		<column name="KeyCode" type="varchar(50)" >
+			<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>
+
 </databaseChangeLog>
 	
