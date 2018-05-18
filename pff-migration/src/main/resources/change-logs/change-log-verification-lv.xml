@@ -2374,7 +2374,7 @@
 	<changeSet id="14.0" author="murthy.y">
 		<dropTable tableName="verification_lv_details"/>
 	</changeSet>
-	<changeSet id="14.1" author="durgaprasad.g">
+	<changeSet id="14.1" author="durgaprasad.g" dbms="postgresql">
 		<createTable tableName="verification_lv_details">
 			<column name="VerificationID" type="bigint">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det"/>
@@ -2408,7 +2408,76 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="14.2" author="durgaprasad.g">
+	<changeSet id="14.1" author="durgaprasad.g" dbms="oracle">
+		<createTable tableName="verification_lv_details">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentType" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14.1" author="durgaprasad.g" dbms="mssql">
+		<createTable tableName="verification_lv_details">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentType" type="int" >
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="14.2" author="durgaprasad.g" dbms="postgresql">
 		<createTable tableName="verification_lv_details_temp">
 			<column name="VerificationID" type="bigint" >
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_t"/>
@@ -2443,7 +2512,77 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="14.3" author="durgaprasad.g">
+	<changeSet id="14.2" author="durgaprasad.g" dbms="oracle">
+		<createTable tableName="verification_lv_details_temp">
+			<column name="VerificationID" type="bigint" >
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_t"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_t"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentType" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+			<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14.2" author="durgaprasad.g" dbms="mssql">
+		<createTable tableName="verification_lv_details_temp">
+			<column name="VerificationID" type="bigint" >
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_t"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_t"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentType" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+			<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14.3" author="durgaprasad.g" dbms="oracle">
 		<createTable tableName="verification_lv_details_stage">
 			<column name="VerificationID" type="bigint">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_s"/>
@@ -2475,6 +2614,79 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+	<changeSet id="14.3" author="durgaprasad.g" dbms="mssql">
+		<createTable tableName="verification_lv_details_stage">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_s"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_s"/>
+			</column>
+				<column name="DocumentId" type="bigint"/>
+			<column name="DocumentType" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+			<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14.3" author="durgaprasad.g" dbms="postgresql">
+		<createTable tableName="verification_lv_details_stage">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_s"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_s"/>
+			</column>
+				<column name="DocumentId" type="bigint"/>
+			<column name="DocumentType" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+			<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14._Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table verification_lv_details add constraint df_vdtl_DocumentType default 0 for DocumentType;
+			alter table verification_lv_details_temp add constraint df_vdtl_t_DocumentType default 0 for DocumentType;
+			alter table verification_lv_details_stage add constraint df_vdtlstg_DocumentType default 0 for DocumentType;
+		</sql>
 	</changeSet>
 	<changeSet id="14.4" author="durgaprasad.g">
 		<addForeignKeyConstraint constraintName="fk_verf_det_vrfid" baseTableName="verification_lv_details" baseColumnNames="VerificationId"  referencedTableName="verification_lv" referencedColumnNames="VerificationId"/>
