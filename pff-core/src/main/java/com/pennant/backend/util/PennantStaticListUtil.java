@@ -341,6 +341,7 @@ public class PennantStaticListUtil {
 			regexType.add(new ValueLabel("REGEX_ALPHA_UNDERSCORE", Labels.getLabel("label_REGEX_ALPHA_UNDERSCORE")));
 			regexType.add(new ValueLabel("REGEX_EMAIL", Labels.getLabel("label_REGEX_EMAIL")));
 			regexType.add(new ValueLabel("REGEX_WEB", Labels.getLabel("label_REGEX_WEB")));
+			regexType.add(new ValueLabel("REGEX_SPECIAL_REGX", Labels.getLabel("label_REGEX_SPECIAL_REGX")));
 		}
 		return regexType;
 
