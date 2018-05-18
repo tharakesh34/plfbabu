@@ -578,7 +578,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		logger.debug(Literal.LEAVING);
 	}
 	
-	private void logMandateHistory(Mandate respmandate, long requestId) {
+	protected void logMandateHistory(Mandate respmandate, long requestId) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		

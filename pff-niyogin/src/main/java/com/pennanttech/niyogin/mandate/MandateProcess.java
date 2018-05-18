@@ -24,6 +24,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.ftp.SftpClient;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pff.external.DocumentManagementService;
@@ -107,7 +108,7 @@ public class MandateProcess extends AbstractMandateProcess{
 
 			List<Mandate> list =   searchProcessor.getResults(search);
 
-			/*for (Mandate mandate : list) {
+			for (Mandate mandate : list) {
 				// Fetch document from DMS by using document reference
 				String reference = String.valueOf(mandate.getMandateID());
 				DocumentDetails detail = documentManagementService.getExternalDocument(mandate.getExternalRef(), reference);
@@ -123,7 +124,7 @@ public class MandateProcess extends AbstractMandateProcess{
 		        } catch (IOException e) {
 		           logger.error("Exception", e);
 		        }
-			}*/
+			}
 			
 			if (file.isDirectory()) {
 				for (File item : file.listFiles()) {
@@ -191,5 +192,30 @@ public class MandateProcess extends AbstractMandateProcess{
 		paramMap.addValue("REASON", respmandate.getReason());
 
 		this.namedJdbcTemplate.update(sql.toString(), paramMap);
+	}
+	
+	
+	@Override
+	protected void logMandateHistory(Mandate respmandate, long requestId) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		
+		StringBuilder sql =new StringBuilder("Insert Into MandatesStatus");
+		sql.append(" (mandateID, status, reason, changeDate, fileID)");
+		sql.append(" Values(:mandateID, :STATUS, :REASON, :changeDate,:fileID)");
+		
+		paramMap.addValue("mandateID", respmandate.getMandateID());
+		
+		if (!MANDATE_POSITIVE_REPSONE.equals(respmandate.getStatus())) {
+			paramMap.addValue("STATUS", "REJECTED");
+		} else {
+			paramMap.addValue("STATUS", "APPROVED");
+		}
+		paramMap.addValue("REASON", respmandate.getReason());
+		paramMap.addValue("changeDate", getAppDate());
+		paramMap.addValue("fileID", requestId);
+		
+		this.namedJdbcTemplate.update(sql.toString(), paramMap);
+		logger.debug(Literal.LEAVING);
 	}
 }
