@@ -187,7 +187,11 @@ public class DeviationExecutionCtrl {
 			if (resultval instanceof Double) {
 				BigDecimal tempResult = new BigDecimal(resultval.toString());
 				finElgDetail.setRuleResult(tempResult.toString());
+			}else  if (resultval instanceof Integer) {
+				BigDecimal tempResult = new BigDecimal(resultval.toString());
+				finElgDetail.setRuleResult(tempResult.toString());
 			}
+
 
 			for (DeviationHeader deviationHeader : list) {
 				if (deviationHeader.getModuleCode().equals(String.valueOf(finElgDetail.getElgRuleCode()))) {
