@@ -279,7 +279,7 @@
 	  	<sql splitStatements="false" stripComments="true"> 
 			DECLARE countT int;
 				begin
-				  for i in (Select SUBMODULENAME from extendedfieldheader where modulename='LOAN')
+				  for i in (Select SUBMODULENAME from adtextendedfieldheader where modulename='LOAN')
 				    loop
 				        begin
 				            Select COUNT(*) into countT from user_tables where table_name='ADTLOAN_'||i.SUBMODULENAME||'_ED';
@@ -470,15 +470,15 @@
 			<constraints nullable="false" />
 		</column>
 		<column name="Id" type="bigint"/>
-		<column name="FinReference" type="varchar"/>
+		<column name="FinReference" type="varchar(10)"/>
 		<column name="CategoryId" type="bigint"/>
-		<column name="QryNotes" type="varchar"/>
-		<column name="AssignedRole" type="varchar"/>
-		<column name="NotifyTo" type="varchar"/>
-		<column name="Status" type="varchar"/>
+		<column name="QryNotes" type="varchar(10)"/>
+		<column name="AssignedRole" type="varchar(10)"/>
+		<column name="NotifyTo" type="varchar(10)"/>
+		<column name="Status" type="varchar(10)"/>
 		<column name="RaisedBy" type="bigint"/>
 		<column name="RaisedOn" type="datetime"/>
-		<column name="ResponsNotes" type="varchar"/>
+		<column name="ResponsNotes" type="varchar(10)"/>
 		<column name="ResponseBy" type="bigint"/>
 		<column name="ResponseOn" type="datetime"/>
 		<column name="CloserNotes" type="nchar"/>
@@ -518,7 +518,7 @@
 		<column name="QueryDetailId" type="bigint"/>
 		<column name="ManagerId" type="bigint"/>
 		<column name="FileName" type="nchar"/>
-		<column name="Remarks" type="varchar"/>
+		<column name="Remarks" type="varchar(10)"/>
 		<column name="UploadedBy" type="bigint"/>
 		<column name="UploadedOn" type="datetime"/>
 		<column name="version" type="int"/>
