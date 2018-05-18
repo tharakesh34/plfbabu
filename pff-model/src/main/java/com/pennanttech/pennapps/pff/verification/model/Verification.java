@@ -56,6 +56,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private boolean approveTab;
 	private boolean waiveTab;
 	private int docType;
+	private int oldRequestType;
 	private String docName;
 
 	private String cif;
@@ -108,6 +109,7 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("rcuDocuments");
 		excludeFields.add("rcuDocument");
 		excludeFields.add("waiveTab");
+		excludeFields.add("oldRequestType");
 		return excludeFields;
 	}
 
@@ -469,6 +471,14 @@ public class Verification extends AbstractWorkflowEntity {
 
 	public void setWaiveTab(boolean waiveTab) {
 		this.waiveTab = waiveTab;
+	}
+
+	public int getOldRequestType() {
+		return oldRequestType;
+	}
+
+	public void setOldRequestType(int oldRequestType) {
+		this.oldRequestType = oldRequestType;
 	}
 
 }

@@ -6,6 +6,7 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 
 public interface RiskContainmentUnitDAO extends BasicCrudDao<RiskContainmentUnit> {
@@ -29,5 +30,7 @@ public interface RiskContainmentUnitDAO extends BasicCrudDao<RiskContainmentUnit
 	void deleteDocuments(long verificationId, TableType tableType);
 	
 	List<RCUDocument> getDocuments(String keyReference, TableType tableType, DocumentType documentType);
+
+	void updateRemarks(Verification item);
 
 }

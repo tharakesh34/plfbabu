@@ -201,6 +201,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				} else {
 					if (item.getId() != 0) {
 						verificationDAO.update(item, TableType.MAIN_TAB);
+						
+						if (verificationType == VerificationType.LV) {
+							
+						} else if (verificationType == VerificationType.RCU) {
+							riskContainmentUnitService.updateRemarks(item);
+						}
+						
 					}
 				}
 			}
@@ -218,11 +225,16 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		reInit.setLastMntOn(item.getLastMntOn());
 		reInit.setLastMntBy(item.getLastMntBy());
 
-		if (item.isApproveTab()) {
+		if (verificationType == VerificationType.LV) {//FIXME
 			reInit.setDecision(Decision.RE_INITIATE.getKey());
+			item.getRcuDocument().setInitRemarks(item.getDecisionRemarks());
 		} else {
 			item.setAgency(item.getReInitAgency());
 			item.setRemarks(item.getDecisionRemarks());
+		}
+		if (verificationType == VerificationType.RCU) {
+			reInit.setDecision(Decision.RE_INITIATE.getKey());
+			item.getRcuDocument().setInitRemarks(item.getDecisionRemarks());
 		}
 		item.setStatus(0);
 		item.setCreatedBy(item.getLastMntBy());

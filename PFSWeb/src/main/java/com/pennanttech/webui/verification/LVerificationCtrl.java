@@ -805,6 +805,18 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			}
 
 		}
+		if (!initType) {
+			for (Listitem listitem : listBoxInitiation.getItems()) {
+				Combobox decisionBox = (Combobox) getComponent(listitem, "Decision");
+
+				if (!decisionBox.isReadonly()) {
+					decisionBox.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_LVInitiationDialog_Decision.value"), null, true, true));
+				}
+
+			}
+		}
+
 		logger.debug("Leaving");
 	}
 

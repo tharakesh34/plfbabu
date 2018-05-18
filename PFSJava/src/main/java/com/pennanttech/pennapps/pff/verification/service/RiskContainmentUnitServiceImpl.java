@@ -809,8 +809,8 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			rcuDocument.setPagesEyeballed(0);
 			rcuDocument.setAgentRemarks("");
 		}
+		
 		riskContainmentUnitDAO.saveDocuments(rcuDocuments, tableType);
-
 	}
 
 	@Override
@@ -822,6 +822,11 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	@Override
 	public List<RCUDocument> getDocuments(String keyReference, TableType tableType, DocumentType documentType) {
 		return riskContainmentUnitDAO.getDocuments(keyReference, tableType, documentType);
+	}
+
+	@Override
+	public void updateRemarks(Verification item) {
+		riskContainmentUnitDAO.updateRemarks(item);
 	}
 
 }

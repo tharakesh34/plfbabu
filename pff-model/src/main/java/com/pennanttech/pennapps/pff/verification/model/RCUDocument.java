@@ -17,6 +17,7 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	private String documentSubId;
 	private Long documentRefId;
 	private String documentUri;
+	private Long reinitid;
 	private int verificationType;
 	private int status;
 	private int pagesEyeballed;
@@ -24,6 +25,7 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	private String initRemarks;
 	private String agentRemarks;
 	private String decisionRemarks;
+	private boolean reInitiated;
 
 	private String docCategory;
 	private String docModule;
@@ -59,6 +61,8 @@ public class RCUDocument extends AbstractWorkflowEntity {
 		excludeFields.add("description");
 		excludeFields.add("collateralRef");
 		excludeFields.add("docTypeId");
+		excludeFields.add("reinitid");
+		excludeFields.add("reInitiated");
 		return excludeFields;
 	}
 
@@ -272,6 +276,22 @@ public class RCUDocument extends AbstractWorkflowEntity {
 
 	public void setDocumentType(int documentType) {
 		this.documentType = documentType;
+	}
+
+	public Long getReinitid() {
+		return reinitid;
+	}
+
+	public void setReinitid(Long reinitid) {
+		this.reinitid = reinitid;
+	}
+
+	public boolean isReInitiated() {
+		return reInitiated;
+	}
+
+	public void setReInitiated(boolean reInitiated) {
+		this.reInitiated = reInitiated;
 	}
 
 }

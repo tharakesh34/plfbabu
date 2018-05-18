@@ -196,6 +196,23 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				setOldVerificationFields(previous, current);
 			}
 		}
+
+		for (Entry<String, Verification> entrySet : map.entrySet()) {
+			if (entrySet.getKey().startsWith("dummy$#")) {
+				customerDocuments.put(entrySet.getKey(), entrySet.getValue());
+			}
+		}
+
+		for (Entry<String, Verification> screen : customerDocuments.entrySet()) {
+			for (Entry<String, Verification> old : map.entrySet()) {
+				if (old.getValue().getReinitid() == null) {
+					continue;
+				}
+				if (screen.getValue().getReinitid() == old.getValue().getReinitid()) {
+					old.getValue().setDocName(screen.getValue().getDocName());
+				}
+			}
+		}
 	}
 
 	private void setDocumentDetails(List<DocumentDetails> documents, DocumentType documentType) {
@@ -231,6 +248,23 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				setOldVerificationFields(current, previous);
 			}
 		}
+
+		for (Entry<String, Verification> entrySet : map.entrySet()) {
+			if (entrySet.getKey().startsWith("dummy$#")) {
+				documentMap.put(entrySet.getKey(), entrySet.getValue());
+			}
+		}
+
+		for (Entry<String, Verification> screen : documentMap.entrySet()) {
+			for (Entry<String, Verification> old : map.entrySet()) {
+				if (old.getValue().getReinitid() == null) {
+					continue;
+				}
+				if (screen.getValue().getReinitid() == old.getValue().getReinitid()) {
+					old.getValue().setDocName(screen.getValue().getDocName());
+				}
+			}
+		}
 	}
 
 	private void setOldVerificationFields(Verification previous, Verification current) {
@@ -244,6 +278,12 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		current.setDecisionRemarks(previous.getDecisionRemarks());
 		current.setReference(previous.getReference());
 		current.setNewRecord(false);
+
+		if (previous.getRcuDocument() != null) {
+			current.getRcuDocument().setVerificationId(previous.getRcuDocument().getVerificationId());
+			current.getRcuDocument().setSeqNo(previous.getRcuDocument().getSeqNo());
+		}
+
 	}
 
 	private boolean isNotDeleted(String recordType) {
@@ -344,8 +384,10 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
+		int i = 0;
 		for (Verification ver : list) {
 			if (ver.getReinitid() != null) {
+				verificationMap.put("dummy$#".concat(String.valueOf(++i)), ver);
 				continue;
 			}
 
@@ -757,7 +799,14 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 				decision.addForward("onChange", self, "onChangeDecision", item);
 				reInitAgency.addForward("onFulfill", self, "onChangeReInitAgency", item);
+
+				if (vrf.getDecision() == Decision.RE_INITIATE.getKey()) {
+					decision.setDisabled(true);
+					reInitRemarks.setReadonly(true);
+				}
 			}
+
+			item.setAttribute("requestType", vrf.getRequestType());
 
 			requestType.addForward("onChange", self, "onChnageTv", item);
 			agency.addForward("onFulfill", self, "onChangeAgency", item);
@@ -920,6 +969,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private void setValue(Listitem listitem, String comonentId) {
 
 		Verification verification = (Verification) listitem.getAttribute("vrf");
+		verification.setOldRequestType(Integer.parseInt(listitem.getAttribute("requestType").toString()));
 
 		switch (comonentId) {
 		case "RequestType":
@@ -952,6 +1002,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (!combobox.isDisabled() && decision == 0) {
 				throw new WrongValueException(combobox,
 						Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
+			} else if (verification.getOldRequestType() == RequestType.INITIATE.getKey()
+					&& decision == Decision.RE_INITIATE.getKey()) {
+				verification.getRcuDocument().setReInitiated(true);
 			}
 			break;
 		case "ReInitAgency":
@@ -1124,15 +1177,26 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private List<Verification> getVerifications() {
 		Map<Long, Verification> map = new HashMap<>();
+		Map<Long, Verification> reInitMap = new HashMap<>();
+		Map<Long, Verification> other = new HashMap<>();
 		List<Verification> verifications = new ArrayList<>();
 		Verification aVerification = null;
 
 		for (Verification vrf : this.verification.getVerifications()) {
+
 			if (vrf.getRequestType() != RequestType.INITIATE.getKey()) {
 				verifications.add(vrf);
 			}
-			if (vrf.getAgency() != null && !map.containsKey(vrf.getAgency())) {
-				map.put(vrf.getAgency(), vrf);
+
+			if (vrf.getAgency() != null
+					&& (!map.containsKey(vrf.getAgency()) || !reInitMap.containsKey(vrf.getAgency()))) {
+				if (vrf.getDecision() == Decision.RE_INITIATE.getKey()) {
+					reInitMap.put(vrf.getAgency(), vrf);
+				} else if (vrf.getRequestType() == vrf.getOldRequestType()) {
+					map.put(vrf.getAgency(), vrf);
+				} else {
+					other.put(vrf.getAgency(), vrf);
+				}
 			}
 		}
 
@@ -1141,11 +1205,31 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			document.setInitRemarks(vrf.getRemarks());
 			document.setDecisionRemarks(vrf.getDecisionRemarks());
 			if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
-				aVerification = map.get(vrf.getAgency());
-				aVerification.getRcuDocuments().add(document);
+				if (!initType && vrf.getDecision() == Decision.RE_INITIATE.getKey()) {
+					aVerification = reInitMap.get(vrf.getAgency());
+					aVerification.getRcuDocuments().add(document);
+				} else if (vrf.getRequestType() == vrf.getOldRequestType()) {
+					aVerification = map.get(vrf.getAgency());
+					aVerification.getRcuDocuments().add(document);
+				} else {
+					aVerification = other.get(vrf.getAgency());
+					aVerification.getRcuDocuments().add(document);
+				}
 			}
 		}
+
+		/*
+		 * if (!initType) { for (Verification vrf : this.verification.getVerifications()) { RCUDocument document =
+		 * vrf.getRcuDocument(); document.setInitRemarks(vrf.getRemarks());
+		 * document.setDecisionRemarks(vrf.getDecisionRemarks()); if (vrf.getDecision() ==
+		 * Decision.RE_INITIATE.getKey()) { aVerification = reInitMap.get(vrf.getAgency());
+		 * aVerification.getRcuDocuments().add(document); } } }
+		 */
+
 		verifications.addAll(map.values());
+		verifications.addAll(reInitMap.values());
+		verifications.addAll(other.values());
+
 		return verifications;
 	}
 
