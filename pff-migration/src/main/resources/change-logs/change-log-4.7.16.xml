@@ -6875,6 +6875,11 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 		<column name="PwdExpDt" type="datetime"/>
 	</addColumn>
 </changeSet>
-
+<changeSet id="165" author="MadhuBabu">
+	<comment> update errorcode code S41103 </comment>
+	<sql>
+		update ErrorDetails set code='41103' where code='S41103';
+	</sql>
+</changeSet>
 </databaseChangeLog>
 	
