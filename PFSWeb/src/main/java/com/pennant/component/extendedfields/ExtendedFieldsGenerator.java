@@ -1135,6 +1135,16 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				}
 			}
 
+			// Bug Fix:allignment of tab elements while throwing error
+			for (ExtendedFieldDetail extendedFieldDetail : notInputElements) {
+				if (ExtendedFieldConstants.FIELDTYPE_TABPANEL.equals(extendedFieldDetail.getFieldType())) {
+					Component fellowIfAny = window.getFellowIfAny(extendedFieldDetail.getFieldName());
+					Tab parTab = (Tab) fellowIfAny;
+					parTab.setSelected(true);
+				}
+
+			}
+
 			//group the exception by tab's
 			HashMap<ExtendedFieldDetail, List<WrongValueException>> data = groupByParentTab(wveMap, notInputElements);
 			//
