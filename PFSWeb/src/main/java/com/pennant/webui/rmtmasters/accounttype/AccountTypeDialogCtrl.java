@@ -594,7 +594,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		}
 		
 		try {
-			this.acTypeGrpId.getValidatedValue();
+			// this.acTypeGrpId.getValidatedValue();
 			AccountTypeGroup accountTypeGroup = (AccountTypeGroup) this.acTypeGrpId.getObject();
 			aAccountType.setAcTypeGrpId(accountTypeGroup.getGroupId());
 			aAccountType.setGroupCode(accountTypeGroup.getGroupCode());
@@ -1464,7 +1464,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		logger.debug("Leaving ");
 	}
 	
-/*	public void onFulfill$acTypeGrpId(Event event) {
+	public void onFulfill$acTypeGrpId(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = acTypeGrpId.getObject();
 		if (dataObject instanceof String) {
@@ -1477,7 +1477,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			}
 		}
 		logger.debug("Leaving" + event.toString());
-	}*/
+	}
 /*	public void onFulfill$profitCenter(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = profitCenter.getObject();
