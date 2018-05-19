@@ -96,7 +96,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		}
 
 		logger.debug(Literal.LEAVING);
-		return new ArrayList<Verification>();
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -294,6 +294,37 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		}
 		logger.debug(Literal.LEAVING);
 		return null;
+	}
+
+	@Override
+	public Verification getLastStatus(Verification verification) {
+		logger.debug(Literal.ENTERING);
+		
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("select Id, verificationDate, status from verifications v");
+		
+		if (verification.getRequestType() == VerificationType.LV.getKey()
+				|| verification.getRequestType() == VerificationType.TV.getKey()) {
+			sql.append(" inner join collateralsetup_view cs on ");
+			sql.append(" cs.collateralRef = v.referenceFor and cs.version = v.version");
+			sql.append(" where id = (select max(id) from verifications referenceFor = :referenceFor)");
+			sql.append(" and verificationType=:verificationType");
+			paramMap.addValue("referenceFor", verification.getReferenceFor());
+			paramMap.addValue("verificationType", verification.getReferenceType());
+		}
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+
+		}
+		
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	
 	}
 
 }

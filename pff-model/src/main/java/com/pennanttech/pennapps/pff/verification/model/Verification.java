@@ -78,6 +78,9 @@ public class Verification extends AbstractWorkflowEntity {
 	private LegalVerification legalVerification;
 	private RiskContainmentUnit rcuVerification;
 
+	private int lastStatus;
+	private Date lastVerificationDate;
+
 	public Verification() {
 		super();
 	}
@@ -479,6 +482,22 @@ public class Verification extends AbstractWorkflowEntity {
 
 	public void setOldRequestType(int oldRequestType) {
 		this.oldRequestType = oldRequestType;
+	}
+
+	public int getLastStatus() {
+		return lastStatus;
+	}
+
+	public void setLastStatus(int lastStatus) {
+		this.lastStatus = lastStatus;
+	}
+
+	public Date getLastVerificationDate() {
+		return lastVerificationDate;
+	}
+
+	public void setLastVerificationDate(Date lastVerificationDate) {
+		this.lastVerificationDate = lastVerificationDate;
 	}
 
 }

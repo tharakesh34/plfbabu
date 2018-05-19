@@ -719,6 +719,15 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 		return verifications;
 	}
+	
+	public void setLastStatus(Verification verification) {
+		Verification lastStatus = verificationDAO.getLastStatus(verification);
+
+		if (lastStatus != null) {
+			verification.setLastStatus(lastStatus.getLastStatus());
+			verification.setLastVerificationDate(lastStatus.getVerificationDate());
+		}
+	}
 
 	@Override
 	public void setLVDetails(List<Verification> verifications) {
