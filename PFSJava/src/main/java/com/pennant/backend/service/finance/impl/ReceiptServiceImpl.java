@@ -345,7 +345,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
 					FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
 
-					if(feeDetail.isOriginationFee() && StringUtils.isEmpty(feeDetail.getRecordType())){
+					if (feeDetail.isOriginationFee()) {
 						feeDetail.setRcdVisible(false);
 					}
 
