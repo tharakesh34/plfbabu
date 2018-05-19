@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
+import com.pennant.backend.dao.masters.MasterDefDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -30,6 +31,7 @@ public class FetchCustomerDedupDetails {
 
 	private static DedupParmService	dedupParmService;
 	private static CustomerDedupDAO	customerDedupDAO;
+	private static MasterDefDAO masterDefDAO;
 
 	public FetchCustomerDedupDetails() {
 		super();
@@ -212,6 +214,8 @@ public class FetchCustomerDedupDetails {
 		String mobileNumber = "";
 		String emailid = "";
 		String aadharId = "";
+		String aadhar = masterDefDAO.getMasterCode("DOC_TYPE", "AADHAAR");
+		String passPort = masterDefDAO.getMasterCode("DOC_TYPE", "PASSPORT");
 		Customer customer = customerDetails.getCustomer();
 		if (customerDetails.getCustomerPhoneNumList() != null) {
 			for (CustomerPhoneNumber custPhone : customerDetails.getCustomerPhoneNumList()) {
@@ -230,9 +234,19 @@ public class FetchCustomerDedupDetails {
 				}
 			}
 		}
+		//Aadhar 
 		if (customerDetails.getCustomerDocumentsList() != null) {
 			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
-				if (document.getCustDocCategory().equals(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+				if (document.getCustDocCategory().equals(aadhar)) {
+					aadharId = document.getCustDocTitle();
+					break;
+				}
+			}
+		}
+		//Passport 
+		if (customerDetails.getCustomerDocumentsList() != null) {
+			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
+				if (document.getCustDocCategory().equals(passPort)) {
 					aadharId = document.getCustDocTitle();
 					break;
 				}
@@ -281,6 +295,14 @@ public class FetchCustomerDedupDetails {
 
 	public void setCustomerDedupDAO(CustomerDedupDAO customerDedupDAO) {
 		FetchCustomerDedupDetails.customerDedupDAO = customerDedupDAO;
+	}
+
+	public static MasterDefDAO getMasterDefDAO() {
+		return masterDefDAO;
+	}
+
+	public static void setMasterDefDAO(MasterDefDAO masterDefDAO) {
+		FetchCustomerDedupDetails.masterDefDAO = masterDefDAO;
 	}
 
 }
