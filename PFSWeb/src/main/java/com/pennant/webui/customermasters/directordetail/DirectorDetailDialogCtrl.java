@@ -611,7 +611,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 				throw new WrongValueException(this.shareholder,
 						Labels.getLabel("label_DirectorDetailDialog_ShareOrDirector.value"));
 			}
-			if (this.shareholder.isChecked() && !this.sharePerc.isReadonly() && this.sharePerc.intValue() == 0) {
+			if (this.shareholder.isChecked() && !this.sharePerc.isReadonly() && this.sharePerc.getValue().compareTo(BigDecimal.ZERO) <= 0) {
 				throw new WrongValueException(this.sharePerc, Labels.getLabel("NUMBER_MINVALUE",
 						new String[] { Labels.getLabel("label_DirectorDetailDialog_SharePerc.value"), "0" }));
 			}
