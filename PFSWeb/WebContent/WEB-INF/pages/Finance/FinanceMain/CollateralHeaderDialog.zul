@@ -54,7 +54,9 @@
 										id="btnNew_CollateralAssignment"
 										label="${c:l('label_btnNew_CollateralAssignment')}"
 										tooltiptext="${c:l('button_CollateralAssignmentDialog_NewCollateral.tooltiptext')}"
+										autodisable="btnNew_CollateralAssignment"
 										sclass="z-toolbarbutton" />
+										
 								</toolbar>
 							</hbox>
 						</div>
