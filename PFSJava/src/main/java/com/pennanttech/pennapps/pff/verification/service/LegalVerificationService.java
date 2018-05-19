@@ -28,7 +28,7 @@ public interface LegalVerificationService {
 
 	void saveDocuments(List<LVDocument> lvDocuments, TableType tableType);
 
-	void deleteDocuments(String reference, TableType tableType);
+	void deleteDocuments(long verificationId, TableType tableType);
 
 	LegalVerification getLVFromStage(long verificationId);
 

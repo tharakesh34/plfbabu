@@ -58,6 +58,8 @@ public class Verification extends AbstractWorkflowEntity {
 	private int docType;
 	private int oldRequestType;
 	private String docName;
+	private CollateralSetup collateralSetup;
+	private boolean ignoreFlag;
 
 	private String cif;
 	private String customerName;
@@ -113,6 +115,8 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("rcuDocument");
 		excludeFields.add("waiveTab");
 		excludeFields.add("oldRequestType");
+		excludeFields.add("collateralSetup");
+		excludeFields.add("ignoreFlag");
 		return excludeFields;
 	}
 
@@ -500,4 +504,19 @@ public class Verification extends AbstractWorkflowEntity {
 		this.lastVerificationDate = lastVerificationDate;
 	}
 
+	public CollateralSetup getCollateralSetup() {
+		return collateralSetup;
+	}
+
+	public void setCollateralSetup(CollateralSetup collateralSetup) {
+		this.collateralSetup = collateralSetup;
+	}
+
+	public boolean isIgnoreFlag() {
+		return ignoreFlag;
+	}
+
+	public void setIgnoreFlag(boolean ignoreFlag) {
+		this.ignoreFlag = ignoreFlag;
+	}
 }

@@ -188,7 +188,6 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			if (arguments.containsKey("finassetTypeList")) {
 				setFinAssetTypes((List<FinAssetTypes>)arguments.get("finassetTypeList"));
 			}
-
 			
 			if (arguments.containsKey("financeMainDialogCtrl")) {
 				this.financeMainDialogCtrl = arguments.get("financeMainDialogCtrl");

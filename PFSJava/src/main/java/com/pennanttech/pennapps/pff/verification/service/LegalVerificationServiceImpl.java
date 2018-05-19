@@ -851,8 +851,8 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	}
 
 	@Override
-	public void deleteDocuments(String reference, TableType tableType) {
-		legalVerificationDAO.deleteDocuments(reference, tableType);
+	public void deleteDocuments(long verificationId, TableType tableType) {
+		legalVerificationDAO.deleteDocuments(verificationId, tableType);
 	}
 
 	@Override

@@ -2635,7 +2635,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				for (Verification oldVrf : verificationsList) {
 					for (Verification newVrf : verification.getVerifications()) {
 						if (newVrf.getId() == oldVrf.getId() && newVrf.getRequestType() == RequestType.WAIVE.getKey()) {
-							BeanUtils.copyProperties(newVrf, oldVrf);;
+							BeanUtils.copyProperties(newVrf, oldVrf);
 						}
 					}
 				}
@@ -2645,9 +2645,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						verificationService.saveOrUpdate(financeDetail, VerificationType.LV, tableType.getSuffix(), auditTranType, true));
 			}
 			
-			// save LV Initiation details
+			// save LV Approval details
 			//=======================================
 			if (financeDetail.isLvApprovalTab()) {
+				Verification verification = financeDetail.getLvVerification();
+				verification.setVerificationType(VerificationType.LV.getKey());
 				adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.LV,
 						tableType.getSuffix(), auditTranType, false));
 			}
@@ -2655,15 +2657,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// save RCU Initiation details
 			//=======================================
 			if (financeDetail.isRcuInitTab()) {
-				adtVerifications.addAll(
-						verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, tableType.getSuffix(), auditTranType, true));
+				adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.RCU,
+						tableType.getSuffix(), auditTranType, true));
 			}
 			
 			// save RCU Approval details
 			//=======================================
 			if (financeDetail.isRcuApprovalTab()) {
-				adtVerifications.addAll(
-						verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, tableType.getSuffix(), auditTranType, false));
+				adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.RCU,
+						tableType.getSuffix(), auditTranType, false));
 			}
 						
 			// preparing audit seqno for same table(adtverifications)

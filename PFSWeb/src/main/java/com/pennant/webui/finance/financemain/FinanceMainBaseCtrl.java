@@ -16967,11 +16967,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		for (CollateralSetup screenCollateral : screenCollaterals) {
 			for (Verification savedVerification : savedVerifications) {
-				if (StringUtils.isNotEmpty(screenCollateral.getRecordType())
-						&& (screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN) 
-						|| screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL))) {
+				/*if (StringUtils.isNotEmpty(screenCollateral.getRecordType())
+						&& (screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN) ||
+						 screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL))) {
 					return true;
-				}
+				}*/
 				if (screenCollateral.getCollateralRef().equals(savedVerification.getReferenceFor())) {
 					flag = false;
 				}

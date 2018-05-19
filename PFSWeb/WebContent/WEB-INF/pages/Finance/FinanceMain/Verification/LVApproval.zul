@@ -62,6 +62,10 @@
 											id="listheader_LegalVerification_Decision"
 											label="${c:l('listheader_LegalVerification_Decision.label')}"
 											sort="false" />
+										<listheader
+											id="listheader_LegalVerification_IReInitRemarks"
+											label="${c:l('listheader_LegalVerification_Remarks.label')}"
+											sort="false" />
 										<listheader visible="true"
 											id="listheader_LegalVerification_Initiation_ReInitiate"
 											sort="false" />
@@ -80,11 +84,15 @@
 										tooltiptext="${c:l('button_LegalVerificationDialog_WaiveDoc.tooltiptext')}"
 										sclass="z-toolbarbutton" />
 								</toolbar>
-								<listbox id="listBoxWaiver"
-									width="100%" span="true" style="overflow:auto;"
+								<listbox id="listBoxWaiver" width="100%"
+									span="true" style="overflow:auto;"
 									emptyMessage="${c:l('listbox.emptyMessage')}"
 									sizedByContent="true">
 									<listhead sizable="false">
+										<listheader
+											id="listheader_LegalVerification_WCollateral"
+											label="${c:l('listheader_LegalVerification_Collateral.label')}"
+											sort="false" />
 										<listheader
 											id="listheader_LegalVerification_DocumentType"
 											label="${c:l('listheader_LegalVerification_DocumentType.label')}"
@@ -108,6 +116,10 @@
 										<listheader
 											id="listheader_LegalVerification_WDecision"
 											label="${c:l('listheader_LegalVerification_Decision.label')}"
+											sort="false" />
+										<listheader
+											id="listheader_LegalVerification_WReInitRemarks"
+											label="${c:l('listheader_LegalVerification_Remarks.label')}"
 											sort="false" />
 										<listheader visible="true"
 											id="listheader_LegalVerification_Initiation_WReInitiate"

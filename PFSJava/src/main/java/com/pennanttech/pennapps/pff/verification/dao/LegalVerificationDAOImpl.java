@@ -276,19 +276,19 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 	}
 
 	@Override
-	public void deleteDocuments(String reference, TableType tableType) {
+	public void deleteDocuments(long verificationId, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from verification_lv_details_stage");
 		sql.append(tableType.getSuffix());
-		sql.append(" where verificationId in (select id from verifications where referenceFor=:referenceFor)");
+		sql.append(" where verificationId =:verificationId");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("referenceFor", reference);
+		paramSource.addValue("verificationId", verificationId);
 
 		int recordCount = 0;
 

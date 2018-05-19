@@ -149,6 +149,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		int i = 0;
 
 		for (Verification item : verification.getVerifications()) {
+			if (item.isIgnoreFlag()) {
+				continue;
+			}
 			item.setLastMntOn(verification.getLastMntOn());
 			item.setLastMntBy(verification.getLastMntBy());
 			item.setVersion(verification.getVersion());
@@ -197,14 +200,17 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 			} else {
 				if (item.getDecision() == Decision.RE_INITIATE.getKey()) {
-					reInitVerification(financeDetail, verificationType, customerDetailsList, collateralSetupList, item);
+					if (verificationType == VerificationType.LV) {
+						savereInitLegalVerification(financeDetail, item);
+					} else {
+						reInitVerification(financeDetail, verificationType, customerDetailsList, collateralSetupList,
+								item);
+					}
 				} else {
 					if (item.getId() != 0) {
 						verificationDAO.update(item, TableType.MAIN_TAB);
-
-						if (verificationType == VerificationType.LV) {
-
-						} else if (verificationType == VerificationType.RCU) {
+						
+						if (verificationType == VerificationType.RCU) {
 							riskContainmentUnitService.updateRemarks(item);
 						}
 
@@ -283,11 +289,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		for (LVDocument lvDocument : verification.getLvDocuments()) {
 			item = new Verification();
 			BeanUtils.copyProperties(verification, item);
-
-			item.setReferenceFor(lvDocument.getDocumentSubId());
 			item.setReferenceType(lvDocument.getDocumentSubId());
 
-			Long verificationId = getVerificationIdByReferenceFor(item.getKeyReference(), item.getReferenceFor(),
+			Long verificationId = getVerificationIdByReferenceFor(item.getKeyReference(), item.getReferenceType(),
 					VerificationType.LV.getKey());
 
 			if (verificationId != null) {
@@ -308,6 +312,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				throw new AppException(
 						String.format("Collateral %s already initiated", verification.getReferenceFor()));
 			}
+
 			if (verificationId != null) {
 				verification.setId(verificationId);
 				verificationDAO.update(verification, TableType.MAIN_TAB);
@@ -316,7 +321,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			}
 		}
 		// delete documents
-		legalVerificationService.deleteDocuments(verification.getReferenceFor(), TableType.MAIN_TAB);
+		legalVerificationService.deleteDocuments(verification.getId(), TableType.MAIN_TAB);
 
 		// Legal verification
 		legalVerificationService.save(verification, TableType.MAIN_TAB);
@@ -440,7 +445,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (lvDocument.getDocumentType() == DocumentType.LOAN.getKey()) {
 				DocumentDetails document = loanDocumentMap.get(lvDocument.getDocumentSubId());
 				lvDocument.setDocumentId(document.getId());
-				lvDocument.setDocumentSubId(lvDocument.getDocCategory());
+				lvDocument.setDocumentSubId(document.getDocCategory());
 				lvDocument.setDocumentRefId(document.getDocRefId());
 				lvDocument.setDocumentUri(document.getDocUri());
 			}
@@ -456,7 +461,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (lvDocument.getDocumentType() == DocumentType.COLLATRL.getKey()) {
 				DocumentDetails document = collateralDocumentMap.get(lvDocument.getDocumentId());
 				lvDocument.setDocumentId(document.getId());
-				lvDocument.setDocumentSubId(lvDocument.getDocCategory());
+				lvDocument.setDocumentSubId(document.getDocCategory());
 				lvDocument.setDocumentRefId(document.getDocRefId());
 				lvDocument.setDocumentUri(document.getDocUri());
 			}
