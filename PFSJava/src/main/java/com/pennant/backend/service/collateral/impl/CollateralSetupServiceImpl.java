@@ -700,6 +700,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			collateralSetup.setTaskId("");
 			collateralSetup.setNextTaskId("");
 			collateralSetup.setWorkflowId(0);
+			collateralSetup.setVersion(collateralSetup.getVersion() + 1);
 
 			if (collateralSetup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
