@@ -44,6 +44,7 @@ package com.pennant.webui.index;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -65,6 +66,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -180,7 +182,8 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser>  {
 			getSecurityUser().setUserDetails(getUserWorkspace().getLoggedInUser());
 			PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
 			getSecurityUser().setUsrPwd(pwdEncoder.encode(getSecurityUser().getUsrPwd()));
-			getSecurityUser().setUsrCredentialsExp(false);
+			int expDays = SysParamUtil.getValueAsInt("USR_EXPIRY_DAYS");
+			getSecurityUser().setPwdExpDt(DateUtility.addDays(new Date(System.currentTimeMillis()), expDays));
 			
 			//update the password by calling securityUserService's changePassword method.
 			auditHeader =  getAuditHeader(getSecurityUser(), PennantConstants.TRAN_UPD);

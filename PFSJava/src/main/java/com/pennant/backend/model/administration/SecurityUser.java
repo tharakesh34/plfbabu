@@ -69,7 +69,6 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private Date usrCanSignonTo;
 	private boolean usrCanOverrideLimits;
 	private boolean usrAcExp;
-	private boolean usrCredentialsExp;
 	private boolean usrAcLocked;
 	private String usrLanguage;
 	private long usrDftAppId;
@@ -88,6 +87,7 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private String lovValue;
 	private SecurityUser befImage;
 	private Date usrAcExpDt;
+	private Date pwdExpDt;
 	private String usrDftAppCode;
 	private String loginAppCode = App.CODE;
 	private long loginAppId = App.ID;
@@ -238,14 +238,6 @@ public class SecurityUser extends AbstractWorkflowEntity {
 		this.usrAcExp = usrAcExp;
 	}
 
-	public boolean isUsrCredentialsExp() {
-		return this.usrCredentialsExp;
-	}
-
-	public void setUsrCredentialsExp(boolean usrCredentialsExp) {
-		this.usrCredentialsExp = usrCredentialsExp;
-	}
-
 	public boolean isUsrAcLocked() {
 		return this.usrAcLocked;
 	}
@@ -284,10 +276,6 @@ public class SecurityUser extends AbstractWorkflowEntity {
 
 	public boolean isAccountNonExpired() {
 		return !usrAcExp;
-	}
-
-	public boolean isCredentialsNonExpired() {
-		return !usrCredentialsExp;
 	}
 
 	public String getUsrLanguage() {
@@ -489,4 +477,13 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	public void setUserType(String userType) {
 		this.userType = userType;
 	}
+
+	public Date getPwdExpDt() {
+		return pwdExpDt;
+	}
+
+	public void setPwdExpDt(Date pwdExpDt) {
+		this.pwdExpDt = pwdExpDt;
+	}
+
 }

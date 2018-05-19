@@ -197,8 +197,6 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 		registerField("usrCanOverrideLimits");
 		registerField("usrAcExp", listheader_UsrAcExp, SortOrder.NONE, usrAcExp, sortOperator_UsrAcExp,
 				Operators.SIMPLE);
-		registerField("usrCredentialsExp", listheader_UsrCredentialsExp, SortOrder.NONE, usrCredentialsExp,
-				sortOperator_UsrCredentialsExp, Operators.SIMPLE);
 		registerField("usrAcLocked", listheader_UsrAcLocked, SortOrder.NONE, usrAcLocked, sortOperator_UsrAcLocked,
 				Operators.SIMPLE);
 

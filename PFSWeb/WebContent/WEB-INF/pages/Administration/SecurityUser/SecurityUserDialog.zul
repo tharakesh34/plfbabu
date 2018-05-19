@@ -260,15 +260,6 @@
 														<checkbox
 															id="usrAcExp" checked="false" />
 													</hbox>
-													<label visible="false"
-														id="label_SecurityUserDialog_UsrCredentialsExp"
-														value="${c:l('label_SecurityUserDialog_UsrCredentialsExp.value')}" />
-													<hbox visible="false">
-														<space
-															spacing="2px" />
-														<checkbox
-															id="usrCredentialsExp" checked="false" />
-													</hbox>
 												</row>
 												<row visible="true">
 													<label

@@ -128,9 +128,9 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		StringBuilder   selectSql = new StringBuilder(" Select UsrID, UsrLogin, UsrPwd, " );
 		selectSql.append(" UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile, UsrEmail,");
 		selectSql.append(" UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, " );
-		selectSql.append(" UsrAcExp,UsrAcExpDt, UsrCredentialsExp, UsrAcLocked, UsrLanguage, " );
+		selectSql.append(" UsrAcExp,UsrAcExpDt, UsrAcLocked, UsrLanguage, " );
 		selectSql.append(" UsrDftAppId, UsrBranchCode, UsrDeptCode, UsrToken, UsrIsMultiBranch, " );
-		selectSql.append(" UsrInvldLoginTries, UsrDesg, AuthType, UserType," );
+		selectSql.append(" UsrInvldLoginTries, UsrDesg, AuthType, PwdExpDt, UserType," );
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" lovDescUsrDftAppCode , lovDescUsrDftAppCodeName , " );
 			selectSql.append(" lovDescUsrDeptCodeName ,lovDescUsrBranchCodeName,LovDescUsrLanguage,");
@@ -173,9 +173,9 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		StringBuilder selectSql= new StringBuilder("Select UsrID, UsrLogin, UsrPwd, " );
 		selectSql.append(" UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile, UsrEmail, " );
 		selectSql.append(" UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, " );
-		selectSql.append(" UsrAcExp,UsrAcExpDt, UsrCredentialsExp, UsrAcLocked, UsrLanguage, " );
+		selectSql.append(" UsrAcExp,UsrAcExpDt, UsrAcLocked, UsrLanguage, " );
 		selectSql.append(" UsrDftAppId, UsrBranchCode, UsrDeptCode, UsrToken, UsrIsMultiBranch, " );
-		selectSql.append(" UsrInvldLoginTries,UsrDesg, AuthType," );
+		selectSql.append(" UsrInvldLoginTries,UsrDesg, AuthType,PwdExpDt," );
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		if(StringUtils.trimToEmpty(type).contains("View")){
@@ -277,17 +277,17 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		insertSql .append(StringUtils.trimToEmpty(type));
 		insertSql .append(" (UsrID, UsrLogin, UsrPwd, UserStaffID, UsrFName, UsrMName, " );
 		insertSql .append(" UsrLName, UsrMobile, UsrEmail, UsrEnabled, UsrCanSignonFrom, " );
-		insertSql .append(" UsrCanSignonTo, UsrCanOverrideLimits, UsrAcExp, UsrCredentialsExp, " );
+		insertSql .append(" UsrCanSignonTo, UsrCanOverrideLimits, UsrAcExp, " );
 		insertSql .append(" UsrAcLocked, UsrLanguage, UsrDftAppId, UsrDftAppCode, UsrBranchCode, " );
 		insertSql .append(" UsrDeptCode, UsrToken, UsrIsMultiBranch, UsrInvldLoginTries, UsrAcExpDt, " );
-		insertSql .append(" UsrDesg, AuthType," );
+		insertSql .append(" UsrDesg, AuthType, PwdExpDt," );
 		insertSql .append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
 		insertSql .append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql .append(" Values(:UsrID, :UsrLogin, :UsrPwd, :UserStaffID, :UsrFName, :UsrMName, " );
 		insertSql .append(" :UsrLName, :UsrMobile, :UsrEmail, :UsrEnabled, :UsrCanSignonFrom, " );
-		insertSql .append(" :UsrCanSignonTo, :UsrCanOverrideLimits, :UsrAcExp, :UsrCredentialsExp, " );
+		insertSql .append(" :UsrCanSignonTo, :UsrCanOverrideLimits, :UsrAcExp, " );
 		insertSql .append(" :UsrAcLocked, :UsrLanguage, :UsrDftAppId, :UsrDftAppCode, :UsrBranchCode, " );
-		insertSql .append(" :UsrDeptCode, :UsrToken, :UsrIsMultiBranch, :UsrInvldLoginTries,:UsrAcExpDt, :UsrDesg, :AuthType,");
+		insertSql .append(" :UsrDeptCode, :UsrToken, :UsrIsMultiBranch, :UsrInvldLoginTries,:UsrAcExpDt, :UsrDesg, :AuthType, :PwdExpDt,");
 		insertSql .append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
 		insertSql .append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -322,10 +322,10 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		updateSql.append(" Set UsrLogin = :UsrLogin, UsrPwd = :UsrPwd, UserStaffID = :UserStaffID, UsrFName = :UsrFName, ");
 		updateSql.append(" UsrMName = :UsrMName, UsrLName = :UsrLName, UsrMobile = :UsrMobile, UsrEmail = :UsrEmail, ");
 		updateSql.append(" UsrEnabled = :UsrEnabled, UsrCanSignonFrom = :UsrCanSignonFrom, UsrCanSignonTo = :UsrCanSignonTo,");
-		updateSql.append(" UsrCanOverrideLimits = :UsrCanOverrideLimits, UsrAcExp = :UsrAcExp, UsrCredentialsExp = :UsrCredentialsExp," );
+		updateSql.append(" UsrCanOverrideLimits = :UsrCanOverrideLimits, UsrAcExp = :UsrAcExp," );
 		updateSql.append(" UsrAcLocked = :UsrAcLocked, UsrLanguage = :UsrLanguage, UsrDftAppId= :UsrDftAppId,UsrAcExpDt= :UsrAcExpDt, UsrDftAppCode = :UsrDftAppCode, ");
 		updateSql.append(" UsrBranchCode = :UsrBranchCode, UsrDeptCode = :UsrDeptCode, ");
-		updateSql.append(" UsrIsMultiBranch = :UsrIsMultiBranch, UsrInvldLoginTries = :UsrInvldLoginTries, UsrDesg = :UsrDesg, AuthType = :AuthType, ");
+		updateSql.append(" UsrIsMultiBranch = :UsrIsMultiBranch, UsrInvldLoginTries = :UsrInvldLoginTries, UsrDesg = :UsrDesg, AuthType = :AuthType, PwdExpDt = :PwdExpDt, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
@@ -358,7 +358,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		int recordCount = 0;
 
 		StringBuilder   updateSql = new StringBuilder  (" Update SecUsers");
-		updateSql.append(" Set UsrPwd=:UsrPwd ,UsrToken=:UsrToken,UsrAcExpDt = :UsrAcExpDt, UsrCredentialsExp = :UsrCredentialsExp, " );
+		updateSql.append(" Set UsrPwd=:UsrPwd ,UsrToken=:UsrToken,UsrAcExpDt = :UsrAcExpDt, PwdExpDt = :PwdExpDt, " );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus ");
 		updateSql.append(" Where UsrID =:UsrID");

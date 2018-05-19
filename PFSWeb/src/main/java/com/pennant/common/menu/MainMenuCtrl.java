@@ -181,12 +181,14 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		}
 
 		String authType = StringUtils.trimToEmpty(userWorkspace.getLoggedInUser().getAuthType());
+		Date pwdExpDate = userWorkspace.getLoggedInUser().getPasswordExpiredOn();
 		Date expiredDate = userWorkspace.getLoggedInUser().getAccountExpiredOn();
-		boolean credentialsExpired = userWorkspace.getLoggedInUser().isCredentialsExpired();
 
 		if (!AuthenticationType.DAO.name().equals(authType)) {
 			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false, new MenuItemOnCloseListener());
-		} else if (credentialsExpired || (expiredDate != null && expiredDate.before(DateUtil.getSysDate()))) {
+		} else if ((expiredDate != null && expiredDate.before(DateUtil.getSysDate()))) {
+			Executions.sendRedirect("/csrfLogout.zul");
+		} else if ((pwdExpDate != null && pwdExpDate.before(DateUtil.getSysDate()))) {
 			Window win = (Window) Executions.createComponents("/WEB-INF/pages/PasswordReset/changePwd.zul", null, null);
 			win.setWidth("98%");
 			win.setHeight("98%");

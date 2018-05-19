@@ -148,13 +148,6 @@
 								</row>
 								<row>
 									<label
-										id="label_SecurityUserList_UsrCredentialsExp"
-										value="${c:l('label_SecurityUserList_UsrCredentialsExp.value')}" />
-									<listbox
-										id="sortOperator_UsrCredentialsExp" width="43px" mold="select"
-										rows="1" />
-									<checkbox id="usrCredentialsExp" />
-									<label
 										id="label_SecurityUserList_UsrAcLocked"
 										value="${c:l('label_SecurityUserList_UsrAcLocked.value')}" />
 									<listbox
@@ -207,10 +200,6 @@
 								<listheader id="listheader_UsrAcExp"
 									label="${c:l('listheader_UsrAcExp.label')}" sort="auto"
 									hflex="min" />
-								<listheader
-									id="listheader_UsrCredentialsExp"
-									label="${c:l('listheader_UsrCredentialsExp.label')}"
-									sort="auto" visible="false" hflex="min" />
 								<listheader id="listheader_UsrAcLocked"
 									label="${c:l('listheader_UsrAcLocked.label')}" sort="auto"
 									hflex="min" />

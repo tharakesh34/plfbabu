@@ -92,12 +92,6 @@ public class SecurityUserListModelItemRenderer implements ListitemRenderer<Secur
 		lc.appendChild(cbUsrAcExp);
 		lc.setParent(item);
 		lc = new Listcell();
-		final Checkbox cbUsrCredentialsExp = new Checkbox();
-		cbUsrCredentialsExp.setDisabled(true);
-		cbUsrCredentialsExp.setChecked(securityUser.isUsrCredentialsExp());
-		lc.appendChild(cbUsrCredentialsExp);
-		lc.setParent(item);
-		lc = new Listcell();
 		final Checkbox cbUsrAcLocked = new Checkbox();
 		cbUsrAcLocked.setDisabled(true);
 		cbUsrAcLocked.setChecked(securityUser.isUsrAcLocked());

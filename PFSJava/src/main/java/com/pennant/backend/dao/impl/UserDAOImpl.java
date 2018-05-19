@@ -169,7 +169,7 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 
 		StringBuilder selectSql = new StringBuilder("SELECT UsrID, UsrLogin, UsrPwd, AuthType, UserType, UsrLName, UsrMName,UsrFName,");
 		selectSql.append(" UsrMobile,UsrEmail,UsrEnabled,UsrCanSignonFrom,UsrCanSignonTo,UsrCanOverrideLimits,");
-		selectSql.append(" UsrAcExp, UsrCredentialsExp,UserStaffID, UsrAcLocked,UsrLanguage,UsrDftAppCode,UsrBranchCode,UsrDeptCode,");
+		selectSql.append(" UsrAcExp, UserStaffID, UsrAcLocked,UsrLanguage,UsrDftAppCode,UsrBranchCode,UsrDeptCode,PwdExpDt,");
 		selectSql.append(" UsrToken, UsrIsMultiBranch,UsrInvldLoginTries,UsrAcExpDt,LastMntOn, LastMntBy,nextRoleCode,TaskId,nextTaskId,LastLoginOn,LastFailLoginOn");
 		selectSql.append(" FROM SecUsers where UsrLogin = :usrLogin");
 		//FIXME Satish : Password should not retrieved to avoid this we have commented out the log printing. 
@@ -259,7 +259,7 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 		updateSql
 				.append(" UsrCanSignonTo =:UsrCanSignonTo , UsrCanOverrideLimits =:UsrCanOverrideLimits , UsrAcExp=:UsrAcExp, ");
 		updateSql
-				.append("UsrCredentialsExp =:UsrCredentialsExp, UsrAcLocked =:UsrAcLocked , UsrLanguage =:UsrLanguage , UsrDftAppCode =:UsrDftAppCode ,");
+				.append("UsrAcLocked =:UsrAcLocked , UsrLanguage =:UsrLanguage , UsrDftAppCode =:UsrDftAppCode ,");
 		updateSql
 				.append(" UsrBranchCode =:UsrBranchCode , UsrDeptCode =:UsrDeptCode ,UsrToken =:UsrToken , UsrInvldLoginTries =:UsrInvldLoginTries, ");
 		updateSql
