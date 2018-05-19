@@ -30,41 +30,41 @@
 								</toolbar>
 
 								<listbox id="listBoxInitiation"
-									fixedLayout="true" sizedByContent="true" span="true"
-									emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
-									multiple="false">
+									width="100%" span="true" style="overflow:auto;"
+									emptyMessage="${c:l('listbox.emptyMessage')}"
+									sizedByContent="true">
 									<listhead sizable="false">
 										<listheader
 											id="listheader_TechnicalVerification_Select"
 											label="${c:l('listheader_TechnicalVerification_Select.label')}"
-											sort="false" hflex="min" />
+											sort="false" />
 										<listheader
 											id="listheader_LegalVerification_Collateral"
 											label="${c:l('listheader_LegalVerification_Collateral.label')}"
-											sort="false" hflex="min" />
+											sort="false" />
 										<listheader
 											id="listheader_LegalVerification_Agency"
 											label="${c:l('listheader_LegalVerification_Agency.label')}"
-											sort="false" hflex="min" />
+											sort="false" />
 										<listheader
 											id="listheader_LegalVerification_Initiation_Remarks"
 											label="${c:l('listheader_LegalVerification_Remarks.label')}"
-											sort="false" hflex="min" />
+											sort="false" />
 										<listheader
 											id="listheader_LegalVerification_Initiation_Status"
 											label="${c:l('listheader_LegalVerification_Status.label')}"
-											sort="false" hflex="min" />
+											sort="false" />
 										<listheader
 											id="listheader_LegalVerification_Initiation_VrfDate"
 											label="${c:l('listheader_LegalVerification_VrfDate.label')}"
-											sort="false" hflex="min" />
+											sort="false" />
 										<listheader
 											id="listheader_LegalVerification_Decision"
 											label="${c:l('listheader_LegalVerification_Decision.label')}"
 											sort="false" />
 										<listheader visible="true"
 											id="listheader_LegalVerification_Initiation_ReInitiate"
-											sort="false" hflex="min" />
+											sort="false" />
 									</listhead>
 								</listbox>
 							</groupbox>
@@ -81,33 +81,36 @@
 										sclass="z-toolbarbutton" />
 								</toolbar>
 								<listbox id="listBoxWaiver"
-									fixedLayout="true" sizedByContent="true" span="true"
-									emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
-									multiple="false">
+									width="100%" span="true" style="overflow:auto;"
+									emptyMessage="${c:l('listbox.emptyMessage')}"
+									sizedByContent="true">
 									<listhead sizable="false">
 										<listheader
 											id="listheader_LegalVerification_DocumentType"
 											label="${c:l('listheader_LegalVerification_DocumentType.label')}"
-											sort="false" hflex="min" />
+											sort="false" />
 										<listheader
 											id="listheader_LegalVerification_Reason"
 											label="${c:l('listheader_LegalVerification_Reason.label')}"
-											sort="false" hflex="min" />
+											sort="false" />
 										<listheader
 											id="listheader_LegalVerification_Waiver_Remarks"
 											label="${c:l('listheader_LegalVerification_Remarks.label')}"
-											sort="false" hflex="min" />
+											sort="false" />
 										<listheader
 											id="listheader_LegalVerification_Waiver_Status"
 											label="${c:l('listheader_LegalVerification_Status.label')}"
-											sort="false" hflex="min" />
+											sort="false" />
 										<listheader
 											id="listheader_LegalVerification_Waiver_VrfDate"
 											label="${c:l('listheader_LegalVerification_VrfDate.label')}"
-											sort="false" hflex="min" />
+											sort="false" />
 										<listheader
 											id="listheader_LegalVerification_WDecision"
 											label="${c:l('listheader_LegalVerification_Decision.label')}"
+											sort="false" />
+										<listheader visible="true"
+											id="listheader_LegalVerification_Initiation_WReInitiate"
 											sort="false" />
 									</listhead>
 								</listbox>

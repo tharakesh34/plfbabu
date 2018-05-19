@@ -54,6 +54,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.Module;
@@ -412,7 +413,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
-				fillDecision(vrf, decision);
+				fillComboBox(decision, vrf.getDecision(), Decision.getList());
 				decision.setParent(listCell);
 				listCell.setParent(item);
 
@@ -420,6 +421,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 				listCell = new Listcell();
 				listCell.setId("IReInitiate".concat(String.valueOf(i)));
 				Button btnReInit = new Button("ReInitiate");
+				btnReInit.setDisabled(true);
 				listCell.appendChild(btnReInit);
 				listCell.setStyle("text-align:right;");
 				listCell.setParent(item);
@@ -442,13 +444,6 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 		}
 		logger.debug(Literal.LEAVING);
-	}
-
-	private void fillDecision(Verification vrf, Combobox decision) {
-		List<ValueLabel> decisionList = new ArrayList<>();
-		decisionList
-				.add(new ValueLabel(String.valueOf(Decision.RE_INITIATE.getKey()), Decision.RE_INITIATE.getValue()));
-		fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
 	}
 
 	private void fillComboBox(Combobox combobox, int value, List<ValueLabel> list) {
@@ -500,6 +495,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	}
 
 	private List<LVDocument> getDocuments() {
+		setScreenDocuments();
 		List<LVDocument> documents = new ArrayList<>();
 		documents.addAll(customerDocuments);
 		documents.addAll(loanDocuments);
@@ -524,6 +520,9 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	public void addLoanDocuments(List<DocumentDetails> documents) {
 		loanDocuments.clear();
 		for (DocumentDetails document : documents) {
+			if ((DocumentCategories.CUSTOMER.getKey().equals(document.getCategoryCode()))) {
+				continue;
+			}
 			LVDocument lvDocument = new LVDocument();
 			lvDocument.setDocumentId(document.getId());
 			lvDocument.setDocumentSubId(document.getDocCategory());
@@ -691,11 +690,21 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
-
-				fillDecision(vrf, decision);
+				fillComboBox(decision, vrf.getDecision(), Decision.getList());
 				decision.setParent(listCell);
 				listCell.setParent(item);
 
+				//ReInitiate
+				listCell = new Listcell();
+				listCell.setId("WReInitiate".concat(String.valueOf(i)));
+				Button btnReInit = new Button("ReInitiate");
+				btnReInit.setDisabled(true);
+				listCell.appendChild(btnReInit);
+				listCell.setStyle("text-align:right;");
+				listCell.setParent(item);
+
+				item.setAttribute("verification", vrf);
+				btnReInit.addForward("onClick", self, "onClickInitiate", item);
 				decision.addForward("onChange", self, "onChangeWaiveDecision", item);
 
 				if (vrf.getDecision() == Decision.RE_INITIATE.getKey()) {
@@ -718,6 +727,22 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	}
 
 	public void onClickReInitiate(ForwardEvent event) throws Exception {
+		Listitem listitem = (Listitem) event.getData();
+
+		// Get the selected entity.
+		Verification vrf = (Verification) listitem.getAttribute("verification");
+
+		if (vrf == null) {
+			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
+			return;
+		}
+		vrf.setNewRecord(true);
+		vrf.setApproveTab(true);
+
+		doShowDialogPage(vrf);
+	}
+
+	public void onClickInitiate(ForwardEvent event) throws Exception {
 		Listitem listitem = (Listitem) event.getData();
 
 		// Get the selected entity.
@@ -764,27 +789,26 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	public void onChangeInitDecision(ForwardEvent event) throws Exception {
 		Listitem listitem = (Listitem) event.getData();
 		Combobox decisionBox = (Combobox) getComponent(listitem, "Decision");
-		try {
-			Decision.getType(Integer.parseInt(decisionBox.getSelectedItem().getValue()));
-		} catch (Exception e) {
-			String value = decisionBox.getValue();
-			decisionBox.setValue("");
-			throw new WrongValueException(decisionBox,
-					Labels.getLabel("STATIC_INVALID", new String[] { value + " is not valid," }));
-		}
+		Button button = (Button) getComponent(listitem, "IReInitiate");
 
+		int decision = Integer.parseInt(decisionBox.getSelectedItem().getValue());
+		if (decision == 2) {
+			button.setDisabled(false);
+		} else {
+			button.setDisabled(true);
+		}
 	}
 
 	public void onChangeWaiveDecision(ForwardEvent event) throws Exception {
 		Listitem listitem = (Listitem) event.getData();
 		Combobox decisionBox = (Combobox) getComponent(listitem, "WDecision");
-		try {
-			Decision.getType(Integer.parseInt(decisionBox.getSelectedItem().getValue()));
-		} catch (Exception e) {
-			String value = decisionBox.getValue();
-			decisionBox.setValue("");
-			throw new WrongValueException(decisionBox,
-					Labels.getLabel("STATIC_INVALID", new String[] { value + " is not valid," }));
+		Button button = (Button) getComponent(listitem, "WReInitiate");
+
+		int decision = Integer.parseInt(decisionBox.getSelectedItem().getValue());
+		if (decision == 2) {
+			button.setDisabled(false);
+		} else {
+			button.setDisabled(true);
 		}
 
 	}

@@ -443,7 +443,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private List<String> getInitDocCategories(List<LVDocument> lvDocuments) {
 		List<String> docCategories = new ArrayList<>();
 		for (LVDocument document : lvDocuments) {
-			if (document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
+			if (document.getDocumentType() != DocumentType.CUSTOMER.getKey()) {
 				docCategories.add(String.valueOf(document.getDocumentId()));
 			} else {
 				docCategories.add(document.getDocumentSubId());
@@ -502,6 +502,12 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 
 			String reference = document.getDocumentSubId();
+			
+			if(document.getDocumentType() !=DocumentType.CUSTOMER.getKey()){
+				reference=String.valueOf(document.getDocumentId());
+			}
+			
+			
 			if (document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
 				if (StringUtils.isNotEmpty(collateralRef) && !collateralRef.equals(document.getCollateralRef())) {
 					continue;

@@ -227,7 +227,6 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 		if (verificationType == VerificationType.LV) {//FIXME
 			reInit.setDecision(Decision.RE_INITIATE.getKey());
-			item.getRcuDocument().setInitRemarks(item.getDecisionRemarks());
 		} else {
 			item.setAgency(item.getReInitAgency());
 			item.setRemarks(item.getDecisionRemarks());
