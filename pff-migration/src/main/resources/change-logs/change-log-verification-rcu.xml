@@ -389,29 +389,45 @@
 		</createTable>
 	</changeSet>
 	<changeSet id="2.5_Post" author="Jayant" dbms="oracle">
-		<addDefaultValue columnName="DocumentType" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="VerificationType" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="Status" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="PagesEyeballed" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="PagesSampled" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="DocumentType" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="VerificationType" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="Status" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="PagesEyeballed" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="PagesSampled" tableName="verification_rcu_details_stage" defaultValue="0"/>
 	</changeSet>
 	<changeSet id="2.5_Post" author="Jayant" dbms="postgresql">
-		<addDefaultValue columnName="DocumentType" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="VerificationType" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="Status" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="PagesEyeballed" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="PagesSampled" tableName="verification_rcu_details_temp" defaultValue="0"/>
+		<addDefaultValue columnName="DocumentType" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="VerificationType" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="Status" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="PagesEyeballed" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="PagesSampled" tableName="verification_rcu_details_stage" defaultValue="0"/>
 	</changeSet>
 	<changeSet id="2.5_Post" author="Jayant" dbms="mssql">
 		<sql>
-			alter table verification_rcu_details_temp add constraint df_vrd_DocumentType default 0 for DocumentType;
-			alter table verification_rcu_details_temp add constraint df_vrd_VerificationType default 0 for VerificationType;
-			alter table verification_rcu_details_temp add constraint df_vrd_status default 0 for Status;
-			alter table verification_rcu_details_temp add constraint df_vrd_PagesEyeballed default 0 for PagesEyeballed;
-			alter table verification_rcu_details_temp add constraint df_vrd_PagesSampled default 0 for PagesSampled;
+			alter table verification_rcu_details_stage add constraint df_vrds_DocumentType default 0 for DocumentType;
+			alter table verification_rcu_details_stage add constraint df_vrds_VerificationType default 0 for VerificationType;
+			alter table verification_rcu_details_stage add constraint df_vrds_status default 0 for Status;
+			alter table verification_rcu_details_stage add constraint df_vrds_PagesEyeballed default 0 for PagesEyeballed;
+			alter table verification_rcu_details_stage add constraint df_vrds_PagesSampled default 0 for PagesSampled;
 		</sql>
 	</changeSet>
- 	<changeSet id="2.6" author="durgaprasad.g">
+ 	<changeSet id="2.6" author="durgaprasad.g" dbms="oracle">
+		<addForeignKeyConstraint constraintName="fk_verf_rcu_vrfid" baseTableName="verification_rcu" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_rcu_temp_vrfid" baseTableName="verification_rcu_temp" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_rcu_stage_vrfid" baseTableName="verification_rcu_stage" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_vrfid" baseTableName="verification_rcu_details" baseColumnNames="VerificationId"  referencedTableName="verification_rcu" referencedColumnNames="VerificationId"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_temp_vrfid" baseTableName="verification_rcu_details_temp" baseColumnNames="VerificationId"  referencedTableName="verification_rcu_temp" referencedColumnNames="VerificationId"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_stage_vrfid" baseTableName="verification_rcu_details_stage" baseColumnNames="VerificationId"  referencedTableName="verification_rcu_stage" referencedColumnNames="VerificationId"/>
+	</changeSet>
+	<changeSet id="2.6" author="durgaprasad.g" dbms="mssql">
+		<addForeignKeyConstraint constraintName="fk_verf_rcu_vrfid" baseTableName="verification_rcu" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_rcu_temp_vrfid" baseTableName="verification_rcu_temp" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_rcu_stage_vrfid" baseTableName="verification_rcu_stage" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_dets_vrfid" baseTableName="verification_rcu_details" baseColumnNames="VerificationId"  referencedTableName="verification_rcu" referencedColumnNames="VerificationId"/>
+		<addForeignKeyConstraint constraintName="fk_verf_dets_temp_vrfid" baseTableName="verification_rcu_details_temp" baseColumnNames="VerificationId"  referencedTableName="verification_rcu_temp" referencedColumnNames="VerificationId"/>
+		<addForeignKeyConstraint constraintName="fk_verf_dets_stage_vrfid" baseTableName="verification_rcu_details_stage" baseColumnNames="VerificationId"  referencedTableName="verification_rcu_stage" referencedColumnNames="VerificationId"/>
+	</changeSet>
+	<changeSet id="2.6" author="durgaprasad.g" dbms="postgresql">
 		<addForeignKeyConstraint constraintName="fk_verf_rcu_vrfid" baseTableName="verification_rcu" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
 		<addForeignKeyConstraint constraintName="fk_verf_rcu_temp_vrfid" baseTableName="verification_rcu_temp" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
 		<addForeignKeyConstraint constraintName="fk_verf_rcu_stage_vrfid" baseTableName="verification_rcu_stage" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
@@ -993,17 +1009,17 @@
 	</changeSet>
 	<changeSet id="4.3_Post" author="Jayant" dbms="mssql">
 		<sql>
-			alter table verification_rcu_details_temp add constraint df_vrd_DocumentType default 0 for DocumentType;
-			alter table verification_rcu_details_temp add constraint df_vrd_VerificationType default 0 for VerificationType;
-			alter table verification_rcu_details_temp add constraint df_vrd_status default 0 for Status;
-			alter table verification_rcu_details_temp add constraint df_vrd_PagesEyeballed default 0 for PagesEyeballed;
-			alter table verification_rcu_details_temp add constraint df_vrd_PagesSampled default 0 for PagesSampled;
+			alter table verification_rcu_details_temp add constraint df_vrd_t_DocumentType default 0 for DocumentType;
+			alter table verification_rcu_details_temp add constraint df_vrd_t_VerificationType default 0 for VerificationType;
+			alter table verification_rcu_details_temp add constraint df_vrd_t_status default 0 for Status;
+			alter table verification_rcu_details_temp add constraint df_vrd_t_PagesEyeballed default 0 for PagesEyeballed;
+			alter table verification_rcu_details_temp add constraint df_vrd_t_PagesSampled default 0 for PagesSampled;
 		</sql>
 	</changeSet>
  	<changeSet id="4.4" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_verf_det_vrfid" baseTableName="verification_rcu_details" baseColumnNames="VerificationId"  referencedTableName="verification_rcu" referencedColumnNames="VerificationId"/>
-		<addForeignKeyConstraint constraintName="fk_verf_det_temp_vrfid" baseTableName="verification_rcu_details_temp" baseColumnNames="VerificationId"  referencedTableName="verification_rcu_temp" referencedColumnNames="VerificationId"/>
-		<addForeignKeyConstraint constraintName="fk_verf_det_stage_vrfid" baseTableName="verification_rcu_details_stage" baseColumnNames="VerificationId"  referencedTableName="verification_rcu_stage" referencedColumnNames="VerificationId"/>
+		<addForeignKeyConstraint constraintName="fk_verf_detes_vrfid" baseTableName="verification_rcu_details" baseColumnNames="VerificationId"  referencedTableName="verification_rcu" referencedColumnNames="VerificationId"/>
+		<addForeignKeyConstraint constraintName="fk_verf_detes_temp_vrfid" baseTableName="verification_rcu_details_temp" baseColumnNames="VerificationId"  referencedTableName="verification_rcu_temp" referencedColumnNames="VerificationId"/>
+		<addForeignKeyConstraint constraintName="fk_verf_detes_stage_vrfid" baseTableName="verification_rcu_details_stage" baseColumnNames="VerificationId"  referencedTableName="verification_rcu_stage" referencedColumnNames="VerificationId"/>
 	</changeSet>
 	<changeSet id="4.5" author="murthy.y">
 	<createView viewName="verification_rcu_details_view" replaceIfExists="true">	
