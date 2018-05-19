@@ -11408,4 +11408,12 @@
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
 	
+	<!-- Master Definition -->
+	<bean id="masterDefDAO" class="com.pennant.backend.dao.masters.impl.MasterDefDAOImpl" >
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="masterDefService" class="com.pennant.backend.service.masters.impl.MasterDefServiceImpl" >
+		<property name="masterDefDAO" ref="masterDefDAO" />
+	</bean>
+	
 </beans>
