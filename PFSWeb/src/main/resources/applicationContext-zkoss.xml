@@ -1837,6 +1837,8 @@
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
 		<property name="customerBankInfoService" ref="customerBankInfoService" />
 		<property name="customerExtLiabilityService" ref="customerExtLiabilityService" />
+		<property name="collateralSetupService" ref="collateralSetupService" />
+		
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"
