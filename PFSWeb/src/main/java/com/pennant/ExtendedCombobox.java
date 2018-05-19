@@ -86,7 +86,7 @@ public class ExtendedCombobox extends Hbox {
 	private String						moduleName;														//mandatory
 	private int							displayStyle		= 1;										//mandatory 	
 	private String						valueColumn;													//mandatory
-	private DataType valueType;
+	private DataType valueType = DataType.STRING;
 	private boolean						isdisplayError		= true;										//mandatory
 	private boolean						inputAllowed		= true;										//mandatory
 	private boolean						isWindowOpened		= false;									//mandatory
