@@ -14740,7 +14740,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		
 		detail.getCustomerEligibilityCheck().addExtendedField("maturityAge",maturityAge );
-		detail.getCustomerEligibilityCheck().setCurrentAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), CurrencyUtil.getFormat(this.finCcy.getValue())));
+		detail.getCustomerEligibilityCheck().setCurrentAssetValue(financeMain.getFinCurrAssetValue());
 		
 		setFinanceDetail(detail);
 		logger.debug("Leaving");
