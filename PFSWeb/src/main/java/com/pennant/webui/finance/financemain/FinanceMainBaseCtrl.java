@@ -74,10 +74,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.xml.stream.FactoryConfigurationError;
@@ -14742,7 +14740,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		
 		detail.getCustomerEligibilityCheck().addExtendedField("maturityAge",maturityAge );
-		
+		detail.getCustomerEligibilityCheck().setCurrentAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), CurrencyUtil.getFormat(this.finCcy.getValue())));
 		
 		setFinanceDetail(detail);
 		logger.debug("Leaving");
