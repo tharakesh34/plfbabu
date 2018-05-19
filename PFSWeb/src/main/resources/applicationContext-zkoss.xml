@@ -3810,6 +3810,7 @@
 		class="com.pennant.webui.dedup.dedupparm.FetchCustomerDedupDetails">
 		<property name="dedupParmService" ref="dedupParmService" />
 		<property name="customerDedupDAO" ref="customerDedupDAO" />
+		<property name="masterDefDAO" ref="masterDefDAO" />
 	</bean>
 
 	<!-- Internal BlackLits Checking -->
