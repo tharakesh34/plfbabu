@@ -639,7 +639,8 @@ public class PennantJavaUtil {
 						"AggName" }, null, 450));
 		ModuleUtil.register("AccountTypeGroup", new ModuleMapping("AccountTypeGroup", AccountTypeGroup.class,
 				new String[] { "AccountTypeGroup", "AccountTypeGroup_AView" }, masterWF, new String[] {
-						"AcctTypeLevel", "GroupCode", "GroupDescription" }, new Object[][] { { "GroupIsActive", "0",
+						"GroupCode", "GroupDescription" },
+				new Object[][] { { "GroupIsActive", "0",
 						1} }, 400));
 
 		ModuleUtil.register("Mandate",
