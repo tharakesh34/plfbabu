@@ -1158,6 +1158,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					ExtendedFieldDetail extdetai = entryset.getKey();
 					//get tab by name and set selected
 					Component fellowIfAny = window.getFellowIfAny(extdetai.getFieldName());
+					// bugfix for if partent tag is null validation throwing
+					if (fellowIfAny == null) {
+						continue;
+					}
 					if (fellowIfAny != null && fellowIfAny instanceof Tab) {
 						Tab parTab = (Tab) fellowIfAny;
 						parTab.setSelected(true);
