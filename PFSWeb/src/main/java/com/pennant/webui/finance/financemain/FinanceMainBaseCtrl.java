@@ -14777,11 +14777,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private Map<String, Object> setCollateralRuleValues(FinanceDetail detail){
 		Map<String, Object> ruleValues= new HashMap<>();
-		if(collateralHeaderDialogCtrl==null){
-			return ruleValues;
-		}
 		
-		if(CollectionUtils.isNotEmpty(collateralHeaderDialogCtrl.getCollateralAssignments())){
+		if(collateralHeaderDialogCtrl!=null &&  CollectionUtils.isNotEmpty(collateralHeaderDialogCtrl.getCollateralAssignments())){
 			for (CollateralAssignment assignment : collateralHeaderDialogCtrl.getCollateralAssignments()) {
 				CollateralSetup setup= getCollateralSetupService().getCollateralSetupByRef(assignment.getCollateralRef(), curNextRoleCode, isEnquiry);
 				if(setup!=null && setup.getCollateralStructure()!=null){
@@ -14804,7 +14801,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 			}
- 
+		}
+		
+		List<ExtendedFieldDetail> extendedFieldDetails =  PennantAppUtil.getCollateralExtendedFieldForRules();
+		for (ExtendedFieldDetail fieldDetail : extendedFieldDetails) {
+			String key=fieldDetail.getLovDescModuleName()+"_"+fieldDetail.getLovDescSubModuleName()+"_"+fieldDetail.getFieldName();
+			if(!ruleValues.containsKey(key)){
+				Object value  = getRuleValue(null, fieldDetail.getFieldType(), "INR");
+				ruleValues.put(key, value);
+			}
 		}
 			return ruleValues;
 	}

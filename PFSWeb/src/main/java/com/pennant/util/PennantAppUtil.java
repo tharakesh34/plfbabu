@@ -940,6 +940,23 @@ public class PennantAppUtil {
 	}
 
 	//### 08-05-2018 End Development Iteam 81
+
+	
+	public static List<ExtendedFieldDetail> getCollateralExtendedFieldForRules() {
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<ExtendedFieldDetail> searchObject = new JdbcSearchObject<ExtendedFieldDetail>(ExtendedFieldDetail.class);
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("AllowInRule", true, Filter.OP_EQUAL);
+		filters[1] = new Filter("lovDescModuleName", "COLLATERAL", Filter.OP_EQUAL);
+		searchObject.addFilters(filters);
+		searchObject.addSort("lovDescSubModuleName", true);
+		searchObject.addSort("ParentTag", false);
+		searchObject.addSort("FieldSeqOrder", true);
+		searchObject.addTabelName("ExtendedFieldDetail_AView");
+		List<ExtendedFieldDetail> extendedFieldDetails = pagedListService.getBySearchObject(searchObject);
+		
+		return extendedFieldDetails;
+	}
 	
 	private static String getExternalFieldType(String fieldType){
 		
