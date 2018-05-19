@@ -111,7 +111,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 	private Component 						parent = null;
 
-	private FinanceMainBaseCtrl 			financeMainDialogCtrl;
+	private Object				 			financeMainDialogCtrl;
 	private RCUVerificationDialogCtrl	 	rcuVerificationDialogCtrl;
 	private LVerificationCtrl 				lVerificationCtrl;
 	private String 							roleCode = "";
@@ -191,8 +191,11 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 			
 			if (arguments.containsKey("financeMainDialogCtrl")) {
-				this.financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
-				financeMainDialogCtrl.setCollateralHeaderDialogCtrl(this);
+				this.financeMainDialogCtrl = arguments.get("financeMainDialogCtrl");
+				
+				if(this.financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
+					((FinanceMainBaseCtrl)financeMainDialogCtrl).setCollateralHeaderDialogCtrl(this);
+				}
 			}
 
 			if (arguments.containsKey("roleCode")) {
