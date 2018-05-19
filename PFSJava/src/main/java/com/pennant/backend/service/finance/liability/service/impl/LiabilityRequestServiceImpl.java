@@ -359,6 +359,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 			if (liabilityRequest.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType=PennantConstants.TRAN_ADD;
 				liabilityRequest.setRecordType("");
+				getLiabilityRequestDAO().delete(liabilityRequest,"");
 				getLiabilityRequestDAO().save(liabilityRequest,"");
 			} else {
 				tranType=PennantConstants.TRAN_UPD;
@@ -550,8 +551,9 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		if (liabilityRequest.isWorkflow()){
 			tempLiabilityRequest = getLiabilityRequestDAO().getLiabilityRequestById(liabilityRequest.getId(),liabilityRequest.getFinEvent(), "_Temp");
 		}
-		LiabilityRequest befLiabilityRequest= getLiabilityRequestDAO().getLiabilityRequestById(liabilityRequest.getId(),liabilityRequest.getFinEvent(), "");
-
+		//LiabilityRequest befLiabilityRequest= getLiabilityRequestDAO().getLiabilityRequestById(liabilityRequest.getId(),liabilityRequest.getFinEvent(), "");
+		LiabilityRequest befLiabilityRequest = null;
+		
 		LiabilityRequest oldLiabilityRequest= liabilityRequest.getBefImage();
 
 
