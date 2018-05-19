@@ -43,6 +43,7 @@
 package com.pennant.webui.util.searchdialogs;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -433,22 +434,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 
 			// Add the search filters.
 			if (StringUtils.isNotBlank(searchText)) {
-				Filter[] searchFilters = new Filter[fieldString.length];
-
-				for (int i = 0; i < fieldString.length; i++) {
-					if (valueColumn != null && valueType != null && valueColumn.equals(fieldString[i])) {
-						if (valueType == DataType.LONG) {
-							searchFilters[i] = new Filter(fieldString[i],
-									DataTypeUtil.getValueAsObject(searchText, DataType.LONG), Filter.OP_EQUAL);
-						} else {
-							searchFilters[i] = new Filter(fieldString[i], "%" + searchText + "%", Filter.OP_LIKE);
-						}
-					} else {
-						searchFilters[i] = new Filter(fieldString[i], "%" + searchText + "%", Filter.OP_LIKE);
-					}
-				}
-
-				jdbcSearchObject.addFilterOr(searchFilters);
+				jdbcSearchObject.addFilterOr(getSearchFilters(fieldString, searchText));
 			}
 
 			String[] lovFields = getModuleMapping().getLovFields();
@@ -595,16 +581,11 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 
 		setJdbcSearchObject(start);
 
+		// Add the search filters.
 		if (StringUtils.isNotBlank(searchText)) {
-
-			Filter[] filters = new Filter[fieldString.length];
-
-			for (int i = 0; i < fieldString.length; i++) {
-				filters[i] = new Filter(fieldString[i], "%" + searchText + "%", Filter.OP_LIKE);
-			}
-
-			this.jdbcSearchObject.addFilterOr(filters);
+			jdbcSearchObject.addFilterOr(getSearchFilters(fieldString, searchText));
 		}
+
 		String[] lovFields = getModuleMapping().getLovFields();
 		if (lovFields != null && lovFields.length > 0) {
 			this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
@@ -746,6 +727,65 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		if (moduleMapping != null) {
 			this.fieldString = moduleMapping.getLovFields();
 			this.setTitle(Labels.getLabel(moduleMapping.getModuleName()));
+		}
+	}
+
+	/**
+	 * Get the search filters for all the fields with the specified search text.
+	 * 
+	 * @param fields
+	 *            The fields for which the search condition to be built.
+	 * @param value
+	 *            The value to search.
+	 * @return The search filters for all the fields with the specified search text.
+	 */
+	private Filter[] getSearchFilters(String[] fields, String value) {
+		List<Filter> searchFilters = new ArrayList<>();
+		boolean valueColumnAdded = false;
+
+		for (String field : fields) {
+			// If the data type of value column is known, build appropriate search filter.
+			if (field.equals(valueColumn) && valueType != null) {
+				if (valueType == DataType.LONG) {
+					searchFilters.add(getSearchFilter(field, value, valueType));
+				} else {
+					searchFilters.add(getSearchFilter(field, value, DataType.STRING));
+				}
+
+				valueColumnAdded = true;
+			} else {
+				searchFilters.add(getSearchFilter(field, value, DataType.STRING));
+			}
+		}
+
+		// Add the additional filter for value column, only if not specified in the module mapping.
+		if (!valueColumnAdded && valueColumn != null && valueType != null) {
+			if (valueType == DataType.LONG) {
+				searchFilters.add(getSearchFilter(valueColumn, value, valueType));
+			} else {
+				searchFilters.add(getSearchFilter(valueColumn, value, DataType.STRING));
+			}
+		}
+
+		return searchFilters.toArray(new Filter[0]);
+	}
+
+	/**
+	 * Get the search filter.
+	 * 
+	 * @param field
+	 *            The field name.
+	 * @param value
+	 *            The value to search.
+	 * @param type
+	 *            The data type of value.
+	 * @return The search filter.
+	 */
+	private Filter getSearchFilter(String field, String value, DataType type) {
+		if (type == DataType.STRING) {
+			return new Filter(field, "%" + value + "%", Filter.OP_LIKE);
+		} else {
+			return new Filter(field, DataTypeUtil.getValueAsObject(value, type), Filter.OP_EQUAL);
 		}
 	}
 }

@@ -261,14 +261,15 @@ public class ExtendedCombobox extends Hbox {
 						if (StringUtils.equals(this.whereClause, "")) {
 							object = ExtendedSearchListBox.show(this, moduleName, filters, this.textbox.getValue());
 						} else {
-							object = ExtendedSearchListBox.show(this, moduleName, this.textbox.getValue(), filters,
+							object = ExtendedSearchListBox.show(this, moduleName, textbox.getValue(), filters,
 									whereClause, valueColumn, valueType);
 						}
 					} else {
 						if (StringUtils.equals(this.whereClause, "")) {
 							object = ExtendedSearchListBox.show(this, moduleName, this.textbox.getValue());
 						} else {
-							object = ExtendedSearchListBox.show(this, moduleName, this.textbox.getValue(), whereClause);
+							object = ExtendedSearchListBox.show(this, moduleName, textbox.getValue(), null,
+									whereClause, valueColumn, valueType);
 						}
 					}
 				} else {
