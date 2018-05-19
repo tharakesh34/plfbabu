@@ -52,6 +52,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.xpath.operations.Bool;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -1102,7 +1103,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 					}
 				}
 			}
-			this.mandRole.setReadonly(isReadOnly("FinCovenantTypeDialog_mandRole"));
+			this.mandRole.setReadonly(true);
 			this.space_receivableDate.setSclass("");
 			this.receivableDate.setErrorMessage("");
 			this.receivableDate.setConstraint("");
@@ -1153,6 +1154,8 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			if (dcoType != null) {
 				this.covenantType.setValue(dcoType.getDocTypeCode());
 				this.covenantType.setDescription(dcoType.getDocTypeDesc());
+				this.covenantType.setAttribute("pdd", dcoType.isPdd());
+				this.covenantType.setAttribute("otc", dcoType.isOtc());
 				validateDocumentExistance(dcoType);
 			}
 		}
@@ -1173,9 +1176,17 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.mandRole.setDescription();
 			this.alwPostpone.setDisabled(false);
 			this.alwOtc.setDisabled(false);
+			this.alwOtc.setChecked(false);
 			this.alwWaiver.setDisabled(false);
 			this.alwPostpone.setChecked(false);
-			this.alwOtc.setChecked(false);
+			if (this.covenantType.getAttribute("pdd") != null
+					&& this.covenantType.getAttribute("otc") != null) {
+				Boolean isPdd=(Boolean)this.covenantType.getAttribute("pdd");
+				Boolean isOtc=(Boolean)this.covenantType.getAttribute("otc");
+				this.alwPostpone.setDisabled(!isPdd);
+				this.alwOtc.setDisabled(!isOtc);
+			}
+
 		} else {
 			SecurityRole role = (SecurityRole) this.mandRole.getObject();
 			if (role != null) {
