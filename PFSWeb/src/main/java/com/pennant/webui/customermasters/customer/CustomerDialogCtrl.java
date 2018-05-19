@@ -3674,8 +3674,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						return false;
 					}
 				}
-				if (StringUtils.equals(PennantConstants.PANNUMBER, custDocument.getCustDocCategory())
-						|| StringUtils.equals(PennantConstants.CPRCODE, custDocument.getCustDocCategory())) {
+				if (StringUtils.equals(PennantConstants.PANNUMBER, custDocument.getCustDocCategory())) {
 					isMandateIDDocExist = true;
 					if (StringUtils.isNotBlank(this.eidNumber.getValue())) {
 						if (!StringUtils.equals(this.eidNumber.getValue(), custDocument.getCustDocTitle())) {
