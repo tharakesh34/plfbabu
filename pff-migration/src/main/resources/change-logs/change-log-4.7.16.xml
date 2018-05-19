@@ -7467,5 +7467,112 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 		     LEFT JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
 	</createView>
 </changeSet>
+
+<changeSet id="174" author="Vinay">
+	<createView viewName="customersdedup_view" replaceIfExists="true">
+		SELECT t1.custid,
+		    t1.custcif,
+		    t1.custfname,
+		    t1.custlname,
+		    t1.custcrcpr,
+		    cdpp.custdoctitle AS custpassportno,
+		    t1.custshrtname,
+		    t1.custdob,
+		    t1.custnationality,
+		    COALESCE(
+		        CASE
+		            WHEN t1.phonenumber = ' ' THEN NULL
+		            ELSE t1.phonenumber
+		        END, t7.phonenumber) AS mobilenumber,
+		    t1.custctgcode,
+		    t1.custdftbranch,
+		    t1.custtypecode,
+		    t1.custsector,
+		    t1.custsubsector,
+		    t1.subcategory,
+		    t1.casteid,
+		    t1.religionid,
+		    t3.castecode,
+		    t3.castedesc,
+		    t4.religioncode,
+		    t4.religiondesc,
+		    t2.custtypectg AS lovdesccustctgtype,
+		    cda.custdoctitle AS aadharnumber,
+		    cdp.custdoctitle AS pannumber,
+		    t6.custemail
+		   FROM customers_temp t1
+		     LEFT JOIN rmtcusttypes t2 ON t1.custtypecode = t2.custtypecode
+		     LEFT JOIN caste t3 ON t1.casteid = t3.casteid
+		     LEFT JOIN religion t4 ON t1.religionid = t4.religionid
+		     LEFT JOIN customerdocuments cda ON cda.custid = t1.custid AND cda.custdoccategory = ((( SELECT master_def.key_code
+		           FROM master_def
+		          WHERE master_def.master_type = 'DOC_TYPE' AND master_def.key_type = 'AADHAAR')))
+		     LEFT JOIN customerdocuments cdp ON cdp.custid = t1.custid AND cdp.custdoccategory = ((( SELECT master_def.key_code
+		           FROM master_def
+		          WHERE master_def.master_type = 'DOC_TYPE' AND master_def.key_type = 'PAN')))
+		     LEFT JOIN customerdocuments cdpp ON cdpp.custid = t1.custid AND cdpp.custdoccategory = ((( SELECT master_def.key_code
+		           FROM master_def
+		          WHERE master_def.master_type = 'DOC_TYPE' AND master_def.key_type = 'PASSPORT')))
+		     LEFT JOIN customeremails t6 ON t1.custid = t6.custid AND t6.custemailpriority = 5
+		     LEFT JOIN customerphonenumbers t7 ON t1.custid = t7.phonecustid
+		UNION ALL
+		 SELECT t1.custid,
+		    t1.custcif,
+		    t1.custfname,
+		    t1.custlname,
+		    t1.custcrcpr,
+		    cdpp.custdoctitle AS custpassportno,
+		    t1.custshrtname,
+		    t1.custdob,
+		    t1.custnationality,
+		    COALESCE(
+		        CASE
+		            WHEN t1.phonenumber = ' ' THEN NULL
+		            ELSE t1.phonenumber
+		        END, t7.phonenumber) AS mobilenumber,
+		    t1.custctgcode,
+		    t1.custdftbranch,
+		    t1.custtypecode,
+		    t1.custsector,
+		    t1.custsubsector,
+		    t1.subcategory,
+		    t1.casteid,
+		    t1.religionid,
+		    t3.castecode,
+		    t3.castedesc,
+		    t4.religioncode,
+		    t4.religiondesc,
+		    t2.custtypectg AS lovdesccustctgtype,
+		    cda.custdoctitle AS aadharnumber,
+		    cdp.custdoctitle AS pannumber,
+		    t6.custemail
+		   FROM customers t1
+		     LEFT JOIN rmtcusttypes t2 ON t1.custtypecode = t2.custtypecode
+		     LEFT JOIN caste t3 ON t1.casteid = t3.casteid
+		     LEFT JOIN religion t4 ON t1.religionid = t4.religionid
+		     LEFT JOIN customerdocuments cda ON cda.custid = t1.custid AND cda.custdoccategory = ((( SELECT master_def.key_code
+		           FROM master_def
+		          WHERE master_def.master_type = 'DOC_TYPE' AND master_def.key_type = 'AADHAAR')))
+		     LEFT JOIN customerdocuments cdp ON cdp.custid = t1.custid AND cdp.custdoccategory = ((( SELECT master_def.key_code
+		           FROM master_def
+		          WHERE master_def.master_type = 'DOC_TYPE' AND master_def.key_type = 'PAN')))
+		     LEFT JOIN customerdocuments cdpp ON cdpp.custid = t1.custid AND cdpp.custdoccategory = ((( SELECT master_def.key_code
+		           FROM master_def
+		          WHERE master_def.master_type = 'DOC_TYPE' AND master_def.key_type = 'PASSPORT')))
+		     LEFT JOIN customeremails t6 ON t1.custid = t6.custid AND t6.custemailpriority = 5
+		     LEFT JOIN customerphonenumbers t7 ON t1.custid = t7.phonecustid
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM customers_temp
+		          WHERE customers_temp.custid = t1.custid))
+	</createView>
+</changeSet>
+
+<changeSet id="175" author="Vinay">
+	<sql>
+		insert into master_def values('DOC_TYPE','AADHAAR','ADHCRD');
+		insert into master_def values('DOC_TYPE','PAN','PANCRD');
+		insert into master_def values('DOC_TYPE','PASSPORT','PASSPRT');
+	</sql>
+</changeSet>
 </databaseChangeLog>
 	
