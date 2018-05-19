@@ -10818,7 +10818,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				} else {
 					if (StringUtils.isEmpty(moduleDefiner)) {
 						this.label_FinanceMainDialog_FinAssetValue
-								.setValue(Labels.getLabel("label_FinanceMainDialog_FinAmount.value"));
+								.setValue(Labels.getLabel("label_FinanceMainDialog_FinAssetValue.value"));
 						validateFinAssetvalue(this.finAmount, financeType, formatter);
 					}
 					aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(
