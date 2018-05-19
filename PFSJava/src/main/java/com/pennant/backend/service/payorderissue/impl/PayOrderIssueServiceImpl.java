@@ -570,7 +570,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			if (isOverdue || isOtc) {
 				List<FinAdvancePayments> advpayments = payOrderIssueHeader.getFinAdvancePaymentsList();
 				for (FinAdvancePayments finAdvancePayments : advpayments) {
-					if (finAdvancePayments.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					if (finAdvancePayments.getRecordType().equals(PennantConstants.RCD_ADD)) {
 						valParm[0] = finAdvancePayments.getPaymentType();
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41103", valParm)));
 					}
