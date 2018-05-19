@@ -52,7 +52,8 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 
 public interface VerificationService {
 
-	List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType, String tableType, String auditTranType, boolean isInitTab);
+	List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType, String tableType,
+			String auditTranType, boolean isInitTab);
 
 	List<Verification> getVerifications(String keyReference, int verificationType);
 
@@ -67,10 +68,14 @@ public interface VerificationService {
 	void saveLegalVerification(Verification verification);
 
 	void setLVDetails(List<Verification> verifications);
-	
+
 	Verification getVerificationById(long id);
-	
-	Long getVerificationIdByReferenceFor(String finReference,String referenceFor, int verificationType);
-	
-	void savereInitLegalVerification(FinanceDetail financeDetail,Verification verification);
+
+	Long getVerificationIdByReferenceFor(String finReference, String referenceFor, int verificationType);
+
+	void savereInitLegalVerification(FinanceDetail financeDetail, Verification verification);
+
+	List<Verification> getCollateralDetails(String[] collaterals);
+
+	void setLastStatus(Verification verification);
 }

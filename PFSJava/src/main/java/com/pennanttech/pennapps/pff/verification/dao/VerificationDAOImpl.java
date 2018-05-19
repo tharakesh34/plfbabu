@@ -12,6 +12,7 @@
 package com.pennanttech.pennapps.pff.verification.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -299,32 +300,70 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 	@Override
 	public Verification getLastStatus(Verification verification) {
 		logger.debug(Literal.ENTERING);
-		
+
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
 		StringBuilder sql = new StringBuilder();
 
-		sql.append("select Id, verificationDate, status from verifications v");
-		
+		sql.append("select v.verificationDate, coalesce(v.status, 0) , coalesce(ed.version, 1) from");
+
 		if (verification.getRequestType() == VerificationType.LV.getKey()
 				|| verification.getRequestType() == VerificationType.TV.getKey()) {
-			sql.append(" inner join collateralsetup_view cs on ");
-			sql.append(" cs.collateralRef = v.referenceFor and cs.version = v.version");
-			sql.append(" where id = (select max(id) from verifications referenceFor = :referenceFor)");
-			sql.append(" and verificationType=:verificationType");
+			sql.append(" collateral_").append(verification.getReferenceType()).append("_ed ed");
+			sql.append(" left join (");
+			sql.append(" select Id, verificationType, verificationDate, status, version from ");
+			sql.append(" verifications where Id = (select coalesce(max(id), 0)");
+			sql.append(" from verifications where referenceFor = :referenceFor ");
+			sql.append(" and verificationType = :verificationType)) v on v.version = ed.version");
+			sql.append(" where ed.reference = :referenceFor");
+
 			paramMap.addValue("referenceFor", verification.getReferenceFor());
-			paramMap.addValue("verificationType", verification.getReferenceType());
+			paramMap.addValue("verificationType", verification.getRequestType());
 		}
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 
 		}
-		
 
 		logger.debug(Literal.LEAVING);
 		return null;
+
+	}
 	
+	
+	@Override
+	public List<Verification> getCollateralDetails(String[] collaterals) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("select cs.collateralref referenceFor,");
+		sql.append(" cs.collateraltype referenceType, depositorcif reference,");
+		sql.append(" cs.depositorname customerName,  ct.collateralvaluatorreq");
+		sql.append(" from collateralassignment_view ca");
+		sql.append(" inner join collateralsetup_view cs on cs.collateralref = ca.collateralref");
+		sql.append(" inner join collateralstructure_view ct on ct.collateraltype = cs.collateraltype");
+		sql.append(" Where cs.collateralref in(:referenceFor)");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		
+		parameterSource.addValue("referenceFor", Arrays.asList(collaterals));
+
+		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
+
+		try {
+			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 }

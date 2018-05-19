@@ -725,12 +725,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		return verifications;
 	}
 	
+	@Override
 	public void setLastStatus(Verification verification) {
 		Verification lastStatus = verificationDAO.getLastStatus(verification);
 
 		if (lastStatus != null) {
 			verification.setLastStatus(lastStatus.getLastStatus());
 			verification.setLastVerificationDate(lastStatus.getVerificationDate());
+			verification.setVersion(lastStatus.getVersion());
 		}
 	}
 
@@ -810,5 +812,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 		}
 
+	}
+	
+	@Override
+	public List<Verification> getCollateralDetails(String[] collaterals) {
+		return verificationDAO.getCollateralDetails(collaterals);
 	}
 }

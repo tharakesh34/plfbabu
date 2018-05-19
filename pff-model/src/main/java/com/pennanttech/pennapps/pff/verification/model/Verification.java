@@ -82,6 +82,7 @@ public class Verification extends AbstractWorkflowEntity {
 
 	private int lastStatus;
 	private Date lastVerificationDate;
+	private boolean verificationReq;
 
 	public Verification() {
 		super();
@@ -117,6 +118,7 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("oldRequestType");
 		excludeFields.add("collateralSetup");
 		excludeFields.add("ignoreFlag");
+		excludeFields.add("verificationReq");
 		return excludeFields;
 	}
 
@@ -518,5 +520,13 @@ public class Verification extends AbstractWorkflowEntity {
 
 	public void setIgnoreFlag(boolean ignoreFlag) {
 		this.ignoreFlag = ignoreFlag;
+	}
+
+	public boolean isVerificationReq() {
+		return verificationReq;
+	}
+
+	public void setVerificationReq(boolean verificationReq) {
+		this.verificationReq = verificationReq;
 	}
 }

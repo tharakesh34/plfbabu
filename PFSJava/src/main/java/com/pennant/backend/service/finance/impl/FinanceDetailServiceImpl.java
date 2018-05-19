@@ -313,8 +313,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Autowired
 	private FieldInvestigationService fieldInvestigationService;
 	@Autowired
-	private TechnicalVerificationService technicalVerificationService;
-	@Autowired
 	private CollateralSetupDAO collateralSetupDAO;
 	@Autowired
 	private DeviationHelper deviationHelper;
@@ -618,11 +616,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// TV Verification Initiation
 		if (financeDetail.isTvInitTab()) {
 			financeDetail.setTvVerification(new Verification());
-			setInitVerification(financeDetail,VerificationType.TV);
+			setInitVerification(financeDetail, VerificationType.TV);
 		}
 		
 		// TV Verification Approval
 		if (financeDetail.isTvApprovalTab()) {
+			System.out.println("TV APPROVAL");
+			/*
 			Verification verification = new Verification();
 			for (CollateralAssignment CollAsmt : financeDetail.getCollateralAssignmentList()) {
 				CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(), "_Aview");
@@ -650,7 +650,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			verification.setVerifications(verifications);
 			financeDetail.setTvVerification(verification);
-		}
+		*/}
 		
 		// LV Verification Initiation
 		if (financeDetail.isLvInitTab()) {
@@ -726,7 +726,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		} else {
 			verification = financeDetail.getLvVerification();
 		}
-		verification.getCollateralSetupList().clear();
+		/*verification.getCollateralSetupList().clear();
 		for (CollateralAssignment CollAsmt : financeDetail.getCollateralAssignmentList()) {
 			CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(),
 					"_Aview");
@@ -744,11 +744,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				verification.getCollateralSetupList().remove(screenCollateral);
 			}
 		}
-		setVerificationData(financeDetail, verification);
+		setVerificationData(financeDetail, verification);*/
 		if (type == VerificationType.TV) {
-			verification.setVerificationType(VerificationType.TV.getKey());
-			verification = technicalVerificationService.getTvVeriFication(verification);
-			financeDetail.setTvVerification(verification);
+			//verification.setVerificationType(VerificationType.TV.getKey());
+			//verification = technicalVerificationService.getTvVeriFication(verification);
+			//financeDetail.setTvVerification(verification);
 		} else {
 			verification.setVerificationType(VerificationType.LV.getKey());
 			//verification = technicalVerificationService.getTvVeriFication(verification);

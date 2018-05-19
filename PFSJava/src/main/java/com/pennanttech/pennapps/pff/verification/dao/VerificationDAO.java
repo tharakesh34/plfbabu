@@ -71,5 +71,7 @@ public interface VerificationDAO extends BasicCrudDao<Verification> {
 	Verification getVerificationById(long id);
 
 	Verification getLastStatus(Verification verification);
+	
+	List<Verification> getCollateralDetails(String[] collaterals);
 
 }
