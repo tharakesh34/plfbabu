@@ -7194,5 +7194,278 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 	<addPrimaryKey columnNames="Master_Type, Key_Type"
 			constraintName="PK_MASTER_DEF" tableName="MASTER_DEF" />
 </changeSet>
+
+<changeSet id="171" author="Vinay">
+	<createView viewName="secusers_view" replaceIfExists="true">
+		SELECT t1.usrid,
+		    t1.usrlogin,
+		    t1.usrpwd,
+		    t1.userstaffid,
+		    t1.usrfname,
+		    t1.usrmname,
+		    t1.usrlname,
+		    t1.usrmobile,
+		    t1.usremail,
+		    t1.usrenabled,
+		    t1.usrcansignonfrom,
+		    t1.usrcansignonto,
+		    t1.usrcanoverridelimits,
+		    t1.usracexp,
+		    t1.usracexpdt,
+		    t1.pwdexpdt,
+		    t1.usraclocked,
+		    t1.usrlanguage,
+		    t5.lngdesc AS lovdescusrlanguage,
+		    t1.usrdftappid,
+		    t2.appcode AS lovdescusrdftappcode,
+		    t2.appdescription AS lovdescusrdftappcodename,
+		    t1.usrbranchcode,
+		    t4.branchdesc AS lovdescusrbranchcodename,
+		    t1.usrdeptcode,
+		    t3.deptdesc AS lovdescusrdeptcodename,
+		    t1.usrtoken,
+		    t1.usrismultibranch,
+		    t1.usrinvldlogintries,
+		    t1.usrdesg,
+		    t6.desgdesc AS lovdescusrdesg,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.usrdftappcode,
+		    t1.authtype,
+		    t1.usertype
+		   FROM secusers_temp t1
+		     LEFT JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
+		     LEFT JOIN bmtdepartments t3 ON t1.usrdeptcode = t3.deptcode
+		     LEFT JOIN rmtbranches t4 ON t1.usrbranchcode = t4.branchcode
+		     LEFT JOIN bmtlanguage t5 ON t1.usrlanguage = t5.lngcode
+		     LEFT JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
+		UNION ALL
+		 SELECT t1.usrid,
+		    t1.usrlogin,
+		    t1.usrpwd,
+		    t1.userstaffid,
+		    t1.usrfname,
+		    t1.usrmname,
+		    t1.usrlname,
+		    t1.usrmobile,
+		    t1.usremail,
+		    t1.usrenabled,
+		    t1.usrcansignonfrom,
+		    t1.usrcansignonto,
+		    t1.usrcanoverridelimits,
+		    t1.usracexp,
+		    t1.usracexpdt,
+		    t1.pwdexpdt,
+		    t1.usraclocked,
+		    t1.usrlanguage,
+		    t5.lngdesc AS lovdescusrlanguage,
+		    t1.usrdftappid,
+		    t2.appcode AS lovdescusrdftappcode,
+		    t2.appdescription AS lovdescusrdftappcodename,
+		    t1.usrbranchcode,
+		    t4.branchdesc AS lovdescusrbranchcodename,
+		    t1.usrdeptcode,
+		    t3.deptdesc AS lovdescusrdeptcodename,
+		    t1.usrtoken,
+		    t1.usrismultibranch,
+		    t1.usrinvldlogintries,
+		    t1.usrdesg,
+		    t6.desgdesc AS lovdescusrdesg,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.usrdftappcode,
+		    t1.authtype,
+		    t1.usertype
+		   FROM secusers t1
+		     LEFT JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
+		     LEFT JOIN bmtdepartments t3 ON t1.usrdeptcode = t3.deptcode
+		     LEFT JOIN rmtbranches t4 ON t1.usrbranchcode = t4.branchcode
+		     LEFT JOIN bmtlanguage t5 ON t1.usrlanguage = t5.lngcode
+		     LEFT JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM secusers_temp
+		          WHERE secusers_temp.usrid = t1.usrid))
+	</createView>
+	</changeSet>
+	
+	<changeSet id="172" author="Vinay">
+	<createView viewName="secusers_rview" replaceIfExists="true">
+		SELECT t1.usrid,
+		    t1.usrlogin,
+		    t1.usrpwd,
+		    t1.userstaffid,
+		    t1.usrfname,
+		    t1.usrmname,
+		    t1.usrlname,
+		    t1.usrmobile,
+		    t1.usremail,
+		    t1.usrenabled,
+		    t1.usrcansignonfrom,
+		    t1.usrcansignonto,
+		    t1.usrcanoverridelimits,
+		    t1.usracexp,
+		    t1.usracexpdt,
+		    t1.pwdexpdt,
+		    t1.usraclocked,
+		    t1.usrlanguage,
+		    t5.lngdesc AS lovdescusrlanguage,
+		    t1.usrdftappid,
+		    t2.appcode AS lovdescusrdftappcode,
+		    t2.appdescription AS lovdescusrdftappcodename,
+		    t1.usrbranchcode,
+		    t4.branchdesc AS lovdescusrbranchcodename,
+		    t1.usrdeptcode,
+		    t3.deptdesc AS lovdescusrdeptcodename,
+		    t1.usrtoken,
+		    t1.usrismultibranch,
+		    t1.usrinvldlogintries,
+		    t1.usrdesg,
+		    t6.desgdesc AS lovdescusrdesg,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.usrdftappcode,
+		    t1.authtype,
+		    t1.usertype
+		   FROM secusers_rtemp t1
+		     JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
+		     JOIN bmtdepartments t3 ON t1.usrdeptcode = t3.deptcode
+		     JOIN rmtbranches t4 ON t1.usrbranchcode = t4.branchcode
+		     JOIN bmtlanguage t5 ON t1.usrlanguage = t5.lngcode
+		     JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
+		UNION ALL
+		 SELECT t1.usrid,
+		    t1.usrlogin,
+		    t1.usrpwd,
+		    t1.userstaffid,
+		    t1.usrfname,
+		    t1.usrmname,
+		    t1.usrlname,
+		    t1.usrmobile,
+		    t1.usremail,
+		    t1.usrenabled,
+		    t1.usrcansignonfrom,
+		    t1.usrcansignonto,
+		    t1.usrcanoverridelimits,
+		    t1.usracexp,
+		    t1.usracexpdt,
+		    t1.pwdexpdt,
+		    t1.usraclocked,
+		    t1.usrlanguage,
+		    t5.lngdesc AS lovdescusrlanguage,
+		    t1.usrdftappid,
+		    t2.appcode AS lovdescusrdftappcode,
+		    t2.appdescription AS lovdescusrdftappcodename,
+		    t1.usrbranchcode,
+		    t4.branchdesc AS lovdescusrbranchcodename,
+		    t1.usrdeptcode,
+		    t3.deptdesc AS lovdescusrdeptcodename,
+		    t1.usrtoken,
+		    t1.usrismultibranch,
+		    t1.usrinvldlogintries,
+		    t1.usrdesg,
+		    t6.desgdesc AS lovdescusrdesg,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.usrdftappcode,
+		    t1.authtype,
+		    t1.usertype
+		   FROM secusers t1
+		     JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
+		     JOIN bmtdepartments t3 ON t1.usrdeptcode = t3.deptcode
+		     JOIN rmtbranches t4 ON t1.usrbranchcode = t4.branchcode
+		     JOIN bmtlanguage t5 ON t1.usrlanguage = t5.lngcode
+		     JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM secusers_rtemp
+		          WHERE secusers_rtemp.usrid = t1.usrid))
+	</createView>
+	</changeSet>
+	
+	<changeSet id="173" author="Vinay">
+	<createView viewName="secusers_aview" replaceIfExists="true">
+		SELECT t1.usrid,
+		    t1.usrlogin,
+		    t1.usrpwd,
+		    t1.userstaffid,
+		    t1.usrfname,
+		    t1.usrmname,
+		    t1.usrlname,
+		    t1.usrmobile,
+		    t1.usremail,
+		    t1.usrenabled,
+		    t1.usrcansignonfrom,
+		    t1.usrcansignonto,
+		    t1.usrcanoverridelimits,
+		    t1.usracexp,
+		    t1.usracexpdt,
+		    t1.pwdexpdt,
+		    t1.usraclocked,
+		    t1.usrlanguage,
+		    t5.lngdesc AS lovdescusrlanguage,
+		    t1.usrdftappid,
+		    t2.appcode AS lovdescusrdftappcode,
+		    t2.appdescription AS lovdescusrdftappcodename,
+		    t1.usrbranchcode,
+		    t4.branchdesc AS lovdescusrbranchcodename,
+		    t1.usrdeptcode,
+		    t3.deptdesc AS lovdescusrdeptcodename,
+		    t1.usrtoken,
+		    t1.usrismultibranch,
+		    t1.usrinvldlogintries,
+		    t1.usrdesg,
+		    t6.desgdesc AS lovdescusrdesg,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.usrdftappcode,
+		    t1.authtype,
+		    t1.usertype
+		   FROM secusers t1
+		     LEFT JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
+		     LEFT JOIN bmtdepartments t3 ON t1.usrdeptcode = t3.deptcode
+		     LEFT JOIN rmtbranches t4 ON t1.usrbranchcode = t4.branchcode
+		     LEFT JOIN bmtlanguage t5 ON t1.usrlanguage = t5.lngcode
+		     LEFT JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
+	</createView>
+</changeSet>
 </databaseChangeLog>
 	
