@@ -119,6 +119,8 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("collateralSetup");
 		excludeFields.add("ignoreFlag");
 		excludeFields.add("verificationReq");
+		excludeFields.add("lastStatus");
+		excludeFields.add("lastVerificationDate");
 		return excludeFields;
 	}
 
