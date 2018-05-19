@@ -859,6 +859,8 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 				verification.setDecision(decision);
 				if (combobox.isDisabled()) {
 					verification.setIgnoreFlag(true);
+				} else if (decision == Decision.RE_INITIATE.getKey()) {
+					verification.setApproveTab(true);
 				}
 				if (!combobox.isDisabled() && decision == 0) {
 					throw new WrongValueException(combobox,
@@ -911,7 +913,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 				if (combobox.isDisabled()) {
 					verification.setIgnoreFlag(true);
 				} else if (decision == Decision.RE_INITIATE.getKey()) {
-					throw new WrongValueException(combobox,"Change the decision or Reinitiate the record");
+					throw new WrongValueException(combobox, "Change the decision or Reinitiate the record");
 				}
 				if (!combobox.isDisabled() && decision == 0) {
 					throw new WrongValueException(combobox,

@@ -6255,6 +6255,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		Tab lvApprovalTab = getTab(AssetConstants.UNIQUE_ID_LVAPPROVAL);
 		if (lvApprovalTab != null && lvApprovalTab.isVisible() && lVerificationCtrl != null) {
 			lVerificationCtrl.doSave_LVVerification(aFinanceDetail, lvApprovalTab);
+			for (Verification verification : aFinanceDetail.getLvVerification().getVerifications()) {
+				if (verification.getDecision() == Decision.RE_INITIATE.getKey()
+						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)
+						&& verification.getReinitid() == null) {
+					MessageUtil.showError("Legal Verification Re-Initiation is allowed only when user action is save");
+					return;
+				}
+			}
 		}
 
 		// RCU Init Verification Detail
@@ -16967,11 +16975,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		for (CollateralSetup screenCollateral : screenCollaterals) {
 			for (Verification savedVerification : savedVerifications) {
-				/*if (StringUtils.isNotEmpty(screenCollateral.getRecordType())
+				if (StringUtils.isNotEmpty(screenCollateral.getRecordType())
 						&& (screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN) ||
 						 screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL))) {
 					return true;
-				}*/
+				}
 				if (screenCollateral.getCollateralRef().equals(savedVerification.getReferenceFor())) {
 					flag = false;
 				}
