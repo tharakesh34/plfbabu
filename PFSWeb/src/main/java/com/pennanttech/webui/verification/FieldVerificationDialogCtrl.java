@@ -114,8 +114,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		renderFIVerificationList(verification);
 
-		this.listBoxFIVerification.setHeight(this.borderLayoutHeight - 600 - 90 + "px");
-		this.window_FIVerificationDialog.setHeight(this.borderLayoutHeight - 80 + "px");
 		logger.debug(Literal.LEAVING);
 	}
 

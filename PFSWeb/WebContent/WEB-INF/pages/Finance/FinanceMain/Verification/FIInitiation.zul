@@ -6,63 +6,60 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-
-	<window>
-		<window id="window_FIVerificationDialog" border="none"
-			apply="${fieldVerificationDialogCtrl}" width="100%" height="100%"
-			style="padding-top:10px" sizable="false">
-
-			<borderlayout id="borderlayoutFIInitiation">
-				<center border="none" id="divCenter">
+	
+	<window id="window_FIVerificationDialog" border="none" apply="${fieldVerificationDialogCtrl}" width="100%" height="100%" sizable="false">
+	<borderlayout  width="100%">
+			<center sclass="none" autoscroll="true">
 				<div>
-					<groupbox id="finBasicdetails" zclass="null"/>					
-					<listbox id="listBoxFIVerification" width="100%" style="overflow:auto;" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">  
-						<listhead sizable="false">
-							<listheader
-								id="listheader_FIVerification_ApplicantType"
-								label="${c:l('listheader_FIVerification_ApplicantType.label')}"
-								sort="false"/>
-							<listheader
-								id="listheader_FIVerification_CIF"
-								label="${c:l('listheader_FIVerification_CIF.label')}"
-								sort="false"/>
-							<listheader
-								id="listheader_FIVerification_Name"
-								label="${c:l('listheader_FIVerification_Name.label')}"
-								sort="false"/>
-							<listheader
-								id="listheader_FIVerification_AddressType"
-								label="${c:l('listheader_FIVerification_AddressType.label')}"
-								sort="false"/>
-							<listheader
-								id="listheader_FIVerification_FIV"
-								label="${c:l('listheader_FIVerification_FIV.label')}"
-								sort="false"/>
-							<listheader
-								id="listheader_FIVerification_Agency"
-								label="${c:l('listheader_FIVerification_Agency.label')}"
-								sort="false"/>
-							<listheader
-								id="listheader_FIVerification_Reason"
-								label="${c:l('listheader_FIVerification_Reason.label')}"
-								sort="false"/>
-							<listheader
-								id="listheader_FIVerification_Remarks"
-								label="${c:l('listheader_FIVerification_Remarks.label')}"
-								sort="false"/>
-							<listheader
-								id="listheader_FIVerification_LastStatus"
-								label="${c:l('listheader_FIVerification_LastStatus.label')}"
-								sort="false"/>
-							<listheader
-								id="listheader_FIVerification_LastVrfDate"
-								label="${c:l('listheader_FIVerification_LastVrfDate.label')}"
-								sort="false"/>
-						</listhead>
-					</listbox>
-				</div>
+					<groupbox id="finBasicdetails" style="border:none;" />
+					<groupbox style="border:none;" >
+							<listbox id="listBoxFIVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}"  sizedByContent="true">  
+								<listhead sizable="false">
+									<listheader
+										id="listheader_FIVerification_ApplicantType"
+										label="${c:l('listheader_FIVerification_ApplicantType.label')}"
+										sort="false" hflex="min"/>
+									<listheader
+										id="listheader_FIVerification_CIF"
+										label="${c:l('listheader_FIVerification_CIF.label')}"
+										sort="false" hflex="min"/>
+									<listheader
+										id="listheader_FIVerification_Name"
+										label="${c:l('listheader_FIVerification_Name.label')}"
+										sort="false" hflex="min"/>
+									<listheader
+										id="listheader_FIVerification_AddressType"
+										label="${c:l('listheader_FIVerification_AddressType.label')}"
+										sort="false"/>
+									<listheader
+										id="listheader_FIVerification_FIV"
+										label="${c:l('listheader_FIVerification_FIV.label')}"
+										sort="false" hflex="250px"/>
+									<listheader
+										id="listheader_FIVerification_Agency"
+										label="${c:l('listheader_FIVerification_Agency.label')}"
+										sort="false" hflex="250px"/>
+									<listheader
+										id="listheader_FIVerification_Reason"
+										label="${c:l('listheader_FIVerification_Reason.label')}"
+										sort="false" hflex="250px"/>
+									<listheader
+										id="listheader_FIVerification_Remarks"
+										label="${c:l('listheader_FIVerification_Remarks.label')}"
+										sort="false" hflex="250px"/>
+									<listheader
+										id="listheader_FIVerification_LastStatus"
+										label="${c:l('listheader_FIVerification_LastStatus.label')}"
+										sort="false" hflex="min"/>
+									<listheader
+										id="listheader_FIVerification_LastVrfDate"
+										label="${c:l('listheader_FIVerification_LastVrfDate.label')}"
+										sort="false" hflex="min"/>
+								</listhead>
+							</listbox>
+						</groupbox>
+					</div>
 				</center>
 			</borderlayout>
-		</window>
 	</window>
 </zk>

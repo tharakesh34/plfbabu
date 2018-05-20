@@ -242,11 +242,8 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			sql = null;
-		}
+			logger.error(Literal.EXCEPTION, e);
+		} 
 		logger.debug(Literal.LEAVING);
 		return null;
 	}

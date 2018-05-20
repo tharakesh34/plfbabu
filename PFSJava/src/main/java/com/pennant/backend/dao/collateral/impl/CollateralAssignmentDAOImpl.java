@@ -110,7 +110,7 @@ public class CollateralAssignmentDAOImpl extends BasisNextidDaoImpl<CollateralMo
 		logger.debug("Entering");
 		int recordCount = 0;
 		
-		StringBuilder deleteSql = new StringBuilder("Delete CollateralAssignment");
+		StringBuilder deleteSql = new StringBuilder("Delete from CollateralAssignment");
  		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where Reference = :Reference and Module = :Module and CollateralRef = :CollateralRef ");
 		logger.debug("deleteSql: " + deleteSql.toString());

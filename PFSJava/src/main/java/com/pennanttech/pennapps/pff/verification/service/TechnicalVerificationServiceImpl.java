@@ -922,4 +922,9 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		}
 		return documentValidation;
 	}
+	
+	@Override
+	public TechnicalVerification getVerificationinFromRecording(long verificationId) {
+		return  technicalVerificationDAO.getTechnicalVerification(verificationId, "_temp");
+	}
 }

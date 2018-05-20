@@ -78,4 +78,6 @@ public interface VerificationService {
 	List<Verification> getCollateralDetails(String[] collaterals);
 
 	void setLastStatus(Verification verification);
+
+	boolean isVerificationInRecording(Verification verification, VerificationType tv);
 }

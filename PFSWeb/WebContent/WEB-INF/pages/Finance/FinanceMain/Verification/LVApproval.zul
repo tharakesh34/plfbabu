@@ -129,8 +129,7 @@
 							</groupbox>
 						</div>
 						<div>
-							<groupbox id="lvInquiry" zclass="null"
-								height="450px" />
+							<groupbox id="lvInquiry" style="border:none;" height="450px" />
 						</div>
 					</div>
 				</center>

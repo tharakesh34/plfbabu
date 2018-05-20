@@ -165,7 +165,6 @@ import com.pennant.app.util.SMSUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
@@ -306,10 +305,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.Decision;
-import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
-import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
@@ -907,10 +904,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	
 	@Autowired
 	private FieldInvestigationService fieldInvestigationService;
-	@Autowired
-	TechnicalVerificationService technicalVerificationService;
-	@Autowired
-	private CollateralSetupDAO								collateralSetupDAO;
+	
 	private String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
 	private String isCreditRevTabReq = SysParamUtil.getValueAsString(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ);
 	private List<String> assignCollateralRef = new ArrayList<>();
@@ -6052,10 +6046,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setFinAssetTypesList(collateralHeaderDialogCtrl.getFinAssetTypes());
 			aFinanceDetail.setExtendedFieldRenderList(collateralHeaderDialogCtrl.getExtendedFieldRenderList());
 			//adding new Collateral Verifications
-			if(aFinanceDetail.isTvInitTab() && isCollateralChanged(aFinanceDetail,aFinanceDetail.getTvVerification())){
+			/*if(aFinanceDetail.isTvInitTab() && isCollateralChanged(aFinanceDetail,aFinanceDetail.getTvVerification())){
 				addNewTvVerification(aFinanceDetail);
 				return;
-			}
+			}*/
 		} else {
 			aFinanceDetail.setCollateralAssignmentList(null);
 			aFinanceDetail.setFinAssetTypesList(null);
@@ -6229,13 +6223,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// TV Init Verification Detail
 		Tab tvInitTab = getTab(AssetConstants.UNIQUE_ID_TVINITIATION);
 		if ((tvInitTab != null && tvInitTab.isVisible()) && tVerificationDialogCtrl != null) {
-			tVerificationDialogCtrl.doSave_FiVerification(aFinanceDetail, tvInitTab, recSave);
+			tVerificationDialogCtrl.doSave(aFinanceDetail, tvInitTab, recSave);
 		}
 
 		// TV Approval Verification Detail
 		Tab tvApprovalTab = getTab(AssetConstants.UNIQUE_ID_TVAPPROVAL);
 		if ((tvApprovalTab != null && tvApprovalTab.isVisible()) && tVerificationDialogCtrl != null) {
-			tVerificationDialogCtrl.doSave_FiVerification(aFinanceDetail, tvApprovalTab, recSave);
+			tVerificationDialogCtrl.doSave(aFinanceDetail, tvApprovalTab, recSave);
 			for (Verification verification : aFinanceDetail.getTvVerification().getVerifications()) {
 				if (verification.getDecision() == Decision.RE_INITIATE.getKey()
 						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)) {
@@ -16534,6 +16528,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setCollateralHeaderDialogCtrl(CollateralHeaderDialogCtrl collateralHeaderDialogCtrl) {
 		this.collateralHeaderDialogCtrl = collateralHeaderDialogCtrl;
+		this.collateralHeaderDialogCtrl.setTVerificationDialogCtrl(tVerificationDialogCtrl);
 		this.collateralHeaderDialogCtrl.setRcuVerificationDialogCtrl(rcuVerificationDialogCtrl);
 		this.collateralHeaderDialogCtrl.setlVerificationCtrl(lVerificationCtrl);
 	}
@@ -16925,9 +16920,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (financeDetail.getTvVerification() == null) {
 				financeDetail.setTvVerification(new Verification());
 			}
-			map.put("financeMainBaseCtrl",this);
+			map.put("financeMainBaseCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("verification", financeDetail.getTvVerification());
+			map.put("financeDetail", financeDetail);
+			
 			map.put("InitType", true);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/TVInitiation.zul", getTabpanel(AssetConstants.UNIQUE_ID_TVINITIATION), map);
 		}
@@ -16957,46 +16954,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("financeMainBaseCtrl",this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("verification", financeDetail.getTvVerification());
+			map.put("financeDetail", financeDetail);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/TVApproval.zul", getTabpanel(AssetConstants.UNIQUE_ID_TVAPPROVAL), map);
 		}
 		logger.debug(Literal.LEAVING);
-	}
-	
-	private boolean isCollateralChanged(FinanceDetail aFinanceDetail, Verification verification) {
-		boolean flag = true;
-
-		List<Verification> savedVerifications = verification.getVerifications();
-		List<CollateralSetup> screenCollaterals = new ArrayList<>();
-		for (CollateralAssignment CollAsmt : aFinanceDetail.getCollateralAssignmentList()) {
-			CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(),
-					"_Aview");
-			collateralSetup.setRecordType(CollAsmt.getRecordType());
-			screenCollaterals.add(collateralSetup);
-		}
-		for (CollateralSetup screenCollateral : screenCollaterals) {
-			for (Verification savedVerification : savedVerifications) {
-				if (StringUtils.isNotEmpty(screenCollateral.getRecordType())
-						&& (screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN) ||
-						 screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL))) {
-					return true;
-				}
-				if (screenCollateral.getCollateralRef().equals(savedVerification.getReferenceFor())) {
-					flag = false;
-				}
-			}
-			if (flag) {
-				return flag;
-			}
-			flag = true;
-		}
-		return false;
-	}
-	private void addNewTvVerification(FinanceDetail aFinanceDetail) {
-		financeDetailService.setInitVerification(aFinanceDetail,VerificationType.TV);
-		financeDetail.setTvVerification(aFinanceDetail.getTvVerification());
-		tVerificationDialogCtrl.renderTechnicalVerificationList(financeDetail.getTvVerification());
-		getTab(AssetConstants.UNIQUE_ID_TVINITIATION).setSelected(true);
-		MessageUtil.showMessage("Collateral details are added or changed, please take respective actions");
 	}
 
 	/**
@@ -17005,13 +16966,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected void appendLVInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 		boolean createTab = false;
-		if (!getFinanceDetail().isLvInitTab()) {
-			createTab = false;
-		} else if (onLoadProcess) {
-			createTab = true;
-		} else if (getTab(AssetConstants.UNIQUE_ID_LVINITIATION) == null) {
+		if (onLoadProcess || getTab(AssetConstants.UNIQUE_ID_LVINITIATION) == null) {
 			createTab = true;
 		}
+		
 		if (createTab) {
 			createTab(AssetConstants.UNIQUE_ID_LVINITIATION, true);
 		} else {

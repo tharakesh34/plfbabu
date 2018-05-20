@@ -48,4 +48,6 @@ public interface TechnicalVerificationService {
 	List<TechnicalVerification> getList(String keyReference);
 
 	boolean isCollateralChanged(TechnicalVerification prvVrf, TechnicalVerification currentVrf);
+
+	TechnicalVerification getVerificationinFromRecording(long verificationId);
 }

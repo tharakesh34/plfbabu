@@ -146,9 +146,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		setScreenVerifications();
 
-		this.listBoxRCUVerification.setHeight(borderLayoutHeight - 600 - 90 + "px");
-		this.window_RCUVerificationDialog.setHeight(borderLayoutHeight - 75 + "px");
-
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -307,7 +307,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
 		StringBuilder sql = new StringBuilder();
 
-		sql.append("select v.verificationDate, coalesce(v.status, 0) , coalesce(ed.version, 1) from");
+		sql.append(" select v.verificationDate, coalesce(v.status, 0) status,");
+		sql.append(" coalesce(ed.version, 1) version, coalesce(v.lastversion, 0) lastversion  from");
 
 		if (verification.getRequestType() == VerificationType.LV.getKey()
 				|| verification.getRequestType() == VerificationType.TV.getKey()) {
@@ -324,8 +325,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		}
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -343,8 +344,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		sql.append("select cs.collateralref referenceFor,");
 		sql.append(" cs.collateraltype referenceType, depositorcif reference,");
 		sql.append(" cs.depositorname customerName,  ct.collateralvaluatorreq");
-		sql.append(" from collateralassignment_view ca");
-		sql.append(" inner join collateralsetup_view cs on cs.collateralref = ca.collateralref");
+		sql.append(" from collateralsetup_view cs");
 		sql.append(" inner join collateralstructure_view ct on ct.collateraltype = cs.collateraltype");
 		sql.append(" Where cs.collateralref in(:referenceFor)");
 
@@ -359,8 +359,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		try {
 			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);

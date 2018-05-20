@@ -83,6 +83,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.webui.verification.LVerificationCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
+import com.pennanttech.webui.verification.TVerificationDialogCtrl;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/CollateralHeaderDialog.zul file.
@@ -111,8 +112,9 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 	private Component 						parent = null;
 
-	private Object				 			financeMainDialogCtrl;
-	private RCUVerificationDialogCtrl	 	rcuVerificationDialogCtrl;
+	private Object financeMainDialogCtrl;
+	private transient TVerificationDialogCtrl tVerificationDialogCtrl;
+	private transient RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
 	private LVerificationCtrl 				lVerificationCtrl;
 	private String 							roleCode = "";
 	private String 							finType = "";
@@ -263,7 +265,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			appendFinBasicDetails();
 
 			// fill the components with the data
-			doFillCollateralDetails(getCollateralAssignments());
+			doFillCollateralDetails(getCollateralAssignments(), false);
 			doFillAssetDetails(getExtendedFieldRenderList());
 
 			// Setting Controller to the Parent Controller
@@ -540,7 +542,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	 * @throws IllegalArgumentException 
 	 * @throws IllegalAccessException 
 	 */
-	public void doFillCollateralDetails(List<CollateralAssignment> CollateralAssignments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public void doFillCollateralDetails(List<CollateralAssignment> CollateralAssignments, boolean fromAssignment) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering");
 		
 		//### 10-05-2018 Start Development Item 82
@@ -675,13 +677,19 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		//### 10-05-2018 End  Development Item 82
 		//### 16-05-2018 Development Item 82
 		rules.put("Collateral_Average_LTV", totalLtv);
-
-		if (rcuVerificationDialogCtrl != null) {
-			rcuVerificationDialogCtrl.addCollateralDocuments(collateralAssignments);
-		}
 		
-		if (lVerificationCtrl != null) {
-			lVerificationCtrl.addCollateralDocuments(collateralAssignments);
+		if (fromAssignment) {
+			if (tVerificationDialogCtrl != null) {
+				tVerificationDialogCtrl.addCollaterals(collateralAssignments);
+			}
+
+			if (rcuVerificationDialogCtrl != null) {
+				rcuVerificationDialogCtrl.addCollateralDocuments(collateralAssignments);
+			}
+
+			if (lVerificationCtrl != null) {
+				lVerificationCtrl.addCollateralDocuments(collateralAssignments);
+			}
 		}
 		
 		logger.debug("Leaving");
@@ -792,7 +800,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	public void updateUtilizedAmount(BigDecimal utilizedAmt) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering");
 		this.utilizedAmount = utilizedAmt;
-		doFillCollateralDetails(getCollateralAssignments());
+		doFillCollateralDetails(getCollateralAssignments(), false);
 		logger.debug("Leaving");
 	}
 	
@@ -876,6 +884,10 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 	public void setCollateralBasicDetailsCtrl(CollateralBasicDetailsCtrl collateralBasicDetailsCtrl) {
 		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
+	}
+	
+	public void setTVerificationDialogCtrl(TVerificationDialogCtrl tVerificationDialogCtrl) {
+		this.tVerificationDialogCtrl = tVerificationDialogCtrl;
 	}
 
 	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {

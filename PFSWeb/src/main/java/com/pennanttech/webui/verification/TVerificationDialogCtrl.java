@@ -2,7 +2,10 @@ package com.pennanttech.webui.verification;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
@@ -34,7 +37,10 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
+import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -46,10 +52,12 @@ import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.Status;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
+import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 @Component(value = "tVerificationDialogCtrl")
@@ -66,12 +74,17 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private Verification verification;
+	private FinanceDetail financeDetail;
 
 	private transient boolean validationOn;
 	private transient boolean initType;
 
 	@Autowired
 	private TechnicalVerificationService technicalVerificationService;
+	@Autowired
+	private transient VerificationService verificationService;
+	
+	private List<Verification> deletedList = new ArrayList<>();
 
 	protected Radiogroup tv;
 
@@ -94,13 +107,23 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		appendFinBasicDetails(arguments.get("finHeaderList"));
 
-		verification = (Verification) arguments.get("verification");
+		financeDetail = (FinanceDetail) arguments.get("financeDetail");
+
+		verification = financeDetail.getTvVerification();
+
+		if (verification == null) {
+			verification = new Verification();
+		}
+
+		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
 
 		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
 
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
+
+		financeMainDialogCtrl.settVerificationDialogCtrl(this);
 
 		doShowDialog();
 
@@ -110,13 +133,142 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 
-		financeMainDialogCtrl.settVerificationDialogCtrl(this);
+		setVerifications();
 
-		renderTechnicalVerificationList(verification);
-
-		this.listBoxTechnicalVerification.setHeight(this.borderLayoutHeight - 600 - 90 + "px");
-		this.window_TVerificationDialog.setHeight(this.borderLayoutHeight - 80 + "px");
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void setVerifications() {
+		List<CollateralAssignment> collaterls = null;
+
+		if (initType) {
+			collaterls = financeDetail.getCollateralAssignmentList();
+		}
+
+		renderList(getVerifications(collaterls));
+	}
+
+	private boolean isNotDeleted(String recordType) {
+		return !(PennantConstants.RECORD_TYPE_DEL.equals(recordType)
+				|| PennantConstants.RECORD_TYPE_CAN.equals(recordType));
+	}
+
+	public void addCollaterals(List<CollateralAssignment> collaterals) {
+		if (collaterals != null) {
+			renderList(getVerifications(collaterals));
+		}
+	}
+
+	private void setOldVerificationFields(Verification current, Verification previous) {
+		current.setId(previous.getId());
+		current.setRequestType(previous.getRequestType());
+		current.setAgency(previous.getAgency());
+		current.setAgencyName(previous.getAgencyName());
+		current.setReason(previous.getReason());
+		current.setRemarks(previous.getRemarks());
+		current.setDecision(previous.getDecision());
+		current.setDecisionRemarks(previous.getDecisionRemarks());
+		current.setReference(previous.getReference());
+		current.setVerificationType(VerificationType.TV.getKey());
+		current.setNewRecord(false);
+	}
+
+	private Verification getVerification(CollateralAssignment collateral) {
+		Verification item = new Verification();
+
+		Customer customer = financeDetail.getCustomerDetails().getCustomer();
+
+		item.setReferenceFor(collateral.getCollateralRef());
+		item.setCif(customer.getCustCIF());
+		item.setCustomerName(customer.getCustShrtName());
+		item.setCustId(customer.getCustID());
+		item.setKeyReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
+		item.setReferenceType(collateral.getLovValue());
+		item.setNewRecord(true);
+		item.setVerificationType(VerificationType.TV.getKey());
+		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
+
+		return item;
+	}
+
+	private List<Verification> getVerifications(List<CollateralAssignment> collaterals) {
+		List<Verification> verifications = new ArrayList<>();
+		Map<String, Verification> collateralMap = new HashMap<>();
+		Set<String> deletedSet = new HashSet<>();
+
+		if (initType) {
+			// Prepare Customer Collaterals
+			for (CollateralAssignment collateral : collaterals) {
+				if (isNotDeleted(collateral.getRecordType())) {
+					Verification object = getVerification(collateral);
+					collateralMap.put(object.getReferenceFor(), object);
+				} else {
+					deletedSet.add(collateral.getCollateralRef());
+				}
+			}
+		}
+
+		// Set the old verification fields back.
+		List<Verification> oldVerifications = getOldVerifications();
+		for (Verification previous : oldVerifications) {
+			Verification current = collateralMap.get(previous.getReferenceFor());
+			if (current != null) {
+				setOldVerificationFields(current, previous);
+				collateralMap.remove(current.getReferenceFor());
+			}
+		}
+
+		verifications.addAll(oldVerifications);
+		verifications.addAll(collateralMap.values());
+
+		for (Verification object : verifications) {
+			if ((deletedSet.contains(object.getReferenceFor()) && (object.isNew()
+					|| !verificationService.isVerificationInRecording(object, VerificationType.TV)))) {
+				object.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+		}
+
+		if (verifications.isEmpty()) {
+			return verifications;
+		}
+
+		if (initType) {
+			String[] references = new String[verifications.size()];
+			int i = 0;
+			for (Verification reference : verifications) {
+				references[i++] = reference.getReferenceFor();
+			}
+
+			List<Verification> collateralDetails = verificationService.getCollateralDetails(references);
+
+			for (Verification item : collateralDetails) {
+				for (Verification ver : verifications) {
+					if (StringUtils.equals(item.getReferenceFor(), ver.getReferenceFor())) {
+						ver.setReferenceType(item.getReferenceType());
+						ver.setReference(item.getReference());
+						ver.setCif(item.getReference());
+						ver.setCustomerName(item.getCustomerName());
+						ver.setVerificationReq(item.isVerificationReq());
+
+						if (ver.isNew()) {
+							if (ver.isVerificationReq()) {
+								ver.setRequestType(RequestType.INITIATE.getKey());
+							} else {
+								ver.setRequestType(RequestType.NOT_REQUIRED.getKey());
+							}
+
+							verificationService.setLastStatus(ver);
+						}
+					}
+				}
+			}
+		}
+
+		return verifications;
+	}
+
+	private List<Verification> getOldVerifications() {
+		return verificationService.getVerifications(this.verification.getKeyReference(), VerificationType.TV.getKey());
 	}
 
 	/**
@@ -125,13 +277,13 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private void appendFinBasicDetails(Object finHeaderList) {
 		logger.debug(Literal.ENTERING);
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final HashMap<String, Object> map = new HashMap<>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", finHeaderList);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);
 		} catch (Exception e) {
-			logger.debug(e);
+			logger.debug(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -193,7 +345,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeAgency(ForwardEvent event) throws Exception {
+	public void onChangeAgency(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox agency = (ExtendedCombobox) getComponent(listitem, "Agency");
 		Object dataObject = agency.getObject();
@@ -209,7 +361,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeReason(ForwardEvent event) throws Exception {
+	public void onChangeReason(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox reason = (ExtendedCombobox) getComponent(listitem, "Reason");
 		Object dataObject = reason.getObject();
@@ -225,7 +377,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeReInitAgency(ForwardEvent event) throws Exception {
+	public void onChangeReInitAgency(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox agency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 		Object dataObject = agency.getObject();
@@ -241,7 +393,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeDecision(ForwardEvent event) throws Exception {
+	public void onChangeDecision(ForwardEvent event) {
+		doRemoveValidation();
+
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox reInitAgency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 		Combobox decisionBox = (Combobox) getComponent(listitem, "Decision");
@@ -279,7 +433,6 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		} else {
 			MessageUtil.showMessage("Initiation request not available in Technical Verification Module.");
 		}
-
 	}
 
 	/**
@@ -287,62 +440,66 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * 
 	 * @param customer
 	 */
-	public void renderTechnicalVerificationList(Verification verification) {
+	public void renderList(List<Verification> verifications) {
 		logger.debug(Literal.ENTERING);
-
-		this.verification = verification;
 
 		if (listBoxTechnicalVerification.getItems() != null) {
 			listBoxTechnicalVerification.getItems().clear();
 		}
+		
+		deletedList.clear();
 
 		int i = 0;
-		for (Verification vrf : verification.getVerifications()) {
-			if (vrf.getReinitid() != null && vrf.getRequestType() == RequestType.WAIVE.getKey()) {
+		for (Verification vrf : verifications) {
+			if ((vrf.getReinitid() != null && vrf.getRequestType() == RequestType.WAIVE.getKey())
+					|| PennantConstants.RECORD_TYPE_DEL.equals(vrf.getRecordType())) {
+				deletedList.add(vrf);
 				continue;
 			}
+	
 
 			i++;
 			Listitem item = new Listitem();
 			Listcell listCell;
+			Radio select = null;
 			if (!initType) {
-
-				//Select
+				// Select
 				listCell = new Listcell();
 				listCell.setId("select".concat(String.valueOf(i)));
-				Radio select = new Radio();
+				select = new Radio();
 				select.setRadiogroup(tv);
 				select.setValue(vrf.getId());
 				listCell.appendChild(select);
 				listCell.setParent(item);
 			}
 
-			//Collateral Type
+			// Collateral Type
 			listCell = new Listcell();
 			listCell.setId("ReferenceType".concat(String.valueOf(i)));
 			listCell.appendChild(new Label(vrf.getReferenceType()));
 			listCell.setParent(item);
 
-			//Depositor CIF
+			// Depositor CIF
 			listCell = new Listcell();
 			listCell.setId("Reference".concat(String.valueOf(i)));
 			listCell.appendChild(new Label(vrf.getCif()));
 			listCell.setParent(item);
 
-			//Dipositor Name
+			// Dipositor Name
 			listCell = new Listcell(vrf.getCustomerName());
 			listCell.setParent(item);
 
-			//Collateral Reference
+			// Collateral Reference
 			listCell = new Listcell();
 			listCell.setId("ReferenceFor".concat(String.valueOf(i)));
 			listCell.appendChild(new Label(vrf.getReferenceFor()));
 			listCell.setParent(item);
 
-			//TV
+			// TV
 			listCell = new Listcell();
 			listCell.setId("RequestType".concat(String.valueOf(i)));
 			Combobox requestType = new Combobox();
+			requestType.setWidth("200px");
 			requestType.setReadonly(true);
 			requestType.setValue(String.valueOf(vrf.getRequestType()));
 			List<ValueLabel> list = new ArrayList<>();
@@ -359,10 +516,12 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			requestType.setParent(listCell);
 			listCell.setParent(item);
 
-			//Agency
+			// Agency
 			listCell = new Listcell();
 			listCell.setId("Agency".concat(String.valueOf(i)));
 			ExtendedCombobox agency = new ExtendedCombobox();
+			agency.setWidth("200px");
+			agency.setHflex("min");
 			if (vrf.getAgencyName() != null) {
 				agency.setValue(String.valueOf(vrf.getAgencyName()));
 				agency.setAttribute("agencyId", vrf.getAgency());
@@ -373,10 +532,11 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell.appendChild(agency);
 			listCell.setParent(item);
 
-			//Reason
+			// Reason
 			listCell = new Listcell();
 			listCell.setId("Reason".concat(String.valueOf(i)));
 			ExtendedCombobox reason = new ExtendedCombobox();
+			reason.setWidth("200px");
 			if (vrf.getReasonName() != null) {
 				reason.setValue(vrf.getReasonName());
 				reason.setAttribute("reasonId", vrf.getReason());
@@ -385,15 +545,16 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell.appendChild(reason);
 			listCell.setParent(item);
 
-			//Remarks
+			// Remarks
 			listCell = new Listcell();
 			listCell.setId("Remarks".concat(String.valueOf(i)));
 			Textbox remarks = new Textbox(vrf.getRemarks());
+			remarks.setWidth("200px");
 			remarks.setMaxlength(500);
 			listCell.appendChild(remarks);
 			listCell.setParent(item);
 
-			//Status
+			// Status
 			listCell = new Listcell();
 			Label status = new Label();
 			if (Status.getType(vrf.getStatus()) != null) {
@@ -402,14 +563,13 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell.appendChild(status);
 			listCell.setParent(item);
 
-			//Verification Date
+			// Verification Date
 			listCell = new Listcell();
 			listCell.appendChild(new Label(DateUtil.formatToShortDate(vrf.getVerificationDate())));
 			listCell.setParent(item);
 
 			if (!initType) {
-
-				//Decision
+				// Decision
 				listCell = new Listcell();
 				listCell.setId("Decision".concat(String.valueOf(i)));
 				Combobox decision = new Combobox();
@@ -423,7 +583,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				decision.setParent(listCell);
 				listCell.setParent(item);
 
-				//Re-Initiation Agency
+				// Re-Initiation Agency
 				listCell = new Listcell();
 				listCell.setId("ReInitAgency".concat(String.valueOf(i)));
 				ExtendedCombobox reInitAgency = new ExtendedCombobox();
@@ -432,7 +592,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				listCell.appendChild(reInitAgency);
 				listCell.setParent(item);
 
-				//Re-Initiation Remarks
+				// Re-Initiation Remarks
 				listCell = new Listcell();
 				listCell.setId("ReInitRemarks".concat(String.valueOf(i)));
 				Textbox reInitRemarks = new Textbox();
@@ -461,6 +621,10 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				agency.setReadonly(true);
 				reason.setReadonly(true);
 				remarks.setReadonly(true);
+
+				if (i == 0) {
+					select.setChecked(true);
+				}
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -530,7 +694,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -541,9 +706,17 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Combobox decision = (Combobox) getComponent(listitem, "Decision");
 			ExtendedCombobox reInitagencyComboBox = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 
-			fivComboBox.clearErrorMessage();
-			agencyComboBox.clearErrorMessage();
-			reasonComboBox.clearErrorMessage();
+			if (fivComboBox != null) {
+				fivComboBox.clearErrorMessage();
+			}
+
+			if (agencyComboBox != null) {
+				agencyComboBox.clearErrorMessage();
+			}
+
+			if (reasonComboBox != null) {
+				reasonComboBox.clearErrorMessage();
+			}
 
 			if (decision != null) {
 				decision.clearErrorMessage();
@@ -558,7 +731,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setValidationOn(true);
 
 		for (Listitem listitem : listBoxTechnicalVerification.getItems()) {
@@ -587,46 +760,46 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 						Labels.getLabel("label_TechnicalVerificationDialog_Agency.value"), null, true, true));
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	private void setValue(Listitem listitem, String comonentId) {
-		Verification verification = null;
+	private Verification getVerification(Listitem listitem, String comonentId) {
+		Verification item = null;
 		String referenceFor = ((Label) getComponent(listitem, "ReferenceFor")).getValue();
 		String reference = ((Label) getComponent(listitem, "Reference")).getValue();
 
 		String key = referenceFor.concat(reference);
 
-		verification = (Verification) listitem.getAttribute(key);
+		item = (Verification) listitem.getAttribute(key);
 
 		switch (comonentId) {
 		case "RequestType":
 			String requestType = ((Combobox) getComponent(listitem, "RequestType")).getSelectedItem().getValue();
-			verification.setRequestType(Integer.parseInt(requestType));
+			item.setRequestType(Integer.parseInt(requestType));
 			break;
 		case "Agency":
 			ExtendedCombobox agency = ((ExtendedCombobox) getComponent(listitem, "Agency"));
 			if (StringUtils.isNotEmpty(agency.getValue())) {
-				verification.setAgency(Long.parseLong(agency.getAttribute("agencyId").toString()));
+				item.setAgency(Long.parseLong(agency.getAttribute("agencyId").toString()));
 			} else {
-				verification.setAgency(null);
+				item.setAgency(null);
 			}
 			break;
 		case "Reason":
 			ExtendedCombobox reason = ((ExtendedCombobox) getComponent(listitem, "Reason"));
 			if (StringUtils.isNotEmpty(reason.getValue())) {
-				verification.setReason(Long.parseLong(reason.getAttribute("reasonId").toString()));
+				item.setReason(Long.parseLong(reason.getAttribute("reasonId").toString()));
 			} else {
-				verification.setReason(null);
+				item.setReason(null);
 			}
 			break;
 		case "Remarks":
-			verification.setRemarks(((Textbox) getComponent(listitem, "Remarks")).getValue());
+			item.setRemarks(((Textbox) getComponent(listitem, "Remarks")).getValue());
 			break;
 		case "Decision":
 			Combobox combobox = (Combobox) getComponent(listitem, "Decision");
 			int decision = Integer.parseInt(getComboboxValue(combobox).toString());
-			verification.setDecision(decision);
+			item.setDecision(decision);
 			if (!combobox.isDisabled() && decision == 0) {
 				throw new WrongValueException(combobox,
 						Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
@@ -635,16 +808,15 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		case "ReInitAgency":
 			ExtendedCombobox reInitAgency = ((ExtendedCombobox) getComponent(listitem, "ReInitAgency"));
 			if (StringUtils.isNotEmpty(reInitAgency.getValue())) {
-				verification.setReInitAgency(Long.parseLong(reInitAgency.getAttribute("reInitAgencyId").toString()));
+				item.setReInitAgency(Long.parseLong(reInitAgency.getAttribute("reInitAgencyId").toString()));
 			} else {
-				verification.setReInitAgency(null);
+				item.setReInitAgency(null);
 			}
 			break;
 		case "ReInitRemarks":
 			Textbox textbox = (Textbox) getComponent(listitem, "ReInitRemarks");
-			verification.setDecisionRemarks(textbox.getValue());
-			if (verification.getDecision() == Decision.OVERRIDE.getKey()
-					&& StringUtils.isEmpty(verification.getDecisionRemarks())) {
+			item.setDecisionRemarks(textbox.getValue());
+			if (item.getDecision() == Decision.OVERRIDE.getKey() && StringUtils.isEmpty(item.getDecisionRemarks())) {
 				throw new WrongValueException(textbox, "Remarks are mandatory when Decision is Override");
 			}
 			break;
@@ -652,7 +824,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			break;
 		}
 
-		verification.setRecordStatus(this.recordStatus.getValue());
+		item.setRecordStatus(this.recordStatus.getValue());
+
+		return item;
 	}
 
 	/**
@@ -661,53 +835,62 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * @param verification
 	 * @return
 	 */
-	public ArrayList<WrongValueException> doWriteComponentsToBean() {
-		logger.debug("Entering");
+	public List<WrongValueException> doWriteComponentsToBean() {
+		logger.debug(Literal.ENTERING);
+		List<Verification> verifications = new ArrayList<>();
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		ArrayList<WrongValueException> wve = new ArrayList<>();
+
+		Verification item = null;
 
 		for (Listitem listitem : listBoxTechnicalVerification.getItems()) {
 			try {
-				setValue(listitem, "RequestType");
+				item = getVerification(listitem, "RequestType");
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 			try {
-				setValue(listitem, "Agency");
+				item = getVerification(listitem, "Agency");
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 
 			try {
-				setValue(listitem, "Reason");
+				item = getVerification(listitem, "Reason");
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 
-			setValue(listitem, "Remarks");
+			item = getVerification(listitem, "Remarks");
 
 			if (!initType) {
 				try {
-					setValue(listitem, "Decision");
+					item = getVerification(listitem, "Decision");
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
 				try {
-					setValue(listitem, "ReInitAgency");
+					item = getVerification(listitem, "ReInitAgency");
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
 				try {
-					setValue(listitem, "ReInitRemarks");
+					item = getVerification(listitem, "ReInitRemarks");
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
 			}
+
+			verifications.add(item);
+			verifications.addAll(deletedList);
 		}
 
 		doRemoveValidation();
 
-		logger.debug("Leaving");
+		this.verification.setVerifications(verifications);
+
+		logger.debug(Literal.LEAVING);
+
 		return wve;
 	}
 
@@ -721,18 +904,24 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
 			Combobox decision = (Combobox) getComponent(listitem, "Decision");
 
-			fivComboBox.setConstraint("");
-			agencyComboBox.setConstraint("");
-			reasonComboBox.setConstraint("");
+			if (fivComboBox != null) {
+				fivComboBox.setConstraint("");
+			}
+
+			if (agencyComboBox != null) {
+				agencyComboBox.setConstraint("");
+			}
+
+			if (reasonComboBox != null) {
+				reasonComboBox.setConstraint("");
+			}
 
 			if (decision != null) {
 				decision.setConstraint("");
 			}
-
 		}
 
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	private void fillComboBox(Combobox combobox, int value, List<ValueLabel> list) {
@@ -752,12 +941,12 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * Writes the showErrorDetails method for .<br>
 	 * displaying exceptions if occured
 	 */
-	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
+	private void showErrorDetails(List<WrongValueException> wve, Tab tab) {
 		logger.debug("Entering");
 
 		doRemoveValidation();
 
-		if (wve.size() > 0) {
+		if (!wve.isEmpty()) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
 			if (tab != null) {
 				tab.setSelected(true);
@@ -772,14 +961,13 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public void doSave_FiVerification(FinanceDetail financeDetail, Tab tab, boolean recSave)
-			throws InterruptedException {
-		logger.debug("Entering");
+	public void doSave(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
 		doSetValidation();
 
-		ArrayList<WrongValueException> wve = doWriteComponentsToBean();
+		List<WrongValueException> wve = doWriteComponentsToBean();
 
 		if (!wve.isEmpty() && tab != null) {
 			tab.setSelected(true);

@@ -768,7 +768,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					if (getCollateralHeaderDialogCtrl() != null) {
-						getCollateralHeaderDialogCtrl().doFillCollateralDetails(this.collateralAssignments);
+						getCollateralHeaderDialogCtrl().doFillCollateralDetails(this.collateralAssignments, true);
 					}
 					closeDialog();
 				}
@@ -842,7 +842,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			int retValue = auditHeader.getProcessStatus();
 			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 				if (getCollateralHeaderDialogCtrl() != null) {
-					getCollateralHeaderDialogCtrl().doFillCollateralDetails(this.collateralAssignments);
+					getCollateralHeaderDialogCtrl().doFillCollateralDetails(this.collateralAssignments, true);
 				}
 				closeDialog();
 			}

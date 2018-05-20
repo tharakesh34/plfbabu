@@ -733,6 +733,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			verification.setLastStatus(lastStatus.getLastStatus());
 			verification.setLastVerificationDate(lastStatus.getVerificationDate());
 			verification.setVersion(lastStatus.getVersion());
+			verification.setLastVersion(lastStatus.getLastVersion());
 		}
 	}
 
@@ -817,5 +818,17 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	@Override
 	public List<Verification> getCollateralDetails(String[] collaterals) {
 		return verificationDAO.getCollateralDetails(collaterals);
+	}
+
+	@Override
+	public boolean isVerificationInRecording(Verification verification, VerificationType verificationType) {
+		boolean exists = false;
+		if (verificationType == VerificationType.TV) {
+			if (technicalVerificationService.getVerificationinFromRecording(verification.getId()) != null) {
+				exists = true;
+			}
+		}
+
+		return exists;
 	}
 }
