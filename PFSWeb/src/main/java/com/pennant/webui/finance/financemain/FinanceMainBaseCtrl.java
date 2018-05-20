@@ -16966,10 +16966,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected void appendLVInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 		boolean createTab = false;
-		if (onLoadProcess || getTab(AssetConstants.UNIQUE_ID_LVINITIATION) == null) {
+		if (!getFinanceDetail().isLvInitTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_LVINITIATION) == null) {
 			createTab = true;
 		}
-		
 		if (createTab) {
 			createTab(AssetConstants.UNIQUE_ID_LVINITIATION, true);
 		} else {
