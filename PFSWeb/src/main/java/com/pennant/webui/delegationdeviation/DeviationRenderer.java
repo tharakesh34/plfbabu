@@ -165,7 +165,9 @@ public class DeviationRenderer {
 					Combobox combobox = new Combobox();
 					combobox.setReadonly(true);
 					combobox.setWidth("100px");
-					combobox.setId("combo_" + deviationDetail.getDeviationId());
+					combobox.setId("combo_" + (deviationDetail.getDeviationId() < 0 ? 0 : deviationDetail.getDeviationId())
+									+ deviationDetail.getDeviationCode() + StringUtils.trimToEmpty(deviationDetail.getModule())
+									+ (deviationDetail.isManualDeviation() ? "M" : "A"));
 					combobox.addForward("onChange", "", "onChangeAutoDevStatus", deviationDetail);
 					fillComboBox(combobox, deviationDetail.getApprovalStatus(), approveStatus);
 					combobox.setDisabled(readOnly);
@@ -299,7 +301,9 @@ public class DeviationRenderer {
 					Combobox combobox = new Combobox();
 					combobox.setReadonly(true);
 					combobox.setWidth("100px");
-					combobox.setId("combo_" + deviation.getDeviationId());
+					combobox.setId("combo_" + (deviation.getDeviationId() < 0 ? 0 : deviation.getDeviationId())
+							+ deviation.getDeviationCode() + StringUtils.trimToEmpty(deviation.getModule())
+							+ (deviation.isManualDeviation() ? "M" : "A"));
 					fillComboBox(combobox, deviation.getApprovalStatus(), approveStatus);
 					combobox.setDisabled(pending);
 					listcell.appendChild(combobox);
