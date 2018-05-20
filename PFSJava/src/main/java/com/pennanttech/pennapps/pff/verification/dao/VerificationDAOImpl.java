@@ -57,7 +57,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		StringBuilder sql = new StringBuilder("select ");
 		sql.append(" v.id, verificationType, module, keyReference, referenceType, reference, ");
 		sql.append(" referenceFor, c.custId, c.custCif as cif, c.custshrtname customerName,");
-		sql.append(" requesttype, reinitid, agency, a.dealerName agencyName, reason, r.description reasonName, remarks, ");
+		sql.append(
+				" requesttype, reinitid, agency, a.dealerName agencyName, reason, r.description reasonName, remarks, ");
 		sql.append(" createdBy, createdOn, status, agencyRemarks, agencyReason, decision, ");
 		sql.append(" verificationDate, decisionRemarks, ");
 		sql.append(" v.LastMntOn, v.LastMntBy");
@@ -247,7 +248,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 	}
 
 	@Override
-	public Long getVerificationIdByReferenceFor(String finReference,String referenceFor, int verificationType) {
+	public Long getVerificationIdByReferenceFor(String finReference, String referenceFor, int verificationType) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("select id from verifications");
@@ -277,15 +278,16 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		StringBuilder sql = new StringBuilder("select");
 		sql.append(" v.id, verificationType, module, keyReference, referenceType, reference, ");
 		sql.append(" referenceFor,");
-		sql.append(" requesttype, reinitid, agency, a.dealerName agencyName,a.dealerCity agencyCity, reason, remarks, ");
+		sql.append(
+				" requesttype, reinitid, agency, a.dealerName agencyName,a.dealerCity agencyCity, reason, remarks, ");
 		sql.append(" createdBy, createdOn, status, agencyRemarks, agencyReason, decision, ");
 		sql.append(" verificationDate, decisionRemarks,a.dealerName agencyName ");
 		sql.append(" from verifications v left join AMTVehicleDealer_AView a on a.dealerid=v.agency");
 		sql.append(" where id=:id and a.dealerType=:dealerType");
-		
+
 		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		
+
 		paramMap.addValue("dealerType", Agencies.LVAGENCY.getKey());
 		paramMap.addValue("id", id);
 		try {
@@ -318,7 +320,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			sql.append(" where ed.reference = :referenceFor");
 
 			paramMap.addValue("referenceFor", verification.getReferenceFor());
-			paramMap.addValue("verificationType", verification.getRequestType());
+			paramMap.addValue("verificationType", verification.getVerificationType());
 		}
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
@@ -330,15 +332,14 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		return null;
 
 	}
-	
-	
+
 	@Override
 	public List<Verification> getCollateralDetails(String[] collaterals) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
-		
+
 		sql.append("select cs.collateralref referenceFor,");
 		sql.append(" cs.collateraltype referenceType, depositorcif reference,");
 		sql.append(" cs.depositorname customerName,  ct.collateralvaluatorreq");
@@ -351,7 +352,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		
+
 		parameterSource.addValue("referenceFor", Arrays.asList(collaterals));
 
 		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
