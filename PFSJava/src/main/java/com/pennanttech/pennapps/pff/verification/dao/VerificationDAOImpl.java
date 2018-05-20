@@ -308,7 +308,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" select v.verificationDate, coalesce(v.status, 0) status,");
-		sql.append(" coalesce(ed.version, 1) version, coalesce(v.version, 0) lastversion  from");
+		sql.append(" coalesce(ed.version, 1) as version, coalesce(v.version, 0) lastversion  from");
 
 		if (verification.getRequestType() == VerificationType.LV.getKey()
 				|| verification.getRequestType() == VerificationType.TV.getKey()) {
