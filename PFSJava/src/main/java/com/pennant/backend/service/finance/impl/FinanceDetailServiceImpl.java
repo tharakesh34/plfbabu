@@ -231,10 +231,8 @@ import com.pennanttech.pennapps.pff.verification.Module;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
-import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
-import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CreditInformation;
@@ -726,7 +724,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		} else {
 			verification = financeDetail.getLvVerification();
 		}
-		/*verification.getCollateralSetupList().clear();
+		verification.getCollateralSetupList().clear();
 		for (CollateralAssignment CollAsmt : financeDetail.getCollateralAssignmentList()) {
 			CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(),
 					"_Aview");
@@ -744,11 +742,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				verification.getCollateralSetupList().remove(screenCollateral);
 			}
 		}
-		setVerificationData(financeDetail, verification);*/
+		setVerificationData(financeDetail, verification);
 		if (type == VerificationType.TV) {
-			//verification.setVerificationType(VerificationType.TV.getKey());
-			//verification = technicalVerificationService.getTvVeriFication(verification);
-			//financeDetail.setTvVerification(verification);
+			/*verification.setVerificationType(VerificationType.TV.getKey());
+			verification = technicalVerificationService.getTvVeriFication(verification);
+			financeDetail.setTvVerification(verification);*/
 		} else {
 			verification.setVerificationType(VerificationType.LV.getKey());
 			//verification = technicalVerificationService.getTvVeriFication(verification);
