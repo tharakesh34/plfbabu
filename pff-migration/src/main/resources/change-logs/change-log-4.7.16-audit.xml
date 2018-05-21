@@ -622,4 +622,15 @@
 <changeSet id="33" author="Vinay">
 	<dropColumn tableName="Adtsecusers" columnName="usrcredentialsexp"/>
 </changeSet>
+
+<changeSet id="34" author="Durgaprasad G">
+	<sql>
+			Update ADTCHEQUEDETAIL set emirefno = '0' Where emirefno is null; 
+	</sql>
+</changeSet>
+
+<changeSet id="35" author="Durgaprasad G">
+	 <modifyDataType tableName="ADTCHEQUEDETAIL" columnName="EMIREFNO" newDataType="int"/>
+</changeSet>
+
 	</databaseChangeLog>
