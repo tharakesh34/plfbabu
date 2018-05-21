@@ -37,7 +37,6 @@ import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * Data access layer implementation for <code>Verification</code> with set of CRUD operations.
@@ -199,10 +198,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from verifications");
-		sql.append(tableType.getSuffix());
-		sql.append(" where id = :id ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		StringBuilder sql = new StringBuilder("delete from verifications where id = :id ");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -252,7 +248,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("select id from verifications");
-		sql.append(" where referenceFor=:referenceFor and verificationType=:verificationType and keyReference=:keyReference");
+		sql.append(
+				" where referenceFor=:referenceFor and verificationType=:verificationType and keyReference=:keyReference");
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("keyReference", finReference);
@@ -343,7 +340,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		sql.append("select cs.collateralref referenceFor,");
 		sql.append(" cs.collateraltype referenceType, depositorcif reference,");
-		sql.append(" cs.depositorname customerName,  ct.collateralvaluatorreq");
+		sql.append(" cs.depositorname customerName,  ct.collateralvaluatorreq verificationReq");
 		sql.append(" from collateralsetup_view cs");
 		sql.append(" inner join collateralstructure_view ct on ct.collateraltype = cs.collateraltype");
 		sql.append(" Where cs.collateralref in(:referenceFor)");

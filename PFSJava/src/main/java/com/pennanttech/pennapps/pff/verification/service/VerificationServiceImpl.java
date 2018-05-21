@@ -152,24 +152,18 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (item.isIgnoreFlag()) {
 				continue;
 			}
-			item.setLastMntOn(verification.getLastMntOn());
-			item.setLastMntBy(verification.getLastMntBy());
-			item.setVersion(verification.getVersion());
-			item.setRoleCode(verification.getRoleCode());
-			item.setNextRoleCode(verification.getNextRoleCode());
-			item.setTaskId(verification.getTaskId());
-			item.setNextTaskId(verification.getNextTaskId());
-			item.setRecordStatus(verification.getRecordStatus());
-			item.setWorkflowId(verification.getWorkflowId());
-			item.setCreatedBy(verification.getLastMntBy());
-			if (StringUtils.isEmpty(item.getRecordType())) {
-				item.setRecordType(verification.getRecordType());
-			}
-			if (StringUtils.isEmpty(item.getKeyReference())) {
-				item.setKeyReference(verification.getKeyReference());
-			}
+
+			//set WorkFlow Data to item; 
+			setVerificationWorkflowData(verification, item);
 
 			if (isInitTab) {
+				//delete non verification Records
+				if (item.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
+						&& verificationType == VerificationType.TV) {//FIX ME
+					verificationDAO.delete(item, TableType.BOTH_TAB);
+					continue;
+				}
+
 				// clear Re-init for non initiated records
 				if (item.getRequestType() != RequestType.INITIATE.getKey()) {
 					item.setReinitid(null);
@@ -209,7 +203,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				} else {
 					if (item.getId() != 0) {
 						verificationDAO.update(item, TableType.MAIN_TAB);
-						
+
 						if (verificationType == VerificationType.RCU) {
 							riskContainmentUnitService.updateRemarks(item);
 						}
@@ -222,6 +216,25 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			}
 		}
 		return auditDetails;
+	}
+
+	private void setVerificationWorkflowData(Verification verification, Verification item) {
+		item.setLastMntOn(verification.getLastMntOn());
+		item.setLastMntBy(verification.getLastMntBy());
+		item.setVersion(verification.getVersion());
+		item.setRoleCode(verification.getRoleCode());
+		item.setNextRoleCode(verification.getNextRoleCode());
+		item.setTaskId(verification.getTaskId());
+		item.setNextTaskId(verification.getNextTaskId());
+		item.setRecordStatus(verification.getRecordStatus());
+		item.setWorkflowId(verification.getWorkflowId());
+		item.setCreatedBy(verification.getLastMntBy());
+		if (StringUtils.isEmpty(item.getRecordType())) {
+			item.setRecordType(verification.getRecordType());
+		}
+		if (StringUtils.isEmpty(item.getKeyReference())) {
+			item.setKeyReference(verification.getKeyReference());
+		}
 	}
 
 	private void reInitVerification(FinanceDetail financeDetail, VerificationType verificationType,
@@ -724,7 +737,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 		return verifications;
 	}
-	
+
 	@Override
 	public void setLastStatus(Verification verification) {
 		Verification lastStatus = verificationDAO.getLastStatus(verification);
@@ -805,16 +818,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (verification.getReference() == null) {
 				verification.setReference(customer.getCustCIF());
 			}
-
-			if (verification.getRequestType() != RequestType.INITIATE.getKey()) {
-				// verification.getRcuDocument();
-				// verification.setReference(customer.getCustCIF());
-			}
-
 		}
 
 	}
-	
+
 	@Override
 	public List<Verification> getCollateralDetails(String[] collaterals) {
 		return verificationDAO.getCollateralDetails(collaterals);
