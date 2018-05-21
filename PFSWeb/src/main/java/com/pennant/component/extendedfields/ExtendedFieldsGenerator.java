@@ -1068,72 +1068,12 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @param wveMap
 	 * @param notInputElements
 	 */
-	protected void showErrorDetails(HashMap<ExtendedFieldDetail, WrongValueException> wveMap, List<Component> compList,
-			List<ExtendedFieldDetail> notInputElements) {
+	protected void showErrorDetails(HashMap<ExtendedFieldDetail, WrongValueException> wveMap,
+			List<Component> components, List<ExtendedFieldDetail> notInputElements) {
 		logger.debug(Literal.ENTERING);
+		clearErrorMessages(components);
 
 		if (wveMap.size() > 0) {
-			for (Component component : compList) {
-				if (component instanceof CurrencyBox) {
-					CurrencyBox currencyBox = (CurrencyBox) component;
-					currencyBox.setConstraint("");
-					currencyBox.setErrorMessage("");
-
-				} else if (component instanceof Decimalbox) {
-					Decimalbox decimalbox = (Decimalbox) component;
-					decimalbox.setConstraint("");
-					decimalbox.setErrorMessage("");
-
-				} else if (component instanceof ExtendedCombobox) {
-					ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
-					extendedCombobox.setConstraint("");
-					extendedCombobox.setErrorMessage("");
-
-				} else if (component instanceof AccountSelectionBox) {
-					AccountSelectionBox accountSelectionBox = (AccountSelectionBox) component;
-					accountSelectionBox.setConstraint("");
-					accountSelectionBox.setErrorMessage("");
-
-				} else if (component instanceof FrequencyBox) {
-					FrequencyBox frequencyBox = (FrequencyBox) component;
-					frequencyBox.setErrorMessage("");
-
-				} else if (component instanceof Intbox) {
-					Intbox intbox = (Intbox) component;
-					intbox.setConstraint("");
-					intbox.setErrorMessage("");
-
-				} else if (component instanceof Longbox) {
-					Longbox longbox = (Longbox) component;
-					longbox.setConstraint("");
-					longbox.setErrorMessage("");
-
-				} else if (component instanceof Datebox) {
-					Datebox datebox = (Datebox) component;
-					datebox.setConstraint("");
-					datebox.setErrorMessage("");
-
-				} else if (component instanceof Timebox) {
-					Timebox timebox = (Timebox) component;
-					timebox.setConstraint("");
-					timebox.setErrorMessage("");
-
-				} else if (component instanceof Combobox) {
-					Combobox combobox = (Combobox) component;
-					combobox.setConstraint("");
-					combobox.setErrorMessage("");
-
-				} else if (component instanceof Bandbox) {
-					Bandbox bandbox = (Bandbox) component;
-					bandbox.setConstraint("");
-					bandbox.setErrorMessage("");
-
-				} else if (component instanceof Textbox) {
-					Textbox textbox = (Textbox) component;
-					textbox.setConstraint("");
-					textbox.setErrorMessage("");
-				}
-			}
 
 			// Bug Fix:allignment of tab elements while throwing error
 			for (ExtendedFieldDetail extendedFieldDetail : notInputElements) {
@@ -1158,10 +1098,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					ExtendedFieldDetail extdetai = entryset.getKey();
 					//get tab by name and set selected
 					Component fellowIfAny = window.getFellowIfAny(extdetai.getFieldName());
-					// bugfix for if partent tag is null validation throwing
-					if (fellowIfAny == null) {
-						continue;
-					}
+					
 					if (fellowIfAny != null && fellowIfAny instanceof Tab) {
 						Tab parTab = (Tab) fellowIfAny;
 						parTab.setSelected(true);
@@ -1186,6 +1123,63 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			}
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void clearErrorMessages(List<Component> components) {
+		for (Component component : components) {
+			if (component instanceof CurrencyBox) {
+				CurrencyBox currencyBox = (CurrencyBox) component;
+				currencyBox.setConstraint("");
+				currencyBox.setErrorMessage("");
+				Clients.clearWrongValue(currencyBox);
+			} else if (component instanceof Decimalbox) {
+				Decimalbox decimalbox = (Decimalbox) component;
+				decimalbox.setConstraint("");
+				decimalbox.setErrorMessage("");
+			} else if (component instanceof ExtendedCombobox) {
+				ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
+				extendedCombobox.setConstraint("");
+				extendedCombobox.setErrorMessage("");
+				Clients.clearWrongValue(extendedCombobox);
+			} else if (component instanceof AccountSelectionBox) {
+				AccountSelectionBox accountSelectionBox = (AccountSelectionBox) component;
+				accountSelectionBox.setConstraint("");
+				accountSelectionBox.setErrorMessage("");
+			} else if (component instanceof FrequencyBox) {
+				FrequencyBox frequencyBox = (FrequencyBox) component;
+				frequencyBox.setErrorMessage("");
+			} else if (component instanceof Intbox) {
+				Intbox intbox = (Intbox) component;
+				intbox.setConstraint("");
+				intbox.setErrorMessage("");
+			} else if (component instanceof Longbox) {
+				Longbox longbox = (Longbox) component;
+				longbox.setConstraint("");
+				longbox.setErrorMessage("");
+			} else if (component instanceof Datebox) {
+				Datebox datebox = (Datebox) component;
+				datebox.setConstraint("");
+				datebox.setErrorMessage("");
+			} else if (component instanceof Timebox) {
+				Timebox timebox = (Timebox) component;
+				timebox.setConstraint("");
+				timebox.setErrorMessage("");
+			} else if (component instanceof Combobox) {
+				Combobox combobox = (Combobox) component;
+				combobox.setConstraint("");
+				combobox.setErrorMessage("");
+			} else if (component instanceof Bandbox) {
+				Bandbox bandbox = (Bandbox) component;
+				bandbox.setConstraint("");
+				bandbox.setErrorMessage("");
+			} else if (component instanceof Textbox) {
+				Textbox textbox = (Textbox) component;
+				textbox.setConstraint("");
+				textbox.setErrorMessage("");
+			} else {
+				Clients.clearWrongValue(component);
+			}
+		}
 	}
 
 	/**
