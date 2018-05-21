@@ -7151,11 +7151,11 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 	</createView>
 </changeSet>
 
-<!-- <changeSet id="166" author="Vinay">
+ <changeSet id="166" author="Vinay">
 	<dropColumn tableName="secusers_temp" columnName="usrcredentialsexp"/>
 	<dropColumn tableName="secusers_rtemp" columnName="usrcredentialsexp"/>
 	<dropColumn tableName="secusers" columnName="usrcredentialsexp"/>
-</changeSet> -->
+</changeSet>
 
 <changeSet id="167" author="Vinay">
 	<createTable tableName="MASTER_DEF">
