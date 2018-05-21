@@ -498,6 +498,8 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 					if (StringUtils.isNotEmpty(checkListDetail.getLovDescUserRole()) && 
 							checkListDetail.getLovDescFinRefDetail().getAllowInputInStage().contains(checkListDetail.getLovDescUserRole())) {
 						Button uploadBtn = new Button("Upload");
+						// added for label disabled>>> bugfix
+						uploadBtn.setAutodisable("Upload");
 						String btnID = "btn_" + checkListDetail.getCheckListId() + "_" + checkListDetail.getAnsSeqNo();
 						uploadBtn.setId(btnID);
 						uploadBtn.setStyle("background-color:#16a085;color:#ffffff !important;font-size:10px;padding:0px 2px;");
