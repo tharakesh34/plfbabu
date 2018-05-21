@@ -7574,5 +7574,32 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 		insert into master_def values('DOC_TYPE','PASSPORT','PASSPRT');
 	</sql>
 </changeSet>
+
+<changeSet id="176" author="Durgaprasad G">
+	<comment> Changing the CHEQUEDETAIL table EMIREFNO column datatype</comment>
+	<dropView viewName="chequedetail_view"/>
+</changeSet>
+
+<changeSet id="177" author="Durgaprasad G">
+	<comment> Changing the CHEQUEDETAIL table EMIREFNO column datatype</comment>
+	<dropView viewName="chequedetail_aview"/>
+</changeSet>
+
+<changeSet id="178" author="Durgaprasad G">
+	<sql>
+			Update CHEQUEDETAIL set emirefno = '0' Where emirefno is null; 
+			Update CHEQUEDETAIL_TEMP set emirefno = '0' Where emirefno is null; 
+	</sql>
+</changeSet>
+
+<changeSet id="179" author="Durgaprasad G">
+	 <modifyDataType tableName="CHEQUEDETAIL" columnName="EMIREFNO" newDataType="int"/>
+</changeSet>
+
+<changeSet id="180" author="Durgaprasad G">
+	 <modifyDataType tableName="CHEQUEDETAIL_TEMP" columnName="EMIREFNO" newDataType="int"/>
+</changeSet>
+
+
 </databaseChangeLog>
 	
