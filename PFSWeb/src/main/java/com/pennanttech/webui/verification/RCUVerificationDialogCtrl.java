@@ -910,6 +910,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
 			Combobox decision = (Combobox) getComponent(listitem, "Decision");
 			ExtendedCombobox reInitagencyComboBox = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
+			Textbox reInitRemarks = (Textbox) getComponent(listitem, "ReInitRemarks");
 
 			rcuComboBox.clearErrorMessage();
 			agencyComboBox.clearErrorMessage();
@@ -920,6 +921,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 			if (reInitagencyComboBox != null) {
 				reInitagencyComboBox.clearErrorMessage();
+			}
+			if (reInitRemarks != null) {
+				reInitRemarks.clearErrorMessage();
 			}
 		}
 	}
@@ -1098,6 +1102,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			ExtendedCombobox agencyComboBox = (ExtendedCombobox) getComponent(listitem, "Agency");
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
 			Combobox decision = (Combobox) getComponent(listitem, "Decision");
+			ExtendedCombobox reInitagencyComboBox = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
+			Textbox reInitRemarks = (Textbox) getComponent(listitem, "ReInitRemarks");
 
 			fivComboBox.setConstraint("");
 			agencyComboBox.setConstraint("");
@@ -1105,6 +1111,12 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			if (decision != null) {
 				decision.setConstraint("");
+			}
+			if (reInitagencyComboBox != null) {
+				reInitagencyComboBox.setConstraint("");
+			}
+			if (reInitRemarks != null) {
+				reInitRemarks.setConstraint("");
 			}
 
 		}

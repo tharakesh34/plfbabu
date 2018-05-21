@@ -99,144 +99,54 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 
 		try {
 			switch (serviceTask.getOperation()) {
-			case PennantConstants.method_doCheckScore:
-				doCheckScore(afinanceDetail);
-				taskExecuted = true;
-				break;
-			case PennantConstants.method_doCheckExceptions:
-				auditHeader = doCheckExceptions(auditHeader);
-				taskExecuted = true;
-				break;
-			case PennantConstants.method_doCheckLPOApproval:
-				errors = doCollateralMark(afinanceDetail.getFinanceCollaterals());
-				if(!errors.isEmpty()) {
-					auditHeader.getErrorMessage().addAll(errors);
-				}
-				taskExecuted = true;
-				break;
-			case PennantConstants.method_checkDDAResponse:
-				errors = checkDDAResponse(afinanceDetail);
-				if(!errors.isEmpty()) {
-					auditHeader.getErrorMessage().addAll(errors);
-				}
-				taskExecuted = true;
-				break;
-			case PennantConstants.method_doClearQueues:
-				afinanceDetail.getFinScheduleData().getFinanceMain().setNextTaskId("");
-				taskExecuted = true;
-				break;
-			case PennantConstants.method_doFundsAvailConfirmed:
-				errors = doFundsAvailConfirmed(afinanceDetail);
-				if(!errors.isEmpty()) {
-					auditHeader.getErrorMessage().addAll(errors);
-				}
-				taskExecuted = true;
-				break;
-			case PennantConstants.method_doCheckProspectCustomer:
-				doCheckProspectCustomer(afinanceDetail);
-				taskExecuted = true;
-				break;
-			case PennantConstants.method_doCheckSMECustomer:
-				doCheckSMECustomer(afinanceDetail);
-				taskExecuted = true;
-				break;
-			case PennantConstants.method_sendDDARequest:
-				errors = sendDDARequest(afinanceDetail);
-				if(!errors.isEmpty()) {
-					auditHeader.getErrorMessage().addAll(errors);
-				}
-				taskExecuted = true;
-				break;
-			case PennantConstants.method_doCheckShariaRequired:
-				//Setting this property which is used in workflow condition post sharia
-				afinanceMain.setShariaApprovalReq(true);//FIXME:what is the default value for sharia required
-				taskExecuted = true;
-				break;
-			case PennantConstants.method_externalDedup:
-				try {
-					auditHeader = externalDedup.checkDedup(auditHeader);
-					taskExecuted = true;
-				} catch (InterfaceException e) {
-					logger.error("Exception in Dedup Bureau:", e);
-					taskExecuted = true;
-					setRemarks(auditHeader, PennantConstants.method_externalDedup, e.getMessage());
-					//throw new InterfaceException("9999", e.getMessage());
-				}
-				break;
-			case PennantConstants.method_hunter:
-				try {
-					auditHeader = blacklistCheck.checkHunterDetails(auditHeader);
-					taskExecuted = true;
-				} catch (InterfaceException e) {
-					logger.error("Exception in Hunter Bureau:", e);
-					taskExecuted = true;
-					setRemarks(auditHeader, PennantConstants.method_hunter, e.getMessage());
-					//throw new InterfaceException("9999", e.getMessage());
-				}
-				break;
-			case PennantConstants.method_Experian_Bureau:
-				try {
-					auditHeader=experianBureauService.executeExperianBureau(auditHeader);
-					taskExecuted = true;
-				} catch (InterfaceException e) {
-					logger.error("Exception in Experian Bureau:", e);
-					taskExecuted = true;
-					setRemarks(auditHeader, PennantConstants.method_Experian_Bureau, e.getMessage());
-					//throw new InterfaceException("9999", e.getMessage());
-				}
-				break;
-			case PennantConstants.method_Crif_Bureau:
-				try {
-					auditHeader=criffBureauService.executeCriffBureau(auditHeader);
-					taskExecuted = true;
-				} catch (InterfaceException e) {
-					logger.error("Exception in CRIFF Bureau:", e);
-					taskExecuted = true;
-					setRemarks(auditHeader, PennantConstants.method_Crif_Bureau, e.getMessage());
-					//throw new InterfaceException("9999", e.getMessage());
-				}
-				break;
-			case PennantConstants.method_Cibil_Bureau:
-				try {
-					auditHeader = cibilConsumerService.getCibilConsumer(auditHeader);
-					taskExecuted = true;
-				} catch (InterfaceException e) {
-					logger.error("Exception in CIBIL Bureau:", e);
-					taskExecuted = true;
-					setRemarks(auditHeader, PennantConstants.method_Cibil_Bureau, e.getMessage());
-				}
-				break;
-			case PennantConstants.method_LegalDesk:
-				try {
-					setInstallmentType(auditHeader);
-					setRateOfInst(auditHeader);
-					auditHeader = legalDeskService.executeLegalDesk(auditHeader);
-					taskExecuted = true;
-				} catch (InterfaceException e) {
-					logger.error("Exception in LegalDesk:", e);
-					taskExecuted = true;
-				}
-				break;
-			case PennantConstants.method_HoldFinance:
-				try {
-					auditHeader = holdFinanceService.executeHoldFinance(auditHeader);
-					taskExecuted = true;
-				} catch (InterfaceException e) {
-					logger.error("Exception in HoldFinance:", e);
-					taskExecuted = true;
-				}
-				break;
-			case PennantConstants.method_bre:
-				try {
-					auditHeader = breService.executeBRE(auditHeader);
-					taskExecuted = true;
-				} catch (InterfaceException e) {
-					logger.error("Exception in BRE:", e);
-					taskExecuted = true;
-					setRemarks(auditHeader, PennantConstants.method_bre, e.getMessage());
-				}
-				break;
-			default:
+			/*
+			 * case PennantConstants.method_doCheckScore: doCheckScore(afinanceDetail); taskExecuted = true; break; case
+			 * PennantConstants.method_doCheckExceptions: auditHeader = doCheckExceptions(auditHeader); taskExecuted =
+			 * true; break; case PennantConstants.method_doCheckLPOApproval: errors =
+			 * doCollateralMark(afinanceDetail.getFinanceCollaterals()); if(!errors.isEmpty()) {
+			 * auditHeader.getErrorMessage().addAll(errors); } taskExecuted = true; break; case
+			 * PennantConstants.method_checkDDAResponse: errors = checkDDAResponse(afinanceDetail);
+			 * if(!errors.isEmpty()) { auditHeader.getErrorMessage().addAll(errors); } taskExecuted = true; break; case
+			 * PennantConstants.method_doClearQueues:
+			 * afinanceDetail.getFinScheduleData().getFinanceMain().setNextTaskId(""); taskExecuted = true; break; case
+			 * PennantConstants.method_doFundsAvailConfirmed: errors = doFundsAvailConfirmed(afinanceDetail);
+			 * if(!errors.isEmpty()) { auditHeader.getErrorMessage().addAll(errors); } taskExecuted = true; break; case
+			 * PennantConstants.method_doCheckProspectCustomer: doCheckProspectCustomer(afinanceDetail); taskExecuted =
+			 * true; break; case PennantConstants.method_doCheckSMECustomer: doCheckSMECustomer(afinanceDetail);
+			 * taskExecuted = true; break; case PennantConstants.method_sendDDARequest: errors =
+			 * sendDDARequest(afinanceDetail); if(!errors.isEmpty()) { auditHeader.getErrorMessage().addAll(errors); }
+			 * taskExecuted = true; break; case PennantConstants.method_doCheckShariaRequired: //Setting this property
+			 * which is used in workflow condition post sharia afinanceMain.setShariaApprovalReq(true);//FIXME:what is
+			 * the default value for sharia required taskExecuted = true; break; case
+			 * PennantConstants.method_externalDedup: try { auditHeader = externalDedup.checkDedup(auditHeader);
+			 * taskExecuted = true; } catch (InterfaceException e) { logger.error("Exception in Dedup Bureau:", e);
+			 * taskExecuted = true; setRemarks(auditHeader, PennantConstants.method_externalDedup, e.getMessage());
+			 * //throw new InterfaceException("9999", e.getMessage()); } break; case PennantConstants.method_hunter: try
+			 * { auditHeader = blacklistCheck.checkHunterDetails(auditHeader); taskExecuted = true; } catch
+			 * (InterfaceException e) { logger.error("Exception in Hunter Bureau:", e); taskExecuted = true;
+			 * setRemarks(auditHeader, PennantConstants.method_hunter, e.getMessage()); //throw new
+			 * InterfaceException("9999", e.getMessage()); } break; case PennantConstants.method_Experian_Bureau: try {
+			 * auditHeader=experianBureauService.executeExperianBureau(auditHeader); taskExecuted = true; } catch
+			 * (InterfaceException e) { logger.error("Exception in Experian Bureau:", e); taskExecuted = true;
+			 * setRemarks(auditHeader, PennantConstants.method_Experian_Bureau, e.getMessage()); //throw new
+			 * InterfaceException("9999", e.getMessage()); } break; case PennantConstants.method_Crif_Bureau: try {
+			 * auditHeader=criffBureauService.executeCriffBureau(auditHeader); taskExecuted = true; } catch
+			 * (InterfaceException e) { logger.error("Exception in CRIFF Bureau:", e); taskExecuted = true;
+			 * setRemarks(auditHeader, PennantConstants.method_Crif_Bureau, e.getMessage()); //throw new
+			 * InterfaceException("9999", e.getMessage()); } break; case PennantConstants.method_Cibil_Bureau: try {
+			 * auditHeader = cibilConsumerService.getCibilConsumer(auditHeader); taskExecuted = true; } catch
+			 * (InterfaceException e) { logger.error("Exception in CIBIL Bureau:", e); taskExecuted = true;
+			 * setRemarks(auditHeader, PennantConstants.method_Cibil_Bureau, e.getMessage()); } break; case
+			 * PennantConstants.method_LegalDesk: try { setInstallmentType(auditHeader); setRateOfInst(auditHeader);
+			 * auditHeader = legalDeskService.executeLegalDesk(auditHeader); taskExecuted = true; } catch
+			 * (InterfaceException e) { logger.error("Exception in LegalDesk:", e); taskExecuted = true; } break; case
+			 * PennantConstants.method_HoldFinance: try { auditHeader =
+			 * holdFinanceService.executeHoldFinance(auditHeader); taskExecuted = true; } catch (InterfaceException e) {
+			 * logger.error("Exception in HoldFinance:", e); taskExecuted = true; } break; case
+			 * PennantConstants.method_bre: try { auditHeader = breService.executeBRE(auditHeader); taskExecuted = true;
+			 * } catch (InterfaceException e) { logger.error("Exception in BRE:", e); taskExecuted = true;
+			 * setRemarks(auditHeader, PennantConstants.method_bre, e.getMessage()); } break;
+			 */default:
 				return taskExecuted;
 			}
 		} catch (Exception e) {
@@ -247,20 +157,6 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 			logServiceTaskDetails(auditHeader, serviceTask, serviceTaskDetail);
 			throw e;
 		}
-		ServiceTaskDetail serviceTaskDetail = new ServiceTaskDetail();
-		// checking for whether service task executed successfully or not
-		if (auditHeader.getErrorMessage() != null && !auditHeader.getErrorMessage().isEmpty()) {
-			serviceTaskDetail.setStatus("Failed");
-			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				serviceTaskDetail.setRemarks(errorDetail.getCode()+":"+errorDetail.getMessage());
-			}
-		} else {
-			serviceTaskDetail.setStatus("Success");
-			serviceTaskDetail.setRemarks(Labels.getLabel("SERVICETASK_EXECUTED"));
-		}
-
-		logServiceTaskDetails(auditHeader, serviceTask, serviceTaskDetail);
-		return taskExecuted;
 	}
 
 	private void setRateOfInst(AuditHeader auditHeader) {

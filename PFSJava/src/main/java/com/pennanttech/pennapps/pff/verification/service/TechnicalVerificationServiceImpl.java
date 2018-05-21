@@ -571,7 +571,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			vrf.setReference(vrf.getCif());
 			vrf.setRecordType(collateralSetup.getRecordType());
 			vrf.setCreatedOn(DateUtility.getAppDate());
-			setTvFields(vrf, collateralSetup);
+			setTvFields(vrf);
 			verifications.add(vrf);
 
 		}
@@ -728,11 +728,11 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		return false;
 	}
 
-	private void setTvFields(Verification verification, CollateralSetup collateralSetup) {
+	private void setTvFields(Verification verification) {
 		TechnicalVerification tv = new TechnicalVerification();
 		tv.setVerificationId(verification.getId());
-		tv.setCollateralRef(collateralSetup.getCollateralRef());
-		tv.setCollateralType(collateralSetup.getCollateralType());
+		tv.setCollateralRef(verification.getReferenceFor());
+		tv.setCollateralType(verification.getReferenceType());
 		tv.setVersion(1);
 		tv.setLastMntBy(verification.getLastMntBy());
 		tv.setLastMntOn(verification.getLastMntOn());
@@ -756,11 +756,10 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	}
 
 	@Override
-	public void save(CollateralSetup collateralSetup, Verification item) {
+	public void save(Verification item) {
 		if ((item.getRequestType() == RequestType.INITIATE.getKey()
-				|| item.getDecision() == Decision.RE_INITIATE.getKey())
-				&& item.getReferenceFor().equals(collateralSetup.getCollateralRef())) {
-			setTvFields(item, collateralSetup);
+				|| item.getDecision() == Decision.RE_INITIATE.getKey())) {
+			setTvFields(item);
 			save(item.getTechnicalVerification(), TableType.TEMP_TAB);
 		}
 	}

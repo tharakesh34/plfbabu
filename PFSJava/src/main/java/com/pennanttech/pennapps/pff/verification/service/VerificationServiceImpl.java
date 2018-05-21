@@ -181,7 +181,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 						if (verificationType == VerificationType.FI) {
 							saveFI(customerDetailsList, item);
 						} else if (verificationType == VerificationType.TV) {
-							saveTV(collateralSetupList, item);
+							saveTV(item);
 						} else if (verificationType == VerificationType.LV) {
 							saveLV(financeDetail, item);
 						} else if (verificationType == VerificationType.RCU) {
@@ -243,15 +243,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		reInit.setId(item.getId());
 		reInit.setLastMntOn(item.getLastMntOn());
 		reInit.setLastMntBy(item.getLastMntBy());
+		reInit.setDecision(Decision.RE_INITIATE.getKey());
 
-		if (verificationType == VerificationType.LV) {//FIXME
-			reInit.setDecision(Decision.RE_INITIATE.getKey());
-		} else {
+		if (verificationType != VerificationType.LV) {//FIXME
 			item.setAgency(item.getReInitAgency());
 			item.setRemarks(item.getDecisionRemarks());
 		}
 		if (verificationType == VerificationType.RCU) {
-			reInit.setDecision(Decision.RE_INITIATE.getKey());
 			item.getRcuDocument().setInitRemarks(item.getDecisionRemarks());
 		}
 		item.setStatus(0);
@@ -271,7 +269,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		if (verificationType == VerificationType.FI) {
 			saveFI(customerDetailsList, item);
 		} else if (verificationType == VerificationType.TV) {
-			saveTV(collateralSetupList, item);
+			saveTV(item);
 		} else if (verificationType == VerificationType.LV) {
 			saveLV(financeDetail, item);
 		} else if (verificationType == VerificationType.RCU) {
@@ -366,11 +364,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		}
 	}
 
-	private void saveTV(List<CollateralSetup> collateralSetupList, Verification item) {
+	private void saveTV(Verification item) {
 		if (item.getTechnicalVerification() == null) {
-			for (CollateralSetup collateralSetup : collateralSetupList) {
-				technicalVerificationService.save(collateralSetup, item);
-			}
+			technicalVerificationService.save(item);
 		} else if (item.getRequestType() == RequestType.INITIATE.getKey()) {
 			TechnicalVerification technicalVerification = new TechnicalVerification();
 
@@ -743,7 +739,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		Verification lastStatus = verificationDAO.getLastStatus(verification);
 
 		if (lastStatus != null && (lastStatus.getVersion() == lastStatus.getLastVersion())) {
-			verification.setLastStatus(lastStatus.getLastStatus());
+			verification.setLastStatus(lastStatus.getStatus());
 			verification.setLastVerificationDate(lastStatus.getVerificationDate());
 			verification.setVersion(lastStatus.getVersion());
 			verification.setLastVersion(lastStatus.getLastVersion());
@@ -768,8 +764,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private void setDecision(int verificationType, List<Verification> verifications) {
 
 		for (Verification verification : verifications) {
-			if (verification.getStatus() == Status.POSITIVE.getKey()
-					|| verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {
+			if ((verification.getStatus() == Status.POSITIVE.getKey()
+					|| verification.getRequestType() == RequestType.NOT_REQUIRED.getKey())
+					&& verification.getDecision() != Decision.RE_INITIATE.getKey()) {
 				verification.setDecision(Decision.APPROVE.getKey());
 			}
 		}

@@ -83,7 +83,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private TechnicalVerificationService technicalVerificationService;
 	@Autowired
 	private transient VerificationService verificationService;
-	
+
 	private List<Verification> deletedList = new ArrayList<>();
 
 	protected Radiogroup tv;
@@ -257,8 +257,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 								ver.setRequestType(RequestType.NOT_REQUIRED.getKey());
 							}
 
-							verificationService.setLastStatus(ver);
 						}
+						verificationService.setLastStatus(ver);
 					}
 				}
 			}
@@ -394,7 +394,6 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	public void onChangeDecision(ForwardEvent event) {
-		doRemoveValidation();
 
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox reInitAgency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
@@ -446,7 +445,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (listBoxTechnicalVerification.getItems() != null) {
 			listBoxTechnicalVerification.getItems().clear();
 		}
-		
+
 		deletedList.clear();
 
 		int i = 0;
@@ -456,7 +455,6 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				deletedList.add(vrf);
 				continue;
 			}
-	
 
 			i++;
 			Listitem item = new Listitem();
@@ -557,15 +555,24 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			// Status
 			listCell = new Listcell();
 			Label status = new Label();
-			if (Status.getType(vrf.getStatus()) != null) {
+			if (initType) {
+				if (Status.getType(vrf.getLastStatus()) != null) {
+					status.setValue(Status.getType(vrf.getLastStatus()).getValue());
+				}
+			} else if (Status.getType(vrf.getStatus()) != null) {
 				status.setValue(Status.getType(vrf.getStatus()).getValue());
 			}
+
 			listCell.appendChild(status);
 			listCell.setParent(item);
 
 			// Verification Date
 			listCell = new Listcell();
-			listCell.appendChild(new Label(DateUtil.formatToShortDate(vrf.getVerificationDate())));
+			if (initType) {
+				listCell.appendChild(new Label(DateUtil.formatToShortDate(vrf.getLastVerificationDate())));
+			} else {
+				listCell.appendChild(new Label(DateUtil.formatToShortDate(vrf.getVerificationDate())));
+			}
 			listCell.setParent(item);
 
 			if (!initType) {
@@ -603,6 +610,12 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 				decision.addForward("onChange", self, "onChangeDecision", item);
 				reInitAgency.addForward("onFulfill", self, "onChangeReInitAgency", item);
+
+				if (vrf.getDecision() == Decision.RE_INITIATE.getKey()) {
+					decision.setDisabled(true);
+					reInitAgency.setReadonly(true);
+					reInitRemarks.setReadonly(true);
+				}
 			}
 
 			requestType.addForward("onChange", self, "onChnageTv", item);
@@ -621,10 +634,6 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				agency.setReadonly(true);
 				reason.setReadonly(true);
 				remarks.setReadonly(true);
-
-				if (i == 0) {
-					select.setChecked(true);
-				}
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -694,8 +703,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -705,6 +713,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
 			Combobox decision = (Combobox) getComponent(listitem, "Decision");
 			ExtendedCombobox reInitagencyComboBox = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
+			Textbox reInitRemarks = (Textbox) getComponent(listitem, "ReInitRemarks");
 
 			if (fivComboBox != null) {
 				fivComboBox.clearErrorMessage();
@@ -721,8 +730,13 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (decision != null) {
 				decision.clearErrorMessage();
 			}
+			
 			if (reInitagencyComboBox != null) {
 				reInitagencyComboBox.clearErrorMessage();
+			}
+			
+			if (reInitRemarks != null) {
+				reInitRemarks.clearErrorMessage();
 			}
 		}
 	}
@@ -799,6 +813,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		case "Decision":
 			Combobox combobox = (Combobox) getComponent(listitem, "Decision");
 			int decision = Integer.parseInt(getComboboxValue(combobox).toString());
+			if (combobox.isDisabled()) {
+				item.setIgnoreFlag(true);
+			}
 			item.setDecision(decision);
 			if (!combobox.isDisabled() && decision == 0) {
 				throw new WrongValueException(combobox,
@@ -882,8 +899,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 
 			verifications.add(item);
-			verifications.addAll(deletedList);
 		}
+		verifications.addAll(deletedList);
 
 		doRemoveValidation();
 
@@ -899,13 +916,15 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		setValidationOn(false);
 		for (Listitem listitem : listBoxTechnicalVerification.getItems()) {
-			Combobox fivComboBox = (Combobox) getComponent(listitem, "RequestType");
+			Combobox tvComboBox = (Combobox) getComponent(listitem, "RequestType");
 			ExtendedCombobox agencyComboBox = (ExtendedCombobox) getComponent(listitem, "Agency");
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
 			Combobox decision = (Combobox) getComponent(listitem, "Decision");
+			ExtendedCombobox reinitAgencyComboBox = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
+			Textbox reInitRemarks = (Textbox) getComponent(listitem, "ReInitRemarks");
 
-			if (fivComboBox != null) {
-				fivComboBox.setConstraint("");
+			if (tvComboBox != null) {
+				tvComboBox.setConstraint("");
 			}
 
 			if (agencyComboBox != null) {
@@ -918,6 +937,13 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			if (decision != null) {
 				decision.setConstraint("");
+			}
+
+			if (reinitAgencyComboBox != null) {
+				reinitAgencyComboBox.setConstraint("");
+			}
+			if (reInitRemarks != null) {
+				reInitRemarks.setConstraint("");
 			}
 		}
 

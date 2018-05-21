@@ -425,8 +425,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	public ChequeHeader getChequeHeaderByRef(String finReference) {
 		ChequeHeader chequeHeader = getChequeHeaderDAO().getChequeHeaderByRef(finReference, "_View");
 		if (chequeHeader != null) {
-			chequeHeader
-					.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
+		//	chequeHeader.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
 		}
 		return chequeHeader;
 	}

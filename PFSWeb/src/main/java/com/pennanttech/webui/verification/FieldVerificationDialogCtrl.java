@@ -422,29 +422,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
-				List<ValueLabel> decisionList = new ArrayList<>();
-				if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-						|| vrf.getStatus() == Status.POSITIVE.getKey()) {
-					decisionList.add(
-							new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
-					decisionList
-							.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
-					if (vrf.getDecision() == Decision.SELECT.getKey()) {
-						vrf.setDecision(Decision.APPROVE.getKey());
-					}
-					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-				} else if (vrf.getStatus() == Status.NOTCMPLTD.getKey()
-						|| vrf.getStatus() == Status.NEGATIVE.getKey()) {
-					decisionList.add(
-							new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
-					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-				} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
-					decisionList.add(
-							new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
-					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-				} else {
-					fillComboBox(decision, vrf.getDecision(), Decision.getList());
-				}
+				fillDecision(vrf, decision);
 
 				decision.setParent(listCell);
 				listCell.setParent(item);
@@ -469,6 +447,12 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 				decision.addForward("onChange", self, "onChangeDecision", item);
 				reInitAgency.addForward("onFulfill", self, "onChangeReInitAgency", item);
+
+				if (vrf.getDecision() == Decision.RE_INITIATE.getKey()) {
+					decision.setDisabled(true);
+					reInitAgency.setReadonly(true);
+					reInitRemarks.setReadonly(true);
+				}
 			}
 
 			requestType.addForward("onChange", self, "onChnageFiv", item);
@@ -490,6 +474,26 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void fillDecision(Verification vrf, Combobox decision) {
+		List<ValueLabel> decisionList = new ArrayList<>();
+		if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey() || vrf.getStatus() == Status.POSITIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
+			decisionList.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
+			if (vrf.getDecision() == Decision.SELECT.getKey()) {
+				vrf.setDecision(Decision.APPROVE.getKey());
+			}
+			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+		} else if (vrf.getStatus() == Status.NOTCMPLTD.getKey() || vrf.getStatus() == Status.NEGATIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
+			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+		} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
+			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+		} else {
+			fillComboBox(decision, vrf.getDecision(), Decision.getList());
+		}
 	}
 
 	private List<ValueLabel> filterDecisions(List<ValueLabel> list) {
@@ -545,6 +549,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
 			Combobox decision = (Combobox) getComponent(listitem, "Decision");
 			ExtendedCombobox reInitagencyComboBox = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
+			Textbox reInitRemarks = (Textbox) getComponent(listitem, "ReInitRemarks");
 
 			fivComboBox.clearErrorMessage();
 			agencyComboBox.clearErrorMessage();
@@ -555,6 +560,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 			if (reInitagencyComboBox != null) {
 				reInitagencyComboBox.clearErrorMessage();
+			}
+			if (reInitRemarks != null) {
+				reInitRemarks.clearErrorMessage();
 			}
 		}
 	}
@@ -631,6 +639,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		case "Decision":
 			Combobox combobox = (Combobox) getComponent(listitem, "Decision");
 			int decision = Integer.parseInt(getComboboxValue(combobox).toString());
+			if (combobox.isDisabled()) {
+				verification.setIgnoreFlag(true);
+			}
 			verification.setDecision(decision);
 			if (!combobox.isDisabled() && decision == 0) {
 				throw new WrongValueException(combobox,
@@ -726,6 +737,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			ExtendedCombobox agencyComboBox = (ExtendedCombobox) getComponent(listitem, "Agency");
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
 			Combobox decision = (Combobox) getComponent(listitem, "Decision");
+			ExtendedCombobox reInitagencyComboBox = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
+			Textbox reInitRemarks = (Textbox) getComponent(listitem, "ReInitRemarks");
 
 			fivComboBox.setConstraint("");
 			agencyComboBox.setConstraint("");
@@ -733,6 +746,12 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			if (decision != null) {
 				decision.setConstraint("");
+			}
+			if (reInitagencyComboBox != null) {
+				reInitagencyComboBox.setConstraint("");
+			}
+			if (reInitRemarks != null) {
+				reInitRemarks.setConstraint("");
 			}
 
 		}

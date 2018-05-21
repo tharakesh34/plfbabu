@@ -307,14 +307,14 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		sql.append(" select v.verificationDate, coalesce(v.status, 0) status,");
 		sql.append(" coalesce(ed.version, 1) as version, coalesce(v.version, 0) lastversion  from");
 
-		if (verification.getRequestType() == VerificationType.LV.getKey()
-				|| verification.getRequestType() == VerificationType.TV.getKey()) {
+		if (verification.getVerificationType() == VerificationType.LV.getKey()
+				|| verification.getVerificationType() == VerificationType.TV.getKey()) {
 			sql.append(" collateral_").append(verification.getReferenceType()).append("_ed ed");
 			sql.append(" left join (");
-			sql.append(" select Id, verificationType, verificationDate, status, version from ");
-			sql.append(" verifications where Id = (select coalesce(max(id), 0)");
+			sql.append(" select Id, verificationType, verificationDate, status, version from verifications");
+			sql.append(" where Id = (select coalesce(max(id), 0)");
 			sql.append(" from verifications where referenceFor = :referenceFor ");
-			sql.append(" and verificationType = :verificationType)) v on v.version = ed.version");
+			sql.append(" and verificationType = :verificationType and verificationdate is not null and status !=0)) v on v.version = ed.version");
 			sql.append(" where ed.reference = :referenceFor");
 
 			paramMap.addValue("referenceFor", verification.getReferenceFor());
