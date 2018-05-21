@@ -63,8 +63,8 @@ import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.util.StaticListUtil;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
-public class CibilEnquiryProcess extends AbstractInterface implements CreditInformation {
-	private static final Logger logger = Logger.getLogger(CibilEnquiryProcess.class);
+public class AbstractCibilEnquiryProcess extends AbstractInterface implements CreditInformation {
+	private static final Logger logger = Logger.getLogger(AbstractCibilEnquiryProcess.class);
 
 	JSONObject jsonObject;
 	@Autowired(required = false)
@@ -1504,7 +1504,14 @@ public class CibilEnquiryProcess extends AbstractInterface implements CreditInfo
 						}
 
 						Array.add(tl);
+						
+						String data = tl.get("HighCreditORSanctionedAmount").toString();
+						float amount = Float.valueOf(data);
+						jsonObject.put("TotalSanctionedAmount", amount);
+						amount = amount + Float.valueOf((String) jsonObject.get("TotalSanctionedAmount"));
+						jsonObject.put("TotalSanctionedAmount", amount);
 						tl = null;
+						
 					}
 					jsonObject.put("AccountSegment", Array);
 				}

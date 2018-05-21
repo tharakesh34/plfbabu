@@ -130,7 +130,7 @@
 			<properties>
 				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
 				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
-				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.19:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.27:1521:orcl</pfs.liquibase.url>
 				<pfs.liquibase.username>plf_core_dev_test</pfs.liquibase.username>
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
@@ -140,7 +140,7 @@
 			<properties>
 				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
 				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
-				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.19:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.27:1521:orcl</pfs.liquibase.url>
 				<pfs.liquibase.username>plf_core_dev_test_audit</pfs.liquibase.username>
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
@@ -150,7 +150,7 @@
 			<properties>
 				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
 				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
-				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.19:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.27:1521:orcl</pfs.liquibase.url>
 				<pfs.liquibase.username>plf</pfs.liquibase.username>
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
@@ -160,7 +160,7 @@
 			<properties>
 				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
 				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
-				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.19:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.27:1521:orcl</pfs.liquibase.url>
 				<pfs.liquibase.username>plfaudit</pfs.liquibase.username>
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
