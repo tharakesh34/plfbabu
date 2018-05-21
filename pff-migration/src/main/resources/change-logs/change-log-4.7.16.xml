@@ -7724,5 +7724,52 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 	     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode;
 	</createView>
 </changeSet>
+
+<changeSet id="Vinay" author="183">
+	<createView viewName="customerextliability_aview" replaceIfExists="true">
+		SELECT t1.custid,
+		    t1.liabilityseq,
+		    t1.findate,
+		    t1.fintype,
+		    t1.bankname,
+		    t1.originalamount,
+		    t1.instalmentamount,
+		    t1.outstandingbal,
+		    t1.finstatus,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t3.bankname AS lovdescbankname,
+		    t4.fintypedesc AS lovdescfintype,
+		    t5.custstsdescription AS lovdescfinstatus,
+		    t1.roi,
+		    t1.tenure,
+		    t1.tenurebal,
+		    t1.bounceno,
+		    t1.pos,
+		    t1.overdue,
+		    t1.emicnsdrforfoir,
+		    t1.source,
+		    t1.checkedby,
+		    t1.securitydetail,
+		    t1.enduseoffunds,
+		    t1.repayfrom,
+		    t6.loanpurposedesc,
+		    t7.bankname AS lovdescrepayfrom
+		   FROM customerextliability t1
+		     JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+		     JOIN otherbankfinancetype t4 ON t4.fintype = t1.fintype
+		     LEFT JOIN bmtcuststatuscodes t5 ON t5.custstscode = t1.finstatus
+		     JOIN loanpurposes t6 ON t6.loanpurposecode = t1.enduseoffunds
+		     JOIN bmtbankdetail t7 ON t7.bankcode = t1.repayfrom
+	</createView>
+</changeSet>
 </databaseChangeLog>
 	
