@@ -925,6 +925,6 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	
 	@Override
 	public TechnicalVerification getVerificationinFromRecording(long verificationId) {
-		return  technicalVerificationDAO.getTechnicalVerification(verificationId, "_temp");
+		return  technicalVerificationDAO.getTechnicalVerification(verificationId, "_View");
 	}
 }

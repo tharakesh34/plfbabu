@@ -729,7 +729,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	public void setLastStatus(Verification verification) {
 		Verification lastStatus = verificationDAO.getLastStatus(verification);
 
-		if (lastStatus != null) {
+		if (lastStatus != null && (lastStatus.getVersion() == lastStatus.getLastVersion())) {
 			verification.setLastStatus(lastStatus.getLastStatus());
 			verification.setLastVerificationDate(lastStatus.getVerificationDate());
 			verification.setVersion(lastStatus.getVersion());
