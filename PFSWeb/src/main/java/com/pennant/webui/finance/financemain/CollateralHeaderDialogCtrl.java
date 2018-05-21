@@ -653,7 +653,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 		balanceAssignedValue = totalBankValuation.subtract(totalAssignedValue);
 		if(assignedCount>1){
-			totalLtv = totalLtv.divide(new BigDecimal(assignedCount));
+			totalLtv = totalLtv.divide(new BigDecimal(assignedCount),2,RoundingMode.HALF_DOWN);
 		}
 
 		this.collateralCount.setValue(PennantApplicationUtil.amountFormate(loanAssignedValue, getFormat()));
