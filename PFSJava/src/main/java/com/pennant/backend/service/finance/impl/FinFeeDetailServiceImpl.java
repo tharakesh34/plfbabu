@@ -1331,7 +1331,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				BigDecimal paidTGST = finTaxDetails.getPaidCGST().add(finTaxDetails.getPaidIGST()).add(finTaxDetails.getPaidUGST()).add(finTaxDetails.getPaidSGST());
 				paidTGST = CalculationUtil.roundAmount(paidTGST, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
 				//finFeeDetail.setPaidAmountOriginal(paidFeeOriginal);
-				finFeeDetail.setPaidAmountOriginal(totalPaidFee.subtract(paidFeeOriginal));
+				finFeeDetail.setPaidAmountOriginal(totalPaidFee.subtract(paidTGST));
 				finFeeDetail.setPaidAmountGST(paidTGST);
 				finTaxDetails.setPaidTGST(paidTGST);
 				
