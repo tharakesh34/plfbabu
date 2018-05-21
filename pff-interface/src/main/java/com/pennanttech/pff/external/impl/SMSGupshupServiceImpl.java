@@ -102,7 +102,7 @@ public class SMSGupshupServiceImpl implements SMSService {
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 			doInterfaceLogging(reference, smsData.toString(), null, null, e.getMessage(), reqSentOn,	InterfaceConstants.STATUS_FAILED);
-			// FIXME Exception Handling
+			throw new InterfaceException("9999", e.getMessage());
 		}
 
 		
