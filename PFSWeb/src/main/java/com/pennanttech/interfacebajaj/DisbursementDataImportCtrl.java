@@ -1,20 +1,9 @@
 package com.pennanttech.interfacebajaj;
 
-import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.bajaj.services.DisbursementResponseFileService;
-import com.pennanttech.dataengine.config.DataEngineConfig;
-import com.pennanttech.dataengine.constants.ExecutionStatus;
-import com.pennanttech.dataengine.excecution.ProcessExecution;
-import com.pennanttech.dataengine.model.Configuration;
-import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.dataengine.util.ConfigUtil;
-import com.pennanttech.pennapps.core.resource.Literal;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +18,19 @@ import org.zkoss.zul.Rows;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
+
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.excecution.ProcessExecution;
+import com.pennanttech.dataengine.model.Configuration;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.dataengine.util.ConfigUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.DisbursementResponse;
 
 public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private static final Logger logger = Logger.getLogger(DisbursementDataImportCtrl.class);
@@ -57,8 +59,8 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private DataEngineStatus	DISB_OTHER_IMPORT_STATUS	= new DataEngineStatus("DISB_OTHER_IMPORT");
 	private DataEngineStatus				DISB_STP_IMPORT_STATUS		= new DataEngineStatus("DISB_CITI_IMPORT");
 	
-	@Autowired
-	private DisbursementResponseFileService disbursementResponseFileService;
+	@Autowired(required=false)
+	private DisbursementResponse disbursementResponse;
 
 	/**
 	 * default constructor.<br>
@@ -330,7 +332,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		@Override
 		public void run() {
 			try {
-				disbursementResponseFileService.processFile(userId, status, file, media, false);
+				disbursementResponse.processResponseFile(userId, status, file, media, false);
 			} catch (Exception e) {
 				logger.error("Exception:", e);
 			}

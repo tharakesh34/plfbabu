@@ -21,6 +21,7 @@ public class AbstractInterface {
 	private static final Logger logger = Logger.getLogger(AbstractInterface.class);
 
 	protected DataSource dataSource;
+	
 	protected JdbcTemplate jdbcTemplate;
 	protected NamedParameterJdbcTemplate namedJdbcTemplate;
 

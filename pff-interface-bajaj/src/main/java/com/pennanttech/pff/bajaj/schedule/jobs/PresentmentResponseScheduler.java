@@ -9,7 +9,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.external.PresentmentProcess;
+import com.pennanttech.pff.external.PresentmentRequest;
 
 public class PresentmentResponseScheduler implements Job, Serializable {
 	private static final Logger logger = Logger.getLogger(PresentmentResponseScheduler.class);
@@ -22,15 +22,15 @@ public class PresentmentResponseScheduler implements Job, Serializable {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
-		PresentmentProcess presementProcess;
+		PresentmentRequest presementProcess;
 		Object isJobRequired;
 		try {
 			JobDataMap dataMap = context.getJobDetail().getJobDataMap();
 
-			presementProcess = (PresentmentProcess) dataMap.get("presementProcess");
+			presementProcess = (PresentmentRequest) dataMap.get("presementProcess");
 			isJobRequired = (Object) dataMap.get("IsJobRequired");
 			if (isJobRequired != null && "Y".equals(isJobRequired.toString())) {
-				presementProcess.receiveResponse();
+				//presementProcess.receiveResponse();
 			}
 
 		} catch (Exception e) {

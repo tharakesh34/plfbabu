@@ -92,7 +92,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.external.PresentmentProcess;
+import com.pennanttech.pff.external.PresentmentRequest;
 
 /**
  * Service implementation for methods that depends on
@@ -113,7 +113,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	private FinanceMainDAO financeMainDAO;
 	
 	@Autowired(required = false)
-	private PresentmentProcess presentmentProcess;
+	private PresentmentRequest presentmentRequest;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -525,7 +525,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			// Storing the presentment data into bajaj inteface tables
 			if (idList != null && !idList.isEmpty()) {
 				try {
-					presentmentProcess.sendReqest(idList, presentmentId, isError);
+					presentmentRequest.sendReqest(idList, presentmentId, isError);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 					throw e;

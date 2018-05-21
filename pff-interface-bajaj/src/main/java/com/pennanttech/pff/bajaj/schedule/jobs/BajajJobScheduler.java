@@ -21,7 +21,7 @@ import com.pennanttech.pennapps.core.scheduler.Job;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.MandateProcess;
-import com.pennanttech.pff.external.PresentmentProcess;
+import com.pennanttech.pff.external.PresentmentRequest;
 
 public class BajajJobScheduler extends AbstractJobScheduler {
 	private static final Logger logger = Logger.getLogger(BajajJobScheduler.class);
@@ -36,7 +36,7 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 	private MandateProcess mandateProcess;
 	
 	@Autowired
-	private PresentmentProcess presementProcess;
+	private PresentmentRequest presentmentRequest;
 	
 	@Autowired
 	private AbstractInterface abstractInterface;
@@ -45,7 +45,7 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 		super();
 
 		abstractInterface = (AbstractInterface)mandateProcess;
-		abstractInterface = (AbstractInterface)presementProcess;
+		abstractInterface = (AbstractInterface)presentmentRequest;
 
 	}
 

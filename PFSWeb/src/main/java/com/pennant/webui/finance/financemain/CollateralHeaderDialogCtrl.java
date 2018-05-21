@@ -112,9 +112,9 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 	private Component 						parent = null;
 
-	private Object financeMainDialogCtrl;
-	private transient TVerificationDialogCtrl tVerificationDialogCtrl;
-	private transient RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
+	private Object 							financeMainDialogCtrl;
+	private  TVerificationDialogCtrl 		tVerificationDialogCtrl;
+	private  RCUVerificationDialogCtrl 		rcuVerificationDialogCtrl;
 	private LVerificationCtrl 				lVerificationCtrl;
 	private String 							roleCode = "";
 	private String 							finType = "";

@@ -96,17 +96,16 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pff.core.services.DisbursementRequestService;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.external.DisbursementRequest;
 
 /**
  * ************************************************************<br>
@@ -171,8 +170,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	private ArrayList<ValueLabel> channelTypesList =  PennantStaticListUtil.getChannelTypes();
 	private int futureDays =  0;
 
-	@Autowired
-	private DisbursementRequestService disbursementRequestService;
+	@Autowired(required = false)
+	private DisbursementRequest disbursementRequest;
 
 	/**
 	 * default constructor.<br>
@@ -673,7 +672,12 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		try {
 			btnDownload.setDisabled(true);
 			button_Search.setDisabled(true);
-			disbursementRequestService.sendReqest(this.finType.getValue(), disbushmentList, getUserWorkspace().getLoggedInUser().getUserId(), ((PartnerBank)partnerBank.getObject()).getFileName());
+			
+			if (disbursementRequest != null) {
+				disbursementRequest.sendReqest(this.finType.getValue(), disbushmentList,
+						getUserWorkspace().getLoggedInUser().getUserId(),
+						((PartnerBank) partnerBank.getObject()).getFileName());
+			}
 			
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("module", "DISBURSEMENT");

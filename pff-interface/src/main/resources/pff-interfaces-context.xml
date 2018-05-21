@@ -24,15 +24,15 @@
 		<property name="transactionManager" ref="transactionManager" />
 	</bean>
 	
-	 <bean id="abstractInterface" class="com.pennanttech.pff.external.AbstractInterface">
+	 <bean id="abstractInterface" class="com.pennanttech.pff.external.AbstractInterface" abstract="true">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
-	 <bean id="abstractMandateProcess" class="com.pennanttech.pennapps.pff.interfaces.AbstractMandateProcess" abstract="true">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="abstractMandateProcess" class="com.pennanttech.pff.external.mandate.AbstractMandateProcess" abstract="true" parent="abstractInterface"/>
+	<bean id="abstractPresentmentProcess" class="com.pennanttech.pff.external.presentment.AbstractPresentmentRequest" abstract="true" parent="abstractInterface"/>
+	<bean id="abstarctDisbursementRequest" class="com.pennanttech.pff.external.disbursment.AbstarctDisbursementRequest" abstract="true" parent="abstractInterface"/>
+	<bean id="abstarctDisbursementResponse" class="com.pennanttech.pff.external.disbursment.AbstarctDisbursementResponse" abstract="true" parent="abstractInterface"/>
 	
-	<bean id="cibilEnquiryProcess" class="com.pennanttech.pff.external.creditInformation.CibilEnquiryProcess">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="cibilEnquiryProcess" class="com.pennanttech.pff.external.creditInformation.CibilEnquiryProcess" abstract="true" parent="abstractInterface"/>
+	
 </beans>

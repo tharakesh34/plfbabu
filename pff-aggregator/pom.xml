@@ -42,9 +42,10 @@
 
 	<modules>
 		<module>../pff-model</module>
+		<module>../pff-core</module>
 		<module>../pff-interface</module>
 		<module>../${pff.client.artifactId}</module>
-		<module>../pff-core</module>
+		<module>../pff-interface-bajaj</module>
 		<module>../PLFInterface</module>
 		<module>../PFSJava</module>
 		<module>../PFSBatch</module>

@@ -39,11 +39,18 @@ import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.MandateProcess;
 
 public abstract class AbstractMandateProcess extends AbstractInterface implements MandateProcess {
-	private final Logger	logger	= Logger.getLogger(getClass());
+	protected final Logger	logger	= Logger.getLogger(getClass());
+
+
+	private static String	MANDATE_APPROVE_STATUS	= "N";
+	private static String	MANDATE_REJECT_STATUS	= "Y";
+	
+	public AbstractMandateProcess () {
+		super();
+	}
 
 	@Override
 	public void sendReqest(Object... object) throws Exception {
-		
 		@SuppressWarnings("unchecked")
 		List<Long> mandateIdList = (List<Long>) object[0];
 

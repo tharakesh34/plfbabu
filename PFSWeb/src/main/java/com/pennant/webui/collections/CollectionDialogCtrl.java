@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -55,6 +56,7 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 	private List<ValueLabel> collectionTablesList = getCollectionTableNames();
 
 	private transient CollectionService	collectionService;
+	@Autowired(required=false)
 	private transient CollectionProcess collectionProcess;
 	
 	
@@ -330,13 +332,5 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 
 	public void setCollectionService(CollectionService collectionService) {
 		this.collectionService = collectionService;
-	}
-
-	public CollectionProcess getCollectionProcess() {
-		return collectionProcess;
-	}
-
-	public void setCollectionProcess(CollectionProcess collectionProcess) {
-		this.collectionProcess = collectionProcess;
 	}
 }
