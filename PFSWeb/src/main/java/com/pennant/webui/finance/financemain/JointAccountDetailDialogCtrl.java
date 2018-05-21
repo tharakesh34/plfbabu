@@ -234,6 +234,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				}
 				if (jointAccountDetailList != null && !jointAccountDetailList.isEmpty()) {
 					doFillJointDetails(jointAccountDetailList);
+				}else{
+					rules.put("Co_Applicants_Count", 0);	
 				}
 				if(fromApproved){
 				 gurantorsAccDetailList = this.guarantorDetailService
@@ -252,6 +254,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			List<JointAccountDetail> jointAcctDetailList = financeDetail.getJountAccountDetailList();
 			if (jointAcctDetailList != null && !jointAcctDetailList.isEmpty()) {
 				doFillJointDetails(jointAcctDetailList);
+			}else{
+				rules.put("Co_Applicants_Count", 0);
 			}
 
 			// Rendering Guaranteer Details
