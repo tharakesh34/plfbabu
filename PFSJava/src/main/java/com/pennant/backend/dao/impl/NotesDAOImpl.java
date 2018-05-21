@@ -31,10 +31,10 @@
  ********************************************************************************************
  * 26-04-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-05-2018		Sai						 0.2          1. PSD - Ticket: 126490 LMS >     * 
+ *                                                           Notes of the rejected or       * 
+ *                                                           resubmitted disbursed tranche  * 
+ *                                                           is not visible.                * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -56,7 +57,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.NotesDAO;
+import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 	private static Logger logger = Logger.getLogger(NotesDAOImpl.class);
@@ -122,20 +126,47 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 		return tempRoleCodes;
 	}
 	
-	public List<Notes> getNotesListAsc(Notes notes){
-		logger.debug("Entering");
-		notes.setRemarkType("N");
-		StringBuilder   selectSql = new StringBuilder(" Select NoteId, ModuleName, Reference, " );
-		selectSql.append(" RemarkType, AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, T2.UsrLogin From Notes T1 "); 
-		selectSql.append(" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy ");
-		selectSql.append(" Where Reference = :Reference and ModuleName = :ModuleName And RemarkType = :RemarkType " );
-		selectSql.append(" ORDER BY InputDate Asc ");
-		
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
+	// PSD - Ticket: 126490 LMS > Notes of the rejected or resubmitted disbursed tranche is not visible.
+	@Override
+	public List<Notes> getNotesListAsc(Notes notes) {
+		logger.trace(Literal.ENTERING);
+
+		// Set the servicing events as modules. 
+		List<String> modules = new ArrayList<>();
+		if ("financeMain".equals(notes.getModuleName())) {
+			modules.add(notes.getModuleName());
+
+			for (FinServicingEvent event : PennantStaticListUtil.getFinServiceEvents(true)) {
+				modules.add(event.getValue());
+			}
+		}
+
+		StringBuilder sql = new StringBuilder(" Select NoteId, ModuleName, Reference, RemarkType, ");
+		sql.append(" AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, T2.UsrLogin From Notes T1 ");
+		sql.append(" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy ");
+		sql.append(" Where Reference = :Reference ");
+		if ("financeMain".equals(notes.getModuleName())) {
+			sql.append(" and ModuleName in (:ModuleNames)");
+		} else {
+			sql.append(" and ModuleName = :ModuleName");
+		}
+		sql.append(" and RemarkType = :RemarkType");
+		sql.append(" ORDER BY InputDate Asc ");
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("Reference", notes.getReference());
+		if ("financeMain".equals(notes.getModuleName())) {
+			paramSource.addValue("ModuleNames", modules);
+		} else {
+			paramSource.addValue("ModuleName", notes.getModuleName());
+		}
+		paramSource.addValue("RemarkType", "N");
+
 		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
-		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+
+		logger.debug(Literal.LEAVING);
+		return namedParameterJdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
 	}
 
 	public List<Notes> getNotesListAsc(String reference, List<String> moduleNames) {

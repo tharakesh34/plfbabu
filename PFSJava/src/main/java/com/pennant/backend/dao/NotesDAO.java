@@ -49,6 +49,13 @@ import com.pennant.backend.model.Notes;
 public interface NotesDAO {
 	List<Notes> getNotesList(Notes notes, boolean isNotes);
 
+	/**
+	 * Get the list of notes for the specified record in ascending order.
+	 * 
+	 * @param notes
+	 *            The notes object with required parameters.
+	 * @return The list of notes for the specified record in ascending order.
+	 */
 	List<Notes> getNotesListAsc(Notes notes);
 
 	List<Notes> getNotesListByRole(Notes notes, boolean isNotes, String[] roleCodes);
