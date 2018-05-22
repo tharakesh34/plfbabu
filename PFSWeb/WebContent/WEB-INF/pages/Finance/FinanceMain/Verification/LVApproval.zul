@@ -32,7 +32,9 @@
 								<listbox id="listBoxInitiation"
 									width="100%" span="true" style="overflow:auto;"
 									emptyMessage="${c:l('listbox.emptyMessage')}"
-									sizedByContent="true">
+									sizedByContent="true" xmlns:w="client"
+									w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
+									w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});">
 									<listhead sizable="false">
 										<listheader
 											id="listheader_TechnicalVerification_Select"
@@ -87,7 +89,9 @@
 								<listbox id="listBoxWaiver" width="100%"
 									span="true" style="overflow:auto;"
 									emptyMessage="${c:l('listbox.emptyMessage')}"
-									sizedByContent="true">
+									sizedByContent="true" xmlns:w="client"
+									w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
+									w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});">
 									<listhead sizable="false">
 										<listheader
 											id="listheader_LegalVerification_WCollateral"

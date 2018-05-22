@@ -13,48 +13,53 @@
 					<groupbox id="finBasicdetails" style="border:none;" />
 					<groupbox style="border:none;">
 						<caption label="${c:l('window_TechnicalVerificationDialog.title')}" />
-						<listbox id="listBoxTechnicalVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
+						<listbox id="listBoxTechnicalVerification"
+							width="100%" span="true" style="overflow:auto;"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							sizedByContent="true" xmlns:w="client"
+							w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
+							w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});">
 							<listhead sizable="true">
 								<listheader
 									id="listheader_TechnicalVerification_CollateralType"
 									label="${c:l('listheader_TechnicalVerification_CollateralType.label')}"
-									sort="false" width="min" />
+									sort="false"/>
 								<listheader
 									id="listheader_TechnicalVerification_DepositorCIF"
 									label="${c:l('listheader_TechnicalVerification_DepositorCIF.label')}"
-									sort="false" width="min" />
+									sort="false"/>
 								<listheader
 									id="listheader_TechnicalVerification_DepositorName"
 									label="${c:l('listheader_TechnicalVerification_DepositorName.label')}"
-									sort="false" width="min" />
+									sort="false"/>
 								<listheader
 									id="listheader_TechnicalVerification_CollateralReference"
 									label="${c:l('listheader_TechnicalVerification_CollateralReference.label')}"
-									sort="false" width="min" />
+									sort="false"/>
 								<listheader
 									id="listheader_TechnicalVerification_TV"
 									label="${c:l('listheader_TechnicalVerification_TV.label')}"
-									sort="false" width="250px" />
+									sort="false"/>
 								<listheader
 									id="listheader_TechnicalVerification_Agency"
 									label="${c:l('listheader_TechnicalVerification_Agency.label')}"
-									sort="false" width="250px" />
+									sort="false"/>
 								<listheader
 									id="listheader_TechnicalVerification_Reason"
 									label="${c:l('listheader_TechnicalVerification_Reason.label')}"
-									sort="false" width="250px" />
+									sort="false"/>
 								<listheader
 									id="listheader_TechnicalVerification_Remarks"
 									label="${c:l('listheader_TechnicalVerification_Remarks.label')}"
-									sort="false" width="250px" />
+									sort="false"/>
 								<listheader
 									id="listheader_TechnicalVerification_LastStatus"
 									label="${c:l('listheader_TechnicalVerification_LastStatus.label')}"
-									sort="false" width="min" />
+									sort="false"/>
 								<listheader
 									id="listheader_TechnicalVerification_LastVrfDate"
 									label="${c:l('listheader_TechnicalVerification_LastVrfDate.label')}"
-									sort="false" width="min" />
+									sort="false"/>
 							</listhead>
 						</listbox>
 					</groupbox>

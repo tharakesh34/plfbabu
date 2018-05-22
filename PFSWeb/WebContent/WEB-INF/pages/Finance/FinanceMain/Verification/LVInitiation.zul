@@ -29,28 +29,30 @@
 							<listbox id="listBoxInitiation"
 								fixedLayout="true" sizedByContent="true" span="true"
 								emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
-								multiple="false">
+								multiple="false" xmlns:w="client"
+								w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
+								w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});">
 								<listhead sizable="false">
 									<listheader
 										id="listheader_LegalVerification_Collateral"
 										label="${c:l('listheader_LegalVerification_Collateral.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_LegalVerification_Agency"
 										label="${c:l('listheader_LegalVerification_Agency.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_LegalVerification_Initiation_Remarks"
 										label="${c:l('listheader_LegalVerification_Remarks.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_LegalVerification_Initiation_LastStatus"
 										label="${c:l('listheader_LegalVerification_LastStatus.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_LegalVerification_Initiation_LastVrfDate"
 										label="${c:l('listheader_LegalVerification_LastVrfDate.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 								</listhead>
 							</listbox>
 						</groupbox>
@@ -67,32 +69,34 @@
 							<listbox id="listBoxWaiver"
 								fixedLayout="true" sizedByContent="true" span="true"
 								emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
-								multiple="false">
+								multiple="false" xmlns:w="client"
+								w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
+								w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});">
 								<listhead sizable="false">
 									<listheader
 										id="listheader_LegalVerification_CollateraRefl"
 										label="${c:l('listheader_LegalVerification_CollateralRef.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_LegalVerification_DocumentType"
 										label="${c:l('listheader_LegalVerification_DocumentType.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_LegalVerification_Reason"
 										label="${c:l('listheader_LegalVerification_Reason.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_LegalVerification_Waiver_Remarks"
 										label="${c:l('listheader_LegalVerification_Remarks.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_LegalVerification_Waiver_LastStatus"
 										label="${c:l('listheader_LegalVerification_LastStatus.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 									<listheader
 										id="listheader_LegalVerification_Waiver_LastVrfDate"
 										label="${c:l('listheader_LegalVerification_LastVrfDate.label')}"
-										sort="false" hflex="min" />
+										sort="false"/>
 								</listhead>
 							</listbox>
 						</groupbox>

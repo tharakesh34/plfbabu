@@ -14,35 +14,38 @@
 						<div>
 							<groupbox id="finBasicdetails" style="border:none;" />
 							<groupbox style="border:none;" >
-								<listbox id="listBoxRCUVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
+								<listbox id="listBoxRCUVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true"
+								sizedByContent="true" xmlns:w="client"
+								w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
+								w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});">
 									<listhead sizable="false">
 										<listheader
 											id="listheader_RCUVerification_Select"
 											label="${c:l('listheader_RCUVerification_Select.label')}"
-											sort="false" hflex="min"/>
+											sort="false"/>
 										<listheader
 											id="listheader_RCUVerification_DocumentName"
 											label="Document Type - Name" sort="false" hflex="min"/>
 										<listheader
 											id="listheader_RCUVerification_RCU"
 											label="${c:l('listheader_RCUVerification_RCU.label')}"
-											sort="false" hflex="min"/>
+											sort="false"/>
 										<listheader
 											id="listheader_RCUVerification_Agency"
 											label="${c:l('listheader_RCUVerification_Agency.label')}"
-											sort="false" hflex="250px"/>
+											sort="false"/>
 										<listheader
 											id="listheader_RCUVerification_Reason"
 											label="${c:l('listheader_RCUVerification_Reason.label')}"
-											sort="false"  hflex="250px"/>
+											sort="false"/>
 										<listheader
 											id="listheader_RCUVerification_Remarks"
 											label="${c:l('listheader_RCUVerification_Remarks.label')}"
-											sort="false"  hflex="250px"/>
+											sort="false"/>
 										<listheader
 											id="listheader_RCUVerification_LastStatus"
 											label="${c:l('listheader_RCUVerification_Status.label')}"
-											sort="false" hflex="min"/>
+											sort="false"  hflex="min"/>
 										<listheader
 											id="listheader_RCUVerification_LastVrfDate"
 											label="${c:l('listheader_RCUVerification_LastVrfDate.label')}"

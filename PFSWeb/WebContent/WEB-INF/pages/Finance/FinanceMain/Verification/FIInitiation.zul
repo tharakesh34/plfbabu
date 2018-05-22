@@ -13,51 +13,56 @@
 				<div>
 					<groupbox id="finBasicdetails" style="border:none;" />
 					<groupbox style="border:none;" >
-							<listbox id="listBoxFIVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}"  sizedByContent="true">  
+							<listbox id="listBoxFIVerification"
+								width="100%" span="true" style="overflow:auto;"
+								emptyMessage="${c:l('listbox.emptyMessage')}"
+								sizedByContent="true" xmlns:w="client"
+								w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
+								w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});">
 								<listhead sizable="false">
 									<listheader
 										id="listheader_FIVerification_ApplicantType"
 										label="${c:l('listheader_FIVerification_ApplicantType.label')}"
-										sort="false" hflex="min"/>
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_CIF"
 										label="${c:l('listheader_FIVerification_CIF.label')}"
-										sort="false" hflex="min"/>
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_Name"
 										label="${c:l('listheader_FIVerification_Name.label')}"
-										sort="false" hflex="min"/>
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_AddressType"
 										label="${c:l('listheader_FIVerification_AddressType.label')}"
-										sort="false"/>
+										sort="false" />
 									<listheader
 										id="listheader_FIVerification_FIV"
 										label="${c:l('listheader_FIVerification_FIV.label')}"
-										sort="false" hflex="250px"/>
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_Agency"
 										label="${c:l('listheader_FIVerification_Agency.label')}"
-										sort="false" hflex="250px"/>
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_Reason"
 										label="${c:l('listheader_FIVerification_Reason.label')}"
-										sort="false" hflex="250px"/>
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_Remarks"
 										label="${c:l('listheader_FIVerification_Remarks.label')}"
-										sort="false" hflex="250px"/>
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_LastStatus"
 										label="${c:l('listheader_FIVerification_LastStatus.label')}"
-										sort="false" hflex="min"/>
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_LastVrfDate"
 										label="${c:l('listheader_FIVerification_LastVrfDate.label')}"
-										sort="false" hflex="min"/>
+										sort="false"/>
 								</listhead>
 							</listbox>
-						</groupbox>
+					</groupbox>
 					</div>
 				</center>
 			</borderlayout>
