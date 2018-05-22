@@ -273,7 +273,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		LegalVerification legalVerification = lv.getSelectedItem().getValue();
 
 		if (legalVerification != null) {
-			legalVerification = legalVerificationService.getLegalVerification(legalVerification);
+			legalVerification = legalVerificationService.getLegalVerification(legalVerification, "_AView");
 		}
 
 		if (legalVerification != null) {

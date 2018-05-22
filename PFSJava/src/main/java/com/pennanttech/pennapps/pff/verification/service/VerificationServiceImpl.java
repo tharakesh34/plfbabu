@@ -356,7 +356,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			fi.setLastMntOn(item.getLastMntOn());
 			fi.setAgentCode("");
 			fi.setAgencyName("");
-			fi.setDate(null);
+			fi.setVerifiedDate(null);
 			fi.setReason(0L);
 			fi.setSummaryRemarks("");
 			fi.setStatus(0);

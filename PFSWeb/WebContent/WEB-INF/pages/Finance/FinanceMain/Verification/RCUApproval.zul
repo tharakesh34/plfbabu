@@ -14,7 +14,7 @@
 						<div>
 							<groupbox id="finBasicdetails" style="border:none;" />
 							<groupbox style="border:none;" >
-								<listbox id="listBoxRCUVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true"
+								<listbox id="listBoxRCUVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}"
 								sizedByContent="true" xmlns:w="client"
 								w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
 								w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});">

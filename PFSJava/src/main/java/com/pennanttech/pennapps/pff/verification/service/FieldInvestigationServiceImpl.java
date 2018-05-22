@@ -326,8 +326,8 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 * @return verification_fi
 	 */
 	@Override
-	public FieldInvestigation getFieldInvestigation(long id) {
-		FieldInvestigation fieldInvestigation = fieldInvestigationDAO.getFieldInvestigation(id, "_View");
+	public FieldInvestigation getFieldInvestigation(long id, String type) {
+		FieldInvestigation fieldInvestigation = fieldInvestigationDAO.getFieldInvestigation(id, type);
 		if (fieldInvestigation != null) {
 			// FI Document Details
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(String.valueOf(id),
@@ -406,12 +406,12 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 				tranType = PennantConstants.TRAN_ADD;
 				fi.setRecordType("");
 				fieldInvestigationDAO.save(fi, TableType.MAIN_TAB);
-				verificationDAO.updateVerifiaction(fi.getId(), fi.getDate(), fi.getStatus());
+				verificationDAO.updateVerifiaction(fi.getId(), fi.getVerifiedDate(), fi.getStatus());
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				fi.setRecordType("");
 				fieldInvestigationDAO.update(fi, TableType.MAIN_TAB);
-				verificationDAO.updateVerifiaction(fi.getId(), fi.getDate(), fi.getStatus());
+				verificationDAO.updateVerifiaction(fi.getId(), fi.getVerifiedDate(), fi.getStatus());
 			}
 			
 			// Extended field Details
@@ -904,8 +904,8 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 							&& previous.getAddressType().equals(current.getAddressType())) {
 						if (!isAddressChange(previous, current)) {
 							verification.setStatus(previous.getStatus());
-							if(previous.getDate()!=null){
-								verification.setVerificationDate(new Timestamp(previous.getDate().getTime()));
+							if(previous.getVerifiedDate()!=null){
+								verification.setVerificationDate(new Timestamp(previous.getVerifiedDate().getTime()));
 							}
 						}
 					}

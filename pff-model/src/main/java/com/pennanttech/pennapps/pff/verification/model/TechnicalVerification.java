@@ -39,7 +39,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private String agentCode;
 	private String agentName;
 	private int type;
-	private Date date;
+	private Date verifiedDate;
 	private int status;
 	private Long reason;
 	private String summaryRemarks;
@@ -51,7 +51,6 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private String reasonCode;
 	private String reasonDesc;
 	private String agencyName;
-	private String agency;
 	private Timestamp createdOn;
 	private String cif;
 	private Long custId;
@@ -96,7 +95,6 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		excludeFields.add("reasonCode");
 		excludeFields.add("reasonDesc");
 		excludeFields.add("agencyName");
-		excludeFields.add("agency");
 		excludeFields.add("createdOn");
 		excludeFields.add("cif");
 		excludeFields.add("custId");
@@ -309,12 +307,12 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		this.reasonDesc = reasonDesc;
 	}
 
-	public Date getDate() {
-		return date;
+	public Date getVerifiedDate() {
+		return verifiedDate;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setVerifiedDate(Date verifiedDate) {
+		this.verifiedDate = verifiedDate;
 	}
 
 	public ExtendedFieldHeader getExtendedFieldHeader() {
@@ -384,14 +382,6 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	public void setAgencyName(String agencyName) {
 		this.agencyName = agencyName;
 	}
-
-	/*public String getAgency() {
-		return agency;
-	}
-
-	public void setAgency(String agency) {
-		this.agency = agency;
-	}*/
 	
 	public List<DocumentDetails> getDocuments() {
 		return documents;

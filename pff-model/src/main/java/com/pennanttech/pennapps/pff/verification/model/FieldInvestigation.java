@@ -58,7 +58,7 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 	private String provinceDesc;
 	private String cityDesc;
 	
-	private Date date;
+	private Date verifiedDate;
 	private String agentCode;
 	private String agentName;
 	private int status;
@@ -179,12 +179,12 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 		this.reasonCode = reasonCode;
 	}
 
-	public Date getDate() {
-		return date;
+	public Date getVerifiedDate() {
+		return verifiedDate;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setVerifiedDate(Date verifiedDate) {
+		this.verifiedDate = verifiedDate;
 	}
 
 	public String getAddressType() {

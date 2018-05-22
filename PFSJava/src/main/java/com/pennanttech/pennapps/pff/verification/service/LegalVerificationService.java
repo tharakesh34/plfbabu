@@ -14,7 +14,7 @@ public interface LegalVerificationService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	LegalVerification getLegalVerification(LegalVerification lv);
+	LegalVerification getLegalVerification(LegalVerification lv, String type);
 
 	LegalVerification getApprovedLegalVerification(long verificationId, String documentSubId);
 

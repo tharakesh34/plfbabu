@@ -419,9 +419,9 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.contactNumber1.setValue(fi.getContactNumber1());
 		this.contactNumber2.setValue(fi.getContactNumber2());
 		
-		this.verificationDate.setValue(fi.getDate());
+		this.verificationDate.setValue(fi.getVerifiedDate());
 		if (!fromLoanOrg) {
-			if (getFirstTaskOwner().equals(getRole()) && fi.getDate() == null) {
+			if (getFirstTaskOwner().equals(getRole()) && fi.getVerifiedDate() == null) {
 				this.verificationDate.setValue(DateUtility.getAppDate());
 			} 
 		}
@@ -608,7 +608,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 
 
 		try {
-			fi.setDate(this.verificationDate.getValue());
+			fi.setVerifiedDate(this.verificationDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

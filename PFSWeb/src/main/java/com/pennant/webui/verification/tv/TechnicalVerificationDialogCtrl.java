@@ -85,7 +85,6 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.StatuReasons;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
-import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
 import com.pennanttech.pennapps.pff.verification.fi.TVStatus;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
@@ -415,9 +414,9 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		this.contactNumber2.setValue(tv.getContactNumber2());
 		
 		//Summary Details
-		this.verificationDate.setValue(tv.getDate());
+		this.verificationDate.setValue(tv.getVerifiedDate());
 		if (!fromLoanOrg) {
-			if (getFirstTaskOwner().equals(getRole()) && tv.getDate() == null) {
+			if (getFirstTaskOwner().equals(getRole()) && tv.getVerifiedDate() == null) {
 				this.verificationDate.setValue(DateUtility.getAppDate());
 			}
 		}
@@ -434,9 +433,6 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			}
 		}
 
-		if (!tv.isNewRecord()) {
-			visibleComponent(tv.getStatus());
-		}
 		this.summaryRemarks.setValue(tv.getSummaryRemarks());
 		fillComboBox(this.recommendations, tv.getStatus(), TVStatus.getList());
 		
@@ -646,7 +642,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		}
 		
 		try {
-			tv.setDate(this.verificationDate.getValue());
+			tv.setVerifiedDate(this.verificationDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -709,24 +705,6 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		showErrorDetails(wve, this.verificationDetails);
 		showErrorDetails(wve, this.extendedDetailsTab);
 		logger.debug(Literal.LEAVING);
-	}
-
-	public void onChange$recommendations(Event event) {
-		logger.debug(Literal.ENTERING + event.toString());
-		
-		this.reason.setErrorMessage("");
-		String type = this.recommendations.getSelectedItem().getValue();
-		visibleComponent(Integer.parseInt(type));
-		
-		logger.debug(Literal.LEAVING + event.toString());
-	}
-
-	private void visibleComponent(Integer type) {
-		if (type == FIStatus.NOT_COMPLETED.getKey()) {
-			this.reason.setMandatoryStyle(true);
-		} else {
-			this.reason.setMandatoryStyle(false);
-		}
 	}
 
 	/**

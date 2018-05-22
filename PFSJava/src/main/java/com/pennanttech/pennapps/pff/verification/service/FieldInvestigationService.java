@@ -27,7 +27,7 @@ public interface FieldInvestigationService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	FieldInvestigation getFieldInvestigation(long id);
+	FieldInvestigation getFieldInvestigation(long id, String type);
 
 	FieldInvestigation getApprovedFieldInvestigation(long id);
 

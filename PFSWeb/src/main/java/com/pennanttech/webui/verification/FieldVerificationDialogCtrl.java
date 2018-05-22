@@ -269,7 +269,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		final HashMap<String, Object> map = new HashMap<>();
-		fieldInvestigation = fieldInvestigationService.getFieldInvestigation(fi.getSelectedItem().getValue());
+		fieldInvestigation = fieldInvestigationService.getFieldInvestigation(fi.getSelectedItem().getValue(), "_AView");
 		if (fieldInvestigation != null) {
 			map.put("LOAN_ORG", true);
 			map.put("fieldInvestigation", fieldInvestigation);

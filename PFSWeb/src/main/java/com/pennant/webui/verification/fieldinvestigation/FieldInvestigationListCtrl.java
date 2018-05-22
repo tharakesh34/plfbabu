@@ -200,7 +200,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxFieldInvestigation.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
-		FieldInvestigation fi = fieldInvestigationService.getFieldInvestigation(id);
+		FieldInvestigation fi = fieldInvestigationService.getFieldInvestigation(id, "_View");
 
 		if (fi == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

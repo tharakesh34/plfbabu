@@ -233,8 +233,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	 * @return verification_fi
 	 */
 	@Override
-	public TechnicalVerification getTechnicalVerification(long id) {
-		TechnicalVerification technicalVerification = technicalVerificationDAO.getTechnicalVerification(id, "_View");
+	public TechnicalVerification getTechnicalVerification(long id,String type) {
+		TechnicalVerification technicalVerification = technicalVerificationDAO.getTechnicalVerification(id, type);
 		if (technicalVerification != null) {
 			// FI Document Details
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(String.valueOf(id),
@@ -315,12 +315,12 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 				tranType = PennantConstants.TRAN_ADD;
 				tv.setRecordType("");
 				technicalVerificationDAO.save(tv, TableType.MAIN_TAB);
-				verificationDAO.updateVerifiaction(tv.getId(), tv.getDate(), tv.getStatus());
+				verificationDAO.updateVerifiaction(tv.getId(), tv.getVerifiedDate(), tv.getStatus());
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				tv.setRecordType("");
 				technicalVerificationDAO.update(tv, TableType.MAIN_TAB);
-				verificationDAO.updateVerifiaction(tv.getId(), tv.getDate(), tv.getStatus());
+				verificationDAO.updateVerifiaction(tv.getId(), tv.getVerifiedDate(), tv.getStatus());
 			}
 
 			// Extended field Details
@@ -622,8 +622,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 							&& previous.getCollateralRef().equals(current.getCollateralRef())) {
 						if (!isCollateralChanged(previous, current)) {
 							verification.setStatus(previous.getStatus());
-							if (previous.getDate() != null) {
-								verification.setVerificationDate(new Timestamp(previous.getDate().getTime()));
+							if (previous.getVerifiedDate() != null) {
+								verification.setVerificationDate(new Timestamp(previous.getVerifiedDate().getTime()));
 							}
 						}
 					}

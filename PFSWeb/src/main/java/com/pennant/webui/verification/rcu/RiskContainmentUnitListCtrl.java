@@ -212,7 +212,7 @@ public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainment
 		RiskContainmentUnit rcu=new RiskContainmentUnit();
 		
 		rcu.setId(verificationId);
-	    rcu = riskContainmentUnitService.getRiskContainmentUnit(rcu);
+		rcu = riskContainmentUnitService.getRiskContainmentUnit(rcu, "_View");
 
 		if (rcu == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

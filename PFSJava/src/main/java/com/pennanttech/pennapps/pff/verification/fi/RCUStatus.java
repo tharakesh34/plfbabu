@@ -9,9 +9,8 @@ import com.pennant.backend.model.ValueLabel;
 
 public enum RCUStatus {
 	
-	SELECT(0, Labels.getLabel("Combo.Select")), NONE(1, "None"), POSITIVE(2, "Positive"), NEGATIVE(3,
-			"Negative"), NOT_COMPLETED(4, "RCU Not Completed");
-
+	SELECT(0, Labels.getLabel("Combo.Select")), POSITIVE(1, "Positive"), NEGATIVE(2, "Negative");
+	
 	private final Integer key;
 	private final String value;
 

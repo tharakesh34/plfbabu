@@ -133,9 +133,9 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	}
 
 	@Override
-	public LegalVerification getLegalVerification(LegalVerification lv) {
+	public LegalVerification getLegalVerification(LegalVerification lv, String type) {
 		LegalVerification legalVerification = legalVerificationDAO.getLegalVerification(lv.getVerificationId(),
-				"_View");
+				type);
 		if (legalVerification != null) {
 			List<LVDocument> lvDocuments = legalVerificationDAO.getLVDocuments(lv.getVerificationId(), "_View");
 			legalVerification.setLvDocuments(lvDocuments);

@@ -14,7 +14,7 @@ public interface RiskContainmentUnitService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	RiskContainmentUnit getRiskContainmentUnit(RiskContainmentUnit rcu);
+	RiskContainmentUnit getRiskContainmentUnit(RiskContainmentUnit rcu, String type);
 
 	RiskContainmentUnit getApprovedRiskContainmentUnit(long verificationId);
 	

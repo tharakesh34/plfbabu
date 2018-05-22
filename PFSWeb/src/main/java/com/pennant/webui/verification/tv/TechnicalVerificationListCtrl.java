@@ -200,7 +200,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxTechnicalVerification.getSelectedItem();
 		long id = (long) selectedItem.getAttribute("id");
-		TechnicalVerification tv = technicalVerificationService.getTechnicalVerification(id);
+		TechnicalVerification tv = technicalVerificationService.getTechnicalVerification(id, "_View");
 
 		if (tv == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

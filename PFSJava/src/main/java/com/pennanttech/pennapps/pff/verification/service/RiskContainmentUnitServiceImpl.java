@@ -323,9 +323,9 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	}
 
 	@Override
-	public RiskContainmentUnit getRiskContainmentUnit(RiskContainmentUnit rcu) {
+	public RiskContainmentUnit getRiskContainmentUnit(RiskContainmentUnit rcu, String type) {
 		RiskContainmentUnit riskContainmentUnit = riskContainmentUnitDAO.getRiskContainmentUnit(rcu.getVerificationId(),
-				"_View");
+				type);
 		if (riskContainmentUnit != null) {
 
 			// RCU Document Details

@@ -191,7 +191,7 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 		final long verificationId = (long) selectedItem.getAttribute("verificationId");
 		LegalVerification lv = new LegalVerification();
 		lv.setVerificationId(verificationId);
-		lv = legalVerificationService.getLegalVerification(lv);
+		lv = legalVerificationService.getLegalVerification(lv, "_View");
 		if (lv == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;

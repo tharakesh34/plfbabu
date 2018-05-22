@@ -36,7 +36,7 @@ public interface TechnicalVerificationService {
 
 	TechnicalVerification getApprovedTechnicalVerification(long id);
 
-	TechnicalVerification getTechnicalVerification(long id);
+	TechnicalVerification getTechnicalVerification(long id, String type);
 
 	void save(Verification item);
 

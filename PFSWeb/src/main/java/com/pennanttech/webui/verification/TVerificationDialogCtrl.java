@@ -419,7 +419,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void onCheck$tv(Event event) {
 		final HashMap<String, Object> map = new HashMap<>();
 		TechnicalVerification technicalVerification = technicalVerificationService
-				.getTechnicalVerification(tv.getSelectedItem().getValue());
+				.getTechnicalVerification(tv.getSelectedItem().getValue(),"_AView");
 		if (technicalVerification != null) {
 			map.put("LOAN_ORG", true);
 			map.put("technicalVerification", technicalVerification);
