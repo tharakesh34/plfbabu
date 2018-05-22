@@ -1636,4 +1636,340 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="91" author="Kesav">
+		<addColumn tableName="BounceReasons">
+			<column name="TaxApplicable" type="boolean" defaultValue="0" />
+			<column name="TaxComponent" type="Char(1)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="92" author="Kesav">
+		<addColumn tableName="BounceReasons_Temp">
+			<column name="TaxApplicable" type="boolean" defaultValue="0" />
+			<column name="TaxComponent" type="Char(1)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="93" author="Kesav">
+		<sql>
+			Update BounceReasons set TaxApplicable = 0 where TaxApplicable is null; 			
+			Update BounceReasons_Temp set TaxApplicable = 0 where TaxApplicable is null; 			
+		</sql>
+	</changeSet>
+	
+	<changeSet id="94" author="Kesav">
+		<comment>taxapplicable, taxcomponent columns added for GST changes</comment>
+		<createView viewName="bouncereasons_aview" replaceIfExists="true">
+			SELECT 	t1.bounceid,
+				    t1.bouncecode,
+				    t1.reasontype,
+				    t1.category,
+				    t1.reason,
+				    t1.action,
+				    t1.ruleid,
+				    t1.returncode,
+				    t1.active,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.rulecode,
+				    t2.rulecodedesc, t1.TaxComponent, t1.TaxApplicable
+			FROM 	bouncereasons t1
+			JOIN 	rules t2 ON t1.ruleid = t2.ruleid
+		</createView>
+	</changeSet>
+	
+	<changeSet id="95" author="Kesav">
+		<comment>taxapplicable, taxcomponent columns added for GST changes</comment>
+		<createView viewName="bouncereasons_view" replaceIfExists="true">
+			SELECT 	t1.bounceid,
+				    t1.bouncecode,
+				    t1.reasontype,
+				    t1.category,
+				    t1.reason,
+				    t1.action,
+				    t1.ruleid,
+				    t1.returncode,
+				    t1.active,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.rulecode,
+				    t2.rulecodedesc, t1.TaxComponent, t1.TaxApplicable
+			FROM 	bouncereasons_temp t1
+			JOIN 	rules t2 ON t1.ruleid = t2.ruleid
+			
+			UNION ALL
+			
+			SELECT 	t1.bounceid,
+				    t1.bouncecode,
+				    t1.reasontype,
+				    t1.category,
+				    t1.reason,
+				    t1.action,
+				    t1.ruleid,
+				    t1.returncode,
+				    t1.active,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.rulecode,
+				    t2.rulecodedesc, t1.TaxComponent, t1.TaxApplicable
+			FROM 	bouncereasons t1
+			JOIN 	rules t2 ON t1.ruleid = t2.ruleid
+			WHERE NOT (EXISTS ( SELECT 1 FROM bouncereasons_temp WHERE bouncereasons_temp.bounceid = t1.bounceid))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="96" author="Kesav">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'BounceReasonDialog_TaxApplicable');
+			Delete from SecRights where RightName = 'BounceReasonDialog_TaxApplicable';
+			
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'BounceReasonDialog_TaxApplicable', 'BounceReasonDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BOUNCEREASON_MAKER'), (Select RightID from SecRights where RightName = 'BounceReasonDialog_TaxApplicable'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'BounceReasonDialog_TaxComponent');
+			Delete from SecRights where RightName = 'BounceReasonDialog_TaxComponent';
+			
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'BounceReasonDialog_TaxComponent', 'BounceReasonDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BOUNCEREASON_MAKER'), (Select RightID from SecRights where RightName = 'BounceReasonDialog_TaxComponent'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);		
+		</sql>
+	</changeSet>
+	
+		
+	<changeSet id="97" author="Kesav">
+		<comment> Case added for TaxApplicable, TaxComponent columns</comment>
+		<createView viewName="manualadvise_aview" replaceIfExists="true">
+			SELECT t1.adviseid,
+			    t1.advisetype,
+			    t1.finreference,
+			    t1.feetypeid,
+			    t1.sequence,
+			    t1.adviseamount,
+			    t1.paidamount,
+			    t1.waivedamount,
+			    t1.remarks,
+			    t1.valuedate,
+			    t1.postdate,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.feetypedesc,
+			    t2.feetypecode,
+			    t1.bounceid,
+			    t1.receiptid,
+			    t3.bouncecode,
+			    t1.reservedamt,
+			    t1.balanceamt,
+			    t3.reason AS bouncecodedesc,
+			    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable::integer, 0) else COALESCE(t3.taxapplicable::integer, 0) END AS TaxApplicable,
+			    Case when t1.feeTypeid > 0 then t2.TaxComponent else t3.TaxComponent END AS TaxComponent,
+			    t1.PaidCgst, t1.PaidSgst, t1.PaidIgst, t1.PaidUgst
+			   FROM manualadvise t1
+			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="98" author="Kesav">
+		<comment> Case added for TaxApplicable, TaxComponent columns</comment>
+		<createView viewName="manualadvise_lview" replaceIfExists="true">
+			SELECT t1.adviseid,
+		    t1.advisetype,
+		    t1.finreference,
+		    t1.feetypeid,
+		    t1.sequence,
+		    t1.adviseamount,
+		    t1.paidamount,
+		    t1.waivedamount,
+		    t1.remarks,
+		    t1.valuedate,
+		    t1.postdate,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.feetypedesc,
+		    t2.feetypecode,
+		    t1.bounceid,
+		    t1.receiptid,
+		    t3.bouncecode,
+		    t1.reservedamt,
+		    t1.balanceamt,
+		    t3.reason AS bouncecodedesc,
+		    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable::integer, 0) else COALESCE(t3.taxapplicable::integer, 0) END AS TaxApplicable,
+			Case when t1.feeTypeid > 0 then t2.TaxComponent else t3.TaxComponent END AS TaxComponent,
+		    t1.PaidCgst, t1.PaidSgst, t1.PaidIgst, t1.PaidUgst
+		   FROM manualadvise t1
+		     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
+		</createView>
+	</changeSet>
+	
+	<changeSet id="99" author="Kesav">
+		<comment> Case added for TaxApplicable, TaxComponent columns</comment>
+		<createView viewName="manualadvise_tview" replaceIfExists="true">
+			SELECT t1.adviseid,
+			    t1.advisetype,
+			    t1.finreference,
+			    t1.feetypeid,
+			    t1.sequence,
+			    t1.adviseamount,
+			    t1.paidamount,
+			    t1.waivedamount,
+			    t1.remarks,
+			    t1.valuedate,
+			    t1.postdate,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.feetypedesc,
+			    t2.feetypecode,
+			    t1.bounceid,
+			    t1.receiptid,
+			    t3.bouncecode,
+			    t1.reservedamt,
+			    t1.balanceamt,
+			    t3.reason AS bouncecodedesc,
+			    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable::integer, 0) else COALESCE(t3.taxapplicable::integer, 0) END AS TaxApplicable,
+			    Case when t1.feeTypeid > 0 then t2.TaxComponent else t3.TaxComponent END AS TaxComponent,
+			    t1.PaidCgst, t1.PaidSgst, t1.PaidIgst, t1.PaidUgst
+			   FROM manualadvise_temp t1
+			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="100" author="Kesav">
+		<comment> Case added for TaxApplicable, TaxComponent columns</comment>
+		<createView viewName="manualadvise_view" replaceIfExists="true">
+		SELECT t1.adviseid,
+		    t1.advisetype,
+		    t1.finreference,
+		    t1.feetypeid,
+		    t1.sequence,
+		    t1.adviseamount,
+		    t1.paidamount,
+		    t1.waivedamount,
+		    t1.remarks,
+		    t1.valuedate,
+		    t1.postdate,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.feetypedesc,
+		    t2.feetypecode,
+		    t1.bounceid,
+		    t1.receiptid,
+		    t3.bouncecode,
+		    t1.reservedamt,
+		    t1.balanceamt,
+		    t3.reason AS bouncecodedesc,
+		    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable::integer, 0) else COALESCE(t3.taxapplicable::integer, 0) END AS TaxApplicable,
+			Case when t1.feeTypeid > 0 then t2.TaxComponent else t3.TaxComponent END AS TaxComponent,
+		    t1.PaidCgst, t1.PaidSgst, t1.PaidIgst, t1.PaidUgst
+		   FROM manualadvise_temp t1
+		     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
+		UNION ALL
+		 SELECT t1.adviseid,
+		    t1.advisetype,
+		    t1.finreference,
+		    t1.feetypeid,
+		    t1.sequence,
+		    t1.adviseamount,
+		    t1.paidamount,
+		    t1.waivedamount,
+		    t1.remarks,
+		    t1.valuedate,
+		    t1.postdate,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.feetypedesc,
+		    t2.feetypecode,
+		    t1.bounceid,
+		    t1.receiptid,
+		    t3.bouncecode,
+		    t1.reservedamt,
+		    t1.balanceamt,
+		    t3.reason AS bouncecodedesc,
+		    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable::integer, 0) else COALESCE(t3.taxapplicable::integer, 0) END AS TaxApplicable,
+			Case when t1.feeTypeid > 0 then t2.TaxComponent else t3.TaxComponent END AS TaxComponent,
+		    t1.PaidCgst, t1.PaidSgst, t1.PaidIgst, t1.PaidUgst
+		   FROM manualadvise t1
+		     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM manualadvise_temp
+		          WHERE manualadvise_temp.adviseid = t1.adviseid))
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>

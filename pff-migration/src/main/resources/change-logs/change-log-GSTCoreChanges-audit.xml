@@ -61,4 +61,19 @@
 			Update AdtManualAdvise set PaidIgst = 0 where PaidIgst is null; 
 		</sql>
 	</changeSet>
+	
+	<changeSet id="8" author="Kesav">
+		<addColumn tableName="AdtBounceReasons">
+			<column name="TaxApplicable" type="boolean"  defaultValue="0" />
+			<column name="TaxComponent" type="Char(1)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="9" author="Kesav">
+		<comment> Old fields updated </comment>
+		<sql>
+			Update AdtBounceReasons set TaxApplicable = 0 where TaxApplicable is null; 
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
