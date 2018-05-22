@@ -868,6 +868,24 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		logger.info(Literal.LEAVING);
 		return verification;
 	}
+	
+	@Override
+	public boolean isAddressChanged(Verification verification) {
+		List<FieldInvestigation> list = fieldInvestigationDAO.getList(verification.getReference());
+
+		FieldInvestigation current = verification.getFieldInvestigation();
+		for (FieldInvestigation previous : list) {
+			if (previous.getCif().equals(verification.getCif())
+					&& previous.getAddressType().equals(current.getAddressType())) {
+				if (!isAddressChange(previous, current)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
 
 	private void setLastStatus(List<Verification> verifications) {
 		String[] cif = new String[verifications.size()];

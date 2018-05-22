@@ -738,11 +738,25 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	public void setLastStatus(Verification verification) {
 		Verification lastStatus = verificationDAO.getLastStatus(verification);
 
-		if (lastStatus != null && (lastStatus.getVersion() == lastStatus.getLastVersion())) {
-			verification.setLastStatus(lastStatus.getStatus());
-			verification.setLastVerificationDate(lastStatus.getVerificationDate());
-			verification.setVersion(lastStatus.getVersion());
-			verification.setLastVersion(lastStatus.getLastVersion());
+		if (lastStatus != null) {
+			if (lastStatus.getVersion() == lastStatus.getLastVersion()) {
+				verification.setLastStatus(lastStatus.getStatus());
+				verification.setLastVerificationDate(lastStatus.getVerificationDate());
+				verification.setVersion(lastStatus.getVersion());
+				verification.setLastVersion(lastStatus.getLastVersion());
+			}
+
+			verification.setLastAgency(verification.getLastAgency());
+
+			if (verification.getVerificationType() == VerificationType.FI.getKey() && fieldInvestigationService.isAddressChanged(verification)) {
+				verification.setLastStatus(lastStatus.getStatus());
+				verification.setLastVerificationDate(lastStatus.getVerificationDate());
+				verification.setVersion(lastStatus.getVersion());
+				verification.setLastVersion(lastStatus.getLastVersion());
+			} else {
+				verification.setLastStatus(0);
+				verification.setLastVerificationDate(null);
+				}
 		}
 	}
 

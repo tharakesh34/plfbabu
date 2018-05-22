@@ -50,4 +50,6 @@ public interface FieldInvestigationService {
 	boolean isAddressChanged(CustomerAddres newAddress, CustomerAddres oldAddress);
 
 	void save(FieldInvestigation fieldInvestigation, TableType tempTab);
+
+	boolean isAddressChanged(Verification verification);
 }
