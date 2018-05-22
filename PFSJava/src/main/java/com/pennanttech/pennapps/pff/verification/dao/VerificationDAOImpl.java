@@ -310,7 +310,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			sql.append(" coalesce(v.version, 0) lastversion, v.agency as lastAgency");
 			sql.append(" from collateral_").append(verification.getReferenceType()).append("_ed ed");
 			sql.append(" left join (");
-			sql.append(" select Id, verificationType, verificationDate, status, version from verifications");
+			sql.append(" select Id, verificationType, verificationDate, status, version, agency from verifications");
 			sql.append(" where Id = (select coalesce(max(id), 0)");
 			sql.append(" from verifications where referenceFor = :referenceFor ");
 			sql.append(" and verificationType = :verificationType and verificationdate is not null and status !=0)) v on v.version = ed.version");
@@ -320,10 +320,10 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			sql.append(" coalesce(v.version, 0) lastversion, v.agency as lastAgency");
 			sql.append(" from customerAddresses_view ca");
 			sql.append(" left join (");
-			sql.append(" select Id, verificationType, verificationDate, status, version from verifications");
+			sql.append(" select Id, verificationType, verificationDate, status, version, agency from verifications");
 			sql.append(" where Id = (select coalesce(max(id), 0)");
-			sql.append(" from verifications where ca.custid = :custid and referenceFor = :referenceFor");
-			sql.append(" and verificationType = :verificationType and verificationdate is not null and status !=0)) v on v.version = ed.version");
+			sql.append(" from verifications where custid = :custid and referenceFor = :referenceFor");
+			sql.append(" and verificationType = :verificationType and verificationdate is not null and status !=0)) v on v.version = ca.version");
 			sql.append(" where ca.custid = :custid and ca.custaddrtype = :referenceFor ");
 		}
 		
