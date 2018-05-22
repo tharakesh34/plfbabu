@@ -122,7 +122,7 @@ public class SMSGupshupServiceImpl implements SMSService {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
-		iLogDetail.setServiceName("CIBIL");
+		iLogDetail.setServiceName("SMSService");
 		iLogDetail.setEndPoint(App.getProperty("gupshup.sms.url"));
 		iLogDetail.setRequest(requets);
 		iLogDetail.setReqSentOn(reqSentOn);
