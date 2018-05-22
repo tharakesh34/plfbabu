@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennanttech.logging.model.InterfaceLogDetail;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -22,9 +23,6 @@ import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 public class SMSGupshupServiceImpl implements SMSService {
 	private static final Logger logger = Logger.getLogger(SMSGupshupServiceImpl.class);
 
-	private String 				userID;
-	private String 				password;
-	private String				serviceUrl=null;
 	private final String 		encoder="UTF-8";
 	private InterfaceLoggingDAO interfaceLoggingDAO;
 	
@@ -62,9 +60,9 @@ public class SMSGupshupServiceImpl implements SMSService {
 
 			smsData.append("method=sendMessage");
 			smsData.append("&userid=");
-			smsData.append(getUserID());
+			smsData.append(App.getProperty("gupshup.sms.userid"));
 			smsData.append("&password=");
-			smsData.append(URLEncoder.encode(getPassword(), encoder));
+			smsData.append(URLEncoder.encode(App.getProperty("gupshup.sms.password"), encoder));
 			smsData.append("&msg=");
 			smsData.append(URLEncoder.encode(messageContent, encoder));
 			smsData.append("&send_to=");
@@ -72,9 +70,8 @@ public class SMSGupshupServiceImpl implements SMSService {
 			smsData.append("&v=1.1");
 			smsData.append("&msg_type=TEXT");
 			smsData.append("&auth_scheme=PLAIN");
-			// FIXME Request logging
 			
-			URL url = new URL(getServiceUrl() + smsData.toString());
+			URL url = new URL(App.getProperty("gupshup.sms.url") + smsData.toString());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
 			conn.setDoOutput(true);
@@ -126,7 +123,7 @@ public class SMSGupshupServiceImpl implements SMSService {
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
 		iLogDetail.setServiceName("CIBIL");
-		iLogDetail.setEndPoint(getServiceUrl());
+		iLogDetail.setEndPoint(App.getProperty("gupshup.sms.url"));
 		iLogDetail.setRequest(requets);
 		iLogDetail.setReqSentOn(reqSentOn);
 
@@ -147,30 +144,6 @@ public class SMSGupshupServiceImpl implements SMSService {
 		logger.debug(Literal.LEAVING);
 	}
 	
-	public String getUserID() {
-		return userID;
-	}
-
-	public void setUserID(String userID) {
-		this.userID = userID;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getServiceUrl() {
-		return serviceUrl;
-	}
-
-	public void setServiceUrl(String serviceUrl) {
-		this.serviceUrl = serviceUrl;
-	}
-
 	public InterfaceLoggingDAO getInterfaceLoggingDAO() {
 		return interfaceLoggingDAO;
 	}
