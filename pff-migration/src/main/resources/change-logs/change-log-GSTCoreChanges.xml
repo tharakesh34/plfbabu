@@ -1622,4 +1622,18 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet id="90" author="Kesav">
+		<sql>
+			Delete from BMTAMOUNTCODES where AllowedEvent = 'ADDDBSP' and AmountCode = 'ae_deductVasDisb';
+			Delete from BMTAMOUNTCODES where AllowedEvent = 'ADDDBSP' and AmountCode = 'ae_addVasToFinance';
+			Delete from BMTAMOUNTCODES where AllowedEvent = 'ADDDBSP' and AmountCode = 'ae_vasFeeWaived';
+			Delete from BMTAMOUNTCODES where AllowedEvent = 'ADDDBSP' and AmountCode = 'ae_paidVasFee';
+			
+			Insert into BMTAMOUNTCODES values ('ADDDBSP',0,'ae_deductVasDisb','Deduct VAS Fee From Disbursement','1',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into BMTAMOUNTCODES values ('ADDDBSP',0,'ae_addVasToFinance','VAS Fee Added to Loan with current Diusbursement','1',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into BMTAMOUNTCODES values ('ADDDBSP',0,'ae_vasFeeWaived','VAS Fees Waived','1',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into BMTAMOUNTCODES values ('ADDDBSP',0,'ae_paidVasFee','Total Paid VAS Fee','1',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);			
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
