@@ -1379,6 +1379,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			BigDecimal addFeeToFinance = BigDecimal.ZERO;
 			BigDecimal paidFee = BigDecimal.ZERO;
 			BigDecimal feeWaived = BigDecimal.ZERO;
+			
+			//VAS
+			BigDecimal deductVasDisb = BigDecimal.ZERO;
+			BigDecimal addVasToFinance = BigDecimal.ZERO;
+			BigDecimal paidVasFee = BigDecimal.ZERO;
+			BigDecimal vasFeeWaived = BigDecimal.ZERO;
 
 			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
 				feeRule = new FeeRule();
@@ -1451,19 +1457,35 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 				if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
 					deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFee());
+					if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
+						deductVasDisb = deductVasDisb.add(finFeeDetail.getActualAmount());
+					}
 				} else if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 					addFeeToFinance = addFeeToFinance.add(finFeeDetail.getRemainingFee());
+					if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
+						addVasToFinance = addVasToFinance.add(finFeeDetail.getActualAmount());
+					}
 				}
 
 				paidFee = paidFee.add(finFeeDetail.getPaidAmount());
 				feeWaived = feeWaived.add(finFeeDetail.getWaivedAmount());
+				
+				if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
+					paidVasFee = paidVasFee.add(finFeeDetail.getPaidAmount());
+					vasFeeWaived = vasFeeWaived.add(finFeeDetail.getWaivedAmount());
+				}
 			}
 
 			amountCodes.setDeductFeeDisb(deductFeeDisb);
 			amountCodes.setAddFeeToFinance(addFeeToFinance);
 			amountCodes.setFeeWaived(feeWaived);
 			amountCodes.setPaidFee(paidFee);
-
+			
+			//VAS
+			amountCodes.setDeductVasDisb(deductVasDisb);
+			amountCodes.setAddVasToFinance(addVasToFinance);
+			amountCodes.setVasFeeWaived(vasFeeWaived);
+			amountCodes.setPaidVasFee(paidVasFee);
 		}
 
 		logger.debug("Leaving");

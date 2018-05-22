@@ -131,9 +131,15 @@ public class AEAmountCodes {
 	
 	// Present mode
 	private String		receiptMode;
+	
+	// VAS Fees
+	private BigDecimal	deductVasDisb				= BigDecimal.ZERO;
+	private BigDecimal	addVasToFinance				= BigDecimal.ZERO;
+	private BigDecimal	vasFeeWaived				= BigDecimal.ZERO;
+	private BigDecimal	paidVasFee					= BigDecimal.ZERO;
 
 	public AEAmountCodes() {
-
+		super();
 	}
 
 	public HashMap<String, Object> getDeclaredFieldValues() {
@@ -1000,6 +1006,38 @@ public class AEAmountCodes {
 
 	public void setReceiptMode(String receiptMode) {
 		this.receiptMode = receiptMode;
+	}
+
+	public BigDecimal getDeductVasDisb() {
+		return deductVasDisb;
+	}
+
+	public void setDeductVasDisb(BigDecimal deductVasDisb) {
+		this.deductVasDisb = deductVasDisb;
+	}
+
+	public BigDecimal getAddVasToFinance() {
+		return addVasToFinance;
+	}
+
+	public void setAddVasToFinance(BigDecimal addVasToFinance) {
+		this.addVasToFinance = addVasToFinance;
+	}
+
+	public BigDecimal getVasFeeWaived() {
+		return vasFeeWaived;
+	}
+
+	public void setVasFeeWaived(BigDecimal vasFeeWaived) {
+		this.vasFeeWaived = vasFeeWaived;
+	}
+
+	public BigDecimal getPaidVasFee() {
+		return paidVasFee;
+	}
+
+	public void setPaidVasFee(BigDecimal paidVasFee) {
+		this.paidVasFee = paidVasFee;
 	}
 	
 }

@@ -11727,6 +11727,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			BigDecimal paidFee = BigDecimal.ZERO;
 			BigDecimal feeWaived = BigDecimal.ZERO;
 
+			//VAS
+			BigDecimal deductVasDisb = BigDecimal.ZERO;
+			BigDecimal addVasToFinance = BigDecimal.ZERO;
+			BigDecimal paidVasFee = BigDecimal.ZERO;
+			BigDecimal vasFeeWaived = BigDecimal.ZERO;
+			
 			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
 				if(!finFeeDetail.isRcdVisible()){
 					continue;
@@ -11746,7 +11752,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmountOriginal());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", finFeeDetail.getNetAmountOriginal());
 				
-				//GST Added
+				//GST 
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", finFeeDetail.getNetAmount());
 				//Calculated Amount 
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_C", finFeeDetail.getFinTaxDetails().getActualCGST());
@@ -11770,14 +11776,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
 						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", finFeeDetail.getRemainingFeeOriginal());
-					//GST Added
+					//GST
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeCGST());
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeSGST());
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeIGST());
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeUGST());
 				} else {
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", 0);
-					//GST Added
+					//GST
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_SCH", 0);
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_SCH", 0);
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_SCH", 0);
@@ -11786,14 +11792,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", finFeeDetail.getRemainingFeeOriginal());
-					//GST Added
+					//GST
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeCGST());
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeSGST());
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeIGST());
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeUGST());
 				} else {
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", 0);
-					//GST Added
+					//GST
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_AF", 0);
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_AF", 0);
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_AF", 0);
@@ -11801,19 +11807,36 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
-					deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFee());	//GST Change
+					deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFee());
+					if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
+						deductVasDisb = deductVasDisb.add(finFeeDetail.getActualAmount());
+					}
 				} else if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-					addFeeToFinance = addFeeToFinance.add(finFeeDetail.getRemainingFee()); //GST Change
-				}
+					addFeeToFinance = addFeeToFinance.add(finFeeDetail.getRemainingFee());
+					if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
+						addVasToFinance = addVasToFinance.add(finFeeDetail.getActualAmount());
+					}
+				} 
 
 				paidFee = paidFee.add(finFeeDetail.getPaidAmount());
 				feeWaived = feeWaived.add(finFeeDetail.getWaivedAmount());
+				
+				if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
+					paidVasFee = paidVasFee.add(finFeeDetail.getPaidAmount());
+					vasFeeWaived = vasFeeWaived.add(finFeeDetail.getWaivedAmount());
+				}
 			}
 
 			amountCodes.setDeductFeeDisb(deductFeeDisb);
 			amountCodes.setAddFeeToFinance(addFeeToFinance);
 			amountCodes.setFeeWaived(feeWaived);
 			amountCodes.setPaidFee(paidFee);
+			
+			//VAS
+			amountCodes.setDeductVasDisb(deductVasDisb);
+			amountCodes.setAddVasToFinance(addVasToFinance);
+			amountCodes.setVasFeeWaived(vasFeeWaived);
+			amountCodes.setPaidVasFee(paidVasFee);
 		}
 
 		logger.debug("Leaving");
