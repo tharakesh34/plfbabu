@@ -84,7 +84,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" bounceID, bounceCode, reasonType, category, reason, action, ");
-		sql.append(" ruleID, returnCode, active, ");
+		sql.append(" ruleID, returnCode, active, TaxComponent, TaxApplicable, ");
 		if (type.contains("View")) {
 			sql.append(" ruleCode, ruleCodeDesc,");
 		}
@@ -159,11 +159,11 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		StringBuilder sql =new StringBuilder(" insert into BounceReasons");
 		sql.append(tableType.getSuffix());
 		sql.append("(bounceID, bounceCode, reasonType, category, reason, action, ");
-		sql.append(" ruleID, returnCode, active, ");
+		sql.append(" ruleID, returnCode, active, TaxComponent, TaxApplicable, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
 		sql.append(" :bounceID, :bounceCode, :reasonType, :category, :reason, :action, ");
-		sql.append(" :ruleID, :returnCode, :active, ");
+		sql.append(" :ruleID, :returnCode, :active, :TaxComponent, :TaxApplicable, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		if (bounceReason.getBounceID() <= 0) {
@@ -193,7 +193,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		sql.append(tableType.getSuffix());
 		sql.append("  set bounceCode = :bounceCode, reasonType = :reasonType, category = :category, ");
 		sql.append(" reason = :reason, action = :action, ruleID = :ruleID, ");
-		sql.append(" returnCode = :returnCode, active = :active, ");
+		sql.append(" returnCode = :returnCode, active = :active, TaxComponent = :TaxComponent, TaxApplicable = :TaxApplicable,");
 		sql.append(" Version = :Version , LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -252,7 +252,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 
 		sql = new StringBuilder();
 		sql.append(" SELECT bounceID, bounceCode, reasonType, category, reason, action, ");
-		sql.append(" ruleID, returnCode, active, ");
+		sql.append(" ruleID, returnCode, active, TaxComponent, TaxApplicable, ");
 		if (type.contains("View")) {
 			sql.append(" ruleCode, ruleCodeDesc,");
 		}
@@ -294,7 +294,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		BounceReason bounceReason = new BounceReason();
 		bounceReason.setRuleID(ruleId);
 
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(RuleID)");
 		selectSql.append(" From BounceReasons");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where RuleID =:RuleID");
