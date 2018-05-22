@@ -27,6 +27,16 @@ public enum TVStatus {
 	public String getValue() {
 		return value;
 	}
+	
+	public static TVStatus getType(Integer key) {
+		for (TVStatus type : values()) {
+			if (type.getKey() == key) {
+				return type;
+			}
+		}
+		return null;
+	}
+
 
 	public static List<ValueLabel> getList() {
 		List<ValueLabel> list = new ArrayList<>();

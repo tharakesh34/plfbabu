@@ -27,6 +27,15 @@ public enum LVStatus {
 	public String getValue() {
 		return value;
 	}
+	
+	public static LVStatus getType(Integer key) {
+		for (LVStatus type : values()) {
+			if (type.getKey() == key) {
+				return type;
+			}
+		}
+		return null;
+	}
 
 	public static List<ValueLabel> getList() {
 		List<ValueLabel> list = new ArrayList<>();

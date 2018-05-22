@@ -27,6 +27,15 @@ public enum RCUStatus {
 	public String getValue() {
 		return value;
 	}
+	
+	public static RCUStatus getType(Integer key) {
+		for (RCUStatus type : values()) {
+			if (type.getKey() == key) {
+				return type;
+			}
+		}
+		return null;
+	}
 
 	public static List<ValueLabel> getList() {
 		List<ValueLabel> list = new ArrayList<>();
