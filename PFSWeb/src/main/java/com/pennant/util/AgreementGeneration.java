@@ -764,8 +764,8 @@ public class AgreementGeneration implements Serializable {
 			if (null!=detail.getFinScheduleData() && null!=detail.getFinScheduleData().getFinanceMain()) {
 				SourcingDetail sourcingDetail=agreement.new SourcingDetail();
 				FinanceMain financeMain2=detail.getFinScheduleData().getFinanceMain();
-				sourcingDetail.setDsaName(financeMain2.getDsaCodeDesc());
-				sourcingDetail.setSourceChannel(financeMain2.getSalesDepartmentDesc());
+				sourcingDetail.setDsaName(StringUtils.trimToEmpty(financeMain2.getDsaCode()));
+				sourcingDetail.setSourceChannel(StringUtils.trimToEmpty(financeMain2.getSalesDepartmentDesc()));
 				agreement.getSourcingDetails().add(sourcingDetail);
 			}
 			else{
@@ -1958,6 +1958,10 @@ public class AgreementGeneration implements Serializable {
 			note.setModuleName(PennantConstants.NOTES_MODULE_FINANCEMAIN);
 			note.setReference(finreference);
 			List<Notes> list = getNotesService().getNotesList(note, false);
+			List<Notes> notesList = getNotesService().getNotesList(note, true);
+			if(CollectionUtils.isNotEmpty(notesList)){
+				list.addAll(notesList);
+			}
 			if (list != null && !list.isEmpty()) {
 				agreement.setRecommendations(new ArrayList<AgreementDetail.Recommendation>(list.size()));
 				for (Notes notes : list) {

@@ -405,13 +405,18 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 						String aggName=StringUtils.trimToEmpty(data.getLovDescNamelov());
 						String reportName="";
 
+						/**
+						 * Disabling the aggPath functionality as aggPath is no longer considered in loan process.
+						 * As discussed with Raju. This functionality is moved to collateral and associated at customer side.
+						 * 
+						 */
 						String aggPath = "",templateName = "";
 						if(StringUtils.trimToEmpty(data.getLovDescAggReportName()).contains("/") ){
 							String aggRptName = StringUtils.trimToEmpty(data.getLovDescAggReportName());
-							aggPath = main.getFinPurpose()+"/"+aggRptName.substring(0,aggRptName.lastIndexOf("/"));
+							//aggPath = main.getFinPurpose()+"/"+aggRptName.substring(0,aggRptName.lastIndexOf("/"));
 							templateName = aggRptName.substring(aggRptName.lastIndexOf("/")+1,aggRptName.length());
 						}else{
-							aggPath = main.getFinPurpose();
+							//aggPath = main.getFinPurpose();
 							templateName = data.getLovDescAggReportName();
 						}
 						TemplateEngine engine = new TemplateEngine(aggPath);

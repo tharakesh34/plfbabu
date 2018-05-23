@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Executions;
@@ -63,11 +62,17 @@ public class  TemplateEngine {
 	public String getTemplatePath(String assetCode){
 		
 		String templatePath = "";
-		if(StringUtils.isBlank(assetCode)){
+		/**
+		 * Disabling the assetCode functionality as assetCode is no longer considered in loan process.
+		 * As discussed with Raju. This functionality is moved to collateral and associated at customer side.
+		 * 
+		 */
+		/*if(StringUtils.isBlank(assetCode)){
 			templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
 		}else{
 			templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS)+"/"+assetCode;
-		}
+		}*/
+		templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
 		logger.debug("Template Path:"+templatePath);
 		return templatePath;
 	}
