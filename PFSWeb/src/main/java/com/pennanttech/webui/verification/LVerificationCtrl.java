@@ -271,12 +271,15 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	public void onCheck$lv(Event event) {
 		final HashMap<String, Object> map = new HashMap<>();
 		LegalVerification legalVerification = lv.getSelectedItem().getValue();
-
+		if (lvInquiry.getChildren() != null) {
+			lvInquiry.getChildren().clear();
+		}
+		
 		if (legalVerification != null) {
-			legalVerification = legalVerificationService.getLegalVerification(legalVerification, "_AView");
+			legalVerification = legalVerificationService.getLegalVerification(legalVerification, "_View");
 		}
 
-		if (legalVerification != null) {
+		if (legalVerification != null && StringUtils.isEmpty(legalVerification.getNextRoleCode())) {
 			map.put("LOAN_ORG", true);
 			map.put("legalVerification", legalVerification);
 			if (lvInquiry.getChildren() != null) {
@@ -284,8 +287,10 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			}
 			Executions.createComponents("/WEB-INF/pages/Verification/LegalVerification/LegalVerificationDialog.zul",
 					lvInquiry, map);
+		} else if (legalVerification != null) {
+			MessageUtil.showMessage("Verification is not yet completed.");
 		} else {
-			MessageUtil.showMessage("Initiation request not available in Lagal Verification Module.");
+			MessageUtil.showMessage("Initiation request not available.");
 		}
 
 	}

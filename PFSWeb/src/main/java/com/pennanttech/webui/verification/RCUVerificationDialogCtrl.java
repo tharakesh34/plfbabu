@@ -546,10 +546,13 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		final HashMap<String, Object> map = new HashMap<>();
 		RiskContainmentUnit riskContainmentUnit = riskContainmentUnitService
 				.getRiskContainmentUnit(Long.parseLong(rcuRadioGroup.getSelectedItem().getValue().toString()));
-		if (riskContainmentUnit != null) {
-			riskContainmentUnit = riskContainmentUnitService.getRiskContainmentUnit(riskContainmentUnit, "_AView");
+		if (rcuInquiry.getChildren() != null) {
+			rcuInquiry.getChildren().clear();
 		}
 		if (riskContainmentUnit != null) {
+			riskContainmentUnit = riskContainmentUnitService.getRiskContainmentUnit(riskContainmentUnit, "_View");
+		}
+		if (riskContainmentUnit != null && StringUtils.isEmpty(riskContainmentUnit.getNextRoleCode())) {
 			map.put("LOAN_ORG", true);
 			map.put("riskContainmentUnit", riskContainmentUnit);
 			if (rcuInquiry.getChildren() != null) {
@@ -557,8 +560,10 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 			Executions.createComponents("/WEB-INF/pages/Verification/RiskContainmentUnit/RiskContainmentUnitDialog.zul",
 					rcuInquiry, map);
+		} else if (riskContainmentUnit != null) {
+			MessageUtil.showMessage("Verification is not yet completed.");
 		} else {
-			MessageUtil.showMessage("Initiation request not available in RCU Verification Module.");
+			MessageUtil.showMessage("Initiation request not available.");
 		}
 	}
 

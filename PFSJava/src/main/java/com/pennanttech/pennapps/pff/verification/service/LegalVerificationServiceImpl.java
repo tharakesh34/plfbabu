@@ -134,15 +134,14 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 
 	@Override
 	public LegalVerification getLegalVerification(LegalVerification lv, String type) {
-		LegalVerification legalVerification = legalVerificationDAO.getLegalVerification(lv.getVerificationId(),
-				type);
+		LegalVerification legalVerification = legalVerificationDAO.getLegalVerification(lv.getVerificationId(), type);
 		if (legalVerification != null) {
-			List<LVDocument> lvDocuments = legalVerificationDAO.getLVDocuments(lv.getVerificationId(), "_View");
+			List<LVDocument> lvDocuments = legalVerificationDAO.getLVDocuments(lv.getVerificationId(), type);
 			legalVerification.setLvDocuments(lvDocuments);
 
 			// LV Document Details
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
-					String.valueOf(lv.getVerificationId()), VerificationType.LV.getCode(), "", "_View");
+					String.valueOf(lv.getVerificationId()), VerificationType.LV.getCode(), "", type);
 			if (legalVerification.getDocuments() != null && !legalVerification.getDocuments().isEmpty()) {
 				legalVerification.getDocuments().addAll(documentList);
 			} else {

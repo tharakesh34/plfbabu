@@ -25,8 +25,6 @@ public class RiskContainmentUnitListModelItemRender implements ListitemRenderer<
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(rcu.getCreatedOn()));
 		lc.setParent(item);
-		lc = new Listcell(rcu.getRcuReference());
-		lc.setParent(item);
 		lc = new Listcell(rcu.getRecordStatus());
 		lc.setParent(item);									
 		lc = new Listcell(PennantJavaUtil.getLabel(rcu.getRecordType()));

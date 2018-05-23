@@ -269,8 +269,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		final HashMap<String, Object> map = new HashMap<>();
-		fieldInvestigation = fieldInvestigationService.getFieldInvestigation(fi.getSelectedItem().getValue(), "_AView");
-		if (fieldInvestigation != null) {
+		fieldInvestigation = fieldInvestigationService.getFieldInvestigation(fi.getSelectedItem().getValue(), "_View");
+		if (fieldInvestigation != null && StringUtils.isEmpty(fieldInvestigation.getNextRoleCode())) {
 			map.put("LOAN_ORG", true);
 			map.put("fieldInvestigation", fieldInvestigation);
 			if (fiInquiry.getChildren() != null) {
@@ -278,8 +278,10 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 			Executions.createComponents("/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationDialog.zul",
 					fiInquiry, map);
-		} else {
-			MessageUtil.showMessage("Initiation request not avilable in Field Investigation Module.");
+		} else if(fieldInvestigation != null){
+			MessageUtil.showMessage("Verification is not yet completed.");
+		}else {
+			MessageUtil.showMessage("Initiation request not available.");
 		}
 	}
 

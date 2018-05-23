@@ -419,8 +419,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void onCheck$tv(Event event) {
 		final HashMap<String, Object> map = new HashMap<>();
 		TechnicalVerification technicalVerification = technicalVerificationService
-				.getTechnicalVerification(tv.getSelectedItem().getValue(),"_AView");
-		if (technicalVerification != null) {
+				.getTechnicalVerification(tv.getSelectedItem().getValue(),"_View");
+		if (technicalVerification != null && StringUtils.isEmpty(technicalVerification.getNextRoleCode())) {
 			map.put("LOAN_ORG", true);
 			map.put("technicalVerification", technicalVerification);
 			if (tvInquiry.getChildren() != null) {
@@ -429,8 +429,10 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Executions.createComponents(
 					"/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationDialog.zul", tvInquiry,
 					map);
+		} else if (technicalVerification != null) {
+			MessageUtil.showMessage("Verification is not yet completed.");
 		} else {
-			MessageUtil.showMessage("Initiation request not available in Technical Verification Module.");
+			MessageUtil.showMessage("Initiation request not available.");
 		}
 	}
 

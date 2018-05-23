@@ -329,12 +329,12 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		if (riskContainmentUnit != null) {
 
 			// RCU Document Details
-			List<RCUDocument> rcuDocuments = riskContainmentUnitDAO.getRCUDocuments(rcu.getVerificationId(), "_View");
+			List<RCUDocument> rcuDocuments = riskContainmentUnitDAO.getRCUDocuments(rcu.getVerificationId(), type);
 			riskContainmentUnit.setRcuDocuments(rcuDocuments);
 
 			// Document Details
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
-					String.valueOf(rcu.getVerificationId()), VerificationType.RCU.getCode(), "", "_View");
+					String.valueOf(rcu.getVerificationId()), VerificationType.RCU.getCode(), "", type);
 			if (riskContainmentUnit.getDocuments() != null && !riskContainmentUnit.getDocuments().isEmpty()) {
 				riskContainmentUnit.getDocuments().addAll(documentList);
 			} else {
