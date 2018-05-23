@@ -982,6 +982,10 @@ public class RepaymentProcessUtil {
 										advise.setAdviseID(movement.getAdviseID());
 										advise.setPaidAmount(movement.getPaidAmount());
 										advise.setWaivedAmount(movement.getWaivedAmount());
+										advise.setPaidCGST(movement.getPaidCGST());
+										advise.setPaidSGST(movement.getPaidSGST());
+										advise.setPaidIGST(movement.getPaidIGST());
+										advise.setPaidUGST(movement.getPaidUGST());
 										
 										getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
 									}
