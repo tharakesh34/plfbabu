@@ -7638,5 +7638,66 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 		     JOIN bmtbankdetail t7 ON t7.bankcode = t1.repayfrom
 	</createView>
 </changeSet>
+<changeSet id="184" author="SaiKrishna">
+	<comment> Ticket 126612 LMS - PDE - newly added shareholder are not displayed in PDE </comment>
+	<createView viewName="customerdirectordetail_aview" replaceIfExists="true">
+		SELECT t1.directorid
+	    t1.custid
+	    t1.firstname
+	    t1.middlename
+	    t1.lastname
+	    t1.shortname
+	    t1.custgendercode
+	    t1.custsalutationcode
+	    t1.shareperc
+	    t1.custaddrhnbr
+	    t1.custflatnbr
+	    t1.custaddrstreet
+	    t1.custaddrline1
+	    t1.custaddrline2
+	    t1.custpobox
+	    t1.custaddrcity
+	    t1.custaddrprovince
+	    t1.custaddrcountry
+	    t1.custaddrzip
+	    t1.custaddrphone
+	    t1.custaddrfrom
+	    t1.shareholder
+	    t1.director
+	    t1.designation
+	    t1.idtype
+	    t1.idreference
+	    t1.nationality
+	    t1.dob
+	    t1.version
+	    t1.lastmntby
+	    t1.lastmnton
+	    t1.recordstatus
+	    t1.rolecode
+	    t1.nextrolecode
+	    t1.taskid
+	    t1.nexttaskid
+	    t1.recordtype
+	    t1.workflowid
+	    t5.pccityname AS lovdesccustaddrcityname
+	    t6.cpprovincename AS lovdesccustaddrprovincename
+	    t7.countrydesc AS lovdesccustaddrcountryname
+	    t3.genderdesc AS lovdesccustgendercodename
+	    t4.saluationdesc AS lovdesccustsalutationcodename
+	    t8.desgdesc AS lovdescdesignationname
+	    t9.countrydesc AS lovdescnationalityname
+	    t10.doctypedesc AS lovdesccustdoccategoryname
+	    COALESCE(t10.docidnummand, 0) AS idreferencemand
+	   FROM customerdirectordetail t1
+	     LEFT JOIN bmtgenders t3 ON t1.custgendercode = t3.gendercode
+	     LEFT JOIN bmtsalutations t4 ON t1.custsalutationcode = t4.salutationcode
+	     LEFT JOIN rmtprovincevscity t5 ON t1.custaddrcountry = t5.pccountry AND t1.custaddrprovince = t5.pcprovince AND t1.custaddrcity = t5.pccity
+	     LEFT JOIN rmtcountryvsprovince t6 ON t1.custaddrcountry = t6.cpcountry AND t1.custaddrprovince = t6.cpprovince
+	     JOIN bmtcountries t7 ON t1.custaddrcountry = t7.countrycode
+	     LEFT JOIN bmtdesignations t8 ON t1.designation = t8.desgcode
+	     LEFT JOIN bmtcountries t9 ON t1.nationality = t9.countrycode
+	     LEFT JOIN bmtdocumenttypes t10 ON t1.idtype = t10.doctypecode
+	</createView>
+</changeSet>
 </databaseChangeLog>
 	
