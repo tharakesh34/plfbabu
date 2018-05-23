@@ -48,6 +48,8 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
@@ -78,11 +80,14 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private transient boolean validationOn;
 	private transient boolean initType;
+	List<String> requiredCodes;
 
 	@Autowired
 	private TechnicalVerificationService technicalVerificationService;
 	@Autowired
 	private transient VerificationService verificationService;
+	@Autowired
+	private SearchProcessor searchProcessor;
 
 	private List<Verification> deletedList = new ArrayList<>();
 
@@ -125,6 +130,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		financeMainDialogCtrl.settVerificationDialogCtrl(this);
 
+		requiredCodes = getRequiredCollaterals();
+
 		doShowDialog();
 
 		logger.debug(Literal.LEAVING);
@@ -136,6 +143,15 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		setVerifications();
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private List<String> getRequiredCollaterals() {
+		Search search = new Search(String.class);
+		search.addField("collateraltype");
+		search.addTabelName("collateralstructure");
+		search.addFilter(new Filter("collateralvaluatorreq", true));
+
+		return searchProcessor.getResults(search);
 	}
 
 	private void setVerifications() {
@@ -422,7 +438,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void onCheck$tv(Event event) {
 		final HashMap<String, Object> map = new HashMap<>();
 		TechnicalVerification technicalVerification = technicalVerificationService
-				.getTechnicalVerification(tv.getSelectedItem().getValue(),"_View");
+				.getTechnicalVerification(tv.getSelectedItem().getValue(), "_View");
 		if (technicalVerification != null && StringUtils.isEmpty(technicalVerification.getNextRoleCode())) {
 			map.put("LOAN_ORG", true);
 			map.put("technicalVerification", technicalVerification);
@@ -506,14 +522,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			requestType.setReadonly(true);
 			requestType.setValue(String.valueOf(vrf.getRequestType()));
 			List<ValueLabel> list = new ArrayList<>();
-			if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {
-				for (ValueLabel valueLabel : RequestType.getList()) {
-					if (Integer.parseInt(valueLabel.getValue()) != RequestType.WAIVE.getKey()) {
-						list.add(valueLabel);
-					}
-				}
-				fillComboBox(requestType, vrf.getRequestType(), list);
-			} else if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
+			if (requiredCodes.contains(vrf.getReferenceType())) {
 				for (ValueLabel valueLabel : RequestType.getList()) {
 					if (Integer.parseInt(valueLabel.getValue()) != RequestType.NOT_REQUIRED.getKey()) {
 						list.add(valueLabel);
@@ -521,8 +530,14 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 				fillComboBox(requestType, vrf.getRequestType(), list);
 			} else {
-				fillComboBox(requestType, vrf.getRequestType(), RequestType.getList());
+				for (ValueLabel valueLabel : RequestType.getList()) {
+					if (Integer.parseInt(valueLabel.getValue()) != RequestType.WAIVE.getKey()) {
+						list.add(valueLabel);
+					}
+				}
+				fillComboBox(requestType, vrf.getRequestType(), list);
 			}
+
 			requestType.setParent(listCell);
 			listCell.setParent(item);
 
@@ -567,7 +582,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			// Status
 			listCell = new Listcell();
 			Label status = new Label();
-			
+
 			if (initType) {
 				if (vrf.getLastStatus() != 0) {
 					status.setValue(TVStatus.getType(vrf.getLastStatus()).getValue());
@@ -579,7 +594,6 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 
 			}
-			
 
 			listCell.appendChild(status);
 			listCell.setParent(item);

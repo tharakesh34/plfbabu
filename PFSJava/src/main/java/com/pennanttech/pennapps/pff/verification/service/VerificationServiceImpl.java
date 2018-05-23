@@ -176,9 +176,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					item.setReinitid(null);
 				}
 				if (item.isNew()) {
-					if (verificationType != VerificationType.FI) {
-						setVerificationData(financeDetail, item, verificationType);
-					}
+					setVerificationData(financeDetail, item, verificationType);
 					verificationDAO.save(item, TableType.MAIN_TAB);
 				} else {
 					verificationDAO.update(item, TableType.MAIN_TAB);
@@ -832,27 +830,20 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 	private void setVerificationData(FinanceDetail financeDetail, Verification verification,
 			VerificationType verificationType) {
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
-		verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		verification.setModule(Module.LOAN.getKey());
-		verification.setKeyReference(financeMain.getFinReference());
-		verification.setCustId(customer.getCustID());
-		verification.setCustomerName(customer.getCustShrtName());
 		verification.setCreatedOn(DateUtility.getAppDate());
-
-		if (verificationType == VerificationType.FI) {
-			if (verification.getReference() != null) {
-				verification.setReference(customer.getCustCIF());
-			}
-		} else if (verificationType == VerificationType.TV) {
-
-		} else if (verificationType == VerificationType.LV) {
+		if (verificationType != VerificationType.FI) {
+			verification.setKeyReference(financeMain.getFinReference());
+			verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+			verification.setCustId(customer.getCustID());
+			verification.setCustomerName(customer.getCustShrtName());
+		}
+		if (verificationType == VerificationType.LV) {
 			if (verification.getReference() == null) {
 				verification.setReference(customer.getCustCIF());
 			}
-		} else if (verificationType == VerificationType.TV) {
-
 		} else if (verificationType == VerificationType.RCU) {
 			if (verification.getReference() == null) {
 				verification.setReference(customer.getCustCIF());

@@ -87,6 +87,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private FinanceDetail financeDetail;
 	private List<Verification> customerVerifications = new ArrayList<>();
 	private List<Verification> coApplicantVerifications = new ArrayList<>();
+	List<String> requiredCodes;
 
 	private transient boolean validationOn;
 	private transient boolean initType;
@@ -134,6 +135,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
+
+		requiredCodes = addressTypeDAO.getFiRequiredCodes();
 
 		doShowDialog();
 
@@ -312,9 +315,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 			Executions.createComponents("/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationDialog.zul",
 					fiInquiry, map);
-		} else if(fieldInvestigation != null){
+		} else if (fieldInvestigation != null) {
 			MessageUtil.showMessage("Verification is not yet completed.");
-		}else {
+		} else {
 			MessageUtil.showMessage("Initiation request not available.");
 		}
 	}
@@ -381,16 +384,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Combobox requestType = new Combobox();
 			requestType.setReadonly(true);
 			requestType.setValue(String.valueOf(vrf.getRequestType()));
-
 			List<ValueLabel> list = new ArrayList<>();
-			if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {
-				for (ValueLabel valueLabel : RequestType.getList()) {
-					if (Integer.parseInt(valueLabel.getValue()) != RequestType.WAIVE.getKey()) {
-						list.add(valueLabel);
-					}
-				}
-				fillComboBox(requestType, vrf.getRequestType(), list);
-			} else if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
+			if (requiredCodes.contains(vrf.getReferenceFor())) {
 				for (ValueLabel valueLabel : RequestType.getList()) {
 					if (Integer.parseInt(valueLabel.getValue()) != RequestType.NOT_REQUIRED.getKey()) {
 						list.add(valueLabel);
@@ -398,7 +393,12 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 				fillComboBox(requestType, vrf.getRequestType(), list);
 			} else {
-				fillComboBox(requestType, vrf.getRequestType(), RequestType.getList());
+				for (ValueLabel valueLabel : RequestType.getList()) {
+					if (Integer.parseInt(valueLabel.getValue()) != RequestType.WAIVE.getKey()) {
+						list.add(valueLabel);
+					}
+				}
+				fillComboBox(requestType, vrf.getRequestType(), list);
 			}
 
 			requestType.setParent(listCell);
@@ -565,7 +565,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private void fillAgencies(ExtendedCombobox agency) {
 		logger.debug(Literal.ENTERING);
-
 		agency.setModuleName("VerificationAgencies");
 		agency.setValueColumn("DealerName");
 		agency.setValidateColumns(new String[] { "DealerName" });
@@ -659,7 +658,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		} else {
 			this.verification.setVerifications(getOldVerifications(null));
 		}
-
 		renderFIVerificationList(this.verification);
 	}
 
