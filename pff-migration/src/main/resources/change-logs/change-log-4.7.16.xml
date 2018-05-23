@@ -5054,12 +5054,11 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 		</insert>
 	</changeSet>
 	<changeSet id="49" author="Jayant">
-		<insert tableName="ErrorDetails">
+	<insert tableName="ErrorDetails">
 			<column name="Code">AUL02</column>
 			<column name="Language">EN</column>
 			<column name="Severity">E</column>
-			<column name="Message">Authorization Limits Not Exists for {0} and
-				Product {1}.</column>
+			<column name="Message">Authorization Limits Not Exists for {0} and Product {1}.</column>
 			<column name="ExtendedMessage"></column>
 			<column name="RecordStatus">Approved</column>
 			<column name="RoleCode"></column>
@@ -5073,13 +5072,12 @@ FROM       Auth_Limit_Details T1 LEFT OUTER JOIN
 			<column name="Version">0</column>
 		</insert>
 	</changeSet>
-	<changeSet id="50" author="Jayant">
-		<insert tableName="ErrorDetails">
+	<changeSet id="50" author="Jayant">		
+	<insert tableName="ErrorDetails">
 			<column name="Code">AUL03</column>
 			<column name="Language">EN</column>
 			<column name="Severity">E</column>
-			<column name="Message">Insufficient Authorization Limits for {0} and
-				Product {1}.</column>
+			<column name="Message">Insufficient Authorization Limits for {0} and Product {1}.</column>
 			<column name="ExtendedMessage"></column>
 			<column name="RecordStatus">Approved</column>
 			<column name="RoleCode"></column>
@@ -8227,32 +8225,30 @@ WHERE     NOT EXISTS (SELECT 1 FROM BMTQueryCategories_TEMP WHERE Id = T1.Id)
 		</sql>
 	</changeSet>
 	<changeSet id="134" author="Jayant">
-		<sql>
-			update workflowdetails set WorkFlowActive='0' where
-			WorkFlowType='VERIFICATION_PROCESS';
-		</sql>
+<sql>
+update workflowdetails set WorkFlowActive='0' where WorkFlowType='VERIFICATION_PROCESS';
+</sql>
 		<insert tableName="WorkFlowDetails">
-			<column name="WorkFlowId" valueComputed="(select max(Seqno) + 1 from SeqWorkFlowDetails)" />
+			<column name="WorkFlowId" valueComputed="(select max(Seqno) + 1 from SeqWorkFlowDetails)"/>
 			<column name="WorkFlowType">VERIFICATION_PROCESS</column>
 			<column name="WorkFlowSubType">Verification Workflow Process</column>
-			<column name="WorkFlowDesc">Maker and checker work flow for verification
-				modules.</column>
+			<column name="WorkFlowDesc">Maker and checker work flow for verification modules.</column>
 			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
 			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
-			<column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
+            <column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
 			<column name="WorkFlowRoles">VERIFICATION_MAKER;VERIFICATION_APPROVER</column>
 			<column name="FirstTaskOwner">VERIFICATION_MAKER</column>
 			<column name="WorkFlowActive">1</column>
 			<column name="Version">5</column>
-			<column name="LastMntBy">1000</column>
-			<column name="LastMntOn" valueDate="current_timestamp" />
+			<column name="LastMntBy">1000</column>		
+			<column name="LastMntOn" valueDate="current_timestamp"/>
 			<column name="RecordStatus">Null</column>
 			<column name="RoleCode"></column>
 			<column name="NextRoleCode"></column>
 			<column name="TaskId"></column>
-			<column name="NextTaskId"></column>
-			<column name="RecordType">NULL</column>
-		</insert>
+			<column name="NextTaskId"></column>	
+     		<column name="RecordType">NULL</column>		
+		</insert>	
 	</changeSet>
 	<changeSet id="135" author="Jayant">
 		<update tableName="WORKFLOWDETAILS">
