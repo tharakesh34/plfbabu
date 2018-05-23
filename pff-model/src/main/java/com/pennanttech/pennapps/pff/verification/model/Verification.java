@@ -84,7 +84,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private Date lastVerificationDate;
 	private int lastVersion;
 	private boolean verificationReq;
-	private Long lastAgency;
+	private String lastAgency;
 
 	public Verification() {
 		super();
@@ -543,11 +543,11 @@ public class Verification extends AbstractWorkflowEntity {
 		this.verificationReq = verificationReq;
 	}
 
-	public Long getLastAgency() {
+	public String getLastAgency() {
 		return lastAgency;
 	}
 
-	public void setLastAgency(Long lastAgency) {
+	public void setLastAgency(String lastAgency) {
 		this.lastAgency = lastAgency;
 	}
 }

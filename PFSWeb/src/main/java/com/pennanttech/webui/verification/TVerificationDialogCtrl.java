@@ -671,24 +671,28 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void fillDecision(Verification vrf, Combobox decision) {
+	private void fillDecision(Verification vrf, Combobox combobox) {
 		List<ValueLabel> decisionList = new ArrayList<>();
-		if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-				|| vrf.getStatus() == TVStatus.POSITIVE.getKey()) {
+
+		int requestType = vrf.getRequestType();
+		int status = vrf.getStatus();
+		int decision = vrf.getDecision();
+
+		if (requestType == RequestType.NOT_REQUIRED.getKey() || status == TVStatus.POSITIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
 			decisionList.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
-			if (vrf.getDecision() == Decision.SELECT.getKey()) {
+			if (decision == Decision.SELECT.getKey()) {
 				vrf.setDecision(Decision.APPROVE.getKey());
 			}
-			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-		} else if (vrf.getStatus() == TVStatus.NEGATIVE.getKey()) {
+			fillComboBox(combobox, decision, filterDecisions(decisionList));
+		} else if (status == TVStatus.NEGATIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
-			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-		} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
+			fillComboBox(combobox, decision, filterDecisions(decisionList));
+		} else if (requestType == RequestType.WAIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
-			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+			fillComboBox(combobox, decision, filterDecisions(decisionList));
 		} else {
-			fillComboBox(decision, vrf.getDecision(), Decision.getList());
+			fillComboBox(combobox, decision, Decision.getList());
 		}
 	}
 

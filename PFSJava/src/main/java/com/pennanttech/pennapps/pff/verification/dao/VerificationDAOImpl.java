@@ -303,11 +303,12 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("select verificationDate, coalesce(status, 0) status, agency as lastAgency from verifications");
+		sql.append("select v.id, v.verificationDate, coalesce(v.status, 0) status, a.dealerName as lastAgency from verifications v");
+		sql.append(" left join AMTVehicleDealer_AView a on a.dealerid = v.agency and dealerType = :dealerType");
 
 		if (verification.getVerificationType() == VerificationType.LV.getKey()
 				|| verification.getVerificationType() == VerificationType.TV.getKey()) {
-			sql.append(" where Id = (select coalesce(max(id), 0)");
+			sql.append(" where v.id = (select coalesce(max(id), 0)");
 			sql.append(" from verifications where referenceFor = :referenceFor ");
 			sql.append(" and verificationType = :verificationType and verificationdate is not null and status !=0)");
 		} else if (verification.getVerificationType() == VerificationType.FI.getKey()) {
@@ -319,6 +320,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		paramMap.addValue("referenceFor", verification.getReferenceFor());
 		paramMap.addValue("verificationType", verification.getVerificationType());
 		paramMap.addValue("custid", verification.getCustId());
+		paramMap.addValue("dealerType", verification.getAgency());
 				
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
