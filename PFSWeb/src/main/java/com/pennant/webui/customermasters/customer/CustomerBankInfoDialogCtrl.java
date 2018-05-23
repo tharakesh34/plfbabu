@@ -67,6 +67,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -297,12 +298,16 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		filter[0] = new Filter("FieldCode", "ACC_TYPE", Filter.OP_EQUAL);
 		this.accountType.setFilters(filter);
 		
-		this.accountNumber.setMaxlength(20);
 		this.accountType.setMaxlength(8);
 		
 		if (StringUtils.isNotBlank(this.customerBankInfo.getBankCode())) {
 			accNoLength = bankDetailService.getAccNoLengthByCode(this.customerBankInfo.getBankCode());
 		}
+		
+		if (accNoLength==0) {
+			accNoLength = LengthConstants.LEN_ACCOUNT;
+		}
+		this.accountNumber.setMaxlength(accNoLength);
 
 		//###_0.2
 		this.creditTranAmt.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));

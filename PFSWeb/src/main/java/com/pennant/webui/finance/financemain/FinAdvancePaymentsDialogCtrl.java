@@ -75,6 +75,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.applicationmaster.BankDetail;
@@ -644,7 +645,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.disbDateAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.disbDateAmount.setScale(ccyFormatter);
 
-		this.beneficiaryAccNo.setMaxlength(50);
+		
 
 		this.llDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -696,6 +697,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		if (StringUtils.isNotBlank(this.finAdvancePayments.getBranchBankCode())) {
 			accNoLength = bankDetailService.getAccNoLengthByCode(this.finAdvancePayments.getBranchBankCode());
 		}
+		
+		if (accNoLength==0) {
+			accNoLength = LengthConstants.LEN_ACCOUNT;
+		}
+		this.beneficiaryAccNo.setMaxlength(accNoLength);
+		
 
 		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);
 		logger.debug("Leaving");
@@ -1642,6 +1649,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
 				}
+				if (accNoLength==0) {
+					accNoLength = LengthConstants.LEN_ACCOUNT;
+				}
+				this.beneficiaryAccNo.setMaxlength(accNoLength);
 			}
 		}
 
@@ -1783,6 +1794,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
 				}
+				if (accNoLength==0) {
+					accNoLength = LengthConstants.LEN_ACCOUNT;
+				}
+				this.beneficiaryAccNo.setMaxlength(accNoLength);
 			}
 		}
 	}

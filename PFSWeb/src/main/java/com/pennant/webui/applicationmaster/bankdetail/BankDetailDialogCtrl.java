@@ -58,6 +58,7 @@ import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -354,14 +355,14 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 			this.accNoLength.setErrorMessage("");
 			
 			if (this.accNoLength.getValue() == null) {
-				throw new WrongValueException(this.accNoLength, Labels.getLabel("NUMBER_RANGE_EQ", new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "0",  String.valueOf(PennantConstants.accNo_maxValue)}));
+				throw new WrongValueException(this.accNoLength, Labels.getLabel("NUMBER_RANGE_EQ", new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "0",  String.valueOf(LengthConstants.LEN_ACCOUNT)}));
 			}
 			
 			int accNoLegthValue = this.accNoLength.getValue();
 			
 			if (!this.accNoLength.isReadonly()) {
-				if (accNoLegthValue < 0 || accNoLegthValue > PennantConstants.accNo_maxValue) {
-					throw new WrongValueException(this.accNoLength, Labels.getLabel("NUMBER_RANGE_EQ", new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "0",  String.valueOf(PennantConstants.accNo_maxValue)}));
+				if (accNoLegthValue < 0 || accNoLegthValue > LengthConstants.LEN_ACCOUNT) {
+					throw new WrongValueException(this.accNoLength, Labels.getLabel("NUMBER_RANGE_EQ", new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "0",  String.valueOf(LengthConstants.LEN_ACCOUNT)}));
 				}
 			}
 			

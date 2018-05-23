@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
@@ -329,6 +330,9 @@ public class CustomizeFinanceDataValidation {
 				//validate AccNumber length
 				if (StringUtils.isNotBlank(mandate.getBankCode())) {
 					int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
+					if (accNoLength==0) {
+						accNoLength = LengthConstants.LEN_ACCOUNT;
+					}
 					if (accNoLength != 0) {
 						if (mandate.getAccNumber().length() != accNoLength) {
 							String[] valueParm = new String[2];

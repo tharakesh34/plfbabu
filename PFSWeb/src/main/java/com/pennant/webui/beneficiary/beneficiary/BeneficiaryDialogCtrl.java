@@ -58,6 +58,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
@@ -188,7 +189,6 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		this.bankBranchID.setDisplayStyle(2);
 		this.bankBranchID.setValidateColumns(new String[] { "IFSC" });
 
-		this.accNumber.setMaxlength(50);
 		this.accHolderName.setMaxlength(50);
 		this.phoneNumber.setMaxlength(10);
 		this.phoneNumber.setWidth("180px");
@@ -197,6 +197,10 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		if(StringUtils.isNotBlank(this.beneficiary.getBankCode())){
 			accNoLength = getBankDetailService().getAccNoLengthByCode(this.beneficiary.getBankCode());
 		}
+		if (accNoLength==0) {
+			accNoLength = LengthConstants.LEN_ACCOUNT;
+		}
+		this.accNumber.setMaxlength(accNoLength);
 		setStatusDetails();
 		logger.debug("Leaving");
 	}
@@ -331,6 +335,10 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 				if(StringUtils.isNotBlank(details.getBankCode())){
 					accNoLength = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
 				}
+				if (accNoLength==0) {
+					accNoLength = LengthConstants.LEN_ACCOUNT;
+				}
+				this.accNumber.setMaxlength(accNoLength);
 			}
 		}
 

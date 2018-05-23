@@ -79,6 +79,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -695,7 +696,15 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				this.ifsc.setValue(details.getIFSC());
 				this.city.setValue(details.getCity());
 				this.cityName.setValue(details.getPCCityName());
-				this.accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+				if (StringUtils.isNotBlank(details.getBankName())) {
+					this.accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+				}
+				if (accNoLength==0) {
+					accNoLength = LengthConstants.LEN_ACCOUNT;
+				}
+				this.accNumber.setMaxlength(accNoLength);
+				
+				
 			}
 		}
 

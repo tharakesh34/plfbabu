@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -549,6 +550,9 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		//validate AccNumber length
 		if (StringUtils.isNotBlank(mandate.getBankCode())) {
 			int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
+			if (accNoLength == 0) {
+				accNoLength = LengthConstants.LEN_ACCOUNT;
+			}
 			if (accNoLength != 0) {
 				if (mandate.getAccNumber().length() != accNoLength) {
 					String[] valueParm = new String[2];

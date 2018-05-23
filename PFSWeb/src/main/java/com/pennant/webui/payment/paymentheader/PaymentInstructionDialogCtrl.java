@@ -25,6 +25,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -308,7 +309,6 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.paymentAmount.setScale(ccyFormatter);
 		this.paymentAmount.setTextBoxWidth(150);
 
-		this.acctNumber.setMaxlength(50);
 		this.postDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
@@ -350,6 +350,12 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		if (StringUtils.isNotBlank(this.paymentInstruction.getBankBranchCode())) {
 			accNoLength = bankDetailService.getAccNoLengthByCode(this.paymentInstruction.getBankBranchCode());
 		}
+		if (accNoLength==0) {
+			accNoLength = LengthConstants.LEN_ACCOUNT;
+		}
+		this.acctNumber.setMaxlength(accNoLength);
+		
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -728,6 +734,10 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
 				}
+				if (accNoLength==0) {
+					accNoLength = LengthConstants.LEN_ACCOUNT;
+				}
+				this.acctNumber.setMaxlength(accNoLength);
 			}
 		}
 		logger.debug(Literal.LEAVING + event.toString());

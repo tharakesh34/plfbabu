@@ -86,6 +86,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
@@ -384,7 +385,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
-		this.accNumber.setMaxlength(50);
 		this.accHolderName.setMaxlength(50);
 		this.jointAccHolderName.setMaxlength(50);
 		this.startDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -439,6 +439,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (StringUtils.isNotBlank(this.mandate.getBankCode())) {
 			accNoLength = getBankDetailService().getAccNoLengthByCode(this.mandate.getBankCode());
 		}
+		
+		if (accNoLength==0) {
+			accNoLength = LengthConstants.LEN_ACCOUNT;
+		}
+		this.accNumber.setMaxlength(accNoLength);
 
 		this.barCodeNumber.setMaxlength(10);
 		
@@ -1653,6 +1658,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				if(StringUtils.isNotBlank(details.getBankCode())){
 					accNoLength = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
 				}
+				if (accNoLength==0) {
+					accNoLength = LengthConstants.LEN_ACCOUNT;
+				}
+				this.accNumber.setMaxlength(accNoLength);
 			}
 		}
 
