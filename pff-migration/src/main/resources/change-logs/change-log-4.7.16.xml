@@ -7682,5 +7682,10 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 	     LEFT JOIN bmtdocumenttypes t10 ON t1.idtype = t10.doctypecode
 	</createView>
 </changeSet>
+<changeSet id="185" author="Srikanth">
+	<comment> Ticket 125596 presentment Issue fixes</comment>
+<modifyDataType tableName="PDC_CONSL_EMI_DTL_TEMP" columnName="lesseeid" newDataType="varchar(20)"/>
+<modifyDataType tableName="PDC_CONSL_EMI_DTL" columnName="lesseeid" newDataType="varchar(20)"/>
+</changeSet>
 </databaseChangeLog>
 	
