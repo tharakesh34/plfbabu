@@ -10051,5 +10051,13 @@ update workflowdetails set WorkFlowActive='0' where WorkFlowType='VERIFICATION_P
 		<modifyDataType tableName="PDC_CONSL_EMI_DTL"
 			columnName="lesseeid" newDataType="varchar(20)" />
 	</changeSet>
+	<changeSet id="186" author="kesava">
+	<sql>
+	Delete from SMTPARAMETERS where SYSPARMCODE = 'BOUNCE_TAX_APPLICABLE';
+    Delete from SMTPARAMETERS where SYSPARMCODE = 'BOUNCE_TAX_TYPE';
+    Insert into SMTPARAMETERS  values ('BOUNCE_TAX_APPLICABLE','BOUNCE TAX APPLICABLE','String',1,'Y',1,0,null,null,'BOUNCE TAX APPLICABLE',1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+    Insert into SMTPARAMETERS  values ('BOUNCE_TAX_TYPE','BOUNCE TAX TYPE','String',1,'I',1,0,null,null,'BOUNCE TAX TYPE',1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
 	
