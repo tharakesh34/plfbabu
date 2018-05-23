@@ -156,6 +156,7 @@ public class PennantConstants {
 	public static final String RCD_DEL = "DELETE";
 
 	// WorkFlow Service Method Types
+	public static final String method_doFinnov = "doFinnovCheck";
 	public static final String method_doApprove = "doApprove";
 	public static final String method_doReversal = "doReversal";
 	public static final String method_doPreApprove = "doPreApprove";

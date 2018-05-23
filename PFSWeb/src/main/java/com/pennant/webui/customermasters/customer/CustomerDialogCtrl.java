@@ -60,6 +60,7 @@ import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.zkoss.util.resource.Labels;
@@ -181,6 +182,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
+import com.pennanttech.pff.external.FinnovService;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
 import com.pennanttech.webui.verification.LVerificationCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
@@ -457,6 +459,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	boolean primaryIdMandatory = false;
 	Map<String, Configuration> TEMPLATES = new HashMap<String, Configuration>();
 
+	@Autowired(required = false)
+	private FinnovService finnovService;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -3314,6 +3319,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						if (aCustomer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doFinnov)) {
+						auditHeader = finnovService.getFinnovReport(auditHeader);
 					} else {
 						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
