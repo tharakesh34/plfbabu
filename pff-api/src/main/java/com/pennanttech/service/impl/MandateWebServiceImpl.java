@@ -550,24 +550,27 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		//validate AccNumber length
 		if (StringUtils.isNotBlank(mandate.getBankCode())) {
 			int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
-			if (accNoLength == 0) {
-				accNoLength = LengthConstants.LEN_ACCOUNT;
-			}
+			int length = mandate.getAccNumber().length();
 			if (accNoLength != 0) {
-				if (mandate.getAccNumber().length() != accNoLength) {
+				if (length != accNoLength) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "AccountNumber";
 					valueParm[1] = String.valueOf(accNoLength) + " characters";
 					return getErrorDetails("30570", valueParm);
 				}
+			}else if (length > LengthConstants.LEN_ACCOUNT) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "AccountNumber";
+				valueParm[1] = String.valueOf(accNoLength) + " characters";
+				return getErrorDetails("30570", valueParm);
 			}
 		}
-		
-			if (mandate.getExpiryDate() == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "expiryDate";
-				return getErrorDetails("90502", valueParm);
-			}
+
+		if (mandate.getExpiryDate() == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "expiryDate";
+			return getErrorDetails("90502", valueParm);
+		}
 		//validate Dates
 		if (mandate.getExpiryDate() != null) {
 			if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0

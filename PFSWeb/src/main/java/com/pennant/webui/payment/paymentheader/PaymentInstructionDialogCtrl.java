@@ -350,10 +350,12 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		if (StringUtils.isNotBlank(this.paymentInstruction.getBankBranchCode())) {
 			accNoLength = bankDetailService.getAccNoLengthByCode(this.paymentInstruction.getBankBranchCode());
 		}
-		if (accNoLength==0) {
-			accNoLength = LengthConstants.LEN_ACCOUNT;
+		if (accNoLength!=0) {
+			this.acctNumber.setMaxlength(accNoLength);
+		}else{
+			this.acctNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);	
 		}
-		this.acctNumber.setMaxlength(accNoLength);
+		
 		
 		
 		logger.debug(Literal.LEAVING);
@@ -734,10 +736,12 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
 				}
-				if (accNoLength==0) {
-					accNoLength = LengthConstants.LEN_ACCOUNT;
+				if (accNoLength!=0) {
+					this.acctNumber.setMaxlength(accNoLength);
+				}else{
+					this.acctNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);	
 				}
-				this.acctNumber.setMaxlength(accNoLength);
+				
 			}
 		}
 		logger.debug(Literal.LEAVING + event.toString());

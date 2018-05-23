@@ -197,10 +197,12 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		if(StringUtils.isNotBlank(this.beneficiary.getBankCode())){
 			accNoLength = getBankDetailService().getAccNoLengthByCode(this.beneficiary.getBankCode());
 		}
-		if (accNoLength==0) {
-			accNoLength = LengthConstants.LEN_ACCOUNT;
+		if (accNoLength!=0) {
+			this.accNumber.setMaxlength(accNoLength);
+		}else{
+			this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
 		}
-		this.accNumber.setMaxlength(accNoLength);
+	
 		setStatusDetails();
 		logger.debug("Leaving");
 	}
@@ -335,10 +337,12 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 				if(StringUtils.isNotBlank(details.getBankCode())){
 					accNoLength = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
 				}
-				if (accNoLength==0) {
-					accNoLength = LengthConstants.LEN_ACCOUNT;
+				if (accNoLength!=0) {
+					this.accNumber.setMaxlength(accNoLength);
+				}else{
+					this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);	
 				}
-				this.accNumber.setMaxlength(accNoLength);
+				
 			}
 		}
 

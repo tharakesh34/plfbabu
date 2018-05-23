@@ -304,10 +304,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			accNoLength = bankDetailService.getAccNoLengthByCode(this.customerBankInfo.getBankCode());
 		}
 		
-		if (accNoLength==0) {
-			accNoLength = LengthConstants.LEN_ACCOUNT;
+		if (accNoLength!=0) {
+			this.accountNumber.setMaxlength(accNoLength);
+		}else{
+			this.accountNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
 		}
-		this.accountNumber.setMaxlength(accNoLength);
 
 		//###_0.2
 		this.creditTranAmt.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));

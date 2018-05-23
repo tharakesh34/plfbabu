@@ -698,12 +698,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			accNoLength = bankDetailService.getAccNoLengthByCode(this.finAdvancePayments.getBranchBankCode());
 		}
 		
-		if (accNoLength==0) {
-			accNoLength = LengthConstants.LEN_ACCOUNT;
+		if (accNoLength!=0) {
+			this.beneficiaryAccNo.setMaxlength(accNoLength);
+		}else{
+			this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);	
 		}
-		this.beneficiaryAccNo.setMaxlength(accNoLength);
-		
-
 		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);
 		logger.debug("Leaving");
 	}
@@ -1649,10 +1648,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
 				}
-				if (accNoLength==0) {
-					accNoLength = LengthConstants.LEN_ACCOUNT;
+				if (accNoLength!=0) {
+					this.beneficiaryAccNo.setMaxlength(accNoLength);
+				}else{
+					this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
 				}
-				this.beneficiaryAccNo.setMaxlength(accNoLength);
 			}
 		}
 
@@ -1794,10 +1794,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
 				}
-				if (accNoLength==0) {
-					accNoLength = LengthConstants.LEN_ACCOUNT;
+				if (accNoLength!=0) {
+					this.beneficiaryAccNo.setMaxlength(accNoLength);
+				}else{
+					this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
 				}
-				this.beneficiaryAccNo.setMaxlength(accNoLength);
+				
 			}
 		}
 	}

@@ -440,10 +440,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			accNoLength = getBankDetailService().getAccNoLengthByCode(this.mandate.getBankCode());
 		}
 		
-		if (accNoLength==0) {
-			accNoLength = LengthConstants.LEN_ACCOUNT;
+		if (accNoLength != 0) {
+			this.accNumber.setMaxlength(accNoLength);
+		} else {
+			this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
 		}
-		this.accNumber.setMaxlength(accNoLength);
 
 		this.barCodeNumber.setMaxlength(10);
 		
@@ -1658,10 +1659,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				if(StringUtils.isNotBlank(details.getBankCode())){
 					accNoLength = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
 				}
-				if (accNoLength==0) {
-					accNoLength = LengthConstants.LEN_ACCOUNT;
+				if (accNoLength!=0) {
+					this.accNumber.setMaxlength(accNoLength);
+				}else{
+					this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);	
 				}
-				this.accNumber.setMaxlength(accNoLength);
+				
 			}
 		}
 

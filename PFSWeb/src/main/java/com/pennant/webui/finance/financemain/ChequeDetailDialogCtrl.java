@@ -699,12 +699,11 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				if (StringUtils.isNotBlank(details.getBankName())) {
 					this.accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
 				}
-				if (accNoLength==0) {
-					accNoLength = LengthConstants.LEN_ACCOUNT;
+				if (accNoLength!=0) {
+					this.accNumber.setMaxlength(accNoLength);	
+				}else{
+					this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);	
 				}
-				this.accNumber.setMaxlength(accNoLength);
-				
-				
 			}
 		}
 

@@ -330,9 +330,6 @@ public class CustomizeFinanceDataValidation {
 				//validate AccNumber length
 				if (StringUtils.isNotBlank(mandate.getBankCode())) {
 					int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
-					if (accNoLength==0) {
-						accNoLength = LengthConstants.LEN_ACCOUNT;
-					}
 					if (accNoLength != 0) {
 						if (mandate.getAccNumber().length() != accNoLength) {
 							String[] valueParm = new String[2];
