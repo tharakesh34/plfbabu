@@ -7575,23 +7575,6 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 	</sql>
 </changeSet>
 
-<changeSet id="176" author="Durgaprasad G">
-	<comment> Changing the CHEQUEDETAIL table EMIREFNO column datatype</comment>
-	<dropView viewName="chequedetail_view"/>
-</changeSet>
-
-<changeSet id="177" author="Durgaprasad G">
-	<comment> Changing the CHEQUEDETAIL table EMIREFNO column datatype</comment>
-	<dropView viewName="chequedetail_aview"/>
-</changeSet>
-
-<changeSet id="178" author="Durgaprasad G">
-	<sql>
-			Update CHEQUEDETAIL set emirefno = '0' Where emirefno is null; 
-			Update CHEQUEDETAIL_TEMP set emirefno = '0' Where emirefno is null; 
-	</sql>
-</changeSet>
-
 <changeSet id="Vinay" author="183">
 	<createView viewName="customerextliability_aview" replaceIfExists="true">
 		SELECT t1.custid,
