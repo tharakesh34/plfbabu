@@ -62,7 +62,9 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -72,6 +74,7 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
@@ -79,11 +82,16 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.rits.cloning.Cloner;
 
@@ -96,6 +104,11 @@ public class ReceiptCalculator implements Serializable {
 	private ManualAdviseDAO						manualAdviseDAO;
 	private ReceiptService						receiptService;
 	private FinanceProfitDetailDAO				financeProfitDetailDAO;
+	private FinFeeDetailService 				finFeeDetailService;
+	private RuleDAO								ruleDAO;
+	private RuleExecutionUtil					ruleExecutionUtil;
+	private FinanceTaxDetailDAO					financeTaxDetailDAO;
+	private CustomerDetailsService				customerDetailsService;				
 
 	// Default Constructor
 	public ReceiptCalculator() {
@@ -524,8 +537,8 @@ public class ReceiptCalculator implements Serializable {
 		BigDecimal latePayPftBal = BigDecimal.ZERO;
 		BigDecimal penaltyBal = BigDecimal.ZERO;
 		if (DateUtility.compare(valueDate, DateUtility.getAppDate()) == 0) {
-			latePayPftBal = getFinODDetailsDAO().getTotalODPftBal(repayMain.getFinReference(), presentmentDates);
-			penaltyBal = getFinODDetailsDAO().getTotalPenaltyBal(repayMain.getFinReference(), presentmentDates);
+			latePayPftBal = finODDetailsDAO.getTotalODPftBal(repayMain.getFinReference(), presentmentDates);
+			penaltyBal = finODDetailsDAO.getTotalPenaltyBal(repayMain.getFinReference(), presentmentDates);
 		} else {
 
 			Date reqMaxODDate = valueDate;
@@ -534,7 +547,7 @@ public class ReceiptCalculator implements Serializable {
 			}
 
 			// Calculate overdue Penalties
-			List<FinODDetails> overdueList = getReceiptService().getValueDatePenalties(finScheduleData,
+			List<FinODDetails> overdueList = receiptService.getValueDatePenalties(finScheduleData,
 					receiptData.getTotReceiptAmount(), reqMaxODDate, null, true);
 
 			// Calculating Actual Sum of Penalty Amount & Late Pay Interest
@@ -644,9 +657,13 @@ public class ReceiptCalculator implements Serializable {
 		}
 
 		// Manual Advises
-		List<ManualAdvise> adviseList = getManualAdviseDAO().getManualAdviseByRef(repayMain.getFinReference(),
+		List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdviseByRef(repayMain.getFinReference(),
 				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_AView");
 		if (adviseList != null && !adviseList.isEmpty()) {
+			
+			// Calculate total GST percentage
+			BigDecimal totalGSTPerc = getTaxPercentages(receiptData.getFinanceDetail()).get("TOTALGST");
+			
 			for (ManualAdvise advise : adviseList) {
 				BigDecimal adviseBal = advise.getAdviseAmount().subtract(advise.getPaidAmount())
 						.subtract(advise.getWaivedAmount());
@@ -665,10 +682,74 @@ public class ReceiptCalculator implements Serializable {
 							receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_BOUNCE, "Bounce Charges");
 						}
 					} else {
-						receiptData.getAllocationDescMap().put(
-								RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID(), advise.getFeeTypeDesc());
 						receiptData.getAllocationMap()
 								.put(RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID(), adviseBal);
+						
+						// Calculation Receivable Advises
+						if(!advise.isTaxApplicable()){
+							
+							receiptData.getAllocationDescMap().put(
+									RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID(), advise.getFeeTypeDesc());
+							
+							continue;
+						}
+						
+						if(StringUtils.equals(advise.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+
+							BigDecimal gstAmount = (adviseBal.multiply(totalGSTPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+							gstAmount = CalculationUtil.roundAmount(gstAmount, finScheduleData.getFinanceMain().getCalRoundingMode(),
+									finScheduleData.getFinanceMain().getRoundingTarget());
+
+							receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID()+"_GST_E", gstAmount);
+							
+							receiptData.getAllocationDescMap().put(
+									RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID(), advise.getFeeTypeDesc() +" (Exclusive)");
+
+						}else if(StringUtils.equals(advise.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
+
+							BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+							BigDecimal actualAmt = adviseBal.divide(percentage, 9, RoundingMode.HALF_DOWN);
+							actualAmt = CalculationUtil.roundAmount(actualAmt, finScheduleData.getFinanceMain().getCalRoundingMode(),
+									finScheduleData.getFinanceMain().getRoundingTarget());
+							BigDecimal gstAmount = adviseBal.subtract(actualAmt);
+
+							receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID()+"_GST_I", gstAmount);
+							
+							receiptData.getAllocationDescMap().put(
+									RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID(), advise.getFeeTypeDesc() +" (Inclusive)");
+						}
+					}
+				}
+			}
+			
+			// Bounce Charge GST Amount calculation
+			if (receiptData.getAllocationMap().containsKey(RepayConstants.ALLOCATION_BOUNCE)) {
+				BigDecimal bounceAmount = receiptData.getAllocationMap().get(RepayConstants.ALLOCATION_BOUNCE);
+				
+				String taxApplicable = SysParamUtil.getValueAsString("BOUNCE_TAX_APPLICABLE");
+				if(StringUtils.equals(taxApplicable, PennantConstants.YES)){
+					
+					String taxType = SysParamUtil.getValueAsString("BOUNCE_TAX_TYPE");
+					
+					if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+
+						BigDecimal gstAmount = (bounceAmount.multiply(totalGSTPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+						gstAmount = CalculationUtil.roundAmount(gstAmount, finScheduleData.getFinanceMain().getCalRoundingMode(),
+								finScheduleData.getFinanceMain().getRoundingTarget());
+
+						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_BOUNCE +"_GST_E", gstAmount);
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_BOUNCE, "Bounce Charges (Exclusive)");
+
+					}else if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
+
+						BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+						BigDecimal actualAmt = bounceAmount.divide(percentage, 9, RoundingMode.HALF_DOWN);
+						actualAmt = CalculationUtil.roundAmount(actualAmt, finScheduleData.getFinanceMain().getCalRoundingMode(),
+								finScheduleData.getFinanceMain().getRoundingTarget());
+						BigDecimal gstAmount = bounceAmount.subtract(actualAmt);
+						
+						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_BOUNCE +"_GST_I", gstAmount);
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_BOUNCE, "Bounce Charges (Inclusive)");
 					}
 				}
 			}
@@ -701,7 +782,7 @@ public class ReceiptCalculator implements Serializable {
 
 		// Fetch total Advise details
 		Map<Long, ManualAdvise> adviseMap = new HashMap<Long, ManualAdvise>();
-		List<ManualAdvise> advises = getManualAdviseDAO().getManualAdviseByRef(financeMain.getFinReference(),
+		List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(financeMain.getFinReference(),
 				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_AView");
 		if (advises != null && !advises.isEmpty()) {
 			for (int i = 0; i < advises.size(); i++) {
@@ -717,14 +798,14 @@ public class ReceiptCalculator implements Serializable {
 
 		// Value Date Penalty Calculation
 		if (DateUtility.compare(valueDate, DateUtility.getAppDate()) == 0) {
-			overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
+			overdueList = finODDetailsDAO.getFinODBalByFinRef(financeMain.getFinReference());
 		} else {
 			// Calculate overdue Penalties
 			Date reqMaxODDate = valueDate;
 			if (!ImplementationConstants.LPP_CALC_SOD) {
 				reqMaxODDate = DateUtility.addDays(valueDate, -1);
 			}
-			overdueList = getReceiptService().getValueDatePenalties(scheduleData, receiptData.getReceiptHeader()
+			overdueList = receiptService.getValueDatePenalties(scheduleData, receiptData.getReceiptHeader()
 					.getReceiptAmount().subtract(receiptData.getReceiptHeader().getTotFeeAmount()), reqMaxODDate, null,
 					true);
 		}
@@ -743,6 +824,7 @@ public class ReceiptCalculator implements Serializable {
 		// Allocation Details Map Preparation based on key Details
 		Map<String, BigDecimal> paidAllocationMap = new HashMap<String, BigDecimal>();
 		Map<String, BigDecimal> waivedAllocationMap = new HashMap<String, BigDecimal>();
+		Map<String, BigDecimal> paidGSTMap = new HashMap<String, BigDecimal>();
 		BigDecimal totalWaivedAmt = BigDecimal.ZERO;
 		BigDecimal totalSchdWaivedAmt = BigDecimal.ZERO;
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
@@ -765,6 +847,14 @@ public class ReceiptCalculator implements Serializable {
 					}
 					waivedAllocationMap.put(allocate.getAllocationType() + "_" + allocate.getAllocationTo(),
 							waivedAmount.add(allocate.getWaivedAmount()));
+				}
+				
+				if(allocate.getPaidGST().compareTo(BigDecimal.ZERO) > 0){
+					if(allocate.getAllocationTo() > 0){
+						paidGSTMap.put(allocate.getAllocationType() + "_" + allocate.getAllocationTo(),allocate.getPaidGST());
+					}else{
+						paidGSTMap.put(allocate.getAllocationType() ,allocate.getPaidGST());
+					}
 				}
 
 				if (!(StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_TDS)
@@ -915,24 +1005,65 @@ public class ReceiptCalculator implements Serializable {
 						if (!adviseMap.isEmpty()) {
 							List<Long> adviseIdList = new ArrayList<Long>(adviseMap.keySet());
 							Collections.sort(adviseIdList);
+							
+							// Calculate total GST percentage
+							Map<String, BigDecimal> taxPercmap  = null;
+							String taxApplicable = SysParamUtil.getValueAsString("BOUNCE_TAX_APPLICABLE");
+							BigDecimal totalBounceTaxAmount = BigDecimal.ZERO;
+							if(paidGSTMap.containsKey(RepayConstants.ALLOCATION_BOUNCE)){
+								totalBounceTaxAmount = paidGSTMap.get(RepayConstants.ALLOCATION_BOUNCE);
+							}
+							
+							// Calculate TAX Amounts against each TAX Type
+							BigDecimal totalGSTPerc = BigDecimal.ZERO;
+							
 							for (int a = 0; a < adviseIdList.size(); a++) {
 
 								ManualAdvise advise = adviseMap.get(adviseIdList.get(a));
+								
+								if((advise.isTaxApplicable() || StringUtils.equals(taxApplicable, PennantConstants.YES)) && taxPercmap == null){
+									taxPercmap = getTaxPercentages(receiptData.getFinanceDetail());
+									if(taxPercmap.containsKey("TOTALGST")){
+										totalGSTPerc = taxPercmap.get("TOTALGST");
+									}
+								}
+								
 								if (advise != null) {
 
 									String allocateType = "";
+									boolean addGSTAmount = false;
 									if (advise.getBounceID() > 0) {
 										allocateType = RepayConstants.ALLOCATION_BOUNCE;
+										
+										if(StringUtils.equals(taxApplicable, PennantConstants.YES)){
+											String taxType = SysParamUtil.getValueAsString("BOUNCE_TAX_TYPE");
+											if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+												addGSTAmount = true;
+											}
+										}
+										
 									} else {
 										allocateType = RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID();
+										if(advise.isTaxApplicable() &&
+												StringUtils.equals(advise.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+											addGSTAmount = true;
+										}
 									}
 
 									if (paidAllocationMap.containsKey(allocateType)) {
 										BigDecimal advAllocateBal = paidAllocationMap.get(allocateType);
 										if (advAllocateBal.compareTo(BigDecimal.ZERO) > 0) {
-											BigDecimal balAdvise = advise.getAdviseAmount()
-													.subtract(advise.getPaidAmount())
+											BigDecimal balAdvise = advise.getAdviseAmount().subtract(advise.getPaidAmount())
 													.subtract(advise.getWaivedAmount());
+											
+											// In case of GST is Exclusive then GST amount should add before payment collection
+											BigDecimal gstAmount = BigDecimal.ZERO;
+											if(addGSTAmount){
+												gstAmount = (balAdvise.multiply(totalGSTPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+												gstAmount = CalculationUtil.roundAmount(gstAmount, financeMain.getCalRoundingMode(),financeMain.getRoundingTarget());
+												balAdvise = balAdvise.add(gstAmount);
+											}
+											
 											if (balAdvise.compareTo(BigDecimal.ZERO) > 0) {
 												if (totalReceiptAmt.compareTo(advAllocateBal) >= 0
 														&& advAllocateBal.compareTo(balAdvise) < 0) {
@@ -947,15 +1078,98 @@ public class ReceiptCalculator implements Serializable {
 												advAmountPaid = advAmountPaid.add(balAdvise);
 												paidAllocationMap.put(allocateType, advAllocateBal.subtract(balAdvise));
 
-												// Save Movements for Manual
-												// Advise
+												// Save Movements for Manual Advise
 												ManualAdviseMovements movement = new ManualAdviseMovements();
 												movement.setAdviseID(advise.getAdviseID());
 												movement.setMovementDate(valueDate);
 												movement.setMovementAmount(balAdvise);
-												movement.setPaidAmount(balAdvise);
 												movement.setWaivedAmount(BigDecimal.ZERO);
 												movement.setFeeTypeCode(advise.getFeeTypeCode());
+												
+												// Total Paid/Adjusted GST amount
+												BigDecimal totalTaxAmount = BigDecimal.ZERO;
+												BigDecimal actTaxAmount = BigDecimal.ZERO;
+												if(advise.getBounceID() > 0){
+													totalTaxAmount = totalBounceTaxAmount;
+															
+													BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+													BigDecimal actualAmt = balAdvise.divide(percentage, 9, RoundingMode.HALF_DOWN);
+													actualAmt = CalculationUtil.roundAmount(actualAmt, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+													actTaxAmount = balAdvise.subtract(actualAmt);
+													
+												}else{
+													if(paidGSTMap.containsKey(allocateType)){
+														totalTaxAmount = paidGSTMap.get(allocateType);
+														actTaxAmount = paidGSTMap.get(allocateType);
+													}
+												}
+												
+												if ((advise.getBounceID() > 0 && StringUtils.equals(taxApplicable, PennantConstants.YES)) ||
+														advise.getBounceID() == 0 && advise.isTaxApplicable()) {
+
+													if(totalGSTPerc.compareTo(BigDecimal.ZERO) > 0){
+
+														String roundingMode = financeMain.getCalRoundingMode();
+														int roundingtarget = financeMain.getRoundingTarget();													
+
+														// CGST Calculation
+														if(taxPercmap.containsKey(RuleConstants.CODE_CGST)){
+															BigDecimal taxPerc = taxPercmap.get(RuleConstants.CODE_CGST);	
+															BigDecimal taxAmount = calculateTaxAmount(actTaxAmount, totalGSTPerc, taxPerc, roundingMode,roundingtarget);
+															if(taxAmount.compareTo(totalTaxAmount) > 0){
+																taxAmount = totalTaxAmount;
+															}
+															movement.setPaidCGST(taxAmount);
+															totalTaxAmount = totalTaxAmount.subtract(taxAmount);
+														}
+
+														// SGST Calculation
+														if(taxPercmap.containsKey(RuleConstants.CODE_SGST)){
+															BigDecimal taxPerc = taxPercmap.get(RuleConstants.CODE_SGST);	
+															BigDecimal taxAmount = calculateTaxAmount(actTaxAmount, totalGSTPerc,taxPerc, roundingMode,roundingtarget);
+															if(taxAmount.compareTo(totalTaxAmount) > 0){
+																taxAmount = totalTaxAmount;
+															}
+															movement.setPaidSGST(taxAmount);
+															totalTaxAmount = totalTaxAmount.subtract(taxAmount);
+														}
+
+														// IGST Calculation
+														if(taxPercmap.containsKey(RuleConstants.CODE_IGST)){
+															BigDecimal taxPerc = taxPercmap.get(RuleConstants.CODE_IGST);	
+															BigDecimal taxAmount = calculateTaxAmount(actTaxAmount, totalGSTPerc,taxPerc, roundingMode,roundingtarget);
+															if(taxAmount.compareTo(totalTaxAmount) > 0){
+																taxAmount = totalTaxAmount;
+															}
+															movement.setPaidIGST(taxAmount);
+															totalTaxAmount = totalTaxAmount.subtract(taxAmount);
+														}
+
+														// UGST Calculation
+														if(taxPercmap.containsKey(RuleConstants.CODE_UGST)){
+															BigDecimal taxPerc = taxPercmap.get(RuleConstants.CODE_UGST);	
+															BigDecimal taxAmount = calculateTaxAmount(actTaxAmount,totalGSTPerc, taxPerc, roundingMode,roundingtarget);
+															if(taxAmount.compareTo(totalTaxAmount) > 0){
+																taxAmount = totalTaxAmount;
+															}
+															movement.setPaidUGST(taxAmount);
+															totalTaxAmount = totalTaxAmount.subtract(taxAmount);
+														}
+														// Reset remaining tax amount only in case of Bounce
+														if(advise.getBounceID() > 0){
+															totalBounceTaxAmount = totalTaxAmount;
+														}
+													}
+												}
+												
+												// In case of Exclusive
+												if(addGSTAmount){
+													movement.setPaidAmount(balAdvise.subtract(movement.getPaidCGST().subtract(
+															movement.getPaidIGST().subtract(movement.getPaidSGST().subtract(movement.getPaidUGST())))));
+												}else{
+													movement.setPaidAmount(balAdvise);
+												}
+												
 												receiptDetail.getAdvMovements().add(movement);
 											}
 										}
@@ -1390,34 +1604,75 @@ public class ReceiptCalculator implements Serializable {
 			}
 
 			// Manual Advises
-			BigDecimal manAdvAmount = BigDecimal.ZERO;
 			if (!isPartialPayNow && totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
 
 				if (!adviseMap.isEmpty()) {
 					List<Long> adviseIdList = new ArrayList<Long>(adviseMap.keySet());
 					Collections.sort(adviseIdList);
+					
+					// Calculate total GST percentage
+					Map<String, BigDecimal> taxPercmap  = null;
+					String taxApplicable = SysParamUtil.getValueAsString("BOUNCE_TAX_APPLICABLE");
+					BigDecimal totalBounceTaxAmount = BigDecimal.ZERO;
+					if(paidGSTMap.containsKey(RepayConstants.ALLOCATION_BOUNCE)){
+						totalBounceTaxAmount = paidGSTMap.get(RepayConstants.ALLOCATION_BOUNCE);
+					}
+					
+					// Calculate TAX Amounts against each TAX Type
+					BigDecimal totalGSTPerc = BigDecimal.ZERO;
+					
 					for (int a = 0; a < adviseIdList.size(); a++) {
 
 						ManualAdvise advise = adviseMap.get(adviseIdList.get(a));
+						
+						if((advise.isTaxApplicable() || StringUtils.equals(taxApplicable, PennantConstants.YES)) && taxPercmap == null){
+							taxPercmap = getTaxPercentages(receiptData.getFinanceDetail());
+							if(taxPercmap.containsKey("TOTALGST")){
+								totalGSTPerc = taxPercmap.get("TOTALGST");
+							}
+						}
+						
 						if (advise != null) {
 
 							String allocateType = "";
+							boolean addGSTAmount = false;
 							if (advise.getBounceID() > 0) {
 								allocateType = RepayConstants.ALLOCATION_BOUNCE;
+								
+								if(StringUtils.equals(taxApplicable, PennantConstants.YES)){
+									String taxType = SysParamUtil.getValueAsString("BOUNCE_TAX_TYPE");
+									if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+										addGSTAmount = true;
+									}
+								}
+								
 							} else {
 								allocateType = RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID();
+								if(advise.isTaxApplicable() &&
+										StringUtils.equals(advise.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+									addGSTAmount = true;
+								}
 							}
 
 							if (paidAllocationMap.containsKey(allocateType)) {
-								BigDecimal insAllocateBal = paidAllocationMap.get(allocateType);
-								if (insAllocateBal.compareTo(BigDecimal.ZERO) > 0) {
+								BigDecimal advAllocateBal = paidAllocationMap.get(allocateType);
+								if (advAllocateBal.compareTo(BigDecimal.ZERO) > 0) {
 									BigDecimal balAdvise = advise.getAdviseAmount().subtract(advise.getPaidAmount())
 											.subtract(advise.getWaivedAmount());
+									
+									// In case of GST is Exclusive then GST amount should add before payment collection
+									BigDecimal gstAmount = BigDecimal.ZERO;
+									if(addGSTAmount){
+										gstAmount = (balAdvise.multiply(totalGSTPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+										gstAmount = CalculationUtil.roundAmount(gstAmount, financeMain.getCalRoundingMode(),financeMain.getRoundingTarget());
+										balAdvise = balAdvise.add(gstAmount);
+									}
+									
 									if (balAdvise.compareTo(BigDecimal.ZERO) > 0) {
-										if (totalReceiptAmt.compareTo(insAllocateBal) >= 0
-												&& insAllocateBal.compareTo(balAdvise) < 0) {
-											balAdvise = insAllocateBal;
-										} else if (totalReceiptAmt.compareTo(insAllocateBal) < 0
+										if (totalReceiptAmt.compareTo(advAllocateBal) >= 0
+												&& advAllocateBal.compareTo(balAdvise) < 0) {
+											balAdvise = advAllocateBal;
+										} else if (totalReceiptAmt.compareTo(advAllocateBal) < 0
 												&& balAdvise.compareTo(totalReceiptAmt) > 0) {
 											balAdvise = totalReceiptAmt;
 										}
@@ -1425,17 +1680,100 @@ public class ReceiptCalculator implements Serializable {
 										// Reset Total Receipt Amount
 										totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
 										advAmountPaid = advAmountPaid.add(balAdvise);
-										paidAllocationMap.put(allocateType, insAllocateBal.subtract(balAdvise));
+										paidAllocationMap.put(allocateType, advAllocateBal.subtract(balAdvise));
 
-										manAdvAmount=manAdvAmount.add(balAdvise);
 										// Save Movements for Manual Advise
 										ManualAdviseMovements movement = new ManualAdviseMovements();
 										movement.setAdviseID(advise.getAdviseID());
 										movement.setMovementDate(valueDate);
 										movement.setMovementAmount(balAdvise);
-										movement.setPaidAmount(balAdvise);
 										movement.setWaivedAmount(BigDecimal.ZERO);
 										movement.setFeeTypeCode(advise.getFeeTypeCode());
+										
+										// Total Paid/Adjusted GST amount
+										BigDecimal totalTaxAmount = BigDecimal.ZERO;
+										BigDecimal actTaxAmount = BigDecimal.ZERO;
+										if(advise.getBounceID() > 0){
+											totalTaxAmount = totalBounceTaxAmount;
+													
+											BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+											BigDecimal actualAmt = balAdvise.divide(percentage, 9, RoundingMode.HALF_DOWN);
+											actualAmt = CalculationUtil.roundAmount(actualAmt, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+											actTaxAmount = balAdvise.subtract(actualAmt);
+											
+										}else{
+											if(paidGSTMap.containsKey(allocateType)){
+												totalTaxAmount = paidGSTMap.get(allocateType);
+												actTaxAmount = paidGSTMap.get(allocateType);
+											}
+										}
+										
+										if ((advise.getBounceID() > 0 && StringUtils.equals(taxApplicable, PennantConstants.YES)) ||
+												advise.getBounceID() == 0 && advise.isTaxApplicable()) {
+
+											if(totalGSTPerc.compareTo(BigDecimal.ZERO) > 0){
+
+												String roundingMode = financeMain.getCalRoundingMode();
+												int roundingtarget = financeMain.getRoundingTarget();													
+
+												// CGST Calculation
+												if(taxPercmap.containsKey(RuleConstants.CODE_CGST)){
+													BigDecimal taxPerc = taxPercmap.get(RuleConstants.CODE_CGST);	
+													BigDecimal taxAmount = calculateTaxAmount(actTaxAmount, totalGSTPerc, taxPerc, roundingMode,roundingtarget);
+													if(taxAmount.compareTo(totalTaxAmount) > 0){
+														taxAmount = totalTaxAmount;
+													}
+													movement.setPaidCGST(taxAmount);
+													totalTaxAmount = totalTaxAmount.subtract(taxAmount);
+												}
+
+												// SGST Calculation
+												if(taxPercmap.containsKey(RuleConstants.CODE_SGST)){
+													BigDecimal taxPerc = taxPercmap.get(RuleConstants.CODE_SGST);	
+													BigDecimal taxAmount = calculateTaxAmount(actTaxAmount, totalGSTPerc,taxPerc, roundingMode,roundingtarget);
+													if(taxAmount.compareTo(totalTaxAmount) > 0){
+														taxAmount = totalTaxAmount;
+													}
+													movement.setPaidSGST(taxAmount);
+													totalTaxAmount = totalTaxAmount.subtract(taxAmount);
+												}
+
+												// IGST Calculation
+												if(taxPercmap.containsKey(RuleConstants.CODE_IGST)){
+													BigDecimal taxPerc = taxPercmap.get(RuleConstants.CODE_IGST);	
+													BigDecimal taxAmount = calculateTaxAmount(actTaxAmount, totalGSTPerc,taxPerc, roundingMode,roundingtarget);
+													if(taxAmount.compareTo(totalTaxAmount) > 0){
+														taxAmount = totalTaxAmount;
+													}
+													movement.setPaidIGST(taxAmount);
+													totalTaxAmount = totalTaxAmount.subtract(taxAmount);
+												}
+
+												// UGST Calculation
+												if(taxPercmap.containsKey(RuleConstants.CODE_UGST)){
+													BigDecimal taxPerc = taxPercmap.get(RuleConstants.CODE_UGST);	
+													BigDecimal taxAmount = calculateTaxAmount(actTaxAmount,totalGSTPerc, taxPerc, roundingMode,roundingtarget);
+													if(taxAmount.compareTo(totalTaxAmount) > 0){
+														taxAmount = totalTaxAmount;
+													}
+													movement.setPaidUGST(taxAmount);
+													totalTaxAmount = totalTaxAmount.subtract(taxAmount);
+												}
+												// Reset remaining tax amount only in case of Bounce
+												if(advise.getBounceID() > 0){
+													totalBounceTaxAmount = totalTaxAmount;
+												}
+											}
+										}
+										
+										// In case of Exclusive
+										if(addGSTAmount){
+											movement.setPaidAmount(balAdvise.subtract(movement.getPaidCGST().subtract(
+													movement.getPaidIGST().subtract(movement.getPaidSGST().subtract(movement.getPaidUGST())))));
+										}else{
+											movement.setPaidAmount(balAdvise);
+										}
+										
 										receiptDetail.getAdvMovements().add(movement);
 									}
 								}
@@ -2239,10 +2577,11 @@ public class ReceiptCalculator implements Serializable {
 	 * @param receiptData
 	 * @param aFinScheduleData
 	 */
-	public Map<String, BigDecimal> recalAutoAllocation(FinScheduleData scheduleData, BigDecimal totalReceiptAmt,
+	public Map<String, BigDecimal> recalAutoAllocation(FinanceDetail financeDetail, BigDecimal totalReceiptAmt,
 			Date valueDate, String receiptPurpose, boolean isPresentment) {
 		logger.debug("Entering");
 
+		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> scheduleDetails = scheduleData.getFinanceScheduleDetails();
 
@@ -2253,7 +2592,7 @@ public class ReceiptCalculator implements Serializable {
 		// Fetch total Advise details
 		Map<Long, ManualAdvise> adviseMap = new HashMap<Long, ManualAdvise>();
 		if (!isPresentment) {
-			List<ManualAdvise> advises = getManualAdviseDAO().getManualAdviseByRef(financeMain.getFinReference(),
+			List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(financeMain.getFinReference(),
 					FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_AView");
 			if (advises != null && !advises.isEmpty()) {
 				for (int i = 0; i < advises.size(); i++) {
@@ -2273,10 +2612,10 @@ public class ReceiptCalculator implements Serializable {
 		}
 		List<FinODDetails> overdueList = null;
 		if (DateUtility.compare(valueDate, DateUtility.getAppDate()) == 0) {
-			overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
+			overdueList = finODDetailsDAO.getFinODBalByFinRef(financeMain.getFinReference());
 		} else {
 			// Calculate overdue Penalties
-			overdueList = getReceiptService().getValueDatePenalties(scheduleData, totalReceiptAmt, reqMaxODDate, null,
+			overdueList = receiptService.getValueDatePenalties(scheduleData, totalReceiptAmt, reqMaxODDate, null,
 					true);
 		}
 
@@ -2707,6 +3046,12 @@ public class ReceiptCalculator implements Serializable {
 		if (!isPresentment) {
 			if (totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
 				if (!adviseMap.isEmpty()) {
+					
+					// Calculate total GST percentage
+					BigDecimal totalGSTPerc = getTaxPercentages(financeDetail).get("TOTALGST");
+					String taxApplicable = SysParamUtil.getValueAsString("BOUNCE_TAX_APPLICABLE");
+					String taxType = SysParamUtil.getValueAsString("BOUNCE_TAX_TYPE");
+					
 					List<Long> adviseIdList = new ArrayList<Long>(adviseMap.keySet());
 					Collections.sort(adviseIdList);
 					for (int i = 0; i < adviseIdList.size(); i++) {
@@ -2715,6 +3060,21 @@ public class ReceiptCalculator implements Serializable {
 						if (advise != null) {
 							BigDecimal balAdvise = advise.getAdviseAmount().subtract(advise.getPaidAmount())
 									.subtract(advise.getWaivedAmount());
+							
+							// In case of GST is Exclusive then GST amount should add before payment collection
+							boolean addGSTAmount = false;
+							if((advise.getBounceID() == 0 && advise.isTaxApplicable() &&
+									StringUtils.equals(advise.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) ||
+									(advise.getBounceID() > 0 && StringUtils.equals(taxApplicable, PennantConstants.YES) &&
+									StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE))){
+								addGSTAmount = true;
+							}
+							
+							if(addGSTAmount){
+								BigDecimal gstAmount = (balAdvise.multiply(totalGSTPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+								gstAmount = CalculationUtil.roundAmount(gstAmount, financeMain.getCalRoundingMode(),financeMain.getRoundingTarget());
+								balAdvise = balAdvise.add(gstAmount);
+							}
 
 							if (balAdvise.compareTo(BigDecimal.ZERO) > 0) {
 								if (totalReceiptAmt.compareTo(balAdvise) > 0) {
@@ -2732,6 +3092,23 @@ public class ReceiptCalculator implements Serializable {
 									}
 									allocatePaidMap.put(RepayConstants.ALLOCATION_BOUNCE,
 											totAdvisePayNow.add(balAdvise));
+									
+									BigDecimal bounceAmount = totAdvisePayNow.add(balAdvise);
+									
+									if(StringUtils.equals(taxApplicable, PennantConstants.YES)){
+										
+										BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+										BigDecimal actualAmt = bounceAmount.divide(percentage, 9, RoundingMode.HALF_DOWN);
+										actualAmt = CalculationUtil.roundAmount(actualAmt, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+										BigDecimal gstAmount = bounceAmount.subtract(actualAmt);
+										
+										if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+											allocatePaidMap.put(RepayConstants.ALLOCATION_BOUNCE +"_GST_E", gstAmount);
+										}else if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
+											allocatePaidMap.put(RepayConstants.ALLOCATION_BOUNCE +"_GST_I", gstAmount);
+										}
+									}
+										
 								} else {
 									if (allocatePaidMap.containsKey(
 											RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID())) {
@@ -2742,6 +3119,22 @@ public class ReceiptCalculator implements Serializable {
 									}
 									allocatePaidMap.put(RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID(),
 											totAdvisePayNow.add(balAdvise));
+									
+									// Calculation Receivable Advises
+									if(!advise.isTaxApplicable()){
+										continue;
+									}
+									
+									BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+									BigDecimal actualAmt = balAdvise.divide(percentage, 9, RoundingMode.HALF_DOWN);
+									actualAmt = CalculationUtil.roundAmount(actualAmt, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+									BigDecimal gstAmount = balAdvise.subtract(actualAmt);
+									
+									if(StringUtils.equals(advise.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+										allocatePaidMap.put(RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID()+"_GST_E", gstAmount);
+									}else if(StringUtils.equals(advise.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
+										allocatePaidMap.put(RepayConstants.ALLOCATION_MANADV + "_" + advise.getAdviseID()+"_GST_I", gstAmount);
+									}
 								}
 							}
 						}
@@ -2753,41 +3146,139 @@ public class ReceiptCalculator implements Serializable {
 		logger.debug("Leaving");
 		return allocatePaidMap;
 	}
+	
+	/**
+	 * Method for Preparing all GST fee amounts based on configurations
+	 * @param manAdvList
+	 * @param financeDetail
+	 * @return
+	 */
+	public Map<String, BigDecimal> getTaxPercentages(FinanceDetail financeDetail){
+		
+		// Set Tax Details if Already exists
+		if(financeDetail.getFinanceTaxDetails() == null){
+			financeDetail.setFinanceTaxDetails(financeTaxDetailDAO.getFinanceTaxDetail(
+					financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), ""));
+		}
+		
+		// Customer Details			
+		if (financeDetail.getCustomerDetails() == null) {
+			financeDetail.setCustomerDetails(customerDetailsService.getCustomerDetailsById(
+					financeDetail.getFinScheduleData().getFinanceMain().getCustID(), true, "_View"));
+		}
+		
+		// Map Preparation for Executing GST rules
+		HashMap<String, Object> dataMap = finFeeDetailService.prepareGstMappingDetails(financeDetail, null);
+		
+		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
+		String finCcy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();
+		
+		BigDecimal totalTaxPerc = BigDecimal.ZERO;
+		Map<String, BigDecimal> taxPercMap = new HashMap<>();
+		
+		for (Rule rule : rules) {
+			BigDecimal taxPerc = BigDecimal.ZERO;
+			if (StringUtils.equals(RuleConstants.CODE_CGST, rule.getRuleCode())) {
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+				totalTaxPerc = totalTaxPerc.add(taxPerc);
+				taxPercMap.put(RuleConstants.CODE_CGST, taxPerc);
+			} else if (StringUtils.equals(RuleConstants.CODE_IGST, rule.getRuleCode())) {
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+				totalTaxPerc = totalTaxPerc.add(taxPerc);
+				taxPercMap.put(RuleConstants.CODE_IGST, taxPerc);
+			} else if (StringUtils.equals(RuleConstants.CODE_SGST, rule.getRuleCode())) {
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+				totalTaxPerc = totalTaxPerc.add(taxPerc);
+				taxPercMap.put(RuleConstants.CODE_SGST, taxPerc);
+			} else if (StringUtils.equals(RuleConstants.CODE_UGST, rule.getRuleCode())) {
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+				totalTaxPerc = totalTaxPerc.add(taxPerc);
+				taxPercMap.put(RuleConstants.CODE_UGST, taxPerc);
+			}
+		}
+		taxPercMap.put("TOTALGST", totalTaxPerc);
+		
+		return taxPercMap;
+	}
+	
+	/**
+	 * Method for Processing of SQL Rule and get Executed Result
+	 * 
+	 * @return
+	 */
+	private BigDecimal getRuleResult(String sqlRule, HashMap<String, Object> executionMap,String finCcy) {
+		logger.debug("Entering");
+		
+		BigDecimal result = BigDecimal.ZERO;
+		try {
+			Object exereslut = this.ruleExecutionUtil.executeRule(sqlRule, executionMap, finCcy, RuleReturnType.DECIMAL);
+			if (exereslut == null || StringUtils.isEmpty(exereslut.toString())) {
+				result = BigDecimal.ZERO;
+			} else {
+				result = new BigDecimal(exereslut.toString());
+			}
+		} catch (Exception e) {
+			logger.debug(e);
+		}
+		
+		logger.debug("Leaving");
+		return result;
+	}
+	
+	/**
+	 * Method for calculating GST percentage Values
+	 */
+	private BigDecimal calculateTaxAmount(BigDecimal amount, BigDecimal totalTaxPerc, BigDecimal taxPerc, String roundingMode, int roundingtarget){
+		
+		if(amount.compareTo(BigDecimal.ZERO) == 0 || taxPerc.compareTo(BigDecimal.ZERO) == 0){
+			return BigDecimal.ZERO;
+		}
+		
+		BigDecimal gstAmount = (amount.multiply(taxPerc)).divide(totalTaxPerc, 9, RoundingMode.HALF_DOWN);
+		gstAmount = CalculationUtil.roundAmount(gstAmount, roundingMode, roundingtarget);
+		
+		return gstAmount;
+	}
+	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public FinODDetailsDAO getFinODDetailsDAO() {
-		return finODDetailsDAO;
-	}
-
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
-	}
-
-	public ManualAdviseDAO getManualAdviseDAO() {
-		return manualAdviseDAO;
 	}
 
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
-	public ReceiptService getReceiptService() {
-		return receiptService;
-	}
-
 	public void setReceiptService(ReceiptService receiptService) {
 		this.receiptService = receiptService;
-	}
-
-	public FinanceProfitDetailDAO getFinanceProfitDetailDAO() {
-		return financeProfitDetailDAO;
 	}
 
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
 	}
 
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
+	}
+
+	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
+	}
+
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
+
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+	
 }

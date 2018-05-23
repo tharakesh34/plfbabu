@@ -807,9 +807,16 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 							continue;
 						}
 						
-						getManualAdviseDAO().updateAdvPayment(movement.getAdviseID(),
-								movement.getPaidAmount().negate(), movement.getWaivedAmount().negate(),
-								TableType.MAIN_TAB);
+						ManualAdvise advise = new ManualAdvise();
+						advise.setAdviseID(movement.getAdviseID());
+						advise.setPaidAmount(movement.getPaidAmount().negate());
+						advise.setWaivedAmount(movement.getWaivedAmount().negate());
+						advise.setPaidCGST(movement.getPaidCGST().negate());
+						advise.setPaidSGST(movement.getPaidSGST().negate());
+						advise.setPaidIGST(movement.getPaidIGST().negate());
+						advise.setPaidUGST(movement.getPaidUGST().negate());
+						
+						getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
 					}
 
 					// Update Movement Status

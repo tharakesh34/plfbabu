@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.finance.impl;
 
 import java.util.List;
@@ -66,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implements ManualAdviseService {
 	private static final Logger logger = Logger.getLogger(ManualAdviseServiceImpl.class);
-	
+
 	private AuditHeaderDAO auditHeaderDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 
@@ -74,14 +74,14 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	/**
 	 * @return the auditHeaderDAO
 	 */
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
-	
+
 	/**
 	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
@@ -118,16 +118,16 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);	
-		
+
 		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
 
 		ManualAdvise manualAdvise = (ManualAdvise) auditHeader.getAuditDetail().getModelData();
-		
+
 		TableType tableType = TableType.MAIN_TAB;
 		if (manualAdvise.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
@@ -162,18 +162,18 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
-		
+
 		auditHeader = businessValidation(auditHeader,"delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-		
+
 		ManualAdvise manualAdvise = (ManualAdvise) auditHeader.getAuditDetail().getModelData();
 		getManualAdviseDAO().delete(manualAdvise,TableType.MAIN_TAB);
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -204,7 +204,12 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	public ManualAdvise getApprovedManualAdvise(long adviseID) {
 		return getManualAdviseDAO().getManualAdviseById(adviseID,"_AView");
 	}	
-		
+
+	@Override
+	public String getTaxComponent(Long adviseID, String type) {
+		return getManualAdviseDAO().getTaxComponent(adviseID, type);
+	}
+	
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by
 	 * using businessValidation(auditHeader) method if there is any error or
@@ -227,10 +232,10 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
-		
+
 		String tranType="";
 		auditHeader = businessValidation(auditHeader,"doApprove");
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
@@ -241,7 +246,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 		getManualAdviseDAO().delete(manualAdvise, TableType.TEMP_TAB);
 
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(manualAdvise.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(manualAdviseDAO.getManualAdviseById(manualAdvise.getAdviseID(), ""));
 		}
@@ -275,96 +280,95 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(manualAdvise);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
-		
-		}
 
-		/**
-		 * doReject method do the following steps. 1) Do the Business validation by
-		 * using businessValidation(auditHeader) method if there is any error or
-		 * warning message then return the auditHeader. 2) Delete the record from
-		 * the workFlow table by using getManualAdviseDAO().delete with parameters
-		 * manualAdvise,"_Temp" 3) Audit the record in to AuditHeader and
-		 * AdtManualAdvise by using auditHeaderDAO.addAudit(auditHeader) for Work
-		 * flow
-		 * 
-		 * @param AuditHeader
-		 *            (auditHeader)
-		 * @return auditHeader
-		 */
-		@Override
-		public AuditHeader  doReject(AuditHeader auditHeader) {
-			logger.info(Literal.ENTERING);
-			
-			auditHeader = businessValidation(auditHeader,"doApprove");
-			if (!auditHeader.isNextProcess()) {
-				logger.info(Literal.LEAVING);
-				return auditHeader;
-			}
+	}
 
-			ManualAdvise manualAdvise = (ManualAdvise) auditHeader.getAuditDetail().getModelData();
-			
-			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			getManualAdviseDAO().delete(manualAdvise,TableType.TEMP_TAB);
-			
-			getAuditHeaderDAO().addAudit(auditHeader);
-			
+	/**
+	 * doReject method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) Delete the record from
+	 * the workFlow table by using getManualAdviseDAO().delete with parameters
+	 * manualAdvise,"_Temp" 3) Audit the record in to AuditHeader and
+	 * AdtManualAdvise by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
+	@Override
+	public AuditHeader  doReject(AuditHeader auditHeader) {
+		logger.info(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader,"doApprove");
+		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
 
-		/**
-		 * businessValidation method do the following steps. 1) get the details from
-		 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-		 * Record based on the record details. 4) Validate for any business
-		 * validation.
-		 * 
-		 * @param AuditHeader
-		 *            (auditHeader)
-		 * @return auditHeader
-		 */
-		private AuditHeader businessValidation(AuditHeader auditHeader, String method){
-			logger.debug(Literal.ENTERING);
-			
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
-			auditHeader.setAuditDetail(auditDetail);
-			auditHeader.setErrorList(auditDetail.getErrorDetails());
-			auditHeader=nextProcess(auditHeader);
+		ManualAdvise manualAdvise = (ManualAdvise) auditHeader.getAuditDetail().getModelData();
 
-			logger.debug(Literal.LEAVING);
-			return auditHeader;
-		}
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		getManualAdviseDAO().delete(manualAdvise,TableType.TEMP_TAB);
 
-		/**
-		 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-		 * from getManualAdviseDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
-		 * the to auditDeail Object
-		 * 
-		 * @param auditDetail
-		 * @param usrLanguage
-		 * @return
-		 */
-		
-		private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
-			logger.debug(Literal.ENTERING);
-			
-			// Write the required validation over hear.
-			
-			
-			logger.debug(Literal.LEAVING);
-			return auditDetail;
-		}
+		getAuditHeaderDAO().addAudit(auditHeader);
 
-		@Override
-		public List<ManualAdviseMovements> getAdivseMovements(long id) {
-			return getManualAdviseDAO().getAdviseMovements(id);
-		}
-		@Override
-		public FinanceMain getFinanceDetails(String finReference) {
-			return manualAdviseDAO.getFinanceDetails(finReference);
-		}
+		logger.info(Literal.LEAVING);
+		return auditHeader;
+	}
 
+	/**
+	 * businessValidation method do the following steps. 1) get the details from
+	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
+	 * Record based on the record details. 4) Validate for any business
+	 * validation.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
+		logger.debug(Literal.ENTERING);
+
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		auditHeader=nextProcess(auditHeader);
+
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
+
+	/**
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getManualAdviseDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
+	 * 
+	 * @param auditDetail
+	 * @param usrLanguage
+	 * @return
+	 */
+
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug(Literal.ENTERING);
+
+		// Write the required validation over hear.
+
+
+		logger.debug(Literal.LEAVING);
+		return auditDetail;
+	}
+
+	@Override
+	public List<ManualAdviseMovements> getAdivseMovements(long id) {
+		return getManualAdviseDAO().getAdviseMovements(id);
+	}
+	@Override
+	public FinanceMain getFinanceDetails(String finReference) {
+		return manualAdviseDAO.getFinanceDetails(finReference);
+	}
 
 }

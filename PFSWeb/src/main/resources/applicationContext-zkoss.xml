@@ -2878,6 +2878,7 @@
 		<property name="mailUtil" ref="mailUtil" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
+		<property name="manualAdviseService" ref="manualAdviseService" />
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->

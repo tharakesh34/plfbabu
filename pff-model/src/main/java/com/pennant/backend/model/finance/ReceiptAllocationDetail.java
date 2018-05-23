@@ -13,8 +13,8 @@ public class ReceiptAllocationDetail implements Entity{
 	private String typeDesc;
 	private long allocationTo;
 	private BigDecimal paidAmount = BigDecimal.ZERO;
+	private BigDecimal paidGST = BigDecimal.ZERO;
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
-	private String waiverAccepted = "";
 	
 	public ReceiptAllocationDetail() {
 		
@@ -95,12 +95,12 @@ public class ReceiptAllocationDetail implements Entity{
 		this.receiptID=id;
 	}
 
-	public String getWaiverAccepted() {
-		return waiverAccepted;
+	public BigDecimal getPaidGST() {
+		return paidGST;
 	}
 
-	public void setWaiverAccepted(String waiverAccepted) {
-		this.waiverAccepted = waiverAccepted;
+	public void setPaidGST(BigDecimal paidGST) {
+		this.paidGST = paidGST;
 	}
 	
 }

@@ -17,6 +17,12 @@ public class ManualAdviseMovements {
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
 	private String status;
 	
+	// GST Paid Fields
+	private BigDecimal paidCGST = BigDecimal.ZERO;
+	private BigDecimal paidSGST = BigDecimal.ZERO;
+	private BigDecimal paidUGST = BigDecimal.ZERO;
+	private BigDecimal paidIGST = BigDecimal.ZERO;
+	
 	// Enquiry Purpose
 	private String receiptMode;
 	
@@ -103,5 +109,31 @@ public class ManualAdviseMovements {
 	public void setFeeTypeDesc(String feeTypeDesc) {
 		this.feeTypeDesc = feeTypeDesc;
 	}
+	public BigDecimal getPaidCGST() {
+		return paidCGST;
+	}
+	public void setPaidCGST(BigDecimal paidCGST) {
+		this.paidCGST = paidCGST;
+	}
+	public BigDecimal getPaidSGST() {
+		return paidSGST;
+	}
+	public void setPaidSGST(BigDecimal paidSGST) {
+		this.paidSGST = paidSGST;
+	}
+	public BigDecimal getPaidUGST() {
+		return paidUGST;
+	}
+	public void setPaidUGST(BigDecimal paidUGST) {
+		this.paidUGST = paidUGST;
+	}
+	public BigDecimal getPaidIGST() {
+		return paidIGST;
+	}
+	public void setPaidIGST(BigDecimal paidIGST) {
+		this.paidIGST = paidIGST;
+	}
+	
+	
 
 }

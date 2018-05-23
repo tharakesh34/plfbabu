@@ -798,6 +798,7 @@ public class RepaymentProcessUtil {
 			ManualAdviseMovements movement = movements.get(m);
 
 			BigDecimal amount = BigDecimal.ZERO;
+			String keyCode = null;
 			if(StringUtils.isEmpty(movement.getFeeTypeCode())){
 
 				if(movementMap.containsKey("bounceChargePaid")){
@@ -810,6 +811,7 @@ public class RepaymentProcessUtil {
 					amount = movementMap.get("bounceChargeWaived");
 				}
 				movementMap.put("bounceChargeWaived",  amount.add(movement.getWaivedAmount()));
+				keyCode = "bounceCharge";
 			}else{
 				if(movementMap.containsKey(movement.getFeeTypeCode() + "_P")){
 					amount = movementMap.get(movement.getFeeTypeCode() + "_P");
@@ -822,6 +824,30 @@ public class RepaymentProcessUtil {
 				}
 				movementMap.put(movement.getFeeTypeCode() + "_W",  amount.add(movement.getWaivedAmount()));
 			}
+			// Tax Details
+			amount = BigDecimal.ZERO;
+			if(movementMap.containsKey(keyCode + "_CGST_P")){
+				amount = movementMap.get(keyCode + "_CGST_P");
+			}
+			movementMap.put(keyCode + "_CGST_P",  amount.add(movement.getPaidCGST()));
+
+			amount = BigDecimal.ZERO;
+			if(movementMap.containsKey(keyCode + "_SGST_P")){
+				amount = movementMap.get(keyCode + "_SGST_P");
+			}
+			movementMap.put(keyCode + "_SGST_P",  amount.add(movement.getPaidSGST()));
+
+			amount = BigDecimal.ZERO;
+			if(movementMap.containsKey(keyCode + "_IGST_P")){
+				amount = movementMap.get(keyCode + "_IGST_P");
+			}
+			movementMap.put(keyCode + "_IGST_P",  amount.add(movement.getPaidIGST()));
+
+			amount = BigDecimal.ZERO;
+			if(movementMap.containsKey(keyCode + "_UGST_P")){
+				amount = movementMap.get(keyCode + "_UGST_P");
+			}
+			movementMap.put(keyCode + "_UGST_P",  amount.add(movement.getPaidUGST()));
 		}
 		return movementMap;
 	}
@@ -845,6 +871,7 @@ public class RepaymentProcessUtil {
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", finFeeDetail.getNetAmount());
 				
 				if(StringUtils.equals(payType, RepayConstants.PAYTYPE_EXCESS)){
 					payType = "EX_";
@@ -856,6 +883,24 @@ public class RepaymentProcessUtil {
 					payType = "PB_";
 				}
 				dataMap.put(payType + finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
+				
+				//Calculated Amount 
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_C", finFeeDetail.getFinTaxDetails().getActualCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_C", finFeeDetail.getFinTaxDetails().getActualSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_C", finFeeDetail.getFinTaxDetails().getActualIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_C", finFeeDetail.getFinTaxDetails().getActualUGST());
+				
+				//Paid Amount 
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_P", finFeeDetail.getFinTaxDetails().getPaidCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_P", finFeeDetail.getFinTaxDetails().getPaidSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_P", finFeeDetail.getFinTaxDetails().getPaidIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_P", finFeeDetail.getFinTaxDetails().getPaidUGST());
+	
+				//Net Amount 
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_N", finFeeDetail.getFinTaxDetails().getNetCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_N", finFeeDetail.getFinTaxDetails().getNetSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_N", finFeeDetail.getFinTaxDetails().getNetIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_N", finFeeDetail.getFinTaxDetails().getNetUGST());
 			}
 		}
 
@@ -897,8 +942,24 @@ public class RepaymentProcessUtil {
 					if(StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_MANADV)){
 						if(allocation.getPaidAmount().compareTo(BigDecimal.ZERO) > 0 || 
 								allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0){
-							getManualAdviseDAO().updateAdvPayment(allocation.getAllocationTo(),
-									allocation.getPaidAmount(), allocation.getWaivedAmount(), TableType.MAIN_TAB);
+							
+							ManualAdvise advise = new ManualAdvise();
+							advise.setAdviseID(allocation.getAllocationTo());
+							advise.setPaidAmount(allocation.getPaidAmount());
+							advise.setWaivedAmount(allocation.getWaivedAmount());
+							
+							for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+								for (ManualAdviseMovements movement : receiptDetail.getAdvMovements()) {
+									if(allocation.getAllocationTo() == movement.getAdviseID()){
+										advise.setPaidCGST(advise.getPaidCGST().add(movement.getPaidCGST()));
+										advise.setPaidSGST(advise.getPaidSGST().add(movement.getPaidSGST()));
+										advise.setPaidIGST(advise.getPaidIGST().add(movement.getPaidIGST()));
+										advise.setPaidUGST(advise.getPaidUGST().add(movement.getPaidUGST()));
+									}
+								}
+							}
+							
+							getManualAdviseDAO().updateAdvPayment(advise , TableType.MAIN_TAB);
 						}
 					}
 					
@@ -916,8 +977,13 @@ public class RepaymentProcessUtil {
 							for (FinReceiptDetail receiptDetail : receiptDetails) {
 								for (ManualAdviseMovements movement : receiptDetail.getAdvMovements()) {
 									if(bounceAdvises.contains(movement.getAdviseID())){
-										getManualAdviseDAO().updateAdvPayment(movement.getAdviseID(),
-												movement.getPaidAmount(), movement.getWaivedAmount(), TableType.MAIN_TAB);
+										
+										ManualAdvise advise = new ManualAdvise();
+										advise.setAdviseID(movement.getAdviseID());
+										advise.setPaidAmount(movement.getPaidAmount());
+										advise.setWaivedAmount(movement.getWaivedAmount());
+										
+										getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
 									}
 								}
 							}

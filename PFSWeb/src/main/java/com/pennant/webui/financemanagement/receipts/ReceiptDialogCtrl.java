@@ -161,6 +161,7 @@ import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
 import com.pennant.backend.service.financemanagement.ProvisionService;
@@ -383,6 +384,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private transient ReceiptCalculator						receiptCalculator;
 	private transient FinanceReferenceDetailService			financeReferenceDetailService;
 	private transient AccrualService 						accrualService;
+	private transient ManualAdviseService 					manualAdviseService;
 
 	private transient AccountingDetailDialogCtrl			accountingDetailDialogCtrl			= null;
 	private transient DocumentDetailDialogCtrl				documentDetailDialogCtrl			= null;
@@ -1911,7 +1913,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// Calling for Past due Amount Auto Calculation Process
 		FinScheduleData aFinScheduleData = getFinanceDetailService().getFinSchDataForReceipt(this.finReference.getValue(), "_AView");
-		Map<String, BigDecimal> paidAllocatedMap = getReceiptCalculator().recalAutoAllocation(aFinScheduleData, 
+		FinanceDetail detail = new FinanceDetail();
+		detail.setFinReference(this.finReference.getValue());
+		detail.setFinScheduleData(aFinScheduleData);
+		Map<String, BigDecimal> paidAllocatedMap = getReceiptCalculator().recalAutoAllocation(detail, 
 				totReceiptAmount, valueDate, tempReceiptPurpose, false);
 
 		// Render Allocation Details & Manual Advises
@@ -2546,6 +2551,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			allocationDetail = new ReceiptAllocationDetail();
 
 			String allocationType = allocateTypes.get(i);
+			
+			// Done consider GST parameters , only setting for display purpose of data
+			if(allocationType.contains("GST")){
+				continue;
+			}
+			
 			long allocateTo = 0;
 			if(allocateTypes.get(i).contains("_")){
 				allocationType = allocateTypes.get(i).substring(0, allocateTypes.get(i).indexOf("_"));
@@ -2561,6 +2572,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if(this.listBoxManualAdvises.getFellowIfAny("AllocatePaid_"+allocateTypes.get(i)) != null){
 					CurrencyBox paidAllocate = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny("AllocatePaid_"+allocateTypes.get(i));
 					allocationDetail.setPaidAmount(PennantApplicationUtil.unFormateAmount(paidAllocate.getActualValue(), finFormatter));
+				}
+				
+				if(this.listBoxManualAdvises.getFellowIfAny("AllocateGSTPaid_"+allocateTypes.get(i)) != null){
+					Listcell paidAllocate = (Listcell) this.listBoxManualAdvises.getFellowIfAny("AllocateGSTPaid_"+allocateTypes.get(i));
+					allocationDetail.setPaidGST(PennantApplicationUtil.unFormateAmount(new BigDecimal(paidAllocate.getLabel().replaceAll(",", "")), finFormatter));
 				}
 
 				if(this.listBoxManualAdvises.getFellowIfAny("AllocateAdvWaived_"+allocateTypes.get(i)) != null){
@@ -3651,6 +3667,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			for (int i = 0; i < allocateTypes.size(); i++) {
 
 				String allocationType = allocateTypes.get(i);
+				
+				// Done consider GST parameters , only setting for display purpose of data
+				if(allocationType.contains("GST")){
+					continue;
+				}
+				
 				if(allocationMap.containsKey(allocationType)){
 					allocation = allocationMap.get(allocationType);
 				}else{
@@ -3665,6 +3687,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				item = new Listitem();
 				String label = Labels.getLabel("label_RecceiptDialog_AllocationType_"+allocationType);
+				boolean isManAdv = false;
+				if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_MANADV) || 
+						StringUtils.equals(allocationType, RepayConstants.ALLOCATION_BOUNCE)){
+					isManAdv = true;
+				}
 				if(allocateTypes.get(i).contains("_")){
 					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_MANADV)){
 						label = getReceiptData().getAllocationDescMap().get(allocateTypes.get(i));
@@ -3675,10 +3702,32 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				lc = new Listcell(label);
 				lc.setStyle("font-weight:bold;color: #191a1c;");
 				lc.setParent(item);
+				
+				// Due Splitting due to GST
+				if(isManAdv){
+					
+					BigDecimal gstAmount = BigDecimal.ZERO;
+					if(getReceiptData().getAllocationMap().containsKey(allocateTypes.get(i)+"_GST_I")){
+						gstAmount = getReceiptData().getAllocationMap().get(allocateTypes.get(i)+"_GST_I");
+					}else if(getReceiptData().getAllocationMap().containsKey(allocateTypes.get(i)+"_GST_E")){
+						gstAmount = getReceiptData().getAllocationMap().get(allocateTypes.get(i)+"_GST_E");
+						totalCalAmount = totalCalAmount.add(gstAmount);
+					}
+					
+					lc = new Listcell(PennantApplicationUtil.amountFormate(totalCalAmount.subtract(gstAmount), finFormatter));
+					lc.setStyle("text-align:right;");
+					lc.setId("AllocateActualDue_"+allocateTypes.get(i));
+					lc.setParent(item);
+					
+					lc = new Listcell(PennantApplicationUtil.amountFormate(gstAmount, finFormatter));
+					lc.setStyle("text-align:right;");
+					lc.setId("AllocateGSTDue_"+allocateTypes.get(i));
+					lc.setParent(item);
+				}
 
 				lc = new Listcell(PennantApplicationUtil.amountFormate(totalCalAmount, finFormatter));
 				lc.setId("AllocateAmount_"+allocateTypes.get(i));
-				lc.setStyle("text-align:right;");
+				lc.setStyle("text-align:right;font-weight:bold;");
 				lc.setParent(item);
 
 				lc = new Listcell();
@@ -3687,10 +3736,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				allocationPaid.setBalUnvisible(true);
 				setProps(allocationPaid, false, finFormatter, 120);
 				allocationPaid.setId("AllocatePaid_"+allocateTypes.get(i));
+				BigDecimal gstPaid = BigDecimal.ZERO;
 				if(allocatePaidMap != null){
 					if(allocatePaidMap.containsKey(allocateTypes.get(i))){
 						BigDecimal autoCalPaidAmt = allocatePaidMap.get(allocateTypes.get(i));
 						allocationPaid.setValue(PennantApplicationUtil.formateAmount(autoCalPaidAmt, finFormatter));
+						if(allocatePaidMap.containsKey(allocateTypes.get(i)+"_GST_I")){
+							gstPaid = allocatePaidMap.get(allocateTypes.get(i)+"_GST_I");
+						}else if(allocatePaidMap.containsKey(allocateTypes.get(i)+"_GST_E")){
+							gstPaid = allocatePaidMap.get(allocateTypes.get(i)+"_GST_E");
+						}
 					}else{
 						allocationPaid.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
 					}
@@ -3698,11 +3753,17 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					if(isUserAction){
 						if(paidAllocationMap != null && paidAllocationMap.containsKey("AllocatePaid_"+allocateTypes.get(i))){
 							allocationPaid.setValue(PennantApplicationUtil.formateAmount(paidAllocationMap.get("AllocatePaid_"+allocateTypes.get(i)), finFormatter));
+							if(paidAllocationMap.containsKey("AllocatePaid_"+allocateTypes.get(i)+"_GST_I")){
+								gstPaid = paidAllocationMap.get("AllocatePaid_"+allocateTypes.get(i)+"_GST_I");
+							}else if(paidAllocationMap.containsKey("AllocatePaid_"+allocateTypes.get(i)+"_GST_E")){
+								gstPaid = paidAllocationMap.get("AllocatePaid_"+allocateTypes.get(i)+"_GST_E");
+							}
 						}else{
 							allocationPaid.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
 						}
 					}else{
 						allocationPaid.setValue(PennantApplicationUtil.formateAmount(allocation.getPaidAmount(), finFormatter));
+						gstPaid = allocation.getPaidGST();
 						if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PRI)){
 							if(allocation.getPaidAmount().compareTo(totalCalAmount) > 0){
 								allocationPaid.setValue(PennantApplicationUtil.formateAmount(totalCalAmount, finFormatter));
@@ -3722,6 +3783,21 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				lc.appendChild(allocationPaid);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
+				
+				// Paid Splitting due to GST
+				if(isManAdv){
+					
+					BigDecimal totalPaid = PennantApplicationUtil.unFormateAmount(allocationPaid.getActualValue(), finFormatter);
+					lc = new Listcell(PennantApplicationUtil.amountFormate(totalPaid.subtract(gstPaid), finFormatter));
+					lc.setStyle("text-align:right;");
+					lc.setId("AllocateActualPaid_"+allocateTypes.get(i));
+					lc.setParent(item);
+					
+					lc = new Listcell(PennantApplicationUtil.amountFormate(gstPaid, finFormatter));
+					lc.setStyle("text-align:right;");
+					lc.setId("AllocateGSTPaid_"+allocateTypes.get(i));
+					lc.setParent(item);
+				}
 
 				lc = new Listcell();
 				CurrencyBox allocationWaived = new CurrencyBox();
@@ -3932,6 +4008,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		Listcell lc = new Listcell(Labels.getLabel("label_RecceiptDialog_AllocationType_Totals"));
 		lc.setStyle("font-weight:bold;");
 		lc.setParent(item);
+		
+		if(!isPastDue){
+			lc = new Listcell();
+			lc.setParent(item);
+
+			lc = new Listcell();
+			lc.setParent(item);
+		}
 
 		lc = new Listcell();
 		Label label = new Label(PennantAppUtil.amountFormate(dueAmount, formatter));
@@ -3946,6 +4030,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);
+		
+		if(!isPastDue){
+			lc = new Listcell();
+			lc.setParent(item);
+
+			lc = new Listcell();
+			lc.setParent(item);
+		}
 
 		lc = new Listcell();
 		label = new Label(PennantAppUtil.amountFormate(waivedAmount, formatter));
@@ -4071,8 +4163,38 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		BigDecimal paidAllocateAmt = PennantApplicationUtil.unFormateAmount(allocatePaid.getActualValue(), finFormatter);
 		BigDecimal waivedAllocateAmt = PennantApplicationUtil.unFormateAmount(allocateWaived.getActualValue(), finFormatter);
-		if(paidAllocateAmt.compareTo(pastdueAmt.subtract(waivedAllocateAmt)) > 0){
-			paidAllocateAmt = pastdueAmt.subtract(waivedAllocateAmt);
+		
+		// In case GST is applicable and GST Type is Exclusive
+		BigDecimal totalGSTPerc = null;
+		BigDecimal balamount = pastdueAmt.subtract(waivedAllocateAmt);
+		if(allocatePaid.getId().contains(RepayConstants.ALLOCATION_MANADV) ||
+				allocatePaid.getId().contains(RepayConstants.ALLOCATION_BOUNCE)){
+
+			String taxType = null;
+			if(allocatePaid.getId().contains(RepayConstants.ALLOCATION_MANADV)){
+				String adviseID = (allocatePaid.getId().replace("AllocatePaid_", "")).replaceAll(RepayConstants.ALLOCATION_MANADV+"_", "");
+				taxType = getManualAdviseService().getTaxComponent(Long.valueOf(adviseID),"_AView");
+			}else if(allocatePaid.getId().contains(RepayConstants.ALLOCATION_BOUNCE)){
+				taxType = SysParamUtil.getValueAsString("BOUNCE_TAX_TYPE");
+			}
+			
+			if(StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, taxType)){
+				
+				totalGSTPerc = getReceiptCalculator().getTaxPercentages(getFinanceDetail()).get("TOTALGST");
+				BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+				BigDecimal actualAmt = pastdueAmt.divide(percentage, 9, RoundingMode.HALF_DOWN);
+				pastdueAmt = CalculationUtil.roundAmount(actualAmt, getFinanceMain().getCalRoundingMode(), getFinanceMain().getRoundingTarget());
+				
+				balamount = pastdueAmt.subtract(waivedAllocateAmt);
+				
+				BigDecimal gstAmount = (balamount.multiply(totalGSTPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+				gstAmount = CalculationUtil.roundAmount(gstAmount, getFinanceMain().getCalRoundingMode(),getFinanceMain().getRoundingTarget());
+				balamount = balamount.add(gstAmount);
+			}
+		}
+		
+		if(paidAllocateAmt.compareTo(balamount) > 0){
+			paidAllocateAmt = balamount;
 			allocatePaid.setValue(PennantApplicationUtil.formateAmount(paidAllocateAmt, finFormatter));
 		}
 
@@ -4128,6 +4250,49 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				paidAllocationMap.put(allocatePFTPaid.getId(), actPftAdjust);
 			}
 		}
+		
+		// GST Amount calculation on manual Allocation
+		if(allocatePaid.getId().contains(RepayConstants.ALLOCATION_MANADV) ||
+				allocatePaid.getId().contains(RepayConstants.ALLOCATION_BOUNCE)){
+			
+			String adviseID = null;
+			String taxType = null;
+			boolean isBounce = false;
+			
+			if(allocatePaid.getId().contains(RepayConstants.ALLOCATION_MANADV)){
+				adviseID = (allocatePaid.getId().replace("AllocatePaid_", "")).replaceAll(RepayConstants.ALLOCATION_MANADV+"_", "");
+				taxType = getManualAdviseService().getTaxComponent(Long.valueOf(adviseID),"_AView");
+			}else if(allocatePaid.getId().contains(RepayConstants.ALLOCATION_BOUNCE)){
+				taxType = SysParamUtil.getValueAsString("BOUNCE_TAX_TYPE");
+				isBounce = true;
+			}
+			
+			if(StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, taxType) ||
+					StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, taxType)){
+				
+				if(totalGSTPerc == null){
+					totalGSTPerc = getReceiptCalculator().getTaxPercentages(getFinanceDetail()).get("TOTALGST");
+				}
+				BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+				BigDecimal actualAmt = paidAllocateAmt.divide(percentage, 9, RoundingMode.HALF_DOWN);
+				actualAmt = CalculationUtil.roundAmount(actualAmt, getFinanceMain().getCalRoundingMode(), getFinanceMain().getRoundingTarget());
+				BigDecimal gstAmount = paidAllocateAmt.subtract(actualAmt);
+				
+				if(isBounce){
+					if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+						paidAllocationMap.put(RepayConstants.ALLOCATION_BOUNCE + "_GST_E", gstAmount);
+					}else if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
+						paidAllocationMap.put(RepayConstants.ALLOCATION_BOUNCE + "_GST_I", gstAmount);
+					}
+				}else{
+					if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+						paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV + "_" + adviseID+"_GST_E", gstAmount);
+					}else if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
+						paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV + "_" + adviseID+"_GST_I", gstAmount);
+					}
+				}
+			}
+		}
 
 		// Setting to Map for future usage on Rendering
 		Map<String, BigDecimal> allocateTypePaidMap = null;
@@ -4167,8 +4332,38 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		BigDecimal paidAllocateAmt = PennantApplicationUtil.unFormateAmount(allocatePaid.getActualValue(), finFormatter);
 		BigDecimal waivedAllocateAmt = PennantApplicationUtil.unFormateAmount(allocateWaived.getActualValue(), finFormatter);
-		if(waivedAllocateAmt.compareTo(pastdueAmt.subtract(paidAllocateAmt)) > 0){
-			waivedAllocateAmt = pastdueAmt.subtract(paidAllocateAmt);
+		
+		
+		// In case GST is applicable and GST Type is Exclusive
+		BigDecimal totalGSTPerc = null;
+		BigDecimal balamount = pastdueAmt.subtract(paidAllocateAmt);
+		if(allocatePaid.getId().contains(RepayConstants.ALLOCATION_MANADV) ||
+				allocatePaid.getId().contains(RepayConstants.ALLOCATION_BOUNCE)){
+
+			String taxType = null;
+			if(allocatePaid.getId().contains(RepayConstants.ALLOCATION_MANADV)){
+				String adviseID = (allocatePaid.getId().replace("AllocatePaid_", "")).replaceAll(RepayConstants.ALLOCATION_MANADV+"_", "");
+				taxType = getManualAdviseService().getTaxComponent(Long.valueOf(adviseID),"_AView");
+			}else if(allocatePaid.getId().contains(RepayConstants.ALLOCATION_BOUNCE)){
+				taxType = SysParamUtil.getValueAsString("BOUNCE_TAX_TYPE");
+			}
+
+			if(StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, taxType)){
+
+				totalGSTPerc = getReceiptCalculator().getTaxPercentages(getFinanceDetail()).get("TOTALGST");
+				BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+				BigDecimal actualAmt = pastdueAmt.divide(percentage, 9, RoundingMode.HALF_DOWN);
+				pastdueAmt = CalculationUtil.roundAmount(actualAmt, getFinanceMain().getCalRoundingMode(), getFinanceMain().getRoundingTarget());
+				
+				BigDecimal actualPaidAmt = paidAllocateAmt.divide(percentage, 9, RoundingMode.HALF_DOWN);
+				paidAllocateAmt = CalculationUtil.roundAmount(actualPaidAmt, getFinanceMain().getCalRoundingMode(), getFinanceMain().getRoundingTarget());
+
+				balamount = pastdueAmt.subtract(paidAllocateAmt);
+			}
+		}
+
+		if(waivedAllocateAmt.compareTo(balamount) > 0){
+			waivedAllocateAmt = balamount;
 			allocateWaived.setValue(PennantApplicationUtil.formateAmount(waivedAllocateAmt, finFormatter));
 		}
 
@@ -5282,8 +5477,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 					// Bounce Charges
 					BigDecimal amount = BigDecimal.ZERO;
+					String keyCode = null;
 					if(StringUtils.isEmpty(movement.getFeeTypeCode())){
-						
+
 						if(movementMap.containsKey("bounceChargePaid")){
 							amount = movementMap.get("bounceChargePaid");
 						}
@@ -5294,6 +5490,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							amount = movementMap.get("bounceChargeWaived");
 						}
 						movementMap.put("bounceChargeWaived",  amount.add(movement.getWaivedAmount()));
+						keyCode = "bounceCharge";
 					}else{
 
 						// Receivable Advises
@@ -5307,7 +5504,35 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							amount = movementMap.get(movement.getFeeTypeCode() + "_W");
 						}
 						movementMap.put(movement.getFeeTypeCode() + "_W",  amount.add(movement.getWaivedAmount()));
+						
+						keyCode = movement.getFeeTypeCode();
 					}
+					
+					// Tax Details
+					amount = BigDecimal.ZERO;
+					if(movementMap.containsKey(keyCode + "_CGST_P")){
+						amount = movementMap.get(keyCode + "_CGST_P");
+					}
+					movementMap.put(keyCode + "_CGST_P",  amount.add(movement.getPaidCGST()));
+
+					amount = BigDecimal.ZERO;
+					if(movementMap.containsKey(keyCode + "_SGST_P")){
+						amount = movementMap.get(keyCode + "_SGST_P");
+					}
+					movementMap.put(keyCode + "_SGST_P",  amount.add(movement.getPaidSGST()));
+
+					amount = BigDecimal.ZERO;
+					if(movementMap.containsKey(keyCode + "_IGST_P")){
+						amount = movementMap.get(keyCode + "_IGST_P");
+					}
+					movementMap.put(keyCode + "_IGST_P",  amount.add(movement.getPaidIGST()));
+
+					amount = BigDecimal.ZERO;
+					if(movementMap.containsKey(keyCode + "_UGST_P")){
+						amount = movementMap.get(keyCode + "_UGST_P");
+					}
+					movementMap.put(keyCode + "_UGST_P",  amount.add(movement.getPaidUGST()));
+
 				}
 
 				// Accounting Postings Process Execution
@@ -5386,6 +5611,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", finFeeDetail.getNetAmount());
 				
 				if(StringUtils.equals(payType, RepayConstants.PAYTYPE_EXCESS)){
 					payType = "EX_";
@@ -5397,6 +5623,24 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					payType = "PB_";
 				}
 				dataMap.put(payType + finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
+				
+				//Calculated Amount 
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_C", finFeeDetail.getFinTaxDetails().getActualCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_C", finFeeDetail.getFinTaxDetails().getActualSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_C", finFeeDetail.getFinTaxDetails().getActualIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_C", finFeeDetail.getFinTaxDetails().getActualUGST());
+				
+				//Paid Amount 
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_P", finFeeDetail.getFinTaxDetails().getPaidCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_P", finFeeDetail.getFinTaxDetails().getPaidSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_P", finFeeDetail.getFinTaxDetails().getPaidIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_P", finFeeDetail.getFinTaxDetails().getPaidUGST());
+	
+				//Net Amount 
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_N", finFeeDetail.getFinTaxDetails().getNetCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_N", finFeeDetail.getFinTaxDetails().getNetSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_N", finFeeDetail.getFinTaxDetails().getNetIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_N", finFeeDetail.getFinTaxDetails().getNetUGST());
 			}
 		}
 
@@ -6957,5 +7201,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	public BigDecimal getCustPaidAmt() {	//Used in Fees Execution
 		return this.custPaid.getValue();
+	}
+
+	public ManualAdviseService getManualAdviseService() {
+		return manualAdviseService;
+	}
+
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
 	}
 }

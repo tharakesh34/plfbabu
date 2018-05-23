@@ -6655,6 +6655,11 @@
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="receiptService" ref="receiptService" />
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
 	</bean>
 
 	<!--================= Holiday Util =================== -->

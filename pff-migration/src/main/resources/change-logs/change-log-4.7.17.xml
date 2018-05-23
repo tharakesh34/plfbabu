@@ -29,7 +29,15 @@
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="1" author="Siva">
+		<sql>
+			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_CGST_P','Bounce charge CGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_SGST_P','Bounce charge SGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_IGST_P','Bounce charge IGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_UGST_P','Bounce charge UGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
 	

@@ -620,7 +620,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 
 			// calculate allocations
 			Map<String, BigDecimal> allocationMap = receiptCalculator.recalAutoAllocation(
-					financeDetail.getFinScheduleData(), detail.getPresentmentAmt(), detail.getSchDate(),
+					financeDetail, detail.getPresentmentAmt(), detail.getSchDate(),
 					receiptHeader.getReceiptPurpose(), true);
 			finReceiptData.setAllocationMap(allocationMap);
 

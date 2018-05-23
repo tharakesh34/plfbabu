@@ -89,7 +89,7 @@ public class ReceiptAllocationDetailDAOImpl extends BasisNextidDaoImpl<ReceiptAl
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReceiptID", receiptID);
 
-		StringBuilder selectSql = new StringBuilder(" Select ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount ");
+		StringBuilder selectSql = new StringBuilder(" Select ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount ,PaidGST, WaivedAmount ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append( " ,TypeDesc ");
 		}
@@ -135,8 +135,8 @@ public class ReceiptAllocationDetailDAOImpl extends BasisNextidDaoImpl<ReceiptAl
 		}
         insertSql.append("Insert Into ReceiptAllocationDetail");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount)");
-		insertSql.append(" Values(:ReceiptAllocationid,:ReceiptID , :AllocationID , :AllocationType , :AllocationTo , :PaidAmount , :WaivedAmount)");
+		insertSql.append(" (ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , PaidGST, WaivedAmount)");
+		insertSql.append(" Values(:ReceiptAllocationid,:ReceiptID , :AllocationID , :AllocationType , :AllocationTo , :PaidAmount ,:PaidGST, :WaivedAmount)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 

@@ -896,13 +896,25 @@
 											style="padding:0px;position:relative;">
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountRelatedTo.label')}"
-												sort="false" width="40%" />
+												sort="false" width="30%" />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_DueAmountOriginal.label')}"
+												align="right" sort="false" width="10%" />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_DueAmountGST.label')}"
+												align="right" sort="false" width="10%"  />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_DueAmount.label')}"
 												align="right" sort="false" width="20%" />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}"
 												align="right" sort="false" width="20%" />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_AmountPaidOriginalNow.label')}"
+												align="right" sort="false" width="10%"  />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_AmountPaidGSTNow.label')}"
+												align="right" sort="false" width="10%"  />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountWaivedNow.label')}"
 												align="right" sort="false" width="20%" />

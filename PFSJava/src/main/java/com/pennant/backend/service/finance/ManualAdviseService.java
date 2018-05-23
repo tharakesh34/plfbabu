@@ -59,5 +59,6 @@ public interface ManualAdviseService {
 	AuditHeader doReject(AuditHeader auditHeader);
 	List<ManualAdviseMovements> getAdivseMovements(long id);
 	FinanceMain getFinanceDetails(String finReference);
+	String getTaxComponent(Long adviseID, String type);
 	
 }

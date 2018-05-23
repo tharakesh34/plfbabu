@@ -1450,25 +1450,19 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	public BigDecimal getFeePaidAmount(int formatter){
 		logger.debug("Entering");
 		
-		Decimalbox actualBox;
-		Decimalbox waivedBox;
 		BigDecimal totalPaidAmt = BigDecimal.ZERO;
-		
 		if (this.finFeeDetailList != null && !this.finFeeDetailList.isEmpty()) {
 			for (FinFeeDetail finFeeDetail : this.finFeeDetailList) {
 				if (!finFeeDetail.isRcdVisible()) {
 					continue;
 				}
-				actualBox = (Decimalbox) this.listBoxFeeDetail.getFellow(getComponentId(FEE_UNIQUEID_ACTUALAMOUNT, finFeeDetail));
-				waivedBox = (Decimalbox) this.listBoxFeeDetail.getFellow(getComponentId(FEE_UNIQUEID_WAIVEDAMOUNT, finFeeDetail));
-				BigDecimal actualAmt = PennantAppUtil.unFormateAmount(actualBox.getValue(), formatter);
-				BigDecimal waivedAmt = PennantAppUtil.unFormateAmount(waivedBox.getValue(), formatter);
-				totalPaidAmt = totalPaidAmt.add(actualAmt.subtract(waivedAmt));
+				Decimalbox totalNetFeeBox = (Decimalbox) this.listBoxFeeDetail.getFellow(getComponentId(FEE_UNIQUEID_NET_TOTALAMOUNT, finFeeDetail));
+				BigDecimal netAmt = PennantAppUtil.unFormateAmount(totalNetFeeBox.getValue(), formatter);
+				totalPaidAmt = totalPaidAmt.add(netAmt);
 			}
 		}
 		
 		logger.debug("Leaving");
-		
 		return totalPaidAmt;
 	}
 
