@@ -258,4 +258,8 @@
 <changeSet   id="5.3" author="vijay">
 	<modifyDataType tableName="Adtverifications" columnName="nextrolecode" newDataType="character varying(500)"/>
 	</changeSet>
+	
+	<changeSet id="6" author="murthy.y">
+		<renameColumn tableName="adtverification_fi" oldColumnName="date" newColumnName="VerifiedDate"/>
+	</changeSet>
 </databaseChangeLog>

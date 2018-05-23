@@ -80,4 +80,7 @@
 			columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
 			constraintName="pk_adtverification_tv" />
 	</changeSet>
+	<changeSet id="3" author="murthy.y">
+		<renameColumn tableName="adtverification_tv" oldColumnName="date" newColumnName="VerifiedDate"/>
+	</changeSet>
 </databaseChangeLog>

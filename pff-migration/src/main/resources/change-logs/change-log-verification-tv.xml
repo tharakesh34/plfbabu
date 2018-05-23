@@ -1295,4 +1295,256 @@
 				where not (exists ( select 1 from verification_tv_temp where verification_tv_temp.verificationid = tv.verificationid))
 		</createView>
 	</changeSet>
+	<changeSet id="10" author="murthy.y">
+		<renameColumn tableName="verification_tv" oldColumnName="date" newColumnName="VerifiedDate"/>
+	</changeSet>
+	<changeSet id="10.1" author="murthy.y">
+		<renameColumn tableName="verification_tv_temp" oldColumnName="date" newColumnName="VerifiedDate"/>
+	</changeSet>
+	<changeSet id="10.2" author="murthy.y">
+		<createView viewName="verification_tv_view" replaceIfExists="true">
+			select tv.verificationid, 
+				tv.agentcode,  
+				tv.agentname, 
+				tv.type, 
+				tv.verifieddate, 
+				tv.status,
+				cs.collateraltype,
+				cs.collateralccy,
+				cs.collateralloc,
+				tv.reason, 
+				tv.valuationamount, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				tv.summaryremarks,
+				tv.sourceformname,
+				tv.verificationformname,
+				tv.version, 
+				tv.lastmntby, 
+				tv.lastmnton, 
+				tv.recordstatus, 
+				tv.rolecode, 
+				tv.nextrolecode,
+				tv.taskid, 
+				tv.nexttaskid, 
+				tv.recordtype, 
+				tv.workflowid, 
+				tv.observationremarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.createdon, 
+				v.agency, 
+				a.dealername as agencyname,
+				v.custid, 
+				c.custshrtname as custname, 
+				cs.collateralref, 
+				cpnh.phonenumber as contactnumber1,
+				cpnl.phonenumber as contactnumber2
+				from verification_tv_temp tv
+				join verifications v on v.id = tv.verificationid
+				join collateralsetup cs on cs.collateralref = v.referencefor
+				join collateralstructure cst on cst.collateraltype = cs.collateraltype
+	            left join amtvehicledealer a on a.dealerid = v.agency
+				left join customers c on c.custid = v.custid
+				left join customerphonenumbers cpnh on cpnh.phonecustid = c.custid and cpnh.phonetypepriority = 5
+				left join customerphonenumbers cpnl on cpnl.phonecustid = c.custid and cpnl.phonetypepriority = 4
+				left join reasons_aview r1 on r1.id = tv.reason
+				union all
+				select tv.verificationid, 
+				tv.agentcode,  
+				tv.agentname, 
+				tv.type, 
+				tv.verifieddate, 
+				tv.status,
+				cs.collateraltype,
+				cs.collateralccy,
+				cs.collateralloc,
+				tv.reason, 
+				tv.valuationamount, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				tv.summaryremarks,
+				tv.sourceformname,
+				tv.verificationformname,
+				tv.version, 
+				tv.lastmntby, 
+				tv.lastmnton, 
+				tv.recordstatus, 
+				tv.rolecode, 
+				tv.nextrolecode,
+				tv.taskid, 
+				tv.nexttaskid, 
+				tv.recordtype, 
+				tv.workflowid, 
+				tv.observationremarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.createdon, 
+				v.agency, 
+				a.dealername as agencyname,
+				v.custid, 
+				c.custshrtname as custname, 
+				cs.collateralref, 
+				cpnh.phonenumber as contactnumber1,
+				cpnl.phonenumber as contactnumber2
+				from verification_tv tv
+				join verifications v on v.id = tv.verificationid
+				join collateralsetup cs on cs.collateralref = v.referencefor
+				join collateralstructure cst on cst.collateraltype = cs.collateraltype
+	            left join amtvehicledealer a on a.dealerid = v.agency
+				left join customers c on c.custid = v.custid
+				left join customerphonenumbers cpnh on cpnh.phonecustid = c.custid and cpnh.phonetypepriority = 5
+				left join customerphonenumbers cpnl on cpnl.phonecustid = c.custid and cpnl.phonetypepriority = 4
+				left join reasons_aview r1 on r1.id = tv.reason
+				where not (exists ( select 1 from verification_tv_temp where verification_tv_temp.verificationid = tv.verificationid))
+		</createView>
+	</changeSet>
+	<changeSet id="10.3" author="murthy.y">
+		<createView viewName="verification_tv_view" replaceIfExists="true">
+			select tv.verificationid, 
+				tv.agentcode,  
+				tv.agentname, 
+				tv.type, 
+				tv.verifieddate, 
+				tv.status,
+				cs.collateraltype,
+				cs.collateralccy,
+				cs.collateralloc,
+				tv.reason, 
+				tv.valuationamount, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				tv.summaryremarks,
+				tv.sourceformname,
+				tv.verificationformname,
+				tv.version, 
+				tv.lastmntby, 
+				tv.lastmnton, 
+				tv.recordstatus, 
+				tv.rolecode, 
+				tv.nextrolecode,
+				tv.taskid, 
+				tv.nexttaskid, 
+				tv.recordtype, 
+				tv.workflowid, 
+				tv.observationremarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.createdon, 
+				v.agency, 
+				a.dealername as agencyname,
+				v.custid, 
+				c.custshrtname as custname, 
+				cs.collateralref, 
+				cpnh.phonenumber as contactnumber1,
+				cpnl.phonenumber as contactnumber2
+				from verification_tv tv
+				join verifications v on v.id = tv.verificationid
+				join collateralsetup cs on cs.collateralref = v.referencefor
+				join collateralstructure cst on cst.collateraltype = cs.collateraltype
+	            left join amtvehicledealer a on a.dealerid = v.agency
+				left join customers c on c.custid = v.custid
+				left join customerphonenumbers cpnh on cpnh.phonecustid = c.custid and cpnh.phonetypepriority = 5
+				left join customerphonenumbers cpnl on cpnl.phonecustid = c.custid and cpnl.phonetypepriority = 4
+				left join reasons_aview r1 on r1.id = tv.reason
+		</createView>
+	</changeSet>
+	<changeSet id="10.4" author="murthy.y">
+		<createView viewName="verification_tv_view" replaceIfExists="true">
+			select tv.verificationid, 
+				tv.agentcode,  
+				tv.agentname, 
+				tv.type, 
+				tv.verifieddate, 
+				tv.status,
+				cs.collateraltype,
+				cs.collateralccy,
+				cs.collateralloc,
+				tv.reason, 
+				tv.valuationamount, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				tv.summaryremarks,
+				tv.sourceformname,
+				tv.verificationformname,
+				tv.version, 
+				tv.lastmntby, 
+				tv.lastmnton, 
+				tv.recordstatus, 
+				tv.rolecode, 
+				tv.nextrolecode,
+				tv.taskid, 
+				tv.nexttaskid, 
+				tv.recordtype, 
+				tv.workflowid, 
+				tv.observationremarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.createdon, 
+				v.agency, 
+				a.dealername as agencyname,
+				v.custid, 
+				c.custshrtname as custname, 
+				cs.collateralref, 
+				cpnh.phonenumber as contactnumber1,
+				cpnl.phonenumber as contactnumber2
+				from verification_tv_temp tv
+				join verifications v on v.id = tv.verificationid
+				join collateralsetup cs on cs.collateralref = v.referencefor
+				join collateralstructure cst on cst.collateraltype = cs.collateraltype
+	            left join amtvehicledealer a on a.dealerid = v.agency
+				left join customers c on c.custid = v.custid
+				left join customerphonenumbers cpnh on cpnh.phonecustid = c.custid and cpnh.phonetypepriority = 5
+				left join customerphonenumbers cpnl on cpnl.phonecustid = c.custid and cpnl.phonetypepriority = 4
+				left join reasons_aview r1 on r1.id = tv.reason
+				union all
+				select tv.verificationid, 
+				tv.agentcode,  
+				tv.agentname, 
+				tv.type, 
+				tv.verifieddate, 
+				tv.status,
+				cs.collateraltype,
+				cs.collateralccy,
+				cs.collateralloc,
+				tv.reason, 
+				tv.valuationamount, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				tv.summaryremarks,
+				tv.sourceformname,
+				tv.verificationformname,
+				tv.version, 
+				tv.lastmntby, 
+				tv.lastmnton, 
+				tv.recordstatus, 
+				tv.rolecode, 
+				tv.nextrolecode,
+				tv.taskid, 
+				tv.nexttaskid, 
+				tv.recordtype, 
+				tv.workflowid, 
+				tv.observationremarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.createdon, 
+				v.agency, 
+				a.dealername as agencyname,
+				v.custid, 
+				c.custshrtname as custname, 
+				cs.collateralref, 
+				cpnh.phonenumber as contactnumber1,
+				cpnl.phonenumber as contactnumber2
+				from verification_tv tv
+				join verifications v on v.id = tv.verificationid
+				join collateralsetup cs on cs.collateralref = v.referencefor
+				join collateralstructure cst on cst.collateraltype = cs.collateraltype
+	            left join amtvehicledealer a on a.dealerid = v.agency
+				left join customers c on c.custid = v.custid
+				left join customerphonenumbers cpnh on cpnh.phonecustid = c.custid and cpnh.phonetypepriority = 5
+				left join customerphonenumbers cpnl on cpnl.phonecustid = c.custid and cpnl.phonetypepriority = 4
+				left join reasons_aview r1 on r1.id = tv.reason
+				where not (exists ( select 1 from verification_tv_temp where verification_tv_temp.verificationid = tv.verificationid))
+		</createView>
+	</changeSet>
 </databaseChangeLog>
