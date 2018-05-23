@@ -96,8 +96,10 @@
 		<property name="serviceUrl" value="${niyogin.tally.url}" />
 	</bean>		
 	<bean id="mandateProcess" class="com.pennanttech.niyogin.mandate.MandateProcess"  parent="abstractMandateProcess"/>
-	<bean id="presentmentRequest" class="com.pennanttech.pff.presentment.PresentmentRequest"
-		parent="abstractMandateProcess" />
+	<!-- <bean id="presentmentRequest" class="com.pennanttech.pff.presentment.PresentmentRequest"
+		parent="abstractMandateProcess" /> -->
+	<bean id="presentmentProcess" class="com.pennanttech.pff.presentment.AbstractPresentmentProcess" scope="prototype" parent="abstractInterface" />
+		
 	<bean id="disbursementRequest" class="com.pennanttech.pff.disbursement.DisbursementRequest"
 		parent="abstarctDisbursementRequest" />
 	<bean id="disbursementResponse" class="com.pennanttech.pff.disbursement.DisbursementResponse"
