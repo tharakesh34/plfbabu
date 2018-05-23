@@ -634,7 +634,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 
 	@Override
 	public void save(TechnicalVerification technicalVerification, TableType tempTab) {
-		setAudit(technicalVerification);
+		setWorkFlowDetails(technicalVerification);
 		technicalVerificationDAO.save(technicalVerification, tempTab);
 		technicalVerificationDAO.saveCollateral(technicalVerification.getCollateralRef(),
 				technicalVerification.getCollateralType(), technicalVerification.getVerificationId());
@@ -736,11 +736,11 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		tv.setVersion(1);
 		tv.setLastMntBy(verification.getLastMntBy());
 		tv.setLastMntOn(verification.getLastMntOn());
-		setAudit(tv);
+		setWorkFlowDetails(tv);
 		verification.setTechnicalVerification(tv);
 	}
 
-	private void setAudit(TechnicalVerification tv) {
+	private void setWorkFlowDetails(TechnicalVerification tv) {
 		String workFlowType = ModuleUtil.getWorkflowType("TechnicalVerification");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workFlowType);
 		WorkflowEngine engine = new WorkflowEngine(

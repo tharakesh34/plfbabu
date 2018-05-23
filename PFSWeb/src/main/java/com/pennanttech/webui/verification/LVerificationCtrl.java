@@ -60,9 +60,9 @@ import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.Module;
 import com.pennanttech.pennapps.pff.verification.RequestType;
-import com.pennanttech.pennapps.pff.verification.Status;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
+import com.pennanttech.pennapps.pff.verification.fi.LVStatus;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -364,8 +364,8 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			//Status
 			listCell = new Listcell();
 			Label status = new Label();
-			if (Status.getType(vrf.getStatus()) != null) {
-				status.setValue(Status.getType(vrf.getStatus()).getValue());
+			if (vrf.getStatus() != 0) {
+				status.setValue(LVStatus.getType(vrf.getStatus()).getValue());
 			}
 			listCell.appendChild(status);
 			listCell.setParent(item);
@@ -643,8 +643,8 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			//Status
 			listCell = new Listcell();
 			Label status = new Label();
-			if (Status.getType(vrf.getStatus()) != null) {
-				status.setValue(Status.getType(vrf.getStatus()).getValue());
+			if (vrf.getStatus() != 0) {
+				status.setValue(LVStatus.getType(vrf.getStatus()).getValue());
 			}
 			listCell.appendChild(status);
 			listCell.setParent(item);

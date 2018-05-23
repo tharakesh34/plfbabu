@@ -66,7 +66,9 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -79,9 +81,10 @@ import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.Module;
 import com.pennanttech.pennapps.pff.verification.RequestType;
-import com.pennanttech.pennapps.pff.verification.Status;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
+import com.pennanttech.pennapps.pff.verification.dao.FieldInvestigationDAO;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
+import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
@@ -110,6 +113,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private RiskContainmentUnitService riskContainmentUnitService;
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
+	@Autowired
+	private FieldInvestigationDAO fieldInvestigationDAO;
+	@Autowired
+	private CustomerDetailsService customerDetailsService;
 
 	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType,
 			String tableType, String auditTranType, boolean isInitTab) {
@@ -169,7 +176,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					item.setReinitid(null);
 				}
 				if (item.isNew()) {
-					setVerificationData(financeDetail, item, verificationType);
+					if (verificationType != VerificationType.FI) {
+						setVerificationData(financeDetail, item, verificationType);
+					}
 					verificationDAO.save(item, TableType.MAIN_TAB);
 				} else {
 					verificationDAO.update(item, TableType.MAIN_TAB);
@@ -179,7 +188,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 						verification.getNextTaskId().replace(";", "")) == Flow.SUCCESSOR) {
 					if (!idList.contains(item.getId())) {
 						if (verificationType == VerificationType.FI) {
-							saveFI(customerDetailsList, item);
+							saveFI(financeDetail, item);
 						} else if (verificationType == VerificationType.TV) {
 							saveTV(item);
 						} else if (verificationType == VerificationType.LV) {
@@ -259,7 +268,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		item.setDecision(Decision.SELECT.getKey());
 		item.setRequestType(RequestType.INITIATE.getKey());
 		item.setReason(null);
-		setVerificationData(financeDetail, item, verificationType);
+		if (verificationType != VerificationType.FI) {
+			setVerificationData(financeDetail, item, verificationType);
+		}
 
 		verificationDAO.save(item, TableType.MAIN_TAB);
 
@@ -267,7 +278,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		verificationDAO.updateReInit(reInit, TableType.MAIN_TAB);
 
 		if (verificationType == VerificationType.FI) {
-			saveFI(customerDetailsList, item);
+			saveFI(financeDetail, item);
 		} else if (verificationType == VerificationType.TV) {
 			saveTV(item);
 		} else if (verificationType == VerificationType.LV) {
@@ -345,22 +356,38 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		legalVerificationService.saveDocuments(verification.getLvDocuments(), TableType.MAIN_TAB);
 	}
 
-	private void saveFI(List<CustomerDetails> customerDetailsList, Verification item) {
-		if (item.getFieldInvestigation() == null) {
-			for (CustomerDetails customerDetails : customerDetailsList) {
-				fieldInvestigationService.save(customerDetails, customerDetails.getCustomerPhoneNumList(), item);
+	private void saveFI(FinanceDetail financeDetail, Verification item) {
+		List<CustomerDetails> customerDetails = new ArrayList<>();
+		customerDetails.add(financeDetail.getCustomerDetails());
+		for (JointAccountDetail jointAccountDetail : financeDetail.getJountAccountDetailList()) {
+			customerDetails.add(customerDetailsService.getApprovedCustomerById(jointAccountDetail.getCustID()));
+		}
+		for (CustomerDetails custDetails : customerDetails) {
+			Customer customer = custDetails.getCustomer();
+
+			if (StringUtils.equals(customer.getCustCIF(), item.getReference())) {
+				item.setCustId(customer.getCustID());
+
+				if (item.getFieldInvestigation() == null) {
+					FieldInvestigation fi = fieldInvestigationDAO.getFieldInvestigation(item.getId(), "_view");
+
+					if (fi == null) {
+						fieldInvestigationService.save(custDetails, custDetails.getCustomerPhoneNumList(), item);
+					}
+
+				} else if (item.getRequestType() == RequestType.INITIATE.getKey()) {
+					FieldInvestigation fi = item.getFieldInvestigation();
+					fi.setVerificationId(item.getId());
+					fi.setLastMntOn(item.getLastMntOn());
+					fi.setAgentCode("");
+					fi.setAgencyName("");
+					fi.setVerifiedDate(null);
+					fi.setReason(0L);
+					fi.setSummaryRemarks("");
+					fi.setStatus(0);
+					fieldInvestigationService.save(fi, TableType.TEMP_TAB);
+				}
 			}
-		} else if (item.getRequestType() == RequestType.INITIATE.getKey()) {
-			FieldInvestigation fi = item.getFieldInvestigation();
-			fi.setVerificationId(item.getId());
-			fi.setLastMntOn(item.getLastMntOn());
-			fi.setAgentCode("");
-			fi.setAgencyName("");
-			fi.setVerifiedDate(null);
-			fi.setReason(0L);
-			fi.setSummaryRemarks("");
-			fi.setStatus(0);
-			fieldInvestigationService.save(fi, TableType.TEMP_TAB);
 		}
 	}
 
@@ -748,7 +775,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 			verification.setLastAgency(verification.getLastAgency());
 
-			if (verification.getVerificationType() == VerificationType.FI.getKey() && fieldInvestigationService.isAddressChanged(verification)) {
+			if (verification.getVerificationType() == VerificationType.FI.getKey()
+					&& !fieldInvestigationService.isAddressChanged(verification)) {
 				verification.setLastStatus(lastStatus.getStatus());
 				verification.setLastVerificationDate(lastStatus.getVerificationDate());
 				verification.setVersion(lastStatus.getVersion());
@@ -756,7 +784,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			} else {
 				verification.setLastStatus(0);
 				verification.setLastVerificationDate(null);
-				}
+			}
 		}
 	}
 
@@ -778,7 +806,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private void setDecision(int verificationType, List<Verification> verifications) {
 
 		for (Verification verification : verifications) {
-			if ((verification.getStatus() == Status.POSITIVE.getKey()
+			if ((verification.getStatus() == FIStatus.POSITIVE.getKey()
 					|| verification.getRequestType() == RequestType.NOT_REQUIRED.getKey())
 					&& verification.getDecision() != Decision.RE_INITIATE.getKey()) {
 				verification.setDecision(Decision.APPROVE.getKey());
@@ -845,8 +873,11 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (technicalVerificationService.getVerificationinFromRecording(verification.getId()) != null) {
 				exists = true;
 			}
+		} else if (verificationType == VerificationType.FI) {
+			if (fieldInvestigationService.getVerificationinFromRecording(verification.getId()) != null) {
+				exists = true;
+			}
 		}
-
 		return exists;
 	}
 }

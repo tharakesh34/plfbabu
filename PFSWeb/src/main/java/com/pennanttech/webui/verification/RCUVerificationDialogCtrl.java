@@ -59,9 +59,9 @@ import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.RequestType;
-import com.pennanttech.pennapps.pff.verification.Status;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
+import com.pennanttech.pennapps.pff.verification.fi.RCUStatus;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -690,6 +690,13 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 				}
 				fillComboBox(requestType, vrf.getRequestType(), list);
+			} else if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
+				for (ValueLabel valueLabel : RequestType.getList()) {
+					if (Integer.parseInt(valueLabel.getValue()) != RequestType.NOT_REQUIRED.getKey()) {
+						list.add(valueLabel);
+					}
+				}
+				fillComboBox(requestType, vrf.getRequestType(), list);
 			} else {
 				fillComboBox(requestType, vrf.getRequestType(), RequestType.getList());
 			}
@@ -733,8 +740,12 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			//Status
 			listCell = new Listcell();
 			Label status = new Label();
-			if (Status.getType(vrf.getStatus()) != null) {
-				status.setValue(Status.getType(vrf.getStatus()).getValue());
+			if (vrf.getStatus() != 0) {
+				if (initType) {
+					status.setValue(RCUStatus.getType(vrf.getLastStatus()).getValue());
+				} else {
+					status.setValue(RCUStatus.getType(vrf.getStatus()).getValue());
+				}
 			}
 			listCell.appendChild(status);
 			listCell.setParent(item);
@@ -754,29 +765,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
 
-				List<ValueLabel> decisionList = new ArrayList<>();
-				if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-						|| vrf.getStatus() == Status.POSITIVE.getKey()) {
-					decisionList.add(
-							new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
-					decisionList
-							.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
-					if (vrf.getDecision() == Decision.SELECT.getKey()) {
-						vrf.setDecision(Decision.APPROVE.getKey());
-					}
-					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-				} else if (vrf.getStatus() == Status.NOTCMPLTD.getKey()
-						|| vrf.getStatus() == Status.NEGATIVE.getKey()) {
-					decisionList.add(
-							new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
-					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-				} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
-					decisionList.add(
-							new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
-					fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-				} else {
-					fillComboBox(decision, vrf.getDecision(), Decision.getList());
-				}
+				fillDecision(vrf, decision);
 
 				decision.setParent(listCell);
 				listCell.setParent(item);
@@ -847,6 +836,27 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void fillDecision(Verification vrf, Combobox decision) {
+		List<ValueLabel> decisionList = new ArrayList<>();
+		if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()
+				|| vrf.getStatus() == RCUStatus.POSITIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
+			decisionList.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
+			if (vrf.getDecision() == Decision.SELECT.getKey()) {
+				vrf.setDecision(Decision.APPROVE.getKey());
+			}
+			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+		} else if (vrf.getStatus() == RCUStatus.NEGATIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
+			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+		} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
+			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
+		} else {
+			fillComboBox(decision, vrf.getDecision(), Decision.getList());
+		}
 	}
 
 	private List<String> getRCURequiredDocs() {

@@ -47,9 +47,13 @@ public interface FieldInvestigationService {
 
 	boolean isAddressesAdded(List<CustomerAddres> screenCustomerAddresses, List<CustomerAddres> savedCustomerAddresses);
 
-	boolean isAddressChanged(CustomerAddres newAddress, CustomerAddres oldAddress);
-
 	void save(FieldInvestigation fieldInvestigation, TableType tempTab);
 
 	boolean isAddressChanged(Verification verification);
+
+	FieldInvestigation getVerificationinFromRecording(long verificationId);
+
+	boolean isAddressChanged(long verificationId, CustomerAddres customerAddres);
+
+	boolean isAddressChange(CustomerAddres oldAddress, CustomerAddres newAddress);
 }

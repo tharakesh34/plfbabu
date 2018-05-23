@@ -113,7 +113,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.constants.InterfaceConstants;
@@ -125,7 +124,6 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
-import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 
@@ -1028,12 +1026,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		}
 		
-		// FI Init Verification
-		if (financeDetail.isFiInitTab()) {
-			financeDetail.setFiVerification(new Verification());
-			financeDetailService.setFIInitVerification(financeDetail);
-		}
-				
 		showDetailView(financeDetail);
 		logger.debug("Leaving " + event.toString());
 	}

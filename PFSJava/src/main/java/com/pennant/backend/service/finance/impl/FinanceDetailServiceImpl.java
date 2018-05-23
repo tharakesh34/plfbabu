@@ -579,18 +579,21 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getFiVerification() == null) {
 				financeDetail.setFiVerification(new Verification());
 			}
-			setFIInitVerification(financeDetail);
+			
+			setVerificationData(financeDetail,financeDetail.getFiVerification());
+		//	setFIInitVerification(financeDetail);
 		}
 		// FI Approval Verification
 		if (financeDetail.isFiApprovalTab()) {
-			Verification verification =new Verification();
+			Verification verification = new Verification();
 			verification.getCustomerDetailsList().add(financeDetail.getCustomerDetails());
 			for (JointAccountDetail jointAccountDetail : financeDetail.getJountAccountDetailList()) {
 				verification.getCustomerDetailsList()
 						.add(getCustomerDetailsService().getApprovedCustomerById(jointAccountDetail.getCustID()));
 			}
 			String keyRef = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-			List<Verification> verifications = verificationService.getVerifications(keyRef,VerificationType.FI.getKey());
+			List<Verification> verifications = verificationService.getVerifications(keyRef,
+					VerificationType.FI.getKey());
 			List<FieldInvestigation> fiList = fieldInvestigationService.getList(keyRef);
 			for (Verification vrf : verifications) {
 				for (FieldInvestigation fi : fiList) {

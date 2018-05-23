@@ -180,7 +180,6 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -209,7 +208,6 @@ import com.pennant.backend.model.finance.FinanceMainExt;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
-import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
@@ -5814,13 +5812,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!processCustomerDetails(aFinanceDetail, validatePhone)) {
 				return;
 			} else {
-				if (financeDetail.isFiInitTab()) {
+				/*if (financeDetail.isFiInitTab()) {
 					Verification verification = financeDetail.getFiVerification();
 					if(aFinanceDetail.isFiInitTab() && isAddressChanged(aFinanceDetail, verification,false)){
 						addNewFiVerification(aFinanceDetail);
 						return;
 					}
-				}
+				}*/
 			}
 		}
 
@@ -5873,13 +5871,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (jointAccountDetailDialogCtrl.getJountAccountDetailList() != null
 					&& jointAccountDetailDialogCtrl.getJountAccountDetailList().size() > 0) {
 				jointAccountDetailDialogCtrl.doSave_JointAccountDetail(aFinanceDetail);
-				if (financeDetail.isFiInitTab()) {
+				/*if (financeDetail.isFiInitTab()) {
 					Verification verification = financeDetail.getFiVerification();
 					if (aFinanceDetail.isFiInitTab() && isAddressChanged(aFinanceDetail, verification, true)) {
 						addNewFiVerification(aFinanceDetail);
 						return;
 					}
-				}
+				}*/
 			}
 		} else {
 			aFinanceDetail.setJountAccountDetailList(null);
@@ -16017,6 +16015,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setJointAccountDetailDialogCtrl(JointAccountDetailDialogCtrl jointAccountDetailDialogCtrl) {
 		this.jointAccountDetailDialogCtrl = jointAccountDetailDialogCtrl;
+		this.jointAccountDetailDialogCtrl.setFieldVerificationDialogCtrl(fieldVerificationDialogCtrl);
 	}
 
 	public AgreementDetailDialogCtrl getAgreementDetailDialogCtrl() {
@@ -16789,8 +16788,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFieldVerificationDialogCtrl(FieldVerificationDialogCtrl fieldVerificationDialogCtrl) {
 		this.fieldVerificationDialogCtrl = fieldVerificationDialogCtrl;
+		this.customerDialogCtrl.setFieldVerificationDialogCtrl(fieldVerificationDialogCtrl);
 	}
-	
+
 	public TVerificationDialogCtrl gettVerificationDialogCtrl() {
 		return tVerificationDialogCtrl;
 	}
@@ -16842,7 +16842,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			map.put("financeMainBaseCtrl",this);
 			map.put("finHeaderList", getFinBasicDetails());
-			map.put("verification", financeDetail.getFiVerification());
+			map.put("financeDetail", financeDetail);
 			map.put("InitType", true);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/FIInitiation.zul", getTabpanel(AssetConstants.UNIQUE_ID_FIINITIATION), map);
 		}
@@ -16871,66 +16871,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("financeMainBaseCtrl",this);
 			map.put("finHeaderList", getFinBasicDetails());
-			map.put("verification", financeDetail.getFiVerification());
+			map.put("financeDetail", financeDetail);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/FIApproval.zul", getTabpanel(AssetConstants.UNIQUE_ID_FIAPPROVAL), map);
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
-	private boolean isAddressChanged(FinanceDetail aFinanceDetail, Verification verification, boolean jointAcc) {
-		List<CustomerDetails> screenCustomers = new ArrayList<>();
-		screenCustomers.add(aFinanceDetail.getCustomerDetails());
-		if (verification.getCustomerDetailsList().isEmpty() && !screenCustomers.isEmpty()) {
-			return true;
-		}
-		for (JointAccountDetail jointAccountDetail : aFinanceDetail.getJountAccountDetailList()) {
-			screenCustomers.add(getCustomerDetailsService().getApprovedCustomerById(jointAccountDetail.getCustID()));
-		}
-		if (screenCustomers.size() != verification.getCustomerDetailsList().size() && jointAcc) {
-			return true;
-		}
-		for (CustomerDetails screenCustomer : screenCustomers) {
-			for (CustomerDetails savedcustomer : verification.getCustomerDetailsList()) {
-				
-				if(savedcustomer.getAddressList() == null || screenCustomer.getAddressList() == null) {
-					continue;
-				}			
-				
-				
-				if (screenCustomer.getCustID() == savedcustomer.getCustID()) {
-					if (fieldInvestigationService.isAddressesAdded(screenCustomer.getAddressList(),
-							savedcustomer.getAddressList())
-							|| fieldInvestigationService.isAddressesAdded(savedcustomer.getAddressList(),
-									screenCustomer.getAddressList())) {
-						return true;
-					} else {
-						for (CustomerAddres screenaddres : screenCustomer.getAddressList()) {
-							for (CustomerAddres oldAddres : savedcustomer.getAddressList()) {
-								if ((oldAddres.getCustAddrType().equals(screenaddres.getCustAddrType()) && (!StringUtils
-										.isEmpty(screenaddres.getRecordType())
-										&& (screenaddres.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
-												|| screenaddres.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN))))
-										|| (oldAddres.getCustAddrType().equals(screenaddres.getCustAddrType())
-												&& fieldInvestigationService.isAddressChanged(screenaddres,oldAddres))) {
-									return true;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return false;
-	}
-
-	private void addNewFiVerification(FinanceDetail aFinanceDetail) {
-		financeDetailService.setFIInitVerification(aFinanceDetail);
-		financeDetail.setFiVerification(aFinanceDetail.getFiVerification());
-		fieldVerificationDialogCtrl.renderFIVerificationList(financeDetail.getFiVerification());
-		getTab(AssetConstants.UNIQUE_ID_FIINITIATION).setSelected(true);
-		MessageUtil.showMessage("FI Verifications are added,please  take respective actions");
-	}
-	
+		
 	/**
 	 * Method for Rendering TV Initiation Data in finance
 	 */

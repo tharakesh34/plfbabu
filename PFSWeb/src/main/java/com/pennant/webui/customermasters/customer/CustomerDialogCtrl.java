@@ -181,6 +181,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
+import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
 import com.pennanttech.webui.verification.LVerificationCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
@@ -434,6 +435,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
 	private LVerificationCtrl lVerificationCtrl;
 	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
+	private FieldVerificationDialogCtrl fieldVerificationDialogCtrl;
 	protected Groupbox finBasicdetails;
 
 	public boolean validateAllDetails = true;
@@ -5017,7 +5019,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			}
 			setCustomerAddressDetailList(customerAddresDetails);
+			if (fieldVerificationDialogCtrl != null) {
+				fieldVerificationDialogCtrl.addCustomerAddresses(customerAddresDetails,true);
+			}
 		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -6327,6 +6333,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setlVerificationCtrl(LVerificationCtrl lVerificationCtrl) {
 		this.lVerificationCtrl = lVerificationCtrl;
+	}
+
+	public FieldVerificationDialogCtrl getFieldVerificationDialogCtrl() {
+		return fieldVerificationDialogCtrl;
+	}
+
+	public void setFieldVerificationDialogCtrl(FieldVerificationDialogCtrl fieldVerificationDialogCtrl) {
+		this.fieldVerificationDialogCtrl = fieldVerificationDialogCtrl;
 	}
 
 	public List<CustomerBankInfo> getCustomerBankInfoList() {

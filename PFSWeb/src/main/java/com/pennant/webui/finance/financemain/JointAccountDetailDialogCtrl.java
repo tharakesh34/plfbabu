@@ -75,6 +75,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
 
 /**
@@ -115,6 +116,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	private String roleCode = "";
 	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
+	private FieldVerificationDialogCtrl fieldVerificationDialogCtrl;
 	protected Groupbox finBasicdetails;
 	private Object mainController;
 	private boolean enquiry;
@@ -403,6 +405,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			listitem.setAttribute("data", jountAccountDetail);
 			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onFinJointItemDoubleClicked");
 			this.listBoxJountAccountDetails.appendChild(listitem);
+		}
+		
+		if (fieldVerificationDialogCtrl != null) {
+			fieldVerificationDialogCtrl.addCoApplicantAddresses(jountAccountDetails,true);
 		}
 		logger.debug("Leaving");
 	}
@@ -801,6 +807,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
+		((FinanceMainBaseCtrl) financeMainDialogCtrl).setJointAccountDetailDialogCtrl(this);
 	}
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
@@ -835,5 +842,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	public void setMainController(Object mainController) {
 		this.mainController = mainController;
+	}
+
+	public void setFieldVerificationDialogCtrl(FieldVerificationDialogCtrl fieldVerificationDialogCtrl) {
+		this.fieldVerificationDialogCtrl = fieldVerificationDialogCtrl;
 	}
 }

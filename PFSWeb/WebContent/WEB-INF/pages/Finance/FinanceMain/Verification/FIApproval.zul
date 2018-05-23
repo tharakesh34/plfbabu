@@ -13,7 +13,7 @@
 			<center sclass="none" autoscroll="true">
 				<div>
 					<groupbox id="finBasicdetails" style="border:none;" />
-					<groupbox style="border:none;" >
+					<groupbox style="border:none;">
 						<listbox id="listBoxFIVerification" width="100%"
 							span="true" style="overflow:auto;"
 							emptyMessage="${c:l('listbox.emptyMessage')}"

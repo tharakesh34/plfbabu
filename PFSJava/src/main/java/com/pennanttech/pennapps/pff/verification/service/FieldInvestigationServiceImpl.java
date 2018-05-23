@@ -84,18 +84,17 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	@Autowired
 	private CustomerDocumentDAO customerDocumentDAO;
 	private DocumentDetailValidation documentValidation;
-	
-	
+
 	public FieldInvestigationServiceImpl() {
 		super();
 	}
 
 	@Override
 	public void save(FieldInvestigation fi, TableType tempTab) {
-		setAudit(fi);
+		setWorkflowData(fi);
 		fieldInvestigationDAO.save(fi, tempTab);
 	}
-	
+
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
@@ -145,14 +144,14 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 					tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
-		
+
 		// FI documents
 		if (fi.getDocuments() != null && !fi.getDocuments().isEmpty()) {
 			List<AuditDetail> details = fi.getAuditDetailMap().get("DocumentDetails");
 			details = saveOrUpdateDocuments(details, fi, tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
-		
+
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
@@ -168,8 +167,8 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> saveOrUpdateDocuments(List<AuditDetail> auditDetails,
-			FieldInvestigation fi, String type) {
+	private List<AuditDetail> saveOrUpdateDocuments(List<AuditDetail> auditDetails, FieldInvestigation fi,
+			String type) {
 		logger.debug(Literal.ENTERING);
 
 		boolean saveRecord = false;
@@ -358,13 +357,12 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
 	 * following actions a) DELETE Delete the record from the main table by using fieldInvestigationDAO.delete with
-	 * parameters fieldInvestigation,"" b) NEW Add new record in to main table by using fieldInvestigationDAO.save
-	 * with parameters fieldInvestigation,"" c) EDIT Update record in the main table by using
-	 * fieldInvestigationDAO.update with parameters fieldInvestigation,"" 3) Delete the record from the workFlow
-	 * table by using fieldInvestigationDAO.delete with parameters fieldInvestigation,"_Temp" 4) Audit the record
-	 * in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) based on the
-	 * transaction Type.
+	 * parameters fieldInvestigation,"" b) NEW Add new record in to main table by using fieldInvestigationDAO.save with
+	 * parameters fieldInvestigation,"" c) EDIT Update record in the main table by using fieldInvestigationDAO.update
+	 * with parameters fieldInvestigation,"" 3) Delete the record from the workFlow table by using
+	 * fieldInvestigationDAO.delete with parameters fieldInvestigation,"_Temp" 4) Audit the record in to AuditHeader and
+	 * Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
+	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -413,7 +411,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 				fieldInvestigationDAO.update(fi, TableType.MAIN_TAB);
 				verificationDAO.updateVerifiaction(fi.getId(), fi.getVerifiedDate(), fi.getStatus());
 			}
-			
+
 			// Extended field Details
 			if (fi.getExtendedFieldRender() != null) {
 				List<AuditDetail> details = fi.getAuditDetailMap().get("ExtendedFieldDetails");
@@ -472,7 +470,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		logger.debug("Entering");
 
 		List<AuditDetail> auditList = new ArrayList<>();
-		
+
 		// Extended field Render Details.
 		List<AuditDetail> extendedDetails = fi.getAuditDetailMap().get("ExtendedFieldDetails");
 		if (extendedDetails != null && !extendedDetails.isEmpty()) {
@@ -482,8 +480,9 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			tableName.append("_");
 			tableName.append(fi.getExtendedFieldHeader().getSubModuleName());
 			tableName.append("_ED");
-			auditList.addAll(extendedFieldDetailsService.delete(fi.getExtendedFieldHeader(), String.valueOf(fi.getVerificationId()),
-					tableName.toString(), tableType, auditTranType, extendedDetails));
+			auditList.addAll(extendedFieldDetailsService.delete(fi.getExtendedFieldHeader(),
+					String.valueOf(fi.getVerificationId()), tableName.toString(), tableType, auditTranType,
+					extendedDetails));
 		}
 
 		// Document Details.
@@ -496,7 +495,8 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 				document = (DocumentDetails) documentDetails.get(i).getModelData();
 				document.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 				documents.add(document);
-				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], document.getBefImage(), document));
+				auditList.add(
+						new AuditDetail(auditTranType, i + 1, fields[0], fields[1], document.getBefImage(), document));
 			}
 			documentDetailsDAO.deleteList(documents, tableType);
 		}
@@ -563,7 +563,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		auditHeader = getAuditDetails(auditHeader, method);
 		FieldInvestigation fieldInvestigation = (FieldInvestigation) auditDetail.getModelData();
 		String usrLanguage = fieldInvestigation.getUserDetails().getLanguage();
-		
+
 		// Extended field details Validation
 		if (fieldInvestigation.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = fieldInvestigation.getAuditDetailMap().get("ExtendedFieldDetails");
@@ -595,8 +595,8 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from fieldInvestigationDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings
-	 * then assign the to auditDeail Object
+	 * from fieldInvestigationDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -634,7 +634,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		
+
 		// Extended Field Details
 		if (fieldInvestigation.getExtendedFieldRender() != null) {
 			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
@@ -771,19 +771,23 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		fi.setVersion(1);
 		fi.setLastMntBy(verification.getLastMntBy());
 		fi.setLastMntOn(verification.getLastMntOn());
-		setAudit(fi);
-		Collections.sort(phoneNumbers, new PhonePriority());
-		fi.setContactNumber1((phoneNumbers.get(0)).getPhoneNumber());
-		if (phoneNumbers.size() > 1) {
-			fi.setContactNumber2((phoneNumbers.get(1)).getPhoneNumber());
+		setWorkflowData(fi);
+
+		if (phoneNumbers != null) {
+			Collections.sort(phoneNumbers, new PhonePriority());
+			fi.setContactNumber1((phoneNumbers.get(0)).getPhoneNumber());
+			if (phoneNumbers.size() > 1) {
+				fi.setContactNumber2((phoneNumbers.get(1)).getPhoneNumber());
+			}
 		}
+
 		fi.setPoBox(address.getCustPOBox());
 		fi.setZipCode(address.getCustAddrZIP());
 
 		verification.setFieldInvestigation(fi);
 	}
 
-	private void setAudit(FieldInvestigation fi) {
+	private void setWorkflowData(FieldInvestigation fi) {
 		String workFlowType = ModuleUtil.getWorkflowType("FieldInvestigation");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workFlowType);
 		WorkflowEngine engine = new WorkflowEngine(
@@ -807,7 +811,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			if (customerDetails.getAddressList() == null) {
 				continue;
 			}
-			
+
 			for (CustomerAddres address : customerDetails.getAddressList()) {
 				Verification vrf = new Verification();
 				vrf.setNewRecord(true);
@@ -868,7 +872,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		logger.info(Literal.LEAVING);
 		return verification;
 	}
-	
+
 	@Override
 	public boolean isAddressChanged(Verification verification) {
 		List<FieldInvestigation> list = fieldInvestigationDAO.getList(verification.getReference());
@@ -882,10 +886,9 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 				}
 			}
 		}
-		
+
 		return false;
 	}
-	
 
 	private void setLastStatus(List<Verification> verifications) {
 		String[] cif = new String[verifications.size()];
@@ -904,7 +907,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 							&& previous.getAddressType().equals(current.getAddressType())) {
 						if (!isAddressChange(previous, current)) {
 							verification.setStatus(previous.getStatus());
-							if(previous.getVerifiedDate()!=null){
+							if (previous.getVerifiedDate() != null) {
 								verification.setVerificationDate(new Timestamp(previous.getVerifiedDate().getTime()));
 							}
 						}
@@ -914,8 +917,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		}
 	}
 
-	private void getChangedVerifications(List<Verification> oldList, List<Verification> newList,
-			String keyReference) {
+	private void getChangedVerifications(List<Verification> oldList, List<Verification> newList, String keyReference) {
 		List<Long> fiIds = getFieldInvestigationIds(oldList, keyReference);
 		for (Verification newVer : newList) {
 			for (Verification oldVer : oldList) {
@@ -935,6 +937,70 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		}
 	}
 
+	@Override
+	public boolean isAddressChanged(long verificationId, CustomerAddres customerAddres) {
+		FieldInvestigation newAddress = null;
+		FieldInvestigation oldAddress;
+
+		Verification verification = new Verification();
+		setFiFields(verification, customerAddres, null);
+
+		oldAddress = fieldInvestigationDAO.getFieldInvestigation(verificationId, "_view");
+		oldAddress = verification.getFieldInvestigation();
+
+		if (oldAddress == null || oldAddress == null) {
+			return false;
+		}
+
+		return isAddressChange(oldAddress, newAddress);
+
+	}
+
+	public boolean isAddressChange(CustomerAddres oldAddress, CustomerAddres newAddress) {
+
+		if (oldAddress == null || newAddress == null) {
+			return false;
+		}
+
+		if (!StringUtils.equals(oldAddress.getCustAddrHNbr(), newAddress.getCustAddrHNbr())) {
+			return true;
+		}
+		if (!StringUtils.equals(oldAddress.getCustFlatNbr(), newAddress.getCustFlatNbr())) {
+			return true;
+		}
+		if (!StringUtils.equals(oldAddress.getCustAddrStreet(), newAddress.getCustAddrStreet())) {
+			return true;
+		}
+		if (!StringUtils.equals(oldAddress.getCustAddrLine1(), newAddress.getCustAddrLine1())) {
+			return true;
+		}
+		if (!StringUtils.equals(oldAddress.getCustAddrLine2(), newAddress.getCustAddrLine2())) {
+			return true;
+		}
+		if (!StringUtils.equals(oldAddress.getCustAddrLine3(), newAddress.getCustAddrLine3())) {
+			return true;
+		}
+		if (!StringUtils.equals(oldAddress.getCustAddrLine4(), newAddress.getCustAddrLine4())) {
+			return true;
+		}
+		if (!StringUtils.equals(oldAddress.getCustAddrCountry(), newAddress.getCustAddrCountry())) {
+			return true;
+		}
+		if (!StringUtils.equals(oldAddress.getCustAddrProvince(), newAddress.getCustAddrProvince())) {
+			return true;
+		}
+		if (!StringUtils.equals(oldAddress.getCustAddrCity(), newAddress.getCustAddrCity())) {
+			return true;
+		}
+		if (!StringUtils.equals(oldAddress.getCustAddrZIP(), newAddress.getCustAddrZIP())) {
+			return true;
+		}
+		if (!StringUtils.equals(oldAddress.getCustPOBox(), newAddress.getCustPOBox())) {
+			return true;
+		}
+		return false;
+	}
+	
 	private boolean isAddressChange(FieldInvestigation oldAddress, FieldInvestigation newAddress) {
 
 		if (oldAddress == null || newAddress == null) {
@@ -1014,7 +1080,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	public boolean isAddressesAdded(List<CustomerAddres> screenCustomerAddresses,
 			List<CustomerAddres> savedCustomerAddresses) {
 		boolean flag = true;
-	
+
 		for (CustomerAddres screenCustomerAddres : screenCustomerAddresses) {
 			for (CustomerAddres savedCustomerAddres : savedCustomerAddresses) {
 				if (savedCustomerAddres.getCustAddrType().equals(screenCustomerAddres.getCustAddrType())
@@ -1028,49 +1094,6 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			}
 			flag = true;
 		}
-		return false;
-	}
-
-	@Override
-	public boolean isAddressChanged(CustomerAddres newAddress, CustomerAddres oldAddress) {
-
-		if (!StringUtils.equals(newAddress.getCustAddrHNbr(), oldAddress.getCustAddrHNbr())) {
-			return true;
-		}
-		if (!StringUtils.equals(newAddress.getCustFlatNbr(), oldAddress.getCustFlatNbr())) {
-			return true;
-		}
-		if (!StringUtils.equals(newAddress.getCustAddrStreet(), oldAddress.getCustAddrStreet())) {
-			return true;
-		}
-		if (!StringUtils.equals(newAddress.getCustAddrLine1(), oldAddress.getCustAddrLine1())) {
-			return true;
-		}
-		if (!StringUtils.equals(newAddress.getCustAddrLine2(), oldAddress.getCustAddrLine2())) {
-			return true;
-		}
-		if (!StringUtils.equals(newAddress.getCustAddrLine3(), oldAddress.getCustAddrLine3())) {
-			return true;
-		}
-		if (!StringUtils.equals(newAddress.getCustAddrLine4(), oldAddress.getCustAddrLine4())) {
-			return true;
-		}
-		if (!StringUtils.equals(newAddress.getCustAddrCountry(), oldAddress.getCustAddrCountry())) {
-			return true;
-		}
-		if (!StringUtils.equals(newAddress.getCustAddrProvince(), oldAddress.getCustAddrProvince())) {
-			return true;
-		}
-		if (!StringUtils.equals(newAddress.getCustAddrCity(), oldAddress.getCustAddrCity())) {
-			return true;
-		}
-		if (!StringUtils.equals(newAddress.getCustPOBox(), oldAddress.getCustPOBox())) {
-			return true;
-		}
-		if (!StringUtils.equals(newAddress.getCustAddrZIP(), oldAddress.getCustAddrZIP())) {
-			return true;
-		}
-
 		return false;
 	}
 
@@ -1089,8 +1112,15 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 	public DocumentDetailValidation getDocumentValidation() {
 		if (documentValidation == null) {
-			this.documentValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO, customerDocumentDAO);
+			this.documentValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO,
+					customerDocumentDAO);
 		}
 		return documentValidation;
+	}
+
+	@Override
+	public FieldInvestigation getVerificationinFromRecording(long verificationId) {
+
+		return fieldInvestigationDAO.getFieldInvestigation(verificationId, "_view");
 	}
 }

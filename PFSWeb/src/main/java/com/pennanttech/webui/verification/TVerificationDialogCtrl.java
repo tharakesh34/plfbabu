@@ -51,9 +51,9 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
-import com.pennanttech.pennapps.pff.verification.Status;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
+import com.pennanttech.pennapps.pff.verification.fi.TVStatus;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
@@ -154,6 +154,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	public void addCollaterals(List<CollateralAssignment> collaterals) {
+		if (!initType) {
+			return;
+		}
 		if (collaterals != null) {
 			renderList(getVerifications(collaterals));
 		}
@@ -510,6 +513,13 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 				}
 				fillComboBox(requestType, vrf.getRequestType(), list);
+			} else if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
+				for (ValueLabel valueLabel : RequestType.getList()) {
+					if (Integer.parseInt(valueLabel.getValue()) != RequestType.NOT_REQUIRED.getKey()) {
+						list.add(valueLabel);
+					}
+				}
+				fillComboBox(requestType, vrf.getRequestType(), list);
 			} else {
 				fillComboBox(requestType, vrf.getRequestType(), RequestType.getList());
 			}
@@ -557,13 +567,19 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			// Status
 			listCell = new Listcell();
 			Label status = new Label();
+			
 			if (initType) {
-				if (Status.getType(vrf.getLastStatus()) != null) {
-					status.setValue(Status.getType(vrf.getLastStatus()).getValue());
+				if (vrf.getLastStatus() != 0) {
+					status.setValue(TVStatus.getType(vrf.getLastStatus()).getValue());
 				}
-			} else if (Status.getType(vrf.getStatus()) != null) {
-				status.setValue(Status.getType(vrf.getStatus()).getValue());
+
+			} else {
+				if (vrf.getStatus() != 0) {
+					status.setValue(TVStatus.getType(vrf.getStatus()).getValue());
+				}
+
 			}
+			
 
 			listCell.appendChild(status);
 			listCell.setParent(item);
@@ -643,14 +659,15 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private void fillDecision(Verification vrf, Combobox decision) {
 		List<ValueLabel> decisionList = new ArrayList<>();
-		if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey() || vrf.getStatus() == Status.POSITIVE.getKey()) {
+		if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()
+				|| vrf.getStatus() == TVStatus.POSITIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
 			decisionList.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
 			if (vrf.getDecision() == Decision.SELECT.getKey()) {
 				vrf.setDecision(Decision.APPROVE.getKey());
 			}
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-		} else if (vrf.getStatus() == Status.NOTCMPLTD.getKey() || vrf.getStatus() == Status.NEGATIVE.getKey()) {
+		} else if (vrf.getStatus() == TVStatus.NEGATIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
 		} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
@@ -732,11 +749,11 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (decision != null) {
 				decision.clearErrorMessage();
 			}
-			
+
 			if (reInitagencyComboBox != null) {
 				reInitagencyComboBox.clearErrorMessage();
 			}
-			
+
 			if (reInitRemarks != null) {
 				reInitRemarks.clearErrorMessage();
 			}
