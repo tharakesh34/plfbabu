@@ -298,6 +298,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 	@Override
 	public Verification getLastStatus(Verification verification) {
 		logger.debug(Literal.ENTERING);
+		
+		int type = verification.getVerificationType();
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
@@ -320,7 +322,16 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		paramMap.addValue("referenceFor", verification.getReferenceFor());
 		paramMap.addValue("verificationType", verification.getVerificationType());
 		paramMap.addValue("custid", verification.getCustId());
-		paramMap.addValue("dealerType", verification.getAgency());
+		
+		if (type == VerificationType.FI.getKey()) {
+			paramMap.addValue("dealerType", Agencies.FIAGENCY.getValue());
+		} else if (type == VerificationType.TV.getKey()) {
+			paramMap.addValue("dealerType", Agencies.TVAGENCY.getValue());
+		} else if (type == VerificationType.LV.getKey()) {
+			paramMap.addValue("dealerType", Agencies.LVAGENCY.getValue());
+		} else if (type == VerificationType.RCU.getKey()) {
+			paramMap.addValue("dealerType", Agencies.RCUVAGENCY.getValue());
+		}
 				
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
