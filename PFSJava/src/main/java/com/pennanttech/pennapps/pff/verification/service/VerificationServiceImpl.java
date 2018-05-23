@@ -834,8 +834,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		verification.setModule(Module.LOAN.getKey());
 		verification.setCreatedOn(DateUtility.getAppDate());
+		verification.setKeyReference(financeMain.getFinReference());
 		if (verificationType != VerificationType.FI) {
-			verification.setKeyReference(financeMain.getFinReference());
 			verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 			verification.setCustId(customer.getCustID());
 			verification.setCustomerName(customer.getCustShrtName());
