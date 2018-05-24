@@ -10369,5 +10369,12 @@ update workflowdetails set WorkFlowActive='0' where WorkFlowType='VERIFICATION_P
 	</createView>
 </changeSet>
  
+ <changeSet id="190" author="Durgaprasad G">
+	<sql>
+		delete from SMTPARAMETERS where sysparmcode='NUMBEROF_PDC_CHEQUES';
+		Insert into SMTPARAMETERS values ('NUMBEROF_PDC_CHEQUES','Number of pdc cheques.','int','1','3',1,0,null,null,'Number of pdc cheques.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+	</sql>
+</changeSet>
+ 
 </databaseChangeLog>
 	
