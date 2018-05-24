@@ -881,7 +881,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		for (FieldInvestigation previous : list) {
 			if (previous.getCif().equals(verification.getCif())
 					&& previous.getAddressType().equals(current.getAddressType())) {
-				if (!isAddressChange(previous, current)) {
+				if (isAddressChange(previous, current)) {
 					return true;
 				}
 			}

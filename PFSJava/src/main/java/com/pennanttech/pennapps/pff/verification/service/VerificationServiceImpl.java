@@ -786,7 +786,20 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			verification.setLastAgency(lastStatus.getLastAgency());
 
 			if (verificationType == VerificationType.FI.getKey()) {
-				if (!fieldInvestigationService.isAddressChanged(verification)) {
+				if (fieldInvestigationService.isAddressChanged(verification)) {
+					verification.setLastStatus(0);
+					verification.setLastVerificationDate(null);
+					verification.setLastAgency("");
+				} else {
+					verification.setLastStatus(lastStatus.getStatus());
+					verification.setLastVerificationDate(lastStatus.getVerificationDate());
+					verification.setVersion(lastStatus.getVersion());
+					verification.setLastVersion(lastStatus.getLastVersion());
+					verification.setLastAgency(lastStatus.getLastAgency());
+				}
+
+			} else if (verificationType == VerificationType.TV.getKey()) {
+				if (!technicalVerificationService.isCollateralChanged(lastStatus)) {
 					verification.setLastStatus(lastStatus.getStatus());
 					verification.setLastVerificationDate(lastStatus.getVerificationDate());
 					verification.setVersion(lastStatus.getVersion());
@@ -797,8 +810,6 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					verification.setLastVerificationDate(null);
 					verification.setLastAgency("");
 				}
-
-			} else if (verificationType == VerificationType.TV.getKey()) {
 
 			} else if (verificationType == VerificationType.LV.getKey()) {
 
