@@ -166,7 +166,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (isInitTab) {
 				//delete non verification Records
 				if (item.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
-						&& verificationType == VerificationType.TV) {//FIX ME
+						&& (verificationType == VerificationType.TV || verificationType == VerificationType.FI)) {//FIX ME
 					verificationDAO.delete(item, TableType.BOTH_TAB);
 					continue;
 				}
@@ -770,7 +770,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			verification.setLastVerificationDate(lastStatus.getVerificationDate());
 			verification.setVersion(lastStatus.getVersion());
 			verification.setLastVersion(lastStatus.getLastVersion());
-			verification.setLastAgency(verification.getLastAgency());
+			verification.setLastAgency(lastStatus.getLastAgency());
 
 			if (verificationType == VerificationType.FI.getKey()) {
 				if (!fieldInvestigationService.isAddressChanged(verification)) {
@@ -778,7 +778,11 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					verification.setLastVerificationDate(lastStatus.getVerificationDate());
 					verification.setVersion(lastStatus.getVersion());
 					verification.setLastVersion(lastStatus.getLastVersion());
-					verification.setLastAgency(verification.getLastAgency());
+					verification.setLastAgency(lastStatus.getLastAgency());
+				} else {
+					verification.setLastStatus(0);
+					verification.setLastVerificationDate(null);
+					verification.setLastAgency("");
 				}
 
 			} else if (verificationType == VerificationType.TV.getKey()) {

@@ -63,6 +63,7 @@ import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.fi.LVStatus;
+import com.pennanttech.pennapps.pff.verification.fi.TVStatus;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -274,7 +275,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		if (lvInquiry.getChildren() != null) {
 			lvInquiry.getChildren().clear();
 		}
-		
+
 		if (legalVerification != null) {
 			legalVerification = legalVerificationService.getLegalVerification(legalVerification, "_View");
 		}
@@ -384,7 +385,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
-				fillComboBox(decision, vrf.getDecision(), Decision.getList());
+				fillDecision(vrf, decision);
 				decision.setParent(listCell);
 				listCell.setParent(item);
 
@@ -426,6 +427,48 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void fillDecision(Verification vrf, Combobox combobox) {
+		List<ValueLabel> decisionList = new ArrayList<>();
+
+		int requestType = vrf.getRequestType();
+		int status = vrf.getStatus();
+		int decision = vrf.getDecision();
+
+		if (requestType == RequestType.NOT_REQUIRED.getKey() || status == TVStatus.POSITIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
+			decisionList.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
+			if (decision == Decision.SELECT.getKey()) {
+				vrf.setDecision(Decision.APPROVE.getKey());
+			}
+			fillComboBox(combobox, decision, filterDecisions(decisionList));
+		} else if (status == TVStatus.NEGATIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
+			fillComboBox(combobox, decision, filterDecisions(decisionList));
+		} else if (requestType == RequestType.WAIVE.getKey()) {
+			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
+			fillComboBox(combobox, decision, filterDecisions(decisionList));
+		} else {
+			fillComboBox(combobox, decision, Decision.getList());
+		}
+	}
+
+	private List<ValueLabel> filterDecisions(List<ValueLabel> list) {
+		boolean flag = true;
+		List<ValueLabel> decisionList = new ArrayList<>();
+		for (ValueLabel decValueLabel : Decision.getList()) {
+			for (ValueLabel valueLabel : list) {
+				if (Integer.parseInt(valueLabel.getValue()) == Integer.parseInt(decValueLabel.getValue())) {
+					flag = false;
+				}
+			}
+			if (flag) {
+				decisionList.add(decValueLabel);
+			}
+			flag = true;
+		}
+		return decisionList;
 	}
 
 	private void fillComboBox(Combobox combobox, int value, List<ValueLabel> list) {

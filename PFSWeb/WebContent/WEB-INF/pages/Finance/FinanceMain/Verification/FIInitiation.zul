@@ -52,6 +52,10 @@
 										id="listheader_FIVerification_Remarks"
 										label="${c:l('listheader_FIVerification_Remarks.label')}"
 										sort="false"/>
+										<listheader
+										id="listheader_FIVerification_LastAgency"
+										label="${c:l('listheader_TechnicalVerification_LastAgency.label')}"
+										sort="false"/>
 									<listheader
 										id="listheader_FIVerification_LastStatus"
 										label="${c:l('listheader_FIVerification_LastStatus.label')}"

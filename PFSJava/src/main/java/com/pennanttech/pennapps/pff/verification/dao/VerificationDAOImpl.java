@@ -298,14 +298,15 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 	@Override
 	public Verification getLastStatus(Verification verification) {
 		logger.debug(Literal.ENTERING);
-		
+
 		int type = verification.getVerificationType();
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
 		StringBuilder sql = new StringBuilder();
-		
-		sql.append("select v.id, v.verificationDate, coalesce(v.status, 0) status, a.dealerName as lastAgency from verifications v");
+
+		sql.append(
+				"select v.id, v.verificationDate, coalesce(v.status, 0) status, a.dealerName as lastAgency from verifications v");
 		sql.append(" left join AMTVehicleDealer_AView a on a.dealerid = v.agency and dealerType = :dealerType");
 
 		if (verification.getVerificationType() == VerificationType.LV.getKey()
@@ -318,25 +319,26 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			sql.append(" from verifications where custid = :custid and referenceFor = :referenceFor");
 			sql.append(" and verificationType = :verificationType and verificationdate is not null and status !=0)");
 		}
-		
+
 		paramMap.addValue("referenceFor", verification.getReferenceFor());
 		paramMap.addValue("verificationType", verification.getVerificationType());
 		paramMap.addValue("custid", verification.getCustId());
-		
+
 		if (type == VerificationType.FI.getKey()) {
-			paramMap.addValue("dealerType", Agencies.FIAGENCY.getValue());
+			paramMap.addValue("dealerType", Agencies.FIAGENCY.getKey());
 		} else if (type == VerificationType.TV.getKey()) {
-			paramMap.addValue("dealerType", Agencies.TVAGENCY.getValue());
+			paramMap.addValue("dealerType", Agencies.TVAGENCY.getKey());
 		} else if (type == VerificationType.LV.getKey()) {
-			paramMap.addValue("dealerType", Agencies.LVAGENCY.getValue());
+			paramMap.addValue("dealerType", Agencies.LVAGENCY.getKey());
 		} else if (type == VerificationType.RCU.getKey()) {
-			paramMap.addValue("dealerType", Agencies.RCUVAGENCY.getValue());
+			paramMap.addValue("dealerType", Agencies.RCUVAGENCY.getKey());
 		}
-				
+
 		try {
+			logger.debug(Literal.SQL + sql.toString());
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.error(e);
 		}
 
 		logger.debug(Literal.LEAVING);

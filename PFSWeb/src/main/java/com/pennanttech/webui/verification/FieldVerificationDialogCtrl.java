@@ -438,6 +438,13 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell.appendChild(remarks);
 			listCell.setParent(item);
 
+			if (initType) {
+				// Last Verification Agency
+				listCell = new Listcell();
+				listCell.appendChild(new Label(vrf.getLastAgency()));
+				listCell.setParent(item);
+			}
+
 			// Status
 			listCell = new Listcell();
 			Label status = new Label();
@@ -523,6 +530,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 		logger.debug(Literal.LEAVING);
+
 	}
 
 	private void fillDecision(Verification vrf, Combobox decision) {

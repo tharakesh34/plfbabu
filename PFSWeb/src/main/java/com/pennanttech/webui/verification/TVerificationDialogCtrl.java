@@ -38,6 +38,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.util.PennantConstants;
@@ -146,12 +147,16 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private List<String> getRequiredCollaterals() {
-		Search search = new Search(String.class);
+		List<String> codes = new ArrayList<>();
+		Search search = new Search(CollateralSetup.class);
 		search.addField("collateraltype");
 		search.addTabelName("collateralstructure");
-		search.addFilter(new Filter("collateralvaluatorreq", true));
-
-		return searchProcessor.getResults(search);
+		search.addFilter(new Filter("collateralvaluatorreq", 1));
+		List<CollateralSetup> list = searchProcessor.getResults(search);
+		for (CollateralSetup collateralSetup : list) {
+			codes.add(collateralSetup.getCollateralType());
+		}
+		return codes;
 	}
 
 	private void setVerifications() {
@@ -578,6 +583,13 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			remarks.setMaxlength(500);
 			listCell.appendChild(remarks);
 			listCell.setParent(item);
+
+			if (initType) {
+				// Last Verification Agency
+				listCell = new Listcell();
+				listCell.appendChild(new Label(vrf.getLastAgency()));
+				listCell.setParent(item);
+			}
 
 			// Status
 			listCell = new Listcell();
