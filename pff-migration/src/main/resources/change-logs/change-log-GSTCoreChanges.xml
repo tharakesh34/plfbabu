@@ -1801,7 +1801,7 @@
 			    t1.reservedamt,
 			    t1.balanceamt,
 			    t3.reason AS bouncecodedesc,
-			    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable::integer, 0) else COALESCE(t3.taxapplicable::integer, 0) END AS TaxApplicable,
+			    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable, 0) else COALESCE(t3.taxapplicable, 0) END AS TaxApplicable,
 			    Case when t1.feeTypeid > 0 then t2.TaxComponent else t3.TaxComponent END AS TaxComponent,
 			    t1.PaidCgst, t1.PaidSgst, t1.PaidIgst, t1.PaidUgst
 			   FROM manualadvise t1
@@ -1842,7 +1842,7 @@
 		    t1.reservedamt,
 		    t1.balanceamt,
 		    t3.reason AS bouncecodedesc,
-		    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable::integer, 0) else COALESCE(t3.taxapplicable::integer, 0) END AS TaxApplicable,
+		    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable, 0) else COALESCE(t3.taxapplicable, 0) END AS TaxApplicable,
 			Case when t1.feeTypeid > 0 then t2.TaxComponent else t3.TaxComponent END AS TaxComponent,
 		    t1.PaidCgst, t1.PaidSgst, t1.PaidIgst, t1.PaidUgst
 		   FROM manualadvise t1
@@ -1883,7 +1883,7 @@
 			    t1.reservedamt,
 			    t1.balanceamt,
 			    t3.reason AS bouncecodedesc,
-			    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable::integer, 0) else COALESCE(t3.taxapplicable::integer, 0) END AS TaxApplicable,
+			    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable, 0) else COALESCE(t3.taxapplicable, 0) END AS TaxApplicable,
 			    Case when t1.feeTypeid > 0 then t2.TaxComponent else t3.TaxComponent END AS TaxComponent,
 			    t1.PaidCgst, t1.PaidSgst, t1.PaidIgst, t1.PaidUgst
 			   FROM manualadvise_temp t1
@@ -1924,7 +1924,7 @@
 		    t1.reservedamt,
 		    t1.balanceamt,
 		    t3.reason AS bouncecodedesc,
-		    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable::integer, 0) else COALESCE(t3.taxapplicable::integer, 0) END AS TaxApplicable,
+		    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable, 0) else COALESCE(t3.taxapplicable, 0) END AS TaxApplicable,
 			Case when t1.feeTypeid > 0 then t2.TaxComponent else t3.TaxComponent END AS TaxComponent,
 		    t1.PaidCgst, t1.PaidSgst, t1.PaidIgst, t1.PaidUgst
 		   FROM manualadvise_temp t1
@@ -1960,7 +1960,7 @@
 		    t1.reservedamt,
 		    t1.balanceamt,
 		    t3.reason AS bouncecodedesc,
-		    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable::integer, 0) else COALESCE(t3.taxapplicable::integer, 0) END AS TaxApplicable,
+		    Case when t1.feetypeid > 0 then COALESCE(t2.taxapplicable, 0) else COALESCE(t3.taxapplicable, 0) END AS TaxApplicable,
 			Case when t1.feeTypeid > 0 then t2.TaxComponent else t3.TaxComponent END AS TaxComponent,
 		    t1.PaidCgst, t1.PaidSgst, t1.PaidIgst, t1.PaidUgst
 		   FROM manualadvise t1
@@ -1985,9 +1985,9 @@
 				    COALESCE(t3.feetypedesc, t5.feetypedesc) AS typedesc,
 				    t1.PaidGST
 			FROM 	receiptallocationdetail t1
-				    LEFT JOIN finfeedetail t2 ON t1.allocationto = t2.feeid AND t1.allocationtype = 'FEE'::citext
+				    LEFT JOIN finfeedetail t2 ON t1.allocationto = t2.feeid AND t1.allocationtype = 'FEE'
 				    LEFT JOIN feetypes t3 ON t2.feetypeid = t3.feetypeid
-				    LEFT JOIN manualadvise t4 ON t1.allocationto = t4.adviseid AND t1.allocationtype = 'MANADV'::citext
+				    LEFT JOIN manualadvise t4 ON t1.allocationto = t4.adviseid AND t1.allocationtype = 'MANADV'
 				    LEFT JOIN feetypes t5 ON t4.feetypeid = t5.feetypeid
 		</createView>
 	</changeSet>
