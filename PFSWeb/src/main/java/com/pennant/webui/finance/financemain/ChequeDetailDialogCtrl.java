@@ -301,7 +301,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.bankBranchID.setDescColumn("BankName");
 		this.bankBranchID.setDisplayStyle(2);
 		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
-		this.bankBranchID.setTextBoxWidth(200);
+		this.bankBranchID.setTextBoxWidth(180);
 		
 		this.chequeType.setSclass(PennantConstants.mandateSclass);
 		this.chequeSerialNo.setMaxlength(6);
