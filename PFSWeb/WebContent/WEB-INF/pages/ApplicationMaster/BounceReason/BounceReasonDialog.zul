@@ -124,7 +124,7 @@
 									value="${c:l('label_BounceReasonDialog_RuleID.value')}" />
 								<extendedcombobox id="ruleID" />
 							</row>
-							<row id="row3">
+							<row id="row3" visible="false">
 									<label id="label_TaxApplicable"
 										value="${c:l('label_BounceReasonDialog_TaxApplicable.value')}" />
 									<hbox id="hlayout_TaxApplicable">
