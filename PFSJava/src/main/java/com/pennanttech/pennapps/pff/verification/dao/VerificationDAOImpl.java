@@ -33,6 +33,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.verification.Agencies;
+import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -248,12 +249,13 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		StringBuilder sql = new StringBuilder("select id from verifications");
 		sql.append(
-				" where referenceFor=:referenceFor and verificationType=:verificationType and keyReference=:keyReference");
+				" where referenceFor=:referenceFor and verificationType=:verificationType and keyReference=:keyReference and requestType=:requestType");
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("keyReference", finReference);
 		paramMap.addValue("referenceFor", referenceFor);
 		paramMap.addValue("verificationType", verificationType);
+		paramMap.addValue("requestType", RequestType.INITIATE.getKey());
 		try {
 			Long verificationId = jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
 			if (verificationId != null) {

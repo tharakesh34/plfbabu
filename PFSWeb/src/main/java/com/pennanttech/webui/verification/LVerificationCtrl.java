@@ -311,7 +311,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			if (lvInquiry.getChildren() != null) {
 				lvInquiry.getChildren().clear();
 			}
-			verifications = getVerifications();
+			verifications = getInitVerifications();
 		}
 		if (this.listBoxInitiation.getItems() != null) {
 			this.listBoxInitiation.getItems().clear();
@@ -442,7 +442,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			if (decision == Decision.SELECT.getKey()) {
 				vrf.setDecision(Decision.APPROVE.getKey());
 			}
-			fillComboBox(combobox, decision, filterDecisions(decisionList));
+			fillComboBox(combobox, vrf.getDecision(), filterDecisions(decisionList));
 		} else if (status == TVStatus.NEGATIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
 			fillComboBox(combobox, decision, filterDecisions(decisionList));
@@ -635,7 +635,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			verifications = verificationService.getVerifications(this.verification.getKeyReference(),
 					VerificationType.LV.getKey());
 		} else {
-			verifications = getVerifications();
+			verifications = getWaiveVerifications();
 		}
 
 		if (this.listBoxWaiver.getItems() != null) {
@@ -775,14 +775,14 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		// Get the selected entity.
 		Verification vrf = (Verification) listitem.getAttribute("verification");
 
-		List<LVDocument> list = getDocuments();
+		/*List<LVDocument> list = getDocuments();
 
 		for (LVDocument LVDocument : list) {
 			if (vrf.getReferenceType().equals(LVDocument.getDocumentSubId())) {
 				vrf.getLvDocuments().add(LVDocument);
 				break;
 			}
-		}
+		}*/
 		if (vrf == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
@@ -1073,7 +1073,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	private List<Verification> getVerifications() {
+	private List<Verification> getInitVerifications() {
 		//get verifications
 		List<Verification> verifications = verificationService.getVerifications(verification.getKeyReference(),
 				VerificationType.LV.getKey());
@@ -1087,6 +1087,17 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 					break;
 				}
 			}
+		}
+		return verifications;
+	}
+
+	private List<Verification> getWaiveVerifications() {
+		//get verifications
+		List<Verification> verifications = verificationService.getVerifications(verification.getKeyReference(),
+				VerificationType.LV.getKey());
+
+		for (Verification vrf : verifications) {
+			vrf.setLvDocuments(legalVerificationService.getLVDocumentsFromStage(vrf.getId()));
 		}
 		return verifications;
 	}

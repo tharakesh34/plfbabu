@@ -71,8 +71,6 @@ public interface VerificationService {
 
 	Verification getVerificationById(long id);
 
-	Long getVerificationIdByReferenceFor(String finReference, String referenceFor, int verificationType);
-
 	void savereInitLegalVerification(FinanceDetail financeDetail, Verification verification);
 
 	List<Verification> getCollateralDetails(String[] collaterals);

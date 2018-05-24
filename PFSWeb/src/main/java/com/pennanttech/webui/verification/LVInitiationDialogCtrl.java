@@ -88,7 +88,6 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.RequestType;
-import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -439,11 +438,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			this.reason.setAttribute("reasonName", aVerification.getReasonName());
 		}
 
-		/*
-		 * if (!initiation) { fillDocuments(this.listBoxCollateralDocuments, this.lvDocuments, DocumentType.COLLATRL,
-		 * null); } else
-		 */
-
 		if (verification.getReferenceFor() != null) {
 			fillDocuments(this.listBoxCollateralDocuments, this.lvDocuments, DocumentType.COLLATRL,
 					verification.getReferenceFor());
@@ -455,17 +449,23 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private List<String> getInitDocCategories(List<LVDocument> lvDocuments) {
-		List<String> docCategories = new ArrayList<>();
+	private List<String> getCheckedDocuments(List<LVDocument> lvDocuments) {
+		List<String> docKeys = new ArrayList<>();
 		for (LVDocument document : lvDocuments) {
+			/*
+			 * if (document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
+			 * docCategories.add(String.valueOf(document.getDocumentId())); } else {
+			 * docCategories.add(String.valueOf(document.getDocumentType()).concat(document.getDocumentSubId())); }
+			 */
 			if (document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
-				docCategories.add(String.valueOf(document.getDocumentId()));
+				docKeys.add(this.verification.getReferenceFor()
+						.concat(String.valueOf(document.getDocumentType()).concat(document.getDocumentSubId())));
 			} else {
-				docCategories.add(String.valueOf(document.getDocumentType()).concat(document.getDocumentSubId()));
+				docKeys.add(String.valueOf(document.getDocumentType()).concat(document.getDocumentSubId()));
 			}
 
 		}
-		return docCategories;
+		return docKeys;
 	}
 
 	private List<LVDocument> getWaiveDocIds(List<Verification> verifications) {
@@ -483,38 +483,48 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	public void fillDocuments(Listbox listbox, List<LVDocument> documents, DocumentType docType, String collateralRef) {
 		logger.debug(Literal.ENTERING);
-		List<String> documentCategories = new ArrayList<>();
+		List<String> checkedDocuments = new ArrayList<>();
 		List<String> idList = new ArrayList<>();
 
 		if (initiation) {
 			listbox.getItems().clear();
 			if (!verification.getLvDocuments().isEmpty()) {
-				documentCategories = getInitDocCategories(this.verification.getLvDocuments());
+				checkedDocuments = getCheckedDocuments(this.verification.getLvDocuments());
 			}
-			if (verification.getRequestType() == RequestType.WAIVE.getKey()) {
-				documentCategories.add(verification.getReferenceFor());
-			}
+			/*
+			 * if (verification.getRequestType() == RequestType.WAIVE.getKey()) {
+			 * documentCategories.add(verification.getReferenceFor()); }
+			 */
 		}
-		//if (!this.verification.isApproveTab()) {
+
 		List<LVDocument> oldDocumentIds = legalVerificationService.getLVDocuments(verification.getKeyReference());
-		oldDocumentIds.addAll(getWaiveDocIds(
-				verificationService.getVerifications(verification.getKeyReference(), VerificationType.LV.getKey())));
+		/*
+		 * oldDocumentIds.addAll(getWaiveDocIds( verificationService.getVerifications(verification.getKeyReference(),
+		 * VerificationType.LV.getKey())));
+		 */
 
 		for (LVDocument lvDocument : oldDocumentIds) {
-			if ((lvDocument.getDocumentType() == DocumentType.COLLATRL.getKey())) {
-				idList.add(String.valueOf(lvDocument.getDocumentId()));
-			}else if("W".equals(lvDocument.getDocModule())){
-				idList.add(lvDocument.getDocumentSubId());
-			}else {
+			/*
+			 * if ((lvDocument.getDocumentType() == DocumentType.COLLATRL.getKey())) {
+			 * idList.add(String.valueOf(lvDocument.getDocumentId())); } else if ("W".equals(lvDocument.getDocModule()))
+			 * { idList.add(lvDocument.getDocumentSubId()); } else {
+			 * idList.add(String.valueOf(lvDocument.getDocumentType()).concat(lvDocument.getDocumentSubId())); }
+			 */
+			if ((lvDocument.getDocumentType() == DocumentType.COLLATRL.getKey()) && StringUtils.isNotEmpty(lvDocument.getCollateralRef())) {
+				idList.add(String.valueOf(lvDocument.getCollateralRef()
+						.concat(String.valueOf(lvDocument.getDocumentType())).concat(lvDocument.getDocumentSubId())));
+			} else {
 				idList.add(String.valueOf(lvDocument.getDocumentType()).concat(lvDocument.getDocumentSubId()));
 			}
+
 		}
-		//	}
 
 		for (LVDocument document : documents) {
 			if (docType.getKey() != document.getDocumentType()) {
 				continue;
 			}
+
+			/* String reference = String.valueOf(document.getDocumentType()).concat(document.getDocumentSubId()); */
 
 			String reference = String.valueOf(document.getDocumentType()).concat(document.getDocumentSubId());
 
@@ -522,11 +532,12 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				if (StringUtils.isNotEmpty(collateralRef) && !collateralRef.equals(document.getCollateralRef())) {
 					continue;
 				} else {
-					reference = String.valueOf(document.getDocumentId());
+					reference = String.valueOf(collateralRef.concat(String.valueOf(document.getDocumentType()))
+							.concat(document.getDocumentSubId()));
 				}
 			}
 
-			if (idList.contains(reference) && !documentCategories.contains(reference)) {
+			if (idList.contains(reference) && !checkedDocuments.contains(reference)) {
 				continue;
 			}
 
@@ -536,7 +547,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			checkbox.setValue(document);
 			checkbox.setLabel(getDocumentName(document.getDocumentSubId(), document.getDescription()));
 
-			if (lvrequiredDocs.contains(reference) || documentCategories.contains(reference)) {
+			if ((lvrequiredDocs.contains(document.getDocumentSubId()) && this.verification.isNewRecord())
+					|| checkedDocuments.contains(reference)) {
 				checkbox.setChecked(true);
 			}
 
@@ -848,7 +860,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
 		} else {
-			
+
 			if ("ENQ".equals(this.moduleType)) {
 				this.btnCtrl.setBtnStatus_New();
 				this.btnSave.setVisible(false);

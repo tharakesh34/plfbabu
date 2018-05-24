@@ -52,7 +52,6 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.trace(Literal.SQL + sql.toString());
 
-		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalVerification);
 
 		try {
@@ -352,9 +351,9 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 	@Override
 	public List<LVDocument> getLVDocuments(String keyReference) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select documentid,documentType, documentSubId");
-		sql.append(" from verification_lv_details_stage where verificationId in (");
-		sql.append(" select id from verifications where keyReference=:keyReference)");
+		sql.append(" select vs.verificationId,vs.documentid,vs.documentType, vs.documentSubId,v.referencefor collateralRef");
+		sql.append(" from verification_lv_details_stage vs left join verifications v on  v.id=vs.verificationId");
+		sql.append(" where vs.verificationId in ( select id from verifications where keyReference=:keyReference)");
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("keyReference", keyReference);

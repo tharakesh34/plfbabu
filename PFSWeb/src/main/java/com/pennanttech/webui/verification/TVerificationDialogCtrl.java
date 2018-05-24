@@ -696,7 +696,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (decision == Decision.SELECT.getKey()) {
 				vrf.setDecision(Decision.APPROVE.getKey());
 			}
-			fillComboBox(combobox, decision, filterDecisions(decisionList));
+			fillComboBox(combobox, vrf.getDecision(), filterDecisions(decisionList));
 		} else if (status == TVStatus.NEGATIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
 			fillComboBox(combobox, decision, filterDecisions(decisionList));

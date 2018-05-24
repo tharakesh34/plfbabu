@@ -306,13 +306,15 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 	private void saveLVWaive(Verification verification) {
 		Verification item = null;
+		List<LVDocument> newLVDocs;
 		for (LVDocument lvDocument : verification.getLvDocuments()) {
 			item = new Verification();
+			newLVDocs = new ArrayList<>();
 			BeanUtils.copyProperties(verification, item);
 			item.setReferenceType(lvDocument.getDocumentSubId());
 
-			Long verificationId = getVerificationIdByReferenceFor(item.getKeyReference(), item.getReferenceType(),
-					VerificationType.LV.getKey());
+			Long verificationId = verificationDAO.getVerificationIdByReferenceFor(item.getKeyReference(),
+					item.getReferenceType(), VerificationType.LV.getKey());
 
 			if (verificationId != null) {
 				item.setId(verificationId);
@@ -320,6 +322,16 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			} else {
 				verificationDAO.save(item, TableType.MAIN_TAB);
 			}
+
+			lvDocument.setVerificationId(item.getId());
+			newLVDocs.add(lvDocument);
+			item.setLvDocuments(newLVDocs);
+
+			// Legal verification
+			legalVerificationService.save(item, TableType.MAIN_TAB);
+
+			//LV Documents
+			legalVerificationService.saveDocuments(item.getLvDocuments(), TableType.MAIN_TAB);
 		}
 	}
 
@@ -408,6 +420,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
 			legalVerificationService.save(item, TableType.TEMP_TAB);
 			setLVDocumentDetails(financeDetail, item);
+
 			for (LVDocument lvDocument : item.getLvDocuments()) {
 				lvDocument.setVerificationId(item.getId());
 			}
@@ -832,11 +845,6 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 	}
 
-	@Override
-	public Long getVerificationIdByReferenceFor(String finReference, String referenceFor, int verificationType) {
-		return verificationDAO.getVerificationIdByReferenceFor(finReference, referenceFor, verificationType);
-	}
-
 	private void setVerificationData(FinanceDetail financeDetail, Verification verification,
 			VerificationType verificationType) {
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
@@ -844,6 +852,12 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		verification.setModule(Module.LOAN.getKey());
 		verification.setCreatedOn(DateUtility.getAppDate());
 		verification.setKeyReference(financeMain.getFinReference());
+		
+		if(verification.getCustId() ==null || verification.getCustId()==0L){
+			verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+			verification.setCustId(customer.getCustID());
+			verification.setCustomerName(customer.getCustShrtName());
+		}
 		if (verificationType != VerificationType.FI) {
 			verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 			verification.setCustId(customer.getCustID());
