@@ -1972,4 +1972,24 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet id="101" author="Kesav">
+		<comment>PaidGST column added for GST changes</comment>
+		<createView viewName="receiptallocationdetail_aview" replaceIfExists="true">
+			 SELECT t1.receiptallocationid,
+				    t1.receiptid,
+				    t1.allocationid,
+				    t1.allocationtype,
+				    t1.allocationto,
+				    t1.paidamount,
+				    t1.waivedamount,
+				    COALESCE(t3.feetypedesc, t5.feetypedesc) AS typedesc,
+				    t1.PaidGST
+			FROM 	receiptallocationdetail t1
+				    LEFT JOIN finfeedetail t2 ON t1.allocationto = t2.feeid AND t1.allocationtype = 'FEE'::citext
+				    LEFT JOIN feetypes t3 ON t2.feetypeid = t3.feetypeid
+				    LEFT JOIN manualadvise t4 ON t1.allocationto = t4.adviseid AND t1.allocationtype = 'MANADV'::citext
+				    LEFT JOIN feetypes t5 ON t4.feetypeid = t5.feetypeid
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
