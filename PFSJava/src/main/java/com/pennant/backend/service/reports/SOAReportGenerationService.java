@@ -31,7 +31,8 @@
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
  * 5-09-2012	       Pennant	                 0.1                                        * 
- *                                                                                          * 
+ * 24-05-2018          Srikanth                  0.2           Merge the Code From Bajaj To Core                                                   * 
+                                                                                         * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -43,11 +44,17 @@
  */package com.pennant.backend.service.reports;
 
 import java.util.Date;
+import java.util.List;
 
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
+import com.pennanttech.dataengine.model.EventProperties;
 
 public interface SOAReportGenerationService {
 	
 	StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate);
+
+	EventProperties getEventPropertiesList(String configName);
+	
+	List<String> getSOAFinTypes();
 	
 }

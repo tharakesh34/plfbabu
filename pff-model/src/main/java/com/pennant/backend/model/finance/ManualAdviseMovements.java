@@ -25,6 +25,9 @@ public class ManualAdviseMovements {
 	
 	// Enquiry Purpose
 	private String receiptMode;
+// ### 24-05-2018  SOA Merging from Bajaj to QC
+	private Date valueDate;
+
 	
 	// Getters and Setters
 	
@@ -132,6 +135,12 @@ public class ManualAdviseMovements {
 	}
 	public void setPaidIGST(BigDecimal paidIGST) {
 		this.paidIGST = paidIGST;
+	}
+	public Date getValueDate() {
+		return valueDate;
+	}
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
 	}
 	
 	

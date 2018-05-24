@@ -7,10 +7,10 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window>
-		<window id="window_SOAReportGenerationDialogCtrl" border="normal" width="50%" height="50%" sizable="false" mode="embedded"  apply="${soaReportGenerationDialogCtrl}">
+		<window id="window_SOAReportGenerationDialogCtrl" border="normal" width="50%" height="40%" sizable="false" mode="embedded"  apply="${soaReportGenerationDialogCtrl}">
 			<borderlayout id="borderlayout">
 				<north size="30px" border="none">
+					<div sclass="z-toolbar" style="padding:0">
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
 						width="100%" widths="35%,30%,35%">
 
@@ -20,7 +20,7 @@
 						<!-- SEARCH AREA -->
 						<toolbar align="center"
 							sclass="toolbar-center">
-							<label value="${c:l('window_SOAReportGeneration.title')}" />
+							<label value="${c:l('window_SOAReportGeneration.title')}" sclass="label-heading" />
 						</toolbar>
 
 						<!-- CRUD BUTTONS -->
@@ -31,39 +31,47 @@
 								sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
+					</div>
 				</north>
 
 				<center border="none" autoscroll="true">
-					<groupbox id="gb_basicDetails" sclass="gb-dialog">
+					<groupbox id="gb_basicDetails" sclass="gb-dialog" height="97%">
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>
+							<column width="35px"/>
 							<column width="150px" />
 							<column />
 						</columns>
 						<rows>
+							<row height="30px"/>
 							<row>
+								<space/>
 								<label id="label_SOAReportDialog_FinReference"
 									value="${c:l('label_SOAReportDialog_FinReference.value')}" />
 								<extendedcombobox id="finReference" />
 							</row>
 							<row>
+								<space/>
 								<label id="label_SOAReportDialog_StartDate"
 									value="${c:l('label_SOAReportDialog_StartDate.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<datebox id="startDate"/>
+									<datebox id="startDate" width="100px"/>
 								</hbox>
 							</row>
 							<row>
+								<space/>
 								<label id="label_SOAReportDialog_EndDate"
 									value="${c:l('label_SOAReportDialog_EndDate.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<datebox id="endDate"/>
+									<datebox id="endDate" width="100px"/>
 								</hbox>
 							</row>
+							<row height="10px"/>
 							<row valign="middle">
 								<space />
+								<space/>
 								<hbox align="start">
 									<button id="btnGenereate"
 										height="20" label="${c:l('btnGenerate.label')}"
@@ -78,5 +86,4 @@
 				<south />
 			</borderlayout>
 		</window>
-	</window>
 </zk>

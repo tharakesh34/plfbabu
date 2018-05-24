@@ -30,7 +30,8 @@
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
  * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
+ * 24-05-2018       Srikanth                 0.2           Merge the Code From Bajaj To Core                                                   * 
+                                                                                         * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -75,11 +76,12 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
-import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
+import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -118,7 +120,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select ClosingStatus,FinStartDate,FeeChargeAmt,FinCurrAssetValue FROM  FinanceMain");
+		selectSql.append(" Select ClosingStatus,FinStartDate,FeeChargeAmt,FinCurrAssetValue,FInApprovedDate,FinType FROM  FinanceMain");
 		selectSql.append(" Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
@@ -185,7 +187,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		
 		StringBuilder selectSql = new StringBuilder();
 		
-		selectSql.append(" Select LlDate,AmtToBeReleased,PaymentType,LlReferenceNo,TransactionRef FROM FinAdvancePayments");
+		selectSql.append(" Select LlDate,AmtToBeReleased,PaymentType,LlReferenceNo,TransactionRef,ValueDate FROM FinAdvancePayments");
 		selectSql.append(" Where (Status not in ('CANCELED','REJECTED') or Status is null)");
 		selectSql.append(" And FinReference = :FinReference");
 		
@@ -285,7 +287,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		StringBuilder selectSql = new StringBuilder();
 		
 		selectSql.append(" Select T1.FinReference, T1.PostDate, T1.AdviseAmount, T1.AdviseType, T1.ReceiptId, T1.BounceId, T1.Adviseid, T1.FeeTypeId, T1.BalanceAmt,");
-		selectSql.append(" T1.WaivedAmount, T1.PaidAmount, T2.FeeTypeDesc ");
+		selectSql.append(" T1.WaivedAmount, T1.PaidAmount, T2.FeeTypeDesc, T1.ValueDate ");
 		selectSql.append(" FROM ManualAdvise T1 Left Join");
 		selectSql.append(" FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId  ");
 		selectSql.append(" Where FinReference = :FinReference");
@@ -320,7 +322,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		
 		StringBuilder selectSql = new StringBuilder();
 		
-		selectSql.append(" SELECT T1.Movementdate, T2.WaivedAmount, F.FEETYPEDESC");
+		selectSql.append(" SELECT T1.Movementdate, T2.WaivedAmount, F.FEETYPEDESC, T2.ValueDate");
 		selectSql.append(" FROM ManualAdviseMovements T1 INNER JOIN ");
 		selectSql.append(" ManualAdvise T2 on T1.Adviseid = T2.Adviseid LEFT JOIN ");
 		selectSql.append(" FEETYPES F ON F.FEETYPEID = T2.FEETYPEID ");
@@ -355,7 +357,8 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		List<FinFeeDetail> finFeeDetailsList = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select T1.FinReference, T1.RemainingFee, T1.PaidAmount, T1.Postdate, T1.FeeTypeID, T1.VasReference, T1.Originationfee, T1.FeeSchedulemethod, T2.FeeTypeCode, T2.FeeTypedesc");
+		sql.append(" Select T1.FinReference, T1.RemainingFee, T1.PaidAmount, T1.Postdate, T1.FeeTypeID, T1.VasReference,");
+		sql.append(" T1.Originationfee, T1.FeeSchedulemethod, T2.FeeTypeCode, T2.FeeTypedesc, T1.WaivedAmount");
 		sql.append(" From  FinFeeDetail T1");
 		sql.append(" Left Join FeeTypes T2 ON T2.FeeTypeId = T1.FeeTypeId");
 		sql.append(" WHERE T1.FinReference = :FinReference");
@@ -453,8 +456,8 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("Reference", finReference);
-		selectSql.append(" SELECT ReceiptID,PaymentType,PaymentRef,FavourName,Amount,Status,ReceiptSeqID  from FinReceiptDetail");
-		selectSql.append(" Where ReceiptId in (Select ReceiptId from FINRECEIPTHEADER where Reference = :Reference)");
+		selectSql.append(" SELECT ReceiptID,PaymentType,PaymentRef,FavourNumber,Amount,Status,ReceiptSeqID,ReceivedDate,TransactionRef  from FinReceiptDetail");
+		selectSql.append(" Where ReceiptId in (Select ReceiptId from FINRECEIPTHEADER where Reference = :Reference) ");
 		
 		logger.trace(Literal.SQL + selectSql.toString());
 		
@@ -487,7 +490,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		selectSql.append(" PREVINSTAMTPRI, PREVINSTAMTPFT, INTRATETYPE, LASTDISBURSALDATE, FIRSTDUEDATE, ENDINSTALLMENTDATE, ADVINSTAMT, FINISACTIVE,");
 		selectSql.append(" CLOSINGSTATUS, FUTUREINSTNO, FUTUREPRI1, FUTUREPRI2, FUTURERPYPFT1, FUTURERPYPFT2, CHARGE_COLL_CUST CHARGECOLLCUST,");
 		selectSql.append(" UPFRONT_INT_CUST UPFRONTINTCUST, INT_PAID_DEALER_UPFRONT INTPAIDDEALERUPFRONT, PRE_EMI_INT_PAID PREEMIINTPAID, REPO_STATUS REPOSTATUS,");
-		selectSql.append(" REPO_DATE REPODATE, SALE_DATE SALEDATE, RELEASE_DATE RELEASEDATE, LATESTRPYDATE, CCYMINORCCYUNITS, CCYEDITFIELD");
+		selectSql.append(" LATESTRPYDATE, CCYMINORCCYUNITS, CCYEDITFIELD");
 		selectSql.append(" FROM  RPT_SOA_LOAN_VIEW");
 		selectSql.append(" Where FinReference = :FinReference");
 
@@ -792,7 +795,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		List<RepayScheduleDetail> finRepayScheduleDetailsList = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT RepayID,TdsSchdPayNow FROM FinRepayscheduledetail");
+		sql.append(" SELECT RepayID,TdsSchdPayNow,PftSchdWaivedNow,PriSchdWaivedNow,WaivedAmt FROM FinRepayscheduledetail");
 		sql.append(" WHERE FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -883,4 +886,53 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 
 		return finFeeScheduleDetailsList;
 	}
+	
+	@Override
+	public EventProperties getEventPropertiesList(String configName) {
+
+		logger.debug(Literal.ENTERING);
+
+		EventProperties statementOfAccount = null;
+		MapSqlParameterSource parameterMap = new MapSqlParameterSource();
+		parameterMap = new MapSqlParameterSource();
+		parameterMap.addValue("ConfigName", configName);
+
+		StringBuilder sql = new StringBuilder("Select * from  DATA_ENGINE_EVENT_PROPERTIES");
+		sql.append(" Where config_id in (Select Id from DATA_ENGINE_CONFIG where Name = :ConfigName)");
+
+		logger.trace(Literal.SQL + sql.toString());
+		
+		try {
+			RowMapper<EventProperties> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EventProperties.class);
+			statementOfAccount = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), parameterMap, typeRowMapper);
+		} catch (Exception e) {
+			statementOfAccount = null;
+		} finally {
+			parameterMap = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+
+		return statementOfAccount;
+	}
+	@Override
+	public List<String> getSOAFinTypes() {
+
+		logger.debug(Literal.ENTERING);
+		List<String> list = null;
+		StringBuilder sql = new StringBuilder("Select FinType from  SOA_FinTypes");
+		logger.trace(Literal.SQL + sql.toString());
+		
+		try {
+			list = this.namedParameterJdbcTemplate.queryForList(sql.toString(),new MapSqlParameterSource(),String.class);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION);
+		} finally {
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+
+		return list;
+	}
+	
 }

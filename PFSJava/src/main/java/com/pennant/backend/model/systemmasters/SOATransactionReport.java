@@ -30,7 +30,8 @@
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
  * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
+ * 24-05-2018       Srikanth                 0.2           Merge the Code From Bajaj To Core                                                   * 
+                                                                                       
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -62,6 +63,8 @@ public class SOATransactionReport {
 	private Date toDate;
 	private int ccyEditField;
 	private int priority;
+	private BigDecimal balanceAmount ;
+	private Date valueDate;
 
 	/**
 	 * default Constructor
@@ -146,5 +149,21 @@ public class SOATransactionReport {
 
 	public void setPriority(int priority) {
 		this.priority = priority;
+	}
+
+	public BigDecimal getBalanceAmount() {
+		return balanceAmount;
+	}
+
+	public void setBalanceAmount(BigDecimal balanceAmount) {
+		this.balanceAmount = balanceAmount;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
 	}
 }

@@ -952,8 +952,11 @@
 				rightName="menu_Item_CollateralDetails" />
 		</menu>
 		<menu id="menu_Category_CustomerTemplates">
-			<menuItem id="menu_Item_AccountStmt"
+			<!-- <menuItem id="menu_Item_AccountStmt"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menuItem_CustomerTemplates_SOA" /> -->
+				<menuItem id="menu_Item_AccountStmt"
+				zulNavigation="/WEB-INF/pages/Reports/SOAReportGenerationDialog.zul"
 				rightName="menuItem_CustomerTemplates_SOA" />
 			<menuItem id="menu_Item_NoObjectionCertificate"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"

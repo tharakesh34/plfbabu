@@ -30,7 +30,8 @@
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
  * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
+ * 24-05-2018       Srikanth                 0.2           Merge the Code From Bajaj To Core                                                   * 
+ * 															
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -60,11 +61,12 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
-import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
+import com.pennanttech.dataengine.model.EventProperties;
 
 /**
  * DAO methods declaration for the <b>ReportConfiguration model</b> class.<br>
@@ -94,4 +96,6 @@ public interface SOAReportGenerationDAO {
 	List<RepayScheduleDetail> getRepayScheduleDetailsList(String finReference);
 	List<VASRecording> getVASRecordingsList(String finReference);
 	List<FinFeeScheduleDetail> getFinFeeScheduleDetailsList(String finReference);
+	EventProperties getEventPropertiesList(String configName);
+	List<String> getSOAFinTypes();
 }

@@ -30,7 +30,7 @@
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
  * 23-09-2012         Pennant	                 0.1                                        * 
- *                                                                                          * 
+ * 24-05-2018         Srikanth                  0.2           Merge the Code From Bajaj To Core                                                                                        * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -66,8 +66,8 @@ import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -83,7 +83,8 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 	protected Datebox	endDate;
 	
 	private StatementOfAccount statementOfAccount = new StatementOfAccount();
-	private transient SOAReportGenerationService soaReportGenerationService;	
+	private transient SOAReportGenerationService soaReportGenerationService;
+
 
 	public SOAReportGenerationDialogCtrl() {
 		super();
@@ -128,11 +129,12 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		// Finance Reference
 		this.finReference.setModuleName("FinanceMain");
 		this.finReference.setValueColumn("FinReference");
+		this.finReference.setDescColumn("FinType");
 		this.finReference.setDisplayStyle(2);
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
 		this.finReference.setMandatoryStyle(true);
 		this.finReference.setMaxlength(LengthConstants.LEN_REF);
-		this.finReference.setTextBoxWidth(143);
+		this.finReference.setTextBoxWidth(140);
 		
 		this.startDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.endDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -170,16 +172,18 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		List<Object> list = new ArrayList<Object>();
 		list.add(this.statementOfAccount.getSoaSummaryReports());
 		list.add(this.statementOfAccount.getTransactionReports());
-		
 		try {
-			ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount", this.statementOfAccount, list,
-					true, 1, getUserWorkspace().getLoggedInUser().getFullName(), this.window_SOAReportGenerationDialogCtrl);
-		} catch (InterruptedException e) {
+				ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount", this.statementOfAccount, list, true, 1,
+						getUserWorkspace().getLoggedInUser().getFullName(), null);
+
+			}
+		 catch (InterruptedException e) {
 			MessageUtil.showError(e);
 		}
-		
+		this.window_SOAReportGenerationDialogCtrl.setVisible(true);
 		logger.debug(Literal.LEAVING);
 	}
+	
 	
 	/**
 	 * Writes the components values to the bean.<br>
@@ -193,11 +197,9 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		String finReference = "";
 		Date startDate = null;
 		Date endDate = null;
-
 		// FinReference
 		try {
 			finReference = this.finReference.getValue();
-			
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
