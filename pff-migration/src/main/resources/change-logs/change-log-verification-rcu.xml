@@ -993,27 +993,27 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="4.3_Post" author="Jayant" dbms="oracle">
-		<addDefaultValue columnName="DocumentType" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="VerificationType" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="Status" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="PagesEyeballed" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="PagesSampled" tableName="verification_rcu_details_temp" defaultValue="0"/>
+	<changeSet id="4.3_Post1" author="Jayant" dbms="oracle">
+		<addDefaultValue columnName="DocumentType" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="VerificationType" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="Status" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="PagesEyeballed" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="PagesSampled" tableName="verification_rcu_details_stage" defaultValue="0"/>
 	</changeSet>
-	<changeSet id="4.3_Post" author="Jayant" dbms="postgresql">
-		<addDefaultValue columnName="DocumentType" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="VerificationType" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="Status" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="PagesEyeballed" tableName="verification_rcu_details_temp" defaultValue="0"/>
-		<addDefaultValue columnName="PagesSampled" tableName="verification_rcu_details_temp" defaultValue="0"/>
+	<changeSet id="4.3_Post1" author="Jayant" dbms="postgresql">
+		<addDefaultValue columnName="DocumentType" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="VerificationType" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="Status" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="PagesEyeballed" tableName="verification_rcu_details_stage" defaultValue="0"/>
+		<addDefaultValue columnName="PagesSampled" tableName="verification_rcu_details_stage" defaultValue="0"/>
 	</changeSet>
-	<changeSet id="4.3_Post" author="Jayant" dbms="mssql">
+	<changeSet id="4.3_Post1" author="Jayant" dbms="mssql">
 		<sql>
-			alter table verification_rcu_details_temp add constraint df_vrd_t_DocumentType default 0 for DocumentType;
-			alter table verification_rcu_details_temp add constraint df_vrd_t_VerificationType default 0 for VerificationType;
-			alter table verification_rcu_details_temp add constraint df_vrd_t_status default 0 for Status;
-			alter table verification_rcu_details_temp add constraint df_vrd_t_PagesEyeballed default 0 for PagesEyeballed;
-			alter table verification_rcu_details_temp add constraint df_vrd_t_PagesSampled default 0 for PagesSampled;
+			alter table verification_rcu_details_stage add constraint df_vrdss_DocumentType default 0 for DocumentType;
+			alter table verification_rcu_details_stage add constraint df_vrdss_VerificationType default 0 for VerificationType;
+			alter table verification_rcu_details_stage add constraint df_vrdss_status default 0 for Status;
+			alter table verification_rcu_details_stage add constraint df_vrdss_PagesEyeballed default 0 for PagesEyeballed;
+			alter table verification_rcu_details_stage add constraint df_vrdss_PagesSampled default 0 for PagesSampled;
 		</sql>
 	</changeSet>
  	<changeSet id="4.4" author="murthy.y">
