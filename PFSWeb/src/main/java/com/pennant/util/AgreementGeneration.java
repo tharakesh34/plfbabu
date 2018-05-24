@@ -87,6 +87,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -149,6 +150,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.NotesService;
 import com.pennant.backend.service.administration.SecurityUserService;
+import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.applicationmaster.MMAgreementService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -189,6 +191,8 @@ public class AgreementGeneration implements Serializable {
 	private CollateralSetupService collateralSetupService;
 	private SecurityUserService securityUserService;
 	private ActivityLogService activityLogService;
+	@Autowired
+	private BranchService branchService;
 
 	public AgreementGeneration() {
 		super();
@@ -1759,6 +1763,30 @@ public class AgreementGeneration implements Serializable {
 			agreement.setFinCcy(main.getFinCcy());
 			agreement.setPftDaysBasis(main.getProfitDaysBasis());
 			agreement.setFinBranch(main.getFinBranch());
+			
+			if (StringUtils.isNotBlank(main.getFinBranch())) {
+				if (branchService != null) {
+					Branch branchdetails = branchService.getApprovedBranchById(main.getFinBranch());
+					if (branchdetails!=null) {
+						agreement.setFinBranchAddrHNbr(branchdetails.getBranchAddrHNbr());
+						agreement.setFinBranchFlatNbr(branchdetails.getBranchFlatNbr());
+						agreement.setFinBranchAddrStreet(branchdetails.getBranchAddrStreet());
+						agreement.setFinBranchAddrLine1(branchdetails.getBranchAddrLine1());
+						agreement.setFinBranchAddrLine2(branchdetails.getBranchAddrLine2());
+						agreement.setFinBranchPOBox(branchdetails.getBranchPOBox());
+						agreement.setFinBranchAddrCountry(branchdetails.getBranchCountry());
+						agreement.setFinBranchAddrCountryName(branchdetails.getLovDescBranchCountryName());
+						agreement.setFinBranchAddrProvince(branchdetails.getBranchProvince());
+						agreement.setFinBranchAddrProvinceName(branchdetails.getLovDescBranchProvinceName());
+						agreement.setFinBranchAddrCity(branchdetails.getBranchCity());
+						agreement.setFinBranchAddrCityName(branchdetails.getLovDescBranchCityName());
+						agreement.setFinBranchAddrZIP(branchdetails.getBranchPOBox());
+						agreement.setFinBranchAddrPhone(branchdetails.getBranchTel());
+					}
+
+				}
+
+			}
 			agreement.setRepayRateBasis(PennantStaticListUtil.getlabelDesc(main.getRepayRateBasis(), interestRateType));
 			agreement.setStartDate(DateUtility.formatToLongDate(main.getFinStartDate()));
 			agreement.setRepayFrqDay(FrequencyUtil.getFrequencyDay(main.getRepayFrq()));

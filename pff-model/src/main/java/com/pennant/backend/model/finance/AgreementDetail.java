@@ -323,6 +323,133 @@ public class AgreementDetail {
 	private String 	repayFrqDay  ="";													// Payment Frequency Day 
 	private String 	repayFrqCode  ="";													// Payment Frequency Day 
 	
+	
+	public String getFinBranchAddrHNbr() {
+		return StringUtils.trimToEmpty(finBranchAddrHNbr);
+	}
+
+	public void setFinBranchAddrHNbr(String finBranchAddrHNbr) {
+		this.finBranchAddrHNbr = finBranchAddrHNbr;
+	}
+
+	public String getFinBranchFlatNbr() {
+		return StringUtils.trimToEmpty(finBranchFlatNbr);
+	}
+
+	public void setFinBranchFlatNbr(String finBranchFlatNbr) {
+		this.finBranchFlatNbr = finBranchFlatNbr;
+	}
+
+	public String getFinBranchAddrStreet() {
+		return StringUtils.trimToEmpty(finBranchAddrStreet);
+	}
+
+	public void setFinBranchAddrStreet(String finBranchAddrStreet) {
+		this.finBranchAddrStreet = finBranchAddrStreet;
+	}
+
+	public String getFinBranchAddrLine1() {
+		return StringUtils.trimToEmpty(finBranchAddrLine1);
+	}
+
+	public void setFinBranchAddrLine1(String finBranchAddrLine1) {
+		this.finBranchAddrLine1 = finBranchAddrLine1;
+	}
+
+	public String getFinBranchAddrLine2() {
+		return StringUtils.trimToEmpty(finBranchAddrLine2);
+	}
+
+	public void setFinBranchAddrLine2(String finBranchAddrLine2) {
+		this.finBranchAddrLine2 = finBranchAddrLine2;
+	}
+
+	public String getFinBranchPOBox() {
+		return StringUtils.trimToEmpty(finBranchPOBox);
+	}
+
+	public void setFinBranchPOBox(String finBranchPOBox) {
+		this.finBranchPOBox = finBranchPOBox;
+	}
+
+	public String getFinBranchAddrCountry() {
+		return StringUtils.trimToEmpty(finBranchAddrCountry);
+	}
+
+	public void setFinBranchAddrCountry(String finBranchAddrCountry) {
+		this.finBranchAddrCountry = finBranchAddrCountry;
+	}
+
+	public String getFinBranchAddrCountryName() {
+		return StringUtils.trimToEmpty(finBranchAddrCountryName);
+	}
+
+	public void setFinBranchAddrCountryName(String finBranchAddrCountryName) {
+		this.finBranchAddrCountryName = finBranchAddrCountryName;
+	}
+
+	public String getFinBranchAddrProvince() {
+		return StringUtils.trimToEmpty(finBranchAddrProvince);
+	}
+
+	public void setFinBranchAddrProvince(String finBranchAddrProvince) {
+		this.finBranchAddrProvince = finBranchAddrProvince;
+	}
+
+	public String getFinBranchAddrProvinceName() {
+		return StringUtils.trimToEmpty(finBranchAddrProvinceName);
+	}
+
+	public void setFinBranchAddrProvinceName(String finBranchAddrProvinceName) {
+		this.finBranchAddrProvinceName = finBranchAddrProvinceName;
+	}
+
+	public String getFinBranchAddrCity() {
+		return StringUtils.trimToEmpty(finBranchAddrCity);
+	}
+
+	public void setFinBranchAddrCity(String finBranchAddrCity) {
+		this.finBranchAddrCity = finBranchAddrCity;
+	}
+
+	public String getFinBranchAddrCityName() {
+		return StringUtils.trimToEmpty(finBranchAddrCityName);
+	}
+
+	public void setFinBranchAddrCityName(String finBranchAddrCityName) {
+		this.finBranchAddrCityName = finBranchAddrCityName;
+	}
+
+	public String getFinBranchAddrZIP() {
+		return StringUtils.trimToEmpty(finBranchAddrZIP);
+	}
+
+	public void setFinBranchAddrZIP(String finBranchAddrZIP) {
+		this.finBranchAddrZIP = finBranchAddrZIP;
+	}
+
+	public String getFinBranchAddrPhone() {
+		return StringUtils.trimToEmpty(finBranchAddrPhone);
+	}
+
+	public void setFinBranchAddrPhone(String finBranchAddrPhone) {
+		this.finBranchAddrPhone = finBranchAddrPhone;
+	}
+
+	private String finBranchAddrHNbr="";
+	private String finBranchFlatNbr="";
+	private String finBranchAddrStreet="";
+	private String finBranchAddrLine1="";
+	private String finBranchAddrLine2="";
+	private String finBranchPOBox="";
+	private String finBranchAddrCountry="";
+	private String finBranchAddrCountryName="";
+	private String finBranchAddrProvince="";
+	private String finBranchAddrProvinceName="";
+	private String finBranchAddrCity ="";
+	private String finBranchAddrCityName ="";
+	private String finBranchAddrZIP ="";
+	private String finBranchAddrPhone ="";
 
 	//Repayment Details
 	//===============================
