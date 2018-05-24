@@ -30,8 +30,6 @@ public interface TechnicalVerificationService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	Verification getTvVeriFication(Verification verification);
-
 	List<Long> getTechnicalVerificaationIds(List<Verification> verifications, String keyRef);
 
 	TechnicalVerification getApprovedTechnicalVerification(long id);

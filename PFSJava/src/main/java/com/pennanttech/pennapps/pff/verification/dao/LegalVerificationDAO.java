@@ -6,6 +6,7 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 
 public interface LegalVerificationDAO extends BasicCrudDao<LegalVerification> {
@@ -48,5 +49,7 @@ public interface LegalVerificationDAO extends BasicCrudDao<LegalVerification> {
 	boolean isLVExists(long id);
 
 	List<LVDocument> getDocuments(String keyReference, TableType tableType, DocumentType documentType);
+
+	List<Verification> getDocumentRefIdByCOllateralRef(String collateralRef);
 
 }

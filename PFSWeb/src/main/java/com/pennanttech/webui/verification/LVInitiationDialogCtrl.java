@@ -322,12 +322,12 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void onChangeCollateral(ForwardEvent event) throws Exception {
 		Object dataObject = this.collateral.getObject();
 		if (dataObject != null) {
+			if (listBoxCollateralDocuments.getItems() != null) {
+				listBoxCollateralDocuments.getItems().clear();
+			}
 			if (dataObject instanceof String) {
 				collateral.setValue(dataObject.toString());
 				collateral.setDescription("");
-				if (listBoxCollateralDocuments.getItems() != null) {
-					listBoxCollateralDocuments.getItems().clear();
-				}
 			} else {
 				CollateralSetup collateralSetup = (CollateralSetup) dataObject;
 				collateral.setAttribute("collateralRef", collateralSetup.getCollateralRef());
@@ -510,7 +510,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			 * { idList.add(lvDocument.getDocumentSubId()); } else {
 			 * idList.add(String.valueOf(lvDocument.getDocumentType()).concat(lvDocument.getDocumentSubId())); }
 			 */
-			if ((lvDocument.getDocumentType() == DocumentType.COLLATRL.getKey()) && StringUtils.isNotEmpty(lvDocument.getCollateralRef())) {
+			if ((lvDocument.getDocumentType() == DocumentType.COLLATRL.getKey())
+					&& StringUtils.isNotEmpty(lvDocument.getCollateralRef())) {
 				idList.add(String.valueOf(lvDocument.getCollateralRef()
 						.concat(String.valueOf(lvDocument.getDocumentType())).concat(lvDocument.getDocumentSubId())));
 			} else {

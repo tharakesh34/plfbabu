@@ -62,6 +62,7 @@ import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.fi.RCUStatus;
+import com.pennanttech.pennapps.pff.verification.fi.TVStatus;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -274,6 +275,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		current.setDecision(previous.getDecision());
 		current.setDecisionRemarks(previous.getDecisionRemarks());
 		current.setReference(previous.getReference());
+		current.setStatus(previous.getStatus());
+		current.setVerificationDate(previous.getVerificationDate());
 		current.setNewRecord(false);
 
 		if (previous.getRcuDocument() != null) {
@@ -444,14 +447,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private void onchangeVerificationType(Combobox cfiv, ExtendedCombobox cAgency, ExtendedCombobox cReason) {
 		RequestType type;
-		try {
-			type = RequestType.getType(Integer.parseInt(cfiv.getSelectedItem().getValue()));
-		} catch (Exception e) {
-			String value = cfiv.getValue();
-			cfiv.setValue("");
-			throw new WrongValueException(cfiv,
-					Labels.getLabel("STATIC_INVALID", new String[] { value + " is not valid," }));
-		}
+		type = RequestType.getType(Integer.parseInt(cfiv.getSelectedItem().getValue()));
+
 		switch (type) {
 		case INITIATE:
 			cAgency.setReadonly(false);
@@ -682,24 +679,29 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Combobox requestType = new Combobox();
 			requestType.setReadonly(true);
 			requestType.setValue(String.valueOf(vrf.getRequestType()));
+			
 			List<ValueLabel> list = new ArrayList<>();
-			if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {
-				for (ValueLabel valueLabel : RequestType.getList()) {
-					if (Integer.parseInt(valueLabel.getValue()) != RequestType.WAIVE.getKey()) {
-						list.add(valueLabel);
-					}
-				}
-				fillComboBox(requestType, vrf.getRequestType(), list);
-			} else if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
+			int reqType = vrf.getRequestType();
+			if (reqType == RequestType.NOT_REQUIRED.getKey() && rcurequiredDocs.contains(vrf.getReferenceFor())) {
+				list = RequestType.getList();
+			} else if (reqType == RequestType.WAIVE.getKey() && !rcurequiredDocs.contains(vrf.getReferenceFor())) {
+				list = RequestType.getList();
+			} else if (rcurequiredDocs.contains(vrf.getReferenceFor())) {
 				for (ValueLabel valueLabel : RequestType.getList()) {
 					if (Integer.parseInt(valueLabel.getValue()) != RequestType.NOT_REQUIRED.getKey()) {
 						list.add(valueLabel);
 					}
 				}
-				fillComboBox(requestType, vrf.getRequestType(), list);
 			} else {
-				fillComboBox(requestType, vrf.getRequestType(), RequestType.getList());
+				for (ValueLabel valueLabel : RequestType.getList()) {
+					if (Integer.parseInt(valueLabel.getValue()) != RequestType.WAIVE.getKey()) {
+						list.add(valueLabel);
+					}
+				}
 			}
+			
+			fillComboBox(requestType, reqType, list);
+			
 			requestType.setParent(listCell);
 			listCell.setParent(item);
 
@@ -740,13 +742,15 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			//Status
 			listCell = new Listcell();
 			Label status = new Label();
-			if (vrf.getStatus() != 0) {
-				if (initType) {
-					status.setValue(RCUStatus.getType(vrf.getLastStatus()).getValue());
-				} else {
-					status.setValue(RCUStatus.getType(vrf.getStatus()).getValue());
-				}
+			
+			if (initType && vrf.getLastStatus() != 0) {
+				status.setValue(TVStatus.getType(vrf.getLastStatus()).getValue());
+
+			} else if (vrf.getStatus() != 0) {
+				status.setValue(TVStatus.getType(vrf.getStatus()).getValue());
 			}
+			
+			
 			listCell.appendChild(status);
 			listCell.setParent(item);
 
@@ -860,12 +864,17 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private List<String> getRCURequiredDocs() {
-		Search search = new Search(String.class);
+
+		List<String> codes = new ArrayList<>();
+		Search search = new Search(com.pennant.backend.model.systemmasters.DocumentType.class);
 		search.addField("doctypecode");
 		search.addTabelName("BMTDocumentTypes");
-		search.addFilter(new Filter("rcureq", true));
-
-		return searchProcessor.getResults(search);
+		search.addFilter(new Filter("rcureq", 1));
+		List<com.pennant.backend.model.systemmasters.DocumentType> list = searchProcessor.getResults(search);
+		for (com.pennant.backend.model.systemmasters.DocumentType documentType : list) {
+			codes.add(documentType.getDocTypeCode());
+		}
+		return codes;
 	}
 
 	private List<ValueLabel> filterDecisions(List<ValueLabel> list) {

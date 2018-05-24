@@ -23,9 +23,12 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -576,6 +579,39 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
+	}
+	
+	@Override
+	public List<Verification> getDocumentRefIdByCOllateralRef(String collateralRef) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select v.id, v.verificationDate, coalesce(v.status, 0) status,");
+		sql.append(" a.dealerName as lastAgency,  documentId, docRefId, referenceFor");
+		sql.append(" from  verification_lv_details_view dd");
+		sql.append(" inner join verifications v on v.id=dd.verificationid");
+		sql.append(" left join AMTVehicleDealer_AView a on a.dealerid = v.agency and dealerType = :dealerType");
+		sql.append(" where Id = (select coalesce(max(id), 0)");
+		sql.append(" from verifications where referenceFor = :referenceFor");
+		sql.append(" and verificationType = :verificationType and verificationdate is not null and status !=0)");
+
+		paramMap.addValue("referenceFor", collateralRef);
+		paramMap.addValue("verificationType", VerificationType.LV.getKey());
+		paramMap.addValue("dealerType", Agencies.LVAGENCY.getKey());
+
+		try {
+			logger.debug(Literal.SQL + sql.toString());
+			return jdbcTemplate.query(sql.toString(), paramMap, rowMapper);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+
 	}
 
 }

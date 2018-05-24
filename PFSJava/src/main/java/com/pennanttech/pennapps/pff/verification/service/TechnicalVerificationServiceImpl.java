@@ -35,7 +35,6 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.collateral.CollateralStructureService;
 import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.CollateralConstants;
@@ -73,8 +72,6 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	@Autowired
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
-	@Autowired
-	private CollateralStructureService collateralStructureService;
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
 	@Autowired
@@ -229,7 +226,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	 * @return verification_fi
 	 */
 	@Override
-	public TechnicalVerification getTechnicalVerification(long id,String type) {
+	public TechnicalVerification getTechnicalVerification(long id, String type) {
 		TechnicalVerification technicalVerification = technicalVerificationDAO.getTechnicalVerification(id, type);
 		if (technicalVerification != null) {
 			// FI Document Details
@@ -544,90 +541,6 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		return auditDetails;
 	}
 
-	private List<Verification> getScreenVerifications(Verification verification) {
-		List<Verification> verifications = new ArrayList<>();
-		/*List<String> requiredCodes = collateralStructureService.getCollateralValuatorRequiredCodes();
-		for (CollateralSetup collateralSetup : verification.getCollateralSetupList()) {
-			Verification vrf = new Verification();
-			vrf.setModule(verification.getModule());
-			vrf.setVerificationType(verification.getVerificationType());
-			vrf.setReferenceType(collateralSetup.getCollateralType());
-			vrf.setKeyReference(verification.getKeyReference());
-			vrf.setCif(verification.getCif());
-			vrf.setCustomerName(verification.getCustomerName());
-			vrf.setReferenceFor(collateralSetup.getCollateralRef());
-			vrf.setCustId(verification.getCustId());
-
-			if (requiredCodes.contains(collateralSetup.getCollateralType())) {
-				vrf.setRequestType(RequestType.INITIATE.getKey());
-			} else {
-				vrf.setRequestType(RequestType.NOT_REQUIRED.getKey());
-			}
-			vrf.setNewRecord(true);
-			vrf.setReference(vrf.getCif());
-			vrf.setRecordType(collateralSetup.getRecordType());
-			vrf.setCreatedOn(DateUtility.getAppDate());
-			setTvFields(vrf);
-			verifications.add(vrf);
-
-		}
-	*/	return verifications;
-	}
-
-	@Override
-	public Verification getTvVeriFication(Verification verification) {/*
-		logger.info(Literal.ENTERING);
-		List<Verification> preVerifications = verificationDAO.getVeriFications(verification.getKeyReference(),
-				VerificationType.TV.getKey());
-		List<Verification> screenVerifications = getScreenVerifications(verification);
-		//setLastStatus(screenVerifications);
-
-		if (!preVerifications.isEmpty()) {
-			List<TechnicalVerification> tvList = technicalVerificationDAO.getList(verification.getKeyReference());
-
-			for (Verification pvr : preVerifications) {
-				for (TechnicalVerification tv : tvList) {
-					if (pvr.getId() == tv.getVerificationId()) {
-						pvr.setTechnicalVerification(tv);
-					}
-				}
-			}
-
-		}
-		getChangedVerifications(preVerifications, screenVerifications, verification.getKeyReference());
-		verification.setVerifications(
-				compareVerifications(screenVerifications, preVerifications, verification.getKeyReference()));
-
-		logger.info(Literal.LEAVING);*/
-		return verification;
-	}
-
-	private void setLastStatus(List<Verification> verifications) {/*
-		String[] cif = new String[verifications.size()];
-
-		int i = 0;
-		for (Verification verification : verifications) {
-			cif[i++] = verification.getCif();
-		}
-		if (cif.length != 0) {
-			List<TechnicalVerification> list = technicalVerificationDAO.getList(cif);
-			for (Verification verification : verifications) {
-				TechnicalVerification current = verification.getTechnicalVerification();
-				for (TechnicalVerification previous : list) {
-					if (previous.getCif().equals(verification.getCif())
-							&& previous.getCollateralRef().equals(current.getCollateralRef())) {
-						if (!isCollateralChanged(previous, current)) {
-							verification.setStatus(previous.getStatus());
-							if (previous.getVerifiedDate() != null) {
-								verification.setVerificationDate(new Timestamp(previous.getVerifiedDate().getTime()));
-							}
-						}
-					}
-				}
-			}
-		}
-	*/}
-
 	@Override
 	public void save(TechnicalVerification technicalVerification, TableType tempTab) {
 		setWorkFlowDetails(technicalVerification);
@@ -635,24 +548,6 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		technicalVerificationDAO.saveCollateral(technicalVerification.getCollateralRef(),
 				technicalVerification.getCollateralType(), technicalVerification.getVerificationId());
 	}
-
-	private void getChangedVerifications(List<Verification> oldList, List<Verification> newList, String keyReference) {/*
-		List<Long> tvIds = getTechnicalVerificaationIds(oldList, keyReference);
-		for (Verification newVer : newList) {
-			for (Verification oldVer : oldList) {
-				if (oldVer.getReferenceFor().equals(newVer.getReferenceFor())) {
-					if (oldVer.getRequestType() != RequestType.INITIATE.getKey() || !tvIds.contains(oldVer.getId())) {
-						break;
-					}
-					if (oldVer.getRequestType() == RequestType.INITIATE.getKey()
-							&& isCollateralChanged(oldVer.getTechnicalVerification(), newVer.getTechnicalVerification())
-							&& tvIds.contains(oldVer.getId())) {
-						newVer.setReinitid(oldVer.getId());
-					}
-				}
-			}
-		}
-	*/}
 
 	@Override
 	public List<Long> getTechnicalVerificaationIds(List<Verification> verifications, String keyRef) {
@@ -675,45 +570,23 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		return technicalVerificationDAO.getList(keyReference);
 	}
 
-	private List<Verification> compareVerifications(List<Verification> screenVerifications,
-			List<Verification> preVerifications, String keyReference) {/*
-		List<Verification> tempList = new ArrayList<>();
-		tempList.addAll(screenVerifications);
-		Collections.reverse(preVerifications);
-		tempList.addAll(preVerifications);
-		Collections.reverse(preVerifications);
-		List<Long> tvIds = getTechnicalVerificaationIds(preVerifications, keyReference);
-		screenVerifications.addAll(preVerifications);
-
-		for (Verification vrf : tempList) {
-			for (Verification preVrf : preVerifications) {
-				if (vrf.getReferenceFor().equals(preVrf.getReferenceFor()) && vrf.getReinitid() == null
-						&& !isCollateralChanged(preVrf.getTechnicalVerification(), vrf.getTechnicalVerification())
-						&& !tvIds.contains(vrf.getId())) {
-					screenVerifications.remove(vrf);
-					preVerifications.remove(preVrf);
-					break;
-				}
-			}
-		}
-	*/	return screenVerifications;
-	}
-
 	@Override
 	public boolean isCollateralChanged(Verification verification) {
-		List<Map<String, Object>> previous = extendedFieldRenderDAO.getExtendedFieldMapByVerificationId(verification.getId(),
-				"collateral_" + verification.getReferenceType() + "_ed_tv");
-		List<Map<String, Object>> current = extendedFieldRenderDAO.getExtendedFieldMap(verification.getReferenceFor(),
-				"collateral_" + verification.getReferenceType() + "_ed", null);
+		List<Map<String, Object>> previous;
+		List<Map<String, Object>> current;
+		String tableName = "collateral_" + verification.getReferenceType();
 		
+		previous = extendedFieldRenderDAO.getExtendedFieldMapByVerificationId(verification.getId(),
+				tableName + "_ed_tv");
+		current = extendedFieldRenderDAO.getExtendedFieldMap(verification.getReferenceFor(), tableName + "_ed", null);
+
 		if (previous.size() != current.size()) {
 			return true;
 		}
-		
+
 		for (Map<String, Object> prv : previous) {
 			for (Map<String, Object> item : current) {
-				if (prv.get("reference").equals(item.get("reference"))
-						&& prv.get("seqno").equals(item.get("seqno"))
+				if (prv.get("reference").equals(item.get("reference")) && prv.get("seqno").equals(item.get("seqno"))
 						&& prv.get("version").equals(item.get("version"))) {
 					return true;
 				}
@@ -915,9 +788,10 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		}
 		return documentValidation;
 	}
-	
+
 	@Override
 	public TechnicalVerification getVerificationinFromRecording(long verificationId) {
-		return  technicalVerificationDAO.getTechnicalVerification(verificationId, "_View");
+		return technicalVerificationDAO.getTechnicalVerification(verificationId, "_View");
 	}
+
 }

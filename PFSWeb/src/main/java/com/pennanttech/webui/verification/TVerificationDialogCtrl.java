@@ -341,14 +341,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private void onchangeVerificationType(Combobox cfiv, ExtendedCombobox cAgency, ExtendedCombobox cReason) {
 		RequestType type;
-		try {
-			type = RequestType.getType(Integer.parseInt(cfiv.getSelectedItem().getValue()));
-		} catch (Exception e) {
-			String value = cfiv.getValue();
-			cfiv.setValue("");
-			throw new WrongValueException(cfiv,
-					Labels.getLabel("STATIC_INVALID", new String[] { value + " is not valid," }));
-		}
+		type = RequestType.getType(Integer.parseInt(cfiv.getSelectedItem().getValue()));
+
 		switch (type) {
 		case INITIATE:
 			cAgency.setReadonly(false);
@@ -526,23 +520,29 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			requestType.setWidth("200px");
 			requestType.setReadonly(true);
 			requestType.setValue(String.valueOf(vrf.getRequestType()));
+			
 			List<ValueLabel> list = new ArrayList<>();
-			if (requiredCodes.contains(vrf.getReferenceType())) {
+			int reqType = vrf.getRequestType();
+			if (reqType == RequestType.NOT_REQUIRED.getKey() && requiredCodes.contains(vrf.getReferenceType())) {
+				list = RequestType.getList();
+			} else if (reqType == RequestType.WAIVE.getKey() && !requiredCodes.contains(vrf.getReferenceType())) {
+				list = RequestType.getList();
+			} else if (requiredCodes.contains(vrf.getReferenceType())) {
 				for (ValueLabel valueLabel : RequestType.getList()) {
 					if (Integer.parseInt(valueLabel.getValue()) != RequestType.NOT_REQUIRED.getKey()) {
 						list.add(valueLabel);
 					}
 				}
-				fillComboBox(requestType, vrf.getRequestType(), list);
 			} else {
 				for (ValueLabel valueLabel : RequestType.getList()) {
 					if (Integer.parseInt(valueLabel.getValue()) != RequestType.WAIVE.getKey()) {
 						list.add(valueLabel);
 					}
 				}
-				fillComboBox(requestType, vrf.getRequestType(), list);
 			}
-
+			
+			fillComboBox(requestType, reqType, list);
+			
 			requestType.setParent(listCell);
 			listCell.setParent(item);
 
@@ -595,16 +595,11 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell = new Listcell();
 			Label status = new Label();
 
-			if (initType) {
-				if (vrf.getLastStatus() != 0) {
-					status.setValue(TVStatus.getType(vrf.getLastStatus()).getValue());
-				}
+			if (initType && vrf.getLastStatus() != 0) {
+				status.setValue(TVStatus.getType(vrf.getLastStatus()).getValue());
 
-			} else {
-				if (vrf.getStatus() != 0) {
-					status.setValue(TVStatus.getType(vrf.getStatus()).getValue());
-				}
-
+			} else if (vrf.getStatus() != 0) {
+				status.setValue(TVStatus.getType(vrf.getStatus()).getValue());
 			}
 
 			listCell.appendChild(status);

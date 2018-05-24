@@ -64,6 +64,7 @@ import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
+import com.pennanttech.pennapps.pff.verification.fi.TVStatus;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
@@ -202,14 +203,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private void onchangeVerificationType(Combobox cfiv, ExtendedCombobox cAgency, ExtendedCombobox cReason) {
 		RequestType type;
-		try {
-			type = RequestType.getType(Integer.parseInt(cfiv.getSelectedItem().getValue()));
-		} catch (Exception e) {
-			String value = cfiv.getValue();
-			cfiv.setValue("");
-			throw new WrongValueException(cfiv,
-					Labels.getLabel("STATIC_INVALID", new String[] { value + " is not valid," }));
-		}
+		type = RequestType.getType(Integer.parseInt(cfiv.getSelectedItem().getValue()));
+
 		switch (type) {
 		case INITIATE:
 			cAgency.setReadonly(false);
@@ -385,22 +380,30 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Combobox requestType = new Combobox();
 			requestType.setReadonly(true);
 			requestType.setValue(String.valueOf(vrf.getRequestType()));
+						
 			List<ValueLabel> list = new ArrayList<>();
-			if (requiredCodes.contains(vrf.getReferenceFor())) {
+			int reqType = vrf.getRequestType();
+			if (reqType == RequestType.NOT_REQUIRED.getKey() && requiredCodes.contains(vrf.getReferenceFor())) {
+				list = RequestType.getList();
+			} else if (reqType == RequestType.WAIVE.getKey() && !requiredCodes.contains(vrf.getReferenceFor())) {
+				list = RequestType.getList();
+			} else if (requiredCodes.contains(vrf.getReferenceFor())) {
 				for (ValueLabel valueLabel : RequestType.getList()) {
 					if (Integer.parseInt(valueLabel.getValue()) != RequestType.NOT_REQUIRED.getKey()) {
 						list.add(valueLabel);
 					}
 				}
-				fillComboBox(requestType, vrf.getRequestType(), list);
 			} else {
 				for (ValueLabel valueLabel : RequestType.getList()) {
 					if (Integer.parseInt(valueLabel.getValue()) != RequestType.WAIVE.getKey()) {
 						list.add(valueLabel);
 					}
 				}
-				fillComboBox(requestType, vrf.getRequestType(), list);
 			}
+			
+			fillComboBox(requestType, reqType, list);
+			
+			
 
 			requestType.setParent(listCell);
 			listCell.setParent(item);
@@ -450,15 +453,14 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell = new Listcell();
 			Label status = new Label();
 
-			if (initType) {
-				if (vrf.getLastStatus() != 0) {
-					status.setValue(FIStatus.getType(vrf.getLastStatus()).getValue());
-				}
-			} else {
-				if (vrf.getStatus() != 0) {
-					status.setValue(FIStatus.getType(vrf.getStatus()).getValue());
-				}
+					
+			if (initType && vrf.getLastStatus() != 0) {
+				status.setValue(TVStatus.getType(vrf.getLastStatus()).getValue());
+
+			} else if (vrf.getStatus() != 0) {
+				status.setValue(TVStatus.getType(vrf.getStatus()).getValue());
 			}
+			
 			listCell.appendChild(status);
 			listCell.setParent(item);
 
@@ -684,7 +686,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<Verification> tempVerifications = new ArrayList<>();
 		List<String> requiredCodes = addressTypeDAO.getFiRequiredCodes();
 		Set<String> deletedSet = new HashSet<>();
-		
+
 		//set deleted addresses of Co-Applicant
 		if (coApplicant) {
 			for (CustomerAddres addr : addresses) {
@@ -693,7 +695,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 			}
 		}
-		
+
 		if (initType) {
 			// Prepare Customer Addresses
 			for (CustomerAddres address : addresses) {

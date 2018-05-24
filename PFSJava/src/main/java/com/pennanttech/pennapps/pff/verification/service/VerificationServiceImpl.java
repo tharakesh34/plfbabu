@@ -252,7 +252,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		reInit.setLastMntBy(item.getLastMntBy());
 		reInit.setDecision(Decision.RE_INITIATE.getKey());
 
-		if (verificationType != VerificationType.LV) {//FIXME
+		if (verificationType != VerificationType.LV) {
 			item.setAgency(item.getReInitAgency());
 			item.setRemarks(item.getDecisionRemarks());
 		}
@@ -799,19 +799,30 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				}
 
 			} else if (verificationType == VerificationType.TV.getKey()) {
-				if (!technicalVerificationService.isCollateralChanged(lastStatus)) {
+				if (technicalVerificationService.isCollateralChanged(lastStatus)) {
+					verification.setLastStatus(0);
+					verification.setLastVerificationDate(null);
+					verification.setLastAgency("");
+				} else {
 					verification.setLastStatus(lastStatus.getStatus());
 					verification.setLastVerificationDate(lastStatus.getVerificationDate());
 					verification.setVersion(lastStatus.getVersion());
 					verification.setLastVersion(lastStatus.getLastVersion());
 					verification.setLastAgency(lastStatus.getLastAgency());
-				} else {
-					verification.setLastStatus(0);
-					verification.setLastVerificationDate(null);
-					verification.setLastAgency("");
 				}
 
 			} else if (verificationType == VerificationType.LV.getKey()) {
+				if (technicalVerificationService.isCollateralChanged(lastStatus)) {
+					verification.setLastStatus(0);
+					verification.setLastVerificationDate(null);
+					verification.setLastAgency("");
+				} else {
+					verification.setLastStatus(lastStatus.getStatus());
+					verification.setLastVerificationDate(lastStatus.getVerificationDate());
+					verification.setVersion(lastStatus.getVersion());
+					verification.setLastVersion(lastStatus.getLastVersion());
+					verification.setLastAgency(lastStatus.getLastAgency());
+				}
 
 			} else if (verificationType == VerificationType.RCU.getKey()) {
 
