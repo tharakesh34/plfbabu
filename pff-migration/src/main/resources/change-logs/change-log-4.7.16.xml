@@ -10059,5 +10059,315 @@ update workflowdetails set WorkFlowActive='0' where WorkFlowType='VERIFICATION_P
     Insert into SMTPARAMETERS  values ('BOUNCE_TAX_TYPE','BOUNCE TAX TYPE','String',1,'I',1,0,null,null,'BOUNCE TAX TYPE',1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
 	</sql>
 	</changeSet>
+	
+	 
+<changeSet id="176" author="Durgaprasad G">
+	<comment> Changing the CHEQUEDETAIL table EMIREFNO column datatype</comment>
+	<dropView viewName="chequedetail_view"/>
+</changeSet>
+
+<changeSet id="177" author="Durgaprasad G">
+	<comment> Changing the CHEQUEDETAIL table EMIREFNO column datatype</comment>
+	<dropView viewName="chequedetail_aview"/>
+</changeSet>
+
+<changeSet id="178" author="Durgaprasad G">
+	<sql>
+			Update CHEQUEDETAIL set emirefno = '0' Where emirefno is null; 
+			Update CHEQUEDETAIL_TEMP set emirefno = '0' Where emirefno is null; 
+	</sql>
+</changeSet>
+	 
+<changeSet id="179" author="Durgaprasad G">
+	 <modifyDataType tableName="CHEQUEDETAIL" columnName="EMIREFNO" newDataType="int"/>
+</changeSet>
+
+<changeSet id="180" author="Durgaprasad G">
+	 <modifyDataType tableName="CHEQUEDETAIL_TEMP" columnName="EMIREFNO" newDataType="int"/>
+</changeSet>
+
+<changeSet id="181" author="Durgaprasad G">
+	<createView viewName="chequedetail_view" replaceIfExists="true">
+			SELECT t1.chequedetailsid,
+			    t1.headerid,
+			    t1.bankbranchid,
+			    t2.bankcode,
+			    t2.branchcode,
+			    t2.branchdesc,
+			    t2.micr,
+			    t2.ifsc,
+			    t2.city,
+			    t3.bankname,
+			    t1.accountno,
+			    t1.chequeserialno,
+			    t1.chequedate,
+			    t1.emirefno,
+			    t1.amount,
+			    t1.chequeccy,
+			    t1.status,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t1.documentname,
+			    t1.documentref,
+			    t1.chequetype,
+			    t1.chequestatus,
+			    t1.accounttype,
+			    t1.accholdername
+			   FROM chequedetail_temp t1
+			     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+			     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+			UNION ALL
+			 SELECT t1.chequedetailsid,
+			    t1.headerid,
+			    t1.bankbranchid,
+			    t2.bankcode,
+			    t2.branchcode,
+			    t2.branchdesc,
+			    t2.micr,
+			    t2.ifsc,
+			    t2.city,
+			    t3.bankname,
+			    t1.accountno,
+			    t1.chequeserialno,
+			    t1.chequedate,
+			    t1.emirefno,
+			    t1.amount,
+			    t1.chequeccy,
+			    t1.status,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t1.documentname,
+			    t1.documentref,
+			    t1.chequetype,
+			    t1.chequestatus,
+			    t1.accounttype,
+			    t1.accholdername
+			   FROM chequedetail t1
+			     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+			     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM chequedetail_temp
+			          WHERE chequedetail_temp.chequedetailsid = t1.chequedetailsid));
+	</createView>
+</changeSet>
+
+<changeSet id="182" author="Durgaprasad G">
+	<createView viewName="chequedetail_aview" replaceIfExists="true">
+		SELECT t1.chequedetailsid,
+	    t1.headerid,
+	    t1.bankbranchid,
+	    t2.bankcode,
+	    t2.branchcode,
+	    t2.branchdesc,
+	    t2.micr,
+	    t2.ifsc,
+	    t2.city,
+	    t3.bankname,
+	    t1.accountno,
+	    t1.chequeserialno,
+	    t1.chequedate,
+	    t1.emirefno,
+	    t1.amount,
+	    t1.chequeccy,
+	    t1.status,
+	    t1.active,
+	    t1.version,
+	    t1.lastmntby,
+	    t1.lastmnton,
+	    t1.recordstatus,
+	    t1.rolecode,
+	    t1.nextrolecode,
+	    t1.taskid,
+	    t1.nexttaskid,
+	    t1.recordtype,
+	    t1.workflowid,
+	    t1.documentname,
+	    t1.documentref,
+	    t1.chequetype,
+	    t1.chequestatus,
+	    t1.accounttype,
+	    t1.accholdername
+	   FROM chequedetail t1
+	     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+	     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode;
+	</createView>
+</changeSet>
+ 
+
+<changeSet id="187" author="Durgaprasad G">
+	<sql>
+		delete from SMTPARAMETERS where sysparmcode='NUMBEROF_UNDATED_CHEQUES';
+		Insert into SMTPARAMETERS values ('NUMBEROF_UNDATED_CHEQUES','Number of undated cheques.','int','1','3',1,0,null,null,'Number of undated cheques.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+	</sql>
+</changeSet>
+
+<changeSet id="188" author="Durgaprasad G">
+	<createView viewName="presentmentdetails_PDCAView" replaceIfExists="true">
+	    SELECT t1.id,
+		t1.presentmentid,
+		t1.presentmentref,
+		t1.finreference,
+		t1.schdate,
+		t1.mandateid,
+		t1.schamtdue,
+		t1.schpridue,
+		t1.schpftdue,
+		t1.schfeedue,
+		t1.schinsdue,
+		t1.schpenaltydue,
+		t1.advanceamt,
+		t1.excessid,
+		t1.adviseamt,
+		t1.presentmentamt,
+		t1.excludereason,
+		t1.tdsamount,
+		t1.bounceid,
+		t1.emino,
+		t1.status,
+		t1.version,
+		t1.lastmntby,
+		t1.lastmnton,
+		t1.recordstatus,
+		t1.rolecode,
+		t1.nextrolecode,
+		t1.taskid,
+		t1.nexttaskid,
+		t1.recordtype,
+		t1.workflowid,
+		t2.chequetype AS mandatetype,
+		t3.fintype,
+		t4.fintypedesc,
+		t5.custshrtname AS customername,
+		t1.receiptid,
+		t1.ecsreturn,
+		t1.errorcode,
+		t1.errordesc,
+		t1.manualadviseid
+	   FROM presentmentdetails t1
+		 JOIN chequedetail t2 ON t2.chequedetailsid = t1.mandateid
+		 JOIN financemain t3 ON t1.finreference = t3.finreference
+		 JOIN rmtfinancetypes t4 ON t3.fintype = t4.fintype
+		 JOIN customers t5 ON t5.custid = t3.custid;
+	</createView>
+</changeSet>
+ 
+ 
+<changeSet id="189" author="Durgaprasad G">
+	<createView viewName="presentmentdetails_PDCview" replaceIfExists="true">
+    SELECT t1.id,
+    t1.presentmentid,
+    t1.presentmentref,
+    t1.finreference,
+    t1.schdate,
+    t1.mandateid,
+    t1.schamtdue,
+    t1.schpridue,
+    t1.schpftdue,
+    t1.schfeedue,
+    t1.schinsdue,
+    t1.schpenaltydue,
+    t1.advanceamt,
+    t1.excessid,
+    t1.adviseamt,
+    t1.presentmentamt,
+    t1.excludereason,
+    t1.tdsamount,
+    t1.bounceid,
+    t1.emino,
+    t1.status,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.chequetype mandatetype,
+    t3.fintype,
+    t4.fintypedesc,
+    t5.custshrtname customername,
+    t1.receiptid,
+    t1.ecsreturn,
+    t1.errorcode,
+    t1.errordesc,
+    t1.manualadviseid
+    FROM presentmentdetails_temp t1
+     JOIN chequedetail t2 ON t2.chequedetailsid = t1.mandateid
+     JOIN financemain t3 ON t1.finreference = t3.finreference
+     JOIN rmtfinancetypes t4 ON t3.fintype = t4.fintype
+     JOIN customers t5 ON t5.custid = t3.custid
+    UNION ALL
+    SELECT t1.id,
+    t1.presentmentid,
+    t1.presentmentref,
+    t1.finreference,
+    t1.schdate,
+    t1.mandateid,
+    t1.schamtdue,
+    t1.schpridue,
+    t1.schpftdue,
+    t1.schfeedue,
+    t1.schinsdue,
+    t1.schpenaltydue,
+    t1.advanceamt,
+    t1.excessid,
+    t1.adviseamt,
+    t1.presentmentamt,
+    t1.excludereason,
+    t1.tdsamount,
+    t1.bounceid,
+    t1.emino,
+    t1.status,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.chequetype mandatetype,
+    t3.fintype,
+    t4.fintypedesc,
+    t5.custshrtname customername,
+    t1.receiptid,
+    t1.ecsreturn,
+    t1.errorcode,
+    t1.errordesc,
+    t1.manualadviseid
+    FROM presentmentdetails t1
+     JOIN chequedetail t2 ON t2.chequedetailsid = t1.mandateid
+     JOIN financemain t3 ON t1.finreference = t3.finreference
+     JOIN rmtfinancetypes t4 ON t3.fintype = t4.fintype
+     JOIN customers t5 ON t5.custid = t3.custid
+    WHERE NOT (EXISTS ( SELECT 1
+           FROM presentmentdetails_temp
+          WHERE presentmentdetails_temp.id = t1.id));
+	</createView>
+</changeSet>
+ 
 </databaseChangeLog>
 	
