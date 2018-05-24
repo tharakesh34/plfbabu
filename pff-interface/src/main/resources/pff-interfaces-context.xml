@@ -34,13 +34,4 @@
 	<bean id="abstarctDisbursementResponse" class="com.pennanttech.pff.external.disbursment.AbstarctDisbursementResponse" abstract="true" parent="abstractInterface"/>
 	
 	<bean id="abstractCibilEnquiryProcess" class="com.pennanttech.pff.external.creditInformation.AbstractCibilEnquiryProcess" abstract="true" parent="abstractInterface"/>
-	
-	
-	<bean id="finnovService" class="com.pennanttech.pff.external.creditInformation.FinnovCibilEnquiryProcess">
-		<property name="dataSource" ref="dataSource" />
-		<property name="handShakeUrl" value="${finnov.cibil.handshake.url}"/>
-		<property name="finnovDataUrl" value="${finnov.cibil.data.url}"/>
-	</bean>
-	
-	
 </beans>
