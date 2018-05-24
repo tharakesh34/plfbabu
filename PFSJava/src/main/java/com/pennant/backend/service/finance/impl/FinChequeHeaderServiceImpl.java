@@ -372,8 +372,6 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 		ChequeHeader chequeHeader = (ChequeHeader) auditHeader.getAuditDetail().getModelData();
 		getChequeHeaderDAO().delete(chequeHeader, TableType.MAIN_TAB);
-		//getAuditHeaderDAO().addAudit(auditHeader);
-
 		auditHeader.setAuditDetails(listDeletion(chequeHeader, TableType.MAIN_TAB, PennantConstants.TRAN_WF));
 
 		logger.info(Literal.LEAVING);
