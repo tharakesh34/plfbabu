@@ -87,6 +87,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private FinanceDetail financeDetail;
 	private List<Verification> customerVerifications = new ArrayList<>();
 	private List<Verification> coApplicantVerifications = new ArrayList<>();
+	List<Long> deletedJointAccountS;
 	List<String> requiredCodes;
 
 	private transient boolean validationOn;
@@ -623,10 +624,14 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 		List<CustomerDetails> customerDetails = new ArrayList<>();
 		List<CustomerAddres> addresses = new ArrayList<>();
+		deletedJointAccountS = new ArrayList<>();
 
 		if (jointAccountDetails != null) {
 			for (JointAccountDetail jointAccountDetail : jointAccountDetails) {
 				customerDetails.add(customerDetailsService.getApprovedCustomerById(jointAccountDetail.getCustID()));
+				if (!isNotDeleted(jointAccountDetail.getRecordType())) {
+					deletedJointAccountS.add(jointAccountDetail.getCustID());
+				}
 			}
 
 			coApplicantVerifications.clear();
@@ -679,7 +684,16 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<Verification> tempVerifications = new ArrayList<>();
 		List<String> requiredCodes = addressTypeDAO.getFiRequiredCodes();
 		Set<String> deletedSet = new HashSet<>();
-
+		
+		//set deleted addresses of Co-Applicant
+		if (coApplicant) {
+			for (CustomerAddres addr : addresses) {
+				if (deletedJointAccountS.contains(addr.getCustID())) {
+					addr.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				}
+			}
+		}
+		
 		if (initType) {
 			// Prepare Customer Addresses
 			for (CustomerAddres address : addresses) {
