@@ -89,7 +89,7 @@ public class InstallmentDueService extends ServiceHelper {
 		}
 
 		FinanceProfitDetail profiDetails = finEODEvent.getFinProfitDetail();
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails, AccountEventConstants.ACCEVENT_INSTDATE, valueDate,
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails,finEODEvent.getFinanceScheduleDetails(), AccountEventConstants.ACCEVENT_INSTDATE, valueDate,
 				curSchd.getSchDate());
 		aeEvent.getAcSetIDList().add(accountingID);
 
@@ -249,7 +249,7 @@ public class InstallmentDueService extends ServiceHelper {
 			}
 
 			
-			AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails, AccountEventConstants.ACCEVENT_INSTDATE,
+			AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails, list, AccountEventConstants.ACCEVENT_INSTDATE,
 					curSchd.getSchDate(), curSchd.getSchDate());
 			aeEvent.getAcSetIDList().add(accountingID);
 

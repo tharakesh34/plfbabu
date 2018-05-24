@@ -373,7 +373,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		updateSql.append(" TdSchdAdvPft = :TdSchdAdvPft, TdSchdRbt = :TdSchdRbt, TotalAdvPftSchd = :TotalAdvPftSchd,");
 		updateSql.append(" TotalRbtSchd = :TotalRbtSchd, TotalPriPaidInAdv = :TotalPriPaidInAdv,");
 		updateSql.append(" TotalPftPaidInAdv = :TotalPftPaidInAdv, LastMdfDate = :LastMdfDate,MaturityDate=:MaturityDate, ");
-		updateSql.append(" FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus,FinStatus=:FinStatus, ActualODDays = :ActualODDays ");
+		updateSql.append(" FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus,FinStatus=:FinStatus, ActualODDays = :ActualODDays,AmzTillLBD=:AmzTillLBD ");
 		/*
 		 * updateSql.append(" ExcessAmt = :ExcessAmt, ");
 		 * updateSql.append(" EmiInAdvance = :EmiInAdvance, PayableAdvise = :PayableAdvise, ");

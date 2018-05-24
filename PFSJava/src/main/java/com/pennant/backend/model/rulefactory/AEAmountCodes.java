@@ -17,7 +17,7 @@ public class AEAmountCodes {
 	private BigDecimal	amz					= BigDecimal.ZERO;
 	private BigDecimal	dAmz				= BigDecimal.ZERO;
 	private BigDecimal	amzBal				= BigDecimal.ZERO;
-
+	private BigDecimal	uAmz				= BigDecimal.ZERO;
 	private BigDecimal	amzNRM				= BigDecimal.ZERO;
 	private BigDecimal	dAmzNRM				= BigDecimal.ZERO;
 
@@ -1038,6 +1038,14 @@ public class AEAmountCodes {
 
 	public void setPaidVasFee(BigDecimal paidVasFee) {
 		this.paidVasFee = paidVasFee;
+	}
+
+	public BigDecimal getuAmz() {
+		return uAmz;
+	}
+
+	public void setuAmz(BigDecimal uAmz) {
+		this.uAmz = uAmz;
 	}
 	
 }

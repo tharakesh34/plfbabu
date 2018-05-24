@@ -215,6 +215,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			actReturnList.add(aeEvent.isPostingSucess());
 			actReturnList.add(aeEvent.getLinkedTranId());// Linked Transaction ID
 			actReturnList.add(scheduleDetails); // Schedule Details
+			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized Amount
 
 		} else {
 			if (actReturnList == null) {
@@ -228,6 +229,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				actReturnList.add(Long.MIN_VALUE); // Linked Transaction ID
 			}
 			actReturnList.add(scheduleDetails); // Schedule Details
+			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized Amount
 		}
 
 		logger.debug("Leaving");
@@ -310,6 +312,13 @@ public class RepaymentPostingsUtil implements Serializable {
 		actReturnList.add(aeEvent.isPostingSucess());
 		actReturnList.add(aeEvent.getLinkedTranId());
 		actReturnList.add(scheduleDetails); // Schedule Details
+		
+		// Unrealized Amortized Amount
+		if(aeEvent.isuAmzExists()){
+			actReturnList.add(aeEvent.getAeAmountCodes().getuAmz()); 
+		}else{
+			actReturnList.add(BigDecimal.ZERO);
+		}
 
 		logger.debug("Leaving");
 		return actReturnList;

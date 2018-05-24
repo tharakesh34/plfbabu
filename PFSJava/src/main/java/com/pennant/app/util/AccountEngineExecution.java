@@ -629,6 +629,12 @@ public class AccountEngineExecution implements Serializable {
 				} 
 				continue;
 			}
+
+			// Un Realized Amortization Income Field Exists
+			if(StringUtils.contains(transactionEntry.getAmountRule(), "dAmz")){
+				aeEvent.setuAmzExists(true);
+			}
+
 			returnDataSet.setTranOrderId(acc.getTransOrder());
 			returnDataSet.setAccount(acc.getAccountId());
 		//	returnDataSet.setPostStatus(acc.getFlagPostStatus());

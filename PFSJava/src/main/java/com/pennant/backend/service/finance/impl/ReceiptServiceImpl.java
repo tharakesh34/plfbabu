@@ -883,6 +883,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @throws Exception 
 	 * @throws AccountNotFoundException
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public AuditHeader doApprove(AuditHeader aAuditHeader) throws Exception {
 		logger.debug("Entering");
@@ -962,8 +963,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<FinanceScheduleDetail> schdList = scheduleData.getFinanceScheduleDetails();
 
 		// Postings Process
-		schdList = getRepayProcessUtil().doProcessReceipts(financeMain, schdList, 
+		List<Object> returnList = getRepayProcessUtil().doProcessReceipts(financeMain, schdList, 
 				profitDetail, receiptHeader, scheduleData.getFinFeeDetailList(), scheduleData,valueDate,DateUtility.getAppDate());
+		schdList = (List<FinanceScheduleDetail>) returnList.get(0);
 		
 		// Preparing Total Principal Amount
 		BigDecimal totPriPaid = BigDecimal.ZERO;
@@ -979,6 +981,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 		financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(totPriPaid));
+		
+		// UnRealized Income Amount Resetting 
+		profitDetail.setAmzTillLBD(profitDetail.getAmzTillLBD().add((BigDecimal)returnList.get(1)));
 		
 		if(schdList == null){
 			schdList = scheduleData.getFinanceScheduleDetails();

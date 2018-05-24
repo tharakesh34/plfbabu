@@ -34,6 +34,7 @@
 package com.pennant.app.util;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -62,10 +63,10 @@ public class AEAmounts implements Serializable {
 	public static AEEvent procAEAmounts(FinanceMain financeMain, List<FinanceScheduleDetail> schdDetails,
 			FinanceProfitDetail pftDetail, String eventCode, Date valueDate, Date schdDate) {
 		pftDetail = accrualService.calProfitDetails(financeMain, schdDetails, pftDetail, valueDate);
-		return procCalAEAmounts(pftDetail, eventCode, valueDate, schdDate);
+		return procCalAEAmounts(pftDetail, schdDetails, eventCode, valueDate, schdDate);
 	}
 
-	public static AEEvent procCalAEAmounts(FinanceProfitDetail pftDetail, String finEvent, Date valueDate,
+	public static AEEvent procCalAEAmounts(FinanceProfitDetail pftDetail,  List<FinanceScheduleDetail> schdDetails, String finEvent, Date valueDate,
 			Date dateSchdDate) {
 		logger.debug("Entering");
 
@@ -114,6 +115,27 @@ public class AEAmounts implements Serializable {
 		amountCodes.setAmz(pftDetail.getPftAmz());
 		amountCodes.setAmzS(pftDetail.getPftAmzSusp());
 		amountCodes.setdAmz(amountCodes.getAmz().subtract(pftDetail.getAmzTillLBD()));
+		
+		//-----------------------------------------------------------------------
+		//FIXME: PV 23MAR18
+		BigDecimal accruedIncome = BigDecimal.ZERO;
+		BigDecimal unRealizedIncome = BigDecimal.ZERO;
+		
+		for (int i = 0; i < schdDetails.size(); i++) {
+
+			if (schdDetails.get(i).getSchDate().compareTo(valueDate) > 0) {
+				break;
+			}
+			accruedIncome = accruedIncome.add(schdDetails.get(i).getProfitCalc());
+		}
+
+		if (accruedIncome.compareTo(pftDetail.getAmzTillLBD()) > 0) {
+			unRealizedIncome = accruedIncome.subtract(pftDetail.getAmzTillLBD());
+		}
+
+		amountCodes.setuAmz(unRealizedIncome);
+		//-----------------------------------------------------------------------
+
 		//OD Details
 		amountCodes.setODDays(pftDetail.getCurODDays());
 		amountCodes.setODInst(pftDetail.getNOODInst());

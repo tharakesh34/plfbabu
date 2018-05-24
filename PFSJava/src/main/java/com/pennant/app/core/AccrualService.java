@@ -642,7 +642,7 @@ public class AccrualService extends ServiceHelper {
 			return;
 		}
 
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finPftDetail, eventCode, custEODEvent.getEodValueDate(),
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finPftDetail, finEODEvent.getFinanceScheduleDetails(), eventCode, custEODEvent.getEodValueDate(),
 				custEODEvent.getEodValueDate());
 		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);

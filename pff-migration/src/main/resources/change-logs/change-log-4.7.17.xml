@@ -121,5 +121,26 @@
 		   WHERE NOT (EXISTS ( SELECT 1 FROM extendedfielddetail_temp WHERE extendedfielddetail_temp.moduleid = t1.moduleid AND extendedfielddetail_temp.fieldname = t1.fieldname));
 		</createView>
 	</changeSet>
+	
+	<changeSet id="4" author="Siva">
+		<addColumn tableName="FinRepayHeader">
+			<column name="RealizeUnAmz" type="decimal(18,0)" />
+		</addColumn>
+		<addColumn tableName="FinRepayHeader_Temp">
+			<column name="RealizeUnAmz" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="5" author="Siva">
+		<addDefaultValue columnName="RealizeUnAmz" tableName="FinRepayHeader" defaultValue="0"/>
+		<addDefaultValue columnName="RealizeUnAmz" tableName="FinRepayHeader_Temp" defaultValue="0"/>
+	</changeSet>
+	
+	<changeSet id="6" author="Siva">
+		<sql>
+			update FinRepayHeader set RealizeUnAmz = 0 where RealizeUnAmz is null;
+			update FinRepayHeader_Temp set RealizeUnAmz = 0 where RealizeUnAmz is null;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	

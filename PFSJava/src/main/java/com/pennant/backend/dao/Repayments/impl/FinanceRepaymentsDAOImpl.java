@@ -287,7 +287,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		StringBuilder selectSql = new StringBuilder("Select RepayID, ReceiptSeqID, FinReference , ValueDate , FinEvent , ");
 		selectSql.append(" RepayAmount , PriAmount , PftAmount , LatePftAmount, TotalPenalty, TotalRefund , " );
 		selectSql.append(" TotalWaiver , InsRefund ,RepayAccountId , EarlyPayEffMtd , EarlyPayDate, SchdRegenerated, LinkedTranId, ");
-		selectSql.append(" TotalIns , TotalSuplRent , TotalIncrCost, TotalSchdFee, PayApportionment ");
+		selectSql.append(" TotalIns , TotalSuplRent , TotalIncrCost, TotalSchdFee, PayApportionment, RealizeUnAmz ");
 		selectSql.append(" From FinRepayHeader");
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" Where FinReference =:FinReference ");
@@ -346,10 +346,10 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (RepayID, ReceiptSeqID, FinReference , ValueDate , FinEvent , RepayAmount , PriAmount , PftAmount , TotalRefund , " );
 		insertSql.append(" TotalWaiver , InsRefund ,RepayAccountId , EarlyPayEffMtd  ,EarlyPayDate, SchdRegenerated, LinkedTranId, " );
-		insertSql.append(" TotalIns , TotalSuplRent , TotalIncrCost, TotalSchdFee, PayApportionment,LatePftAmount, TotalPenalty ) " );
+		insertSql.append(" TotalIns , TotalSuplRent , TotalIncrCost, TotalSchdFee, PayApportionment,LatePftAmount, TotalPenalty,RealizeUnAmz ) " );
 		insertSql.append(" Values(:RepayID, :ReceiptSeqID, :FinReference , :ValueDate , :FinEvent , :RepayAmount , :PriAmount , :PftAmount , :TotalRefund , " );
 		insertSql.append(" :TotalWaiver , :InsRefund , :RepayAccountId , :EarlyPayEffMtd , :EarlyPayDate, :SchdRegenerated, :LinkedTranId,");
-		insertSql.append(" :TotalIns , :TotalSuplRent , :TotalIncrCost, :TotalSchdFee , :PayApportionment, :LatePftAmount, :TotalPenalty )");
+		insertSql.append(" :TotalIns , :TotalSuplRent , :TotalIncrCost, :TotalSchdFee , :PayApportionment, :LatePftAmount, :TotalPenalty, :RealizeUnAmz )");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finRepayHeader);
@@ -369,7 +369,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		updateSql.append(" PriAmount=:PriAmount , PftAmount=:PftAmount , TotalRefund=:TotalRefund , " );
 		updateSql.append(" TotalWaiver=:TotalWaiver , InsRefund=:InsRefund ,RepayAccountId=:RepayAccountId , EarlyPayEffMtd=:EarlyPayEffMtd , " );
 		updateSql.append(" EarlyPayDate=:EarlyPayDate, SchdRegenerated=:SchdRegenerated , LinkedTranId=:LinkedTranId,");
-		updateSql.append(" TotalIns=:TotalIns , ");
+		updateSql.append(" TotalIns=:TotalIns , RealizeUnAmz=:RealizeUnAmz, ");
 		updateSql.append(" TotalSuplRent=:TotalSuplRent , TotalIncrCost=:TotalIncrCost, TotalSchdFee=:TotalSchdFee , PayApportionment=:PayApportionment ");
 		updateSql.append(" Where FinReference =:FinReference");
 
@@ -552,7 +552,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		StringBuilder selectSql = new StringBuilder("Select RepayID, ReceiptSeqID, FinReference , ValueDate , FinEvent , ");
 		selectSql.append(" RepayAmount , PriAmount , PftAmount , LatePftAmount, TotalPenalty, TotalRefund , " );
 		selectSql.append(" TotalWaiver , InsRefund ,RepayAccountId , EarlyPayEffMtd , EarlyPayDate, SchdRegenerated, LinkedTranId, ");
-		selectSql.append(" TotalIns , TotalSuplRent , TotalIncrCost, TotalSchdFee, PayApportionment ");
+		selectSql.append(" TotalIns , TotalSuplRent , TotalIncrCost, TotalSchdFee, PayApportionment, RealizeUnAmz ");
 		selectSql.append(" From FinRepayHeader");
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" Where FinReference =:FinReference ");

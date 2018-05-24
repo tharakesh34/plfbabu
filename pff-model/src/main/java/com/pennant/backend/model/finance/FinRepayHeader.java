@@ -30,6 +30,7 @@ public class FinRepayHeader {
 	private BigDecimal					totalIncrCost			= BigDecimal.ZERO;
 	private BigDecimal					totalSchdFee			= BigDecimal.ZERO;
 	private String						payApportionment;
+	private BigDecimal					realizeUnAmz			= BigDecimal.ZERO;
 
 	private List<RepayScheduleDetail>	repayScheduleDetails	= new ArrayList<RepayScheduleDetail>(1);
 
@@ -231,6 +232,14 @@ public class FinRepayHeader {
 
 	public void setTotalPenalty(BigDecimal totalPenalty) {
 		this.totalPenalty = totalPenalty;
+	}
+
+	public BigDecimal getRealizeUnAmz() {
+		return realizeUnAmz;
+	}
+
+	public void setRealizeUnAmz(BigDecimal realizeUnAmz) {
+		this.realizeUnAmz = realizeUnAmz;
 	}
 
 }

@@ -108,6 +108,7 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
+	@SuppressWarnings("unchecked")
 	public void calcualteAndPayReceipt(FinanceMain financeMain, Customer customer,
 			List<FinanceScheduleDetail> scheduleDetails, List<FinFeeDetail> finFeeDetailList, FinanceProfitDetail profitDetail,
 			FinReceiptHeader receiptHeader, String repayHierarchy, Date valuedate,Date postDate) throws IllegalAccessException,
@@ -345,8 +346,10 @@ public class RepaymentProcessUtil {
 			receiptDetail.setRepayHeaders(repayHeaderList);
 		}
 
-		scheduleDetails = doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, finFeeDetailList, scheduleData,
+		List<Object> returnList = doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, finFeeDetailList, scheduleData,
 				valuedate,postDate);
+		
+		scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(0);
 		
 		// Preparing Total Principal Amount
 		BigDecimal totPriPaid = BigDecimal.ZERO;
@@ -389,11 +392,12 @@ public class RepaymentProcessUtil {
 	 * @param receiptHeader
 	 */
 	@SuppressWarnings("unchecked")
-	public List<FinanceScheduleDetail> doProcessReceipts(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
+	public  List<Object> doProcessReceipts(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			FinanceProfitDetail profitDetail, FinReceiptHeader receiptHeader, List<FinFeeDetail> finFeeDetailList,
 			FinScheduleData logScheduleData, Date valueDate,Date postingDate) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
+		BigDecimal uAmz = BigDecimal.ZERO;
 		List<FinReceiptDetail> receiptDetailList = sortReceiptDetails(receiptHeader.getReceiptDetails());
 
 		// Find out Is there any schedule payment done or not, If exists Log will be captured
@@ -707,6 +711,11 @@ public class RepaymentProcessUtil {
 				repayHeader.setLinkedTranId(linkedTranId);
 				repayHeader.setValueDate(postDate);
 				scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(2);
+				
+				// Unrealized Income amount
+				uAmz = uAmz.add((BigDecimal) returnList.get(3));
+				repayHeader.setRealizeUnAmz(uAmz);
+				
 				repaySchdList = null;
 			}
 			
@@ -725,8 +734,14 @@ public class RepaymentProcessUtil {
 			// Setting/Maintaining Log key for Last log of Schedule Details
 			receiptDetailList.get(rcpt).setLogKey(logKey);
 		}
+		
+
+		List<Object> returnList = new ArrayList<>();
+		returnList.add(scheduleDetails);
+		returnList.add(uAmz);
+		
 		logger.debug("Leaving");
-		return scheduleDetails;
+		return returnList;
 
 	}
 	

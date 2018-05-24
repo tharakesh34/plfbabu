@@ -48,6 +48,8 @@ public class AEEvent {
 	private String					vasPostAgainst;
 	private String					collateralRef;
 	private int						transOrder = 0;
+	
+	private boolean					uAmzExists = false;
 
 	public AEEvent() {
 
@@ -327,6 +329,14 @@ public class AEEvent {
 
 	public void setTransOrder(int transOrder) {
 		this.transOrder = transOrder;
+	}
+
+	public boolean isuAmzExists() {
+		return uAmzExists;
+	}
+
+	public void setuAmzExists(boolean uAmzExists) {
+		this.uAmzExists = uAmzExists;
 	}
 
 }

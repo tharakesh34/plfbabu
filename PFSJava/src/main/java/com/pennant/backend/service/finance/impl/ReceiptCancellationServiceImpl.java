@@ -692,6 +692,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		long logKey = 0;
 		BigDecimal totalPriAmount = BigDecimal.ZERO;
 		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
+		BigDecimal unRealizeAmz = BigDecimal.ZERO;
 		if (receiptDetails != null && !receiptDetails.isEmpty()) {
 			for (int i = receiptDetails.size() - 1; i >= 0; i--) {
 
@@ -779,6 +780,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					if (rpyHeader.getRepayScheduleDetails() != null && !rpyHeader.getRepayScheduleDetails().isEmpty()) {
 						rpySchdList.addAll(rpyHeader.getRepayScheduleDetails());
 					}
+					
+					// Update Profit Details for UnRealized Income
+					unRealizeAmz = unRealizeAmz.add(rpyHeader.getRealizeUnAmz());
 
 				}
 
@@ -1035,6 +1039,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				}else{
 					scheduleData.setFinanceScheduleDetails(new ArrayList<>(schdMap.values()));
 				}
+				
+				// Update Profit Details for UnRealized Income & Capitalization Difference
+				pftDetail.setAmzTillLBD(pftDetail.getAmzTillLBD().subtract(unRealizeAmz));
 
 				// Check Current Finance Max Status For updation
 				// ============================================
