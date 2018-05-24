@@ -131,11 +131,18 @@
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="5" author="Siva">
+	<changeSet id="5" author="Siva" dbms="oracle">
 		<addDefaultValue columnName="RealizeUnAmz" tableName="FinRepayHeader" defaultValue="0"/>
 		<addDefaultValue columnName="RealizeUnAmz" tableName="FinRepayHeader_Temp" defaultValue="0"/>
 	</changeSet>
-	
+	<changeSet id="5" author="Siva" dbms="postgresql">
+		<addDefaultValue columnName="RealizeUnAmz" tableName="FinRepayHeader" defaultValue="0"/>
+		<addDefaultValue columnName="RealizeUnAmz" tableName="FinRepayHeader_Temp" defaultValue="0"/>
+	</changeSet>
+		<changeSet id="5" author="Siva" dbms="mssql">
+			alter table FinRepayHeader add constraint df_fph_RealizeUnAmz default 0 for RealizeUnAmz;
+			alter table FinRepayHeader add constraint df_fph_t_RealizeUnAmz default 0 for RealizeUnAmz;
+	</changeSet>
 	<changeSet id="6" author="Siva">
 		<sql>
 			update FinRepayHeader set RealizeUnAmz = 0 where RealizeUnAmz is null;
