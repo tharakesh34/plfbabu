@@ -2243,7 +2243,7 @@
 		<renameColumn tableName="verification_fi_temp" oldColumnName="date" newColumnName="VerifiedDate"/>
 	</changeSet>
 	
-	<changeSet id="15.2" author="Durgaprasad G" dbms="postgresql">
+	<changeSet id="15.2" author="Durgaprasad G">
  		<createView viewName="verification_fi_view" replaceIfExists="true">
 		 SELECT fi.verificationid,
 	    fi.agentcode,
