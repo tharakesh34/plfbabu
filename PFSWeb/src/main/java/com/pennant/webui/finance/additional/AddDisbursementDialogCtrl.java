@@ -85,7 +85,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.service.accounts.AccountsService;
-import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -96,8 +95,8 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinFeeDetailListCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
@@ -147,7 +146,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	private transient boolean validationOn;
 	private transient AddDisbursementService addDisbursementService;
-	private PresentmentHeaderService presentmentHeaderService; 
 
 	/**
 	 * default constructor.<br>
@@ -1167,13 +1165,5 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void setFinFeeDetailListCtrl(FinFeeDetailListCtrl finFeeDetailListCtrl) {
 		this.finFeeDetailListCtrl = finFeeDetailListCtrl;
 	}
-
-	public PresentmentHeaderService getPresentmentHeaderService() {
-		return presentmentHeaderService;
-	}
-
-	public void setPresentmentHeaderService(PresentmentHeaderService presentmentHeaderService) {
-		this.presentmentHeaderService = presentmentHeaderService;
-	}
-
+	 
 }

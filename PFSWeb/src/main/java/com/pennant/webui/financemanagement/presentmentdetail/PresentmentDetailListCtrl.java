@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PresentmentHeaderListCtrl.java                                                   * 	  
+ * FileName    		:  PresentmentDetailListCtrl.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -65,7 +65,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
-import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
+import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.financemanagement.presentmentheader.model.PresentmentHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -77,12 +77,12 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the /WEB-INF/pages/com.pennant.financemanagement/PresentmentHeader/PresentmentHeaderList.zul file.
+ * This is the controller class for the /WEB-INF/pages/com.pennant.financemanagement/PresentmentHeader/PresentmentDetailList.zul file.
  * 
  */
-public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader> {
+public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PresentmentHeaderListCtrl.class);
+	private static final Logger logger = Logger.getLogger(PresentmentDetailListCtrl.class);
 
 	protected Window window_PresentmentHeaderList;
 	protected Borderlayout borderLayout_PresentmentHeaderList;
@@ -123,12 +123,12 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected Listbox sortOperator_BankCode;
 	protected Listbox sortOperator_Entity;
 	
-	private transient PresentmentHeaderService presentmentHeaderService;
+	private transient PresentmentDetailService presentmentDetailService;
 
 	/**
 	 * default constructor.<br>
 	 */
-	public PresentmentHeaderListCtrl() {
+	public PresentmentDetailListCtrl() {
 		super();
 	}
 
@@ -278,7 +278,7 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxPresentmentHeader.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
-		PresentmentHeader presentmentheader = presentmentHeaderService.getPresentmentHeader(id);
+		PresentmentHeader presentmentheader = presentmentDetailService.getPresentmentHeader(id);
 
 		if (presentmentheader == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -315,11 +315,11 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("presentmentHeader", presentmentheader);
-		arg.put("presentmentheaderListCtrl", this);
+		arg.put("presentmentDetailListCtrl", this);
 		arg.put("moduleType", this.moduleType);
 		
 		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailDialog.zul", null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -365,7 +365,12 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		search();
 	}
 
-	public void setPresentmentHeaderService(PresentmentHeaderService presentmentHeaderService) {
-		this.presentmentHeaderService = presentmentHeaderService;
+	public PresentmentDetailService getPresentmentDetailService() {
+		return presentmentDetailService;
 	}
+
+	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
+		this.presentmentDetailService = presentmentDetailService;
+	}
+
 }

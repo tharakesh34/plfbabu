@@ -63,4 +63,6 @@ public class SMTParameterConstants {
 	public static final String	DISB_PAID_STATUS	= "DISB_PAID_STATUS";
 	public static final String	IS_CREDITREVIEW_TAB_REQ	= "IS_CREDITREVIEW_TAB_REQ";
 	public static final String	PRESENTMENT_RESPONSE_ROW_LENGTH	= "PRESENTMENT_RESPONSE_ROW_LENGTH";
+	public static final String	NUMBEROF_UNDATED_CHEQUES	= "NUMBEROF_UNDATED_CHEQUES";
+	public static final String	NUMBEROF_PDC_CHEQUES	= "NUMBEROF_PDC_CHEQUES";
 }

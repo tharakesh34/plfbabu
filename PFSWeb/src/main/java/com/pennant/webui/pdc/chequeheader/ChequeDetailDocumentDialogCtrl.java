@@ -29,6 +29,7 @@ import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.financemain.ChequeDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
@@ -67,8 +68,6 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 		super.pageRightName = "";
 	}
 
-	// Component Events
-
 	/**
 	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
 	 * selected financeMain object in a Map.
@@ -77,7 +76,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	 * @throws Exception
 	 */
 	public void onCreate$window_ChequeDetailDocumentDialog(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_ChequeDetailDocumentDialog);
@@ -88,8 +87,6 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 			} else {
 				enqiryModule = false;
 			}
-
-			// READ OVERHANDED parameters !
 
 			// ChequeDetailDialogCtrl details
 			if (arguments.containsKey("ChequeDetailDialogCtrl")) {
@@ -104,13 +101,13 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 			int dialogHeight = grid_basicDetails.getRows().getVisibleItemCount() * 20 + 80;
 			int listboxHeight = borderLayoutHeight - dialogHeight;
 			this.chequeDocumentDivPdfView.setHeight(listboxHeight + "px");
-			
 			doShowDialog();
 		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 			closeDialog();
 		}
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -120,9 +117,9 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		doSave();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -132,7 +129,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug(Literal.ENTERING +event.toString());
 		
 		chequeDetail.setDocImage(null);
 		chequeDetail.setDocumentName("");
@@ -140,7 +137,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 		
 		closeDialog();
 		
-		logger.debug("Leaving" +event.toString());
+		logger.debug(Literal.LEAVING +event.toString());
 	}
 	
 	/**
@@ -158,14 +155,13 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	 * @throws InterruptedException
 	 */
 	public void doSave() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		if(chequeDetailDialogCtrl != null) {
 			chequeDetailDialogCtrl.getChequeDocuments().add(chequeDetail);
 		}
-		
 		closeDialog();
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -177,7 +173,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	 * @throws Exception
 	 */
 	public void doShowDialog() throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		try {
 			// fill the components with the data
@@ -186,12 +182,13 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 			this.window_ChequeDetailDocumentDialog.setWidth("80%");
 			this.window_ChequeDetailDocumentDialog.doModal() ;
 		} catch (UiException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			this.window_ChequeDetailDocumentDialog.onClose();
 		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
 			throw e;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -201,7 +198,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	 *            CustomerDocument
 	 */
 	public void doWriteBeanToComponents(ChequeDetail chequeDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.chequeId.setValue(String.valueOf(chequeDetail.getChequeSerialNo()));
 		this.documentName.setValue(chequeDetail.getDocumentName());
@@ -216,22 +213,20 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 		AMedia amedia = null;
 		if (chequeDetail.getDocImage() != null) {
 			amedia = new AMedia(chequeDetail.getDocumentName(), null, null, chequeDetail.getDocImage());
-			// display the image
 			this.chequeDocumentDivPdfView.setContent(amedia);
 		}
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		Media media = event.getMedia();
 		browseDoc(media, this.documentName);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			String docType = "";
 			if ("application/pdf".equals(media.getContentType())) {
@@ -268,25 +263,21 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 				list.add(docType);
 				list.add(ddaImageData);
 				ageementLink.addForward("onClick", window_ChequeDetailDocumentDialog, "onDocumentClicked", list);
-				//this.docDiv.appendChild(ageementLink);
 			}
 
 			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)) {
-				//this.docDiv.setVisible(true);
 				this.chequeDocumentDivPdfView.setVisible(false);
 			} else {
-				//this.docDiv.setVisible(false);
 				this.chequeDocumentDivPdfView.setVisible(true);
 			}
-
 			textbox.setValue(fileName);
 			chequeDetail.setDocumentName(fileName);
 			chequeDetail.setDocImage(ddaImageData);
-	
-		} catch (Exception ex) {
-			logger.error("Exception: ", ex);
+			chequeDetail.setUpload(true);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// ******************************************************//

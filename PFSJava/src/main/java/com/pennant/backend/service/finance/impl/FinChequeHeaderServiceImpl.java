@@ -82,6 +82,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	private ChequeHeaderDAO		chequeHeaderDAO;
 	private ChequeDetailDAO		chequeDetailDAO;
 	private DocumentManagerDAO	documentManagerDAO;
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -89,14 +90,12 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
 	}
-
 	/**
 	 * @return the auditHeaderDAO
 	 */
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
-
 	/**
 	 * @param auditHeaderDAO
 	 *            the auditHeaderDAO to set
@@ -145,7 +144,6 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		ChequeHeader chequeHeader = (ChequeHeader) auditHeader.getAuditDetail().getModelData();
-
 		if (chequeHeader.isNew()) {
 			processDocument(chequeHeader.getChequeDetailList());
 			chequeHeader.setId(Long.parseLong(getChequeHeaderDAO().save(chequeHeader, tableType)));
@@ -159,16 +157,12 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		// ChequeHeaderModule Details Processing
 		if (chequeHeader.getChequeDetailList() != null && !chequeHeader.getChequeDetailList().isEmpty()) {
 			List<AuditDetail> details = chequeHeader.getAuditDetailMap().get("ChequeDetail");
-			details = processingChequeDetailList(details, tableType, chequeHeader.getHeaderID(), "INR");
+			details = processingChequeDetailList(details, tableType, chequeHeader.getHeaderID());
 			auditDetails.addAll(details);
 		}
-
 		auditHeader.setAuditDetails(auditDetails);
-		//getAuditHeaderDAO().addAudit(auditHeader);
-
 		logger.info(Literal.LEAVING);
 		return auditHeader;
-
 	}
 
 	/**
@@ -179,10 +173,8 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	 * @param type
 	 * @return
 	 */
-	@Override
-	public List<AuditDetail> processingChequeDetailList(List<AuditDetail> auditDetails, TableType type, long headerID,
-			String finCcy) {
-		logger.debug("Entering");
+	private List<AuditDetail> processingChequeDetailList(List<AuditDetail> auditDetails, TableType type, long headerID) {
+		logger.debug(Literal.ENTERING);
 
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -191,11 +183,9 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 			ChequeDetail chequeDetail = (ChequeDetail) auditDetails.get(i).getModelData();
-
 			if (StringUtils.isEmpty(chequeDetail.getRecordType())) {
 				continue;
 			}
-
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -211,7 +201,6 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 				chequeDetail.setWorkflowId(0);
 			}
 			chequeDetail.setHeaderID(headerID);
-			chequeDetail.setChequeCcy(finCcy);
 			if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
 			} else if (chequeDetail.isNewRecord()) {
@@ -234,10 +223,6 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 				updateRecord = true;
 			} else if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				deleteRecord = true;
-				/*
-				 * if (approveRec) { deleteRecord = true; } else if (chequeDetail.isNew()) { saveRecord = true; } else {
-				 * updateRecord = true; }
-				 */
 			}
 			if (approveRec) {
 				rcdType = chequeDetail.getRecordType();
@@ -264,13 +249,13 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 			auditDetails.get(i).setModelData(chequeDetail);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 
 	}
 
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -285,18 +270,16 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-
 		//chequeHeader details
 		if (chequeHeader.getChequeDetailList() != null && chequeHeader.getChequeDetailList().size() > 0) {
 			auditDetailMap.put("ChequeDetail", setChequeDetailAuditData(chequeHeader, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ChequeDetail"));
 		}
-
 		chequeHeader.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(chequeHeader);
 		auditHeader.setAuditDetails(auditDetails);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -309,7 +292,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	 * @return
 	 */
 	private List<AuditDetail> setChequeDetailAuditData(ChequeHeader chequeHeader, String auditTranType, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
@@ -363,7 +346,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], detail.getBefImage(), detail));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
@@ -408,8 +391,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	public ChequeHeader getChequeHeader(String finRef) {
 		ChequeHeader chequeHeader = getChequeHeaderDAO().getChequeHeader(finRef, "_View");
 		if (chequeHeader != null) {
-			chequeHeader
-					.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
+			chequeHeader.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
 		}
 		return chequeHeader;
 	}
@@ -425,7 +407,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	public ChequeHeader getChequeHeaderByRef(String finReference) {
 		ChequeHeader chequeHeader = getChequeHeaderDAO().getChequeHeaderByRef(finReference, "_View");
 		if (chequeHeader != null) {
-		//	chequeHeader.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
+			 chequeHeader.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
 		}
 		return chequeHeader;
 	}
@@ -441,8 +423,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	public ChequeHeader getApprovedChequeHeader(String finRef) {
 		ChequeHeader chequeHeader = getChequeHeaderDAO().getChequeHeader(finRef, "_AView");
 		if (chequeHeader != null) {
-			chequeHeader.setChequeDetailList(
-					getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_AView"));
+			chequeHeader.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_AView"));
 		}
 		return chequeHeader;
 	}
@@ -501,14 +482,11 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 				getChequeHeaderDAO().update(chequeHeader, TableType.TEMP_TAB);
 			}
 		}
-
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		//getAuditHeaderDAO().addAudit(auditHeader);
-
 		// Cheque Details
 		if (chequeHeader.getChequeDetailList() != null && chequeHeader.getChequeDetailList().size() > 0) {
 			List<AuditDetail> details = chequeHeader.getAuditDetailMap().get("ChequeDetail");
-			details = processingChequeDetailList(details, TableType.MAIN_TAB, chequeHeader.getHeaderID(), "INR");
+			details = processingChequeDetailList(details, TableType.MAIN_TAB, chequeHeader.getHeaderID());
 			auditDetails.addAll(details);
 		}
 		auditHeader.setAuditDetails(
@@ -518,9 +496,6 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(chequeHeader);
-
-		//getAuditHeaderDAO().addAudit(auditHeader);
-
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -559,7 +534,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 	// Method for Deleting all records related to ChequeHeaderModule and ChequeHeaderLOB in _Temp/Main tables depend on method type
 	private List<AuditDetail> listDeletion(ChequeHeader chequeHeader, TableType tableType, String auditTranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 
@@ -576,7 +551,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditList;
 	}
 
@@ -605,8 +580,6 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		auditHeader.setAuditDetails(
 				getListAuditDetails(listDeletion(chequeHeader, TableType.TEMP_TAB, PennantConstants.TRAN_WF)));
 		getChequeHeaderDAO().delete(chequeHeader, TableType.TEMP_TAB);
-		//getAuditHeaderDAO().addAudit(auditHeader);
-
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -644,7 +617,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	 * @return
 	 */
 	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
 
 		if (list != null && list.size() > 0) {
@@ -654,10 +627,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 				String rcdType = "";
 				Object object = ((AuditDetail) list.get(i)).getModelData();
 				try {
-
-					//ChequeHeaderModule module = (ChequeHeaderModule) ((AuditDetail)list.get(i)).getModelData();			
 					rcdType = rcdType = object.getClass().getMethod("getRecordType").invoke(object).toString();
-
 					if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(rcdType)) {
 						transType = PennantConstants.TRAN_ADD;
 					} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(rcdType)
@@ -670,17 +640,16 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 					if (StringUtils.isNotEmpty(transType)) {
 						//check and change below line for Complete code
 						//
-						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
-								.invoke(object, object.getClass().getClasses());
+						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses()).invoke(object, object.getClass().getClasses());
 						auditDetailsList.add(
 								new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(), befImg, object));
 					}
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
+					logger.error(Literal.EXCEPTION, e);
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetailsList;
 	}
 

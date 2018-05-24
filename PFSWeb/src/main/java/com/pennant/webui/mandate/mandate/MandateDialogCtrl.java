@@ -2095,14 +2095,16 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	public void checkTabDisplay(String mandateType, boolean onchange) {
 		this.parenttab.setVisible(false);
 		String val = StringUtils.trimToEmpty(mandateType);
-		for (ValueLabel valueLabel : mandateTypeList) {
-			if (val.equals(valueLabel.getValue())) {
-				this.parenttab.setVisible(true);
-				fillComboBox(this.mandateType, mandateType, mandateTypeList, "");
-				break;
+		
+		if (!MandateConstants.TYPE_PDC.equals(val)) {
+			for (ValueLabel valueLabel : mandateTypeList) {
+				if (val.equals(valueLabel.getValue())) {
+					this.parenttab.setVisible(true);
+					fillComboBox(this.mandateType, mandateType, mandateTypeList, "");
+					break;
+				}
 			}
 		}
-
 		addMandateFiletrs(mandateType);
 		if (this.useExisting.isChecked() && onchange) {
 			clearMandatedata();

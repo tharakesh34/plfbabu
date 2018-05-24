@@ -64,36 +64,43 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"eMIRefNo", "amount", "chequeCcy", "status", "active" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChequeDetail extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private long				chequeDetailsID;
-	private long				headerID			= 0;
-	private long				bankBranchID		= 0;
-	private String				bankBranchIDName;
-	private String				accountNo;
-	private int					chequeSerialNo;
-	private String				chequeType;
-	private Date				chequeDate;
-	private String				eMIRefNo;
-	private BigDecimal			amount;
-	private String				chequeCcy;
-	private String				chequeStatus;
-	private String				accountType;
-	private String				accHolderName;
-	private String				status;
-	private boolean				active				= false;
+	private long chequeDetailsID;
+	private long headerID = 0;
+	private long bankBranchID = 0;
+	private String accountNo;
+	private int chequeSerialNo;
+	private String chequeType;
+	private Date chequeDate;
+	private int eMIRefNo;
+	private BigDecimal amount;
+	private String chequeCcy;
+	private String chequeStatus;
+	private String accountType;
+	private String accHolderName;
+	private String status;
+	private boolean active = false;
 	@XmlTransient
-	private boolean				newRecord			= false;
+	private boolean newRecord = false;
 	@XmlTransient
-	private String				lovValue;
+	private String lovValue;
 	@XmlTransient
-	private ChequeDetail		befImage;
+	private ChequeDetail befImage;
 	@XmlTransient
-	private LoggedInUser		userDetails;
+	private LoggedInUser userDetails;
+	private String documentName;
+	private long documentRef = Long.MIN_VALUE;
+	private byte[] docImage;
+	private boolean isUpload;
 
-	private String				documentName;
-	private long				documentRef			= Long.MIN_VALUE;
-	private byte[]				docImage;
+	private String bankCode;
+	private String branchCode;
+	private String branchDesc;
+	private String micr;
+	private String ifsc;
+	private String city;
+	private String bankName;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -110,8 +117,16 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("bankCode");
+		excludeFields.add("branchCode");
+		excludeFields.add("branchDesc");
+		excludeFields.add("micr");
+		excludeFields.add("ifsc");
+		excludeFields.add("city");
+		excludeFields.add("bankName");
 		excludeFields.add("bankBranchIDName");
 		excludeFields.add("docImage");
+		excludeFields.add("isUpload");
 		return excludeFields;
 	}
 
@@ -145,14 +160,6 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 
 	public void setBankBranchID(long bankBranchID) {
 		this.bankBranchID = bankBranchID;
-	}
-
-	public String getBankBranchIDName() {
-		return this.bankBranchIDName;
-	}
-
-	public void setBankBranchIDName(String bankBranchIDName) {
-		this.bankBranchIDName = bankBranchIDName;
 	}
 
 	public String getAccountNo() {
@@ -255,11 +262,11 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 		this.chequeType = chequeType;
 	}
 
-	public String geteMIRefNo() {
+	public int geteMIRefNo() {
 		return eMIRefNo;
 	}
 
-	public void seteMIRefNo(String eMIRefNo) {
+	public void seteMIRefNo(int eMIRefNo) {
 		this.eMIRefNo = eMIRefNo;
 	}
 
@@ -309,6 +316,70 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 
 	public void setAccHolderName(String accHolderName) {
 		this.accHolderName = accHolderName;
+	}
+
+	public String getBankCode() {
+		return bankCode;
+	}
+
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
+	}
+
+	public String getBranchDesc() {
+		return branchDesc;
+	}
+
+	public void setBranchDesc(String branchDesc) {
+		this.branchDesc = branchDesc;
+	}
+
+	public String getMicr() {
+		return micr;
+	}
+
+	public void setMicr(String micr) {
+		this.micr = micr;
+	}
+
+	public String getIfsc() {
+		return ifsc;
+	}
+
+	public void setIfsc(String ifsc) {
+		this.ifsc = ifsc;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public boolean isUpload() {
+		return isUpload;
+	}
+
+	public void setUpload(boolean isUpload) {
+		this.isUpload = isUpload;
 	}
 
 }

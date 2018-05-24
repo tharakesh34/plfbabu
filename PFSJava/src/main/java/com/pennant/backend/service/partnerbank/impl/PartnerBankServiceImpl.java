@@ -52,7 +52,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.fees.FeePostingsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
-import com.pennant.backend.dao.financemanagement.PresentmentHeaderDAO;
+import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
@@ -88,7 +88,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 
 	private FeePostingsDAO feePostingsDAO;
 
-	private PresentmentHeaderDAO presentmentHeaderDAO;
+	private PresentmentDetailDAO presentmentDetailDAO;
 	
 	/**
 	 * @return the auditHeaderDAO
@@ -458,7 +458,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 			return true;
 		}
 
-		count = getPresentmentHeaderDAO().getAssignedPartnerBankCount(partnerBankId, "_View");
+		count = getPresentmentDetailDAO().getAssignedPartnerBankCount(partnerBankId, "_View");
 		if (count > 0) {
 			return true;
 		}
@@ -504,11 +504,11 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 		this.feePostingsDAO = feePostingsDAO;
 	}
 
-	public PresentmentHeaderDAO getPresentmentHeaderDAO() {
-		return presentmentHeaderDAO;
+	public PresentmentDetailDAO getPresentmentDetailDAO() {
+		return presentmentDetailDAO;
 	}
 
-	public void setPresentmentHeaderDAO(PresentmentHeaderDAO presentmentHeaderDAO) {
-		this.presentmentHeaderDAO = presentmentHeaderDAO;
+	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
+		this.presentmentDetailDAO = presentmentDetailDAO;
 	}
 }

@@ -7,7 +7,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
-		<window id="window_PresentmentHeaderList"  apply="${presentmentHeaderListCtrl}" border="none" width="100%" >
+		<window id="window_PresentmentHeaderList"  apply="${presentmentDetailListCtrl}" border="none" width="100%" >
 			<div sclass="z-toolbar" style="padding:0px">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
 	
@@ -74,7 +74,7 @@
 									<combobox id="status" width="150px" />
 								</row>
 								<row>
-									<label id="label_PresentmentHeaderList_MandateType" value="${c:l('label_PresentmentHeaderList_MandateType.value')}" />
+									<label id="label_PresentmentHeaderList_MandateType" value="${c:l('listheader_PresentmentPaymentType.label')}" />
 									<listbox id="sortOperator_MandateType" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 	   								<combobox id ="mandateType" width="200px"/>
 									<label id="label_PresentmentHeaderList_Schdate" value="${c:l('label_PresentmentHeaderList_Schdate.value')}" />
@@ -101,7 +101,7 @@
 							<listheader id="listheader_BankCode" label="${c:l('listheader_BankCode.label')}" sort="auto"  hflex="min"  />
 							<listheader id="listheader_PartnerBankId" label="${c:l('listheader_PartnerBankId.label')}" sort="auto"  hflex="min"  />
 							<listheader id="listheader_Status" label="${c:l('listheader_Status.label')}" sort="auto"   hflex="min"  />
-							<listheader id="listheader_MandateType" label="${c:l('listheader_MandateType.label')}" sort="auto"   hflex="min"  />
+							<listheader id="listheader_MandateType" label="${c:l('listheader_PresentmentPaymentType.label')}" sort="auto"   hflex="min"  />
 							<listheader id="listheader_PresentmentDate" label="${c:l('listheader_PresentmentDate.label')}" sort="auto"  hflex="min"  />
 							<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min"  visible="false"/>
 							<listheader id="listheader_RecordType"  label="${c:l('label.RecordType')}" sort="auto" hflex="min"  visible="false"/>

@@ -64,4 +64,6 @@ public interface ChequeDetailDAO {
 
 	void deleteByCheqID(final long headerID, String type);
 
+	void updateChequeStatus(long chequeDetailsId, String status);
+
 }

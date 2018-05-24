@@ -60,12 +60,10 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.pdc.chequeheader.model.ChequeHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -74,39 +72,40 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/pdc/ChequeHeader/ChequeHeaderList.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/pdc/ChequeHeader/ChequeHeaderList.zul file.
  * 
  */
 public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
-	private static final long			serialVersionUID	= 1L;
-	private static final Logger			logger				= Logger.getLogger(ChequeHeaderListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(ChequeHeaderListCtrl.class);
 
-	protected Window					window_ChequeHeaderList;
-	protected Borderlayout				borderLayout_ChequeHeaderList;
-	protected Paging					pagingChequeHeaderList;
-	protected Listbox					listBoxChequeHeader;
+	protected Window window_ChequeHeaderList;
+	protected Borderlayout borderLayout_ChequeHeaderList;
+	protected Paging pagingChequeHeaderList;
+	protected Listbox listBoxChequeHeader;
 
 	// List headers
-	protected Listheader				listheader_FinReference;
-	protected Listheader				listheader_ChequeType;
-	protected Listheader				listheader_NoOfCheques;
-	protected Listheader				listheader_TotalAmount;
+	protected Listheader listheader_FinReference;
+	protected Listheader listheader_ChequeType;
+	protected Listheader listheader_NoOfCheques;
+	protected Listheader listheader_TotalAmount;
 
 	// checkRights
-	protected Button					button_ChequeHeaderList_NewChequeHeader;
-	protected Button					button_ChequeHeaderList_ChequeHeaderSearch;
+	protected Button button_ChequeHeaderList_NewChequeHeader;
+	protected Button button_ChequeHeaderList_ChequeHeaderSearch;
 
 	// Search Fields
-	protected Textbox					finReference;
-	protected Intbox					noOfCheques;
-	protected Textbox					totalAmount;
+	protected Textbox finReference;
+	protected Intbox noOfCheques;
+	protected Textbox totalAmount;
 
-	protected Listbox					sortOperator_FinReference;
-	protected Listbox					sortOperator_NoOfCheques;
-	protected Listbox					sortOperator_TotalAmount;
+	protected Listbox sortOperator_FinReference;
+	protected Listbox sortOperator_NoOfCheques;
+	protected Listbox sortOperator_TotalAmount;
 
-	private ChequeHeaderService			chequeHeaderService;
-	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
+	private ChequeHeaderService chequeHeaderService;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
 	/**
 	 * default constructor.<br>
@@ -125,7 +124,8 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -153,12 +153,13 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 		// Render the page and display the data.
 		doRenderPage();
 		search();
-		
+
 		this.button_ChequeHeaderList_NewChequeHeader.setVisible(false);
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search button.
+	 * The framework calls this event handler when user clicks the search
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -168,7 +169,8 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh button.
+	 * The framework calls this event handler when user clicks the refresh
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -179,35 +181,33 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button.
+	 * Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$button_ChequeHeaderList_NewChequeHeader(Event event) {
 		logger.debug(Literal.ENTERING);
-
 		// Create a new entity.
 		ChequeHeader chequeheader = new ChequeHeader();
 		chequeheader.setNewRecord(true);
 		chequeheader.setWorkflowId(getWorkFlowId());
 		// Display the dialog page.
 		doShowDialogPage(chequeheader);
-
 		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
-	 * the selected entity.
+	 * The framework calls this event handler when user opens a record to view
+	 * it's details. Show the dialog page with the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
 
 	public void onChequeHeaderItemDoubleClicked(Event event) {
-		logger.debug("Entering");
-
+		logger.debug(Literal.ENTERING);
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxChequeHeader.getSelectedItem();
 		final long headerID = (long) selectedItem.getAttribute("headerID");
@@ -249,18 +249,12 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("chequeHeader", chequeheader);
 		arg.put("chequeHeaderListCtrl", this);
-		String dftCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
-		arg.put("curCcyField", dftCcy);
-		
-		List<FinanceScheduleDetail> finSchduleList = financeScheduleDetailDAO.getFinScheduleDetails(
-				chequeheader.getFinReference(), "_View", false);
-		
+		List<FinanceScheduleDetail> finSchduleList = financeScheduleDetailDAO .getFinScheduleDetails(chequeheader.getFinReference(), "_View", false);
 		arg.put("financeSchedules", finSchduleList);
-		
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/PDC/ChequeDetailDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
+			logger.error(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 		}
 
@@ -268,7 +262,8 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button to print the results.
+	 * The framework calls this event handler when user clicks the print button
+	 * to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -308,7 +303,7 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 	public void setChequeHeaderService(ChequeHeaderService chequeHeaderService) {
 		this.chequeHeaderService = chequeHeaderService;
 	}
-	
+
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}

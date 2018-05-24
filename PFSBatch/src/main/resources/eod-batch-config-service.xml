@@ -23,7 +23,7 @@
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
-		<property name="presentmentHeaderDAO" ref="presentmentHeaderDAO" />
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />

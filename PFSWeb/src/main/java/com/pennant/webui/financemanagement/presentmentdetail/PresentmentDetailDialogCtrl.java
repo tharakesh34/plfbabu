@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PresentmentHeaderDialogCtrl.java                                                   * 	  
+ * FileName    		:  presentmentHeaderDialogCtrl.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -73,7 +73,8 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
-import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
+import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.util.PennantAppUtil;
@@ -83,13 +84,13 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/financemanagement/PresentmentHeader/presentmentHeaderDialog.zul
+ * This is the controller class for the /WEB-INF/pages/financemanagement/PresentmentHeader/presentmentDetailDialog.zul
  * file. <br>
  */
-public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> {
+public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PresentmentHeaderDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(PresentmentDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -124,14 +125,14 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	private Map<Long, PresentmentDetail> excludeMap = new HashMap<Long, PresentmentDetail>();
 	List<PresentmentDetail> includeList = new ArrayList<PresentmentDetail>();
 
-	private transient PresentmentHeaderListCtrl presentmentHeaderListCtrl;
-	private transient PresentmentHeaderService presentmentHeaderService;
+	private transient PresentmentDetailListCtrl presentmentDetailListCtrl;
+	private transient PresentmentDetailService presentmentDetailService;
 
 	private String moduleType;
 	/**
 	 * default constructor.<br>
 	 */
-	public PresentmentHeaderDialogCtrl() {
+	public PresentmentDetailDialogCtrl() {
 		super();
 	}
 
@@ -164,7 +165,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			// Get the required arguments.
 			this.presentmentHeader = (PresentmentHeader) arguments.get("presentmentHeader");
 			this.moduleType = (String) arguments.get("moduleType");
-			this.presentmentHeaderListCtrl = (PresentmentHeaderListCtrl) arguments.get("presentmentheaderListCtrl");
+			this.presentmentDetailListCtrl = (PresentmentDetailListCtrl) arguments.get("presentmentDetailListCtrl");
 			if (this.presentmentHeader == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
@@ -173,10 +174,10 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			doCheckRights();
 			doShowDialog(this.presentmentHeader);
 		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 			closeDialog();
 			MessageUtil.showError(e);
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -221,8 +222,6 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
-		
-		
 		if ("N".equalsIgnoreCase(moduleType)) {
 			this.btnSave.setVisible(true);
 			this.btn_AddExlude.setVisible(true);
@@ -240,7 +239,6 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			readOnlyComponent(true, this.partnerBank);
 		}
 		this.btnCancel.setVisible(false);
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -252,11 +250,8 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
-
 		doSave();
-
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	/**
@@ -313,7 +308,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	 */
 	private void refreshList() {
 		logger.debug(Literal.ENTERING);
-		presentmentHeaderListCtrl.search();
+		presentmentDetailListCtrl.search();
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -328,6 +323,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	public void doWriteBeanToComponents(PresentmentHeader aPresentmentHeader) {
 		logger.debug(Literal.ENTERING);
 
+		List<PresentmentDetail> excludeList = null;
 		if(presentmentHeader.getPartnerBankId() != 0){
 			this.partnerBank.setValue(String.valueOf(presentmentHeader.getPartnerBankId()));
 			this.partnerBank.setDescription(presentmentHeader.getPartnerBankName());
@@ -339,9 +335,14 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		
 		Map<Long, PresentmentDetail> totExcludeMap = new HashMap<Long, PresentmentDetail>();
 		boolean isApprove = "A".equals(moduleType);
-		this.includeList = this.presentmentHeaderService.getPresentmentDetailsList(aPresentmentHeader.getId(), true, isApprove, "_AView");
-		List<PresentmentDetail> excludeList = this.presentmentHeaderService.getPresentmentDetailsList(aPresentmentHeader.getId(), false, isApprove, "_AView");
 		
+		if (MandateConstants.TYPE_PDC.equals(aPresentmentHeader.getMandateType())) {
+			this.includeList = this.presentmentDetailService.getPresentmentDetailsList(aPresentmentHeader.getId(), true, isApprove, "_PDCAView");
+			excludeList = this.presentmentDetailService.getPresentmentDetailsList(aPresentmentHeader.getId(), false, isApprove, "_PDCAView");
+		} else {
+			this.includeList = this.presentmentDetailService.getPresentmentDetailsList(aPresentmentHeader.getId(), true, isApprove, "_AView");
+			excludeList = this.presentmentDetailService.getPresentmentDetailsList(aPresentmentHeader.getId(), false, isApprove, "_AView");
+		}
 		for (PresentmentDetail presentmentDetail : includeList) {
 			this.includeMap.put(presentmentDetail.getId(), presentmentDetail);
 		}
@@ -372,7 +373,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	}
 
 	public void onClick$btn_AddExlude(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		Clients.clearWrongValue(this.listBox_Include);
 		if (listBox_Include.getSelectedItems().isEmpty()) {
@@ -391,18 +392,17 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include, false);
 		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_ManualExclude, true);
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onClick$btn_AddInclude(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		Clients.clearWrongValue(this.listBox_ManualExclude);
 		if (listBox_ManualExclude.getSelectedItems().isEmpty()) {
 			MessageUtil.showError(" Please select at least one record. ");
 			return;
 		}
-
 		for (Listitem listitem : this.listBox_ManualExclude.getSelectedItems()) {
 			if (this.listBox_ManualExclude.getSelectedItems().contains(listitem)) {
 				PresentmentDetail presentmentDetail = (PresentmentDetail) listitem.getAttribute("data");
@@ -410,11 +410,10 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 				this.excludeMap.remove(presentmentDetail.getId());
 			}
 		}
-
 		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include, false);
 		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_ManualExclude, true);
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -426,17 +425,15 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		logger.debug(Literal.LEAVING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-
 		try {
 			if (StringUtils.trimToNull(this.partnerBank.getValue()) == null) {
-				throw new WrongValueException(this.partnerBank, "Partner Bank is mandatory.");
+				throw new WrongValueException(this.partnerBank, Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_PresentmentDetailList_Bank.value")}));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
-
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -462,9 +459,10 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		try {
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e){
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			this.window_PresentmentHeaderDialog.onClose();
 		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
 		logger.debug(Literal.LEAVING);
@@ -494,7 +492,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 		
 		if ("N".equalsIgnoreCase(moduleType)) {
 			this.userAction.appendItem("Save", "Saved");
@@ -526,18 +524,18 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		this.partnerBank.setValue("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Saves the components to table. <br>
 	 */
 	public void doSave() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final PresentmentHeader aPresentmentHeader = new PresentmentHeader();
 		BeanUtils.copyProperties(this.presentmentHeader, aPresentmentHeader);
@@ -565,26 +563,22 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			doWriteComponentsToBean(aPresentmentHeader);
 			partnerBankId = Long.valueOf(this.partnerBank.getValue());
 		}
-		
 		try {
-			this.presentmentHeaderService.updatePresentmentDetails(excludeList, afterIncludeList, userAction,
-					aPresentmentHeader.getId(), partnerBankId, getUserWorkspace().getLoggedInUser());
+			boolean isPDC = MandateConstants.TYPE_PDC.equals(aPresentmentHeader.getMandateType());
+			this.presentmentDetailService.updatePresentmentDetails(excludeList, afterIncludeList, userAction, aPresentmentHeader.getId(), partnerBankId, getUserWorkspace().getLoggedInUser(), isPDC);
 		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 		}
 
 		refreshList();
 		closeDialog();
 		
-		logger.debug("Leaving");
-	}
-
-	public void setPresentmentHeaderService(PresentmentHeaderService presentmentHeaderService) {
-		this.presentmentHeaderService = presentmentHeaderService;
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doFillList(List<PresentmentDetail> presentmentDetailList, Listbox listbox, boolean isExclude) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		ArrayList<ValueLabel> excludeList = PennantStaticListUtil.getPresentmentExclusionList();
 		ArrayList<ValueLabel> statusList = PennantStaticListUtil.getPresentmentsStatusList();
@@ -619,7 +613,11 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 				lc = new Listcell(presentmentDetail.getPresentmentRef());
 				lc.setParent(item);
 				
-				lc = new Listcell(presentmentDetail.getMandateType());
+				if(MandateConstants.TYPE_PDC.equals(presentmentDetail.getMandateType())){
+					lc = new Listcell(Labels.getLabel("label_Mandate_PDC"));
+				} else {
+					lc = new Listcell(presentmentDetail.getMandateType());
+				}
 				lc.setParent(item);
 				if (isExclude) {
 					lc = new Listcell(PennantStaticListUtil.getlabelDesc(String.valueOf(presentmentDetail.getExcludeReason()), excludeList));
@@ -638,7 +636,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		} else {
 			listbox.getItems().clear();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public Map<Long, PresentmentDetail> getIncludeMap() {
@@ -655,5 +653,13 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 	public void setExcludeMap(Map<Long, PresentmentDetail> excludeMap) {
 		this.excludeMap = excludeMap;
+	}
+
+	public PresentmentDetailService getPresentmentDetailService() {
+		return presentmentDetailService;
+	}
+
+	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
+		this.presentmentDetailService = presentmentDetailService;
 	}
 }

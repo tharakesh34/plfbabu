@@ -69,32 +69,34 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>ChequeDetail</code> with set of CRUD operations.
+ * Data access layer implementation for <code>ChequeDetail</code> with set of
+ * CRUD operations.
  */
 public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements ChequeDetailDAO {
-	private static Logger				logger	= Logger.getLogger(ChequeDetailDAOImpl.class);
+	private static Logger logger = Logger.getLogger(ChequeDetailDAOImpl.class);
 
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public ChequeDetailDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public ChequeDetail getChequeDetail(long chequeDetailsID,String type) {
+	public ChequeDetail getChequeDetail(long chequeDetailsID, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" chequeDetailsID, headerID, bankBranchID, accountNo, chequeSerialNo, chequeDate, ");
 		sql.append(" eMIRefNo, amount, chequeCcy, status, active, documentName, documentRef, chequeType, ");
 		sql.append(" chequeStatus, accountType, accHolderName, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From CHEQUEDETAIL");
 		sql.append(type);
 		sql.append(" Where chequeDetailsID = :chequeDetailsID");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -113,25 +115,26 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 
 		logger.debug(Literal.LEAVING);
 		return chequeDetail;
-	}		
-	
+	}
+
 	@Override
-	public List<ChequeDetail> getChequeDetailList(long headerID,String type) {
+	public List<ChequeDetail> getChequeDetailList(long headerID, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" chequeDetailsID, headerID, bankBranchID, accountNo, chequeSerialNo, chequeDate, ");
 		sql.append(" eMIRefNo, amount, chequeCcy, status, active, documentName, documentRef, chequeType, ");
 		sql.append(" chequeStatus, accountType, accHolderName, ");
-		if(type.equals("_View")){
-			sql.append(" bankName as bankBranchIDName, ");
+		if (type.equals("_View")) {
+			sql.append(" bankCode, branchCode, branchDesc, micr, ifsc, city, bankName, ");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From CHEQUEDETAIL");
 		sql.append(type);
 		sql.append(" Where headerID = :headerID");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -141,11 +144,12 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeDetail);
 		RowMapper<ChequeDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeDetail.class);
 		return namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		 
+
 	}
-	
+
 	@Override
-	public boolean isDuplicateKey(long chequeDetailsID,long bankBranchID,String accountNo,int chequeSerialNo, TableType tableType) {
+	public boolean isDuplicateKey(long chequeDetailsID, long bankBranchID, String accountNo, int chequeSerialNo,
+			TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -171,7 +175,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		paramSource.addValue("bankBranchID", bankBranchID);
 		paramSource.addValue("accountNo", accountNo);
 		paramSource.addValue("chequeSerialNo", String.valueOf(chequeSerialNo));
-		
+
 		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -182,23 +186,25 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public String save(ChequeDetail chequeDetail,TableType tableType) {
+	public String save(ChequeDetail chequeDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into CHEQUEDETAIL");
+		StringBuilder sql = new StringBuilder(" insert into CHEQUEDETAIL");
 		sql.append(tableType.getSuffix());
 		sql.append("(chequeDetailsID, headerID, bankBranchID, accountNo, chequeSerialNo, chequeDate, ");
 		sql.append(" eMIRefNo, amount, chequeCcy, status, active, documentName, documentRef, chequeType, ");
 		sql.append(" chequeStatus, accountType, accHolderName, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :chequeDetailsID, :headerID, :bankBranchID, :accountNo, :chequeSerialNo, :chequeDate, ");
 		sql.append(" :eMIRefNo, :amount, :chequeCcy, 'NEW', :active, :documentName, :documentRef, :chequeType, ");
 		sql.append(" :chequeStatus, :accountType, :accHolderName, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		if (chequeDetail.getId() == Long.MIN_VALUE || chequeDetail.getId() == 0) {
 			chequeDetail.setId(getNextidviewDAO().getNextId("SeqChequeDetail"));
 			logger.debug("get NextID:" + chequeDetail.getId());
@@ -215,28 +221,29 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(chequeDetail.getChequeDetailsID());
-	}	
+	}
 
 	@Override
-	public void update(ChequeDetail chequeDetail,TableType tableType) {
+	public void update(ChequeDetail chequeDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update CHEQUEDETAIL" );
+		StringBuilder sql = new StringBuilder("update CHEQUEDETAIL");
 		sql.append(tableType.getSuffix());
 		sql.append("  set headerID = :headerID, bankBranchID = :bankBranchID, accountNo = :accountNo, ");
 		sql.append(" chequeSerialNo = :chequeSerialNo, chequeDate = :chequeDate, eMIRefNo = :eMIRefNo, ");
 		sql.append(" amount = :amount, chequeCcy = :chequeCcy, status = :status, ");
-		sql.append(" active = :active, documentName = :documentName, documentRef = :documentRef, chequeType =:chequeType, ");
+		sql.append(
+				" active = :active, documentName = :documentName, documentRef = :documentRef, chequeType =:chequeType, ");
 		sql.append(" chequeStatus = :chequeStatus, accountType = :accountType, accHolderName = :accHolderName, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where chequeDetailsID = :chequeDetailsID ");
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeDetail);
 		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 
@@ -244,7 +251,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -275,7 +282,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void deleteById(long headerID, String tableType) {
 		logger.debug(Literal.ENTERING);
 		ChequeDetail chequeDetail = new ChequeDetail();
@@ -284,45 +291,46 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		StringBuilder sql = new StringBuilder("delete from CHEQUEDETAIL");
 		sql.append(StringUtils.trimToEmpty(tableType));
 		sql.append(" where headerID = :headerID ");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeDetail);
 		int recordCount = 0;
-		
+
 		try {
 			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		
+
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * Method for Deletion of Cheque Header Related List of chequeDetail for the Cheque Header
+	 * Method for Deletion of Cheque Header Related List of chequeDetail for the
+	 * Cheque Header
 	 */
-	public void deleteByCheqID(final long headerID,String type) {
+	public void deleteByCheqID(final long headerID, String type) {
 		logger.debug("Entering");
 		ChequeDetail chequeDetail = new ChequeDetail();
 		chequeDetail.setHeaderID(headerID);
 
 		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From CHEQUEDETAIL" );
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+		deleteSql.append("Delete From CHEQUEDETAIL");
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where headerID =:headerID ");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(chequeDetail);
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Sets a new <code>JDBC Template</code> for the given data source.
 	 * 
@@ -332,5 +340,26 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-	
-}	
+
+	@Override
+	public void updateChequeStatus(long chequeDetailsId, String chequestatus) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+		try {
+			sql = new StringBuilder();
+			sql.append("update CHEQUEDETAIL Set Chequestatus = :Chequestatus  where ChequeDetailsId = :ChequeDetailsId ");
+			logger.trace(Literal.SQL + sql.toString());
+
+			source = new MapSqlParameterSource();
+			source.addValue("Chequestatus", chequestatus);
+			source.addValue("ChequeDetailsId", chequeDetailsId);
+			namedParameterJdbcTemplate.update(sql.toString(), source);
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+}

@@ -66,23 +66,23 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"eMIRefNo", "amount", "chequeCcy", "status", "active" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChequeHeader extends AbstractWorkflowEntity {
-	private static final long					serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private long								headerID			= 0;
-	private String								finReference;
-	private int									noOfCheques;
-	private BigDecimal							totalAmount;
-	private boolean								active				= false;
-	private List<ChequeDetail>					chequeDetailList	= new ArrayList<ChequeDetail>();
+	private long headerID = 0;
+	private String finReference;
+	private int noOfCheques;
+	private BigDecimal totalAmount;
+	private boolean active = false;
+	private List<ChequeDetail> chequeDetailList = new ArrayList<ChequeDetail>();
 	@XmlTransient
-	private boolean								newRecord			= false;
+	private boolean newRecord = false;
 	@XmlTransient
-	private String								lovValue;
+	private String lovValue;
 	@XmlTransient
-	private ChequeHeader						befImage;
+	private ChequeHeader befImage;
 	@XmlTransient
-	private LoggedInUser						userDetails;
-	private HashMap<String, List<AuditDetail>>	auditDetailMap		= new HashMap<String, List<AuditDetail>>();
+	private LoggedInUser userDetails;
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public boolean isNew() {
 		return isNewRecord();

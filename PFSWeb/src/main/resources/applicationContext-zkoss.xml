@@ -2785,7 +2785,6 @@
 		<property name="accountsService" ref="accountsService" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="addDisbursementService" ref="addDisbursementService" />
-		<property name="presentmentHeaderService" ref="presentmentHeaderService" />
 	</bean>
 
 	<!--============ Add/Remove Term Finance Maintainance Details ============== -->
@@ -4706,18 +4705,18 @@
 	<bean id="presentmentDetailExtractListCtrl"
 		class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailExtractListCtrl"
 		parent="basisListCtrl" scope="prototype">
-		<property name="presentmentHeaderService" ref="presentmentHeaderService" />
+		<property name="presentmentDetailService" ref="presentmentDetailService" />
 	</bean>
 	<!-- PresentmentHeader -->
-	<bean id="presentmentHeaderListCtrl"
-		class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentHeaderListCtrl"
+	<bean id="presentmentDetailListCtrl"
+		class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailListCtrl"
 		parent="basisListCtrl" scope="prototype">
-		<property name="presentmentHeaderService" ref="presentmentHeaderService" />
+		<property name="presentmentDetailService" ref="presentmentDetailService" />
 	</bean>
-	<bean id="presentmentHeaderDialogCtrl"
-		class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentHeaderDialogCtrl"
+	<bean id="presentmentDetailDialogCtrl"
+		class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
-		<property name="presentmentHeaderService" ref="presentmentHeaderService" />
+		<property name="presentmentDetailService" ref="presentmentDetailService" />
 	</bean>
 
 	<!-- PresentmentImports -->

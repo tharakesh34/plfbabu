@@ -728,10 +728,10 @@
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailExtractList.zul"
 				rightName="menuItem_PresentmentDetail_PresentmentExtract" />
 			<menuItem id="menu_Item_PresentmentBatchCreation"
-				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=N"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailList.zul?ModuleType=N"
 				rightName="menuItem_PresentmentDetail_PresentmentBatchCreation" />
 			<menuItem id="menu_Item_PresentmentHeaderApprove"
-				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=A"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailList.zul?ModuleType=A"
 				rightName="menuItem_PresentmentDetail_PresentmentApprove" />
 			<menuItem id="menu_Item_PresentmentFileImport"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/ImportPresentmentDetails.zul"
@@ -888,7 +888,7 @@
 		</menu>
 		<menu id="menu_Category_BulkProcessingEnquiry">
 			<menuItem id="menu_Item_PresentmentHeaderEnquiry"
-				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=E"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailList.zul?ModuleType=E"
 				rightName="menuItem_PresentmentDetail_PresentmentEnquiry" />
 			<menuItem id="menu_Item_PresentmentFileImport_Report"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"

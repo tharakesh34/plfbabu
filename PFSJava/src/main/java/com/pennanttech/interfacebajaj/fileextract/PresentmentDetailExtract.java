@@ -33,7 +33,8 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
-import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
+import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -59,13 +60,13 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	private static final String			DATE_FORMAT				= "dd/MM/yyyy HH:mm:ss";
 	private static final String			REGIX					= "[/:\\s]";
 
-	private PresentmentHeaderService presentmentHeaderService;
+	private PresentmentDetailService presentmentDetailService;
 	
 	
 
-	public PresentmentDetailExtract(DataSource datsSource, PresentmentHeaderService presentmentHeaderService) {
+	public PresentmentDetailExtract(DataSource datsSource, PresentmentDetailService presentmentDetailService) {
 		super(datsSource);
-		this.presentmentHeaderService = presentmentHeaderService;
+		this.presentmentDetailService = presentmentDetailService;
 	}
 
 	@Override
@@ -284,7 +285,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							successCount++;
 							updatePresentmentDetails(presentmentRef, status);
 							updatePresentmentHeader(presentmentRef, status, status);
-							presentmentHeaderService.updateFinanceDetails(presentmentRef);
+							presentmentDetailService.updateFinanceDetails(presentmentRef);
+							updateChequeStatus(presentmentRef);
 							saveBatchLog(batchId, status, presentmentRef, null);
 						} else {
 							try {
@@ -338,17 +340,15 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.S.name());
 				}
 				updateFileHeader(batchId, recordCount, successCount, failedCount, remarks.toString());
-				
 				return 0;
 			}
-
 		});
 		logger.debug(Literal.LEAVING);
 	}
 
 	// Presentment cancellation process
 	private PresentmentDetail presentmentCancellation(String presentmentRef, String reasonCode) throws Exception {
-		return this.presentmentHeaderService.presentmentCancellation(presentmentRef, reasonCode);
+		return this.presentmentDetailService.presentmentCancellation(presentmentRef, reasonCode);
 	}
 
 	// Truncating the data from staging tables
@@ -400,7 +400,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	// Update the presentment status
 	private void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc) {
 		logger.debug(Literal.ENTERING);
-		presentmentHeaderService.updatePresentmentDetails(presentmentRef, status, errorCode, errorDesc);
+		presentmentDetailService.updatePresentmentDetails(presentmentRef, status, errorCode, errorDesc);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -408,7 +408,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	private void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId,
 			String errorDesc) {
 		logger.debug(Literal.ENTERING);
-		presentmentHeaderService.updatePresentmentDetails(presentmentRef, status, bounceId, manualAdviseId, errorDesc);
+		presentmentDetailService.updatePresentmentDetails(presentmentRef, status, bounceId, manualAdviseId, errorDesc);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -562,7 +562,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		sql.append(" (ID, FileName, StartTime)");
 		sql.append(" VALUES( :ID, :FileName, :StartTime)");
 
-		long batchId = presentmentHeaderService.getSeqNumber("SeqBatchFileHeader");
+		long batchId = presentmentDetailService.getSeqNumber("SeqBatchFileHeader");
 
 		source.addValue("ID", batchId);
 		source.addValue("FileName", fileName);
@@ -799,7 +799,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 			LoggedInUser userDetails = new LoggedInUser();
 			userDetails.setLoginUsrID(CON_USER_ID);
-			presentmentHeaderService.processReceipts(presentmentDetail, userDetails);
+			presentmentDetailService.processReceipts(presentmentDetail, userDetails);
 			updateSuccessResponse(presement_Response);
 
 		}
@@ -969,7 +969,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		successCount++;
 		updatePresentmentDetails(presement_Response.getBatchId(), RepayConstants.PEXC_SUCCESS);
 		updatePresentmentHeader(presement_Response.getBatchId(), RepayConstants.PEXC_SUCCESS, RepayConstants.PEXC_SUCCESS);
-		presentmentHeaderService.updateFinanceDetails(presement_Response.getBatchId());
+		presentmentDetailService.updateFinanceDetails(presement_Response.getBatchId());
 		saveBatchLog(batchId, RepayConstants.PEXC_SUCCESS, presement_Response.getBatchId(), null);
 		updatePresentmentResponse(presement_Response, RepayConstants.PRES_SUCCESS, null);
 	}
@@ -1117,6 +1117,40 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			presentmentDetail = null;
 		}
 		return presentmentDetail;
+	}
+	/*
+	 * Updating the cheque status if the mode is PDC
+	 */
+	private void updateChequeStatus(String presentmentRef) {
+
+		String paymentMode = presentmentDetailService.getPaymenyMode(presentmentRef);
+		PresentmentDetail detail = presentmentDetailService.getPresentmentDetailsByMode(presentmentRef, paymentMode);
+		//Updating the cheque status as releases if the payment mode is PDC
+		if (MandateConstants.TYPE_PDC.equals(paymentMode)) {
+			updateChequeStatus(detail.getMandateId(), PennantConstants.CHEQUESTATUS_REALISED);
+		}
+		logger.debug(Literal.LEAVING);
+		
+	}
+
+	private void updateChequeStatus(long chequeDetailsId, String chequestatus) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+		try {
+			sql = new StringBuilder();
+			sql.append("update CHEQUEDETAIL Set Chequestatus = :Chequestatus  where ChequeDetailsId = :ChequeDetailsId ");
+			logger.trace(Literal.SQL + sql.toString());
+
+			source = new MapSqlParameterSource();
+			source.addValue("Chequestatus", chequestatus);
+			source.addValue("ChequeDetailsId", chequeDetailsId);
+			this.jdbcTemplate.update(sql.toString(), source);
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 }

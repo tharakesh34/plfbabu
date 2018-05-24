@@ -28,20 +28,27 @@ import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.PresentmentRequest;
 
 public class AbstractPresentmentRequest extends AbstractInterface implements PresentmentRequest {
-	protected final Logger logger = Logger.getLogger(getClass());
+	private static final Logger	logger	= Logger.getLogger(AbstractPresentmentRequest.class);
 
-	private long presentmentId;
-	private long successCount;
-	private long processedCount;
+	private long				presentmentId;
+	private long				successCount;
+	private long				processedCount;
 
 	@Override
-	public void sendReqest(List<Long> idList, long headerId, boolean isError) throws Exception {
+	public void sendReqest(List<Long> idList, long headerId, boolean isError, boolean isPDC) throws Exception {
+
 		logger.debug(Literal.ENTERING);
 
 		this.presentmentId = headerId;
 		boolean isBatchFail = false;
+		StringBuilder sql = null;
 
-		StringBuilder sql = getSqlQuery();
+		if (isPDC) {
+			sql = getPDCSqlQuery();
+		} else {
+			sql = getSqlQuery();
+		}
+		 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("IdList", idList);
 		paramMap.addValue("EXCLUDEREASON", 0);
@@ -51,14 +58,13 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 		// Begin Transaction
 		namedJdbcTemplate.update("TRUNCATE TABLE PRESENTMENT_REQ_DETAILS_TEMP", new MapSqlParameterSource());
 		try {
-			successCount = 0;
-			processedCount = 0;
+			successCount=0;
+			processedCount=0;
 			for (Presentment presement : presements) {
 				processedCount++;
 				save(presement, "PRESENTMENT_REQ_DETAILS_TEMP");
 				successCount++;
 			}
-
 			// Commit Transaction
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
@@ -114,7 +120,6 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 
 		logger.debug(Literal.LEAVING);
 	}
-
 	private StringBuilder getSqlQuery() {
 		StringBuilder sql = new StringBuilder();
 		sql = new StringBuilder();
@@ -123,13 +128,38 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 		sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
 		sql.append(" T0.PRESENTMENTDATE, T3.MANDATEREF, T4.IFSC, ");
 		sql.append(" T7.PARTNERBANKCODE, T7.UTILITYCODE, T3.STARTDATE, T3.EXPIRYDATE, T3.MANDATETYPE, ");
-		sql.append(
-				" T2.FINTYPE, T2.CUSTID , T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
+		sql.append(" T2.FINTYPE, T2.CUSTID , T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
 		sql.append(" T8.BRANCHSWIFTBRNCDE, T11.ENTITYCODE, T10.CCYMINORCCYUNITS FROM PRESENTMENTHEADER T0 ");
 		sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
 		sql.append(" INNER JOIN CuSTOMERS T5 ON T5.CUSTID = T2.CUSTID ");
 		sql.append(" INNER JOIN MANDATES T3 ON T2.MANDATEID = T3.MANDATEID ");
+		sql.append(" INNER JOIN BANKBRANCHES T4 ON T3.BANKBRANCHID = T4.BANKBRANCHID ");
+		sql.append(" INNER JOIN BMTBANKDETAIL T6 ON T4.BANKCODE = T6.BANKCODE ");
+		sql.append(" INNER JOIN PARTNERBANKS T7 ON T7.PARTNERBANKID = T0.PARTNERBANKID ");
+		sql.append(" INNER JOIN RMTBRANCHES T8 ON T8.BRANCHCODE = T2.FINBRANCH ");
+		sql.append(" INNER JOIN RMTFINANCETYPES T9 ON T9.FINTYPE = T2.FINTYPE");
+		sql.append(" INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T2.FINCCY");
+		sql.append(" INNER JOIN SMTDIVISIONDETAIL T11 ON T11.DIVISIONCODE=T9.FINDIVISION");
+		sql.append(" WHERE T1.ID IN(:IdList) AND T1.EXCLUDEREASON = :EXCLUDEREASON ");
+		return sql;
+	}
+	
+	private StringBuilder getPDCSqlQuery() {
+		StringBuilder sql = new StringBuilder();
+		sql = new StringBuilder();
+		sql.append(" SELECT  T2.FINBRANCH, T1.FINREFERENCE, T4.MICR, T1.SCHDATE, ");
+		sql.append(" T3.ACCOUNTTYPE ACCTYPE, T3.ACCOUNTNO ACCNUMBER, T3.ACCHOLDERNAME, T3.CHEQUESERIALNO MANDATEREF,");
+		sql.append(" 'PDC' MANDATETYPE, T5.CUSTSHRTNAME,T5.CUSTCOREBANK, T6.BANKCODE, ");
+		sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
+		sql.append(" T0.PRESENTMENTDATE, T4.IFSC, ");
+		sql.append(" T7.PARTNERBANKCODE, T7.UTILITYCODE, ");
+		sql.append(" T2.FINTYPE, T2.CUSTID , T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
+		sql.append(" T8.BRANCHSWIFTBRNCDE, T11.ENTITYCODE, T10.CCYMINORCCYUNITS FROM PRESENTMENTHEADER T0 ");
+		sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
+		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
+		sql.append(" INNER JOIN CuSTOMERS T5 ON T5.CUSTID = T2.CUSTID ");
+		sql.append(" INNER JOIN CHEQUEDETAIL T3 ON T3.CHEQUEDETAILSID = T1.MANDATEID ");
 		sql.append(" INNER JOIN BANKBRANCHES T4 ON T3.BANKBRANCHID = T4.BANKBRANCHID ");
 		sql.append(" INNER JOIN BMTBANKDETAIL T6 ON T4.BANKCODE = T6.BANKCODE ");
 		sql.append(" INNER JOIN PARTNERBANKS T7 ON T7.PARTNERBANKID = T0.PARTNERBANKID ");
@@ -147,15 +177,19 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 		@Override
 		public Presentment mapRow(ResultSet rs, int rowNum) throws SQLException {
 			Presentment presement = new Presentment();
-
+			
+			//Payment Mode Data
+			presement.setAccType(Long.valueOf(rs.getString("ACCTYPE"))); 
+			presement.setAccountNo(rs.getString("ACCNUMBER"));
+			presement.setUmrnNo(rs.getString("MANDATEREF"));
+			
 			presement.setBrCode(rs.getString("BRANCHSWIFTBRNCDE"));
 			presement.setAgreementNo(rs.getString("FINREFERENCE"));
 			presement.setMicrCode(rs.getString("MICR"));
-			presement.setAccType(Long.valueOf(rs.getString("ACCTYPE")));
 			presement.setDestAccHolder(rs.getString("CUSTSHRTNAME"));
 			presement.setBankName(rs.getString("BANKNAME"));
-
-			String entity = rs.getString("ENTITYCODE");
+			
+			String entity=rs.getString("ENTITYCODE");
 			if (StringUtils.isNumeric(entity)) {
 				presement.setEntityCode(Long.valueOf(entity));
 			}
@@ -168,7 +202,7 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 			presement.setEmiNo(rs.getLong("EMINO"));
 			presement.setBatchId(rs.getString("PresentmentRef"));
 
-			String mandateType = rs.getString("MANDATETYPE");
+			
 			// Presentment amount convertion using currency minor units..
 			BigDecimal presentAmt = rs.getBigDecimal("PRESENTMENTAMT");
 			int ccyMinorUnits = rs.getInt("CCYMINORCCYUNITS");
@@ -176,24 +210,27 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 
 			presement.setChequeAmount(checqueAmt);
 			presement.setPresentationDate(rs.getDate("PRESENTMENTDATE"));
-			presement.setUmrnNo(rs.getString("MANDATEREF"));
-
+			
+			String mandateType = rs.getString("MANDATETYPE");
 			if (StringUtils.equals(mandateType, "ECS")) {
 				presement.setInstrumentMode("E");
 			} else if (StringUtils.equals(mandateType, "DDM")) {
 				presement.setInstrumentMode("A");
 			} else if (StringUtils.equals(mandateType, "NACH")) {
 				presement.setInstrumentMode("Z");
+			} else if (StringUtils.equals(mandateType, "PDC")) {
+				presement.setInstrumentMode("P");
 			}
-
+			
 			presement.setProductCode(rs.getString("FINTYPE"));
 
 			presement.setDataGenDate(new Timestamp(System.currentTimeMillis()));
 			presement.setUserID(String.valueOf(1000));
 			presement.setJobId(rs.getLong("PRESENTMENTID"));
-
-			if (rs.getString("MICR").length() >= 6) {
-				String bankCode = rs.getString("MICR").substring(3, 6);
+			
+			String micr = rs.getString("MICR");
+			if (StringUtils.trimToNull(micr) != null && micr.length() >= 6) {
+				String bankCode = micr.substring(3, 6);
 				presement.setBankCode(bankCode);
 			}
 			presement.setTxnReference(rs.getLong("ID"));
@@ -202,8 +239,6 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 			if (StringUtils.isNotBlank(string) && StringUtils.isNumeric(string)) {
 				presement.setCustomerId(Long.valueOf(string));
 			}
-
-			presement.setAccountNo(rs.getString("ACCNUMBER"));
 			presement.setCycleDate(rs.getDate("SCHDATE"));
 
 			return presement;
@@ -219,13 +254,13 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 		sql.append(" UMRN_NO , BANK_NAME, MICR_CODE, AccountNo, DEST_ACC_HOLDER, ACC_TYPE, BANK_ADDRESS, RESUB_FLAG,");
 		sql.append(" ORGIN_SYSTEM, DATA_GEN_DATE ,USERID, BATCHID,job_Id ,PICKUP_BATCHID, CycleDate)");
 		sql.append(" values( :TxnReference,");
-
+		
 		if (presentment.getEntityCode() == 0) {
 			sql.append(" null,");
 		} else {
 			sql.append(" :EntityCode,");
 		}
-
+		
 		sql.append(" :CycleType, :InstrumentMode, :PresentationDate, :BankCode, :ProductCode,");
 		sql.append(" :CustomerId, :AgreementNo, :ChequeAmount, :EmiNo, :TxnTypeCode, :SourceCode, :BrCode,");
 		sql.append(" :UmrnNo , :BankName, :MicrCode, :AccountNo, :DestAccHolder, :AccType, :BankAddress, :ResubFlag,");
@@ -253,8 +288,7 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 
 		saveHeader();
 
-		namedJdbcTemplate.update("INSERT INTO PRESENTMENT_REQ_DETAILS SELECT * FROM PRESENTMENT_REQ_DETAILS_TEMP",
-				new MapSqlParameterSource());
+		namedJdbcTemplate.update("INSERT INTO PRESENTMENT_REQ_DETAILS SELECT * FROM PRESENTMENT_REQ_DETAILS_TEMP", new MapSqlParameterSource());
 
 		updateHeader();
 
@@ -263,9 +297,9 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 
 	private void updateHeader() {
 		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource parmMap = null;
-
+		
+		MapSqlParameterSource parmMap=null;
+		
 		parmMap = new MapSqlParameterSource();
 		parmMap.addValue("Job_Id", this.presentmentId);
 		parmMap.addValue("Data_trnsfr_status", "C");
@@ -329,8 +363,7 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 		sql.append(tableName);
 		sql.append(" (ENTITY, Instrument_Type, Job_Id, Cycle_Date,Data_gen_Status,Bank_Report_Cnt,Total_Cnt,");
 		sql.append(" Data_trnsfr_status, Data_trnsfr_jobid, Start_Date, End_Date, ERROR_MSG)");
-		sql.append(
-				" values( :EntityCode, :InstrumentMode, :JobId, :CycleDate, :DataGenStatus, :bankReportCnt, :stagingTableCnt,");
+		sql.append(" values( :EntityCode, :InstrumentMode, :JobId, :CycleDate, :DataGenStatus, :bankReportCnt, :stagingTableCnt,");
 		sql.append(" :dataTrnsfrStatus, :dataTrnsfrJobid, :startDate, :endDate,:errorMsg)");
 
 		// Execute the SQL, binding the arguments.
@@ -374,8 +407,7 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append(
-				" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS,  ErrorDesc = :ErrorDesc Where ID IN(:IDList) AND EXCLUDEREASON = :EXCLUDEREASON ");
+		sql.append(" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS,  ErrorDesc = :ErrorDesc Where ID IN(:IDList) AND EXCLUDEREASON = :EXCLUDEREASON ");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
@@ -400,8 +432,7 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append(
-				" UPDATE PRESENTMENTHEADER Set STATUS = :STATUS, DBSTATUSID = :DBSTATUSID, TOTALRECORDS = TOTALRECORDS+:TOTALRECORDS  Where ID = :ID ");
+		sql.append(" UPDATE PRESENTMENTHEADER Set STATUS = :STATUS, DBSTATUSID = :DBSTATUSID, TOTALRECORDS = TOTALRECORDS+:TOTALRECORDS  Where ID = :ID ");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
@@ -418,4 +449,5 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 }

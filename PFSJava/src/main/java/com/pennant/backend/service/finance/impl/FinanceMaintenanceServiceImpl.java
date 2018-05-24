@@ -26,11 +26,13 @@ import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
+import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -54,6 +56,7 @@ import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.validation.FinGuarantorDetailValidation;
 import com.pennant.backend.service.finance.validation.FinJointAccountDetailValidation;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -77,6 +80,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	private MandateDAO					mandateDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private ChequeHeaderDAO chequeHeaderDAO;
 
 	public FinanceMaintenanceServiceImpl() {
 		super();
@@ -1019,8 +1023,36 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// Extended field Render Details.
 		List<AuditDetail> extendedDetails = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
 		if (extendedDetails != null && extendedDetails.size() > 0) {
-			auditDetailList.addAll(extendedFieldDetailsService.delete(financeDetail.getExtendedFieldHeader(),
+			auditDetailList.addAll(extendedFieldDetailsService.delete(financeDetail.getExtendedFieldHeader(), 
 					financeMain.getFinReference(), "_Temp", auditHeader.getAuditTranType(), extendedDetails));
+		}
+		
+		// Cheque detail maintaince Inserting the entry in the cheque details
+		// if the repayment mode changed to pdc
+		if (financeMain.getBefImage() != null) {
+			if (MandateConstants.TYPE_PDC.equals(financeMain.getFinRepayMethod())) {
+				if (!financeMain.getFinRepayMethod().equals(financeMain.getBefImage().getFinRepayMethod())) {
+					if (!getChequeHeaderDAO().isChequeDetilsExists(financeMain.getFinReference())) {
+						ChequeHeader chequeHeader = new ChequeHeader();
+						chequeHeader.setRoleCode("");
+						chequeHeader.setNextRoleCode("");
+						chequeHeader.setTaskId("");
+						chequeHeader.setNextTaskId("");
+						chequeHeader.setVersion(1);
+						chequeHeader.setLastMntBy(financeMain.getLastMntBy());
+						chequeHeader.setLastMntOn(financeMain.getLastMntOn());
+						chequeHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						chequeHeader.setRecordType("");
+						chequeHeader.setWorkflowId(0);
+
+						chequeHeader.setFinReference(financeMain.getFinReference());
+						chequeHeader.setNoOfCheques(0);
+						chequeHeader.setTotalAmount(BigDecimal.ZERO);
+						chequeHeader.setActive(true);
+						getChequeHeaderDAO().save(chequeHeader, TableType.MAIN_TAB);
+					}
+				}
+			}
 		}
 		
 		FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
@@ -1877,6 +1909,14 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public ChequeHeaderDAO getChequeHeaderDAO() {
+		return chequeHeaderDAO;
+	}
+
+	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
+		this.chequeHeaderDAO = chequeHeaderDAO;
 	}
 
 }

@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PresentmentHeaderDAO.java                                                   * 	  
+ * FileName    		:  presentmentDetailService.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -40,54 +40,40 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.backend.dao.financemanagement;
+package com.pennant.backend.service.financemanagement;
 
-import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
-import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
+public interface PresentmentDetailService {
 
-	PresentmentHeader getPresentmentHeader(long id, String type);
+	PresentmentHeader getPresentmentHeader(long id);
 
-	long save(PresentmentDetail presentmentDetail, TableType tableType);
-
-	long getSeqNumber(String tableName);
-
-	 List<Object> getPresentmentDetails(PresentmentHeader detailHeader) throws Exception;
-
-	long savePresentmentHeader(PresentmentHeader presentmentHeader);
+	String savePresentmentDetails(PresentmentHeader presentmentHeader) throws Exception;
 
 	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, boolean isApprove, String type);
 
-	void updatePresentmentDetials(long presentmentId, List<Long> list, int mnualExclude);
+	void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction, long presentmentId, long partnerBankId, LoggedInUser loggedInUser, boolean isPDC) throws Exception;
 
-	void updatePresentmentHeader(long presentmentId, int pexcBatchCreated, long partnerBankId);
-
-	void updateFinScheduleDetails(long id, String finReference, Date schDate, int schSeq);
-
-	void updatePresentmentIdAsZero(long presentmentId);
-
-	void deletePresentmentHeader(long id);
-
-	void deletePresentmentDetails(long presentmentId);
-
-	PresentmentDetail getPresentmentDetail(String presentmentRef);
-
-	void updateReceptId(long id, long receiptID);
-
-	List<PresentmentDetail> getPresentmenToPost(long custId, Date schData);
-
-	List<PresentmentDetail> getPresentmentDetail(long presentmentId, boolean includeData);
-
+	PresentmentDetail presentmentCancellation(String presentmentRef, String bounceCode) throws Exception;
+	
 	void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId, String errorDesc);
 
 	void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc);
+
+	void updatePresentmentIdAsZero(long presentmentId);
+
+	void updateFinanceDetails(String presentmentRef);
 	
-	int getAssignedPartnerBankCount(long partnerBankId, String type);
+	long getSeqNumber(String tableNme);
+	
+	void processReceipts(PresentmentDetail detail, LoggedInUser userDetails) throws Exception;
+
+	String getPaymenyMode(String presentmentRef);
+
+	PresentmentDetail getPresentmentDetailsByMode(String presentmentRef, String paymentMode);
 
 }

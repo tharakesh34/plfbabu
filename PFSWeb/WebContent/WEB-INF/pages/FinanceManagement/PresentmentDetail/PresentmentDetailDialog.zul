@@ -8,7 +8,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 <window>
 	<window id="window_PresentmentHeaderDialog" border="normal"
-			apply="${presentmentHeaderDialogCtrl}" width="100%" height="100%" sizable="false">
+			apply="${presentmentDetailDialogCtrl}" width="100%" height="100%" sizable="false">
 
 		<borderlayout id="borderlayoutPresentmentHeader">
 			<north>
@@ -149,7 +149,7 @@
 													label="${c:l('listheader_PresentmentDetail_Reference.label')}"
 													hflex="min" />
 												<listheader
-													label="${c:l('listheader_PresentmentDetail_MandateType.label')}"
+													label="${c:l('listheader_PresentmentDetail_PaymentMode.label')}"
 													hflex="min" />
 												<listheader
 													label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}"
@@ -212,7 +212,7 @@
 													hflex="min" />
 												<listheader
 													id="listheader_PresentmentDetail_Exclude_MandateType"
-													label="${c:l('listheader_PresentmentDetail_MandateType.label')}"
+													label="${c:l('listheader_PresentmentDetail_PaymentMode.label')}"
 													hflex="min" />
 												<listheader
 													label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}"
@@ -267,7 +267,7 @@
 													label="${c:l('listheader_PresentmentDetail_Reference.label')}"
 													hflex="min" />
 												<listheader
-													label="${c:l('listheader_PresentmentDetail_MandateType.label')}"
+													label="${c:l('listheader_PresentmentDetail_PaymentMode.label')}"
 													hflex="min" />
 												<listheader
 													label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}"

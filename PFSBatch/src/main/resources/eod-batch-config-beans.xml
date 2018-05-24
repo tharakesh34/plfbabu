@@ -505,7 +505,7 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-	<bean id="presentmentHeaderDAO" class="com.pennant.backend.dao.financemanagement.impl.PresentmentHeaderDAOImpl" parent="basisNextidDao">
+	<bean id="presentmentDetailDAO" class="com.pennant.backend.dao.financemanagement.impl.PresentmentDetailDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 

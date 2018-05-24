@@ -47,6 +47,7 @@ public class ImplementationConstants {
 	public static final boolean	DDM_ALLOWED						= true;
 	public static final boolean	ECS_ALLOWED						= true;
 	public static final boolean	NACH_ALLOWED					= true;
+	public static final boolean	PDC_ALLOWED						= true;
 	//Pre-Approval Required
 	public static final boolean	PREAPPROVAL_ALLOWED				= false;
 	// Allow Quick Disbursement

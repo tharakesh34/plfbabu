@@ -2279,13 +2279,16 @@ public class PennantStaticListUtil {
 			if (ImplementationConstants.NACH_ALLOWED) {
 				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_NACH,Labels.getLabel("label_Mandate_Nach")));
 			}
+			if (ImplementationConstants.PDC_ALLOWED) {
+				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_PDC,Labels.getLabel("label_Mandate_PDC")));
+			}
 		}
 		return mandateTypeList;
 	}
 	
 	public static ArrayList<ValueLabel> getPresentmentExclusionList() {
 		if (presentmentExclusionList == null) {
-			presentmentExclusionList = new ArrayList<ValueLabel>(5);
+			presentmentExclusionList = new ArrayList<ValueLabel>(10);
 			presentmentExclusionList.add(new ValueLabel("1", Labels.getLabel("label_Represent_Emiinadvance")));
 			presentmentExclusionList.add(new ValueLabel("2", Labels.getLabel("label_Represent_Emihold")));
 			presentmentExclusionList.add(new ValueLabel("3", Labels.getLabel("label_Represent_Mandate_Hold")));
@@ -2293,6 +2296,10 @@ public class PennantStaticListUtil {
 			presentmentExclusionList.add(new ValueLabel("5", Labels.getLabel("label_Represent_Mandate_Expiry")));
 			presentmentExclusionList.add(new ValueLabel("6", Labels.getLabel("label_Represent_Manual_Exclude")));
 			presentmentExclusionList.add(new ValueLabel("7", Labels.getLabel("label_Represent_Manual_Reject")));
+			presentmentExclusionList.add(new ValueLabel("8", Labels.getLabel("label_Represent_Cheque_Present")));
+			presentmentExclusionList.add(new ValueLabel("9", Labels.getLabel("label_Represent_Cheque_Release")));
+			presentmentExclusionList.add(new ValueLabel("10", Labels.getLabel("label_Represent_Cheque_Bounce")));
+			presentmentExclusionList.add(new ValueLabel("11", Labels.getLabel("label_Represent_Cheque_Realized")));
 		}
 		return presentmentExclusionList;
 	}

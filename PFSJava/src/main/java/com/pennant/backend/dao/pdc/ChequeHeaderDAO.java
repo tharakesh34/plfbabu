@@ -62,4 +62,6 @@ public interface ChequeHeaderDAO {
 	boolean isDuplicateKey(long headerID, String finRef, TableType tableType);
 
 	ChequeHeader getChequeHeaderByRef(String finReference, String type);
+
+	boolean isChequeDetilsExists(String finReference);
 }

@@ -339,4 +339,27 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
+	@Override
+	public boolean isChequeDetilsExists(String finReference) {
+		MapSqlParameterSource parameters = null;
+		StringBuilder sql = null;
+
+		try {
+			sql = new StringBuilder();
+			sql.append(" SELECT Count(*) FROM chequeHeader Where Finreference = :Finreference");
+			parameters = new MapSqlParameterSource();
+			parameters.addValue("Finreference", finReference);
+
+			int count = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), parameters, Integer.class);
+			if (count > 0) {
+				return true;
+			}
+		} catch (EmptyResultDataAccessException e) {
+		} finally {
+			parameters = null;
+			sql = null;
+		}
+		return false;
+	}
+
 }

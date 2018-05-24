@@ -129,6 +129,10 @@ public class RepayConstants {
 	public static final int PEXC_MANDATE_EXPIRY = 5;
 	public static final int PEXC_MANUAL_EXCLUDE = 6;
 	public static final int PEXC_MANDATE_REJECTED = 7;
+	public static final int CHEQUESTATUS_PRESENT = 8;
+	public static final int CHEQUESTATUS_BOUNCE = 9;
+	public static final int CHEQUESTATUS_REALISE = 10;
+	public static final int CHEQUESTATUS_REALISED = 11;
 
 	// Presentment Status Reasons
 	public static final int PEXC_EXTRACT = 1;

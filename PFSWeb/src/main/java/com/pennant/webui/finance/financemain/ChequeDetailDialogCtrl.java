@@ -54,18 +54,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
-import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
-import org.zkoss.zk.ui.event.UploadEvent;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
-import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Intbox;
@@ -78,6 +76,7 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
@@ -95,10 +94,12 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -107,70 +108,75 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.pdc.chequeheader.ChequeHeaderListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/pdc/ChequeDetail/chequeDetailDialog.zul file. <br>
+ * This is the controller class for the
+ * /WEB-INF/pages/pdc/ChequeDetail/chequeDetailDialog.zul file. <br>
  */
 public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
-	private static final long			serialVersionUID		= 1L;
-	private static final Logger			logger					= Logger.getLogger(ChequeDetailDialogCtrl.class);
-
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(ChequeDetailDialogCtrl.class);
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the zul-file are getting by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window					window_ChequeDetailDialog;
-	protected North						north_Id;
-	protected Combobox					chequeType;
-	protected Intbox					noOfCheques;
-	protected Decimalbox				amount;
-	protected Decimalbox				amountCD;
-	protected ExtendedCombobox			bankBranchID;
-	protected Textbox					bankName;
-	protected Textbox					city;
-	protected Label						cityName;
-	protected Textbox					micr;
-	protected Textbox					ifsc;
-	protected Textbox					accNumber;
-	protected Intbox					chequeSerialNo;
-	protected Intbox					noOfChequesCalc;
-	protected Groupbox					finBasicdetails;
-	protected Listbox					listBoxChequeDetail;
-	protected Button					btnGen;
-	protected Label						label_ChequeType;
-	protected Combobox					chequeStatus;
-	protected Combobox					accountType;
-	protected Textbox					accHolderName;
-	protected Grid						grid_chequeDetails;
-	protected Grid						grid_NumbOfChqs;
+	protected Window window_ChequeDetailDialog;
+	protected North north_Id;
 
-	private ChequeDetail				chequeDetail;
-	private boolean						fromLoan				= false;
-	private ChequeHeader				chequeHeader;
-	private FinBasicDetailsCtrl			finBasicDetailsCtrl;
-	private Object						financeMainDialogCtrl	= null;
-	private final List<ValueLabel>		chequeTypeList			= PennantStaticListUtil.getChequeTypes();
-	private final List<ValueLabel>		chequeStatusList		= PennantStaticListUtil.getChequeStatusList();
-	private final List<ValueLabel>		accTypeList				= PennantStaticListUtil.getChequeAccTypeList();
-	private FinanceDetail				financeDetail;
-	private List<ChequeDetail>			chequeDetailList;
-	private Tab							parenttab				= null;
-	private int							accNoLength;
-	private String						curCcyField;
-	private BankDetailService			bankDetailService;
-	private List<FinanceScheduleDetail>	financeSchedules		= new ArrayList<>();
-	private List<ChequeDetail>			chequeDocuments         = new ArrayList<>();
-	
-	private ChequeHeaderListCtrl		chequeHeaderListCtrl;
+	protected Combobox chequeType;
+	protected Intbox totNoOfCheques;
+	protected CurrencyBox totAmount;
+	protected CurrencyBox amount;
+	protected ExtendedCombobox bankBranchID;
+	protected Textbox bankName;
+	protected Textbox city;
+	protected Label cityName;
+	protected Textbox micr;
+	protected Textbox ifsc;
+	protected Textbox accNumber;
+	protected Intbox chequeSerialNo;
+	protected Intbox noOfCheques;
+	protected Groupbox finBasicdetails;
+	protected Listbox listBoxChequeDetail;
+	protected Label label_ChequeType;
+	protected Combobox chequeStatus;
+	protected Combobox accountType;
+	protected Textbox accHolderName;
 
-	private ChequeHeaderService			chequeHeaderService;
-	
-	private boolean						isPDC;
-	private boolean						onclickGenBtn			= false;
+	protected Grid grid_chequeDetails;
+	protected Grid grid_NumbOfChqs;
+	protected Button btnGen;
+
+	private ChequeDetail chequeDetail;
+	private boolean fromLoan = false;
+	private ChequeHeader chequeHeader;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
+	private Object financeMainDialogCtrl = null;
+	private final List<ValueLabel> chequeTypeList = PennantStaticListUtil.getChequeTypes();
+	private final List<ValueLabel> chequeStatusList = PennantStaticListUtil.getChequeStatusList();
+	private final List<ValueLabel> accTypeList = PennantStaticListUtil.getChequeAccTypeList();
+	private FinanceDetail financeDetail;
+	private List<ChequeDetail> chequeDetailList;
+	private Tab parenttab = null;
+	private int accNoLength;
+	private int ccyEditField = PennantConstants.defaultCCYDecPos;
+	private String ccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+	private BankDetailService bankDetailService;
+	private List<FinanceScheduleDetail> financeSchedules = new ArrayList<>();
+	private List<ChequeDetail> chequeDocuments = new ArrayList<>();
+	private boolean isPDC;
+	private boolean onclickGenBtn = false;
+
+	private ChequeHeaderListCtrl chequeHeaderListCtrl;
+	private ChequeHeaderService chequeHeaderService;
 
 	/**
 	 * default constructor.<br>
@@ -192,7 +198,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -210,7 +217,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				this.chequeHeader = (ChequeHeader) arguments.get("chequeHeader");
 				setChequeHeader(chequeHeader);
 			}
-		
+
 			if (arguments.containsKey("fromLoan")) {
 				fromLoan = (Boolean) arguments.get("fromLoan");
 			}
@@ -222,9 +229,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			if (arguments.containsKey("finHeaderList")) {
 				appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
 			} else {
-				FinanceDetail financedetails = null;
-				financedetails = chequeHeaderService.getFinanceDetailById(getChequeHeader().getFinReference());
-				appendFinBasicDetails(getFinBasicDetails(financedetails));
+				setFinanceDetail(chequeHeaderService.getFinanceDetailById(getChequeHeader().getFinReference()));
+				appendFinBasicDetails(getFinBasicDetails(getFinanceDetail()));
 			}
 
 			if (fromLoan) {
@@ -241,14 +247,14 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				if (arguments.containsKey("tab")) {
 					parenttab = (Tab) arguments.get("tab");
 				}
-				this.financeSchedules = getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
+				setFinanceSchedules(getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
+				this.ccy = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy();
+				this.ccyEditField = CurrencyUtil.getFormat(ccy);
 			} else {
 				this.chequeHeaderListCtrl = (ChequeHeaderListCtrl) arguments.get("chequeHeaderListCtrl");
-				this.financeSchedules = (List<FinanceScheduleDetail>) arguments.get("financeSchedules");
-
+				setFinanceSchedules((List<FinanceScheduleDetail>) arguments.get("financeSchedules"));
 				// Render the page and display the data.
-				doLoadWorkFlow(this.chequeHeader.isWorkflow(), this.chequeHeader.getWorkflowId(),
-						this.chequeHeader.getNextTaskId());
+				doLoadWorkFlow(this.chequeHeader.isWorkflow(), this.chequeHeader.getWorkflowId(), this.chequeHeader.getNextTaskId());
 
 				if (isWorkFlowEnabled()) {
 					if (!enqiryModule) {
@@ -258,12 +264,16 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				} else {
 					getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 				}
+				
+				if(getChequeHeader() != null)  {
+					List<ChequeDetail> chequeDetails = getChequeHeader().getChequeDetailList();
+					if (chequeDetails != null && !chequeDetails.isEmpty()) {
+						ChequeDetail chequeDetail = chequeDetails.get(0);
+						this.ccy = chequeDetail.getChequeCcy();
+						this.ccyEditField = CurrencyUtil.getFormat(ccy);
+					}
+				}
 			}
-
-			if (arguments.containsKey("curCcyField")) {
-				curCcyField = (String) arguments.get("curCcyField");
-			}
-
 			if (arguments.containsKey("roleCode")) {
 				getUserWorkspace().allocateRoleAuthorities(arguments.get("roleCode").toString(), "ChequeHeaderDialog");
 			}
@@ -272,10 +282,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			doCheckRights();
 			doShowDialog(getChequeHeader());
 		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
 			closeDialog();
 			MessageUtil.showError(e);
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -291,14 +301,34 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.bankBranchID.setDescColumn("BankName");
 		this.bankBranchID.setDisplayStyle(2);
 		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
+		this.bankBranchID.setTextBoxWidth(200);
+		
 		this.chequeType.setSclass(PennantConstants.mandateSclass);
 		this.chequeSerialNo.setMaxlength(6);
 		this.accNumber.setMaxlength(50);
-		this.noOfChequesCalc.setMaxlength(2);
-		this.amount.setMaxlength(18);
+		this.noOfCheques.setMaxlength(2);
 		this.accHolderName.setMaxlength(200);
+		this.totAmount.setProperties(false, ccyEditField);
+		this.totAmount.setReadonly(true);
+		this.amount.setProperties(true, ccyEditField);
+		this.amount.setTextBoxWidth(200);
 
 		setStatusDetails();
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Set Visible for components by checking if there's a right for it.
+	 */
+	private void doCheckRights() {
+		logger.debug(Literal.ENTERING);
+
+		this.btnNew.setVisible(false);
+		this.btnEdit.setVisible(false);
+		this.btnDelete.setVisible(false);
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ChequeDetailDialog_btnSave"));
+		this.btnCancel.setVisible(false);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -342,7 +372,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete button.
+	 * The framework calls this event handler when user clicks the delete
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -354,7 +385,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel button.
+	 * The framework calls this event handler when user clicks the cancel
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -418,14 +450,16 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * @throws ParseException
 	 */
 	public void doSave() throws ParseException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final ChequeHeader aChequeHeader = new ChequeHeader();
 		BeanUtils.copyProperties(this.chequeHeader, aChequeHeader);
 		boolean isNew = false;
 
 		doSetValidation();
-		doWriteComponentsToBean(aChequeHeader);
+		doWriteComponentsToBean(aChequeHeader, false);
 
+		aChequeHeader.setRecordStatus(this.recordStatus.getValue());
 		isNew = aChequeHeader.isNew();
 		String tranType = "";
 
@@ -448,18 +482,16 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-
 		try {
 			if (doProcess(aChequeHeader, tranType)) {
 				refreshList();
 				closeDialog();
 			}
-
 		} catch (final DataAccessException e) {
-			logger.error(e);
+			logger.error(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -492,18 +524,15 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
-
 			try {
 				if (doProcess(aChequeHeader, tranType)) {
 					refreshList();
 					closeDialog();
 				}
-
 			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -520,7 +549,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * 
 	 */
 	private boolean doProcess(ChequeHeader aChequeHeader, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -538,18 +568,15 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				nextTaskId = taskId + ";";
 			} else {
 				nextTaskId = StringUtils.trimToEmpty(aChequeHeader.getNextTaskId());
-
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
 					nextTaskId = getNextTaskIds(taskId, aChequeHeader);
 				}
-
 				if (isNotesMandatory(taskId, aChequeHeader)) {
 					if (!notesEntered) {
 						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
 						return false;
 					}
-
 				}
 			}
 			if (!StringUtils.isBlank(nextTaskId)) {
@@ -557,7 +584,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
-
 						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
@@ -567,7 +593,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
-
 			aChequeHeader.setTaskId(taskId);
 			aChequeHeader.setNextTaskId(nextTaskId);
 			aChequeHeader.setRoleCode(getRole());
@@ -593,8 +618,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			auditHeader = getAuditHeader(aChequeHeader, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -608,18 +632,16 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * @return boolean
 	 * 
 	 */
-
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		ChequeHeader aChequeHeader = (ChequeHeader) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
-
 			while (retValue == PennantConstants.porcessOVERIDE) {
-
 				if (StringUtils.isBlank(method)) {
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = chequeHeaderService.delete(auditHeader);
@@ -627,21 +649,17 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					} else {
 						auditHeader = chequeHeaderService.saveOrUpdate(auditHeader);
 					}
-
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = chequeHeaderService.doApprove(auditHeader);
-
 						if (aChequeHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
-
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = chequeHeaderService.doReject(auditHeader);
 						if (aChequeHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
-
 					} else {
 						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
@@ -649,18 +667,15 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 						return processCompleted;
 					}
 				}
-
 				auditHeader = ErrorControl.showErrorDetails(this.window_ChequeDetailDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
-
 					if (deleteNotes) {
 						deleteNotes(getNotes(this.chequeHeader), true);
 					}
 				}
-
 				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
@@ -669,16 +684,15 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				}
 			}
 		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 		setOverideMap(auditHeader.getOverideMap());
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
 	public void onFulfill$bankBranchID(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		Object dataObject = this.bankBranchID.getObject();
 		if (dataObject == null || dataObject instanceof String) {
@@ -690,7 +704,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		} else {
 			BankBranch details = (BankBranch) dataObject;
 			if (details != null) {
-				this.bankBranchID.setAttribute("bankBranchID", details.getBankBranchID());
+				this.bankBranchID.setAttribute("bankBranchDetails", details);
 				this.bankName.setValue(details.getBankName());
 				this.micr.setValue(details.getMICR());
 				this.ifsc.setValue(details.getIFSC());
@@ -706,28 +720,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				}
 			}
 		}
-
-		logger.debug("Leaving" + event.toString());
-	}
-
-	/**
-	 * Set Visible for components by checking if there's a right for it.
-	 */
-	private void doCheckRights() {
-		logger.debug(Literal.ENTERING);
-
-		this.btnNew.setVisible(false);
-		this.btnEdit.setVisible(false);
-		this.btnDelete.setVisible(false);
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ChequeDetailDialog_btnSave"));
-		this.btnCancel.setVisible(false);
-
-		/* create the Button Controller. Disable not used buttons during working */
-		/*
-		 * this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, true, this.btnNew,
-		 * this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel, this.btnClose, this.btnNotes);
-		 */
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -746,10 +739,43 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			fillComboBox(this.chequeStatus, "", chequeStatusList, "");
 		}
 		fillComboBox(this.accountType, "", accTypeList, "");
-		this.noOfCheques.setValue(aChequeHeader.getNoOfCheques());
-		this.amount.setValue(PennantApplicationUtil.formateAmount(aChequeHeader.getTotalAmount(), CurrencyUtil.getFormat(curCcyField)));
+
+		List<ChequeDetail> chequeDetails = aChequeHeader.getChequeDetailList();
+		if (chequeDetails != null && !chequeDetails.isEmpty()) {
+			ChequeDetail chequeDetail = chequeDetails.get(0);
+
+			fillComboBox(this.chequeType, chequeDetail.getChequeType(), chequeTypeList, "");
+			fillComboBox(this.chequeStatus, chequeDetail.getChequeStatus(), chequeStatusList, "");
+			fillComboBox(this.accountType, chequeDetail.getAccountType(), accTypeList, "");
+			this.accHolderName.setValue(chequeDetail.getAccHolderName());
+			this.accNumber.setValue(chequeDetail.getAccountNo());
+			this.chequeSerialNo.setValue(chequeDetail.getChequeSerialNo());
+			this.amount.setValue(PennantApplicationUtil.formateAmount(chequeDetail.getAmount(), ccyEditField));
+			this.noOfCheques.setValue(aChequeHeader.getNoOfCheques());
+
+			BankBranch details = new BankBranch();
+			if (details != null) {
+				this.bankBranchID.setAttribute("bankBranchDetails", details);
+				details.setBankCode(chequeDetail.getBranchCode());
+				details.setBankBranchID(chequeDetail.getBankBranchID());
+				details.setBankName(chequeDetail.getBankName());
+				details.setMICR(chequeDetail.getMicr());
+				details.setIFSC(chequeDetail.getIfsc());
+				details.setCity(chequeDetail.getCity());
+			}
+			this.bankBranchID.setValue(chequeDetail.getBranchCode());
+			this.bankBranchID.setDescription(chequeDetail.getBankName());
+			this.bankName.setValue(chequeDetail.getBankName());
+			this.micr.setValue(chequeDetail.getMicr());
+			this.ifsc.setValue(chequeDetail.getIfsc());
+			this.city.setValue(chequeDetail.getCity());
+		}
+
+		this.totNoOfCheques.setValue(aChequeHeader.getNoOfCheques());
+		this.totAmount.setValue(PennantApplicationUtil.formateAmount(aChequeHeader.getTotalAmount(), ccyEditField));
+
 		doFillChequeDetails(listBoxChequeDetail, aChequeHeader.getChequeDetailList());
-		
+		this.recordStatus.setValue(aChequeHeader.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -759,33 +785,35 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * @param aChequeDetail
 	 * @throws ParseException
 	 */
-	public ArrayList<WrongValueException> doWriteComponentsToBean(ChequeHeader chequeHeader) throws ParseException {
+	public ArrayList<WrongValueException> doWriteComponentsToBean(ChequeHeader chequeHeader, boolean isGenarate) throws ParseException {
 		logger.debug(Literal.LEAVING);
 
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+
+		// Total noOfCheques
+		try {
+			chequeHeader.setNoOfCheques(this.totNoOfCheques.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Total Cheque Amount
+		try {
+			chequeHeader
+					.setTotalAmount(PennantAppUtil.unFormateAmount(this.totAmount.getValidateValue(), ccyEditField));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		// cheque Type
-		if (!this.chequeType.isDisabled() && chequeHeader.isNew()) {
-			try {
-				this.chequeType.getValue().toString();
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-		}
-		// noOfCheques
 		try {
-			chequeHeader.setNoOfCheques(this.noOfCheques.getValue());
+			this.chequeType.getValue().toString();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		// amount
-		try {
-			chequeHeader.setTotalAmount(PennantAppUtil.unFormateAmount(this.amount.getValue(), 
-					CurrencyUtil.getFormat(curCcyField)));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
+
 		// Active
 		try {
 			chequeHeader.setActive(true);
@@ -793,24 +821,59 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			wve.add(we);
 		}
 
-		ArrayList<WrongValueException> exceptions = doPrepareList(this.listBoxChequeDetail, chequeHeader);
-		if (!exceptions.isEmpty()) {
-			wve.addAll(exceptions);
+		// bankBranchID
+		try {
+			this.bankBranchID.getValidatedValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
 
-		if (wve.isEmpty()) {
-			// validate existing data
-			validateChequeDetails(chequeHeader.getChequeDetailList(), true);
+		// Amount
+		try {
+			this.amount.getValidateValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
 
+		// accNumber
+		try {
+			this.accNumber.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// chequeSerialNo
+		try {
+			this.chequeSerialNo.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// noOfCheques
+		try {
+			this.noOfCheques.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Validating the child details
+		if (!isGenarate) {
+			ArrayList<WrongValueException> exceptions = doPrepareList(this.listBoxChequeDetail, chequeHeader);
+			if (!exceptions.isEmpty()) {
+				wve.addAll(exceptions);
+			}
+			if (wve.isEmpty()) {
+				// validate existing data
+				validateChequeDetails(chequeHeader.getChequeDetailList(), true);
+			}
+		}
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
 		if (!wve.isEmpty() && parenttab != null) {
 			parenttab.setSelected(true);
 		}
 		showErrorDetails(wve);
-		
+
 		logger.debug(Literal.LEAVING);
 		return wve;
 	}
@@ -826,70 +889,56 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		if (chequeHeader != null && !chequeHeader.isNewRecord()) {
 			if (StringUtils.equals(chequeHeader.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)) {
+				readOnlyComponent(true, this.chequeStatus);
 				readOnlyComponent(true, this.chequeType);
-				readOnlyComponent(true, this.amount);
-				readOnlyComponent(true, this.noOfCheques);
+				readOnlyComponent(true, this.totAmount);
+				readOnlyComponent(true, this.totNoOfCheques);
 				readOnlyComponent(true, this.bankBranchID);
 				readOnlyComponent(true, this.chequeSerialNo);
 				readOnlyComponent(true, this.accNumber);
-				readOnlyComponent(true, this.amountCD);
-				readOnlyComponent(true, this.noOfChequesCalc);
+				readOnlyComponent(true, this.amount);
+				readOnlyComponent(true, this.noOfCheques);
 				readOnlyComponent(true, this.btnGen);
 				readOnlyComponent(true, this.accountType);
 				readOnlyComponent(true, this.accHolderName);
 			}
-		}
-		if (fromLoan) {
-			readOnlyComponent(true, this.chequeStatus);
 		} else {
-			readOnlyComponent(false, this.chequeStatus);
+			if (fromLoan) {
+				readOnlyComponent(true, this.chequeStatus);
+			} else {
+				readOnlyComponent(false, this.chequeStatus);
+			}
 		}
-		/*if (chequeHeader != null && chequeHeader.getChequeType() != null) {
-			this.chequeType.setDisabled(true);
-		}
-		this.chequeType.setDisabled(true);
-		this.chequeType.setVisible(false);
-		this.label_ChequeType.setVisible(false);*/
-
 		doWriteBeanToComponents(chequeHeader);
-		getBorderLayoutHeight();
 		try {
 			// fill the components with the data
 			if (fromLoan) {
 				try {
-					Class[] paramType = { this.getClass() };
-					Object[] stringParameter = { this };
-					getFinanceMainDialogCtrl().getClass().getMethod("setChequeDetailDialogCtrl", paramType)
-							.invoke(getFinanceMainDialogCtrl(), stringParameter);
+					getFinanceMainDialogCtrl().getClass().getMethod("setChequeDetailDialogCtrl", this.getClass()).invoke(getFinanceMainDialogCtrl(), this);
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
+					logger.error(Literal.EXCEPTION, e);
 				}
 				if (parenttab != null) {
 					boolean isChqCaptureReq = financeDetail.getFinScheduleData().getFinanceType().isChequeCaptureReq();
+					FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
+					
 					if (isChqCaptureReq) {
-						checkTabDisplay(financeDetail, false);
-					} else if (chequeHeader.getChequeDetailList() != null
-							&& !chequeHeader.getChequeDetailList().isEmpty()) {
-						checkTabDisplay(financeDetail, true);
+						checkTabDisplay(financeDetail, aFinanceMain.getFinRepayMethod(), false);
+					} else if (chequeHeader.getChequeDetailList() != null	&& !chequeHeader.getChequeDetailList().isEmpty()) {
+						checkTabDisplay(financeDetail, aFinanceMain.getFinRepayMethod(), true);
 					}
 				}
-				// Header toolbar not required in origination
 			} else {
 				this.north_Id.setVisible(true);
 				setDialog(DialogType.EMBEDDED);
 			}
-
 			this.btnSave.setVisible(true);
-
-			//this.window_ChequeDetailDialog.setHeight(this.borderLayoutHeight - 80 + "px");
-			int listBoxHeight = this.grid_chequeDetails.getRows().getVisibleItemCount()
-					+ this.grid_NumbOfChqs.getRows().getVisibleItemCount() + 6;
+			int listBoxHeight = this.grid_chequeDetails.getRows().getVisibleItemCount() + this.grid_NumbOfChqs.getRows().getVisibleItemCount() + 6;
 			this.listBoxChequeDetail.setHeight(getListBoxHeight(listBoxHeight));
-						
 		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -905,43 +954,49 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					Labels.getLabel("label_ChequeDetailDialog_ChequeType.value")));
 		}
 
-		if (isPDC || onclickGenBtn) {
-		// Number of cheques
-		if (!this.noOfCheques.isReadonly()) {
-			this.noOfCheques.setConstraint(
-					new PTNumberValidator(Labels.getLabel("label_ChequeDetailDialog_NoOfCheques.value"), true, false));
-		}
-		// Total Amount
-		if (!this.amount.isReadonly()) {
-			this.amount.setConstraint(
-					new PTDecimalValidator(Labels.getLabel("label_ChequeDetailDialog_Amount.value"), 2, true, false));
-		}
-		// Bank Branch ID
-		if (!this.bankBranchID.isReadonly()) {
-			this.bankBranchID.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_ChequeDetailDialog_BankBranchID.value"), null, true));
-		}
-		// Amount Cheque Detail
-		if (!this.amountCD.isReadonly()) {
-			this.amountCD.setConstraint(
-					new PTDecimalValidator(Labels.getLabel("label_ChequeDetailDialog_Amount.value"), 2, true, false));
-		}
-		// Account Number
-		if (!this.accNumber.isReadonly()) {
-			this.accNumber
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_ChequeDetailDialog_AccNumber.value"),
-							PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true, this.accNoLength));
-		}
-		// Cheque Serial number
-		if (!this.chequeSerialNo.isReadonly()) {
-			this.chequeSerialNo.setConstraint(new PTNumberValidator(
-					Labels.getLabel("label_ChequeDetailDialog_ChequeSerialNo.value"), true, false));
-		}
-		// Amount Cheque Detail
-		if (!this.noOfChequesCalc.isReadonly()) {
-			this.noOfChequesCalc.setConstraint(new PTNumberValidator(
-					Labels.getLabel("label_ChequeDetailDialog_NoOfChequesCalc.value"), true, false));
-		}
+		if (isPDC || onclickGenBtn ||!fromLoan) {
+			// Number of cheques
+			if (!this.totNoOfCheques.isReadonly()) {
+				this.totNoOfCheques.setConstraint(new PTNumberValidator(
+						Labels.getLabel("label_ChequeDetailDialog_NoOfCheques.value"), true, false));
+			}
+			// Total Amount
+			if (!this.totAmount.isReadonly()) {
+				this.totAmount.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_ChequeDetailDialog_Amount.value"), ccyEditField, true, false));
+			}
+			
+			//Cheque Type
+			if (!this.chequeType.isDisabled()) {
+				this.chequeType.setConstraint(new PTListValidator(Labels.getLabel("label_ChequeDetailDialog_ChequeType.value"), chequeTypeList, true));
+			}
+			
+			// Bank Branch ID
+			if (!this.bankBranchID.isReadonly()) {
+				this.bankBranchID.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_ChequeDetailDialog_BankBranchID.value"), null, true, true));
+			}
+			// Amount Cheque Detail
+			if (!this.amount.isReadonly()) {
+				this.amount.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_ChequeDetailDialog_Amount.value"), ccyEditField, true, false));
+			}
+			// Account Number
+			if (!this.accNumber.isReadonly()) {
+				this.accNumber.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_ChequeDetailDialog_AccNumber.value"),
+								PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true, this.accNoLength));
+			}
+			// Cheque Serial number
+			if (!this.chequeSerialNo.isReadonly()) {
+				this.chequeSerialNo.setConstraint(new PTNumberValidator(
+						Labels.getLabel("label_ChequeDetailDialog_ChequeSerialNo.value"), true, false));
+			}
+			// Amount Cheque Detail
+			if (!this.noOfCheques.isReadonly()) {
+				this.noOfCheques.setConstraint(new PTNumberValidator(
+						Labels.getLabel("label_ChequeDetailDialog_NoOfChequesCalc.value"), true, false));
+			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -952,11 +1007,22 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
 
+		Clients.clearWrongValue(this.totNoOfCheques);
+		Clients.clearWrongValue(this.noOfCheques);
+		this.totNoOfCheques.setConstraint("");
+		this.totAmount.setConstraint("");
 		this.bankBranchID.setConstraint("");
+		this.accNumber.setConstraint("");
 		this.chequeSerialNo.setConstraint("");
 		this.amount.setConstraint("");
-		this.amountCD.setConstraint("");
 		this.noOfCheques.setConstraint("");
+
+		this.totNoOfCheques.clearErrorMessage();
+		this.totAmount.clearErrorMessage();
+		this.bankBranchID.clearErrorMessage();
+		this.accNumber.clearErrorMessage();
+		this.chequeSerialNo.clearErrorMessage();
+		this.amount.clearErrorMessage();
 		this.noOfCheques.clearErrorMessage();
 
 		logger.debug(Literal.LEAVING);
@@ -983,7 +1049,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1005,7 +1072,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);
 		} catch (Exception e) {
-			logger.debug(e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 
@@ -1023,10 +1090,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			this.btnCancel.setVisible(true);
 			readOnlyComponent(true, this.bankBranchID);
 			readOnlyComponent(true, this.chequeSerialNo);
-
 		}
-
-		readOnlyComponent(isReadOnly("ChequeDetailDialog_Amount"), this.amount);
+		readOnlyComponent(isReadOnly("ChequeDetailDialog_Amount"), this.totAmount);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1041,7 +1106,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1050,7 +1114,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * displaying exceptions if occured
 	 */
 	private void showErrorDetails(ArrayList<WrongValueException> wve) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		doRemoveValidation();
 		if (wve.size() > 0) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
@@ -1063,8 +1128,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1075,7 +1139,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		readOnlyComponent(true, this.bankBranchID);
 		readOnlyComponent(true, this.chequeSerialNo);
-		readOnlyComponent(true, this.amount);
+		readOnlyComponent(true, this.totAmount);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1083,9 +1147,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			}
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
-
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1093,11 +1155,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
-		logger.debug("Entering");
-		this.bankBranchID.setValue("");
-		this.amount.setValue("");
+		logger.debug(Literal.ENTERING);
 
-		logger.debug("Leaving");
+		this.bankBranchID.setValue("");
+		this.totAmount.setValue("");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1106,16 +1169,50 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * @throws ParseException
 	 */
 	public void doSave_PDC(FinanceDetail financeDetail, String finReference) throws ParseException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final ChequeHeader aChequeHeader = new ChequeHeader();
 		BeanUtils.copyProperties(getChequeHeader(), aChequeHeader);
 		boolean isNew = false;
-		doSetValidation();
 		String rcdStatus = financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus();
 
-		ArrayList<WrongValueException> wve = doWriteComponentsToBean(aChequeHeader);
+		
+		doRemoveValidation();
+		doSetValidation();
+		ArrayList<WrongValueException> wve = doWriteComponentsToBean(aChequeHeader,false);
 		if (!wve.isEmpty() && parenttab != null) {
 			parenttab.setSelected(true);
+		} else {
+			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+			if (FinanceConstants.REPAYMTH_PDC.equals(financeMain.getFinRepayMethod())) {
+				int noOfSchedules = getFinanceSchedules().size();
+				noOfSchedules = noOfSchedules-1;
+				int noOfPDCCheques = SysParamUtil.getValueAsInt(SMTParameterConstants.NUMBEROF_PDC_CHEQUES);
+				int number;
+				if (noOfSchedules >= noOfPDCCheques) {
+					number = noOfPDCCheques;
+				} else {
+					number = noOfSchedules;
+				}
+				if (this.totNoOfCheques.intValue() > number) {
+					parenttab.setSelected(true);
+					throw new WrongValueException(this.totNoOfCheques,
+							Labels.getLabel("NUMBER_MINVALUE_EQ",
+									new String[] { Labels.getLabel("label_ChequeDetailDialog_NoOfCheques.value"),
+											String.valueOf(number) }));
+				}
+			} else if (FinanceConstants.REPAYMTH_UDC.equals(financeMain.getFinRepayMethod())) {
+				int noOfUndateCHeques = SysParamUtil.getValueAsInt(SMTParameterConstants.NUMBEROF_UNDATED_CHEQUES);
+				if (this.totNoOfCheques.intValue() < noOfUndateCHeques) {
+					parenttab.setSelected(true);
+					throw new WrongValueException(this.totNoOfCheques,
+							Labels.getLabel("NUMBER_MINVALUE_EQ",
+									new String[] { Labels.getLabel("label_ChequeDetailDialog_NoOfCheques.value"),
+											String.valueOf(noOfUndateCHeques) }));
+				}
+
+			}
+
 		}
 		showErrorDetails(wve);
 
@@ -1150,86 +1247,82 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			chequeDetail.setNextRoleCode(getNextRoleCode());
 			chequeDetail.setRecordStatus(rcdStatus);
 		}
-		logger.debug("Leaving");
 
+		logger.debug(Literal.LEAVING);
 		financeDetail.setChequeHeader(aChequeHeader);
 	}
 
 	public void onClick$btnGen(Event event) throws ParseException {
 		logger.debug(Literal.ENTERING);
 		doRemoveValidation();
+
 		onclickGenBtn = true;
 		doSetValidation();
-		String chqType = this.chequeType.getSelectedItem().getValue().toString();
-		this.accNumber.getValue();
-		this.chequeSerialNo.intValue();
-		this.amount.getValue();
-		this.noOfCheques.getValue();
-		this.amountCD.getValue();
-		this.noOfChequesCalc.getValue();
-		this.chequeStatus.getSelectedItem().getValue().toString();
-		this.accHolderName.getValue();
-		this.accountType.getSelectedItem().getValue().toString();
-		onclickGenBtn = false;
+		doWriteComponentsToBean(new ChequeHeader(), true);
+
 		// method to validate
-		if (this.bankBranchID.getValidatedValue() != null && !this.bankBranchID.getValidatedValue().isEmpty()) {
+		if (StringUtils.trimToNull(this.bankBranchID.getValue()) != null) {
 			List<ChequeDetail> chequeDetails = new ArrayList<>();
-			int numberofC = this.noOfChequesCalc.getValue();
-			int chequStaretr = this.chequeSerialNo.intValue();
-			int prvsNoOfChqs = this.noOfCheques.getValue();
-			this.chequeDetail = new ChequeDetail();
-			BigDecimal totalChequeAmt = this.amount.getValue();
-			for (int i = 0; i < numberofC; i++) {
-				ChequeDetail cheqDetails = getNewChequedetails();
-				cheqDetails.setChequeSerialNo(chequStaretr);
-				chequStaretr++;
-				Object bankBranchObj = this.bankBranchID.getAttribute("bankBranchID");
-				if (bankBranchObj != null) {
-					cheqDetails.setBankBranchID(Long.parseLong(bankBranchObj.toString()));
-				}
-				cheqDetails.setBankBranchIDName(this.bankName.getValue());
+
+			int chequeSerialNum = this.chequeSerialNo.intValue();
+			int numberofCheques = this.noOfCheques.getValue();
+			int prvsNoOfCheques = this.totNoOfCheques.getValue();
+			BigDecimal totalChequeAmt = this.totAmount.getActualValue();
+			String chequeType = this.chequeType.getSelectedItem().getValue().toString();
+			
+			for (int i = 0; i < numberofCheques; i++) {
+				ChequeDetail cheqDetails = new ChequeDetail();
+
 				cheqDetails.setAccountNo(this.accNumber.getValue());
-				String curField = this.curCcyField;
-				cheqDetails.setAmount(PennantApplicationUtil.unFormateAmount(this.amountCD.getValue(),
-						CurrencyUtil.getFormat(curField)));
-				totalChequeAmt = totalChequeAmt.add(this.amountCD.getValue());
+				cheqDetails.setChequeSerialNo(chequeSerialNum);
+				chequeSerialNum++;
+				
+				Object bankBranch = this.bankBranchID.getAttribute("bankBranchDetails");
+				if (bankBranch != null) {
+					BankBranch branch=  (BankBranch)bankBranch;
+					cheqDetails.setBankBranchID(branch.getBankBranchID());
+					cheqDetails.setBranchCode(branch.getBranchCode());
+				}
+				cheqDetails.setBankName(this.bankName.getValue());
+				cheqDetails.setAccountNo(this.accNumber.getValue());
+				cheqDetails.setAmount(PennantApplicationUtil.unFormateAmount(this.amount.getActualValue(), ccyEditField));
+				totalChequeAmt = totalChequeAmt.add(this.amount.getActualValue());
 				cheqDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				cheqDetails.setNewRecord(true);
 				cheqDetails.setActive(true);
-				cheqDetails.setChequeType(chqType);
+				cheqDetails.setChequeType(chequeType);
 				cheqDetails.setAccHolderName(this.accHolderName.getValue());
 				cheqDetails.setAccountType(this.accountType.getSelectedItem().getValue().toString());
 				cheqDetails.setChequeStatus(this.chequeStatus.getSelectedItem().getValue().toString());
+
 				chequeDetails.add(cheqDetails);
 			}
 
 			// validate existing data
 			validateChequeDetails(chequeDetails, false);
-			this.noOfCheques.setValue(prvsNoOfChqs + numberofC);
-			this.amount.setValue(totalChequeAmt);
-
+			
+			this.totNoOfCheques.setValue(prvsNoOfCheques + numberofCheques);
+			this.totAmount.setValue(totalChequeAmt);
+			
 			doFillChequeDetails(this.listBoxChequeDetail, chequeDetails);
 			logger.debug(Literal.LEAVING);
 		}
 	}
 
-	private void doFillChequeDetails(Listbox listbox, List<ChequeDetail> chequeDetails) {
+	private void doFillChequeDetails(Listbox listBoxChequeDetail, List<ChequeDetail> chequeDetails) {
+		boolean isReadOnly = PennantConstants.RCD_STATUS_SUBMITTED.equals(getChequeHeader().getRecordStatus()) ;
+		
 		if (chequeDetails != null && chequeDetails.size() > 0) {
 			for (ChequeDetail chequeDetail : chequeDetails) {
-				boolean readonly = false;
-
-				if (!chequeDetail.isActive() || StringUtils.trimToEmpty(chequeDetail.getRecordType()).equals(PennantConstants.RCD_DEL)) {
-					readonly = true;
-				}
 
 				Listitem listitem = new Listitem();
 				listitem.setAttribute("data", chequeDetail);
 				Listcell listcell;
 
-				//ChequeType
+				// ChequeType
 				listcell = new Listcell(String.format(chequeDetail.getChequeType()));
 				listcell.setParent(listitem);
-				
+
 				// ChequeSerialNo
 				listcell = new Listcell(String.format("%06d", chequeDetail.getChequeSerialNo()));
 				listcell.setParent(listitem);
@@ -1243,10 +1336,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				bankBranchID.setDescColumn("BankName");
 				bankBranchID.setDisplayStyle(2);
 				bankBranchID.setValidateColumns(new String[] { "BranchCode" });
-				bankBranchID.setValue(String.valueOf(chequeDetail.getBankBranchID()));
-				bankBranchID.setDescription(chequeDetail.getBankBranchIDName());
+				bankBranchID.setWidth("100px");
+				
+				bankBranchID.setValue(chequeDetail.getBranchCode());
+				bankBranchID.setDescription(chequeDetail.getBankName());
 				listcell.appendChild(bankBranchID);
 				listcell.setParent(listitem);
+				
 
 				// AccountNo
 				listcell = new Listcell(chequeDetail.getAccountNo());
@@ -1255,24 +1351,25 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				// Emi ref
 				listcell = new Listcell();
 				Combobox emiReference = getCombobox("1");
-				Combobox emi = getCombobox(chequeDetail.geteMIRefNo());
+				Combobox emi = getCombobox(String.valueOf(chequeDetail.geteMIRefNo()));
 				emiReference.setValue(emi.getSelectedItem().getLabel());
-				emiReference.setReadonly(readonly);
-				readOnlyComponent(readonly, emiReference);
-				if(!isPDC){
-					emiReference.setDisabled(true);	
+				if (!MandateConstants.TYPE_PDC.equals(chequeDetail.getChequeType())) {
+					readOnlyComponent(true, emiReference);
+				} else {
+					readOnlyComponent(isReadOnly, emiReference);
 				}
+				emiReference.setWidth("100px");
+				emi.setWidth("100px");
 				listcell.appendChild(emiReference);
 				listcell.setParent(listitem);
 
 				// Amount
 				listcell = new Listcell();
-				Decimalbox emiAmount = new Decimalbox();
-				emiAmount.setFormat(PennantConstants.in_amountFormate2);
-				String curField = this.curCcyField;
-				emiAmount.setValue(PennantApplicationUtil.formateAmount(chequeDetail.getAmount(),
-						CurrencyUtil.getFormat(curField)));
-				readOnlyComponent(readonly, emiAmount);
+				CurrencyBox emiAmount = new CurrencyBox();
+				emiAmount.setProperties(false, ccyEditField);
+				emiAmount.setValue(PennantApplicationUtil.formateAmount(chequeDetail.getAmount(), ccyEditField));
+				emiAmount.setTextBoxWidth(100);
+				readOnlyComponent(isReadOnly, emiAmount);
 				listcell.appendChild(emiAmount);
 				listcell.setParent(listitem);
 
@@ -1281,53 +1378,49 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				Button delButton = new Button(Labels.getLabel("ChequeDetailDialog_Delete"));
 				Object[] deleteItem = new Object[1];
 				deleteItem[0] = listitem;
-				readOnlyComponent(readonly, delButton);
+				readOnlyComponent(isReadOnly, delButton);
 				listcell.appendChild(delButton);
 				listcell.setParent(listitem);
-				
+
 				// Upload image action
 				listcell = new Listcell();
 				Button uploadButton = new Button(Labels.getLabel("ChequeDetailDialog_Upload"));
 				Object[] uploadItem = new Object[1];
 				uploadItem[0] = listitem;
-				readOnlyComponent(readonly, uploadButton);
+				readOnlyComponent(isReadOnly, uploadButton);
 				listcell.appendChild(uploadButton);
 				listcell.setParent(listitem);
 
-				//ChequeStatus listCell 8
+				// ChequeStatus listCell 8
 				listcell = new Listcell();
 				Combobox chequeStatus = getChequeStatusComboBox(chequeDetail.getChequeStatus());
+				chequeStatus.setWidth("100px");
+				readOnlyComponent(isReadOnly, chequeStatus);
 				listcell.appendChild(chequeStatus);
 				listcell.setParent(listitem);
 
-				//AccountType listCell 09
+				// AccountType listCell 09
 				Combobox accTypecmbbox = new Combobox();
+				accTypecmbbox.setWidth("130px");
 				fillComboBox(accTypecmbbox, chequeDetail.getAccountType(), accTypeList, "");
-				readOnlyComponent(true, accTypecmbbox);
+				readOnlyComponent(isReadOnly, accTypecmbbox);
 				listcell = new Listcell();
 				listcell.appendChild(accTypecmbbox);
 				listcell.setParent(listitem);
 
-				//AccHolderName listCell 10
+				// AccHolderName listCell 10
 				listcell = new Listcell(chequeDetail.getAccHolderName());
 				listcell.setParent(listitem);
-				listbox.appendChild(listitem);
-
-				/*// only to avoid the number format exception while setting the
-				// value to bean listcell 11
-				listcell = new Listcell(chequeDetail.getAmount().toString());
-				listcell.setParent(listitem);
-				listcell.setVisible(false);
-				listbox.appendChild(listitem);*/
+				listBoxChequeDetail.appendChild(listitem);
 
 				List<Object> list = new ArrayList<Object>(11);
-				list.add(chequeDetail); //0
-				list.add(emiAmount); //1
-				list.add(deleteItem); //2
-				list.add(getComboboxValue(emiReference)); //3
-				list.add(chequeStatus);//4
+				list.add(chequeDetail); 
+				list.add(emiAmount);  
+				list.add(deleteItem); 
+				list.add(getComboboxValue(emiReference));  
+				list.add(chequeStatus); 
 
-				emiAmount.addForward("onChange", this.window_ChequeDetailDialog, "onChangeEmiAmount", list);
+				emiAmount.addForward("onFulfill", this.window_ChequeDetailDialog, "onFulfill$EmiAmount", list);
 				delButton.addForward("onClick", this.window_ChequeDetailDialog, "onClickDeleteButton", list);
 				uploadButton.addForward("onClick", this.window_ChequeDetailDialog, "onClickUploadButton", list);
 				emiReference.addForward("onChange", this.window_ChequeDetailDialog, "onChangeEmiDate", list);
@@ -1335,15 +1428,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			}
 		}
 	}
-
-	// Process for Document uploading
-	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		Media media = event.getMedia();
-		//browseDoc(media);
-		logger.debug("Leaving" + event.toString());
-	}
-	
 	/**
 	 * Method for validating
 	 * 
@@ -1353,67 +1437,67 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 */
 	private void validateChequeDetails(List<ChequeDetail> chequeDetails, boolean validate) throws ParseException {
 		logger.debug(Literal.ENTERING);
+
 		for (Listitem listitem : listBoxChequeDetail.getItems()) {
 			List<Listcell> list = listitem.getChildren();
-			Listcell chequeType = (Listcell) list.get(0);
+			
+			Listcell chequeType = list.get(0);
 			if (!validate) {
 				for (ChequeDetail chequeDetail : chequeDetails) {
-					Listcell chkSerial = (Listcell) list.get(1);
-					Listcell extListCell = (Listcell) list.get(2);
+
+					Listcell chkSerial = list.get(1);
+					Listcell extListCell = list.get(2);
 					ExtendedCombobox extendedCombobox = (ExtendedCombobox) extListCell.getFirstChild();
+
 					// validate cheque serial number
 					if (!StringUtils.equals(chequeDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-						if (StringUtils.equals(String.valueOf(extendedCombobox.getValue()),
-								String.valueOf(chequeDetail.getBankBranchID()))
-								&& StringUtils.equals(chkSerial.getLabel().toString(),
-										String.format("%06d", chequeDetail.getChequeSerialNo()))) {
+						if (StringUtils.equals(chkSerial.getLabel().toString(), String.format("%06d", chequeDetail.getChequeSerialNo()))) {
 							if (fromLoan) {
 								parenttab.setSelected(true);
 							}
-							throw new WrongValueException(extendedCombobox,
-									Labels.getLabel("ChequeDetailDialog_ChkSerial_Exists"));
+							throw new WrongValueException(extendedCombobox, Labels.getLabel("ChequeDetailDialog_ChkSerial_Exists"));
 						}
 					}
 				}
-			} else if (StringUtils.equals(chequeType.getLabel(), FinanceConstants.REPAYMTH_PDC)) {
-				//Validation  of Cheque EMI Reference.
-				Listcell emiDateLc = (Listcell) list.get(4);
+			} else if (StringUtils.equals(FinanceConstants.REPAYMTH_PDC, chequeType.getLabel())) {
+				// Validation of Cheque EMI Reference.
+				Listcell emiDateLc = list.get(4);
 				Combobox emiComboBox = (Combobox) emiDateLc.getFirstChild();
 
-				int chequesWithSameEmiRefs = 0;
+				int emiRefNumCnt = 0;
 				for (ChequeDetail chequeDetail : chequeDetails) {
-					if (StringUtils.equals(getComboboxValue(emiComboBox), chequeDetail.geteMIRefNo())) {
-						chequesWithSameEmiRefs++;
-						if (chequesWithSameEmiRefs > 1) {
+					if(PennantConstants.RCD_STATUS_CANCELLED.equals(chequeDetail.getRecordStatus())){
+						continue;
+					}
+					String emiRefNum = getComboboxValue(emiComboBox);
+					if (StringUtils.isNumeric(emiRefNum) &&  (Integer.parseInt(emiRefNum) == chequeDetail.geteMIRefNo())) {
+						emiRefNumCnt++;
+						if (emiRefNumCnt > 1) {
 							if (fromLoan) {
 								parenttab.setSelected(true);
 							}
-							throw new WrongValueException(emiComboBox,
-									Labels.getLabel("ChequeDetailDialog_ChkEMIRef_Exists"));
+							throw new WrongValueException(emiComboBox, Labels.getLabel("ChequeDetailDialog_ChkEMIRef_Exists"));
 						}
 					}
 				}
 
-				//Validation  of Cheque EMI Amount.
+				// Validation of Cheque EMI Amount.
 				Combobox comboItem = getCombobox(getComboboxValue(emiComboBox));
 				Date emiDate = DateUtility.parse(comboItem.getSelectedItem().getLabel(), PennantConstants.dateFormat);
-				if (getFinanceDetail() != null) {
-					List<FinanceScheduleDetail> schedules = financeDetail.getFinScheduleData()
-							.getFinanceScheduleDetails();
-					Listcell emiAmountLc = (Listcell) list.get(5);
-					Decimalbox emiAmount = (Decimalbox) emiAmountLc.getFirstChild();
+				if (getFinanceSchedules() != null) {
+					List<FinanceScheduleDetail> schedules = getFinanceSchedules();
+					Listcell emiAmountLc = list.get(5);
+					CurrencyBox emiAmount = (CurrencyBox) emiAmountLc.getFirstChild();
 
 					for (FinanceScheduleDetail detail : schedules) {
 						if (DateUtility.compare(emiDate, detail.getSchDate()) == 0) {
 
-							BigDecimal repayAmount = PennantApplicationUtil.formateAmount(detail.getRepayAmount(),
-									CurrencyUtil.getFormat(detail.getFinCcy()));
-							if (repayAmount.compareTo(emiAmount.getValue()) != 0) {
+							BigDecimal repayAmount = PennantApplicationUtil.formateAmount(detail.getRepayAmount(), CurrencyUtil.getFormat(detail.getFinCcy()));
+							if (repayAmount.compareTo(emiAmount.getActualValue()) != 0) {
 								if (fromLoan) {
 									parenttab.setSelected(true);
 								}
-								throw new WrongValueException(emiAmount,
-										Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
+								throw new WrongValueException(emiAmount, Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
 							}
 						}
 					}
@@ -1423,7 +1507,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onChangeEmiAmount(Event event) {
+	public void onFulfill$EmiAmount(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		BigDecimal totalChequeAmt = BigDecimal.ZERO;
@@ -1432,49 +1516,44 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		@SuppressWarnings("unchecked")
 		List<Object> list1 = (List<Object>) event.getData();
 		ChequeDetail chequeDetail = (ChequeDetail) list1.get(0);
-		Decimalbox emiAmount1 = (Decimalbox) list1.get(1);
+		CurrencyBox emiAmount1 = (CurrencyBox) list1.get(1);
 
 		for (Listitem listitem : listBoxChequeDetail.getItems()) {
 			List<Listcell> list = listitem.getChildren();
-			Listcell emiAmtLc = (Listcell) list.get(5);
-			Decimalbox emiAmount = (Decimalbox) emiAmtLc.getFirstChild();
+			Listcell emiAmtLc = list.get(5);
+			CurrencyBox emiAmount = (CurrencyBox) emiAmtLc.getFirstChild();
 			if (!emiAmount.isReadonly()) {
-				if (emiAmount.getValue() == null || emiAmount.getValue().compareTo(BigDecimal.ZERO) < 0) {
+				if (emiAmount.getActualValue() == null || emiAmount.getActualValue().compareTo(BigDecimal.ZERO) < 0) {
 					emiAmount.setValue(BigDecimal.ZERO);
 				}
-				totalChequeAmt = totalChequeAmt.add(emiAmount.getValue());
+				totalChequeAmt = totalChequeAmt.add(emiAmount.getActualValue());
 				noOfCheques++;
 			}
 		}
-		
-		chequeDetail.setAmount(
-				PennantAppUtil.unFormateAmount(emiAmount1.getValue(), CurrencyUtil.getFormat(this.curCcyField)));
-		
-		this.amount.setValue(totalChequeAmt);
-		this.noOfCheques.setValue(noOfCheques);
+
+		chequeDetail.setAmount(PennantAppUtil.unFormateAmount(emiAmount1.getActualValue(), ccyEditField));
+
+		this.totAmount.setValue(totalChequeAmt);
+		this.totNoOfCheques.setValue(noOfCheques);
 
 		if (StringUtils.isBlank(chequeDetail.getRecordType())) {
 			chequeDetail.setNewRecord(true);
 			chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
-	
-	public void onChangeEmiDate(Event event) {
+
+	public void onChangeEmiDate(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		@SuppressWarnings("unchecked")
 		List<Object> list1 = (List<Object>) event.getData();
 		ChequeDetail chequeDetail = (ChequeDetail) list1.get(0);
-		String emiDate = (String) list1.get(3);
-		chequeDetail.seteMIRefNo(emiDate);
-		
-		if (StringUtils.isBlank(chequeDetail.getRecordType())) {
+	 	if (StringUtils.isBlank(chequeDetail.getRecordType())) {
 			chequeDetail.setNewRecord(true);
 			chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1498,8 +1577,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * @param chequeHeader
 	 * @throws ParseException
 	 */
-	private ArrayList<WrongValueException> doPrepareList(Listbox listbox, ChequeHeader chequeHeader)
-			throws ParseException {
+	private ArrayList<WrongValueException> doPrepareList(Listbox listbox, ChequeHeader chequeHeader) throws ParseException {
 		logger.debug(Literal.ENTERING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -1509,9 +1587,11 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		List<ChequeDetail> oldList = chequeHeader.getChequeDetailList();
 
 		if (listbox.getItems().isEmpty() && isPDC) {
-			wve.add(new WrongValueException(noOfCheques, Labels.getLabel("ChequeDetailDialog_Generate_Mand")));
+			wve.add(new WrongValueException(this.noOfCheques, Labels.getLabel("ChequeDetailDialog_Generate_Mand")));
 		}
+
 		for (Listitem listitem : listbox.getItems()) {
+			
 			List<Listcell> list = listitem.getChildren();
 			Listcell chequeType = list.get(0);
 			Listcell chequeSerialNo = list.get(1);
@@ -1522,68 +1602,76 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				chequeDetail = new ChequeDetail();
 				chequeDetail.setNewRecord(true);
 				chequeDetail.setRecordType(PennantConstants.RCD_ADD);
+			} else {
+				if (chequeDetail.isUpload()) {//FIXME
+					chequeDetail.setNewRecord(true);
+					chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
 			}
 			chequeDetail.setChequeType(chequeType.getLabel());
 			chequeDetail.setChequeSerialNo(Integer.valueOf(chequeSerialNo.getLabel()));
-			Listcell bankbranchid = list.get(2);
-			ExtendedCombobox bankbrachid = (ExtendedCombobox) bankbranchid.getFirstChild();
-
-			chequeDetail.setBankBranchID(Long.valueOf(bankbrachid.getValue()));
-			chequeDetail.setBankBranchIDName(bankbrachid.getDescription());
-
-			Listcell accNo = (Listcell) list.get(3);
+			
+			Object bankBranch = this.bankBranchID.getAttribute("bankBranchDetails");
+			if (bankBranch != null) {
+				BankBranch branch=  (BankBranch)bankBranch;
+				chequeDetail.setBankBranchID(branch.getBankBranchID());
+				chequeDetail.setBankName(branch.getBankName());
+			}
+			
+			Listcell accNo = list.get(3);
 			chequeDetail.setAccountNo(accNo.getLabel());
 
-			Listcell emiLc = (Listcell) list.get(4);
+			Listcell emiLc = list.get(4);
 			Combobox emi = (Combobox) emiLc.getFirstChild();
 			emi.clearErrorMessage();
 			if (!StringUtils.equals(getComboboxValue(emi), PennantConstants.List_Select)) {
-				chequeDetail.seteMIRefNo(emi.getSelectedItem().getValue().toString());
-			}else{
+				String emiRefNum = emi.getSelectedItem().getValue().toString();
+				if (StringUtils.isNumeric(emiRefNum)) {
+					chequeDetail.seteMIRefNo(Integer.parseInt(emiRefNum));
+				} else {
+					chequeDetail.seteMIRefNo(0);
+				}
+				chequeDetail.setChequeDate(DateUtil.parse(emi.getSelectedItem().getLabel(), DateFormat.SHORT_DATE.getPattern()));
+			} else {
 				if (StringUtils.equals(chequeDetail.getChequeType(), FinanceConstants.REPAYMTH_PDC)) {
 					wve.add(new WrongValueException(emi, Labels.getLabel("ChequeDetailDialog_EMI_Mand")));
-				}else{
-					chequeDetail.seteMIRefNo(null);
+				} else {
+					chequeDetail.seteMIRefNo(0);
 				}
 			}
-			
-			Listcell amount = (Listcell) list.get(5);
-			Decimalbox emiAmount = (Decimalbox) amount.getFirstChild();
-			emiAmount.clearErrorMessage();
-			String curField = this.curCcyField;
-			BigDecimal chequeAmt = PennantAppUtil.unFormateAmount(emiAmount.getValue(),
-					CurrencyUtil.getFormat(curField));
-			chequeDetail.setAmount(chequeAmt);
-			chequeDetail.setChequeCcy(SysParamUtil.getAppCurrency());
 
-			Listcell chequeStatusLC = (Listcell) list.get(8);
+			Listcell amount = list.get(5);
+			CurrencyBox emiAmount = (CurrencyBox) amount.getFirstChild();
+			emiAmount.clearErrorMessage();
+			BigDecimal chequeAmt = PennantAppUtil.unFormateAmount(emiAmount.getActualValue(), ccyEditField);
+			chequeDetail.setAmount(chequeAmt);
+			chequeDetail.setChequeCcy(this.ccy);
+
+			Listcell chequeStatusLC = list.get(8);
 			Combobox chequeStatus = (Combobox) chequeStatusLC.getFirstChild();
 			chequeDetail.setChequeStatus(chequeStatus.getSelectedItem().getValue().toString());
 
-			Listcell accountTypeLc = (Listcell) list.get(9);
+			Listcell accountTypeLc = list.get(9);
 			Combobox accountType = (Combobox) accountTypeLc.getFirstChild();
 			chequeDetail.setAccountType(accountType.getSelectedItem().getValue().toString());
 
-			Listcell accHolderName = (Listcell) list.get(10);
+			Listcell accHolderName = list.get(10);
 			chequeDetail.setAccHolderName(accHolderName.getLabel());
 
-			if (newRecord) { //only for new records
-				for(ChequeDetail document:getChequeDocuments()) {
-					if(document.getChequeSerialNo() == chequeDetail.getChequeSerialNo()) {
+			if (newRecord) { // only for new records
+				for (ChequeDetail document : getChequeDocuments()) {
+					if (document.getChequeSerialNo() == chequeDetail.getChequeSerialNo()) {
 						chequeDetail.setDocImage(document.getDocImage());
 						chequeDetail.setDocumentName(document.getDocumentName());
 					}
 				}
-				
 				oldList.add(chequeDetail);
 				chequeDetail.setActive(true);
-				chequeDetail.setStatus("NEW");
+				chequeDetail.setStatus(PennantConstants.RECORD_TYPE_NEW);
 			}
 		}
 		chequeHeader.setChequeDetailList(oldList);
-
 		logger.debug(Literal.LEAVING);
-
 		return wve;
 	}
 
@@ -1599,34 +1687,37 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	}
 
 	public void onClickDeleteButton(ForwardEvent event) {
-		@SuppressWarnings("unchecked")
-		List<Object> list = (List<Object>) event.getData();
-		ChequeDetail chequeDetail = (ChequeDetail) list.get(0);
-		Object[] rvddata = (Object[]) list.get(2);
-		Listitem listitem = (Listitem) rvddata[0];
-		
-		this.listBoxChequeDetail.removeItemAt(listitem.getIndex());
-		if (chequeDetail != null && !chequeDetail.isNew()) {
-			chequeDetail.setActive(false);
-			chequeDetail.setRecordStatus(PennantConstants.RCD_STATUS_CANCELLED);
-			if(fromLoan) {
-				chequeDetail.setRecordType(PennantConstants.RCD_DEL);
-			} else {
-				chequeDetail.setRecordType(PennantConstants.RCD_UPD);
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+			@SuppressWarnings("unchecked")
+			List<Object> list = (List<Object>) event.getData();
+			ChequeDetail chequeDetail = (ChequeDetail) list.get(0);
+			Object[] rvddata = (Object[]) list.get(2);
+			Listitem listitem = (Listitem) rvddata[0];
+
+			this.listBoxChequeDetail.removeItemAt(listitem.getIndex());
+			if (chequeDetail != null && !chequeDetail.isNew()) {
+				chequeDetail.setActive(false);
+				chequeDetail.setRecordStatus(PennantConstants.RCD_STATUS_CANCELLED);
+				if (fromLoan) {
+					chequeDetail.setRecordType(PennantConstants.RCD_DEL);
+				} else {
+					chequeDetail.setRecordType(PennantConstants.RCD_UPD);
+				}
 			}
+			onFulfill$EmiAmount(event);
 		}
-		onChangeEmiAmount(event);
 	}
-	
+
 	public void onClickUploadButton(ForwardEvent event) {
 		@SuppressWarnings("unchecked")
 		List<Object> list = (List<Object>) event.getData();
 		ChequeDetail chequeDetail = (ChequeDetail) list.get(0);
-		
+
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("ChequeDetailDialogCtrl", this);
 		map.put("chequeDetail", chequeDetail);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/PDC/ChequeDetailDocumentDialog.zul", null, map);
 		} catch (Exception e) {
@@ -1634,8 +1725,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		}
 	}
 
-	private Combobox getCombobox(String eminumber) {
-		List<FinanceScheduleDetail> list = this.financeSchedules;
+	private Combobox getCombobox(String emiNumber) {
 		Combobox combobox = new Combobox();
 		combobox.setSclass(PennantConstants.mandateSclass);
 		combobox.getChildren().clear();
@@ -1645,13 +1735,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		combobox.appendChild(comboitem);
 		combobox.setSelectedItem(comboitem);
 		combobox.setReadonly(true);
-		for (FinanceScheduleDetail valueLabel : list) {
+		for (FinanceScheduleDetail valueLabel : getFinanceSchedules()) {
 			if (valueLabel.isRepayOnSchDate() || valueLabel.isPftOnSchDate()) {
 				comboitem = new Comboitem();
 				comboitem.setValue(valueLabel.getInstNumber());
 				comboitem.setLabel(DateUtility.formatToShortDate(valueLabel.getSchDate()));
 				combobox.appendChild(comboitem);
-				if (String.valueOf(valueLabel.getInstNumber()).equals(String.valueOf(eminumber))) {
+				if (String.valueOf(valueLabel.getInstNumber()).equals(String.valueOf(emiNumber))) {
 					combobox.setSelectedItem(comboitem);
 				}
 			}
@@ -1672,13 +1762,14 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		fillComboBox(combobox, chqStatus, chequeStatusList, "");
 		return combobox;
 	}
+
 	/**
 	 * fill finance basic details to List
 	 * 
 	 * @return
 	 */
 	private ArrayList<Object> getFinBasicDetails(FinanceDetail financeDetail) {
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 
 		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
 		ArrayList<Object> arrayList = new ArrayList<Object>();
@@ -1698,33 +1789,33 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		arrayList.add(9, financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
 		arrayList.add(10, financeDetail.getFinScheduleData().getFinanceMain().isNewRecord());
 		arrayList.add(11, "");
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 		return arrayList;
-	}
-	
-	private ChequeDetail getNewChequedetails() {
-		ChequeDetail chequeDetail = new ChequeDetail();
-		chequeDetail.setAccountNo(this.accNumber.getValue());
-		return chequeDetail;
 	}
 
 	/**
-	 * Method to define whether the Cheque tab is visible or not. it is displayed based only when the loan configuration
-	 * allow Repayments method contains PDC or Cheque Capture Required is true. and also if the finance previously
-	 * having chequeheader details then also the tab is visible.
+	 * Method to define whether the Cheque tab is visible or not. it is
+	 * displayed based only when the loan configuration allow Repayments method
+	 * contains PDC or Cheque Capture Required is true. and also if the finance
+	 * previously having chequeheader details then also the tab is visible.
 	 * 
 	 * @param financeDetail
 	 * @param isContainPrvsCheques
 	 * @param finRepayMethod
 	 */
-	public void checkTabDisplay(FinanceDetail financeDetail, boolean isContainPrvsCheques) {
+	public void checkTabDisplay(FinanceDetail financeDetail, String mandateType, boolean isContainPrvsCheques) {
 		logger.debug(Literal.ENTERING);
 		boolean isChqCaptureReq = financeDetail.getFinScheduleData().getFinanceType().isChequeCaptureReq();
 
-		if (isChqCaptureReq || isContainPrvsCheques) {
+		this.parenttab.setVisible(false);
+		if (isChqCaptureReq || isContainPrvsCheques || MandateConstants.TYPE_PDC.equals(mandateType)) {
 			this.parenttab.setVisible(true);
-			String chequetype = "";
-			fillComboBox(this.chequeType, chequetype, chequeTypeList, "");
+			if (MandateConstants.TYPE_PDC.equals(mandateType)) {
+				fillComboBox(this.chequeType, mandateType, chequeTypeList, "");
+			} else {
+				fillComboBox(this.chequeType, FinanceConstants.REPAYMTH_UDC, chequeTypeList, "");
+			}
+			isPDC(mandateType);
 		} else {
 			this.parenttab.setVisible(false);
 		}
@@ -1733,13 +1824,19 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 	public void onChange$chequeType(Event event) {
 		logger.debug(Literal.ENTERING);
+
 		String chqType = getComboboxValue(this.chequeType);
+		isPDC(chqType);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void isPDC(String chqType) {
 		if (StringUtils.equals(chqType, FinanceConstants.REPAYMTH_PDC)) {
 			isPDC = true;
 		} else {
 			isPDC = false;
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1813,7 +1910,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	public void setChequeHeaderService(ChequeHeaderService chequeHeaderService) {
 		this.chequeHeaderService = chequeHeaderService;
 	}
-	
+
 	public List<ChequeDetail> getChequeDocuments() {
 		return chequeDocuments;
 	}
@@ -1821,4 +1918,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	public void setChequeDocuments(List<ChequeDetail> chequeDocuments) {
 		this.chequeDocuments = chequeDocuments;
 	}
+
+	public List<FinanceScheduleDetail> getFinanceSchedules() {
+		return financeSchedules;
+	}
+
+	public void setFinanceSchedules(List<FinanceScheduleDetail> financeSchedules) {
+		this.financeSchedules = financeSchedules;
+	}
+	
 }

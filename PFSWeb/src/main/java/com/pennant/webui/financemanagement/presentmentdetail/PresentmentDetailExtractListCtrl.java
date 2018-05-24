@@ -68,7 +68,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
-import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
+import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -106,7 +106,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	protected Button btnBranches;
 	protected ExtendedCombobox entity;
 
-	private transient PresentmentHeaderService presentmentHeaderService;
+	private transient PresentmentDetailService presentmentDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -204,7 +204,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 * @param aAcademic
 	 */
 	public void doWriteComponentsToBean(PresentmentHeader detailHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 
@@ -228,7 +228,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		
 		try {
 			if (this.toDate != null && DateUtility.compare(this.toDate.getValue(), this.fromdate.getValue()) < 0) {
-				throw new WrongValueException(this.toDate, "To Date should be greater than From Date");
+				throw new WrongValueException(this.toDate, Labels.getLabel("NUMBER_MINVALUE", new String[] { Labels.getLabel("label_PresentmentDetailList_ToDate.value"),Labels.getLabel("label_PresentmentDetailList_Fromdate.value") }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -237,7 +237,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		try {
 			int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
 			if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) >= diffentDays) {
-				throw new WrongValueException(this.toDate, " From Date and To Date difference should be less than or equal to " + diffentDays);
+				throw new WrongValueException(this.toDate, Labels.getLabel("label_Difference_between_days") + diffentDays);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -259,14 +259,14 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			throw new WrongValuesException(wvea);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/**
 	 * Disables the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Clients.clearWrongValue(fromdate);
 		Clients.clearWrongValue(toDate);
@@ -276,7 +276,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.toDate.setErrorMessage("");
 		this.mandateType.setConstraint("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	private String extractDetails(PresentmentHeader detailHeader) throws Exception {
@@ -289,7 +289,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 
 		logger.debug(Literal.LEAVING);
 
-		return presentmentHeaderService.savePresentmentDetails(detailHeader);
+		return presentmentDetailService.savePresentmentDetails(detailHeader);
 	}
 
 	/**
@@ -317,8 +317,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	public void onClick$btnloanType(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		Object dataObject = MultiSelectionSearchListBox.show(this.window_PresentmentExtractDetailList, "FinanceType",
-				this.loanType.getValue(), null);
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_PresentmentExtractDetailList, "FinanceType", this.loanType.getValue(), null);
 		if (dataObject instanceof String) {
 			this.loanType.setValue(dataObject.toString());
 		} else {
@@ -392,8 +391,13 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		doShowHelp(event);
 	}
 
-	public void setPresentmentHeaderService(PresentmentHeaderService presentmentHeaderService) {
-		this.presentmentHeaderService = presentmentHeaderService;
+	public PresentmentDetailService getPresentmentDetailService() {
+		return presentmentDetailService;
 	}
+
+	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
+		this.presentmentDetailService = presentmentDetailService;
+	}
+
 	
 }

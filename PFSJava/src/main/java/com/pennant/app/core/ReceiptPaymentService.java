@@ -59,7 +59,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		Customer customer = custEODEvent.getCustomer();
 		long custID = customer.getCustID();
 
-		List<PresentmentDetail> presentments = getPresentmentHeaderDAO().getPresentmenToPost(custID, businessDate);
+		List<PresentmentDetail> presentments = getPresentmentDetailDAO().getPresentmenToPost(custID, businessDate);
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
@@ -191,7 +191,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail, header,
 				repayHeirarchy, businessDate,businessDate);
 		if (presentmentDetail.getId() != Long.MIN_VALUE) {
-			getPresentmentHeaderDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
+			getPresentmentDetailDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 		}
 
 	}

@@ -46,7 +46,7 @@
 							<button id="btnNotes"
 								tooltiptext="${c:l('btnNotes.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
+								sclass="z-toolbarbutton"/>
 						</toolbar>
 						<!-- SEARCH AREA -->
 						<toolbar align="center"
@@ -71,7 +71,7 @@
 			</north>
 			<center border="none" autoscroll="false">
 				<div>
-					<groupbox id="finBasicdetails" zclass="null"></groupbox>
+					<groupbox id="finBasicdetails" zclass="null"/>
 					<groupbox id="gb_basicDetails" sclass="gb-dialog">
 						<grid id="grid_NumbOfChqs"
 							sclass="GridLayoutNoBorder" fixedLayout="true"
@@ -88,16 +88,12 @@
 										value="${c:l('label_ChequeDetailDialog_NoOfCheques.value')}" />
 									<hbox>
 										<space spacing="0px" />
-										<intbox id="noOfCheques"
+										<intbox id="totNoOfCheques"
 											readonly="true" width="200px" />
 									</hbox>
 									<label id="label_Amount"
 										value="${c:l('label_ChequeDetailDialog_Amount.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<decimalbox id="amount"
-											readonly="true" maxlength="18" width="200px" />
-									</hbox>
+										<currencyBox id="totAmount" width="200px" />
 								</row>
 							</rows>
 						</grid>
@@ -124,8 +120,7 @@
 									</hbox>
 									<label id="label_BankBranchID"
 										value="${c:l('label_ChequeDetailDialog_BankBranchID.value')}" />
-									<extendedcombobox id="bankBranchID"
-										width="200px" />
+									<extendedcombobox id="bankBranchID" />
 								</row>
 								<row visible="true">
 									<label id="label_bank"
@@ -209,20 +204,13 @@
 									</hbox>
 								</row>
 								<row>
-									<label id="label_AmountCD"
-										value="${c:l('label_ChequeDetailDialog_AmountCD.value')}" />
+									<label id="label_AmountCD" value="${c:l('label_ChequeDetailDialog_AmountCD.value')}" />
+									<currencyBox id="amount"  width="200px" />
+									<label value="${c:l('label_ChequeDetailDialog_NoOfChequesCalc.value')}" />
 									<hbox>
 										<space spacing="2px"
 											sclass="mandatory" />
-										<decimalbox id="amountCD"
-											maxlength="18" width="200px" />
-									</hbox>
-									<label
-										value="${c:l('label_ChequeDetailDialog_NoOfChequesCalc.value')}" />
-									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<intbox id="noOfChequesCalc"
+										<intbox id="noOfCheques"
 											width="120px" />
 										<button id="btnGen"
 											label="Generate" />

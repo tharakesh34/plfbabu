@@ -190,6 +190,7 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
@@ -6180,6 +6181,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					getTab(AssetConstants.UNIQUE_ID_ASSETEVALUATION), recSave);
 		}
 
+		//Mandate tab
 		Tab mandateTab = getTab(AssetConstants.UNIQUE_ID_MANDATE);
 		if (mandateDialogCtrl != null && mandateTab.isVisible()) {
 			mandateDialogCtrl.doSave_Mandate(aFinanceDetail, mandateTab, recSave);
@@ -6211,8 +6213,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			fieldVerificationDialogCtrl.doSave_FiVerification(aFinanceDetail, fiApprovalTab, recSave);
 			for (Verification verification : aFinanceDetail.getFiVerification().getVerifications()) {
 				if (verification.getDecision() == Decision.RE_INITIATE.getKey()
-						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)
-						&& verification.getReinitid() == null) {
+						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)) {
 					MessageUtil.showError("Field Investigation Re-Initiation is allowed only when user action is save");
 					return;
 				}
@@ -6231,10 +6232,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			tVerificationDialogCtrl.doSave(aFinanceDetail, tvApprovalTab, recSave);
 			for (Verification verification : aFinanceDetail.getTvVerification().getVerifications()) {
 				if (verification.getDecision() == Decision.RE_INITIATE.getKey()
-						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)
-						&& verification.getReinitid() == null) {
-					MessageUtil
-							.showError("Technical Verification Re-Initiation is allowed only when user action is save");
+						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)) {
+					MessageUtil.showError("Technical Verification Re-Initiation is allowed only when user action is save");
 					return;
 				}
 			}
@@ -7050,6 +7049,34 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						extendedFieldDetail.setRecordType(afinanceMain.getRecordType());
 						extendedFieldDetail.setNewRecord(true);
 					}
+				}
+			}
+		}
+		// Cheque Details
+		if (aFinanceDetail.getChequeHeader() != null) {
+			ChequeHeader chequeHeader = aFinanceDetail.getChequeHeader();
+			chequeHeader.setFinReference(afinanceMain.getFinReference());
+			chequeHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			chequeHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			chequeHeader.setRecordStatus(afinanceMain.getRecordStatus());
+			chequeHeader.setWorkflowId(afinanceMain.getWorkflowId());
+			chequeHeader.setTaskId(taskId);
+			chequeHeader.setNextTaskId(nextTaskId);
+			chequeHeader.setRoleCode(getRole());
+			chequeHeader.setNextRoleCode(nextRoleCode);
+			if (PennantConstants.RECORD_TYPE_DEL.equals(afinanceMain.getRecordType())) {
+				if (StringUtils.trimToNull(chequeHeader.getRecordType()) == null) {
+					chequeHeader.setRecordType(afinanceMain.getRecordType());
+					chequeHeader.setNewRecord(true);
+				}
+			}
+
+			List<ChequeDetail> chequeDetails = chequeHeader.getChequeDetailList();
+			if (chequeDetails != null && !chequeDetails.isEmpty()) {
+				for (ChequeDetail chequeDetail : chequeDetails) {
+					chequeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					chequeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					chequeDetail.setWorkflowId(afinanceMain.getWorkflowId());
 				}
 			}
 		}
@@ -14281,20 +14308,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param event
 	 */
 	public void onChange$finRepayMethod(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
+		
 		setRepayAccMandatory();
 		String repymethod = "";
 		if (this.finRepayMethod.getSelectedItem() != null && this.finRepayMethod.getSelectedItem().getValue() != null) {
 			repymethod = this.finRepayMethod.getSelectedItem().getValue().toString();
 		}
+		
 		if (getMandateDialogCtrl() != null) {
 			getMandateDialogCtrl().checkTabDisplay(repymethod, true);
 		}
 		
-		/*if (getChequeDetailDialogCtrl() != null) {
-			getChequeDetailDialogCtrl().checkTabDisplay(this.financeDetail, true, repymethod);
-		}*/
-		logger.debug("Leaving" + event.toString());
+		if (getChequeDetailDialogCtrl() != null) {
+			getChequeDetailDialogCtrl().checkTabDisplay(this.financeDetail, repymethod, true);
+		}
+		
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -14750,20 +14780,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// ### 08-05-2018 - End- Development Item 81
 
 		// ### 10-05-2018 - Start- Development Item 82
-		
 		if(jointAccountDetailDialogCtrl!=null){
 			detail.getCustomerEligibilityCheck().setExtendedFields(jointAccountDetailDialogCtrl.getRules());
-		}else{
-			detail.getCustomerEligibilityCheck().addExtendedField("Co_Applicants_Count", 0);
 		}
 
 		if(collateralHeaderDialogCtrl!=null){
 			detail.getCustomerEligibilityCheck().setExtendedFields(collateralHeaderDialogCtrl.getRules());
-		}else{
-			detail.getCustomerEligibilityCheck().addExtendedField("Collaterals_Total_Assigned", 0);
-			detail.getCustomerEligibilityCheck().addExtendedField("Collaterals_Total_UN_Assigned", 0);
-			detail.getCustomerEligibilityCheck().addExtendedField("Collateral_Bank_Valuation", 0);
-			detail.getCustomerEligibilityCheck().addExtendedField("Collateral_Average_LTV", 0);
 		}
 		// ### 10-05-2018 - End - Development Item 82
 		detail.getCustomerEligibilityCheck().setExtendedFields(setCollateralRuleValues(detail));
@@ -15472,9 +15494,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				deviationExecutionCtrl.checkFeeDeviations(getFinanceDetail());
 			}
 		}
-		if(lVerificationCtrl !=null){
+		if (lVerificationCtrl != null) {
 			lVerificationCtrl.setFinanceDetail(getFinanceDetail());
 		}
+		
+		Tab pdcTab = getTab(AssetConstants.UNIQUE_ID_CHEQUE);
+		if (chequeDetailDialogCtrl != null && pdcTab.isVisible()) {
+			chequeDetailDialogCtrl.setFinanceSchedules(getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
+		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 

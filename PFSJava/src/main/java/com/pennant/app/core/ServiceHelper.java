@@ -77,7 +77,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.SecondaryAccountDAO;
-import com.pennant.backend.dao.financemanagement.PresentmentHeaderDAO;
+import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
@@ -121,7 +121,7 @@ abstract public class ServiceHelper implements Serializable {
 	private FinanceProfitDetailDAO		financeProfitDetailDAO;
 	private FinFeeScheduleDetailDAO		finFeeScheduleDetailDAO;
 	private FinInsurancesDAO			finInsurancesDAO;
-	private PresentmentHeaderDAO		presentmentHeaderDAO;
+	private PresentmentDetailDAO		presentmentDetailDAO;
 	//accounting
 	private FinContributorDetailDAO		finContributorDetailDAO;
 	private FinTypeAccountingDAO		finTypeAccountingDAO;
@@ -479,12 +479,12 @@ abstract public class ServiceHelper implements Serializable {
 		this.finInsurancesDAO = finInsurancesDAO;
 	}
 
-	public PresentmentHeaderDAO getPresentmentHeaderDAO() {
-		return presentmentHeaderDAO;
+	public PresentmentDetailDAO getPresentmentDetailDAO() {
+		return presentmentDetailDAO;
 	}
 
-	public void setPresentmentHeaderDAO(PresentmentHeaderDAO presentmentHeaderDAO) {
-		this.presentmentHeaderDAO = presentmentHeaderDAO;
+	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
+		this.presentmentDetailDAO = presentmentDetailDAO;
 	}
 
 	public AccountProcessUtil getAccountProcessUtil() {

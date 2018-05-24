@@ -6089,6 +6089,7 @@
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="chequeHeaderDAO" ref="chequeHeaderDAO" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -9287,7 +9288,7 @@
 		<property name="finTypePartnerBankDAO" ref="finTypePartnerBankDAO" />
 		<property name="paymentInstructionDAO" ref="paymentInstructionDAO" />
 		<property name="feePostingsDAO" ref="feePostingsDAO" />
-		<property name="presentmentHeaderDAO" ref="presentmentHeaderDAO" />
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 
 	</bean>
 	<!--============ Reference ID Generation Configuration ============== -->
@@ -9487,7 +9488,7 @@
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
-		<property name="presentmentHeaderDAO" ref="presentmentHeaderDAO" />
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 
 
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
@@ -9846,18 +9847,18 @@
 	</bean>
 
 	<!-- PresentmentDetail -->
-	<bean id="presentmentHeaderDAO"
-		class="com.pennant.backend.dao.financemanagement.impl.PresentmentHeaderDAOImpl"
+	<bean id="presentmentDetailDAO"
+		class="com.pennant.backend.dao.financemanagement.impl.PresentmentDetailDAOImpl"
 		parent="basisNextidDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	<bean id="presentmentHeaderService"
+	<bean id="presentmentDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
-			<ref bean="presentmentHeaderServiceTarget" />
+			<ref bean="presentmentDetailServiceTarget" />
 		</property>
 		<property name="transactionAttributes">
 			<props>
@@ -9875,8 +9876,8 @@
 		</property>
 	</bean>
 
-	<bean name="presentmentHeaderServiceTarget" class="com.pennant.backend.service.financemanagement.impl.PresentmentHeaderServiceImpl">
-		<property name="presentmentHeaderDAO" ref="presentmentHeaderDAO" />
+	<bean name="presentmentDetailServiceTarget" class="com.pennant.backend.service.financemanagement.impl.PresentmentDetailServiceImpl">
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="receiptCancellationService" ref="receiptCancellationService" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
@@ -9885,6 +9886,7 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="repaymentPostingsUtil" ref="repayPostingUtil" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="chequeDetailDAO" ref="chequeDetailDAO" />
 	</bean>
 
 
@@ -9923,7 +9925,7 @@
 	<bean id="presentmentExtractService"
 		class="com.pennanttech.interfacebajaj.fileextract.PresentmentExtractService">
 		<property name="dataSource" ref="dataSource" />
-		<property name="presentmentHeaderService" ref="presentmentHeaderService" />
+		<property name="presentmentDetailService" ref="presentmentDetailService" />
 	</bean>
 
 	<bean id="disbursementProcess"
