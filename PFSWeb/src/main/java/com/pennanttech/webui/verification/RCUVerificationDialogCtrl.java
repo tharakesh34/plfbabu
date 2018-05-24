@@ -1255,14 +1255,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		/*
-		 * if (!initType) { for (Verification vrf : this.verification.getVerifications()) { RCUDocument document =
-		 * vrf.getRcuDocument(); document.setInitRemarks(vrf.getRemarks());
-		 * document.setDecisionRemarks(vrf.getDecisionRemarks()); if (vrf.getDecision() ==
-		 * Decision.RE_INITIATE.getKey()) { aVerification = reInitMap.get(vrf.getAgency());
-		 * aVerification.getRcuDocuments().add(document); } } }
-		 */
-
 		verifications.addAll(map.values());
 		verifications.addAll(reInitMap.values());
 		verifications.addAll(other.values());

@@ -620,39 +620,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			setInitVerification(financeDetail, VerificationType.TV);
 		}
 		
-		// TV Verification Approval
-		if (financeDetail.isTvApprovalTab()) {
-			System.out.println("TV APPROVAL");
-			/*
-			Verification verification = new Verification();
-			for (CollateralAssignment CollAsmt : financeDetail.getCollateralAssignmentList()) {
-				CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(), "_Aview");
-				collateralSetup.setRecordType(CollAsmt.getRecordType());
-				verification.getCollateralSetupList().add(collateralSetup);
-			}
-			String keyRef = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-			List<Verification> verifications = verificationService.getVerifications(keyRef,
-					VerificationType.TV.getKey());
-			List<TechnicalVerification> tvList = technicalVerificationService.getList(keyRef);
-			for (Verification vrf : verifications) {
-				for (TechnicalVerification tv : tvList) {
-					if (vrf.getId() == tv.getVerificationId()) {
-						vrf.setTechnicalVerification(tv);
-					}
-				}
-			}
-			//hiding the initiate and non verification records
-			for (int i = 0; i < verifications.size(); i++) {
-				if (verifications.get(i).getRequestType() == RequestType.INITIATE.getKey()
-						&& verifications.get(i).getTechnicalVerification() == null) {
-					verifications.remove(verifications.get(i));
-					i--;
-				}
-			}
-			verification.setVerifications(verifications);
-			financeDetail.setTvVerification(verification);
-		*/}
-		
 		// LV Verification Initiation
 		if (financeDetail.isLvInitTab()) {
 			financeDetail.setLvVerification(new Verification());
@@ -747,9 +714,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		setVerificationData(financeDetail, verification);
 		if (type == VerificationType.TV) {
-			/*verification.setVerificationType(VerificationType.TV.getKey());
-			verification = technicalVerificationService.getTvVeriFication(verification);
-			financeDetail.setTvVerification(verification);*/
+			
+			
 		} else {
 			verification.setVerificationType(VerificationType.LV.getKey());
 			//verification = technicalVerificationService.getTvVeriFication(verification);

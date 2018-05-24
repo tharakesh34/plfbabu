@@ -5812,15 +5812,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			boolean validatePhone = !recSave || "Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel());
 			if (!processCustomerDetails(aFinanceDetail, validatePhone)) {
 				return;
-			} else {
-				/*if (financeDetail.isFiInitTab()) {
-					Verification verification = financeDetail.getFiVerification();
-					if(aFinanceDetail.isFiInitTab() && isAddressChanged(aFinanceDetail, verification,false)){
-						addNewFiVerification(aFinanceDetail);
-						return;
-					}
-				}*/
-			}
+			} 
 		}
 
 		// Planned EMI Holiday Details Validation
@@ -5872,13 +5864,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (jointAccountDetailDialogCtrl.getJountAccountDetailList() != null
 					&& jointAccountDetailDialogCtrl.getJountAccountDetailList().size() > 0) {
 				jointAccountDetailDialogCtrl.doSave_JointAccountDetail(aFinanceDetail);
-				/*if (financeDetail.isFiInitTab()) {
-					Verification verification = financeDetail.getFiVerification();
-					if (aFinanceDetail.isFiInitTab() && isAddressChanged(aFinanceDetail, verification, true)) {
-						addNewFiVerification(aFinanceDetail);
-						return;
-					}
-				}*/
 			}
 		} else {
 			aFinanceDetail.setJountAccountDetailList(null);
@@ -6044,11 +6029,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setCollateralAssignmentList(collateralHeaderDialogCtrl.getCollateralAssignments());
 			aFinanceDetail.setFinAssetTypesList(collateralHeaderDialogCtrl.getFinAssetTypes());
 			aFinanceDetail.setExtendedFieldRenderList(collateralHeaderDialogCtrl.getExtendedFieldRenderList());
-			//adding new Collateral Verifications
-			/*if(aFinanceDetail.isTvInitTab() && isCollateralChanged(aFinanceDetail,aFinanceDetail.getTvVerification())){
-				addNewTvVerification(aFinanceDetail);
-				return;
-			}*/
 		} else {
 			aFinanceDetail.setCollateralAssignmentList(null);
 			aFinanceDetail.setFinAssetTypesList(null);
