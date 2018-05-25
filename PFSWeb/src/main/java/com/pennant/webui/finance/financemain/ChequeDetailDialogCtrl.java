@@ -310,7 +310,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.accHolderName.setMaxlength(200);
 		this.totAmount.setProperties(false, ccyEditField);
 		this.totAmount.setReadonly(true);
-		this.amount.setProperties(true, ccyEditField);
+		this.amount.setProperties(false, ccyEditField);
 		this.amount.setTextBoxWidth(200);
 
 		setStatusDetails();
@@ -1262,6 +1262,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		onclickGenBtn = true;
 		doSetValidation();
+		this.amount.getActualValue();
 		doWriteComponentsToBean(new ChequeHeader(), true);
 
 		// method to validate
