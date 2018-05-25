@@ -140,8 +140,10 @@
 		<addDefaultValue columnName="RealizeUnAmz" tableName="FinRepayHeader_Temp" defaultValue="0"/>
 	</changeSet>
 		<changeSet id="5" author="Siva" dbms="mssql">
+		<sql>
 			alter table FinRepayHeader add constraint df_fph_RealizeUnAmz default 0 for RealizeUnAmz;
 			alter table FinRepayHeader add constraint df_fph_t_RealizeUnAmz default 0 for RealizeUnAmz;
+		</sql>
 	</changeSet>
 	<changeSet id="6" author="Siva">
 		<sql>
@@ -149,5 +151,12 @@
 			update FinRepayHeader_Temp set RealizeUnAmz = 0 where RealizeUnAmz is null;
 		</sql>
 	</changeSet>
+	<changeSet id="7" author="Ganesh.p">
+		<comment> change the severity of the LoanStartDate and DisbursmentDate should be matched error</comment>
+		<sql>
+			update ERRORDETAILS set severity='E' where code='65032';
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 	
