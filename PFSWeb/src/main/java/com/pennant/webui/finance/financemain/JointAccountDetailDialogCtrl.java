@@ -807,7 +807,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
-		((FinanceMainBaseCtrl) financeMainDialogCtrl).setJointAccountDetailDialogCtrl(this);
+		if (financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
+			((FinanceMainBaseCtrl) financeMainDialogCtrl).setJointAccountDetailDialogCtrl(this);
+		}
 	}
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
