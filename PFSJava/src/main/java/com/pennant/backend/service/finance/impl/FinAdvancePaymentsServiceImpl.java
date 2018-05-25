@@ -429,7 +429,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		//validation related to loanStartDate and first DisbursmentDate should be same.
 		if (DateUtility.compare(financeMain.getFinStartDate(), finAdvancePay.getLlDate()) != 0
 				&& finAdvancePay.getPaymentSeq() == 1) {
-			ErrorDetail errorDetail = new ErrorDetail("65032");
+			 ErrorDetail errorDetail = new ErrorDetail("65032", new String[] { "Key"});
 			auditDetail.setErrorDetail(errorDetail);
 		}
 
