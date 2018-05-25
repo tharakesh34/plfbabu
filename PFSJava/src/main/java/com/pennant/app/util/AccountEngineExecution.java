@@ -512,41 +512,40 @@ public class AccountEngineExecution implements Serializable {
 			String feeCodes = transactionEntry.getFeeCode();
 			if (feeCodes != null) {
 				for (String feeCode : feeCodes.split(",")) {
-					if (!(dataMap.containsKey(feeCode + "_C") || 
-							dataMap.containsKey(feeCode + "_P"))) {
-						dataMap.put(feeCode + "_C", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_W", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_P", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_SCH", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_AF", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_N", BigDecimal.ZERO);
-						
-						//GST
-						dataMap.put(feeCode + "_UGST_N", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_SGST_N", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_IGST_N", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_CGST_N", BigDecimal.ZERO);
-						
-						dataMap.put(feeCode + "_UGST_C", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_SGST_C", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_IGST_C", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_CGST_C", BigDecimal.ZERO);
-						
-						dataMap.put(feeCode + "_UGST_P", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_SGST_P", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_IGST_P", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_CGST_P", BigDecimal.ZERO);	
-						
-						dataMap.put(feeCode + "_UGST_SCH", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_SGST_SCH", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_IGST_SCH", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_CGST_SCH", BigDecimal.ZERO);
-						
-						dataMap.put(feeCode + "_UGST_AF", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_SGST_AF", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_IGST_AF", BigDecimal.ZERO);
-						dataMap.put(feeCode + "_CGST_AF", BigDecimal.ZERO);
-					}
+					
+					addZeroifNotContains(dataMap, feeCode + "_C" );
+					addZeroifNotContains(dataMap, feeCode + "_W" );
+					addZeroifNotContains(dataMap, feeCode + "_P" );
+					addZeroifNotContains(dataMap, feeCode + "_SCH" );
+					addZeroifNotContains(dataMap, feeCode + "_AF" );
+					addZeroifNotContains(dataMap, feeCode + "_N" );
+					
+					//GST
+					addZeroifNotContains(dataMap, feeCode + "_UGST_N");
+					addZeroifNotContains(dataMap, feeCode + "_SGST_N");
+					addZeroifNotContains(dataMap, feeCode + "_IGST_N");
+					addZeroifNotContains(dataMap, feeCode + "_CGST_N");
+					
+					addZeroifNotContains(dataMap, feeCode + "_UGST_C");
+					addZeroifNotContains(dataMap, feeCode + "_SGST_C");
+					addZeroifNotContains(dataMap, feeCode + "_IGST_C");
+					addZeroifNotContains(dataMap, feeCode + "_CGST_C");
+					 
+					addZeroifNotContains(dataMap, feeCode + "_UGST_P");
+					addZeroifNotContains(dataMap, feeCode + "_SGST_P");
+					addZeroifNotContains(dataMap, feeCode + "_IGST_P");
+					addZeroifNotContains(dataMap, feeCode + "_CGST_P");	
+					 
+					addZeroifNotContains(dataMap, feeCode + "_UGST_SCH");
+					addZeroifNotContains(dataMap, feeCode + "_SGST_SCH");
+					addZeroifNotContains(dataMap, feeCode + "_IGST_SCH");
+					addZeroifNotContains(dataMap, feeCode + "_CGST_SCH");
+					
+					addZeroifNotContains(dataMap, feeCode + "_UGST_AF");
+					addZeroifNotContains(dataMap, feeCode + "_SGST_AF");
+					addZeroifNotContains(dataMap, feeCode + "_IGST_AF");
+					addZeroifNotContains(dataMap, feeCode + "_CGST_AF");
+				
 					String [] payTypes = {"EX_","EA_","PA_","PB_"};
 					String key;
 					for (String payType : payTypes) {
@@ -718,6 +717,14 @@ public class AccountEngineExecution implements Serializable {
 		logger.debug("Leaving");
 
 		return returnDataSets;
+	}
+	
+	private void addZeroifNotContains(Map<String, Object> dataMap,String key){
+		if (dataMap!=null) {
+			if (!dataMap.containsKey(key)) {
+				dataMap.put(key, BigDecimal.ZERO);
+			}
+		}
 	}
 
 	private List<ReturnDataSet> createAccOnCCyConversion(ReturnDataSet existDataSet, String acCcy,

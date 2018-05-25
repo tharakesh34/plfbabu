@@ -828,14 +828,15 @@ public class RepaymentProcessUtil {
 				movementMap.put("bounceChargeWaived",  amount.add(movement.getWaivedAmount()));
 				keyCode = "bounceCharge";
 			}else{
-				if(movementMap.containsKey(movement.getFeeTypeCode() + "_P")){
-					amount = movementMap.get(movement.getFeeTypeCode() + "_P");
+				keyCode = movement.getFeeTypeCode();
+				if(movementMap.containsKey(keyCode + "_P")){
+					amount = movementMap.get(keyCode + "_P");
 				}
-				movementMap.put(movement.getFeeTypeCode() + "_P", amount.add(movement.getPaidAmount()));
+				movementMap.put(keyCode + "_P", amount.add(movement.getPaidAmount()));
 
 				amount = BigDecimal.ZERO;
-				if(movementMap.containsKey(movement.getFeeTypeCode() + "_W")){
-					amount = movementMap.get(movement.getFeeTypeCode() + "_W");
+				if(movementMap.containsKey(keyCode + "_W")){
+					amount = movementMap.get(keyCode + "_W");
 				}
 				movementMap.put(movement.getFeeTypeCode() + "_W",  amount.add(movement.getWaivedAmount()));
 			}
@@ -864,6 +865,11 @@ public class RepaymentProcessUtil {
 			}
 			movementMap.put(keyCode + "_UGST_P",  amount.add(movement.getPaidUGST()));
 		}
+		addZeroifNotContains(movementMap,"bounceChargePaid");
+		addZeroifNotContains(movementMap,"bounceCharge_CGST_P");
+		addZeroifNotContains(movementMap,"bounceCharge_IGST_P");
+		addZeroifNotContains(movementMap,"bounceCharge_SGST_P");
+		addZeroifNotContains(movementMap,"bounceCharge_UGST_P");
 		return movementMap;
 	}
 	
@@ -1856,4 +1862,13 @@ public class RepaymentProcessUtil {
 		this.financeMainDAO = financeMainDAO;
 	}
 
+	private void addZeroifNotContains(Map<String, BigDecimal> dataMap,String key){
+		if (dataMap!=null) {
+			if (!dataMap.containsKey(key)) {
+				dataMap.put(key, BigDecimal.ZERO);
+			}
+		}
+	}
+	
+	
 }

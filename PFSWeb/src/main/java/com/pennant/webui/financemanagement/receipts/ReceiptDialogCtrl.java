@@ -5088,6 +5088,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}else{
 				extDataMap.put("PB_ReceiptAmount", receiptDetail.getAmount());
 			}
+			
+			addZeroifNotContains(extDataMap, "PA_ReceiptAmount");
+			addZeroifNotContains(extDataMap, "EX_ReceiptAmount");
+			addZeroifNotContains(extDataMap, "EA_ReceiptAmount");
+			addZeroifNotContains(extDataMap, "PB_ReceiptAmount");
 
 			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
 				if(extDataMap.containsKey(receiptDetail.getFeeTypeCode()+"_P")){
@@ -5547,6 +5552,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), 
 							AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
 				}
+				
+				if (!movementMap.containsKey("bounceChargePaid")) {
+					addZeroifNotContains(movementMap, "bounceChargePaid");
+					addZeroifNotContains(movementMap,"bounceCharge_CGST_P");
+					addZeroifNotContains(movementMap,"bounceCharge_IGST_P");
+					addZeroifNotContains(movementMap,"bounceCharge_SGST_P");
+					addZeroifNotContains(movementMap,"bounceCharge_UGST_P");
+				}
+				
 
 				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
 				dataMap.putAll(movementMap);
@@ -7210,4 +7224,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
 		this.manualAdviseService = manualAdviseService;
 	}
+	
+	private void addZeroifNotContains(Map<String, BigDecimal> dataMap,String key){
+		if (dataMap!=null) {
+			if (!dataMap.containsKey(key)) {
+				dataMap.put(key, BigDecimal.ZERO);
+			}
+		}
+	}
+	
+	
 }
