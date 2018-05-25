@@ -6193,7 +6193,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			fieldVerificationDialogCtrl.doSave_FiVerification(aFinanceDetail, fiApprovalTab, recSave);
 			for (Verification verification : aFinanceDetail.getFiVerification().getVerifications()) {
 				if (verification.getDecision() == Decision.RE_INITIATE.getKey()
-						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)) {
+						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)
+						&& verification.getReinitid() == null) {
 					MessageUtil.showError("Field Investigation Re-Initiation is allowed only when user action is save");
 					return;
 				}
@@ -6212,7 +6213,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			tVerificationDialogCtrl.doSave(aFinanceDetail, tvApprovalTab, recSave);
 			for (Verification verification : aFinanceDetail.getTvVerification().getVerifications()) {
 				if (verification.getDecision() == Decision.RE_INITIATE.getKey()
-						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)) {
+						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)
+						&& verification.getReinitid() == null) {
 					MessageUtil.showError("Technical Verification Re-Initiation is allowed only when user action is save");
 					return;
 				}
