@@ -582,7 +582,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 	}
 	
 	@Override
-	public List<Verification> getDocumentRefIdByCOllateralRef(String collateralRef) {
+	public List<Verification> getCollateralDocumentsStatus(String collateralRef) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();

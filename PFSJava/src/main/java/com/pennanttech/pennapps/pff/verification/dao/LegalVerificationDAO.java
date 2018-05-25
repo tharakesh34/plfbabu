@@ -50,6 +50,6 @@ public interface LegalVerificationDAO extends BasicCrudDao<LegalVerification> {
 
 	List<LVDocument> getDocuments(String keyReference, TableType tableType, DocumentType documentType);
 
-	List<Verification> getDocumentRefIdByCOllateralRef(String collateralRef);
+	List<Verification> getCollateralDocumentsStatus(String collateralReference);
 
 }
