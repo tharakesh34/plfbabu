@@ -82,6 +82,8 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -224,8 +226,11 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		selectSql.append(" Select * FROM PaymentInstructions");
 		selectSql.append(" Where PaymentId In (Select PaymentId from PaymentHeader where FinReference = :FinReference)");
 		selectSql.append(" And (Status!='CANCELED' or Status is null)");
+		if (App.DATABASE.name() == Database.SQL_SERVER.name()) {
+		selectSql.append(" And PostDate <= (Select sysparmvalue From smtparameters where SYSPARMCODE='APP_DATE')");
+		} else {
 		selectSql.append(" And PostDate <= (Select to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue From smtparameters where SYSPARMCODE='APP_DATE')");
-		
+		}
 		logger.trace(Literal.SQL + selectSql.toString());
 		
 		RowMapper<PaymentInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentInstruction.class);
@@ -867,7 +872,11 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		sql.append(" From FinFeeScheduleDetail T1");
 		sql.append(" Inner Join FinFeeDetail T2 on T2.FeeId = T1.FeeId");
 		sql.append(" Inner Join FeeTypes T3 on T3.FeeTypeId = T2.FeeTypeId");
-		sql.append(" WHERE T1.Schdate <= (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')");
+		if (App.DATABASE.name() == Database.SQL_SERVER.name()) {
+			sql.append(" WHERE T1.Schdate <= (Select sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')");
+		} else {
+			sql.append(" WHERE T1.Schdate <= (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')");
+		}
 		sql.append(" And T1.SchAmount !=0 And T2.FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
