@@ -58,11 +58,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalVerification);
 
 		try {
-			if (tableType == TableType.MAIN_TAB) {
-				jdbcTemplate.update(sql.toString(), paramSource);
-			} else {
-				jdbcTemplate.update(sql.toString(), paramSource);
-			}
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -157,7 +153,6 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 	@Override
 	public LegalVerification getLegalVerification(long verificationId, String type) {
-		// FIXME Murthy
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
@@ -184,15 +179,16 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
+		
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
 	public boolean isLVExists(long verificationId) {
-
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder("Select count(*) FROM  Verification_lv_view  Where verificationId = :verificationId");
@@ -207,6 +203,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 				return true;
 			}
 		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
@@ -216,7 +213,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 	@Override
 	public void saveDocuments(List<LVDocument> lvDocuments, TableType tableType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into verification_lv_details");
@@ -273,7 +270,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		});
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -303,9 +300,9 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 				sql.append(" where verificationId not in (select verificationId from verification_lv_details_stage)");
 				jdbcTemplate.update(sql.toString(), paramSource);
 			}
-
 		} catch (DataAccessException e) {
-
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -325,6 +322,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
@@ -345,10 +343,11 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
-		return null;
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -366,6 +365,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
@@ -392,6 +392,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
@@ -424,13 +425,11 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		try {
 			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			sql = null;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
-		return null;
+		return new ArrayList<>();
 	}
 
 	public void saveDocuments(LVDocument lvDocument, String tableType) {
@@ -574,6 +573,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
@@ -605,8 +605,9 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		try {
 			logger.debug(Literal.SQL + sql.toString());
 			return jdbcTemplate.query(sql.toString(), paramMap, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);

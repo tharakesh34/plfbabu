@@ -132,8 +132,6 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		this.verification = financeDetail.getLvVerification();
 
-		//verification.setReference(verification.getCif());
-
 		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
 
 		if (arguments.get("InitType") != null) {
@@ -181,13 +179,13 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			return;
 		}
 		// Create a new entity.
-		Verification verification = new Verification();
-		BeanUtils.copyProperties(this.verification, verification);
-		verification.getLvDocuments().clear();
-		verification.setNewRecord(true);
-		verification.setVerificationType(VerificationType.LV.getKey());
-		verification.setRequestType(RequestType.INITIATE.getKey());
-		doShowDialogPage(verification, true);
+		Verification averification = new Verification();
+		BeanUtils.copyProperties(this.verification, averification);
+		averification.getLvDocuments().clear();
+		averification.setNewRecord(true);
+		averification.setVerificationType(VerificationType.LV.getKey());
+		averification.setRequestType(RequestType.INITIATE.getKey());
+		doShowDialogPage(averification, true);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -305,8 +303,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 		List<Verification> verifications;
 		if (initType) {
-			verifications = verificationService.getVerifications(this.verification.getKeyReference(),
-					VerificationType.LV.getKey());
+			verifications =  getVerifications();
 		} else {
 			if (lvInquiry.getChildren() != null) {
 				lvInquiry.getChildren().clear();
@@ -365,9 +362,13 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			//Status
 			listCell = new Listcell();
 			Label status = new Label();
-			if (vrf.getStatus() != 0) {
-				status.setValue(LVStatus.getType(vrf.getStatus()).getValue());
-			}
+			if (initType && vrf.getLastStatus() != 0) {
+				status.setValue(TVStatus.getType(vrf.getLastStatus()).getValue());
+
+			} else if (vrf.getStatus() != 0) {
+				status.setValue(TVStatus.getType(vrf.getStatus()).getValue());
+			}			
+			
 			listCell.appendChild(status);
 			listCell.setParent(item);
 
@@ -1072,18 +1073,29 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 		logger.debug("Leaving");
 	}
+	
+	
+	private List<Verification> getVerifications() {
+		List<Verification> list;
+		String keyReference = this.verification.getKeyReference();
+
+		list = verificationService.getVerifications(keyReference, VerificationType.LV.getKey());
+
+		for (Verification item : list) {
+			verificationService.setLastStatus(item);
+		}
+
+		return list;
+	}
 
 	private List<Verification> getInitVerifications() {
-		//get verifications
-		List<Verification> verifications = verificationService.getVerifications(verification.getKeyReference(),
-				VerificationType.LV.getKey());
-		//get Legal Verifications
-		List<LegalVerification> lvList = legalVerificationService.getList(verification.getKeyReference());
-		for (Verification vrf : verifications) {
-			for (LegalVerification lv : lvList) {
-				if (vrf.getId() == lv.getVerificationId()) {
-					vrf.setLegalVerification(lv);
-					vrf.setLvDocuments(legalVerificationService.getLVDocuments(vrf.getId()));
+		List<Verification> verifications = getVerifications();
+		List<LegalVerification> legalVerifications = legalVerificationService.getList(verification.getKeyReference());
+		for (Verification verfcation : verifications) {
+			for (LegalVerification item : legalVerifications) {
+				if (verfcation.getId() == item.getVerificationId()) {
+					verfcation.setLegalVerification(item);
+					verfcation.setLvDocuments(legalVerificationService.getLVDocuments(verfcation.getId()));
 					break;
 				}
 			}

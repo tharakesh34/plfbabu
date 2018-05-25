@@ -94,7 +94,9 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		try {
 			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-
+			logger.warn(e);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -262,7 +264,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 				return verificationId;
 			}
 		} catch (EmptyResultDataAccessException e) {
-
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -291,7 +294,9 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
 		return null;
@@ -307,8 +312,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(
-				"select v.id, v.verificationDate, coalesce(v.status, 0) status, a.dealerName as lastAgency from verifications v");
+		sql.append("select v.id, v.verificationDate, coalesce(v.status, 0) status, a.dealerName as lastAgency");
+		sql.append(" from verifications v");
 		sql.append(" left join AMTVehicleDealer_AView a on a.dealerid = v.agency and dealerType = :dealerType");
 
 		if (verification.getVerificationType() == VerificationType.LV.getKey()
@@ -339,8 +344,10 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		try {
 			logger.debug(Literal.SQL + sql.toString());
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -373,10 +380,11 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		try {
 			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
