@@ -83,6 +83,7 @@ import com.pennanttech.pennapps.pff.verification.Module;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.FieldInvestigationDAO;
+import com.pennanttech.pennapps.pff.verification.dao.LegalVerificationDAO;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
 import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
@@ -117,6 +118,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private FieldInvestigationDAO fieldInvestigationDAO;
 	@Autowired
 	private CustomerDetailsService customerDetailsService;
+	@Autowired
+	private LegalVerificationDAO legalVerificationDAO;
 
 	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType,
 			String tableType, String auditTranType, boolean isInitTab) {
@@ -799,6 +802,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				}
 
 			} else if (verificationType == VerificationType.TV.getKey()) {
+				lastStatus.setReferenceType(verification.getReferenceType());
 				if (technicalVerificationService.isCollateralChanged(lastStatus)) {
 					verification.setLastStatus(0);
 					verification.setLastVerificationDate(null);
@@ -915,5 +919,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			}
 		}
 		return exists;
+	}
+
+	@Override
+	public List<Verification> getCollateralDocumentsStatus(String collateralReference) {
+		return legalVerificationDAO.getCollateralDocumentsStatus(collateralReference);
 	}
 }
