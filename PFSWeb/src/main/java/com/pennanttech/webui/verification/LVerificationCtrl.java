@@ -1082,7 +1082,9 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		list = verificationService.getVerifications(keyReference, VerificationType.LV.getKey());
 
 		for (Verification item : list) {
-			verificationService.setLastStatus(item);
+			if (item.getRequestType() == RequestType.INITIATE.getKey()) {
+				verificationService.setLastStatus(item);
+			}
 		}
 
 		return list;
