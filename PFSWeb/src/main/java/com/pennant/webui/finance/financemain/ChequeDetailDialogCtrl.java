@@ -1001,6 +1001,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				this.noOfCheques.setConstraint(new PTNumberValidator(
 						Labels.getLabel("label_ChequeDetailDialog_NoOfChequesCalc.value"), true, false));
 			}
+			//if the user not interested to generate cheques in after getting the validation.
+			if (onclickGenBtn) {
+				onclickGenBtn = false;
+			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
