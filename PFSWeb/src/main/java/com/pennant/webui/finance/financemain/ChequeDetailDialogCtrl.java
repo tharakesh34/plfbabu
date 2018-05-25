@@ -933,7 +933,11 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				setDialog(DialogType.EMBEDDED);
 			}
 			this.btnSave.setVisible(true);
-			int listBoxHeight = this.grid_chequeDetails.getRows().getVisibleItemCount() + this.grid_NumbOfChqs.getRows().getVisibleItemCount() + 6;
+			int listBoxHeight = this.grid_chequeDetails.getRows().getVisibleItemCount() + this.grid_NumbOfChqs.getRows().getVisibleItemCount() + 5;
+			//in maintenance there is no tabs so decrease the height.
+			if (!fromLoan) {
+				listBoxHeight--;
+			}
 			this.listBoxChequeDetail.setHeight(getListBoxHeight(listBoxHeight));
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
