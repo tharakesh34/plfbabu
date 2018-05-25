@@ -787,6 +787,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			verification.setVersion(lastStatus.getVersion());
 			verification.setLastVersion(lastStatus.getLastVersion());
 			verification.setLastAgency(lastStatus.getLastAgency());
+			lastStatus.setReferenceType(verification.getReferenceType());
 
 			if (verificationType == VerificationType.FI.getKey()) {
 				if (fieldInvestigationService.isAddressChanged(verification)) {
@@ -802,7 +803,6 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				}
 
 			} else if (verificationType == VerificationType.TV.getKey()) {
-				lastStatus.setReferenceType(verification.getReferenceType());
 				if (technicalVerificationService.isCollateralChanged(lastStatus)) {
 					verification.setLastStatus(0);
 					verification.setLastVerificationDate(null);
