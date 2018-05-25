@@ -360,8 +360,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	public void onFulfill$reason(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = reason.getObject();
-		if (dataObject instanceof String) {
-			this.reason.setValue(dataObject.toString());
+		if (dataObject instanceof String || dataObject == null) {
+			this.reason.setValue("");
 			this.reason.setDescription("");
 			this.reason.setAttribute("ReasonId", null);
 		} else {
@@ -404,6 +404,9 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				this.reason.setAttribute("ReasonId", null);
 			}
 		}
+		if (!rcu.isNewRecord()) {
+			visibleComponent(rcu.getStatus());
+		}
 
 		this.remarks.setValue(rcu.getRemarks());
 		fillComboBox(this.recommendations, rcu.getStatus(), RCUStatus.getList());
@@ -442,8 +445,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				verificationType.setDisabled(isReadOnly("RiskContainmentUnitDialog_VerificationType"));
 				verificationType.setReadonly(true);
 				verificationType.setValue(String.valueOf(document.getVerificationType()));
-				verificationType.addForward("onChange", self, "onChangeVerificationType",
-						item);
+				verificationType.addForward("onChange", self, "onChangeVerificationType", item);
 				lc.appendChild(verificationType);
 				lc.setParent(item);
 
@@ -539,10 +541,10 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void readOnlyComponents(Combobox verificationType, Intbox pagesEyeBalled, Intbox pagesSampled) {
 		logger.debug(Literal.ENTERING);
-		int verificationTypeVal=Integer.parseInt(getComboboxValue(verificationType));
+		int verificationTypeVal = Integer.parseInt(getComboboxValue(verificationType));
 		if (!verificationType.isDisabled()) {
 			if (RCUDocVerificationType.SAMPLED.getKey().equals(verificationTypeVal)) {
 				pagesEyeBalled.setReadonly(true);
@@ -721,57 +723,73 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void onChange$recommendations(Event event) {
+		logger.debug(Literal.ENTERING + event.toString());
+		this.reason.setErrorMessage("");
+		String type = this.recommendations.getSelectedItem().getValue();
+		visibleComponent(Integer.parseInt(type));
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	private void visibleComponent(Integer type) {
+		if (type == RCUStatus.NEGATIVE.getKey()) {
+			this.reason.setMandatoryStyle(true);
+		} else {
+			this.reason.setMandatoryStyle(false);
+		}
+	}
+
 	private void setValue(Listitem listitem, String comonentId) {
-			RCUDocument rcuDocument = null;
+		RCUDocument rcuDocument = null;
 
-			rcuDocument = (RCUDocument) listitem.getAttribute("data");
-			switch (comonentId) {
-			case "VerificationType":
-				Combobox combobox = (Combobox) getComponent(listitem, "VerificationType");
-				int verificationType = Integer.parseInt(getComboboxValue(combobox));
-				if (!combobox.isDisabled() && RCUDocVerificationType.SELECT.getKey().equals(verificationType)) {
-					throw new WrongValueException(combobox, Labels.getLabel("STATIC_INVALID", new String[] {
-							Labels.getLabel("label_RiskContainmentUnitDialog_VerificationType.value") }));
-				}
-				rcuDocument.setVerificationType(verificationType);
-
-				break;
-			case "Status":
-				Combobox combobox1 = (Combobox) getComponent(listitem, "Status");
-				int rcuStatus = Integer.parseInt(getComboboxValue(combobox1));
-				if (!combobox1.isDisabled() && RCUDocStatus.SELECT.getKey().equals(rcuStatus)) {
-					throw new WrongValueException(combobox1, Labels.getLabel("STATIC_INVALID",
-							new String[] { Labels.getLabel("label_RiskContainmentUnitDialog_RCUStatus.value") }));
-				}
-				rcuDocument.setStatus(rcuStatus);
-				break;
-			case "PagesEyeBalled":
-				Intbox textBox = (Intbox) getComponent(listitem, "PagesEyeBalled");
-				int pagesEyeballed = textBox.getValue();
-				if (!textBox.isReadonly() && !(pagesEyeballed > 0 && pagesEyeballed <= 1000)) {
-					throw new WrongValueException(textBox, Labels.getLabel("FIELD_RANGE",
-							new Object[] { Labels.getLabel("label_RiskContainmentUnitDialog_PagesEyeBalled.value"),1,1000 }));
-				}
-				rcuDocument.setPagesEyeballed(pagesEyeballed);
-
-				break;
-			case "PagesSampled":
-				Intbox textBox1 = (Intbox) getComponent(listitem, "PagesSampled");
-				int pagesSampled = textBox1.getValue();
-				if (!textBox1.isReadonly() && !(pagesSampled > 0 && pagesSampled <= 1000)) {
-					throw new WrongValueException(textBox1, Labels.getLabel("FIELD_RANGE",
-							new Object[] { Labels.getLabel("label_RiskContainmentUnitDialog_PagesSampled.value"),1,1000 }));
-				}
-				rcuDocument.setPagesSampled(pagesSampled);
-				break;
-			case "Remarks":
-				rcuDocument.setAgentRemarks(((Textbox) getComponent(listitem, "Remarks")).getValue());
-				break;
-
-			default:
-				break;
+		rcuDocument = (RCUDocument) listitem.getAttribute("data");
+		switch (comonentId) {
+		case "VerificationType":
+			Combobox combobox = (Combobox) getComponent(listitem, "VerificationType");
+			int verificationType = Integer.parseInt(getComboboxValue(combobox));
+			if (!combobox.isDisabled() && RCUDocVerificationType.SELECT.getKey().equals(verificationType)) {
+				throw new WrongValueException(combobox, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_RiskContainmentUnitDialog_VerificationType.value") }));
 			}
-			rcuDocument.setRecordStatus(this.recordStatus.getValue());
+			rcuDocument.setVerificationType(verificationType);
+
+			break;
+		case "Status":
+			Combobox combobox1 = (Combobox) getComponent(listitem, "Status");
+			int rcuStatus = Integer.parseInt(getComboboxValue(combobox1));
+			if (!combobox1.isDisabled() && RCUDocStatus.SELECT.getKey().equals(rcuStatus)) {
+				throw new WrongValueException(combobox1, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_RiskContainmentUnitDialog_RCUStatus.value") }));
+			}
+			rcuDocument.setStatus(rcuStatus);
+			break;
+		case "PagesEyeBalled":
+			Intbox textBox = (Intbox) getComponent(listitem, "PagesEyeBalled");
+			int pagesEyeballed = textBox.getValue();
+			if (!textBox.isReadonly() && !(pagesEyeballed > 0 && pagesEyeballed <= 1000)) {
+				throw new WrongValueException(textBox, Labels.getLabel("FIELD_RANGE", new Object[] {
+						Labels.getLabel("label_RiskContainmentUnitDialog_PagesEyeBalled.value"), 1, 1000 }));
+			}
+			rcuDocument.setPagesEyeballed(pagesEyeballed);
+
+			break;
+		case "PagesSampled":
+			Intbox textBox1 = (Intbox) getComponent(listitem, "PagesSampled");
+			int pagesSampled = textBox1.getValue();
+			if (!textBox1.isReadonly() && !(pagesSampled > 0 && pagesSampled <= 1000)) {
+				throw new WrongValueException(textBox1, Labels.getLabel("FIELD_RANGE", new Object[] {
+						Labels.getLabel("label_RiskContainmentUnitDialog_PagesSampled.value"), 1, 1000 }));
+			}
+			rcuDocument.setPagesSampled(pagesSampled);
+			break;
+		case "Remarks":
+			rcuDocument.setAgentRemarks(((Textbox) getComponent(listitem, "Remarks")).getValue());
+			break;
+
+		default:
+			break;
+		}
+		rcuDocument.setRecordStatus(this.recordStatus.getValue());
 	}
 
 	private org.zkoss.zk.ui.Component getComponent(Listitem listitem, String listcellId) {
@@ -981,6 +999,10 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			this.recommendations.setConstraint(
 					new PTListValidator(Labels.getLabel("label_RiskContainmentUnitDialog_Recommendations.value"),
 							RCUStatus.getList(), true));
+		}
+		if (!this.reason.isReadonly()) {
+			this.reason.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_RiskContainmentUnitDialog_Reason.value"), null, this.reason.isMandatory(), true));
 		}
 		if (!this.remarks.isReadonly()) {
 			this.remarks.setConstraint(

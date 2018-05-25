@@ -377,8 +377,8 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	public void onFulfill$reason(Event event) {
 		logger.debug("Entering");
 		Object dataObject = reason.getObject();
-		if (dataObject instanceof String) {
-			this.reason.setValue(dataObject.toString());
+		if (dataObject instanceof String || dataObject == null) {
+			this.reason.setValue("");
 			this.reason.setDescription("");
 			this.reason.setAttribute("ReasonId", null);
 		} else {
@@ -418,12 +418,12 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.zipCode.setValue(fi.getZipCode());
 		this.contactNumber1.setValue(fi.getContactNumber1());
 		this.contactNumber2.setValue(fi.getContactNumber2());
-		
+
 		this.verificationDate.setValue(fi.getVerifiedDate());
 		if (!fromLoanOrg) {
 			if (getFirstTaskOwner().equals(getRole()) && fi.getVerifiedDate() == null) {
 				this.verificationDate.setValue(DateUtility.getAppDate());
-			} 
+			}
 		}
 		this.agentCode.setValue(fi.getAgentCode());
 		this.agentName.setValue(fi.getAgentName());
@@ -437,7 +437,9 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 				this.reason.setAttribute("ReasonId", null);
 			}
 		}
-
+		if (!fi.isNewRecord()) {
+			visibleComponent(fi.getStatus());
+		}
 		this.summaryRemarks.setValue(fi.getSummaryRemarks());
 
 		fillComboBox(this.recommendations, fi.getStatus(), FIStatus.getList());
@@ -596,7 +598,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		fi.setZipCode(this.zipCode.getValue());
 		fi.setContactNumber1(this.contactNumber1.getValue());
 		fi.setContactNumber2(this.contactNumber2.getValue());
-		
+
 		// Extended Field validations
 		if (fi.getExtendedFieldHeader() != null) {
 			try {
@@ -605,7 +607,6 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 				logger.debug(Literal.EXCEPTION);
 			}
 		}
-
 
 		try {
 			fi.setVerifiedDate(this.verificationDate.getValue());
@@ -656,6 +657,22 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 
 		showErrorDetails(wve, this.verificationDetails);
 		logger.debug(Literal.LEAVING);
+	}
+
+	public void onChange$recommendations(Event event) {
+		logger.debug(Literal.ENTERING + event.toString());
+		this.reason.setErrorMessage("");
+		String type = this.recommendations.getSelectedItem().getValue();
+		visibleComponent(Integer.parseInt(type));
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	private void visibleComponent(Integer type) {
+		if (type == FIStatus.NEGATIVE.getKey()) {
+			this.reason.setMandatoryStyle(true);
+		} else {
+			this.reason.setMandatoryStyle(false);
+		}
 	}
 
 	/**
@@ -780,6 +797,10 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		if (!this.recommendations.isDisabled()) {
 			this.recommendations.setConstraint(new PTListValidator(
 					Labels.getLabel("label_FieldInvestigationDialog_Status.value"), FIStatus.getList(), true));
+		}
+		if (!this.reason.isReadonly()) {
+			this.reason.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FieldInvestigationDialog_Reason.value"), null, this.reason.isMandatory(), true));
 		}
 		if (!this.summaryRemarks.isReadonly()) {
 			this.summaryRemarks.setConstraint(
@@ -1059,7 +1080,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			fieldInvestigation.setNextTaskId(nextTaskId);
 			fieldInvestigation.setRoleCode(getRole());
 			fieldInvestigation.setNextRoleCode(nextRoleCode);
-			
+
 			// Extended Field details
 			if (fieldInvestigation.getExtendedFieldRender() != null) {
 				int seqNo = 0;
