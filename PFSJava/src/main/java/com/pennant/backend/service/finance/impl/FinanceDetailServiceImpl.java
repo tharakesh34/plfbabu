@@ -5868,14 +5868,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				
 			}
 			
-			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
+			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)
+					&& !method.equals(PennantConstants.method_doReject)
+					&& !financeMain.getRecordStatus().contains(PennantConstants.RCD_STATUS_RESUBMITTED)
+					&& !financeMain.getRecordStatus().contains(PennantConstants.RCD_STATUS_SAVED)
+					&& !financeMain.getRecordStatus().equals(PennantConstants.RCD_STATUS_DECLINED)) { 
 				// ####_0.2
-				// Not allowed to approve loan with Disbursement type if it is not in  the configured OTC Types
-				String[] valueParm = new String[2];
-				boolean isFound = false;
-				boolean isOTCPayment = false;
+				// Not allowed to approve loan with Disbursement type if it is
+				// not in the configured OTC Types
+
 				String alwrepayMethods = (String) SysParamUtil.getValue("COVENANT_REPAY_OTC_TYPE");
 				if (alwrepayMethods != null) {
+					String[] valueParm = new String[2];
+					boolean isFound = false;
+					boolean isOTCPayment = false;
+					boolean isDocExist = false;
+
 					String[] repaymethod = alwrepayMethods.split(",");
 					if (financeDetail.getAdvancePaymentsList() != null
 							&& financeDetail.getAdvancePaymentsList().size() > 0) {
@@ -5897,7 +5905,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							if (financeDetail.getCovenantTypeList() != null
 									&& financeDetail.getCovenantTypeList().size() > 0) {
 								for (FinCovenantType covenantType : financeDetail.getCovenantTypeList()) {
-									if (covenantType.isAlwOtc()) {
+									// validate the covenants against the
+									// document details
+									List<DocumentDetails> docList = getDocumentDetailsDAO().getDocumentDetailsByRef(
+											covenantType.getFinReference(), FinanceConstants.MODULE_NAME, "");
+									if (docList != null && docList.size() > 0) {
+										for (DocumentDetails documentDetails : docList) {
+											if (documentDetails.getDocCategory()
+													.equals(covenantType.getCovenantType())) {
+												isDocExist = true;
+											}
+										}
+									}
+									if (!isDocExist && covenantType.isAlwOtc()) {
 										valueParm[1] = Labels.getLabel("label_FinCovenantTypeDialog_AlwOTC.value");
 										auditDetails.get(0).setErrorDetail(
 												ErrorUtil.getErrorDetail(new ErrorDetail("41101", valueParm)));
@@ -5908,7 +5928,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							}
 						}
 					}
-				} 
+				}
 			}
 			//Collateral Assignments details
 			//=======================================
