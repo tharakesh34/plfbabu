@@ -479,6 +479,7 @@ public class ScheduleCalculator {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		finScheduleData.getFinanceMain().setResetOrgBal(false);
+		finScheduleData.getFinanceMain().setBpiResetReq(true);
 		finMain.setProcMethod(FinanceConstants.FINSER_EVENT_RECEIPT);
 
 		finMain.setEventFromDate(earlyPayOnSchdl);
@@ -569,7 +570,9 @@ public class ScheduleCalculator {
 
 		// Recalculation of Details after Schedule calculation
 		finScheduleData = afterChangeRepay(finScheduleData);
-
+		
+		finScheduleData.getFinanceMain().setBpiResetReq(false);
+		setFinanceTotals(finScheduleData);
 		setFinScheduleData(finScheduleData);
 		logger.debug("Leaving");
 	}
@@ -2887,18 +2890,28 @@ public class ScheduleCalculator {
 		int indexStart = finMain.getIndexStart();
 
 		BigDecimal bpiBalance = BigDecimal.ZERO;
-		
 		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
+		Date firstRepayDate = null;
+		if (finMain.isBpiResetReq() &&
+				StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL) &&
+				StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHD_FIRSTEMI)) {
+			for (int i = 1; i < sdSize; i++) {
+				curSchd = finSchdDetails.get(i);
+				if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
+					bpiBalance = curSchd.getProfitCalc();	
+				}
+				
+				if(curSchd.isRepayOnSchDate() && curSchd.isFrqDate()){
+					firstRepayDate = curSchd.getSchDate();
+					break;
+				}
+			}
+		}
+		
 		for (int i = indexStart; i < sdSize; i++) {
 			curSchd = finSchdDetails.get(i);
 			Date curSchdDate = curSchd.getSchDate();
 
-			if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
-				if (finMain.getBpiTreatment().equals(FinanceConstants.BPI_SCHD_FIRSTEMI)) {
-					bpiBalance = curSchd.getProfitCalc();	
-				}
-			}
-			
 			// Added for setting Schedule method in case of Different
 			// frequencies for PFT,CPZ & RVW
 			if (DateUtility.compare(curSchdDate, fromDate) < 0) {
@@ -2920,8 +2933,12 @@ public class ScheduleCalculator {
 
 				if (curSchd.isRepayOnSchDate()) {
 					if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
-						curSchd.setRepayAmount(instructAmount.add(bpiBalance));
-						bpiBalance = BigDecimal.ZERO;
+						if(firstRepayDate != null && DateUtility.compare(firstRepayDate, fromDate) == 0){
+							curSchd.setRepayAmount(instructAmount.add(bpiBalance));
+							bpiBalance = BigDecimal.ZERO;
+						}else{
+							curSchd.setRepayAmount(instructAmount);
+						}
 					} else if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)) {
 						curSchd.setRepayAmount(BigDecimal.ZERO);
 					} else {

@@ -627,6 +627,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal recalFee = BigDecimal.ZERO;
 	private int recalTerms = 0;
 	
+	// BPI Recalculation setting on Part Payment / Early settlement
+	private boolean bpiResetReq = false;
+	
 	// Service task specific implemented fields
 	//FIXME: DDP: how to pass the below values from extended fields to workflow.
 	private boolean rcu;
@@ -771,6 +774,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("recalUGSTFee");
 		excludeFields.add("stage");
 		excludeFields.add("status");
+		
+		// BPI Reset
+		excludeFields.add("bpiResetReq");
 
 		return excludeFields;
 	}
@@ -3606,6 +3612,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setEligibilityMethod(String eligibilityMethod) {
 		this.eligibilityMethod = eligibilityMethod;
+	}
+
+	public boolean isBpiResetReq() {
+		return bpiResetReq;
+	}
+
+	public void setBpiResetReq(boolean bpiResetReq) {
+		this.bpiResetReq = bpiResetReq;
 	}
 
 }
