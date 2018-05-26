@@ -86,6 +86,9 @@ import com.pennanttech.dataengine.model.EventProperties;
 public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAccount> implements SOAReportGenerationService{
 	private static Logger logger = Logger.getLogger(SOAReportGenerationServiceImpl .class);
 	
+	private static final String inclusive = "*";
+	private static final String exclusive = "^";
+	
 	private SOAReportGenerationDAO soaReportGenerationDAO;
 
 	public SOAReportGenerationServiceImpl() {
@@ -699,8 +702,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String receiptHeaderPriWaived = "Principal from customer Waived Off ";
 		String receiptHeaderPenaltyWaived = "Penalty from customer Waived Off ";
 		
-		String inclusive = "*";
-		String exclusive = "!";
 		
 		SOATransactionReport soaTransactionReport = null;
 		List<SOATransactionReport> soaTransactionReports = new ArrayList<SOATransactionReport>();
