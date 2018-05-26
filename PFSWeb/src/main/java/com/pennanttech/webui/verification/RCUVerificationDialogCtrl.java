@@ -2,10 +2,12 @@ package com.pennanttech.webui.verification;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
@@ -94,7 +96,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private Map<String, Verification> customerDocuments = new LinkedHashMap<>();
 	private Map<String, Verification> loanDocuments = new LinkedHashMap<>();
 	private Map<String, Verification> collateralDocuments = new LinkedHashMap<>();
-	private List<String> rcurequiredDocs;
+	private Set<String> rcurequiredDocs = new HashSet<>();
+	private Map<String, String> documentMap = new HashMap<>();
 
 	@Autowired
 	private SearchProcessor searchProcessor;
@@ -135,7 +138,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			initType = (Boolean) arguments.get("InitType");
 		}
 
-		rcurequiredDocs = getRCURequiredDocs();
+		setDocumentDetails();
 
 		doShowDialog();
 
@@ -214,20 +217,19 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private void setDocumentDetails(List<DocumentDetails> documents, DocumentType documentType) {
-
-		Map<String, Verification> documentMap;
+		Map<String, Verification> docMap;
 
 		if (documentType == DocumentType.LOAN) {
-			documentMap = loanDocuments;
+			docMap = loanDocuments;
 		} else {
-			documentMap = collateralDocuments;
+			docMap = collateralDocuments;
 		}
 
 		// Prepare the Customer Documents
 		for (DocumentDetails document : documents) {
 			if (isNotDeleted(document.getRecordType())) {
-				Verification object = getVerification(rcurequiredDocs, document, documentType);
-				documentMap.put(document.getDocCategory(), object);
+				Verification object = getVerification(document, documentType);
+				docMap.put(document.getDocCategory(), object);
 			}
 		}
 
@@ -239,7 +241,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			map = getOldVerifications(documentType, TableType.BOTH_TAB);
 		}
 
-		for (Entry<String, Verification> entrySet : documentMap.entrySet()) {
+		for (Entry<String, Verification> entrySet : docMap.entrySet()) {
 			Verification current = map.get(entrySet.getKey());
 			Verification previous = entrySet.getValue();
 			if (current != null) {
@@ -249,11 +251,11 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			if (entrySet.getKey().startsWith("dummy$#")) {
-				documentMap.put(entrySet.getKey(), entrySet.getValue());
+				docMap.put(entrySet.getKey(), entrySet.getValue());
 			}
 		}
 
-		for (Entry<String, Verification> screen : documentMap.entrySet()) {
+		for (Entry<String, Verification> screen : docMap.entrySet()) {
 			for (Entry<String, Verification> old : map.entrySet()) {
 				if (old.getValue().getReinitid() == null) {
 					continue;
@@ -295,7 +297,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		RCUDocument rcuDocument = new RCUDocument();
 		Verification item = new Verification();
 
-		item.setDocName(getDocumentName(document.getCustDocCategory(), document.getLovDescCustDocCategory()));
+		item.setDocName(getDocumentName(document.getCustDocCategory()));
 		item.setReferenceFor(document.getCustDocCategory());
 
 		item.setNewRecord(true);
@@ -317,13 +319,12 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		return item;
 	}
 
-	private Verification getVerification(List<String> requiredDocs, DocumentDetails document,
-			DocumentType documentType) {
+	private Verification getVerification(DocumentDetails document, DocumentType documentType) {
 		RCUDocument rcuDocument = new RCUDocument();
 		Verification item = new Verification();
 
 		item.setNewRecord(true);
-		item.setDocName(getDocumentName(document.getDocCategory(), document.getLovDescDocCategoryName()));
+		item.setDocName(getDocumentName(document.getDocCategory()));
 		item.setReferenceType(documentType.getValue());
 		item.setDocType(documentType.getKey());
 		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -331,7 +332,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setVerificationType(VerificationType.RCU.getKey());
 
 		// set RCU Required
-		if (requiredDocs.contains(document.getDocCategory())) {
+		if (rcurequiredDocs.contains(document.getDocCategory())) {
 			item.setRequestType(RequestType.INITIATE.getKey());
 		} else {
 			item.setRequestType(RequestType.NOT_REQUIRED.getKey());
@@ -343,13 +344,13 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		return item;
 	}
 
-	private String getDocumentName(String code, String description) {
+	private String getDocumentName(String code) {
 		StringBuilder builder = new StringBuilder();
 
 		builder.append(code);
-		if (description != null) {
+		if (documentMap.containsKey(code)) {
 			builder.append(" - ");
-			builder.append(description);
+			builder.append(documentMap.get(code));
 		}
 
 		return builder.toString();
@@ -863,18 +864,24 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	private List<String> getRCURequiredDocs() {
-
-		List<String> codes = new ArrayList<>();
+	private void setDocumentDetails() {
+		this.rcurequiredDocs.clear();
+		this.documentMap.clear();
+		
 		Search search = new Search(com.pennant.backend.model.systemmasters.DocumentType.class);
 		search.addField("doctypecode");
+		search.addField("docTypeDesc");
+		search.addField("rcureq");
 		search.addTabelName("BMTDocumentTypes");
-		search.addFilter(new Filter("rcureq", 1));
 		List<com.pennant.backend.model.systemmasters.DocumentType> list = searchProcessor.getResults(search);
+		
 		for (com.pennant.backend.model.systemmasters.DocumentType documentType : list) {
-			codes.add(documentType.getDocTypeCode());
+			if (documentType.isRcuReq()) {
+				this.rcurequiredDocs.add(documentType.getDocTypeCode());
+			}
+			
+			this.documentMap.put(documentType.getDocTypeCode(), documentType.getDocTypeDesc());
 		}
-		return codes;
 	}
 
 	private List<ValueLabel> filterDecisions(List<ValueLabel> list) {
