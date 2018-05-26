@@ -316,19 +316,23 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		sql.append(" from verifications v");
 		sql.append(" left join AMTVehicleDealer_AView a on a.dealerid = v.agency and dealerType = :dealerType");
 
-		if (verification.getVerificationType() == VerificationType.LV.getKey()
-				|| verification.getVerificationType() == VerificationType.TV.getKey()) {
+		if (type == VerificationType.FI.getKey()) {
+			sql.append(" where Id = (select coalesce(max(id), 0)");
+			sql.append(" from verifications where custid = :custid and referenceFor = :referenceFor");
+			sql.append(" and verificationType = :verificationType and verificationdate is not null and status !=0)");
+		} else if (type == VerificationType.LV.getKey() || type == VerificationType.TV.getKey()) {
 			sql.append(" where v.id = (select coalesce(max(id), 0)");
 			sql.append(" from verifications where referenceFor = :referenceFor ");
 			sql.append(" and verificationType = :verificationType and verificationdate is not null and status !=0)");
-		} else if (verification.getVerificationType() == VerificationType.FI.getKey()) {
-			sql.append(" where Id = (select coalesce(max(id), 0)");
-			sql.append(" from verifications where custid = :custid and referenceFor = :referenceFor");
+		} else if(type == VerificationType.RCU.getKey()) {
+			sql.append(" where v.id = (select coalesce(max(id), 0)");
+			sql.append(" from verifications where referenceFor");
+			sql.append(" in (select documentsubid verification_rcu_details_view where documentsubid = :referenceFor)");
 			sql.append(" and verificationType = :verificationType and verificationdate is not null and status !=0)");
 		}
 
 		paramMap.addValue("referenceFor", verification.getReferenceFor());
-		paramMap.addValue("verificationType", verification.getVerificationType());
+		paramMap.addValue("verificationType", type);
 		paramMap.addValue("custid", verification.getCustId());
 
 		if (type == VerificationType.FI.getKey()) {
@@ -345,7 +349,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			logger.debug(Literal.SQL + sql.toString());
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
