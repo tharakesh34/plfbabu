@@ -2388,7 +2388,7 @@
 	     LEFT JOIN bmtprelationcodes r2 ON r2.prelationcode = fi.relationship
 	  WHERE NOT (EXISTS ( SELECT 1
 	           FROM verification_fi_temp
-	          WHERE verification_fi_temp.verificationid = fi.verificationid));
+	          WHERE verification_fi_temp.verificationid = fi.verificationid))
 	 		</createView>
 	</changeSet>
 </databaseChangeLog>
