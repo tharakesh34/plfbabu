@@ -168,7 +168,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (isInitTab) {
 				//delete non verification Records
 				if (item.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
-						&& (verificationType == VerificationType.TV || verificationType == VerificationType.FI)) {//FIX ME
+						&& (verificationType == VerificationType.TV || verificationType == VerificationType.FI)) {// FIXME
 					verificationDAO.delete(item, TableType.BOTH_TAB);
 					continue;
 				}
@@ -249,6 +249,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private void reInitVerification(FinanceDetail financeDetail, VerificationType verificationType,
 			List<CustomerDetails> customerDetailsList, List<CollateralSetup> collateralSetupList, Verification item) {
 		Verification reInit = new Verification();
+		RCUDocument document;
+		int requestType = item.getRequestType();
+
 		reInit.setId(item.getId());
 		reInit.setLastMntOn(item.getLastMntOn());
 		reInit.setLastMntBy(item.getLastMntBy());
@@ -258,14 +261,12 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			item.setAgency(item.getReInitAgency());
 			item.setRemarks(item.getDecisionRemarks());
 		}
-		if (verificationType == VerificationType.RCU) {
-			item.getRcuDocument().setInitRemarks(item.getDecisionRemarks());
-		}
 		item.setStatus(0);
 		item.setCreatedBy(item.getLastMntBy());
 		item.setVerificationDate(null);
 		item.setDecisionRemarks("");
 		item.setDecision(Decision.SELECT.getKey());
+
 		item.setRequestType(RequestType.INITIATE.getKey());
 		item.setReason(null);
 		if (verificationType != VerificationType.FI) {
@@ -273,8 +274,27 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		}
 
 		verificationDAO.save(item, TableType.MAIN_TAB);
-
 		reInit.setReinitid(item.getId());
+
+		if (verificationType == VerificationType.RCU) {
+			if (requestType != RequestType.INITIATE.getKey()) {
+				reInit.setReinitid(item.getId());
+			} else {
+				reInit.setReinitid(null);
+			}
+		}
+
+		if (verificationType == VerificationType.RCU) {
+			for (RCUDocument rcuDocument : item.getRcuDocuments()) {
+				document = new RCUDocument();
+				BeanUtils.copyProperties(rcuDocument, document);
+				document.setReinitid(item.getId());
+				reInit.getRcuDocuments().add(document);
+			}
+			riskContainmentUnitService.updateRCUDocuments(reInit);
+			//reInit.setReinitid(null);
+		}
+
 		verificationDAO.updateReInit(reInit, TableType.MAIN_TAB);
 
 		if (verificationType == VerificationType.FI) {
@@ -523,11 +543,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		List<DocumentDetails> collateralDocumentList = new ArrayList<>();
 
 		List<CollateralAssignment> collaterals = financeDetail.getCollateralAssignmentList();
+		List<DocumentDetails> list;
 		if (collaterals != null) {
 			for (CollateralAssignment collateral : collaterals) {
-				List<DocumentDetails> list = documentDetailsDAO.getDocumentDetailsByRef(collateral.getCollateralRef(),
-						CollateralConstants.MODULE_NAME, "", "_View");
-
+				list = documentDetailsDAO.getDocumentDetailsByRef(collateral.getCollateralRef(), CollateralConstants.MODULE_NAME, "", "_View");
 				if (list != null) {
 					collateralDocumentList.addAll(list);
 				}
@@ -547,6 +566,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				rcuDocument.setDocumentSubId(document.getCustDocCategory());
 				rcuDocument.setDocumentRefId(document.getDocRefId());
 				rcuDocument.setDocumentUri(document.getDocUri());
+				rcuDocument.setDocumentType(DocumentType.CUSTOMER.getKey());
 			}
 		}
 
@@ -563,22 +583,31 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				rcuDocument.setDocumentSubId(rcuDocument.getDocCategory());
 				rcuDocument.setDocumentRefId(document.getDocRefId());
 				rcuDocument.setDocumentUri(document.getDocUri());
+				rcuDocument.setDocumentType(DocumentType.LOAN.getKey());
 			}
 		}
 
 		// Set collateral documents id's
 		Map<String, DocumentDetails> collateralDocumentMap = new HashMap<>();
+		String reference;
 		for (DocumentDetails document : collateralDocumentList) {
-			collateralDocumentMap.put(document.getDocCategory(), document);
+			reference = document.getDocCategory();
+			reference = StringUtils.trimToEmpty(document.getReferenceId()).concat(reference);
+			
+			collateralDocumentMap.put(reference, document);
 		}
 
 		for (RCUDocument rcuDocument : item.getRcuDocuments()) {
+			reference =   rcuDocument.getDocCategory();
 			if (rcuDocument.getDocumentType() == DocumentType.COLLATRL.getKey()) {
-				DocumentDetails document = collateralDocumentMap.get(rcuDocument.getDocCategory());
+				reference = StringUtils.trimToEmpty(rcuDocument.getCollateralRef()).concat(reference);
+				DocumentDetails document = collateralDocumentMap.get(reference);
 				rcuDocument.setDocumentId(document.getId());
 				rcuDocument.setDocumentSubId(rcuDocument.getDocCategory());
 				rcuDocument.setDocumentRefId(document.getDocRefId());
 				rcuDocument.setDocumentUri(document.getDocUri());
+				rcuDocument.setDocumentType(DocumentType.COLLATRL.getKey());
+				item.setReference(String.valueOf(document.getId()));
 			}
 		}
 	}
@@ -765,13 +794,21 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 	@Override
 	public List<Verification> getVerifications(String keyReference, int verificationType) {
+		List<Verification> result = new ArrayList<>();
 		List<Verification> verifications = verificationDAO.getVeriFications(keyReference, verificationType);
 
 		if (VerificationType.LV.getKey() != verificationType) {
 			setDecision(verificationType, verifications);
 		}
 
-		return verifications;
+		for (Verification verification : verifications) {
+			if (verification.getReinitid() != null && verification.getRequestType() != RequestType.INITIATE.getKey()) {
+				continue;
+			}
+			result.add(verification);
+		}
+
+		return result;
 	}
 
 	@Override
@@ -859,8 +896,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		verification.setModule(Module.LOAN.getKey());
 		verification.setCreatedOn(DateUtility.getAppDate());
 		verification.setKeyReference(financeMain.getFinReference());
-		
-		if(verification.getCustId() ==null || verification.getCustId()==0L){
+
+		if (verification.getCustId() == null || verification.getCustId() == 0L) {
 			verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 			verification.setCustId(customer.getCustID());
 			verification.setCustomerName(customer.getCustShrtName());

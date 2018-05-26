@@ -85,12 +85,13 @@
 									value="${c:l('label_LegalVerificationDialog_CollateralDoc.value')}" />
 								<listbox id="listBoxCollateralDocuments"
 									fixedLayout="true" sizedByContent="true" span="true"
-									emptyMessage="${c:l('listbox.emptyMessage')}" width="80%"
+									emptyMessage="${c:l('listbox.emptyMessage')}" width="90%"
 									multiple="false">
 									<listhead sizable="false">
-										<listheader
-											label="${c:l('listheader_LVInitiationDialog_DocType.label')}"
-											sort="false" hflex="min" />
+										<listheader label="${c:l('listheader_LVInitiationDialog_DocType.label')}" sort="false"/>
+										<listheader label="${c:l('listheader_LegalVerification_LastAgency.label')}" sort="false" />
+										<listheader label="${c:l('listheader_LegalVerification_LastStatus.label')}" sort="false"/>
+										<listheader label="${c:l('listheader_LegalVerification_LastVrfDate.label')}" sort="false"/>
 									</listhead>
 								</listbox>
 							</row>
@@ -100,7 +101,7 @@
 									value="${c:l('label_LegalVerificationDialog_LoanDoc.value')}" />
 								<listbox id="listBoxLoanDocuments"
 									fixedLayout="true" sizedByContent="true" span="true"
-									emptyMessage="${c:l('listbox.emptyMessage')}" width="80%"
+									emptyMessage="${c:l('listbox.emptyMessage')}" width="90%"
 									multiple="false">
 									<listhead sizable="false" visible="false">
 										<listheader
@@ -115,12 +116,10 @@
 									value="${c:l('label_LegalVerificationDialog_CustomerDoc.value')}" />
 								<listbox id="listBoxCustomerDocuments"
 									fixedLayout="true" sizedByContent="true" span="true"
-									emptyMessage="${c:l('listbox.emptyMessage')}" width="80%"
+									emptyMessage="${c:l('listbox.emptyMessage')}" width="90%"
 									multiple="false">
 									<listhead sizable="false" visible="false">
-										<listheader
-											label="${c:l('listheader_LVInitiationDialog_DocType.label')}"
-											sort="false" hflex="min" />
+										<listheader label="${c:l('listheader_LVInitiationDialog_DocType.label')}" sort="false" hflex="min" />
 									</listhead>
 								</listbox>
 							</row>
@@ -141,7 +140,7 @@
 									id="label_LVInitiationDialog_Remarks"
 									value="${c:l('label_LVInitiationDialog_Remarks.value')}" />
 								<textbox id="remarks" maxlength="500"
-									width="80%" multiline="true" height="75px" />
+									width="90%" multiline="true" height="75px" />
 							</row>
 						</rows>
 					</grid>
@@ -153,10 +152,7 @@
 						<caption label="${c:l('Action')}" />
 						<hbox width="75%">
 							<radiogroup id="userAction" name="action" />
-							<label
-								id="label_CustomerAddressDialog_RecordStatus"
-								value="${c:l('label_South_RecordStatus.value')}"
-								sclass="label-status" />
+							<label value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
 							<label id="recordStatus" />
 						</hbox>
 					</groupbox>

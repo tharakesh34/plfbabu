@@ -44,6 +44,7 @@
 										id="listheader_LegalVerification_Initiation_Remarks"
 										label="${c:l('listheader_LegalVerification_Remarks.label')}"
 										sort="false"/>
+									<listheader label="${c:l('listheader_LegalVerification_LastAgency.label')}" sort="false" />
 									<listheader
 										id="listheader_LegalVerification_Initiation_LastStatus"
 										label="${c:l('listheader_LegalVerification_LastStatus.label')}"
@@ -88,6 +89,7 @@
 										id="listheader_LegalVerification_Waiver_Remarks"
 										label="${c:l('listheader_LegalVerification_Remarks.label')}"
 										sort="false"/>
+									<listheader label="${c:l('listheader_LegalVerification_LastAgency.label')}" sort="false" />
 									<listheader
 										id="listheader_LegalVerification_Waiver_LastStatus"
 										label="${c:l('listheader_LegalVerification_LastStatus.label')}"

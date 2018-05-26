@@ -69,8 +69,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update verification_rcu");
 		sql.append(tableType.getSuffix());
-		sql.append(
-				" set verificationDate = :verificationDate, agentCode = :agentCode, agentName = :agentName, status = :status, ");
+		sql.append(" set verificationDate = :verificationDate, agentCode = :agentCode, agentName = :agentName, status = :status, ");
 		sql.append(" reason = :reason, remarks = :remarks, Version = :Version, LastMntBy = :LastMntBy,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
@@ -162,13 +161,12 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into verification_rcu_details");
 		sql.append(tableType);
-		sql.append("(verificationId, seqno, documentid, documenttype, documentsubid, documentrefid, documenturi,");
+		sql.append("(verificationId, seqno, documentid, documenttype, documentsubid, documentrefid, documenturi, reinitid,");
 		sql.append(" verificationtype, status, pageseyeballed, pagessampled, agentremarks,initRemarks, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 
-		sql.append(
-				"values (:verificationId, :seqNo, :documentId, :documentType, :documentSubId, :documentRefId, :documentUri,");
+		sql.append("values (:verificationId, :seqNo, :documentId, :documentType, :documentSubId, :documentRefId, :documentUri, :reinitid,");
 		sql.append(" :verificationType , :status, :pagesEyeballed, :pagesSampled, :agentRemarks,:initRemarks,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
@@ -292,7 +290,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		sql.append(tableType.getSuffix());
 
 		sql.append(
-				" (verificationId, seqNo, documentId, documenttype, documentSubId, documentrefid, documenturi, initremarks, reinitId,");
+				" (verificationId, seqNo, documentId, documenttype, documentSubId, documentrefid, documenturi, initremarks, reinitid,");
 		sql.append(
 				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?");
@@ -305,18 +303,14 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				RCUDocument document = rcuDocuments.get(i);
 				ps.setLong(1, document.getVerificationId());
-				ps.setInt(2, i+1);
+				ps.setInt(2, i + 1);
 				ps.setLong(3, document.getDocumentId());
 				ps.setInt(4, document.getDocumentType());
 				ps.setString(5, document.getDocumentSubId());
 				ps.setLong(6, document.getDocumentRefId());
 				ps.setString(7, document.getDocumentUri());
 				ps.setString(8, document.getInitRemarks());
-				if (document.isReInitiated()) {
-					ps.setLong(9, document.getSeqNo());
-				} else {
-					ps.setLong(9, 0);
-				}
+				ps.setObject(9, document.getReinitid());
 				ps.setInt(10, document.getVersion());
 				ps.setTimestamp(11, document.getLastMntOn());
 				ps.setLong(12, document.getLastMntBy());
@@ -346,7 +340,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
 
-		sql.append(" Select verificationId, SeqNo, documentid, documentsubid, documentType,initRemarks,");
+		sql.append(" Select verificationId, SeqNo, documentid, documentsubid, reinitid, documentType,initRemarks,");
 		if (type.contains("View")) {
 			sql.append(" code, description, docmodule, documentrefid, seqno, docname, doctype,  ");
 			sql.append(" verificationtype, status, pageseyeballed, pagessampled, agentremarks, ");
@@ -421,6 +415,9 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		} else {
 			sql.append(" doccategory as docCategory");
 		}
+		if (tableType == TableType.BOTH_TAB) {
+			sql.append(" ,description ");
+		}
 		sql.append(" From verification_rcu_details");
 
 		if (tableType == TableType.BOTH_TAB) {
@@ -486,6 +483,32 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 				ps.setLong(2, document.getVerificationId());
 				ps.setInt(3, document.getSeqNo());
 
+			}
+
+			@Override
+			public int getBatchSize() {
+				return item.getRcuDocuments().size();
+			}
+
+		});
+	}
+
+	@Override
+	public void updateRCUDocuments(Verification item, TableType table) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("update verification_rcu_details").append(table.getSuffix());
+		sql.append(" set reinitid = ?");
+		sql.append(" where verificationId = ? and seqno = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		jdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				RCUDocument document = item.getRcuDocuments().get(i);
+				ps.setLong(1, document.getReinitid());
+				ps.setLong(2, document.getVerificationId());
+				ps.setInt(3, document.getSeqNo());
 			}
 
 			@Override

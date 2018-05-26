@@ -39,4 +39,6 @@ public interface RiskContainmentUnitService {
 	RiskContainmentUnit getRiskContainmentUnit(long verificationId);
 
 	void updateRemarks(Verification item);
+	
+	void updateRCUDocuments(Verification item);
 }

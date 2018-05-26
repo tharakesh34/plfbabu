@@ -33,9 +33,11 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.verification.Agencies;
+import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
+import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 
@@ -307,7 +309,9 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		logger.debug(Literal.ENTERING);
 
 		int type = verification.getVerificationType();
-
+		
+		RCUDocument rcuDocument = null;
+		
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
 		StringBuilder sql = new StringBuilder();
@@ -326,26 +330,37 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			sql.append(" and verificationType = :verificationType and verificationdate is not null and status !=0)");
 		} else if(type == VerificationType.RCU.getKey()) {
 			sql.append(" where v.id = (select coalesce(max(id), 0)");
-			sql.append(" from verifications where referenceFor");
-			sql.append(" in (select documentsubid verification_rcu_details_view where documentsubid = :referenceFor)");
-			sql.append(" and verificationType = :verificationType and verificationdate is not null and status !=0)");
+			sql.append(" from verifications v ");
+			sql.append(" inner join verification_rcu_details_view vd on vd.verificationid = v.id");
+			
+			rcuDocument = verification.getRcuDocument();
+			if (rcuDocument.getDocumentType() == DocumentType.COLLATRL.getKey()) {
+				sql.append(" where vd.documentid  = :documentid ");
+			} else {
+				sql.append(" where vd.documentsubid = :referenceFor and vd.documenttype=:documenttype");
+			}
+			
+			sql.append(" and v.verificationType = :verificationType and v.verificationdate is not null and v.status !=0)");
 		}
-
-		paramMap.addValue("referenceFor", verification.getReferenceFor());
-		paramMap.addValue("verificationType", type);
-		paramMap.addValue("custid", verification.getCustId());
-
-		if (type == VerificationType.FI.getKey()) {
-			paramMap.addValue("dealerType", Agencies.FIAGENCY.getKey());
-		} else if (type == VerificationType.TV.getKey()) {
-			paramMap.addValue("dealerType", Agencies.TVAGENCY.getKey());
-		} else if (type == VerificationType.LV.getKey()) {
-			paramMap.addValue("dealerType", Agencies.LVAGENCY.getKey());
-		} else if (type == VerificationType.RCU.getKey()) {
-			paramMap.addValue("dealerType", Agencies.RCUVAGENCY.getKey());
-		}
-
+		
+		
 		try {
+			paramMap.addValue("referenceFor", verification.getReferenceFor());
+			paramMap.addValue("verificationType", type);
+			paramMap.addValue("custid", verification.getCustId());
+
+			if (type == VerificationType.FI.getKey()) {
+				paramMap.addValue("dealerType", Agencies.FIAGENCY.getKey());
+			} else if (type == VerificationType.TV.getKey()) {
+				paramMap.addValue("dealerType", Agencies.TVAGENCY.getKey());
+			} else if (type == VerificationType.LV.getKey()) {
+				paramMap.addValue("dealerType", Agencies.LVAGENCY.getKey());
+			} else if (type == VerificationType.RCU.getKey()) {
+				paramMap.addValue("dealerType", Agencies.RCUVAGENCY.getKey());
+				paramMap.addValue("documenttype", rcuDocument.getDocumentType() );
+				paramMap.addValue("documentid", rcuDocument.getDocumentId() );
+			}
+
 			logger.debug(Literal.SQL + sql.toString());
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 		} catch (EmptyResultDataAccessException e) {

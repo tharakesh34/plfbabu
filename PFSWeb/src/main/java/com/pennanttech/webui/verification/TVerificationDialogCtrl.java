@@ -470,8 +470,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		int i = 0;
 		for (Verification vrf : verifications) {
-			if ((vrf.getReinitid() != null && vrf.getRequestType() == RequestType.WAIVE.getKey())
-					|| PennantConstants.RECORD_TYPE_DEL.equals(vrf.getRecordType())) {
+			if (PennantConstants.RECORD_TYPE_DEL.equals(vrf.getRecordType())) {
 				deletedList.add(vrf);
 				continue;
 			}

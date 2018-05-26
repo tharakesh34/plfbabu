@@ -41,6 +41,9 @@
 										label="${c:l('listheader_RCUVerification_Remarks.label')}"
 										sort="false"/>
 									<listheader
+										label="${c:l('listheader_RCUVerification_LastAgency.label')}"
+										sort="false" />
+									<listheader
 										id="listheader_RCUVerification_LastStatus"
 										label="${c:l('listheader_RCUVerification_LastStatus.label')}"
 										sort="false"/>

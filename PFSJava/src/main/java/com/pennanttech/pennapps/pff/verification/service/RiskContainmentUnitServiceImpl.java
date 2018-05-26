@@ -829,4 +829,10 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		riskContainmentUnitDAO.updateRemarks(item);
 	}
 
+	@Override
+	public void updateRCUDocuments(Verification item) {
+		riskContainmentUnitDAO.updateRCUDocuments(item,TableType.TEMP_TAB);
+		riskContainmentUnitDAO.updateRCUDocuments(item, TableType.MAIN_TAB);
+	}
+
 }

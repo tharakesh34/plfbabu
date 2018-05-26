@@ -358,6 +358,13 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			Label remarks = new Label(vrf.getRemarks());
 			listCell.appendChild(remarks);
 			listCell.setParent(item);
+			
+			if (initType) {
+				// Last Verification Agency
+				listCell = new Listcell();
+				listCell.appendChild(new Label(vrf.getLastAgency()));
+				listCell.setParent(item);
+			}
 
 			//Status
 			listCell = new Listcell();
@@ -683,6 +690,14 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			Textbox remarks = new Textbox(vrf.getRemarks());
 			listCell.appendChild(remarks);
 			listCell.setParent(item);
+			
+
+			if (initType) {
+				// Last Verification Agency
+				listCell = new Listcell();
+				listCell.appendChild(new Label(vrf.getLastAgency()));
+				listCell.setParent(item);
+			}
 
 			//Status
 			listCell = new Listcell();
@@ -1080,13 +1095,6 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		String keyReference = this.verification.getKeyReference();
 
 		list = verificationService.getVerifications(keyReference, VerificationType.LV.getKey());
-
-		for (Verification item : list) {
-			if (item.getRequestType() == RequestType.INITIATE.getKey()) {
-				verificationService.setLastStatus(item);
-			}
-		}
-
 		return list;
 	}
 

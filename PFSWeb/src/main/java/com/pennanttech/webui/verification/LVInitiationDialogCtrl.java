@@ -44,8 +44,11 @@ package com.pennanttech.webui.verification;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
@@ -62,6 +65,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -84,6 +88,7 @@ import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
@@ -91,6 +96,7 @@ import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
+import com.pennanttech.pennapps.pff.verification.fi.LVStatus;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.LegalVerificationService;
@@ -107,10 +113,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private static final long serialVersionUID = -3093280086658721485L;
 	private static final Logger logger = Logger.getLogger(LVInitiationDialogCtrl.class);
 
-	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
 	protected Window window_LVInitiationDialog;
 
 	protected Listbox listBoxCollateralDocuments;
@@ -142,7 +144,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private FinanceDetail financeDetail;
-	private List<String> lvrequiredDocs;
+	
+	private Set<String> lvRequiredDocs = new HashSet<>();
+	private Map<String, String> documentMap = new HashMap<>();
 	
 	private Map<Long, Verification> documentStatus = new HashedMap<>();
 
@@ -240,9 +244,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			} else {
 				setLegalVerificationListCtrl(null);
 			}
+			
+			setDocumentDetails();
 
-			//get lvrequiered documents
-			lvrequiredDocs = getLvRequiredDocs();
 
 			// set Field Properties
 			doSetFieldProperties();
@@ -333,13 +337,16 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			} else {
 				CollateralSetup object = (CollateralSetup) dataObject;
 				collateral.setAttribute("collateralRef", object.getCollateralRef());
-				fillDocuments(this.listBoxCollateralDocuments, this.lvDocuments, DocumentType.COLLATRL, object.getCollateralRef());
-
+				
 				List<Verification> list = verificationService.getCollateralDocumentsStatus(object.getCollateralRef());
 				documentStatus.clear();
 				for (Verification item : list) {
 					documentStatus.put(item.getDocumentId(), item);
 				}
+				
+				fillDocuments(this.listBoxCollateralDocuments, this.lvDocuments, DocumentType.COLLATRL, object.getCollateralRef());
+
+				
 			}
 		}
 	}
@@ -436,8 +443,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		if (verification.getReferenceFor() != null) {
-			fillDocuments(this.listBoxCollateralDocuments, this.lvDocuments, DocumentType.COLLATRL,
-					verification.getReferenceFor());
+			fillDocuments(this.listBoxCollateralDocuments, this.lvDocuments, DocumentType.COLLATRL, verification.getReferenceFor());
 		}
 
 		fillDocuments(this.listBoxLoanDocuments, this.lvDocuments, DocumentType.LOAN, null);
@@ -474,7 +480,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	public void fillDocuments(Listbox listbox, List<LVDocument> documents, DocumentType docType, String collateralRef) {
-		List<String> checkedDocuments = new ArrayList<>();
+	List<String> checkedDocuments = new ArrayList<>();
 		List<String> idList = new ArrayList<>();
 
 		if (initiation) {
@@ -521,9 +527,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Listcell lc;
 			Checkbox checkbox = new Checkbox();
 			checkbox.setValue(document);
-			checkbox.setLabel(getDocumentName(document.getDocumentSubId(), document.getDescription()));
+			checkbox.setLabel(getDocumentName(document.getDocumentSubId()));
 
-			if ((lvrequiredDocs.contains(document.getDocumentSubId()) && this.verification.isNewRecord())
+			if ((lvRequiredDocs.contains(document.getDocumentSubId()) && this.verification.isNewRecord())
 					|| checkedDocuments.contains(reference)) {
 				checkbox.setChecked(true);
 			}
@@ -531,21 +537,45 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			lc = new Listcell();
 			lc.appendChild(checkbox);
 			lc.setParent(item);
+			
+			if (document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
+				Verification object =  documentStatus.get(document.getDocumentId());
+				
+				if(object == null) {
+					object = new Verification();
+				}
+				
+				lc = new Listcell();
+				lc.appendChild(new Label(object.getLastAgency()));
+				lc.setParent(item);
+
+				lc = new Listcell();
+				if (object.getStatus() != 0) {
+					lc.appendChild(new Label(LVStatus.getType(object.getStatus()).getValue()));
+				}
+				lc.setParent(item);
+
+				lc = new Listcell();
+				lc.appendChild(new Label(DateUtil.formatToShortDate(object.getVerificationDate())));
+				lc.setParent(item);
+			}
+			
 
 			listbox.appendChild(item);
 		}
 	}
 
-	private String getDocumentName(String code, String description) {
+	private String getDocumentName(String code) {
 		StringBuilder builder = new StringBuilder();
 
 		builder.append(code);
-		if (description != null) {
+		if (documentMap.containsKey(code)) {
 			builder.append(" - ");
-			builder.append(description);
+			builder.append(documentMap.get(code));
 		}
 
 		return builder.toString();
+	
 	}
 
 	/**
@@ -1145,13 +1175,25 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	private List<String> getLvRequiredDocs() {
-		Search search = new Search(String.class);
-		search.addField("doctypecode");
-		search.addTabelName("BMTDocumentTypes");
-		search.addFilter(new Filter("lvreq", true));
+	private void setDocumentDetails() {
+		this.lvRequiredDocs.clear();
+		this.documentMap.clear();
 
-		return searchProcessor.getResults(search);
+		Search search = new Search(com.pennant.backend.model.systemmasters.DocumentType.class);
+		search.addField("doctypecode");
+		search.addField("docTypeDesc");
+		search.addField("lvreq");
+		search.addTabelName("BMTDocumentTypes");
+		List<com.pennant.backend.model.systemmasters.DocumentType> list = searchProcessor.getResults(search);
+
+		for (com.pennant.backend.model.systemmasters.DocumentType documentType : list) {
+			if (documentType.isLvReq()) {
+				this.lvRequiredDocs.add(documentType.getDocTypeCode());
+			}
+
+			this.documentMap.put(documentType.getDocTypeCode(), documentType.getDocTypeDesc());
+		}
+
 	}
 
 	public void onFulfill$collateral(Event event) {
