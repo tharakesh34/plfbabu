@@ -1167,6 +1167,9 @@
 										align="right" label="${c:l('listheader_SchFee.label')}"
 										visible="false" />
 									<listheader
+										id="listheader_ScheduleDetailDialog_SchTax" hflex="min"
+										label="${c:l('listheader_SchTax.label')}" align="right" />
+									<listheader
 										id="listheader_ReceiptSchedule_TDSAmount" hflex="min"
 										align="right" label="${c:l('listheader_TDSAmount.label')}" />
 									<listheader

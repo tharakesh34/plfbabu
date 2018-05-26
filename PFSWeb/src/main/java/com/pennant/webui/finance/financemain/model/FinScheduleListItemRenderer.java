@@ -221,7 +221,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 		boolean showZeroEndBal = false;
 		boolean isGrcBaseRate = false;
 		boolean isRpyBaseRate = false;
-/*		if(accrueValue != null){
+		if(accrueValue != null && accrueValue.compareTo(BigDecimal.ZERO) > 0){
 
 			Date lastAccrueDate = DateUtility.getAppDate();
 			if((!lastRec && lastAccrueDate.compareTo(prvSchDetail.getSchDate()) >= 0 && 
@@ -235,7 +235,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				count = 1;
 			}
 		}
-*/
+
 		if (lastRec) {
 
 			isEditable = false;

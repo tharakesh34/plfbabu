@@ -197,23 +197,14 @@
 									id="listheader_FeeReceiptReference"
 									label="${c:l('listheader_FeeReceiptReference.label')}"
 									sort="auto" hflex="min" />
-								<listheader id="listheader_FeeReceipt_PromotionCode"
-									label="${c:l('listheader_FeeReceipt_PromotionCode')}" 
-									sort="auto" hflex="min" />
 								<listheader
-									id="listheader_FeeReceiptPurpose" visible="false"
+									id="listheader_FeeReceiptPurpose"
 									label="${c:l('listheader_FeeReceiptPurpose.label')}"
 									sort="auto" hflex="min" />
 								<listheader
 									id="listheader_FeeReceiptMode"
 									label="${c:l('listheader_FeeReceiptMode.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_FeeReceipt_ReceiptRef"
-									label="${c:l('listheader_FeeReceipt_ReceiptRef')}" 
-									sort="auto" hflex="min" />
-								<listheader id="listheader_FeeReceipt_ReceiptDate"
-									label="${c:l('listheader_FeeReceipt_ReceiptDate')}" 
-									sort="auto" hflex="min" />
 								<listheader
 									id="listheader_FeeReceiptAmount" align="right"
 									label="${c:l('listheader_FeeReceiptAmount.label')}" sort="auto"

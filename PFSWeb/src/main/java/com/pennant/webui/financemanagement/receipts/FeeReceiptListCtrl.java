@@ -148,7 +148,6 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				sortOperator_FeeReceiptFinType, Operators.STRING);
 		registerField("finBranch", listheader_FeeReceiptFinBranch, SortOrder.NONE, finBranch, sortOperator_FeeReceiptFinBranch,
 				Operators.STRING);
-		registerField("receiptDate", listheader_FeeReceipt_ReceiptDate, SortOrder.NONE);
 		// Render the page and display the data.
 		doRenderPage();
 		search();
