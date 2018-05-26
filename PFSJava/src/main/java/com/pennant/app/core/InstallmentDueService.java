@@ -142,6 +142,13 @@ public class InstallmentDueService extends ServiceHelper {
 		aeEvent.setPostDate(custEODEvent.getCustomer().getCustAppDate());
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
+		
+		//Accrual posted on the installment due postings
+		if (aeEvent.isuAmzExists()) {
+			profiDetails.setAmzTillLBD(profiDetails.getAmzTillLBD().add(aeEvent.getAeAmountCodes().getuAmz()));
+			finEODEvent.setUpdLBDPostings(true);
+		}
+		
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 		logger.debug(" Leaving ");
 	}

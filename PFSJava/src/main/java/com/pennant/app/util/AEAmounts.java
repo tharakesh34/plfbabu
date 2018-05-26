@@ -155,6 +155,14 @@ public class AEAmounts implements Serializable {
 
 		amountCodes.setAmzS(pftDetail.getPftAmzSusp());
 		aeEvent.setAeAmountCodes(amountCodes);
+		
+		if (amountCodes.getdAmz().compareTo(BigDecimal.ZERO) < 0) {
+			amountCodes.setdAmz(BigDecimal.ZERO);
+		}
+
+		if (amountCodes.getuAmz().compareTo(BigDecimal.ZERO) < 0) {
+			amountCodes.setuAmz(BigDecimal.ZERO);
+		}
 
 		logger.debug("Leaving");
 		return aeEvent;
