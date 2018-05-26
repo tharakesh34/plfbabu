@@ -572,13 +572,20 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 
 	@Override
 	public boolean isCollateralChanged(Verification verification) {
-		List<Map<String, Object>> previous;
-		List<Map<String, Object>> current;
+		List<Map<String, Object>> previous = null;
+		List<Map<String, Object>> current = null;
 		String tableName = "collateral_" + verification.getReferenceType();
 		
-		previous = extendedFieldRenderDAO.getExtendedFieldMapByVerificationId(verification.getId(),
-				tableName + "_ed_tv");
+		try {
+		previous = extendedFieldRenderDAO.getExtendedFieldMapByVerificationId(verification.getId(), tableName + "_ed_tv");
 		current = extendedFieldRenderDAO.getExtendedFieldMap(verification.getReferenceFor(), tableName + "_ed", null);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		
+		if (previous == null || current == null) {
+			return false;
+		}
 
 		if (previous.size() != current.size()) {
 			return true;
