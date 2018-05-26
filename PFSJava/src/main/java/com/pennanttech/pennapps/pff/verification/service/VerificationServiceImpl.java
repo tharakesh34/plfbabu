@@ -163,7 +163,6 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				continue;
 			}
 
-			//set WorkFlow Data to item; 
 			setVerificationWorkflowData(verification, item);
 
 			if (isInitTab) {
@@ -794,12 +793,6 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					verification.setLastStatus(0);
 					verification.setLastVerificationDate(null);
 					verification.setLastAgency("");
-				} else {
-					verification.setLastStatus(lastStatus.getStatus());
-					verification.setLastVerificationDate(lastStatus.getVerificationDate());
-					verification.setVersion(lastStatus.getVersion());
-					verification.setLastVersion(lastStatus.getLastVersion());
-					verification.setLastAgency(lastStatus.getLastAgency());
 				}
 
 			} else if (verificationType == VerificationType.TV.getKey()) {
@@ -807,12 +800,6 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					verification.setLastStatus(0);
 					verification.setLastVerificationDate(null);
 					verification.setLastAgency("");
-				} else {
-					verification.setLastStatus(lastStatus.getStatus());
-					verification.setLastVerificationDate(lastStatus.getVerificationDate());
-					verification.setVersion(lastStatus.getVersion());
-					verification.setLastVersion(lastStatus.getLastVersion());
-					verification.setLastAgency(lastStatus.getLastAgency());
 				}
 
 			} else if (verificationType == VerificationType.LV.getKey()) {
@@ -820,12 +807,6 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					verification.setLastStatus(0);
 					verification.setLastVerificationDate(null);
 					verification.setLastAgency("");
-				} else {
-					verification.setLastStatus(lastStatus.getStatus());
-					verification.setLastVerificationDate(lastStatus.getVerificationDate());
-					verification.setVersion(lastStatus.getVersion());
-					verification.setLastVersion(lastStatus.getLastVersion());
-					verification.setLastAgency(lastStatus.getLastAgency());
 				}
 
 			} else if (verificationType == VerificationType.RCU.getKey()) {
