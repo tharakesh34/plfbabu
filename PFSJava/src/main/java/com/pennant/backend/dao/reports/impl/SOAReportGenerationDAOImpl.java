@@ -292,7 +292,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		StringBuilder selectSql = new StringBuilder();
 		
 		selectSql.append(" Select T1.FinReference, T1.PostDate, T1.AdviseAmount, T1.AdviseType, T1.ReceiptId, T1.BounceId, T1.Adviseid, T1.FeeTypeId, T1.BalanceAmt,");
-		selectSql.append(" T1.WaivedAmount, T1.PaidAmount, T2.FeeTypeDesc, T1.ValueDate ");
+		selectSql.append(" T1.WaivedAmount, T1.PaidAmount, T2.FeeTypeDesc, T1.ValueDate,T2.TaxComponent ");
 		selectSql.append(" FROM ManualAdvise T1 Left Join");
 		selectSql.append(" FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId  ");
 		selectSql.append(" Where FinReference = :FinReference");
@@ -363,7 +363,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select T1.FinReference, T1.RemainingFee, T1.PaidAmount, T1.Postdate, T1.FeeTypeID, T1.VasReference,");
-		sql.append(" T1.Originationfee, T1.FeeSchedulemethod, T2.FeeTypeCode, T2.FeeTypedesc, T1.WaivedAmount");
+		sql.append(" T1.Originationfee, T1.FeeSchedulemethod, T2.FeeTypeCode, T2.FeeTypedesc, T1.WaivedAmount, T2.TaxComponent ");
 		sql.append(" From  FinFeeDetail T1");
 		sql.append(" Left Join FeeTypes T2 ON T2.FeeTypeId = T1.FeeTypeId");
 		sql.append(" WHERE T1.FinReference = :FinReference");

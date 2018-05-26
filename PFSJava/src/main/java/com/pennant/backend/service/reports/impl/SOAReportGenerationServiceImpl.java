@@ -80,6 +80,7 @@ import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.dataengine.model.EventProperties;
 public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAccount> implements SOAReportGenerationService{
@@ -697,6 +698,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String receiptHeaderPftWaived = "Interest from customer Waived Off ";
 		String receiptHeaderPriWaived = "Principal from customer Waived Off ";
 		String receiptHeaderPenaltyWaived = "Penalty from customer Waived Off ";
+		
+		String inclusive = "*";
+		String exclusive = "!";
+		
 		SOATransactionReport soaTransactionReport = null;
 		List<SOATransactionReport> soaTransactionReports = new ArrayList<SOATransactionReport>();
 		
@@ -969,12 +974,18 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 						soaTransactionReport = new SOATransactionReport();
 						if(manualAdvise.getFeeTypeID()>0){
-							manualAdvPrentmentNotIn= manualAdvise.getFeeTypeDesc();
+							
+							manualAdvPrentmentNotIn= manualAdvise.getFeeTypeDesc()+" - Due";
+							
+							if(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(manualAdvise.getTaxComponent())){
+								manualAdvPrentmentNotIn= manualAdvPrentmentNotIn + inclusive;
+							}else if(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())){
+								manualAdvPrentmentNotIn= manualAdvPrentmentNotIn + exclusive;
+							}
 						} else {
-							manualAdvPrentmentNotIn = "Bounce";
+							manualAdvPrentmentNotIn = "Bounce - Due";
 						}
-						manualAdvPrentmentNotIn.concat("- Due"+ finRef);
-						soaTransactionReport.setEvent(manualAdvPrentmentNotIn);
+						soaTransactionReport.setEvent(manualAdvPrentmentNotIn+finRef);
 						soaTransactionReport.setTransactionDate(manualAdvise.getPostDate());
 						soaTransactionReport.setValueDate(manualAdvise.getValueDate());
 						soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
@@ -1260,11 +1271,17 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 									soaTransactionReport = new SOATransactionReport();
 									if(StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc())){
-										finFeeDetailOrgination  = finFeeDetail.getFeeTypeDesc();
+										
+										finFeeDetailOrgination  = finFeeDetail.getFeeTypeDesc()+" - Due";
+										if(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())){
+											finFeeDetailOrgination = finFeeDetailOrgination + inclusive;
+										}else if(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(finFeeDetail.getTaxComponent())){
+											finFeeDetailOrgination = finFeeDetailOrgination + exclusive;
+										}
 									} else {
-										finFeeDetailOrgination=vasProduct;
+										finFeeDetailOrgination=vasProduct+" - Due";
 									}
-									soaTransactionReport.setEvent(finFeeDetailOrgination+"- Due"+finRef);
+									soaTransactionReport.setEvent(finFeeDetailOrgination+finRef);
 									soaTransactionReport.setTransactionDate(finMain.getFinApprovedDate());
 									soaTransactionReport.setValueDate(finMain.getFinStartDate());
 									soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
