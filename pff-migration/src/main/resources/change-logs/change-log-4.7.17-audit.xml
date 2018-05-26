@@ -39,7 +39,9 @@
 			Set search_path = plfaudit,plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
+	<changeSet id="1" author="Prasad">
+		<modifyDataType tableName="adtfinancemain" columnName="accountsofficer" newDataType="INT"/>
+	</changeSet>
 	
 
 
