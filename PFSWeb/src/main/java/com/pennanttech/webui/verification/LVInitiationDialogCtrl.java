@@ -45,7 +45,9 @@ package com.pennanttech.webui.verification;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -141,6 +143,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private FinanceDetail financeDetail;
 	private List<String> lvrequiredDocs;
+	
+	private Map<Long, Verification> documentStatus = new HashedMap<>();
 
 	@Autowired
 	private SearchProcessor searchProcessor;
@@ -224,9 +228,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				setNewRecord(true);
 			}
 
-			doLoadWorkFlow(this.verification.isWorkflow(), this.verification.getWorkflowId(),
-					this.verification.getNextTaskId());
-			/* set components visible dependent of the users rights */
+			doLoadWorkFlow(this.verification.isWorkflow(), this.verification.getWorkflowId(), this.verification.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
@@ -250,7 +252,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			MessageUtil.showError(e);
 			this.window_LVInitiationDialog.onClose();
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void fillListBox() {
@@ -329,10 +331,15 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				collateral.setValue(dataObject.toString());
 				collateral.setDescription("");
 			} else {
-				CollateralSetup collateralSetup = (CollateralSetup) dataObject;
-				collateral.setAttribute("collateralRef", collateralSetup.getCollateralRef());
-				fillDocuments(this.listBoxCollateralDocuments, this.lvDocuments, DocumentType.COLLATRL,
-						collateralSetup.getCollateralRef());
+				CollateralSetup object = (CollateralSetup) dataObject;
+				collateral.setAttribute("collateralRef", object.getCollateralRef());
+				fillDocuments(this.listBoxCollateralDocuments, this.lvDocuments, DocumentType.COLLATRL, object.getCollateralRef());
+
+				List<Verification> list = verificationService.getCollateralDocumentsStatus(object.getCollateralRef());
+				documentStatus.clear();
+				for (Verification item : list) {
+					documentStatus.put(item.getDocumentId(), item);
+				}
 			}
 		}
 	}
@@ -344,9 +351,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -355,9 +360,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * @param eventl
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -367,9 +370,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_LVInitiationDialog);
-		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -378,9 +379,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -400,11 +399,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug(Literal.ENTERING);
 		doWriteBeanToComponents(this.verification.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -452,11 +449,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private List<String> getCheckedDocuments(List<LVDocument> lvDocuments) {
 		List<String> docKeys = new ArrayList<>();
 		for (LVDocument document : lvDocuments) {
-			/*
-			 * if (document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
-			 * docCategories.add(String.valueOf(document.getDocumentId())); } else {
-			 * docCategories.add(String.valueOf(document.getDocumentType()).concat(document.getDocumentSubId())); }
-			 */
 			if (document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
 				docKeys.add(this.verification.getReferenceFor()
 						.concat(String.valueOf(document.getDocumentType()).concat(document.getDocumentSubId())));
@@ -482,7 +474,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	public void fillDocuments(Listbox listbox, List<LVDocument> documents, DocumentType docType, String collateralRef) {
-		logger.debug(Literal.ENTERING);
 		List<String> checkedDocuments = new ArrayList<>();
 		List<String> idList = new ArrayList<>();
 
@@ -491,25 +482,11 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (!verification.getLvDocuments().isEmpty()) {
 				checkedDocuments = getCheckedDocuments(this.verification.getLvDocuments());
 			}
-			/*
-			 * if (verification.getRequestType() == RequestType.WAIVE.getKey()) {
-			 * documentCategories.add(verification.getReferenceFor()); }
-			 */
 		}
 
 		List<LVDocument> oldDocumentIds = legalVerificationService.getLVDocuments(verification.getKeyReference());
-		/*
-		 * oldDocumentIds.addAll(getWaiveDocIds( verificationService.getVerifications(verification.getKeyReference(),
-		 * VerificationType.LV.getKey())));
-		 */
 
 		for (LVDocument lvDocument : oldDocumentIds) {
-			/*
-			 * if ((lvDocument.getDocumentType() == DocumentType.COLLATRL.getKey())) {
-			 * idList.add(String.valueOf(lvDocument.getDocumentId())); } else if ("W".equals(lvDocument.getDocModule()))
-			 * { idList.add(lvDocument.getDocumentSubId()); } else {
-			 * idList.add(String.valueOf(lvDocument.getDocumentType()).concat(lvDocument.getDocumentSubId())); }
-			 */
 			if ((lvDocument.getDocumentType() == DocumentType.COLLATRL.getKey())
 					&& StringUtils.isNotEmpty(lvDocument.getCollateralRef())) {
 				idList.add(String.valueOf(lvDocument.getCollateralRef()
@@ -524,8 +501,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (docType.getKey() != document.getDocumentType()) {
 				continue;
 			}
-
-			/* String reference = String.valueOf(document.getDocumentType()).concat(document.getDocumentSubId()); */
 
 			String reference = String.valueOf(document.getDocumentType()).concat(document.getDocumentSubId());
 
@@ -559,8 +534,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			listbox.appendChild(item);
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	private String getDocumentName(String code, String description) {
@@ -728,7 +701,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (initiation) {
 			this.reasonRow.setVisible(false);
 		} else {
-			//this.collateralRow.setVisible(false);
 			this.agencyRow.setVisible(false);
 		}
 

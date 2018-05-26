@@ -1048,7 +1048,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.verification.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		financeDetail.setTvVerification(this.verification);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {

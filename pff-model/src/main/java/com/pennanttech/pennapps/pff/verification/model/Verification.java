@@ -85,6 +85,8 @@ public class Verification extends AbstractWorkflowEntity {
 	private int lastVersion;
 	private boolean verificationReq;
 	private String lastAgency;
+	private long documentId;
+	private long docRefId;
 
 	public Verification() {
 		super();
@@ -125,6 +127,8 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("lastVersion");
 		excludeFields.add("lastVerificationDate");
 		excludeFields.add("lastAgency");
+		excludeFields.add("documentId");
+		excludeFields.add("docRefId");
 		return excludeFields;
 	}
 
@@ -549,5 +553,21 @@ public class Verification extends AbstractWorkflowEntity {
 
 	public void setLastAgency(String lastAgency) {
 		this.lastAgency = lastAgency;
+	}
+
+	public long getDocumentId() {
+		return documentId;
+	}
+
+	public void setDocumentId(long documentId) {
+		this.documentId = documentId;
+	}
+
+	public long getDocRefId() {
+		return docRefId;
+	}
+
+	public void setDocRefId(long docRefId) {
+		this.docRefId = docRefId;
 	}
 }
