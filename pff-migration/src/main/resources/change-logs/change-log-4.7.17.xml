@@ -142,7 +142,7 @@
 		<changeSet id="5" author="Siva" dbms="mssql">
 		<sql>
 			alter table FinRepayHeader add constraint df_fph_RealizeUnAmz default 0 for RealizeUnAmz;
-			alter table FinRepayHeader add constraint df_fph_t_RealizeUnAmz default 0 for RealizeUnAmz;
+			alter table FinRepayHeader_Temp add constraint df_fph_t_RealizeUnAmz default 0 for RealizeUnAmz;
 		</sql>
 	</changeSet>
 	<changeSet id="6" author="Siva">
@@ -157,6 +157,72 @@
 			update ERRORDETAILS set severity='E' where code='65032';
 		</sql>
 	</changeSet>
-	
+	<changeSet id="8" author="Manoj">
+		<comment> New Table : InterfaceMappingConfiguration for mapping PLF and InterfaceData</comment>
+		<createTable tableName="InterfaceMappingConfiguration">
+			<column name="ServiceName" type="varchar(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ModuleCode" type="varchar(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="SourceCode" type="varchar(30)	">
+			</column>
+			<column name="DestCode" type="varchar(30)">
+			</column>
+			<column name="SourceId" type="bigint">
+			</column>
+			<column name="DestId" type="bigint">
+			</column>
+			<column name="DestDescription" type="varchar(200)" />
+			<column name="active" type="boolean" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="8_Post" author="manoj" dbms="oracle">
+		<addDefaultValue columnName="SourceId" tableName="InterfaceMappingConfiguration" defaultValue="0"/>
+		<addDefaultValue columnName="DestId" tableName="InterfaceMappingConfiguration" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="8_Post" author="manoj" dbms="postgresql">
+		<addDefaultValue columnName="SourceId" tableName="InterfaceMappingConfiguration" defaultValue="0"/>
+		<addDefaultValue columnName="DestId" tableName="InterfaceMappingConfiguration" defaultValue="0"/>
+	</changeSet>
+		<changeSet id="8_Post" author="manoj" dbms="mssql">
+		<sql>
+			alter table InterfaceMappingConfiguration add constraint df_imc_SourceId default 0 for SourceId;
+			alter table InterfaceMappingConfiguration add constraint df_imc_DestId default 0 for DestId;
+		</sql>
+	</changeSet>
+	<changeSet id="9" author="Manoj">
+		<createIndex tableName="InterfaceMappingConfiguration" indexName="IDX_IMC_MOD_SRC_SM">
+			<column name="ModuleCode" type="varchar(100)"/>
+			<column name="SourceCode" type="varchar(100)"/>
+			<column name="ServiceName" type="varchar(100)"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="10" author="Manoj">
+		<createIndex tableName="InterfaceMappingConfiguration" indexName="IDX_IMC_MOD_SID_SM">
+			<column name="ModuleCode" type="varchar(100)"/>
+			<column name="SourceId" type="bigint"/>
+			<column name="ServiceName" type="varchar(100)"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="11" author="Manoj">
+		<createIndex tableName="InterfaceMappingConfiguration" indexName="IDX_IMC_MOD_SM">
+			<column name="ModuleCode" type="varchar(100)"/>
+			<column name="ServiceName" type="varchar(100)"/>
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>
 	
