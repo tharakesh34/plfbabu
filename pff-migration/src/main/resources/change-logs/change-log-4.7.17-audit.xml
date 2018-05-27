@@ -43,6 +43,10 @@
 		<modifyDataType tableName="adtfinancemain" columnName="accountsofficer" newDataType="INT"/>
 	</changeSet>
 	
+	<changeSet id="2" author="Ganesh.p">
+		<modifyDataType tableName="ADTCollateralCoOwners"
+			columnName="CoOwnerIDType" newDataType="VARCHAR(50)" />
+	</changeSet>
 
 
 	</databaseChangeLog>

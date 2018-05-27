@@ -50,4 +50,6 @@ public interface MasterDefService {
 
 	String getMasterCode(String masterType, String keytype);
 
+	String getMasterKeyTypeByCode(String masterType, String keyCode);
+
 }

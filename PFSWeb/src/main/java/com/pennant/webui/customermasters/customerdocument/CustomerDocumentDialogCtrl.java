@@ -100,6 +100,7 @@ import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
+import com.pennant.backend.service.masters.MasterDefService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -216,6 +217,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private DeviationExecutionCtrl deviationExecutionCtrl; 
 	private List<DocumentDetails> verificationDocuments;
 	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
+	private MasterDefService masterDefService;
 	
 	
 	/**
@@ -914,18 +916,21 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 		// ### 01-05-2018 TuleApp ID : #360
 		if (!this.custDocTitle.isReadonly()) {
-			if (StringUtils.equals(custDocType.getValue(), PennantConstants.PANNUMBER)) {
-				custDocTitle.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
-								PennantRegularExpressions.REGEX_PANNUMBER, isIdNumMand));
-			} else if (StringUtils.equals(custDocType.getValue(), PennantConstants.CPRCODE)) {
-				custDocTitle.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
-								PennantRegularExpressions.REGEX_AADHAR_NUMBER, isIdNumMand));
-			} else {
-				this.custDocTitle.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
-								PennantRegularExpressions.REGEX_ALPHANUM_CODE, isIdNumMand));
+
+			//TODO:Need To move HardCoded values into constants.
+			String value = this.custDocType.getValue();
+			if (StringUtils.isNotBlank(value)) {
+				String masterDocType = masterDefService.getMasterKeyTypeByCode("DOC_TYPE", value);
+				String regex = PennantRegularExpressions.REGEX_ALPHANUM_CODE;
+				if (StringUtils.equalsIgnoreCase("PAN", masterDocType)) {
+					regex = PennantRegularExpressions.REGEX_PANNUMBER;
+				} else if (StringUtils.equalsIgnoreCase("AADHAAR", masterDocType)) {
+					regex = PennantRegularExpressions.REGEX_AADHAR_NUMBER;
+				}
+				if (StringUtils.isNotBlank(regex)) {
+					custDocTitle.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"), regex, isIdNumMand));
+				}
 			}
 		}
 
@@ -2384,5 +2389,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
 		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
 	}
-	
+
+	public void setMasterDefService(MasterDefService masterDefService) {
+		this.masterDefService = masterDefService;
+	}
+
 }

@@ -1239,6 +1239,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="customerDocumentService" ref="customerDocumentService" />
+		<property name="masterDefService" ref="masterDefService" />
 	</bean>
 
 	<!--============ Customer EMail Detail ============== -->

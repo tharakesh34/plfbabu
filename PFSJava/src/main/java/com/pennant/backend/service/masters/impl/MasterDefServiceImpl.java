@@ -76,4 +76,18 @@ public class MasterDefServiceImpl implements MasterDefService {
 	public String getMasterCode(String masterType, String keytype) {
 		return masterDefDAO.getMasterCode(masterType, keytype);
 	}
+
+	/**
+	 * getMasterCode fetch the details by using MasterDefDAO getMasterCode method.
+	 * 
+	 * @param masterType (String)
+	 *            
+	 * @param KeyCode (String)
+	 * 
+	 * @return keyType (String)
+	 */
+	@Override
+	public String getMasterKeyTypeByCode(String masterType, String keyCode) {
+		return masterDefDAO.getMasterKeyTypeByCode(masterType, keyCode);
+	}
 }

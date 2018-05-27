@@ -102,5 +102,32 @@ public class MasterDefDAOImpl implements MasterDefDAO {
 
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 	}
+	
+	/**
+	 * Fetch the Record  MasterDef details by key field
+	 * 
+	 * @param masterType (String)
+	 * @param  KeyCode (String)
+	 * 			 
+	 * @return keyType (String)
+	 */
+	@Override
+	public String getMasterKeyTypeByCode(String masterType, String keyCode) {
+		logger.debug("Entering");
+
+		MasterDef masterDef = new MasterDef();
+		masterDef.setMasterType(masterType);
+		masterDef.setKeyCode(keyCode);
+
+		StringBuilder selectSql = new StringBuilder("Select Key_type ");
+		selectSql.append(" From Master_Def");
+		selectSql.append(" Where Master_Type =:MasterType and Key_Code=:keyCode " );
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(masterDef);
+		logger.debug("Leaving");
+
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+	}
 
 }

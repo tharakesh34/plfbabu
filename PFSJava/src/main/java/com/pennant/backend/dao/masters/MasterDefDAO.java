@@ -50,4 +50,5 @@ public interface MasterDefDAO {
 
 	String getMasterCode(String masterType, String keytype);
 
+	String getMasterKeyTypeByCode(String masterType, String keyCode);
 }
