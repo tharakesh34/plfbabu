@@ -50,8 +50,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.masters.MasterDefDAO;
-import com.pennant.backend.dao.systemmasters.impl.CityDAOImpl;
 import com.pennant.backend.model.MasterDef;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>MasterDef model</b> class.<br>
@@ -59,7 +59,7 @@ import com.pennant.backend.model.MasterDef;
  */
 public class MasterDefDAOImpl implements MasterDefDAO {
 
-	private static Logger logger = Logger.getLogger(CityDAOImpl.class);
+	private static Logger logger = Logger.getLogger(MasterDefDAOImpl.class);
 
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -126,8 +126,12 @@ public class MasterDefDAOImpl implements MasterDefDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(masterDef);
 		logger.debug("Leaving");
-
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		return null;
 	}
 
 }

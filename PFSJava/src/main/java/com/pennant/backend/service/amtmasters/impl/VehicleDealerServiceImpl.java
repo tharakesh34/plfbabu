@@ -43,6 +43,7 @@
 package com.pennant.backend.service.amtmasters.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -474,6 +475,17 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 		return getVehicleDealerDAO().getVASManufactureCode(dealerName, "_View");
 	}
 
+	/**
+	 * Method for Fetch the VehicleDealer Based on Given id's.
+	 * 
+	 * @param ids
+	 * @return
+	 */
+	@Override
+	public List<VehicleDealer> getVehicleDealerById(List<Long> ids) {
+		return vehicleDealerDAO.getVehicleDealerById(ids);
+	}
+	
 	public CustomerDAO getCustomerDAO() {
 		return customerDAO;
 	}

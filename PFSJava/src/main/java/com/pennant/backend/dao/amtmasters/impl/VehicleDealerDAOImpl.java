@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.amtmasters.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -62,6 +64,7 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>VehicleDealer model</b> class.<br>
@@ -326,5 +329,24 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		}
 		logger.debug("Leaving");
 		return count;
+	}
+
+	@Override
+	public List<VehicleDealer> getVehicleDealerById(List<Long> dealerIds) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select DealerName, DealerCity, DealerId From AMTVehicleDealer ");
+		sql.append(" WHERE DealerId IN(:dealerIds) ");
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("dealerIds", dealerIds);
+		try {
+			RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(VehicleDealer.class);
+			logger.debug(Literal.LEAVING);
+			return this.namedParameterJdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
+
+		} catch (DataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return null;
 	}
 }

@@ -4182,6 +4182,8 @@
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="customerService" ref="customerService" />
+		<!-- VehicleDealer -->
+		<property name="vehicleDealerService" ref="vehicleDealerService" />
 	</bean>
 
 	<!-- Finance Data Validation Service -->

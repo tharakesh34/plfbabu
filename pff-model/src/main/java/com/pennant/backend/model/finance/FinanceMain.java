@@ -157,6 +157,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private long accountsOfficer;
 	@XmlElement
 	private String dsaCode;
+	private String dsaName;
 	private String dsaCodeDesc;
 	private String lovDescAccountsOfficer;
 	private String lovDescSourceCity;
@@ -594,6 +595,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String dmaCode;
 	private String dmaCodeDesc;
+	private String dmaName;
 	@XmlElement
 	private String referralId;
 	private String referralIdDesc;
@@ -718,6 +720,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("agreeName");
 		excludeFields.add("finIsAlwMD");
 		excludeFields.add("dsaCodeDesc");
+		excludeFields.add("dsaName");
 		excludeFields.add("finWriteoffAc");
 		excludeFields.add("lovDecMMAReference");
 		excludeFields.add("numOfMonths");
@@ -739,6 +742,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("validateMain");
 		excludeFields.add("salesDepartmentDesc");
 		excludeFields.add("dmaCodeDesc");
+		excludeFields.add("dmaName");
 		excludeFields.add("referralIdDesc");
 		excludeFields.add("calGrcTerms");
 		excludeFields.add("calGrcEndDate");
@@ -3620,6 +3624,21 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setBpiResetReq(boolean bpiResetReq) {
 		this.bpiResetReq = bpiResetReq;
+	}
+	public String getDsaName() {
+		return dsaName;
+	}
+
+	public void setDsaName(String dsaName) {
+		this.dsaName = dsaName;
+	}
+
+	public String getDmaName() {
+		return dmaName;
+	}
+
+	public void setDmaName(String dmaName) {
+		this.dmaName = dmaName;
 	}
 
 }

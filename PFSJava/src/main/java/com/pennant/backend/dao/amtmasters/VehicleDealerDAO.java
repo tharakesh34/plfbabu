@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.amtmasters;
 
+import java.util.List;
+
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 
 public interface VehicleDealerDAO {
@@ -59,4 +61,6 @@ public interface VehicleDealerDAO {
 	int getVehicleDealerByType(String dealerType, String name,long id, String type);
 
 	int getVASManufactureCode(String dealerName, String type);
+
+	List<VehicleDealer> getVehicleDealerById(List<Long> ids);
 }

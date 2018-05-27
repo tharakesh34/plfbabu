@@ -964,6 +964,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				LengthConstants.LEN_MASTER_CODE);
 		this.dmaCode.setProperties("DMA", "DealerName", "DealerCity", false,
 				LengthConstants.LEN_MASTER_CODE);
+		this.dmaCode.getTextbox().setMaxlength(50);
 		this.salesDepartment.setProperties("GeneralDepartment", "GenDepartment", "GenDeptDesc", false,
 				LengthConstants.LEN_MASTER_CODE);
 
@@ -1086,6 +1087,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.accountsOfficer.setProperties("SourceOfficer", "DealerName", "DealerCity", false, 8);
 		this.dsaCode.setProperties("DSA", "DealerName", "DealerCity", false, 8);
+		this.dsaCode.getTextbox().setMaxlength(50);
 
 		// Finance Basic Details Tab ---> 2. Grace Period Details
 
@@ -2907,9 +2909,26 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.accountsOfficer.setDescription(StringUtils.trimToEmpty(aFinanceMain.getLovDescSourceCity()));
 		this.accountsOfficer.setAttribute("DealerId", aFinanceMain.getAccountsOfficer());
 
-		this.dsaCode.setValue(aFinanceMain.getDsaCode());
-		this.dsaCode.setDescription(aFinanceMain.getDsaCodeDesc());
-
+		if (!aFinanceMain.isNewRecord()) {
+			this.dsaCode.setValue(StringUtils.trimToEmpty((aFinanceMain.getDsaName())),
+					StringUtils.trimToEmpty(aFinanceMain.getDsaCodeDesc()));
+			if (aFinanceMain.getDsaCode() != null) {
+				this.dsaCode.setAttribute("DSAdealerID", aFinanceMain.getDsaCode());
+			} else {
+				this.dsaCode.setAttribute("DSAdealerID", null);
+			}
+		}
+		
+		if (!aFinanceMain.isNewRecord()) {
+			this.dmaCode.setValue(StringUtils.trimToEmpty((aFinanceMain.getDmaName())),
+					StringUtils.trimToEmpty(aFinanceMain.getDmaCodeDesc()));
+			if (aFinanceMain.getDsaCode() != null) {
+				this.dmaCode.setAttribute("DMAdealerID", aFinanceMain.getDmaCode());
+			} else {
+				this.dmaCode.setAttribute("DMAdealerID", null);
+			}
+		}
+		
 		if (financeType.isFinDepreciationReq()) {
 			this.depreciationFrq.setVisible(true);
 			this.label_FinanceMainDialog_DepriFrq.setVisible(true);
@@ -3064,10 +3083,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (aFinanceMain.getReferralId() != null) {
 			this.referralId.setValue(aFinanceMain.getReferralId());
 			this.referralId.setDescription(aFinanceMain.getReferralIdDesc());
-		}
-		if (aFinanceMain.getDmaCode() != null) {
-			this.dmaCode.setValue(aFinanceMain.getDmaCode());
-			this.dmaCode.setDescription(aFinanceMain.getDmaCodeDesc());
 		}
 
 		if (aFinanceMain.getSalesDepartment() != null) {
@@ -8053,7 +8068,38 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving");
 	}
-
+	
+	public void onFulfill$dsaCode(Event event) {
+		logger.debug("Entering");
+		Object dataObject = dsaCode.getObject();
+		if (dataObject==null || dataObject instanceof String) {
+			this.dsaCode.setValue("");
+			this.dsaCode.setDescription("");
+			this.dsaCode.setAttribute("DSAdealerID", null);
+		} else {
+			VehicleDealer details = (VehicleDealer) dataObject;
+			if (details != null) {
+				this.dsaCode.setAttribute("DSAdealerID", details.getId());
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	public void onFulfill$dmaCode(Event event) {
+		logger.debug("Entering");
+		Object dataObject = dmaCode.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.dmaCode.setValue("");
+			this.dmaCode.setDescription("");
+			this.dmaCode.setAttribute("DMAdealerID", null);
+		} else {
+			VehicleDealer details = (VehicleDealer) dataObject;
+			if (details != null) {
+				this.dmaCode.setAttribute("DMAdealerID", details.getId());
+			}
+		}
+		logger.debug("Leaving");
+	}
 	//FinanceMain Details Tab ---> 2. Grace Period Details
 
 	/**
@@ -9823,8 +9869,27 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		try {
-			aFinanceMain.setDsaCode(this.dsaCode.getValue());
+			aFinanceMain.setDsaName(this.dsaCode.getValue());
 			aFinanceMain.setDsaCodeDesc(this.dsaCode.getDescription());
+			Object object = this.dsaCode.getAttribute("DSAdealerID");
+			if (object != null) {
+				aFinanceMain.setDsaCode(object.toString());
+			} else {
+				aFinanceMain.setDsaCode(null);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceMain.setDmaName(this.dmaCode.getValue());
+			aFinanceMain.setDmaCodeDesc(this.dmaCode.getDescription());
+			Object object = this.dmaCode.getAttribute("DMAdealerID");
+			if (object != null) {
+				aFinanceMain.setDmaCode(object.toString());
+			} else {
+				aFinanceMain.setDmaCode(null);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -9832,13 +9897,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		try {
 			aFinanceMain.setReferralId(this.referralId.getValue());
 			aFinanceMain.setReferralIdDesc(this.referralId.getDescription());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			aFinanceMain.setDmaCode(this.dmaCode.getValue());
-			aFinanceMain.setDmaCodeDesc(this.dmaCode.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

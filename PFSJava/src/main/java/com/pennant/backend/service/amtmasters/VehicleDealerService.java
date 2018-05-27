@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.amtmasters;
 
+import java.util.List;
+
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditHeader;
 
@@ -55,4 +57,5 @@ public interface VehicleDealerService {
 	AuditHeader doReject(AuditHeader auditHeader);
 	boolean SearchByName(String dealerName);
 	int getVASManufactureCode(String dealerName);
+	List<VehicleDealer> getVehicleDealerById(List<Long> ids);
 }
