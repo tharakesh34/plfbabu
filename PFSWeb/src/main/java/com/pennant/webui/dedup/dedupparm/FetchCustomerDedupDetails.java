@@ -247,7 +247,7 @@ public class FetchCustomerDedupDetails {
 		if (customerDetails.getCustomerDocumentsList() != null) {
 			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
 				if (document.getCustDocCategory().equals(passPort)) {
-					aadharId = document.getCustDocTitle();
+					passPort = document.getCustDocTitle();
 					break;
 				}
 			}
@@ -268,7 +268,7 @@ public class FetchCustomerDedupDetails {
 		customerDedup.setCustSector(customer.getCustSector());
 		customerDedup.setCustSubSector(customer.getCustSubSector());
 		customerDedup.setCustNationality(customer.getCustNationality());
-		customerDedup.setCustPassportNo(customer.getCustPassportNo());
+		customerDedup.setCustPassportNo(passPort);
 		customerDedup.setCustTradeLicenceNum(customer.getCustTradeLicenceNum());
 		customerDedup.setCustVisaNum(customer.getCustVisaNum());
 		customerDedup.setMobileNumber(mobileNumber);
