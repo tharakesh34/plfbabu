@@ -855,7 +855,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (isChgReceipt) {
 			aFinScheduleData = getFinanceDetailService().getFinSchDataForReceipt(financeMain.getFinReference(), "_AView");
-			//aFinScheduleData.getFinFeeDetailList().addAll(this.receiptService.getFinFeeDetailById(finReference.getValue(), false, "_TView", eventCode));
+			List<FinFeeDetail> feedetailList = getFinanceDetail().getFinScheduleData().getFinFeeDetailActualList();
+			aFinScheduleData.setFinFeeDetailList(feedetailList);
 			getFinanceDetail().setFinScheduleData(aFinScheduleData);
 		} else {
 			Cloner cloner = new Cloner();
@@ -1548,24 +1549,26 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				} else {
 
 					// If Event changed and existing fee should be removed from list, if it is already available in DB
-					if (StringUtils.equals(fee.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-						fee.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-						fee.setRcdVisible(false);
+					if(!StringUtils.equals(fee.getFinEvent(), eventCode)){
+						if (StringUtils.equals(fee.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+							fee.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+							fee.setRcdVisible(false);
 
-						// If Fee available and is in cancel state, should be reverted back to Original State
-					} else if (StringUtils.equals(fee.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+							// If Fee available and is in cancel state, should be reverted back to Original State
+						} else if (StringUtils.equals(fee.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 
-						if(finTypeFeesList != null && !finTypeFeesList.isEmpty()) {
-							for (FinTypeFees finTypeFee : finTypeFeesList) {
-								if(finTypeFee.getFeeTypeID() == fee.getFeeTypeID() &&
-										StringUtils.equals(finTypeFee.getFinEvent(), fee.getFinEvent())) {
+							if(finTypeFeesList != null && !finTypeFeesList.isEmpty()) {
+								for (FinTypeFees finTypeFee : finTypeFeesList) {
+									if(finTypeFee.getFeeTypeID() == fee.getFeeTypeID() &&
+											StringUtils.equals(finTypeFee.getFinEvent(), fee.getFinEvent())) {
 
-									fee.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-									fee.setRcdVisible(true);
+										fee.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+										fee.setRcdVisible(true);
 
-									// Based on FinType Fees, new list will be added in the FinFeeListCtrl,
-									// So if already exists in available list it should be removed from FinTypeFees
-									finTypeFeesList.remove(0);
+										// Based on FinType Fees, new list will be added in the FinFeeListCtrl,
+										// So if already exists in available list it should be removed from FinTypeFees
+										finTypeFeesList.remove(0);
+									}
 								}
 							}
 						}
@@ -6376,7 +6379,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		if (StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE) ||StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
 			
-			BigDecimal remainingPaid1 = (totalDue.add(totalAdvDue)).subtract(totalPaid).subtract(totalWaived);
+			BigDecimal remainingPaid1 = (totalDue.add(totalAdvDue)).subtract(totalPaid).subtract(totalWaived).subtract(totalAdvPaid).subtract(totalAdvWaived);
 			if(remainingPaid1.compareTo(BigDecimal.ZERO) != 0){
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Settlement" ,
 						new String[] { PennantAppUtil.getlabelDesc(tempReceiptPurpose, PennantStaticListUtil.getReceiptPurpose())}));
