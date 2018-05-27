@@ -966,12 +966,12 @@ public class RepaymentProcessUtil {
 							
 							ManualAdvise advise = new ManualAdvise();
 							advise.setAdviseID(allocation.getAllocationTo());
-							advise.setPaidAmount(allocation.getPaidAmount());
-							advise.setWaivedAmount(allocation.getWaivedAmount());
 							
 							for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
 								for (ManualAdviseMovements movement : receiptDetail.getAdvMovements()) {
 									if(allocation.getAllocationTo() == movement.getAdviseID()){
+										advise.setPaidAmount(advise.getPaidAmount().add(movement.getPaidAmount()));
+										advise.setWaivedAmount(advise.getWaivedAmount().add(movement.getWaivedAmount()));
 										advise.setPaidCGST(advise.getPaidCGST().add(movement.getPaidCGST()));
 										advise.setPaidSGST(advise.getPaidSGST().add(movement.getPaidSGST()));
 										advise.setPaidIGST(advise.getPaidIGST().add(movement.getPaidIGST()));
