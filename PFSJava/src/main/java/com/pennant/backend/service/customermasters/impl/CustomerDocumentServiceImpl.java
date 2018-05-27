@@ -70,6 +70,7 @@ import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.validation.CustomerDocumentValidation;
+import com.pennant.backend.service.masters.MasterDefService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -89,6 +90,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 	private CustomerDocumentValidation customerDocumentValidation;
 	private DocumentTypeService documentTypeService;
 	private DocumentManagerDAO documentManagerDAO;
+	private MasterDefService masterDefService;
 
 	public CustomerDocumentServiceImpl() {
 		super();
@@ -669,6 +671,12 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 	public int getVersion(long custId, String docType) {
 		return getCustomerDocumentDAO().getVersion(custId,docType);
 	}
+	
+	@Override
+	public String getDocTypeByMasterDefByCode(String masterType, String keyCode) {
+		return masterDefService.getMasterKeyTypeByCode(masterType, keyCode);
+	}
+
 	public void setDocumentTypeService(DocumentTypeService documentTypeService) {
 		this.documentTypeService = documentTypeService;
 	}
@@ -679,4 +687,9 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
 	}
+
+	public void setMasterDefService(MasterDefService masterDefService) {
+		this.masterDefService = masterDefService;
+	}
+
 }

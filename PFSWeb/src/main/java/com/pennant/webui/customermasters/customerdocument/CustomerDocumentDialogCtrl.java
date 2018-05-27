@@ -217,7 +217,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private DeviationExecutionCtrl deviationExecutionCtrl; 
 	private List<DocumentDetails> verificationDocuments;
 	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
-	private MasterDefService masterDefService;
 	
 	
 	/**
@@ -920,7 +919,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			//TODO:Need To move HardCoded values into constants.
 			String value = this.custDocType.getValue();
 			if (StringUtils.isNotBlank(value)) {
-				String masterDocType = masterDefService.getMasterKeyTypeByCode("DOC_TYPE", value);
+				String masterDocType = customerDocumentService.getDocTypeByMasterDefByCode("DOC_TYPE", value);
 				String regex = PennantRegularExpressions.REGEX_ALPHANUM_CODE;
 				if (StringUtils.equalsIgnoreCase("PAN", masterDocType)) {
 					regex = PennantRegularExpressions.REGEX_PANNUMBER;
@@ -2388,10 +2387,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
 		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
-	}
-
-	public void setMasterDefService(MasterDefService masterDefService) {
-		this.masterDefService = masterDefService;
 	}
 
 }

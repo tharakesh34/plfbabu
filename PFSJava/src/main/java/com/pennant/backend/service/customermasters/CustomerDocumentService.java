@@ -67,4 +67,6 @@ public interface CustomerDocumentService {
 	List<CustomerDocument> getApprovedCustomerDocumentById(long id);
 	int getVersion(long custId,String docType);
 	AuditDetail validateCustomerDocuments(CustomerDocument customerDocument,Customer customer);
+
+	String getDocTypeByMasterDefByCode(String masterType, String keyCode);
 }

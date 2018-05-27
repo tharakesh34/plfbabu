@@ -2916,6 +2916,7 @@
 		<property name="documentTypeService" ref="documentTypeService" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="masterDefService" ref="masterDefService" />
 	</bean>
 
 	<!--============ Customer Email Details ============== -->
