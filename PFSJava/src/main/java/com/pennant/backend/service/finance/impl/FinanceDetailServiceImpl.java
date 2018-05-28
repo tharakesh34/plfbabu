@@ -115,7 +115,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
 import com.pennant.backend.model.collateral.CollateralAssignment;
-import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
@@ -229,10 +228,8 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.pff.verification.Module;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
-import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
@@ -579,84 +576,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		//Cheque Header and Cheque Details getting
 		financeDetail.setChequeHeader(finChequeHeaderService.getChequeHeaderByRef(finReference));
-		
-		// FI Init Verification
-		if (financeDetail.isFiInitTab()) {
-			if (financeDetail.getFiVerification() == null) {
-				financeDetail.setFiVerification(new Verification());
-			}
-			
-			setVerificationData(financeDetail,financeDetail.getFiVerification());
-		//	setFIInitVerification(financeDetail);
-		}
-		// FI Approval Verification
-		if (financeDetail.isFiApprovalTab()) {
-			Verification verification = new Verification();
-			verification.getCustomerDetailsList().add(financeDetail.getCustomerDetails());
-			for (JointAccountDetail jointAccountDetail : financeDetail.getJountAccountDetailList()) {
-				verification.getCustomerDetailsList()
-						.add(getCustomerDetailsService().getApprovedCustomerById(jointAccountDetail.getCustID()));
-			}
-			String keyRef = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-			List<Verification> verifications = verificationService.getVerifications(keyRef,
-					VerificationType.FI.getKey());
-			List<FieldInvestigation> fiList = fieldInvestigationService.getList(keyRef);
-			for (Verification vrf : verifications) {
-				for (FieldInvestigation fi : fiList) {
-					if (vrf.getId() == fi.getVerificationId()) {
-						vrf.setFieldInvestigation(fi);
-					}
-				}
-			}
-			//hiding the initiate and non investigated records
-			for (int i = 0; i < verifications.size(); i++) {
-				if (verifications.get(i).getRequestType() == RequestType.INITIATE.getKey()
-						&& verifications.get(i).getFieldInvestigation() == null) {
-					verifications.remove(verifications.get(i));
-					i--;
-				}
-			}
-			verification.setVerifications(verifications);
-			financeDetail.setFiVerification(verification);
-		}
-		
-		// TV Verification Initiation
-		if (financeDetail.isTvInitTab()) {
-			financeDetail.setTvVerification(new Verification());
-			setInitVerification(financeDetail, VerificationType.TV);
-		}
-		
-		// LV Verification Initiation
-		if (financeDetail.isLvInitTab()) {
-			financeDetail.setLvVerification(new Verification());
-			setInitVerification(financeDetail, VerificationType.LV);
-		}
-		
-		// LV Verification Approval
-		if (financeDetail.isLvApprovalTab()) {
-			Verification verification=new Verification();
-
-			String keyRef = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-			verification.setKeyReference(keyRef);
-			financeDetail.setLvVerification(verification);
-		}
-		
-		// RCU Verification Initiation
-		if (financeDetail.isRcuInitTab()) {
-			Verification verfication = new Verification();
-			verfication.setVerificationType(VerificationType.RCU.getKey());
-			setVerificationData(financeDetail, verfication);
-			financeDetail.setRcuVerification(verfication);
-		}
-		
-		// RCU Verification Approval
-		if (financeDetail.isRcuApprovalTab()) {
-			Verification verfication = new Verification();
-			verfication.setVerificationType(VerificationType.RCU.getKey());
-			setVerificationData(financeDetail, verfication);
-			financeDetail.setRcuVerification(verfication);
-		}
-		
+				
 		logger.debug("Leaving");
 		return financeDetail;
 	}
@@ -690,87 +610,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
-	public void setFIInitVerification(FinanceDetail financeDetail) {
-		Verification verification = financeDetail.getFiVerification();
-		verification.getCustomerDetailsList().clear();
-		verification.getCustomerDetailsList().add(financeDetail.getCustomerDetails());
-		
-		for (JointAccountDetail jointAccountDetail : financeDetail.getJountAccountDetailList()) {
-			verification.getCustomerDetailsList()
-					.add(getCustomerDetailsService().getApprovedCustomerById(jointAccountDetail.getCustID()));
-		}
-
-		//removing the deleted addresses
-		for (CustomerDetails screenCustomer : verification.getCustomerDetailsList()) {
-			if (screenCustomer.getAddressList() == null) {
-				continue;
-			}
-			
-			for (int i = 0; i < screenCustomer.getAddressList().size(); i++) {
-				String recordType = screenCustomer.getAddressList().get(i).getRecordType();
-				if (StringUtils.isNotEmpty(screenCustomer.getAddressList().get(i).getRecordType())
-						&& (recordType.equals(PennantConstants.RECORD_TYPE_DEL)
-								|| recordType.equals(PennantConstants.RECORD_TYPE_CAN))) {
-					screenCustomer.getAddressList().remove(i);
-					i--;
-				}
-			}
-		}
-		setVerificationData(financeDetail, verification);		
-		verification.setVerificationType(VerificationType.FI.getKey());
-		verification = fieldInvestigationService.getFiVeriFication(verification);
-		financeDetail.setFiVerification(verification);
-	}
 	
-	public void setInitVerification(FinanceDetail financeDetail, VerificationType type) {
-		Verification verification;
-		if (type == VerificationType.TV) {
-			verification = financeDetail.getTvVerification();
-		} else {
-			verification = financeDetail.getLvVerification();
-		}
-		verification.getCollateralSetupList().clear();
-		for (CollateralAssignment CollAsmt : financeDetail.getCollateralAssignmentList()) {
-			CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(),
-					"_Aview");
-			collateralSetup.setRecordType(CollAsmt.getRecordType());
-			verification.getCollateralSetupList().add(collateralSetup);
-		}
-		List<CollateralSetup> screenCollaterals = new ArrayList<>();
-		screenCollaterals.addAll(verification.getCollateralSetupList());
-
-		//removing the deleted Collaterals
-		for (CollateralSetup screenCollateral : screenCollaterals) {
-			if (StringUtils.isNotEmpty(screenCollateral.getRecordType())
-					&& (screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)
-							|| screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL))) {
-				verification.getCollateralSetupList().remove(screenCollateral);
-			}
-		}
-		setVerificationData(financeDetail, verification);
-		if (type == VerificationType.TV) {
-			
-			
-		} else {
-			verification.setVerificationType(VerificationType.LV.getKey());
-			//verification = technicalVerificationService.getTvVeriFication(verification);
-			financeDetail.setLvVerification(verification);
-		}
-	}
-
-	private void setVerificationData(FinanceDetail financeDetail, Verification verification) {
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		Customer customer = financeDetail.getCustomerDetails().getCustomer();
-		verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
-		verification.setModule(Module.LOAN.getKey());
-		verification.setKeyReference(financeMain.getFinReference());
-		verification.setCustId(customer.getCustID());
-		verification.setCustomerName(customer.getCustShrtName());
-		verification.setReference(customer.getCustCIF());
-		verification.setCreatedOn(DateUtility.getAppDate());
-	}
-
 	/**
 	 * Method for Fetching Extended Field Details for the Asset Types
 	 * 

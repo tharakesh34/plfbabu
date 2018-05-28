@@ -1,0 +1,94 @@
+<zk>
+	<zscript><![CDATA[
+
+		Map data = new LinkedHashMap();
+		data.put("group 1", new ArrayList());
+		data.put("group 2", new ArrayList());
+		data.put("group 3", new ArrayList());
+
+		data.get("group 1").add("item 1");
+		data.get("group 1").add("item 2");
+		data.get("group 1").add("item 3");
+		data.get("group 2").add("item 4");
+		data.get("group 2").add("item 5");
+
+		public void fillListbox(Listbox listbox) {
+			listbox.getItems().clear();
+			for(entry : data.entrySet()) {
+				listbox.appendChild(new Listgroup(entry.getKey()));
+
+				Listitem listitem = new Listitem();
+				listbox.appendChild(listitem);
+
+				List items = entry.getValue();
+				if(items.isEmpty()) {
+					Listcell lc = new Listcell();
+					lc.appendChild(new Label("empty group"));
+					lc.setSpan(6);
+					lc.setStyle("text-align:center;");
+					listitem.appendChild(lc);
+					continue;
+				}
+				for(item : entry.getValue()) {
+					Listitem listitem = new Listitem();
+					listbox.appendChild(listitem);
+
+					listitem.appendChild(new Listcell(item + " long long long long long"));
+					listitem.appendChild(new Listcell(item + " short"));
+
+					Listcell lc3 = new Listcell();
+					lc3.appendChild(new Combobox());
+					listitem.appendChild(lc3);
+
+					Listcell lc4 = new Listcell();
+					lc4.appendChild(new Textbox());
+					listitem.appendChild(lc4);
+
+					listitem.appendChild(new Listcell(item + " medium medium"));
+					listitem.appendChild(new Listcell());
+				}
+			}
+		}
+		
+		public void addItem(Listbox listbox) {
+			data.get("group 1").add("added item");
+			fillListbox(listbox);
+		}
+
+		public void removeItem(Listbox listbox) {
+			List group1 = data.get("group 1");
+			group1.remove(group1.size() - 1);
+			fillListbox(listbox);
+		}
+	]]></zscript>
+	<tabbox>
+		<tabs>
+			<tab label="1"/>
+			<tab label="2" onClick="Clients.resize(lb)"/>
+		</tabs>
+		<tabpanels>
+		<tabpanel>
+			<button label="add item" onClick="addItem(lb);"/>
+			<button label="remove item" onClick="removeItem(lb);"/>
+		</tabpanel>
+		<tabpanel>
+			<div width="700px">
+				<groupbox style="border:none;">
+					<listbox id="lb" width="100%" sizedByContent="true" span="true" style="overflow:auto;"
+						onCreate="fillListbox(self);">
+						<listhead sizable="false">
+							<listheader label="head 1"/>
+							<listheader label="head 2"/>
+							<listheader label="head 3"/>
+							<listheader label="head 4"/>
+							<listheader label="head 5"/>
+							<listheader label="head 6"/>
+						</listhead>
+					</listbox>
+				</groupbox>
+			</div>
+		</tabpanel>
+		</tabpanels>
+	</tabbox>
+
+</zk>
