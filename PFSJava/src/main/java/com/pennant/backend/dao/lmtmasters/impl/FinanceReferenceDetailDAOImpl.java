@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinanceReferenceDetailDAOImpl.java                                                   * 	  
+ * FileName    		:  FinanceReferenceDetailDAOImpl.java                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -31,8 +31,8 @@
  ********************************************************************************************
  * 26-11-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 28-05-2018       Sai Krishna              0.2          bugs #388 Get active notifications* 
+ *                                                        only from the process editor.     * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.dao.lmtmasters.impl;
 
 import java.sql.ResultSet;
@@ -345,10 +344,11 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		
+
+		// bugs #388 Get active notifications only from the process editor.
 		StringBuilder selectSql = new StringBuilder("Select FinRefId , LovDescCodeLov ");
 		selectSql.append(" From LMTFinRefDetail_ATView ");
-		selectSql.append(" Where FinType =:FinType AND FinEvent =:FinEvent ");
+		selectSql.append(" Where FinType =:FinType AND FinEvent =:FinEvent and IsActive = 1 ");
 
 		if (StringUtils.isNotBlank(roleCode)) {
 			selectSql.append(" AND MandInputInStage LIKE '%" + roleCode + ",%' ");
