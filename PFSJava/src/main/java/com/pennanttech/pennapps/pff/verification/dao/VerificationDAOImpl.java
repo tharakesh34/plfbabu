@@ -333,10 +333,10 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			
 			rcuDocument = verification.getRcuDocument();
 			if (rcuDocument.getDocumentType() == DocumentType.COLLATRL.getKey()) {
-				sql.append(" where vd.documentid = :documentid and v.custid = :custid");
+				sql.append(" where vd.documentid = :documentid");
 			} else {
 				sql.append(" where vd.documentid = :documentid and vd.documentsubid = :referenceFor");
-				sql.append(" and vd.documenttype=:documenttype and v.custid = :custid");
+				sql.append(" and vd.documenttype=:documenttype");
 			}
 			
 			sql.append(" and v.verificationType = :verificationType and v.verificationdate is not null and v.status !=0)");
