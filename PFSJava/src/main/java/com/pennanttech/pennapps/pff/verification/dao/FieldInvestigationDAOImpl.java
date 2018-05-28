@@ -73,6 +73,7 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
@@ -101,6 +102,7 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
@@ -230,6 +232,8 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 			return jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource,
 					ParameterizedBeanPropertyRowMapper.newInstance(FieldInvestigation.class));
 		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);

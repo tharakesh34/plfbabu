@@ -86,7 +86,6 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.pff.verification.VerificationType;
 
 public interface FinanceDetailService {
 	
@@ -198,8 +197,4 @@ public interface FinanceDetailService {
 	
 	//GST
 	HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail, String branchCode);
-	
-	void setFIInitVerification(FinanceDetail financeDetail);
-
-	void setInitVerification(FinanceDetail financeDetail,VerificationType type);
  }

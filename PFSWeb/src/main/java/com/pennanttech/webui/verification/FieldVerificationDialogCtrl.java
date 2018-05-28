@@ -127,11 +127,13 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		appendFinBasicDetails(arguments.get("finHeaderList"));
 
-		financeDetail = (FinanceDetail) arguments.get("financeDetail");
-
-		verification = financeDetail.getFiVerification();
-
-		verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
+		this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
+		this.verification = financeDetail.getFiVerification();
+		if (this.verification == null) {
+			this.verification = new Verification();
+			this.financeDetail.setFiVerification(this.verification);
+		}
+		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
 
 		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
 
@@ -690,7 +692,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		Map<String, Verification> addressMap = new HashMap<>();
 		Map<String, Verification> newAddressMap = new HashMap<>();
 		List<Verification> tempVerifications = new ArrayList<>();
-		List<String> requiredCodes = addressTypeDAO.getFiRequiredCodes();
 		Set<String> deletedSet = new HashSet<>();
 		Verification newVrf;
 
@@ -839,7 +840,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setCustomerName(customer.getCustShrtName());
 		item.setCustId(customer.getCustID());
 		item.setReference(customer.getCustCIF());
-		item.setKeyReference(verification.getKeyReference());
+		item.setKeyReference(this.verification.getKeyReference());
 		if (coApplicant) {
 			item.setReferenceType("Co-applicant");
 		} else {

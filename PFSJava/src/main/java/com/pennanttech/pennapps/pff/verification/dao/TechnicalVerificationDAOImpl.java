@@ -53,13 +53,13 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into verification_tv");
+		StringBuilder sql = new StringBuilder("insert into verification_tv");
 		sql.append(tableType.getSuffix());
 		sql.append(" (verificationId, agentCode, agentName,  type,  verifiedDate, status, reason,");
 		sql.append(" summaryRemarks, sourceFormName, verificationFormName, observationRemarks, valuationAmount,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append("values (:verificationId, :agentCode, :agentName,  :type,  :verifiedDate, :status, :reason,");
+		sql.append(" values (:verificationId, :agentCode, :agentName,  :type,  :verifiedDate, :status, :reason,");
 		sql.append(" :summaryRemarks, :sourceFormName, :verificationFormName, :observationRemarks, :valuationAmount,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
@@ -95,6 +95,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
@@ -123,6 +124,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		try {
   			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
@@ -162,7 +164,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		StringBuilder sql = new StringBuilder("update verification_tv");
 		sql.append(tableType.getSuffix());
 		sql.append(
-				" set verifiedDate = :verifiedDate, type = :type, agentCode = :agentCode, agentName = :agentName, status = :status, ");
+				" set verifiedDate = :verifiedDate, type = :type, agentCode = :agentCode, agentName = :agentName, status = :status,");
 		sql.append(
 				" reason = :reason, summaryremarks = :summaryRemarks,  valuationAmount = :valuationAmount, Version = :Version, LastMntBy = :LastMntBy,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
@@ -216,7 +218,6 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 	 */
 	@Override
 	public TechnicalVerification getTechnicalVerification(long id, String type) {
-
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
@@ -242,8 +243,9 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-		} 
+		}
 		logger.debug(Literal.LEAVING);
 		return null;
 	}

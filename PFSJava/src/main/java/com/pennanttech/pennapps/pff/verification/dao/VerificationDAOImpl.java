@@ -96,7 +96,6 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		try {
 			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(e);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -296,7 +295,6 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -335,9 +333,10 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			
 			rcuDocument = verification.getRcuDocument();
 			if (rcuDocument.getDocumentType() == DocumentType.COLLATRL.getKey()) {
-				sql.append(" where vd.documentid  = :documentid ");
+				sql.append(" where vd.documentid = :documentid and v.custid = :custid");
 			} else {
-				sql.append(" where vd.documentsubid = :referenceFor and vd.documenttype=:documenttype");
+				sql.append(" where vd.documentid = :documentid and vd.documentsubid = :referenceFor");
+				sql.append(" and vd.documenttype=:documenttype and v.custid = :custid");
 			}
 			
 			sql.append(" and v.verificationType = :verificationType and v.verificationdate is not null and v.status !=0)");
@@ -357,14 +356,18 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 				paramMap.addValue("dealerType", Agencies.LVAGENCY.getKey());
 			} else if (type == VerificationType.RCU.getKey()) {
 				paramMap.addValue("dealerType", Agencies.RCUVAGENCY.getKey());
-				paramMap.addValue("documenttype", rcuDocument.getDocumentType() );
-				paramMap.addValue("documentid", rcuDocument.getDocumentId() );
+				if (rcuDocument != null) {
+					paramMap.addValue("documenttype", rcuDocument.getDocumentType());
+					paramMap.addValue("documentid", rcuDocument.getDocumentId());
+				} else {
+					paramMap.addValue("documenttype", 0);
+					paramMap.addValue("documentid", 0);
+				}
 			}
 
 			logger.debug(Literal.SQL + sql.toString());
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -400,7 +403,6 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		try {
 			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

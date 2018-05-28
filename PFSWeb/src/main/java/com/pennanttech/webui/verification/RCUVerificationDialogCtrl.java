@@ -130,9 +130,13 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		appendFinBasicDetails(arguments.get("finHeaderList"));
 
-		financeDetail = (FinanceDetail) arguments.get("financeDetail");
-
-		verification = financeDetail.getRcuVerification();
+		this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
+		this.verification = financeDetail.getRcuVerification();
+		if (this.verification == null) {
+			this.verification = new Verification();
+			this.financeDetail.setRcuVerification(this.verification);
+		}
+		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
 
 		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
 		financeMainDialogCtrl.setRcuVerificationDialogCtrl(this);
@@ -284,6 +288,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		current.setReference(previous.getReference());
 		current.setStatus(previous.getStatus());
 		current.setVerificationDate(previous.getVerificationDate());
+		current.setKeyReference(previous.getKeyReference());
+		current.setCustId(previous.getCustId());
 		current.setNewRecord(false);
 
 		RCUDocument previousDoc = previous.getRcuDocument();
@@ -322,6 +328,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setDocType(documentType.getKey());
 		item.setVerificationType(VerificationType.RCU.getKey());
 		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
+		item.setKeyReference(this.verification.getKeyReference());
+		item.setCustId(document.getCustID());
 
 		//set RCU Required
 		if (rcuRequiredDocs.contains(document.getCustDocCategory())) {
@@ -331,6 +339,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		rcuDocument.setDocCategory(document.getCustDocCategory());
+		rcuDocument.setDocumentId(document.getCustID());
+		rcuDocument.setDocumentSubId(document.getCustDocCategory());
 		rcuDocument.setDocumentType(documentType.getKey());
 		item.setRcuDocument(rcuDocument);
 
@@ -352,7 +362,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setDocType(documentType.getKey());
 		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 		item.setReferenceFor(document.getDocCategory());
-
+		item.setKeyReference(this.verification.getKeyReference());
 		item.setVerificationType(VerificationType.RCU.getKey());
 
 		// set RCU Required

@@ -430,7 +430,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 			// FI Document Details
 			List<DocumentDetails> documentsList = fi.getDocuments();
-			if (documentsList != null && documentsList.size() > 0) {
+			if (documentsList != null && !documentsList.isEmpty()) {
 				List<AuditDetail> details = fi.getAuditDetailMap().get("DocumentDetails");
 				details = saveOrUpdateDocuments(details, fi, "");
 				auditDetails.addAll(details);
@@ -467,7 +467,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 	// Method for Deleting all records related to FI setup in _Temp/Main tables depend on method type
 	public List<AuditDetail> deleteChilds(FieldInvestigation fi, String tableType, String auditTranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditList = new ArrayList<>();
 
@@ -487,7 +487,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 		// Document Details.
 		List<AuditDetail> documentDetails = fi.getAuditDetailMap().get("DocumentDetails");
-		if (documentDetails != null && documentDetails.size() > 0) {
+		if (documentDetails != null && !documentDetails.isEmpty()) {
 			DocumentDetails document = new DocumentDetails();
 			List<DocumentDetails> documents = new ArrayList<>();
 			String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
@@ -560,7 +560,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
-		auditHeader = getAuditDetails(auditHeader, method);
+		getAuditDetails(auditHeader, method);
 		FieldInvestigation fieldInvestigation = (FieldInvestigation) auditDetail.getModelData();
 		String usrLanguage = fieldInvestigation.getUserDetails().getLanguage();
 
@@ -620,10 +620,10 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 * @return
 	 */
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 
 		FieldInvestigation fieldInvestigation = (FieldInvestigation) auditHeader.getAuditDetail().getModelData();
 

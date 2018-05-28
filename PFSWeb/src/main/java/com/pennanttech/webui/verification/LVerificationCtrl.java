@@ -133,6 +133,11 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 
 		this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		this.verification = financeDetail.getLvVerification();
+		if (verification == null) {
+			this.verification = new Verification();
+			financeDetail.setLvVerification(this.verification);
+		}
+		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
 
 		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
 
@@ -187,6 +192,8 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		averification.setNewRecord(true);
 		averification.setVerificationType(VerificationType.LV.getKey());
 		averification.setRequestType(RequestType.INITIATE.getKey());
+		averification.setKeyReference(this.verification.getKeyReference());
+		averification.setCustId(financeDetail.getCustomerDetails().getCustomer().getCustID());
 		doShowDialogPage(averification, true);
 
 		logger.debug(Literal.LEAVING);
@@ -209,6 +216,8 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		BeanUtils.copyProperties(this.verification, item);
 		item.setVerificationType(VerificationType.LV.getKey());
 		item.setRequestType(RequestType.WAIVE.getKey());
+		item.setKeyReference(this.verification.getKeyReference());
+		item.setCustId(financeDetail.getCustomerDetails().getCustomer().getCustID());
 		item.setNewRecord(true);
 
 		// Display the dialog page.

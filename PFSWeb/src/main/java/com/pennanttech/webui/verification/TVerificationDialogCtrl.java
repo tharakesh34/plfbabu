@@ -114,14 +114,12 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		appendFinBasicDetails(arguments.get("finHeaderList"));
 
-		financeDetail = (FinanceDetail) arguments.get("financeDetail");
-
-		verification = financeDetail.getTvVerification();
-
-		if (verification == null) {
-			verification = new Verification();
+		this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
+		this.verification = financeDetail.getTvVerification();
+		if (this.verification == null) {
+			this.verification = new Verification();
+			this.financeDetail.setTvVerification(verification);
 		}
-
 		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
 
 		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
@@ -207,7 +205,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setCif(customer.getCustCIF());
 		item.setCustomerName(customer.getCustShrtName());
 		item.setCustId(customer.getCustID());
-		item.setKeyReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
+		item.setKeyReference(this.verification.getKeyReference());
 		item.setReferenceType(collateral.getLovValue());
 		item.setNewRecord(true);
 		item.setVerificationType(VerificationType.TV.getKey());
