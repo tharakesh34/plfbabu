@@ -1992,4 +1992,34 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet id="102" author="Kesav">
+		<comment>Existing Field descriptions changes</comment>
+		<sql>
+			UPdate RBFieldDetails set RbfldDesc = 'From State Union Territory' where RBModule = 'GSTRULE' and RBEvent = 'CGST' and rbfldName = 'fromUnionTerritory';
+			UPdate RBFieldDetails set RbfldDesc = 'To State Union Territory' where RBModule = 'GSTRULE' and RBEvent = 'CGST' and rbfldName = 'toUnionTerritory';
+			UPdate RBFieldDetails set RbfldDesc = 'GST Exempted' where RBModule = 'GSTRULE' and RBEvent = 'CGST' and rbfldName = 'gstExempted';
+			UPdate RBFieldDetails set RbfldDesc = 'To State GST Exempted' where RBModule = 'GSTRULE' and RBEvent = 'CGST' and rbfldName = 'toStateGstExempted';
+			
+			UPdate RBFieldDetails set RbfldDesc = 'From State Union Territory' where RBModule = 'GSTRULE' and RBEvent = 'SGST' and rbfldName = 'fromUnionTerritory';
+			UPdate RBFieldDetails set RbfldDesc = 'To State Union Territory' where RBModule = 'GSTRULE' and RBEvent = 'SGST' and rbfldName = 'toUnionTerritory';
+			UPdate RBFieldDetails set RbfldDesc = 'GST Exempted' where RBModule = 'GSTRULE' and RBEvent = 'SGST' and rbfldName = 'gstExempted';
+			UPdate RBFieldDetails set RbfldDesc = 'To State GST Exempted' where RBModule = 'GSTRULE' and RBEvent = 'SGST' and rbfldName = 'toStateGstExempted';
+			
+			UPdate RBFieldDetails set RbfldDesc = 'From State Union Territory' where RBModule = 'GSTRULE' and RBEvent = 'IGST' and rbfldName = 'fromUnionTerritory';
+			UPdate RBFieldDetails set RbfldDesc = 'To State Union Territory' where RBModule = 'GSTRULE' and RBEvent = 'IGST' and rbfldName = 'toUnionTerritory';
+			UPdate RBFieldDetails set RbfldDesc = 'GST Exempted' where RBModule = 'GSTRULE' and RBEvent = 'IGST' and rbfldName = 'gstExempted';
+			UPdate RBFieldDetails set RbfldDesc = 'To State GST Exempted' where RBModule = 'GSTRULE' and RBEvent = 'IGST' and rbfldName = 'toStateGstExempted';
+			
+			UPdate RBFieldDetails set RbfldDesc = 'From State Union Territory' where RBModule = 'GSTRULE' and RBEvent = 'UGST' and rbfldName = 'fromUnionTerritory';
+			UPdate RBFieldDetails set RbfldDesc = 'To State Union Territory' where RBModule = 'GSTRULE' and RBEvent = 'UGST' and rbfldName = 'toUnionTerritory';
+			UPdate RBFieldDetails set RbfldDesc = 'GST Exempted' where RBModule = 'GSTRULE' and RBEvent = 'UGST' and rbfldName = 'gstExempted';
+			UPdate RBFieldDetails set RbfldDesc = 'To State GST Exempted' where RBModule = 'GSTRULE' and RBEvent = 'UGST' and rbfldName = 'toStateGstExempted';
+			
+			UPdate RBFieldDetails set RbfldType = 'nchar' where RBModule = 'GSTRULE' and RBEvent = 'CGST' and rbfldName = 'toUnionTerritory';
+			UPdate RBFieldDetails set RbfldType = 'nchar' where RBModule = 'GSTRULE' and RBEvent = 'SGST' and rbfldName = 'toUnionTerritory';
+			UPdate RBFieldDetails set RbfldType = 'nchar' where RBModule = 'GSTRULE' and RBEvent = 'IGST' and rbfldName = 'toUnionTerritory';
+			UPdate RBFieldDetails set RbfldType = 'nchar' where RBModule = 'GSTRULE' and RBEvent = 'UGST' and rbfldName = 'toUnionTerritory';		
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
