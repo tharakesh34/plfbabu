@@ -147,7 +147,7 @@
 								<listheader id="listheader_QueryDesc"
 									label="${c:l('listheader_QueryDesc.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_CollateralType"
+								<listheader id="listheader_CustCtgCode"
 									label="${c:l('listheader_CollateralType.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_RecordStatus"
