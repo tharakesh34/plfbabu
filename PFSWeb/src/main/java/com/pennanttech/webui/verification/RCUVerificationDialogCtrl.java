@@ -225,11 +225,11 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		for (DocumentDetails document : documents) {
 			if (isNotDeleted(document.getRecordType())) {
 				Verification object = getVerification(document, documentType);
-				String reference=document.getDocCategory();
+				String reference = document.getDocCategory();
 				if (documentType == DocumentType.COLLATRL) {
 					reference = String.valueOf(document.getDocId()).concat(reference);
 					collateralMap.put(reference, document.getReferenceId());
-				} 
+				}
 				docMap.put(reference, object);
 			}
 		}
@@ -276,6 +276,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		current.setAgency(previous.getAgency());
 		current.setAgencyName(previous.getAgencyName());
 		current.setReason(previous.getReason());
+		current.setReasonName(previous.getReasonName());
 		current.setRemarks(previous.getRemarks());
 		current.setDecision(previous.getDecision());
 		current.setDecisionRemarks(previous.getDecisionRemarks());
@@ -295,7 +296,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			currentDoc.setReinitid(previousDoc.getReinitid());
 			currentDoc.setDocType(previousDoc.getDocType());
 		}
-		
+
 		if (initType) {
 			verificationService.setLastStatus(current);
 		}
@@ -330,11 +331,11 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		rcuDocument.setDocCategory(document.getCustDocCategory());
 		rcuDocument.setDocumentType(documentType.getKey());
 		item.setRcuDocument(rcuDocument);
-		
+
 		if (initType) {
 			verificationService.setLastStatus(item);
 		}
-		
+
 		return item;
 	}
 
@@ -349,7 +350,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setDocType(documentType.getKey());
 		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 		item.setReferenceFor(document.getDocCategory());
-		
+
 		item.setVerificationType(VerificationType.RCU.getKey());
 
 		// set RCU Required
@@ -365,11 +366,11 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		rcuDocument.setDocumentType(documentType.getKey());
 		rcuDocument.setCollateralRef(document.getReferenceId());
 		item.setRcuDocument(rcuDocument);
-		
+
 		if (initType) {
 			verificationService.setLastStatus(item);
 		}
-		
+
 		return item;
 	}
 
@@ -391,7 +392,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<Verification> verifications;
 		List<RCUDocument> oldDocuments;
 
-		verifications = verificationService.getVerifications(this.verification.getKeyReference(), VerificationType.RCU.getKey());
+		verifications = verificationService.getVerifications(this.verification.getKeyReference(),
+				VerificationType.RCU.getKey());
 		oldDocuments = riskContainmentUnitService.getDocuments(verification.getKeyReference(), tableType, documentType);
 
 		for (Verification item : verifications) {
@@ -425,8 +427,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			String reference = ver.getReferenceFor();
 			if (ver.getRcuDocument() != null) {
 				reference = ver.getRcuDocument().getDocCategory();
-				if(documentType==DocumentType.COLLATRL){
-					reference=String.valueOf(ver.getRcuDocument().getDocumentId()).concat(reference);
+				if (documentType == DocumentType.COLLATRL) {
+					reference = String.valueOf(ver.getRcuDocument().getDocumentId()).concat(reference);
 				}
 			} else {
 				if (documentType == DocumentType.COLLATRL) {
@@ -434,7 +436,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					reference = ver.getReference().concat(ver.getReferenceFor());
 				}
 			}
-			
+
 			verificationMap.put(reference, ver);
 		}
 
@@ -716,23 +718,22 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell = new Listcell();
 			listCell.setId("ReferenceFor".concat(String.valueOf(i)));
 			String docName = vrf.getDocName();
-			
-			if(vrf.getDocType()==DocumentType.COLLATRL.getKey()){
+
+			if (vrf.getDocType() == DocumentType.COLLATRL.getKey()) {
 				String key = StringUtils.trimToEmpty(vrf.getReference()).concat(vrf.getReferenceFor());
-				
-				RCUDocument rcuDocument =  vrf.getRcuDocument();				
+
+				RCUDocument rcuDocument = vrf.getRcuDocument();
 				if (rcuDocument != null
 						&& (rcuDocument.getDocumentId() != null && rcuDocument.getDocumentSubId() != null)) {
 					key = StringUtils.trimToEmpty(String.valueOf(rcuDocument.getDocumentId()))
 							.concat(rcuDocument.getDocumentSubId());
 				}
-				
-				
-				if(collateralMap.containsKey(key)) {
+
+				if (collateralMap.containsKey(key)) {
 					docName = collateralMap.get(key).concat(" - ").concat(docName);
 				}
 			}
-			
+
 			listCell.appendChild(new Label(docName));
 			listCell.setParent(item);
 
@@ -801,7 +802,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			remarks.setMaxlength(500);
 			listCell.appendChild(remarks);
 			listCell.setParent(item);
-			
+
 			if (initType) {
 				// Last Verification Agency
 				listCell = new Listcell();
