@@ -1,3 +1,46 @@
+/**
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  AbstractMandateProcess.java                                                   * 	  
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ * Creation Date    :  01-07-2017    														*
+ *                                                                  						*
+ * Modified Date    :  28-05-2018    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 03-07-2017       Pennant	                 0.1                                            * 
+ * 28-05-2018       Srikanth.m	             0.2          Add additional fields             * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+ */
 package com.pennanttech.pff.external.mandate;
 
 import java.io.File;
@@ -41,10 +84,6 @@ import com.pennanttech.pff.external.MandateProcess;
 public abstract class AbstractMandateProcess extends AbstractInterface implements MandateProcess {
 	protected final Logger	logger	= Logger.getLogger(getClass());
 
-
-	private static String	MANDATE_APPROVE_STATUS	= "N";
-	private static String	MANDATE_REJECT_STATUS	= "Y";
-	
 	public AbstractMandateProcess () {
 		super();
 	}
@@ -162,7 +201,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		long notMatched = 0;
 
 		sql = new StringBuilder();
-		sql.append(" SELECT MANDATEID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, ACCT_NUMBER AccNumber,");
+		sql.append(" SELECT MANDATEID, FINREFERENCE, CUSTCIF, MICR_CODE MICR, IFSC_CODE IFSC, ACCT_NUMBER AccNumber,");
 		sql.append(" case when OPENFLAG = 'Y' THEN 'New Open ECS' ELSE 'No Open ECS' END lovValue,");
 		sql.append(" MANDATE_TYPE, MANDATE_REG_NO mandateRef, STATUS, REMARKS reason");
 		sql.append(" FROM MANDATE_RESPONSE");
@@ -264,9 +303,13 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		sql.append(" MANDATEID,");
 		sql.append(" BANKCODE BANK_CODE,");
 		sql.append(" BANKNAME BANK_NAME,");
+		sql.append(" BRANCHCODE BRANCH_CODE,");
 		sql.append(" BRANCHDESC BRANCH_NAME,");
+		sql.append(" ADDOFBRANCH BRANCH_ADDRESS,");
 		sql.append(" CUSTCIF,");
 		sql.append(" CUSTSHRTNAME CUSTOMER_NAME,");
+		sql.append(" PHONENUMBER CUSTOMER_PHONE,");
+		sql.append(" CUSTEMAIL CUSTOMER_EMAIL,");
 		sql.append(" FINTYPE,");
 		sql.append(" FINREFERENCE,");
 		sql.append(" CUST_EMI,");
@@ -276,6 +319,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		sql.append(" ACCTYPE ACCT_TYPE,");
 		sql.append(" ACCHOLDERNAME ACCT_HOLDER_NAME,");
 		sql.append(" MICR MICR_CODE,");
+		sql.append(" IFSC IFSC_CODE,");
 		sql.append(" FIRSTDUEDATE EFFECTIVE_DATE,");
 		sql.append(" EMIENDDATE EMI_ENDDATE,");
 		sql.append(" EXPIRYDATE OPEN_ENDDATE,");
@@ -455,7 +499,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		MapSqlParameterSource source = null;
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT ID RequestID, MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE, STATUS ");
+		sql.append(" SELECT ID RequestID, MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, IFSC_CODE IFSC, ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE, STATUS ");
 		sql.append(" From MANDATE_REQUESTS");
 		sql.append(" Where MandateID =:MandateID and RESP_BATCH_ID IS NULL");
 		source = new MapSqlParameterSource();
