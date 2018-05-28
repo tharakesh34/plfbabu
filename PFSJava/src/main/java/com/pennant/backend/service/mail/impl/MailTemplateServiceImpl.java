@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  MailTemplateServiceImpl.java                                                   * 	  
+ * FileName    		:  MailTemplateServiceImpl.java                                         * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -27,20 +27,19 @@
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date			Author				Version	Comments                                        *
  ********************************************************************************************
- * 04-10-2012       Pennant	                 0.1                                            * 
+ * 04-10-2012   Pennant	            0.1                                                     * 
  *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 28-05-2018   Sai Krishna         0.2     bugs #389 Skip the external e-Mail and SMS      * 
+ *                                          services if the implementation for the same is  * 
+ *                                          not available.	                                * 
+ *                                                        			                        * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.service.mail.impl;
 
 import java.util.ArrayList;
@@ -407,9 +406,12 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	@Override
 	public void sendMail(List<MailTemplate> templates, String finReference) {
 		logger.debug(Literal.ENTERING);
-		
-		mailService.sendEmail(templates, finReference);
-		
+
+		// bugs #389 Skip the external e-Mail and SMS services if the implementation for the same is not available.
+		if (mailService != null) {
+			mailService.sendEmail(templates, finReference);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
