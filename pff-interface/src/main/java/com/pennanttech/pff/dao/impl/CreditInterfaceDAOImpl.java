@@ -108,8 +108,10 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 				tableName.append(customer.getCustCtgCode());
 				tableName.append("_ED");
 				extMapValues = getExtendedField(customer.getCustCIF(), tableName.toString());
-				extendedFieldRender.setSeqNo(Integer.valueOf(extMapValues.get("SeqNo").toString()));
-
+				
+				if (extMapValues != null) {
+					extendedFieldRender.setSeqNo(Integer.valueOf(extMapValues.get("SeqNo").toString()));
+				}
 				extendedFieldRender.setMapValues(extMapValues);
 				customerDetails.setExtendedFieldRender(extendedFieldRender);
 				tableName.setLength(0);

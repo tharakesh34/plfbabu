@@ -46,6 +46,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -59,7 +60,6 @@ import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceExposure;
@@ -463,6 +463,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 			String[] fields = PennantJavaUtil.getFieldDetails(jointAccountDetail, jointAccountDetail.getExcludeFields());
 			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], jointAccountDetail.getBefImage(), jointAccountDetail));
 			
+	
 			
 			if (jointAccountDetail.getCustomerDetails() != null) {
 				if (jointAccountDetail.getCustomerDetails().getExtendedFieldRender() != null) {
@@ -488,8 +489,10 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 
 					// Add Common Fields
 					HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
-					Customer aCustomer = jointAccountDetail.getCustomerDetails().getCustomer();
-					if (aCustomer.isNewRecord()) {
+					
+					Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(jointAccountDetail.getCustCIF(), tableName.toString(), null);
+					
+					if (extFieldMap == null) {
 						isSaveRecord = true;
 					}
 					if (isSaveRecord) {
