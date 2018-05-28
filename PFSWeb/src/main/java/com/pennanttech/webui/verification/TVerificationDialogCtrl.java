@@ -41,6 +41,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
@@ -247,7 +248,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		for (Verification object : verifications) {
 			if ((deletedSet.contains(object.getReferenceFor()) && (object.isNew()
-					|| !verificationService.isVerificationInRecording(object, VerificationType.TV)))) {
+					|| !verificationService.isVerificationInRecording(object, VerificationType.TV, null)))) {
 				object.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 		}
@@ -468,6 +469,10 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		deletedList.clear();
 
+		//set Initiated flag to initiated Records
+		setInitiated(verifications);
+
+		//Render Verifications
 		int i = 0;
 		for (Verification vrf : verifications) {
 			if (PennantConstants.RECORD_TYPE_DEL.equals(vrf.getRecordType())) {
@@ -519,7 +524,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			requestType.setWidth("200px");
 			requestType.setReadonly(true);
 			requestType.setValue(String.valueOf(vrf.getRequestType()));
-			
+
 			List<ValueLabel> list = new ArrayList<>();
 			int reqType = vrf.getRequestType();
 			if (reqType == RequestType.NOT_REQUIRED.getKey() && requiredCodes.contains(vrf.getReferenceType())) {
@@ -539,9 +544,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 				}
 			}
-			
+
 			fillComboBox(requestType, reqType, list);
-			
+
 			requestType.setParent(listCell);
 			listCell.setParent(item);
 
@@ -667,7 +672,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			this.listBoxTechnicalVerification.appendChild(item);
 
-			if (!initType) {
+			if (!initType || vrf.isInitiated()) {
 				requestType.setDisabled(true);
 				agency.setReadonly(true);
 				reason.setReadonly(true);
@@ -675,6 +680,15 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void setInitiated(List<Verification> verifications) {
+		for (Verification verification : verifications) {
+			if (verification.getRequestType() == RequestType.INITIATE.getKey()
+					&& verificationService.isVerificationInRecording(verification, VerificationType.TV, null)) {
+				verification.setInitiated(true);
+			}
+		}
 	}
 
 	private void fillDecision(Verification vrf, Combobox combobox) {
@@ -1030,7 +1044,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public void doSave(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
@@ -1048,6 +1062,24 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		financeDetail.setTvVerification(this.verification);
 
 		logger.debug(Literal.LEAVING);
+
+		if (tab.getId().equals("TAB".concat(AssetConstants.UNIQUE_ID_TVAPPROVAL))) {
+			return validateReinitiation(financeDetail.getTvVerification().getVerifications());
+		}
+		return true;
+
+	}
+
+	private boolean validateReinitiation(List<Verification> verifications) {
+		for (Verification verification : verifications) {
+			if (verification.getDecision() == Decision.RE_INITIATE.getKey()
+					&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)
+					&& verification.getReinitid() == null) {
+				MessageUtil.showError("Technical Verification Re-Initiation is allowed only when user action is save");
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {

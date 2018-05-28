@@ -35,4 +35,5 @@ public interface RiskContainmentUnitDAO extends BasicCrudDao<RiskContainmentUnit
 
 	void updateRCUDocuments(Verification item, TableType table);
 
+	RCUDocument getRCUDocument(long verificationId, long documentId, int documentType);
 }

@@ -46,6 +46,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -221,7 +222,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			docMap = collateralDocuments;
 		}
 
-		// Prepare the Customer Documents
+		// Prepare the Loan/Collateral Documents
 		for (DocumentDetails document : documents) {
 			if (isNotDeleted(document.getRecordType())) {
 				Verification object = getVerification(document, documentType);
@@ -295,6 +296,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			currentDoc.setDocumentSubId(previousDoc.getDocumentSubId());
 			currentDoc.setReinitid(previousDoc.getReinitid());
 			currentDoc.setDocType(previousDoc.getDocType());
+			currentDoc.setDocumentType(previousDoc.getDocumentType());
 		}
 
 		if (initType) {
@@ -680,7 +682,10 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (listBoxRCUVerification.getItems() != null) {
 			listBoxRCUVerification.getItems().clear();
 		}
+		//set Initiated flag to initiated Records
+		setInitiated(verification.getVerifications());
 
+		//Render Verifications
 		int i = 0;
 		DocumentType documentType;
 		for (Verification vrf : verifications) {
@@ -889,7 +894,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			item.setAttribute("vrf", vrf);
 			this.listBoxRCUVerification.appendChild(item);
 
-			if (!initType) {
+			if (!initType || vrf.isInitiated()) {
 				requestType.setDisabled(true);
 				agency.setReadonly(true);
 				reason.setReadonly(true);
@@ -917,6 +922,16 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void setInitiated(List<Verification> verifications) {
+		for (Verification verification : verifications) {
+			RCUDocument rcuDocument = verification.getRcuDocument();
+			if (verification.getRequestType() == RequestType.INITIATE.getKey() && (rcuDocument.getDocumentId() != null)
+					&& verificationService.isVerificationInRecording(verification, VerificationType.RCU, rcuDocument)) {
+				verification.setInitiated(true);
+			}
+		}
 	}
 
 	private void fillDecision(Verification vrf, Combobox decision) {
@@ -1272,7 +1287,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doSave(FinanceDetail financeDetail, Tab tab) {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab) {
 		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
@@ -1292,6 +1307,22 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		financeDetail.setRcuVerification(this.verification);
 
 		logger.debug(Literal.LEAVING);
+		if (tab.getId().equals("TAB".concat(AssetConstants.UNIQUE_ID_RCUAPPROVAL))) {
+			return validateReinitiation(financeDetail.getRcuVerification().getVerifications());
+		}
+		return true;
+	}
+
+	private boolean validateReinitiation(List<Verification> verifications) {
+		for (Verification verification : verifications) {
+			if (verification.getDecision() == Decision.RE_INITIATE.getKey()
+					&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)
+					&& verification.getReinitid() == null) {
+				MessageUtil.showError("RCU Verification Re-Initiation is allowed only when user action is save");
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private List<Verification> getVerifications() {

@@ -17,7 +17,7 @@ public interface RiskContainmentUnitService {
 	RiskContainmentUnit getRiskContainmentUnit(RiskContainmentUnit rcu, String type);
 
 	RiskContainmentUnit getApprovedRiskContainmentUnit(long verificationId);
-	
+
 	AuditHeader delete(AuditHeader auditHeader);
 
 	AuditHeader doApprove(AuditHeader auditHeader);
@@ -35,10 +35,12 @@ public interface RiskContainmentUnitService {
 	void deleteDocuments(long verificationId, TableType tableType);
 
 	List<RCUDocument> getDocuments(String keyReference, TableType tableType, DocumentType documentType);
-	
+
 	RiskContainmentUnit getRiskContainmentUnit(long verificationId);
 
 	void updateRemarks(Verification item);
-	
+
 	void updateRCUDocuments(Verification item);
+
+	RCUDocument getRCUDocument(long verificationId, long documentId, int type);
 }

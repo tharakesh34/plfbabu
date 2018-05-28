@@ -51,7 +51,7 @@ public interface FieldInvestigationService {
 
 	boolean isAddressChanged(Verification verification);
 
-	FieldInvestigation getVerificationinFromRecording(long verificationId);
+	FieldInvestigation getVerificationFromRecording(long verificationId);
 
 	boolean isAddressChanged(long verificationId, CustomerAddres customerAddres);
 

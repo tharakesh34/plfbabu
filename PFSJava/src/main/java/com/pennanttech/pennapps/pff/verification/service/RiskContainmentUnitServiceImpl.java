@@ -809,7 +809,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			rcuDocument.setPagesEyeballed(0);
 			rcuDocument.setAgentRemarks("");
 		}
-		
+
 		riskContainmentUnitDAO.saveDocuments(rcuDocuments, tableType);
 	}
 
@@ -831,8 +831,14 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 
 	@Override
 	public void updateRCUDocuments(Verification item) {
-		riskContainmentUnitDAO.updateRCUDocuments(item,TableType.TEMP_TAB);
+		riskContainmentUnitDAO.updateRCUDocuments(item, TableType.TEMP_TAB);
 		riskContainmentUnitDAO.updateRCUDocuments(item, TableType.MAIN_TAB);
+		riskContainmentUnitDAO.updateRCUDocuments(item, TableType.STAGE_TAB);
+	}
+
+	@Override
+	public RCUDocument getRCUDocument(long verificationId, long documentId, int type) {
+		return riskContainmentUnitDAO.getRCUDocument(verificationId, documentId, type);
 	}
 
 }

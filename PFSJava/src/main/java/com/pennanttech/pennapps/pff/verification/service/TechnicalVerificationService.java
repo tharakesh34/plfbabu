@@ -46,5 +46,5 @@ public interface TechnicalVerificationService {
 	
 	boolean isCollateralChanged(Verification verification);
 	
-	TechnicalVerification getVerificationinFromRecording(long verificationId);
+	TechnicalVerification getVerificationFromRecording(long verificationId);
 }

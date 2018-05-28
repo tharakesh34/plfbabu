@@ -1119,7 +1119,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	@Override
-	public FieldInvestigation getVerificationinFromRecording(long verificationId) {
+	public FieldInvestigation getVerificationFromRecording(long verificationId) {
 
 		return fieldInvestigationDAO.getFieldInvestigation(verificationId, "_view");
 	}

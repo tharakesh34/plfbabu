@@ -48,6 +48,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
+import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 
 public interface VerificationService {
@@ -77,7 +78,7 @@ public interface VerificationService {
 
 	void setLastStatus(Verification verification);
 
-	boolean isVerificationInRecording(Verification verification, VerificationType tv);
+	boolean isVerificationInRecording(Verification verification, VerificationType tv,RCUDocument rcuDocument);
 	
 	List<Verification> getCollateralDocumentsStatus(String collateralReference);
 }

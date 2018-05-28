@@ -292,7 +292,6 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				reInit.getRcuDocuments().add(document);
 			}
 			riskContainmentUnitService.updateRCUDocuments(reInit);
-			//reInit.setReinitid(null);
 		}
 
 		verificationDAO.updateReInit(reInit, TableType.MAIN_TAB);
@@ -546,7 +545,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		List<DocumentDetails> list;
 		if (collaterals != null) {
 			for (CollateralAssignment collateral : collaterals) {
-				list = documentDetailsDAO.getDocumentDetailsByRef(collateral.getCollateralRef(), CollateralConstants.MODULE_NAME, "", "_View");
+				list = documentDetailsDAO.getDocumentDetailsByRef(collateral.getCollateralRef(),
+						CollateralConstants.MODULE_NAME, "", "_View");
 				if (list != null) {
 					collateralDocumentList.addAll(list);
 				}
@@ -593,12 +593,12 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		for (DocumentDetails document : collateralDocumentList) {
 			reference = document.getDocCategory();
 			reference = StringUtils.trimToEmpty(document.getReferenceId()).concat(reference);
-			
+
 			collateralDocumentMap.put(reference, document);
 		}
 
 		for (RCUDocument rcuDocument : item.getRcuDocuments()) {
-			reference =   rcuDocument.getDocCategory();
+			reference = rcuDocument.getDocCategory();
 			if (rcuDocument.getDocumentType() == DocumentType.COLLATRL.getKey()) {
 				reference = StringUtils.trimToEmpty(rcuDocument.getCollateralRef()).concat(reference);
 				DocumentDetails document = collateralDocumentMap.get(reference);
@@ -925,14 +925,22 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	@Override
-	public boolean isVerificationInRecording(Verification verification, VerificationType verificationType) {
+	public boolean isVerificationInRecording(Verification verification, VerificationType verificationType,
+			RCUDocument rcuDocument) {
 		boolean exists = false;
-		if (verificationType == VerificationType.TV) {
-			if (technicalVerificationService.getVerificationinFromRecording(verification.getId()) != null) {
+		if (verificationType == VerificationType.FI) {
+			if (fieldInvestigationService.getVerificationFromRecording(verification.getId()) != null) {
 				exists = true;
 			}
-		} else if (verificationType == VerificationType.FI) {
-			if (fieldInvestigationService.getVerificationinFromRecording(verification.getId()) != null) {
+		} else if (verificationType == VerificationType.TV) {
+			if (technicalVerificationService.getVerificationFromRecording(verification.getId()) != null) {
+				exists = true;
+			}
+		} else if (verificationType == VerificationType.LV) {
+
+		} else if (verificationType == VerificationType.RCU) {
+			if (riskContainmentUnitService.getRCUDocument(verification.getId(), rcuDocument.getDocumentId(),
+					rcuDocument.getDocumentType()) != null) {
 				exists = true;
 			}
 		}

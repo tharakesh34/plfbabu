@@ -47,11 +47,13 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
-import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -73,7 +75,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 @Component(value = "lVerificationCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
+public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	private static final long serialVersionUID = 8661799804403963415L;
 	private static final Logger logger = LogManager.getLogger(LVerificationCtrl.class);
 
@@ -303,7 +305,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 		List<Verification> verifications;
 		if (initType) {
-			verifications =  getVerifications();
+			verifications = getVerifications();
 		} else {
 			if (lvInquiry.getChildren() != null) {
 				lvInquiry.getChildren().clear();
@@ -358,7 +360,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			Label remarks = new Label(vrf.getRemarks());
 			listCell.appendChild(remarks);
 			listCell.setParent(item);
-			
+
 			if (initType) {
 				// Last Verification Agency
 				listCell = new Listcell();
@@ -374,8 +376,8 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 
 			} else if (vrf.getStatus() != 0) {
 				status.setValue(TVStatus.getType(vrf.getStatus()).getValue());
-			}			
-			
+			}
+
 			listCell.appendChild(status);
 			listCell.setParent(item);
 
@@ -614,7 +616,8 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 
 		// Display the dialog page.
-		Map<String, Object> arg = getDefaultArguments();
+		Map<String, Object> arg = new HashMap<>();
+		;
 		arg.put("initiation", initiation);
 		arg.put("verification", vrf);
 		arg.put("legalVerificationListCtrl", this);
@@ -690,7 +693,6 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 			Textbox remarks = new Textbox(vrf.getRemarks());
 			listCell.appendChild(remarks);
 			listCell.setParent(item);
-			
 
 			if (initType) {
 				// Last Verification Agency
@@ -791,14 +793,12 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		// Get the selected entity.
 		Verification vrf = (Verification) listitem.getAttribute("verification");
 
-		/*List<LVDocument> list = getDocuments();
-
-		for (LVDocument LVDocument : list) {
-			if (vrf.getReferenceType().equals(LVDocument.getDocumentSubId())) {
-				vrf.getLvDocuments().add(LVDocument);
-				break;
-			}
-		}*/
+		/*
+		 * List<LVDocument> list = getDocuments();
+		 * 
+		 * for (LVDocument LVDocument : list) { if (vrf.getReferenceType().equals(LVDocument.getDocumentSubId())) {
+		 * vrf.getLvDocuments().add(LVDocument); break; } }
+		 */
 		if (vrf == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
@@ -829,7 +829,8 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
-	private void doClearMessage() {
+	@Override
+	protected void doClearMessage() {
 		for (Listitem listitem : listBoxWaiver.getItems()) {
 			ExtendedCombobox reasonComboBox = (ExtendedCombobox) getComponent(listitem, "Reason");
 			Combobox decision = (Combobox) getComponent(listitem, "WDecision");
@@ -1069,7 +1070,7 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public void doSave_LVVerification(FinanceDetail financeDetail, Tab tab) throws InterruptedException {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab) throws InterruptedException {
 		logger.debug("Entering");
 
 		doClearMessage();
@@ -1087,9 +1088,26 @@ public class LVerificationCtrl extends GFCBaseListCtrl<Verification> {
 		financeDetail.setLvVerification(this.verification);
 
 		logger.debug("Leaving");
+
+		if (tab.getId().equals("TAB".concat(AssetConstants.UNIQUE_ID_LVAPPROVAL))) {
+			return validateReinitiation(financeDetail.getLvVerification().getVerifications());
+		}
+		return true;
+
 	}
-	
-	
+
+	private boolean validateReinitiation(List<Verification> verifications) {
+		for (Verification verification : verifications) {
+			if (verification.getDecision() == Decision.RE_INITIATE.getKey()
+					&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)
+					&& verification.getReinitid() == null) {
+				MessageUtil.showError("Legal Verification Re-Initiation is allowed only when user action is save");
+				return false;
+			}
+		}
+		return true;
+	}
+
 	private List<Verification> getVerifications() {
 		List<Verification> list;
 		String keyReference = this.verification.getKeyReference();

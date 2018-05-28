@@ -49,6 +49,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
@@ -330,6 +331,10 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listBoxFIVerification.getItems().clear();
 		}
 
+		//set Initiated flag to initiated Records
+		setInitiated(verification.getVerifications());
+
+		//Render Verifications
 		int i = 0;
 		for (Verification vrf : verification.getVerifications()) {
 			i++;
@@ -375,7 +380,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Combobox requestType = new Combobox();
 			requestType.setReadonly(true);
 			requestType.setValue(String.valueOf(vrf.getRequestType()));
-						
+
 			List<ValueLabel> list = new ArrayList<>();
 			int reqType = vrf.getRequestType();
 			if (reqType == RequestType.NOT_REQUIRED.getKey() && requiredCodes.contains(vrf.getReferenceFor())) {
@@ -395,10 +400,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 				}
 			}
-			
+
 			fillComboBox(requestType, reqType, list);
-			
-			
 
 			requestType.setParent(listCell);
 			listCell.setParent(item);
@@ -448,14 +451,13 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell = new Listcell();
 			Label status = new Label();
 
-					
 			if (initType && vrf.getLastStatus() != 0) {
 				status.setValue(TVStatus.getType(vrf.getLastStatus()).getValue());
 
 			} else if (vrf.getStatus() != 0) {
 				status.setValue(TVStatus.getType(vrf.getStatus()).getValue());
 			}
-			
+
 			listCell.appendChild(status);
 			listCell.setParent(item);
 
@@ -520,7 +522,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			this.listBoxFIVerification.appendChild(item);
 
-			if (!initType) {
+			if (!initType || vrf.isInitiated()) {
 				requestType.setDisabled(true);
 				agency.setReadonly(true);
 				reason.setReadonly(true);
@@ -529,6 +531,15 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 		logger.debug(Literal.LEAVING);
 
+	}
+
+	private void setInitiated(List<Verification> verifications) {
+		for (Verification verification : verifications) {
+			if (verification.getRequestType() == RequestType.INITIATE.getKey()
+					&& verificationService.isVerificationInRecording(verification, VerificationType.FI, null)) {
+				verification.setInitiated(true);
+			}
+		}
 	}
 
 	private void fillDecision(Verification vrf, Combobox decision) {
@@ -677,10 +688,11 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<CustomerAddres> addresses = customerDetails.getAddressList();
 		List<Verification> verifications = new ArrayList<>();
 		Map<String, Verification> addressMap = new HashMap<>();
-		Map<String, Verification> changedAddressMap = new HashMap<>();
+		Map<String, Verification> newAddressMap = new HashMap<>();
 		List<Verification> tempVerifications = new ArrayList<>();
 		List<String> requiredCodes = addressTypeDAO.getFiRequiredCodes();
 		Set<String> deletedSet = new HashSet<>();
+		Verification newVrf;
 
 		//set deleted addresses of Co-Applicant
 		if (coApplicant) {
@@ -714,16 +726,20 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 			Verification current = addressMap.get(previous.getReferenceFor());
 			if (current != null) {
+				newVrf = new Verification();
 				for (CustomerAddres newAddress : addresses) {
 					if (StringUtils.equals(newAddress.getCustAddrType(), previous.getReferenceFor())
 							&& (newAddress.getCustID() == previous.getCustId())) {
 						CustomerAddres oldAddres = customerAddresService.getCustomerAddresById(previous.getCustId(),
 								previous.getReferenceFor());
 						if (fieldInvestigationService.isAddressChange(oldAddres, newAddress)) {
-							if (verificationService.isVerificationInRecording(previous, VerificationType.FI)) {
-								changedAddressMap.put(current.getReferenceFor(), current);
+							if (verificationService.isVerificationInRecording(previous, VerificationType.FI, null)) {
+								BeanUtils.copyProperties(current, newVrf);
+								newVrf.setNewRecord(true);
+								verifications.add(newVrf);
+							} else {
+								exists = true;
 							}
-							exists = true;
 						}
 						break;
 					}
@@ -732,19 +748,22 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				if (!exists) {
 					setOldVerificationFields(current, previous);
 				}
+				exists = false;
 				current.setId(previous.getId());
 				current.setNewRecord(false);
 				oldVerifications.remove(previous);
+				newAddressMap.put(current.getReferenceFor(), current);
+				addressMap.remove(current.getReferenceFor());
 			}
 		}
 
-		verifications.addAll(oldVerifications);
 		verifications.addAll(addressMap.values());
-		verifications.addAll(changedAddressMap.values());
+		verifications.addAll(newAddressMap.values());
+		verifications.addAll(oldVerifications);
 
 		for (Verification object : verifications) {
 			if ((deletedSet.contains(object.getReferenceFor()) && (object.isNew()
-					|| !verificationService.isVerificationInRecording(object, VerificationType.FI)))) {
+					|| !verificationService.isVerificationInRecording(object, VerificationType.FI, null)))) {
 				object.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 		}
@@ -1093,13 +1112,13 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public void doSave_FiVerification(FinanceDetail financeDetail, Tab tab, boolean recSave)
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave)
 			throws InterruptedException {
 		logger.debug("Entering");
 		List<Verification> list = new ArrayList<>();
 		doClearMessage();
 		doSetValidation();
-
+	
 		List<WrongValueException> wve = doWriteComponentsToBean();
 
 		if (!wve.isEmpty() && tab != null) {
@@ -1119,6 +1138,22 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		financeDetail.setFiVerification(this.verification);
 
 		logger.debug("Leaving");
+		if (tab.getId().equals("TAB".concat(AssetConstants.UNIQUE_ID_FIAPPROVAL))) {
+			return validateReinitiation(financeDetail.getFiVerification().getVerifications());
+		}
+		return true;
+	}
+
+	private boolean validateReinitiation(List<Verification> verifications) {
+		for (Verification verification : verifications) {
+			if (verification.getDecision() == Decision.RE_INITIATE.getKey()
+					&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)
+					&& verification.getReinitid() == null) {
+				MessageUtil.showError("Field Investigation Re-Initiation is allowed only when user action is save");
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public class PhonePriority implements Comparator<CustomerPhoneNumber> {
