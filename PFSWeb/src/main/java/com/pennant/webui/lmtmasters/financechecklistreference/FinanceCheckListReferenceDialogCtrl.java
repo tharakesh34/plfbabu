@@ -15,7 +15,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinanceCheckListReferenceDialogCtrl.java                                                   * 	  
+ * FileName    		:  FinanceCheckListReferenceDialogCtrl.java                             * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -30,9 +30,9 @@
  ********************************************************************************************
  * 08-12-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 28-05-2018       Sai Krishna              0.2          bugs #387 Don't mandate the       * 
+ *                                                        checklist when allows input at a  * 
+ *                                                        particular stage.                 * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -101,6 +101,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.util.CollectionUtil;
 
 /**
  * This is the controller class for the
@@ -736,7 +737,8 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 					}
 				}
 
-				if (!valid) {
+				// bugs #387 Don't mandate the checklist when allows input at a particular stage.
+				if (!valid && CollectionUtil.exists(aFinRefDetail.getMandInputInStage(), ",", userRole)) {
 					String[] errParm = new String[3];
 					String[] valueParm = new String[1];
 					errParm[0] = Long.toString(min);
