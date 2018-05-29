@@ -218,4 +218,82 @@
 			columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
 			constraintName="pk_adtverification_rcu_details" />
 	</changeSet>
+	
+	<changeSet id="6.0" author="murthy.y">
+		<dropTable tableName="adtverification_rcu_details"/>
+	</changeSet>
+	<changeSet id="6.1" author="murthy.y">
+		<createTable tableName="adtverification_rcu_details">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="VerificationID" type="bigint"/>
+			<column name="seqno" type="int"/>
+			<column name="DocumentId" type="bigint"/>
+			<column name="DocumentType" type="int"/>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="ReInitId" type="bigint"/>
+			<column name="VerificationType" type="int" defaultValue="0"/>
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="PagesEyeballed" type="int" defaultValue="0"/>
+			<column name="PagesSampled" type="int" defaultValue="0"/>
+			<column name="InitRemarks" type="varchar(500)" />
+			<column name="AgentRemarks" type="varchar(500)" />
+			<column name="Decision" type="int" remarks="Approve-1, Re-initiate-2, Override-3"/>
+			<column name="DecisionRemarks" type="varchar(500)" />
+			
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="6.1_Post" author="Jayant" dbms="oracle">
+		<addDefaultValue columnName="DocumentType" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="VerificationType" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="Status" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="PagesEyeballed" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="PagesSampled" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="Decision" tableName="adtverification_rcu_details" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="6.1_Post" author="Jayant" dbms="postgresql">
+		<addDefaultValue columnName="DocumentType" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="VerificationType" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="Status" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="PagesEyeballed" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="PagesSampled" tableName="adtverification_rcu_details" defaultValue="0"/>
+		<addDefaultValue columnName="Decision" tableName="adtverification_rcu_details" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="6.1_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table adtverification_rcu_details add constraint df_avrd_DocumentType default 0 for DocumentType;
+			alter table adtverification_rcu_details add constraint df_avrd_VerificationType default 0 for VerificationType;
+			alter table adtverification_rcu_details add constraint df_avrd_status default 0 for Status;
+			alter table adtverification_rcu_details add constraint df_avrd_PagesEyeballed default 0 for PagesEyeballed;
+			alter table adtverification_rcu_details add constraint df_avrd_PagesSampled default 0 for PagesSampled;
+			alter table adtverification_rcu_details add constraint df_avrd_Decision default 0 for Decision;
+		</sql>
+	</changeSet>
+	<changeSet id="6.2" author="murthy.y">
+		<addPrimaryKey tableName="adtverification_rcu_details"
+			columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
+			constraintName="pk_adtverification_rcu_details" />
+	</changeSet>
 </databaseChangeLog>
