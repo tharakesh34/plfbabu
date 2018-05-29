@@ -15,7 +15,6 @@
 	<window id="window_ChequeDetailDialog" border="normal"
 		apply="${chequeDetailDialogCtrl}" width="100%" height="100%"
 		sizable="false">
-
 		<borderlayout id="borderlayoutChequeDetail">
 			<north id="north_Id" visible="false">
 				<div sclass="z-toolbar" style="padding:0">
@@ -70,9 +69,9 @@
 				</div>
 			</north>
 			<center border="none" autoscroll="false">
-				<div>
-					<groupbox id="finBasicdetails" zclass="null"/>
-					<groupbox id="gb_basicDetails" sclass="gb-dialog">
+				<div style="border:none;">
+					<groupbox id="finBasicdetails" style="border:none;"/>
+					<groupbox id="gb_basicDetails" style="border:none;">
 						<grid id="grid_NumbOfChqs"
 							sclass="GridLayoutNoBorder" fixedLayout="true"
 							style="border:0px">
@@ -98,7 +97,7 @@
 							</rows>
 						</grid>
 					</groupbox>
-					<groupbox id ="gb_ChequeDetails" >
+					<groupbox id ="gb_ChequeDetails" style="border:none;">
 						<grid id="grid_chequeDetails"
 							sclass="GridLayoutNoBorder" fixedLayout="true"
 							style="border:0px">
@@ -170,7 +169,7 @@
 									<label
 										value="${c:l('label_ChequeDetailDialog_AccType.value')}" />
 									<hbox>
-										<space spacing="2px" />
+										<space spacing="2px" sclass="mandatory"/>
 										<combobox id="accountType"
 											width="200px" />
 									</hbox>
@@ -178,11 +177,9 @@
 									<label
 										value="${c:l('label_ChequeDetailDialog_AccHolderName.value')}" />
 									<hbox>
-										<space spacing="2px" />
-										<textbox id="accHolderName"
-											maxlength="200" width="200px" />
+										<space spacing="2px" sclass="mandatory"/>
+										<textbox id="accHolderName" maxlength="200" width="200px" />
 									</hbox>
-
 								</row>
 
 								<row id="row3">
@@ -221,28 +218,28 @@
 					</groupbox>
 					<listbox id="listBoxChequeDetail"
 						emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
-						sizedByContent="true" span="true" width="100%" height="100%">
+						sizedByContent="true" span="true" width="100%"  style="overflow:auto;">
 						<listhead sizable="true">
 							<listheader id="listheader_ChequeType"
-								label="${c:l('listheader_ChequeType.label')}" align="left" />
+								label="${c:l('listheader_ChequeType.label')}" align="left" hflex="min" />
 							<listheader id="listheader_ChequeSerialNo"
-								label="${c:l('listheader_ChequeSerialNo.label')}" align="left" />
+								label="${c:l('listheader_ChequeSerialNo.label')}" align="left" hflex="min" />
 							<listheader id="listheader_BankBranchID"
-								label="${c:l('listheader_BankBranchID.label')}" />
+								label="${c:l('listheader_BankBranchID.label')}" hflex="min" />
 							<listheader id="listheader_AccountNo"
-								label="${c:l('listheader_AccountNo.label')}" align="right" />
+								label="${c:l('listheader_AccountNo.label')}" align="right" hflex="min" />
 							<listheader id="listheader_EMI"
-								label="${c:l('listheader_EMI.label')}" align="left" />
+								label="${c:l('listheader_EMI.label')}" align="left" hflex="min" />
 							<listheader id="listheader_Amount"
-								label="${c:l('listheader_Amount.label')}" align="right" />
-							<listheader />
-							<listheader />
+								label="${c:l('listheader_Amount.label')}" align="right" hflex="min" />
+							<listheader hflex="min" />
+							<listheader hflex="min" />
 							<listheader id="listheader_ChequeStatus"
-								label="${c:l('listheader_ChequeStatus.label')}" align="right" />
+								label="${c:l('listheader_ChequeStatus.label')}" align="right" hflex="min" />
 							<listheader id="listheader_AccountType"
-								label="${c:l('listheader_AccountType.label')}" align="right" />
+								label="${c:l('listheader_AccountType.label')}" align="right" hflex="min" />
 							<listheader id="listheader_AccHolderName"
-								label="${c:l('listheader_AccHolderName.label')}" align="right" />
+								label="${c:l('listheader_AccHolderName.label')}" align="right" hflex="min" />
 						</listhead>
 					</listbox>
 				</div>

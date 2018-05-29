@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
@@ -19,7 +21,6 @@ import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Html;
 import org.zkoss.zul.Iframe;
-import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -49,7 +50,6 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	protected Button				btnUploadDoc;
 	protected Iframe				chequeDocumentDivPdfView;
 	protected Div					chequeDocumentDiv;
-	protected Space					space_documnetName;
 
 	private ChequeDetailDialogCtrl	chequeDetailDialogCtrl;
 	private ChequeDetail			chequeDetail;
@@ -157,6 +157,10 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	public void doSave() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		
+		if (StringUtils.trimToNull(this.documentName.getValue()) == null) {
+			throw new WrongValueException(this.documentName,Labels.getLabel("FIELD_IS_MAND" ,new String[]{Labels.getLabel("label_ChequeDetailDocumentDialog_DocumentName.value")})); 
+		}
+		
 		if(chequeDetailDialogCtrl != null) {
 			chequeDetailDialogCtrl.getChequeDocuments().add(chequeDetail);
 		}
@@ -203,6 +207,10 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 		this.chequeId.setValue(String.valueOf(chequeDetail.getChequeSerialNo()));
 		this.documentName.setValue(chequeDetail.getDocumentName());
 		this.documentName.setAttribute("data", chequeDetail);
+		
+		if (StringUtils.trimToNull(chequeDetail.getDocumentName()) != null && !enqiryModule) {
+			this.btnDelete.setVisible(true);
+		}
 
 		if(chequeDetail.getDocImage() == null && chequeDetail.getDocumentRef() != Long.MIN_VALUE) {
 			DocumentManager docManager = documentManagerDAO.getById(chequeDetail.getDocumentRef());

@@ -309,10 +309,13 @@ public class PresentmentDetailExtractService {
 				presentmentDetail.setExcessID(finExcessAmount.getExcessID());
 			} else {
 				presentmentDetail.setPresentmentAmt(presentmentDetail.getSchAmtDue());
+				presentmentDetail.setAdvanceAmt(BigDecimal.ZERO);
 			}
 		} else {
 			presentmentDetail.setPresentmentAmt(presentmentDetail.getSchAmtDue());
+			presentmentDetail.setAdvanceAmt(BigDecimal.ZERO);
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 	
