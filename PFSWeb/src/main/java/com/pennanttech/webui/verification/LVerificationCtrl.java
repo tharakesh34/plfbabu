@@ -194,6 +194,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		averification.setRequestType(RequestType.INITIATE.getKey());
 		averification.setKeyReference(this.verification.getKeyReference());
 		averification.setCustId(financeDetail.getCustomerDetails().getCustomer().getCustID());
+		averification.setReference(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 		doShowDialogPage(averification, true);
 
 		logger.debug(Literal.LEAVING);
@@ -218,6 +219,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		item.setRequestType(RequestType.WAIVE.getKey());
 		item.setKeyReference(this.verification.getKeyReference());
 		item.setCustId(financeDetail.getCustomerDetails().getCustomer().getCustID());
+		item.setReference(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 		item.setNewRecord(true);
 
 		// Display the dialog page.

@@ -144,10 +144,10 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private FinanceDetail financeDetail;
-	
+
 	private Set<String> lvRequiredDocs = new HashSet<>();
 	private Map<String, String> documentMap = new HashMap<>();
-	
+
 	private Map<Long, Verification> documentStatus = new HashedMap<>();
 
 	@Autowired
@@ -232,7 +232,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				setNewRecord(true);
 			}
 
-			doLoadWorkFlow(this.verification.isWorkflow(), this.verification.getWorkflowId(), this.verification.getNextTaskId());
+			doLoadWorkFlow(this.verification.isWorkflow(), this.verification.getWorkflowId(),
+					this.verification.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
@@ -244,9 +245,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			} else {
 				setLegalVerificationListCtrl(null);
 			}
-			
-			setDocumentDetails();
 
+			setDocumentDetails();
 
 			// set Field Properties
 			doSetFieldProperties();
@@ -337,16 +337,16 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			} else {
 				CollateralSetup object = (CollateralSetup) dataObject;
 				collateral.setAttribute("collateralRef", object.getCollateralRef());
-				
+
 				List<Verification> list = verificationService.getCollateralDocumentsStatus(object.getCollateralRef());
 				documentStatus.clear();
 				for (Verification item : list) {
 					documentStatus.put(item.getDocumentId(), item);
 				}
-				
-				fillDocuments(this.listBoxCollateralDocuments, this.lvDocuments, DocumentType.COLLATRL, object.getCollateralRef());
 
-				
+				fillDocuments(this.listBoxCollateralDocuments, this.lvDocuments, DocumentType.COLLATRL,
+						object.getCollateralRef());
+
 			}
 		}
 	}
@@ -443,7 +443,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		if (verification.getReferenceFor() != null) {
-			fillDocuments(this.listBoxCollateralDocuments, this.lvDocuments, DocumentType.COLLATRL, verification.getReferenceFor());
+			fillDocuments(this.listBoxCollateralDocuments, this.lvDocuments, DocumentType.COLLATRL,
+					verification.getReferenceFor());
 		}
 
 		fillDocuments(this.listBoxLoanDocuments, this.lvDocuments, DocumentType.LOAN, null);
@@ -480,7 +481,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	public void fillDocuments(Listbox listbox, List<LVDocument> documents, DocumentType docType, String collateralRef) {
-	List<String> checkedDocuments = new ArrayList<>();
+		List<String> checkedDocuments = new ArrayList<>();
 		List<String> idList = new ArrayList<>();
 
 		if (initiation) {
@@ -537,14 +538,14 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			lc = new Listcell();
 			lc.appendChild(checkbox);
 			lc.setParent(item);
-			
+
 			if (document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
-				Verification object =  documentStatus.get(document.getDocumentId());
-				
-				if(object == null) {
+				Verification object = documentStatus.get(document.getDocumentId());
+
+				if (object == null) {
 					object = new Verification();
 				}
-				
+
 				lc = new Listcell();
 				lc.appendChild(new Label(object.getLastAgency()));
 				lc.setParent(item);
@@ -559,7 +560,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				lc.appendChild(new Label(DateUtil.formatToShortDate(object.getVerificationDate())));
 				lc.setParent(item);
 			}
-			
 
 			listbox.appendChild(item);
 		}
@@ -575,7 +575,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		return builder.toString();
-	
+
 	}
 
 	/**
@@ -933,8 +933,13 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
+			
 		// fill the CustomerPhoneNumber object with the components data
 		doWriteComponentsToBean(this.verification);
+		
+		if (!validateLVDocuments()){
+			return;
+		}
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
@@ -977,6 +982,23 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			MessageUtil.showError(e);
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private boolean validateLVDocuments() {
+		for (Listitem listitem : listBoxCollateralDocuments.getItems()) {
+			Checkbox docIdBox = (Checkbox) listitem.getFirstChild().getFirstChild();
+			LVDocument document = docIdBox.getValue();
+			if (!docIdBox.isChecked() && lvRequiredDocs.contains(document.getDocumentSubId())) {
+				if (MessageUtil.YES == MessageUtil
+						.confirm("Required collateral documets are not selected, Do you want to proceed?")) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+		}
+		return true;
 	}
 
 	/**
