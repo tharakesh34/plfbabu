@@ -14870,6 +14870,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			maturityAge = DateUtility.getYearsBetween(customer.getCustDOB(), maturityDate_two.getValue());
 		}
 
+		BigDecimal iIRVAlue = BigDecimal.ZERO;
+		if(!detail.getCustomerEligibilityCheck().getInstallmentAmount().equals(BigDecimal.ZERO) && !customer.getCustTotalIncome().equals(BigDecimal.ZERO)){
+			iIRVAlue = detail.getCustomerEligibilityCheck().getInstallmentAmount();
+			iIRVAlue = iIRVAlue.divide(customer.getCustTotalIncome(),RoundingMode.HALF_UP);
+			iIRVAlue = iIRVAlue.divide(new BigDecimal(100),RoundingMode.HALF_UP);
+			detail.getCustomerEligibilityCheck().addExtendedField("IIR_RATIO",iIRVAlue);
+		}
+		
 		detail.getCustomerEligibilityCheck().addExtendedField("maturityAge", maturityAge);
 		detail.getCustomerEligibilityCheck().setCurrentAssetValue(financeMain.getFinCurrAssetValue());
 
@@ -14908,6 +14916,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private Map<String, Object> setCollateralRuleValues(FinanceDetail detail) {
 		Map<String, Object> ruleValues = new HashMap<>();
+		BigDecimal guidedValue 			= BigDecimal.ZERO;
+		BigDecimal marketValue 			= BigDecimal.ZERO;
+		BigDecimal unitPrice 			= BigDecimal.ZERO;
+		BigDecimal marketValue_Consider	= BigDecimal.ZERO;
+		BigDecimal propertyLTV			= BigDecimal.ZERO;
 
 		if (collateralHeaderDialogCtrl != null
 				&& CollectionUtils.isNotEmpty(collateralHeaderDialogCtrl.getCollateralAssignments())) {
@@ -14935,11 +14948,36 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								}
 							}
 						}
+						if(CollectionUtils.isNotEmpty(setup.getExtendedFieldRenderList())){
+							ExtendedFieldRender extendedFieldRender = setup.getExtendedFieldRenderList().get(0);
+							if(!ruleValues.containsKey("GLNVAL")){
+								guidedValue  = decimalValue(extendedFieldRender.getMapValues().get("GLNVAL"), setup.getCollateralCcy());
+							}
+							if(!ruleValues.containsKey("MKTVAL")){
+								marketValue  = decimalValue(extendedFieldRender.getMapValues().get("MKTVAL"), setup.getCollateralCcy());
+							}	
+							if(!ruleValues.containsKey("UNITPRICE")){
+								unitPrice  = decimalValue(extendedFieldRender.getMapValues().get("UNITPRICE"), setup.getCollateralCcy());
+							}
+						}	
 					}
 				}
 			}
 		}
 
+		// (Guided Value/MarketValue)/100
+		if(!marketValue.equals(BigDecimal.ZERO) && !guidedValue.equals(BigDecimal.ZERO)){
+			marketValue_Consider = marketValue.divide(guidedValue,RoundingMode.HALF_UP);
+			marketValue_Consider  = marketValue_Consider.multiply(new BigDecimal(100)); 
+		}
+		ruleValues.put("MRKVALUE_CONSIDER", marketValue_Consider);		
+		
+		// PROP_LTV Property LTV	LoanAmount/UNITPRICE
+		if(!marketValue.equals(BigDecimal.ZERO) && !unitPrice.equals(BigDecimal.ZERO)){
+			propertyLTV = marketValue.divide(decimalValue(detail.getFinScheduleData().getFinanceMain().getFinAmount(),detail.getFinScheduleData().getFinanceMain().getFinCcy()),RoundingMode.HALF_UP);
+		}
+		ruleValues.put("PROP_LTV", propertyLTV);	
+		
 		List<ExtendedFieldDetail> extendedFieldDetails = PennantAppUtil.getCollateralExtendedFieldForRules();
 		for (ExtendedFieldDetail fieldDetail : extendedFieldDetails) {
 			String key = fieldDetail.getLovDescModuleName() + "_" + fieldDetail.getLovDescSubModuleName() + "_"
@@ -14952,6 +14990,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return ruleValues;
 	}
 
+		private BigDecimal decimalValue(Object mapvalue,String currency){
+			BigDecimal decimal= BigDecimal.ZERO;
+			
+			try {
+				if(mapvalue instanceof BigDecimal){
+					decimal = (BigDecimal) mapvalue;
+					decimal  = PennantAppUtil.formateAmount(decimal,CurrencyUtil.getFormat(currency));
+				}
+			} catch (Exception e) {
+				logger.equals(e);
+			}
+			
+			return decimal;
+		} 
 	public String getCodeValue(String fieldCodeId) {
 		if (!StringUtils.equals(fieldCodeId, PennantConstants.List_Select)) {
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
