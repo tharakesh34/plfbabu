@@ -6316,7 +6316,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (this.userAction.getSelectedItem() != null
 						&& !"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 					List<FinanceDeviations> manualDeviations = getDeviationDetailDialogCtrl().getManualDeviationList();
-					List<FinanceDeviations> Autodeviations = financeDetail.getFinanceDeviations();
+					List<FinanceDeviations> Autodeviations = getDeviationDetailDialogCtrl().getFinanceDetail().getFinanceDeviations();
 					List<FinanceDeviations> deviations = new ArrayList<>();
 					deviations.addAll(Autodeviations);
 					deviations.addAll(manualDeviations);
@@ -6327,12 +6327,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								&& (StringUtils.equals(PennantConstants.List_Select, deviation.getApprovalStatus())
 										|| StringUtils.isBlank(deviation.getApprovalStatus()))) {
 							pendingDecisions.add(deviation.isManualDeviation() ? deviation.getDeviationCodeDesc()
-									: deviation.getDeviationCode());
+									: deviation.getModule() + " - " + deviation.getDeviationCode());
 						}
 					}
 
 					if (pendingDecisions.size() > 0) {
-						String errorMessage = "Please mark your decision for the below manual deviations.";
+						String errorMessage = "Please mark your decision for the below deviations.";
 						for (String deviation : pendingDecisions) {
 							errorMessage = errorMessage.concat("\n - " + deviation);
 						}

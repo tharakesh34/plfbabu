@@ -1103,7 +1103,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 					}
 				}
 			}
-			this.mandRole.setReadonly(true);
+			this.mandRole.setReadonly(isReadOnly("FinCovenantTypeDialog_mandRole"));
 			this.space_receivableDate.setSclass("");
 			this.receivableDate.setErrorMessage("");
 			this.receivableDate.setConstraint("");

@@ -261,7 +261,7 @@ public class CollateralAssignmentDAOImpl extends BasisNextidDaoImpl<CollateralMo
 		StringBuilder selectSql = new StringBuilder("Select Module, CA.Reference, Coalesce(FM.FinCcy,CM.CmtCcy) Currency, AssignPerc AssignedPerc, ");
 		selectSql.append(" BankValuation CollateralValue, TotAssignedPerc,  ");
 		selectSql.append("Coalesce(FinCurrAssetValue+FeeChargeAmt+InsuranceAmt-FinRepaymentAmount,CmtUtilizedAmount) UtilizedValue, ");
-		selectSql.append(" CmtExpDate , Coalesce(FinIsActive,CmtActive) FinIsActive, TotalUtilized	from CollateralAssignment CA Left Join ");
+		selectSql.append(" CmtExpDate , Coalesce(FinIsActive,Coalesce(CmtActive,0)) FinIsActive, TotalUtilized	from CollateralAssignment CA Left Join ");
 		selectSql.append(" FinanceMain FM on CA.Reference = FM.FinReference left join ");
 		selectSql.append(" Commitments CM on CM.CmtReference = CA.Reference ");
 		selectSql.append(" inner join CollateralSetUp CS on CS.CollateralRef = CA.CollateralRef ");

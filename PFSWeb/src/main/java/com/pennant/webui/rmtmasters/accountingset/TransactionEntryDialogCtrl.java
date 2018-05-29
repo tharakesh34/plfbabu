@@ -84,7 +84,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.ErrorUtil;
@@ -110,10 +109,10 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * This is the controller class for the /WEB-INF/pages/RulesFactory/TransactionEntry/transactionEntryDialog.zul file.
@@ -1530,24 +1529,18 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		JdbcSearchObject<FeeType> searchObj = new JdbcSearchObject<FeeType>(FeeType.class);
 		searchObj.addTabelName("FeeTypes");
 		searchObj.addFilter(new Filter("Active", 1, Filter.OP_EQUAL));
-		/*
-		 * //Rule Module & Rule Event Filter addition if(allowedevent.contains(AccountEventConstants.ACCEVENT_REPAY)){
-		 * Object[] ruleModule= new String[]{RuleConstants.MODULE_FEES, RuleConstants.MODULE_REFUND}; Object[]
-		 * ruleEvent= new String[]{allowedevent,RuleConstants.EVENT_REFUND};
-		 * searchObj.addFilterIn("RuleModule",ruleModule); searchObj.addFilterIn("RuleEvent", ruleEvent); }else{
-		 * searchObj.addFilterEqual("RuleModule", RuleConstants.MODULE_FEES); if
-		 * (allowedevent.contains(AccountEventConstants.ACCEVENT_ADDDBS)) {
-		 * searchObj.addFilterEqual("RuleEvent",AccountEventConstants.ACCEVENT_ADDDBS); }else
-		 * if(allowedevent.equals(AccountEventConstants.ACCEVENT_STAGE)){ // All Fee Event will allow to Enter Details }
-		 * }
-		 */
 
 		feeRulesList = this.pagedListService.getBySearchObject(searchObj);
 
 		Listitem item = null;
 		Listgroup group = null;
 		Listcell lc = null;
-
+		
+		String [] feeExtensions = new String[25];
+		String [] feeExtensionLabels = new String[25];
+		
+		fillAccountingDetails(feeExtensions, feeExtensionLabels);
+		
 		for (int i = 0; i < feeRulesList.size(); i++) {
 			String feeTypeCode = feeRulesList.get(i).getFeeTypeCode();
 			String feeTypeDesc = feeRulesList.get(i).getFeeTypeDesc();
@@ -1556,488 +1549,112 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.feeCodeListbox.appendChild(group);
 			group.setOpen(false);
 
-			for (int j = 0; j < 5; j++) {
-				String newRuleCode = feeTypeCode;
-				String newRuleCodeDesc = feeTypeDesc;
+			String ruleCode = "";
+			String ruleCodeDesc = "";
+			
+			for (int j = 0; j < feeExtensions.length; j++) {
 
-				if (j == 0) {
-					
-					String ruleCode = "";
-					String ruleCodeDesc = "";
-					
-					ruleCode = newRuleCode + "_N";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_N");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-					
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-					
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_CGST_C";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_CGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_CGST_N";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_CGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_CGST_P";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_CGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_CGST_SCH";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_CGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_CGST_AF";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_CGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_SGST_C";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_SGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_SGST_N";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_SGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_SGST_P";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_SGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_SGST_SCH";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_SGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_SGST_AF";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_SGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_IGST_C";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_IGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-					
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-					
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-					
-					ruleCode = newRuleCode + "_IGST_N";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_IGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_IGST_P";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_IGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-					
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-					
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-					ruleCode = newRuleCode + "_IGST_SCH";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_IGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_IGST_AF";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_IGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_UGST_C";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_UGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_UGST_N";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_UGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_UGST_P";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_UGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_UGST_SCH";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_UGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					ruleCode = newRuleCode + "_UGST_AF";
-					ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_UGST");
-					
-					item = new Listitem();
-					lc = new Listcell(ruleCode);
-
-					if (!amountcodes.contains(ruleCode)) {
-						amountcodes.add(ruleCode);
-					}
-
-					lc.setParent(item);
-					lc = new Listcell(ruleCodeDesc);
-					lc.setParent(item);
-					this.feeCodeListbox.appendChild(item);
-					
-					newRuleCode = newRuleCode + "_C";
-					newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_FeeCalc");
-				} else if (j == 1) {
-					newRuleCode = newRuleCode + "_W";
-					newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_FeeWaiver");
-				} else if (j == 2) {
-					if(StringUtils.equals(allowedevent, AccountEventConstants.ACCEVENT_REPAY) ||
-							StringUtils.equals(allowedevent, AccountEventConstants.ACCEVENT_EARLYPAY) ||
-							StringUtils.equals(allowedevent, AccountEventConstants.ACCEVENT_EARLYSTL)) {
-						String ruleCode = "";
-						String ruleCodeDesc = "";
-						
-						ruleCode = newRuleCode + "_CGST_P";
-						ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_CGST");
-						
-						item = new Listitem();
-						lc = new Listcell(ruleCode);
-
-						if (!amountcodes.contains(ruleCode)) {
-							amountcodes.add(ruleCode);
-						}
-
-						lc.setParent(item);
-						lc = new Listcell(ruleCodeDesc);
-						lc.setParent(item);
-						this.feeCodeListbox.appendChild(item);
-						
-						ruleCode = newRuleCode + "_SGST_P";
-						ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_SGST");
-						
-						item = new Listitem();
-						lc = new Listcell(ruleCode);
-
-						if (!amountcodes.contains(ruleCode)) {
-							amountcodes.add(ruleCode);
-						}
-
-						lc.setParent(item);
-						lc = new Listcell(ruleCodeDesc);
-						lc.setParent(item);
-						this.feeCodeListbox.appendChild(item);
-						
-						ruleCode = newRuleCode + "_IGST_P";
-						ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_IGST");
-						
-						item = new Listitem();
-						lc = new Listcell(ruleCode);
-
-						if (!amountcodes.contains(ruleCode)) {
-							amountcodes.add(ruleCode);
-						}
-
-						lc.setParent(item);
-						lc = new Listcell(ruleCodeDesc);
-						lc.setParent(item);
-						this.feeCodeListbox.appendChild(item);
-						
-						ruleCode = newRuleCode + "_UGST_P";
-						ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_UGST");
-						
-						item = new Listitem();
-						lc = new Listcell(ruleCode);
-
-						if (!amountcodes.contains(ruleCode)) {
-							amountcodes.add(ruleCode);
-						}
-
-						lc.setParent(item);
-						lc = new Listcell(ruleCodeDesc);
-						lc.setParent(item);
-						this.feeCodeListbox.appendChild(item);
-						
-						ruleCode = "PA_" + newRuleCode + "_P";
-						ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_PayableAdvise");
-						
-						item = new Listitem();
-						lc = new Listcell(ruleCode);
-
-						if (!amountcodes.contains(ruleCode)) {
-							amountcodes.add(ruleCode);
-						}
-
-						lc.setParent(item);
-						lc = new Listcell(ruleCodeDesc);
-						lc.setParent(item);
-						this.feeCodeListbox.appendChild(item);
-						
-						ruleCode = "PB_" + newRuleCode + "_P";
-						ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_PartnerBank");
-						
-						item = new Listitem();
-						lc = new Listcell(ruleCode);
-
-						if (!amountcodes.contains(ruleCode)) {
-							amountcodes.add(ruleCode);
-						}
-
-						lc.setParent(item);
-						lc = new Listcell(ruleCodeDesc);
-						lc.setParent(item);
-						this.feeCodeListbox.appendChild(item);
-						
-						ruleCode = "EA_" + newRuleCode + "_P";
-						ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_EMIAdvance");
-						
-						item = new Listitem();
-						lc = new Listcell(ruleCode);
-
-						if (!amountcodes.contains(ruleCode)) {
-							amountcodes.add(ruleCode);
-						}
-
-						lc.setParent(item);
-						lc = new Listcell(ruleCodeDesc);
-						lc.setParent(item);
-						this.feeCodeListbox.appendChild(item);
-						
-						newRuleCode = "EX_" + newRuleCode + "_P";
-						newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_Excess");
-					} else {
-						newRuleCode = newRuleCode + "_P";
-						newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_FeePaid");
-					}
-				} else if (j == 3) {
-					newRuleCode = newRuleCode + "_AF";
-					newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_FeeAF");
-				} else if (j == 4) {
-					newRuleCode = newRuleCode + "_SCH";
-					newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_FeeSF");
-				}
+				ruleCode = feeTypeCode + feeExtensions[j];
+				ruleCodeDesc = feeTypeDesc + feeExtensionLabels[j];
 
 				item = new Listitem();
-				lc = new Listcell(newRuleCode);
+				lc = new Listcell(ruleCode);
 
-				if (!amountcodes.contains(newRuleCode)) {
-					amountcodes.add(newRuleCode);
+				if (!amountcodes.contains(ruleCode)) {
+					amountcodes.add(ruleCode);
 				}
 
 				lc.setParent(item);
-				lc = new Listcell(newRuleCodeDesc);
+				lc = new Listcell(ruleCodeDesc);
 				lc.setParent(item);
 				this.feeCodeListbox.appendChild(item);
 			}
 		}
 
 		logger.debug("Leaving");
+	}
+
+	/**
+	 * Adding the Fee Extensions and labels
+	 * @param feeExtensions
+	 * @param feeExtensionLabels
+	 */
+	private void fillAccountingDetails(String[] feeExtensions, String[] feeExtensionLabels) {
+		feeExtensions[0]  = "_N";
+		feeExtensionLabels[0]  = Labels.getLabel("label_TransactionEntryDialog_N");
+		
+		feeExtensions[1]  = "_W";
+		feeExtensionLabels[1]  = Labels.getLabel("label_TransactionEntryDialog_FeeWaiver");
+		
+		feeExtensions[2]  = "_P";
+		feeExtensionLabels[2]  = Labels.getLabel("label_TransactionEntryDialog_FeePaid");
+		
+		feeExtensions[3]  = "_AF";
+		feeExtensionLabels[3]  = Labels.getLabel("label_TransactionEntryDialog_FeeAF");
+		
+		feeExtensions[4]  = "_SCH";
+		feeExtensionLabels[4]  = Labels.getLabel("label_TransactionEntryDialog_FeeSF");
+		
+		//GST Fields 
+		feeExtensions[5]  = "_CGST_C";
+		feeExtensionLabels[5]  = Labels.getLabel("label_TransactionEntryDialog_CGST");
+		
+		feeExtensions[6]  = "_CGST_N";
+		feeExtensionLabels[6]  = Labels.getLabel("label_TransactionEntryDialog_CGST");
+		
+		feeExtensions[7]  = "_CGST_P";
+		feeExtensionLabels[7]  = Labels.getLabel("label_TransactionEntryDialog_CGST");
+		
+		feeExtensions[8]  = "_CGST_SCH";
+		feeExtensionLabels[8]  = Labels.getLabel("label_TransactionEntryDialog_CGST");
+		
+		feeExtensions[9]  = "_CGST_AF";
+		feeExtensionLabels[9]  = Labels.getLabel("label_TransactionEntryDialog_CGST");
+		
+		feeExtensions[10]  = "_SGST_C";
+		feeExtensionLabels[10]  = Labels.getLabel("label_TransactionEntryDialog_SGST");
+		
+		feeExtensions[11]  = "_SGST_N";
+		feeExtensionLabels[11]  = Labels.getLabel("label_TransactionEntryDialog_SGST");
+		
+		feeExtensions[12]  = "_SGST_P";
+		feeExtensionLabels[12]  = Labels.getLabel("label_TransactionEntryDialog_SGST");
+		
+		feeExtensions[13]  = "_SGST_SCH";
+		feeExtensionLabels[13]  = Labels.getLabel("label_TransactionEntryDialog_SGST");
+		
+		feeExtensions[14]  = "_SGST_AF";
+		feeExtensionLabels[14]  = Labels.getLabel("label_TransactionEntryDialog_SGST");
+		
+		feeExtensions[15]  = "_UGST_C";
+		feeExtensionLabels[15]  = Labels.getLabel("label_TransactionEntryDialog_UGST");
+		
+		feeExtensions[16]  = "_UGST_N";
+		feeExtensionLabels[16]  = Labels.getLabel("label_TransactionEntryDialog_UGST");
+		
+		feeExtensions[17]  = "_UGST_P";
+		feeExtensionLabels[17]  = Labels.getLabel("label_TransactionEntryDialog_UGST");
+		
+		feeExtensions[18]  = "_UGST_SCH";
+		feeExtensionLabels[18]  = Labels.getLabel("label_TransactionEntryDialog_UGST");
+		
+		feeExtensions[19]  = "_UGST_AF";
+		feeExtensionLabels[19]  = Labels.getLabel("label_TransactionEntryDialog_UGST");
+		
+		feeExtensions[20]  = "_IGST_C";
+		feeExtensionLabels[20]  = Labels.getLabel("label_TransactionEntryDialog_IGST");
+		
+		feeExtensions[21]  = "_IGST_N";
+		feeExtensionLabels[21]  = Labels.getLabel("label_TransactionEntryDialog_IGST");
+		
+		feeExtensions[22]  = "_IGST_P";
+		feeExtensionLabels[22]  = Labels.getLabel("label_TransactionEntryDialog_IGST");
+		
+		feeExtensions[23]  = "_IGST_SCH";
+		feeExtensionLabels[23]  = Labels.getLabel("label_TransactionEntryDialog_IGST");
+		
+		feeExtensions[24]  = "_IGST_AF";
+		feeExtensionLabels[24]  = Labels.getLabel("label_TransactionEntryDialog_IGST");
 	}
 
 	/**

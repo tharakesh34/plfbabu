@@ -324,7 +324,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 		this.space_finType.setSclass(PennantConstants.mandateSclass);
 
-		fillComboBox(this.disbTypes, "", PennantStaticListUtil.getPaymentTypes(false), "");
+		fillComboBox(this.disbTypes, "", PennantStaticListUtil.getDisbRegistrationTypes(), "");
 		fillComboBox(this.channelTypes, "",channelTypesList, "");
 
 		this.partnerBank.setModuleName("PartnerBank");

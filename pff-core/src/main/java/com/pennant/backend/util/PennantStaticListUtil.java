@@ -1850,21 +1850,6 @@ public class PennantStaticListUtil {
 		return paymentDetails;
 	}
 
-	public static ArrayList<ValueLabel> getPaymentTypes(boolean addSwitchTransfer){
-		ArrayList<ValueLabel>  paymentTypes = new ArrayList<ValueLabel>(6);
-		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IMPS,Labels.getLabel("label_PaymentType_IMPS")));
-		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_NEFT,Labels.getLabel("label_PaymentType_NEFT")));
-		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_RTGS,Labels.getLabel("label_PaymentType_RTGS")));
-		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CHEQUE,Labels.getLabel("label_PaymentType_CHEQUE")));
-		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_DD,Labels.getLabel("label_PaymentType_DD")));
-		if(addSwitchTransfer){
-		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CASH,Labels.getLabel("label_PaymentType_CASH")));
-		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_ESCROW,Labels.getLabel("label_PaymentType_ESCROW")));
-		}
-		return paymentTypes;
-	}
-
-
 	public static ArrayList<ValueLabel> getPayOrderStatus(){
 		if(payOrderStatus == null){
 			payOrderStatus = new ArrayList<ValueLabel>(2);
@@ -3285,7 +3270,9 @@ public class PennantStaticListUtil {
 	// Change to customize the drop down list
 	private static Map<String, ValueLabel> scheduleCalculationCodes = new HashMap<>();
 	private static Map<String, ValueLabel> bpimethods = new HashMap<>();
-
+	private static ArrayList<ValueLabel> paymentTypes= new ArrayList<>();
+	private static ArrayList<ValueLabel> disbRegistrationTypes= new ArrayList<>();
+	
 	public static List<ValueLabel> getSchCalCodes() {
 		return new ArrayList<>(scheduleCalculationCodes.values());
 	}
@@ -3312,6 +3299,31 @@ public class PennantStaticListUtil {
 		bpimethods.put(FinanceConstants.BPI_SCHEDULE, new ValueLabel(FinanceConstants.BPI_SCHEDULE, Labels.getLabel("label_SCHD_BPI")));
 		bpimethods.put(FinanceConstants.BPI_CAPITALIZE, new ValueLabel(FinanceConstants.BPI_CAPITALIZE, Labels.getLabel("label_CAPITALIZE_BPI")));
 		bpimethods.put(FinanceConstants.BPI_SCHD_FIRSTEMI, new ValueLabel(FinanceConstants.BPI_SCHD_FIRSTEMI, Labels.getLabel("label_SCHD_BPI_FRSTEMI")));
+
+		// paymentTypes
+		
+		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IMPS,Labels.getLabel("label_PaymentType_IMPS")));
+		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_NEFT,Labels.getLabel("label_PaymentType_NEFT")));
+		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_RTGS,Labels.getLabel("label_PaymentType_RTGS")));
+		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CHEQUE,Labels.getLabel("label_PaymentType_CHEQUE")));
+		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_DD,Labels.getLabel("label_PaymentType_DD")));
+		
+		disbRegistrationTypes.addAll(paymentTypes);
+	}
+
+	public static ArrayList<ValueLabel> getPaymentTypes(boolean addSwitchTransfer){
+		ArrayList<ValueLabel>  payments = new ArrayList<ValueLabel>();
+		payments.addAll(paymentTypes);
+		
+		if(addSwitchTransfer){
+			payments.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CASH,Labels.getLabel("label_PaymentType_CASH")));
+			payments.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_ESCROW,Labels.getLabel("label_PaymentType_ESCROW")));
+		}
+		return payments;
+	}
+
+	public static ArrayList<ValueLabel> getDisbRegistrationTypes(){
+		return disbRegistrationTypes;
 	}
 
 	public void removeScheduleCalculationCode(String scheduleCalculationCode) {
@@ -3328,5 +3340,18 @@ public class PennantStaticListUtil {
 		}
 		
 		bpimethods.remove(scheduleCalculationCode);
+	}
+	
+	public void removetDisbRegistrationTypes(String paymentType) {
+		if(paymentType == null) {
+			return;
+		}
+
+		for (ValueLabel valueLabel : disbRegistrationTypes) {
+			if(StringUtils.equalsIgnoreCase(valueLabel.getValue(), paymentType)){
+				disbRegistrationTypes.remove(valueLabel);
+				return;
+			}
+		}
 	}
 }
