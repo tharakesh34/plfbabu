@@ -456,7 +456,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (initType && vrf.getLastStatus() != 0) {
 				status.setValue(TVStatus.getType(vrf.getLastStatus()).getValue());
 
-			} else if (vrf.getStatus() != 0) {
+			} else if (!initType && vrf.getStatus() != 0) {
 				status.setValue(TVStatus.getType(vrf.getStatus()).getValue());
 			}
 
@@ -1113,13 +1113,12 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave)
-			throws InterruptedException {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
 		logger.debug("Entering");
 		List<Verification> list = new ArrayList<>();
 		doClearMessage();
 		doSetValidation();
-	
+
 		List<WrongValueException> wve = doWriteComponentsToBean();
 
 		if (!wve.isEmpty() && tab != null) {

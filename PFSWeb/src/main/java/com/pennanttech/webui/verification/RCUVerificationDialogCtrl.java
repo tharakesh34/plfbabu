@@ -66,7 +66,6 @@ import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.fi.RCUStatus;
-import com.pennanttech.pennapps.pff.verification.fi.TVStatus;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -211,6 +210,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				if (document != null) {
 					entrySet.getValue().setDocName(getDocumentName(document.getDocumentSubId()));
 					entrySet.getValue().setReinitid(document.getReinitid());
+					if (initType) {
+						verificationService.setLastStatus(entrySet.getValue());
+					}
 				}
 				customerDocuments.put(entrySet.getKey(), entrySet.getValue());
 			}
@@ -268,6 +270,10 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 
 					entrySet.getValue().setDocName(docName);
+					
+					if (initType) {
+						verificationService.setLastStatus(entrySet.getValue());
+					}
 				}
 				docMap.put(entrySet.getKey(), entrySet.getValue());
 			}
@@ -831,10 +837,10 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Label status = new Label();
 
 			if (initType && vrf.getLastStatus() != 0) {
-				status.setValue(TVStatus.getType(vrf.getLastStatus()).getValue());
+				status.setValue(RCUStatus.getType(vrf.getLastStatus()).getValue());
 
-			} else if (vrf.getStatus() != 0) {
-				status.setValue(TVStatus.getType(vrf.getStatus()).getValue());
+			} else if (!initType && vrf.getStatus() != 0) {
+				status.setValue(RCUStatus.getType(vrf.getStatus()).getValue());
 			}
 
 			listCell.appendChild(status);

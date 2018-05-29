@@ -182,7 +182,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
@@ -311,8 +311,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 	@Override
 	public LegalVerification getLVFromStage(long verificationId) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select * from verification_lv_stage where verificationId in (");
-		sql.append("select verificationId from verification_lv_details_stage where verificationId=:verificationId)");
+		sql.append("select * from verification_lv_stage where verificationId=:verificationId");
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("verificationId", verificationId);
@@ -353,7 +352,8 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 	@Override
 	public List<LVDocument> getLVDocuments(String keyReference) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select vs.verificationId,vs.documentid,vs.documentType, vs.documentSubId,v.referencefor collateralRef");
+		sql.append(
+				" select vs.verificationId,vs.documentid,vs.documentType, vs.documentSubId,v.referencefor collateralRef");
 		sql.append(" from verification_lv_details_stage vs left join verifications v on  v.id=vs.verificationId");
 		sql.append(" where vs.verificationId in ( select id from verifications where keyReference=:keyReference)");
 
@@ -580,7 +580,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
-	
+
 	@Override
 	public List<Verification> getCollateralDocumentsStatus(String collateralRef) {
 		logger.debug(Literal.ENTERING);
@@ -613,6 +613,58 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 
+	}
+
+	@Override
+	public int getCollateralDocumentCount(String collateralRef) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select count(*) from  verification_lv_details_view vd");
+		sql.append(" inner join verifications v on v.id=vd.verificationid");
+		sql.append(" inner join documentdetails dd on dd.docid=vd.documentid and dd.docrefid=vd.docrefid");
+		sql.append(" where documentType=:documentType and verificationType=:verificationType");
+		sql.append(" referenceFor=:referenceFor");
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("documentType", DocumentType.COLLATRL.getKey());
+		paramSource.addValue("verificationType", VerificationType.LV.getKey());
+		paramSource.addValue("referenceFor", collateralRef);
+
+		RowMapper<Integer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Integer.class);
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return 0;
+	}
+	
+	@Override
+	public int getLVDocumentsCount(String collateralRef) {
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+		sql = new StringBuilder();
+
+		sql.append(" select count(*) from  verification_lv_details_view vd");
+		sql.append(" inner join verifications v on v.id=vd.verificationid ");
+		sql.append(" where documentType=:documentType and referenceFor=:referenceFor");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("documentType", DocumentType.COLLATRL);
+		source.addValue("collateralRef", collateralRef);
+
+		RowMapper<Integer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Integer.class);
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return 0;
 	}
 
 }

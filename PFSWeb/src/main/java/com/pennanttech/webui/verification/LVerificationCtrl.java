@@ -383,18 +383,22 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			listCell = new Listcell();
 			Label status = new Label();
 			if (initType && vrf.getLastStatus() != 0) {
-				status.setValue(TVStatus.getType(vrf.getLastStatus()).getValue());
+				status.setValue(LVStatus.getType(vrf.getLastStatus()).getValue());
 
-			} else if (vrf.getStatus() != 0) {
-				status.setValue(TVStatus.getType(vrf.getStatus()).getValue());
+			} else if (!initType && vrf.getStatus() != 0) {
+				status.setValue(LVStatus.getType(vrf.getStatus()).getValue());
 			}
 
 			listCell.appendChild(status);
 			listCell.setParent(item);
 
-			//Verification Date
+			// Verification Date
 			listCell = new Listcell();
-			listCell.appendChild(new Label(DateUtil.formatToShortDate(vrf.getVerificationDate())));
+			if (initType) {
+				listCell.appendChild(new Label(DateUtil.formatToShortDate(vrf.getLastVerificationDate())));
+			} else {
+				listCell.appendChild(new Label(DateUtil.formatToShortDate(vrf.getVerificationDate())));
+			}
 			listCell.setParent(item);
 
 			if (!initType) {
@@ -1122,8 +1126,12 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	private List<Verification> getVerifications() {
 		List<Verification> list;
 		String keyReference = this.verification.getKeyReference();
-
 		list = verificationService.getVerifications(keyReference, VerificationType.LV.getKey());
+		if (initType) {
+			for (Verification verification : list) {
+				verificationService.setLastStatus(verification);
+			}
+		}
 		return list;
 	}
 

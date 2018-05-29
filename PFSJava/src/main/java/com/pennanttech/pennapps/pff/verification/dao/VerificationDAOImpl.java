@@ -307,9 +307,9 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		logger.debug(Literal.ENTERING);
 
 		int type = verification.getVerificationType();
-		
+
 		RCUDocument rcuDocument = null;
-		
+
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
 		StringBuilder sql = new StringBuilder();
@@ -326,11 +326,11 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			sql.append(" where v.id = (select coalesce(max(id), 0)");
 			sql.append(" from verifications where referenceFor = :referenceFor ");
 			sql.append(" and verificationType = :verificationType and verificationdate is not null and status !=0)");
-		} else if(type == VerificationType.RCU.getKey()) {
+		} else if (type == VerificationType.RCU.getKey()) {
 			sql.append(" where v.id = (select coalesce(max(id), 0)");
 			sql.append(" from verifications v ");
 			sql.append(" inner join verification_rcu_details_view vd on vd.verificationid = v.id");
-			
+
 			rcuDocument = verification.getRcuDocument();
 			if (rcuDocument.getDocumentType() == DocumentType.COLLATRL.getKey()) {
 				sql.append(" where vd.documentid = :documentid");
@@ -338,11 +338,11 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 				sql.append(" where vd.documentid = :documentid and vd.documentsubid = :referenceFor");
 				sql.append(" and vd.documenttype=:documenttype");
 			}
-			
-			sql.append(" and v.verificationType = :verificationType and v.verificationdate is not null and v.status !=0)");
+
+			sql.append(
+					" and v.verificationType = :verificationType and v.verificationdate is not null and v.status !=0)");
 		}
-		
-		
+
 		try {
 			paramMap.addValue("referenceFor", verification.getReferenceFor());
 			paramMap.addValue("verificationType", type);
@@ -359,6 +359,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 				if (rcuDocument != null) {
 					paramMap.addValue("documenttype", rcuDocument.getDocumentType());
 					paramMap.addValue("documentid", rcuDocument.getDocumentId());
+					paramMap.addValue("referenceFor", rcuDocument.getDocumentSubId());
 				} else {
 					paramMap.addValue("documenttype", 0);
 					paramMap.addValue("documentid", 0);

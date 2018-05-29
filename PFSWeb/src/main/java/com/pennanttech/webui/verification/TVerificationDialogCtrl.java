@@ -600,7 +600,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (initType && vrf.getLastStatus() != 0) {
 				status.setValue(TVStatus.getType(vrf.getLastStatus()).getValue());
 
-			} else if (vrf.getStatus() != 0) {
+			} else if (!initType && vrf.getStatus() != 0) {
 				status.setValue(TVStatus.getType(vrf.getStatus()).getValue());
 			}
 

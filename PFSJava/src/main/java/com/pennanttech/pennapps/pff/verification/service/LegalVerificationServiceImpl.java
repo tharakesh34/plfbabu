@@ -903,4 +903,15 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	public List<LVDocument> getLVDocuments(long id) {
 		return legalVerificationDAO.getLVDocuments(id, "_View");
 	}
+
+	@Override
+	public boolean isCollateralDocumentsChanged(String collateralRef) {
+		int count1 = legalVerificationDAO.getLVDocumentsCount(collateralRef);
+		int count2 = legalVerificationDAO.getCollateralDocumentCount(collateralRef);
+		if (count1 == count2) {
+			return false;
+		}
+		return true;
+	}
+
 }

@@ -840,14 +840,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				}
 
 			} else if (verificationType == VerificationType.LV.getKey()) {
-				if (technicalVerificationService.isCollateralChanged(verification)) {
+				if (legalVerificationService.isCollateralDocumentsChanged(verification.getReferenceFor())) {
 					verification.setLastStatus(0);
 					verification.setLastVerificationDate(null);
 					verification.setLastAgency("");
 				}
 
 			} else if (verificationType == VerificationType.RCU.getKey()) {
-
+				
 			}
 		}
 	}
