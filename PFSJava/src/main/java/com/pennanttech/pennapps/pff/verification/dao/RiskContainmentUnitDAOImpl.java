@@ -408,7 +408,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append(
-				"select verificationid, seqno, documentid,documentType, documentsubid, documentrefid, documenturi, initRemarks, decisionremarks, reinitId,");
+				"select verificationid, seqno, documentid,documentType, documentsubid, documentrefid, documenturi, initRemarks,decision, decisionremarks, reinitId,");
 		if (documentType == DocumentType.CUSTOMER) {
 			sql.append(" custdoccategory as docCategory");
 		} else {
@@ -464,13 +464,14 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		logger.debug(Literal.ENTERING);
 		updateRemarks(item, "_temp");
 		updateRemarks(item, "");
+		updateRemarks(item, "_stage");
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void updateRemarks(Verification item, String table) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("update verification_rcu_details").append(table);
-		sql.append(" set decisionremarks = ?");
+		sql.append(" set decision= ?, decisionremarks = ?");
 		sql.append(" where verificationId = ? and seqno = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -479,9 +480,10 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				RCUDocument document = item.getRcuDocuments().get(i);
-				ps.setString(1, document.getDecisionRemarks());
-				ps.setLong(2, document.getVerificationId());
-				ps.setInt(3, document.getSeqNo());
+				ps.setInt(1, document.getDecision());
+				ps.setString(2, document.getDecisionRemarks());
+				ps.setLong(3, document.getVerificationId());
+				ps.setInt(4, document.getSeqNo());
 
 			}
 
@@ -520,21 +522,27 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 	}
 
 	@Override
-	public RCUDocument getRCUDocument(long verificationId, long documentId, int documentType) {
+	public RCUDocument getRCUDocument(long verificationId, RCUDocument rcuDocument) {
 
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
 
 		sql.append(" Select * from verification_rcu_details_view ");
-		sql.append(" where verificationId=:verificationId and documentId=:documentId and documentType=:documentType ");
+		sql.append(" where verificationId=:verificationId and documentType=:documentType ");
+		sql.append(" and documentId=:documentId ");
+
+		if (rcuDocument.getDocumentType() == DocumentType.CUSTOMER.getKey()) {
+			sql.append(" and documentSubId=:documentSubId ");
+		}
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
 		source.addValue("verificationId", verificationId);
-		source.addValue("documentId", documentId);
-		source.addValue("documentType", documentType);
+		source.addValue("documentId", rcuDocument.getDocumentId());
+		source.addValue("documentType", rcuDocument.getDocumentType());
+		source.addValue("documentSubId", rcuDocument.getDocumentSubId());
 
 		RowMapper<RCUDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RCUDocument.class);
 		try {

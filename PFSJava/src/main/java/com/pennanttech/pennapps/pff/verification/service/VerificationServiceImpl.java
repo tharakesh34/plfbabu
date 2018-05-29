@@ -833,14 +833,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				}
 
 			} else if (verificationType == VerificationType.TV.getKey()) {
-				if (technicalVerificationService.isCollateralChanged(lastStatus)) {
+				if (technicalVerificationService.isCollateralChanged(verification)) {
 					verification.setLastStatus(0);
 					verification.setLastVerificationDate(null);
 					verification.setLastAgency("");
 				}
 
 			} else if (verificationType == VerificationType.LV.getKey()) {
-				if (technicalVerificationService.isCollateralChanged(lastStatus)) {
+				if (technicalVerificationService.isCollateralChanged(verification)) {
 					verification.setLastStatus(0);
 					verification.setLastVerificationDate(null);
 					verification.setLastAgency("");
@@ -939,8 +939,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		} else if (verificationType == VerificationType.LV) {
 
 		} else if (verificationType == VerificationType.RCU) {
-			if (riskContainmentUnitService.getRCUDocument(verification.getId(), rcuDocument.getDocumentId(),
-					rcuDocument.getDocumentType()) != null) {
+			if (riskContainmentUnitService.getRCUDocument(verification.getId(), rcuDocument) != null) {
 				exists = true;
 			}
 		}

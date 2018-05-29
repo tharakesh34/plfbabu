@@ -421,6 +421,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					Verification item = new Verification();
 					BeanUtils.copyProperties(ver, item);
 					item.setRemarks(document.getInitRemarks());
+					item.setDecision((document.getDecision()));
 					item.setDecisionRemarks((document.getDecisionRemarks()));
 					item.setRcuDocument(document);
 					item.setReinitid(document.getReinitid());
@@ -1365,16 +1366,13 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			RCUDocument document = vrf.getRcuDocument();
 			document.setInitRemarks(vrf.getRemarks());
 			document.setDecisionRemarks(vrf.getDecisionRemarks());
+			document.setDecision(vrf.getDecision());
 			if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
 				if (!initType && vrf.getDecision() == Decision.RE_INITIATE.getKey() && !vrf.isIgnoreFlag()) {
 					aVerification = reInitMap.get(vrf.getReInitAgency());
 					document.setInitRemarks(vrf.getDecisionRemarks());
 					aVerification.getRcuDocuments().add(document);
-				} /*
-					 * else if (vrf.getRequestType() == vrf.getOldRequestType()) { aVerification =
-					 * map.get(vrf.getAgency()); if (aVerification != null) {
-					 * aVerification.getRcuDocuments().add(document); } }
-					 */ else {
+				} else {
 					aVerification = other.get(vrf.getAgency());
 					if (aVerification != null) {
 						aVerification.getRcuDocuments().add(document);

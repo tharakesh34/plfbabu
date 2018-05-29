@@ -583,7 +583,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			logger.error(Literal.EXCEPTION, e);
 		}
 		
-		if (previous == null || current == null) {
+		if (previous == null || current == null || previous.isEmpty()) {
 			return false;
 		}
 
@@ -594,7 +594,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		for (Map<String, Object> prv : previous) {
 			for (Map<String, Object> item : current) {
 				if (prv.get("reference").equals(item.get("reference")) && prv.get("seqno").equals(item.get("seqno"))
-						&& prv.get("version").equals(item.get("version"))) {
+						&& !prv.get("version").equals(item.get("version"))) {
 					return true;
 				}
 			}

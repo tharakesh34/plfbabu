@@ -26,6 +26,7 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	private String agentRemarks;
 	private String decisionRemarks;
 	private boolean reInitiated;
+	private int decision;
 
 	private String docCategory;
 	private String docModule;
@@ -181,7 +182,6 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	public void setDecisionRemarks(String decisionRemarks) {
 		this.decisionRemarks = decisionRemarks;
 	}
-
 	public String getDocCategory() {
 		return docCategory;
 	}
@@ -292,6 +292,14 @@ public class RCUDocument extends AbstractWorkflowEntity {
 
 	public void setReInitiated(boolean reInitiated) {
 		this.reInitiated = reInitiated;
+	}
+
+	public int getDecision() {
+		return decision;
+	}
+
+	public void setDecision(int decision) {
+		this.decision = decision;
 	}
 
 }

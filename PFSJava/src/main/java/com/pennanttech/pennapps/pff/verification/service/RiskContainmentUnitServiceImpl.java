@@ -837,8 +837,8 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	}
 
 	@Override
-	public RCUDocument getRCUDocument(long verificationId, long documentId, int type) {
-		return riskContainmentUnitDAO.getRCUDocument(verificationId, documentId, type);
+	public RCUDocument getRCUDocument(long verificationId,RCUDocument rcuDocument) {
+		return riskContainmentUnitDAO.getRCUDocument(verificationId, rcuDocument);
 	}
 
 }

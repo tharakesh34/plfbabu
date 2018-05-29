@@ -42,5 +42,5 @@ public interface RiskContainmentUnitService {
 
 	void updateRCUDocuments(Verification item);
 
-	RCUDocument getRCUDocument(long verificationId, long documentId, int type);
+	RCUDocument getRCUDocument(long verificationId, RCUDocument rcuDocument);
 }
