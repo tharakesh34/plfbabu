@@ -1075,6 +1075,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.stepPolicy.setFilters(filter);
 
 		this.accountsOfficer.setProperties("SourceOfficer", "DealerName", "DealerCity", false, 8);
+		this.accountsOfficer.getTextbox().setMaxlength(50);
 		this.dsaCode.setProperties("DSA", "DealerName", "DealerCity", false, 8);
 		this.dsaCode.getTextbox().setMaxlength(50);
 
