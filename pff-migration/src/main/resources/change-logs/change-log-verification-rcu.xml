@@ -1318,7 +1318,7 @@
 			alter table verification_rcu_details_temp add constraint df_vrd_t_status default 0 for Status;
 			alter table verification_rcu_details_temp add constraint df_vrd_t_PagesEyeballed default 0 for PagesEyeballed;
 			alter table verification_rcu_details_temp add constraint df_vrd_t_PagesSampled default 0 for PagesSampled;
-			alter table verification_rcu_details_temp add constraint df_vrd_Decision default 0 for Decision;
+			alter table verification_rcu_details_temp add constraint df_vrd_t_Decision default 0 for Decision;
 		</sql>
 	</changeSet>
 	<changeSet id="5.3" author="murthy.y">
@@ -1385,7 +1385,7 @@
 			alter table verification_rcu_details_stage add constraint df_vrdss_status default 0 for Status;
 			alter table verification_rcu_details_stage add constraint df_vrdss_PagesEyeballed default 0 for PagesEyeballed;
 			alter table verification_rcu_details_stage add constraint df_vrdss_PagesSampled default 0 for PagesSampled;
-			alter table verification_rcu_details_stage add constraint df_vrd_Decision default 0 for Decision;
+			alter table verification_rcu_details_stage add constraint df_vrdss_Decision default 0 for Decision;
 		</sql>
 	</changeSet>
  	<changeSet id="5.4" author="murthy.y">
