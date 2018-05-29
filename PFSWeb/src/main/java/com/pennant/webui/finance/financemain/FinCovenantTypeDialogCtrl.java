@@ -592,11 +592,6 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	public void doWriteBeanToComponents(FinCovenantType aFinAdvnancePayments) {
 		logger.debug("Entering");
 
-		/*if(aFinAdvnancePayments.getMandRole()==null){
-			this.mandRole.setVisible(false);
-			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
-		}
-		*/
 		this.covenantType.setValue(aFinAdvnancePayments.getCovenantType());
 		this.covenantType.setDescription(aFinAdvnancePayments.getCovenantTypeDesc());
 		this.mandRole.setValue(aFinAdvnancePayments.getMandRole(),aFinAdvnancePayments.getMandRoleDesc());
@@ -607,9 +602,15 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		if (aFinAdvnancePayments.getReceivableDate() != null) {
 			this.receivableDate.setValue(aFinAdvnancePayments.getReceivableDate());
 		}
-
+		this.covenantType.setAttribute("pdd",aFinAdvnancePayments.isPdd());
+		this.covenantType.setAttribute("otc",aFinAdvnancePayments.isOtc());
 		this.recordStatus.setValue(aFinAdvnancePayments.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aFinAdvnancePayments.getRecordType()));
+		if(aFinAdvnancePayments.getRecordType()!=null){
+			this.alwPostpone.setDisabled(!aFinAdvnancePayments.isPdd());
+			this.alwOtc.setDisabled(!aFinAdvnancePayments.isOtc());			
+		}
+		
 		
 		doSetWaiverProp();
 		doSetOTCProp();
@@ -1103,7 +1104,11 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 					}
 				}
 			}
-			this.mandRole.setReadonly(isReadOnly("FinCovenantTypeDialog_mandRole"));
+			if(this.alwOtc.isChecked()){				
+				this.mandRole.setReadonly(true);
+			}else{
+				this.mandRole.setReadonly(isReadOnly("FinCovenantTypeDialog_mandRole"));
+			}
 			this.space_receivableDate.setSclass("");
 			this.receivableDate.setErrorMessage("");
 			this.receivableDate.setConstraint("");
@@ -1127,6 +1132,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.space_receivableDate.setSclass("");
 			this.alwWaiver.setChecked(false);
 			this.mandRole.setReadonly(true);
+			this.mandRole.setValue(null);
 			this.receivableDate.setValue(null);
 		} else {
 			this.mandRole.setReadonly(isReadOnly("FinCovenantTypeDialog_mandRole"));
@@ -1156,6 +1162,10 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				this.covenantType.setDescription(dcoType.getDocTypeDesc());
 				this.covenantType.setAttribute("pdd", dcoType.isPdd());
 				this.covenantType.setAttribute("otc", dcoType.isOtc());
+				getFinCovenantType().setPdd(dcoType.isPdd());
+				getFinCovenantType().setOtc(dcoType.isOtc());
+				this.alwPostpone.setDisabled(!dcoType.isPdd());
+				this.alwOtc.setDisabled(!dcoType.isOtc());
 				validateDocumentExistance(dcoType);
 			}
 		}
