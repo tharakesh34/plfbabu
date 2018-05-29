@@ -84,4 +84,5 @@ public interface VerificationService {
 	
 	List<Verification> getCollateralDocumentsStatus(String collateralReference);
 	
+	List<Verification> getVerificationsForAggrement(String finReference);
 }

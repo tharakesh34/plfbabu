@@ -47,7 +47,7 @@ public enum VerificationType {
 		return code;
 	}
 
-	public static VerificationType getRequestType(Integer key) {
+	public static VerificationType getVerificationType(Integer key) {
 		for (VerificationType type : values()) {
 			if (type.getKey() == key) {
 				return type;

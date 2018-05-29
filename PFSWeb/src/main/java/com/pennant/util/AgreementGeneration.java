@@ -60,9 +60,11 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.bind.sys.debugger.impl.info.AddBindingInfo;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Filedownload;
@@ -82,6 +84,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.RateUtil;
+import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -116,6 +119,7 @@ import com.pennant.backend.model.finance.AgreementDetail.Covenant;
 import com.pennant.backend.model.finance.AgreementDetail.CustomerFinance;
 import com.pennant.backend.model.finance.AgreementDetail.Disbursement;
 import com.pennant.backend.model.finance.AgreementDetail.Document;
+import com.pennant.backend.model.finance.AgreementDetail.Eligibility;
 import com.pennant.backend.model.finance.AgreementDetail.EmailDetail;
 import com.pennant.backend.model.finance.AgreementDetail.ExceptionList;
 import com.pennant.backend.model.finance.AgreementDetail.ExtendedDetail;
@@ -124,7 +128,9 @@ import com.pennant.backend.model.finance.AgreementDetail.GroupRecommendation;
 import com.pennant.backend.model.finance.AgreementDetail.InternalLiabilityDetail;
 import com.pennant.backend.model.finance.AgreementDetail.IrrDetail;
 import com.pennant.backend.model.finance.AgreementDetail.LoanDeviation;
+import com.pennant.backend.model.finance.AgreementDetail.Score;
 import com.pennant.backend.model.finance.AgreementDetail.SourcingDetail;
+import com.pennant.backend.model.finance.AgreementDetail.VerificationDetail;
 import com.pennant.backend.model.finance.AgreementFieldDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetEvaluation;
@@ -138,6 +144,7 @@ import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceScoreDetail;
 import com.pennant.backend.model.finance.FinanceScoreHeader;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.GuarantorDetail;
@@ -147,6 +154,7 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.NotesService;
 import com.pennant.backend.service.administration.SecurityUserService;
@@ -156,6 +164,7 @@ import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -170,6 +179,19 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
+import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
+import com.pennanttech.pennapps.pff.verification.fi.LVStatus;
+import com.pennanttech.pennapps.pff.verification.fi.RCUDocVerificationType;
+import com.pennanttech.pennapps.pff.verification.fi.RCUStatus;
+import com.pennanttech.pennapps.pff.verification.fi.TVStatus;
+import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
+import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
+import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
+import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
+import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
+import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 
 public class AgreementGeneration implements Serializable {
 	private static final long		serialVersionUID	= -2030216591697935342L;
@@ -187,12 +209,16 @@ public class AgreementGeneration implements Serializable {
 	@Autowired
 	private CustomerDetailsService customerDetailsService;
 	@Autowired
+	private VerificationService verificationService;
+	@Autowired
 	private SearchProcessor searchProcessor;
 	private CollateralSetupService collateralSetupService;
 	private SecurityUserService securityUserService;
 	private ActivityLogService activityLogService;
 	@Autowired
 	private BranchService branchService;
+	@Autowired
+	private DeviationHelper	deviationHelper;
 
 	public AgreementGeneration() {
 		super();
@@ -392,7 +418,6 @@ public class AgreementGeneration implements Serializable {
 		
 		// Create New Object For The Agreement Detail
 		AgreementDetail agreement = new AgreementDetail();
-
 		// Application Date
 		Date appldate = DateUtility.getAppDate();
 		String appDate = DateUtility.formatToLongDate(appldate);
@@ -899,8 +924,55 @@ public class AgreementGeneration implements Serializable {
 
 			// -----------------Scoring Detail
 			if (aggModuleDetails.contains(PennantConstants.AGG_SCOREDE)) {
+				populateAgreementScoringDetails(detail, agreement);				
 			}
+			
+			if(CollectionUtils.isEmpty(agreement.getScoringDetails())){
+				agreement.setScoringDetails(new ArrayList<>());
+			}
+			
+			// -----------------Eligibility Detail
+			if(CollectionUtils.isNotEmpty(detail.getElgRuleList())){
+				if(CollectionUtils.isEmpty(agreement.getEligibilityList())){
+					agreement.setEligibilityList(new ArrayList<>());
+				}
+				for (FinanceEligibilityDetail eligibility : detail.getElgRuleList()) {
+		            Eligibility elg = agreement.new Eligibility();
+		            elg.setRuleCode(StringUtils.trimToEmpty(eligibility.getLovDescElgRuleCode()));
+		            elg.setDescription(StringUtils.trimToEmpty(eligibility.getLovDescElgRuleCodeDesc()));
+		            
+		            if(RuleConstants.RETURNTYPE_DECIMAL.equals(eligibility.getRuleResultType())){
+		            	
+						if("E".equals(eligibility.getRuleResult())){
+							 elg.setEligibilityLimit(StringUtils.trimToEmpty(Labels.getLabel("common.InSuffData")));
+						}else if(PennantStaticListUtil.getConstElgRules().contains(eligibility.getLovDescElgRuleCode())){
+							String result = eligibility.getRuleResult();
+							if(RuleConstants.ELGRULE_DSRCAL.equals(eligibility.getLovDescElgRuleCode()) ||
+									RuleConstants.ELGRULE_PDDSRCAL.equals(eligibility.getLovDescElgRuleCode())){
+								result = result.concat("%");
+							}
 
+							elg.setEligibilityLimit(StringUtils.trimToEmpty(result));
+						}else{
+							elg.setEligibilityLimit(PennantApplicationUtil.amountFormate(new BigDecimal(eligibility.getRuleResult()),
+									formatter));
+						}
+					}else{
+						if(eligibility.isEligible()){
+							elg.setEligibilityLimit(Labels.getLabel("common.Eligible"));
+						}else{
+							elg.setEligibilityLimit(Labels.getLabel("common.Ineligible"));
+						}					
+					}
+		           
+		            agreement.getEligibilityList().add(elg);
+	            }
+			}
+			
+			if(CollectionUtils.isEmpty(agreement.getEligibilityList())){
+				agreement.setEligibilityList(new ArrayList<>());
+			}
+			
 			// ----------------Finance Details
 			if (aggModuleDetails.contains(PennantConstants.AGG_FNBASIC)) {
 				agreement = getFinanceDetails(agreement, detail);
@@ -953,6 +1025,105 @@ public class AgreementGeneration implements Serializable {
 			//customer bank info
 			setCustomerBankInfo(detail, agreement);
 			
+			// Verification details
+			
+			if(CollectionUtils.isEmpty(agreement.getFiVerification())){
+				agreement.setFiVerification(new ArrayList<>());
+			}
+			if(CollectionUtils.isEmpty(agreement.getLegalVerification())){
+				agreement.setLegalVerification(new ArrayList<>());
+			}
+			if(CollectionUtils.isEmpty(agreement.getRcuVerification())){
+				agreement.setRcuVerification(new ArrayList<>());
+			}
+			if(CollectionUtils.isEmpty(agreement.getTechnicalVerification())){
+				agreement.setTechnicalVerification(new ArrayList<>());
+			}
+			
+			if(null!= finRef){
+				List<Verification> verifications = verificationService.getVerificationsForAggrement(finRef);
+				
+				if(CollectionUtils.isNotEmpty(verifications)){
+					for (Verification verification : verifications) {
+						if(null!=verification){
+							VerificationType type = VerificationType.getVerificationType(verification.getVerificationType());
+							long verificationId = verification.getId();
+							VerificationDetail verificationData=agreement.new VerificationDetail();
+							verificationData.setInitiationDate(DateUtility.formatToLongDate(verification.getCreatedOn()));
+							verificationData.setCompletionDate(DateUtility.formatToLongDate(verification.getLastVerificationDate()));
+							verificationData.setFinalStatus(StringUtils.trimToEmpty(verification.getVerificationStatus()));
+							verificationData.setRemarks(StringUtils.trimToEmpty(verification.getRemarks()));
+							verificationData.setAgencyName(StringUtils.trimToEmpty(verification.getAgencyName()));
+
+							switch (type) {
+							case FI:
+								verificationData.setApplicantName(StringUtils.trimToEmpty(verification.getCustomerName()));
+								if(null!=verification.getFieldInvestigation()){
+									FieldInvestigation fieldInvestigation=verification.getFieldInvestigation();
+									verificationData.setAddressType(StringUtils.trimToEmpty(fieldInvestigation.getAddressType()));
+								}
+								agreement.getFiVerification().add(verificationData);
+								break;
+							case TV:
+								TechnicalVerification technicalVerification = verification.getTechnicalVerification();
+								if(null!=technicalVerification){
+									verificationData.setCollateralType(StringUtils.trimToEmpty(technicalVerification.getCollateralType()));
+									verificationData.setCollateralReference(StringUtils.trimToEmpty(technicalVerification.getCollateralRef()));
+								}
+								agreement.getTechnicalVerification().add(verificationData);
+								break;
+							case LV:
+								agreement.getLegalVerification().add(verificationData);
+								break;
+							case RCU:
+								if(null!=verification.getRcuVerification()&&CollectionUtils.isNotEmpty(verification.getRcuVerification().getRcuDocuments())){
+									for (RCUDocument rcuDocument : verification.getRcuVerification().getRcuDocuments()) {
+										if(null!=rcuDocument){
+											String rcuDocVerficationType=null;
+											if(rcuDocument.getVerificationType()==0){
+												rcuDocVerficationType="Verification not completed";
+											}else{
+												for(RCUDocVerificationType rcuDocVerification:RCUDocVerificationType.values()){
+													if(rcuDocVerification.getKey()==rcuDocument.getVerificationType()){
+														rcuDocVerficationType=rcuDocVerification.getValue();
+													}
+												}
+											}
+											verificationData.setVerificationType(StringUtils.trimToEmpty(rcuDocVerficationType));
+											if(CollectionUtils.isNotEmpty(verification.getRcuVerification().getDocuments())){
+												List<DocumentDetails> documentDetailList = verification.getRcuVerification().getDocuments();
+												for (DocumentDetails documentDetail : documentDetailList) {
+													if(null!=documentDetail&&(documentDetail.getDocId()==rcuDocument.getDocumentId())){
+														verificationData.setDocumentName(StringUtils.trimToEmpty(documentDetail.getDocName()));
+														verificationData.setDocumentStatus(StringUtils.trimToEmpty(documentDetail.getRecordStatus()));
+														break;
+													}
+												}
+											}
+										}
+										agreement.getRcuVerification().add(verificationData);
+									}
+								}
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			if(CollectionUtils.isEmpty(agreement.getFiVerification())){
+				agreement.setFiVerification(new ArrayList<>());
+			}
+			if(CollectionUtils.isEmpty(agreement.getLegalVerification())){
+				agreement.setLegalVerification(new ArrayList<>());
+			}
+			if(CollectionUtils.isEmpty(agreement.getRcuVerification())){
+				agreement.setRcuVerification(new ArrayList<>());
+			}
+			if(CollectionUtils.isEmpty(agreement.getTechnicalVerification())){
+				agreement.setTechnicalVerification(new ArrayList<>());
+			}
+			
 			if(CollectionUtils.isEmpty(agreement.getExtendedDetails())){
 				agreement.setExtendedDetails(new ArrayList<>());
 				agreement.getExtendedDetails().add(agreement.new ExtendedDetail());
@@ -963,6 +1134,37 @@ public class AgreementGeneration implements Serializable {
 		}
 		logger.debug("Leaving");
 		return agreement;
+	}
+
+	/**
+	 * Method to populate the Scoring Details to AgreementDetails
+	 * 
+	 * @param detail
+	 * @param agreement
+	 */
+	private void populateAgreementScoringDetails(FinanceDetail detail, AgreementDetail agreement) {
+		if(CollectionUtils.isEmpty(agreement.getScoringDetails())){
+			agreement.setScoringDetails(new ArrayList<>());
+		}
+		
+		if(MapUtils.isNotEmpty(detail.getScoreDetailListMap())){
+			Map<Long, List<FinanceScoreDetail>> scoreDetailListMap=detail.getScoreDetailListMap();
+			for(long key:scoreDetailListMap.keySet()){
+				List<FinanceScoreDetail> scoreDetailList = scoreDetailListMap.get(key);
+				if(CollectionUtils.isNotEmpty(scoreDetailList)){
+					for(FinanceScoreDetail scoreDetail:scoreDetailList){
+						if(null!=scoreDetail){
+							Score score=agreement.new Score();
+							score.setScoringMetrics(StringUtils.trimToEmpty(scoreDetail.getRuleCode()));
+							score.setDescription(StringUtils.trimToEmpty(scoreDetail.getRuleCodeDesc()));
+							score.setMaximumScore(StringUtils.trimToEmpty(String.valueOf(scoreDetail.getMaxScore())));
+							score.setActualScore(StringUtils.trimToEmpty(String.valueOf(scoreDetail.getExecScore())));
+							agreement.getScoringDetails().add(score);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private AgreementDetail populateCustomerExtendedDetails(FinanceDetail detail, AgreementDetail agreement) {
@@ -1031,13 +1233,18 @@ public class AgreementGeneration implements Serializable {
 					}
 					if(deviations.isManualDeviation()){
 						loanDeviation.setDeviationType("Manual");
+						loanDeviation.setDeviationDescription(StringUtils.trimToEmpty(deviations.getDeviationCodeDesc()));
+						loanDeviation.setDeviationCode(StringUtils.trimToEmpty(deviations.getDeviationCodeName()));
+						loanDeviation.setRemarks(StringUtils.trimToEmpty(deviations.getRemarks()));
 					}else{
 						loanDeviation.setDeviationType("Auto");
+						JdbcSearchObject<DeviationParam> searchObject = new JdbcSearchObject<DeviationParam>(DeviationParam.class);
+						searchObject.addSortAsc("dataType");
+						loanDeviation.setDeviationDescription(StringUtils.trimToEmpty(deviationHelper.getDeviationDesc(deviations, searchProcessor.getResults(searchObject))));
+						loanDeviation.setDeviationCode("-");
+						loanDeviation.setRemarks("-");
 					}
 					loanDeviation.setDeviationApprovedBy(StringUtils.trimToEmpty(deviations.getDelegationRole()));
-					loanDeviation.setRemarks(StringUtils.trimToEmpty(deviations.getRemarks()));
-					loanDeviation.setDeviationDescription(StringUtils.trimToEmpty(deviations.getDeviationCodeDesc()));
-					loanDeviation.setDeviationCode(StringUtils.trimToEmpty(deviations.getDeviationCodeName()));
 					agreement.getLoanDeviations().add(loanDeviation);
 				}
 			}

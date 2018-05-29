@@ -6004,4 +6004,257 @@ private String custAccount ="";
 		this.totalPrice = totalPrice;
 	}
 	
+	private List<Score> scoringDetails;
+	
+	public List<Score> getScoringDetails() {
+		return scoringDetails;
+	}
+
+	public void setScoringDetails(List<Score> scoringDetails) {
+		this.scoringDetails = scoringDetails;
+	}
+
+	public class Score{
+		private String scoringMetrics="";
+		private String description="";
+		private String maximumScore="";
+		private String actualScore="";
+		
+		public Score() {
+		}
+
+		public String getScoringMetrics() {
+			return scoringMetrics;
+		}
+
+		public void setScoringMetrics(String scoringMetrics) {
+			this.scoringMetrics = scoringMetrics;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public String getMaximumScore() {
+			return maximumScore;
+		}
+
+		public void setMaximumScore(String maximumScore) {
+			this.maximumScore = maximumScore;
+		}
+
+		public String getActualScore() {
+			return actualScore;
+		}
+
+		public void setActualScore(String actualScore) {
+			this.actualScore = actualScore;
+		}
+	}
+	
+	List<Eligibility> eligibilityList;
+	
+	public List<Eligibility> getEligibilityList() {
+    	return eligibilityList;
+    }
+	public void setEligibilityList(List<Eligibility> eligibilityList) {
+    	this.eligibilityList = eligibilityList;
+    }
+
+	public class Eligibility{
+		
+		private String ruleCode = "";
+		private String description = "";
+		private String eligibilityLimit = "";
+		
+		public Eligibility() {
+		}
+		
+		public String getRuleCode() {
+        	return ruleCode;
+        }
+		public void setRuleCode(String ruleCode) {
+        	this.ruleCode = ruleCode;
+        }
+		
+		public String getDescription() {
+        	return description;
+        }
+		public void setDescription(String description) {
+        	this.description = description;
+        }
+		
+		public String getEligibilityLimit() {
+        	return eligibilityLimit;
+        }
+		public void setEligibilityLimit(String eligibilityLimit) {
+        	this.eligibilityLimit = eligibilityLimit;
+        }
+	}
+	
+	private List<VerificationDetail> fiVerification;
+	private List<VerificationDetail> technicalVerification ;
+	private List<VerificationDetail> rcuVerification;
+	private List<VerificationDetail> legalVerification ;
+	
+	public List<VerificationDetail> getFiVerification() {
+		return fiVerification;
+	}
+
+	public void setFiVerification(List<VerificationDetail> fiVerification) {
+		this.fiVerification = fiVerification;
+	}
+
+	public List<VerificationDetail> getTechnicalVerification() {
+		return technicalVerification;
+	}
+
+	public void setTechnicalVerification(List<VerificationDetail> technicalVerification) {
+		this.technicalVerification = technicalVerification;
+	}
+
+	public List<VerificationDetail> getRcuVerification() {
+		return rcuVerification;
+	}
+
+	public void setRcuVerification(List<VerificationDetail> rcuVerification) {
+		this.rcuVerification = rcuVerification;
+	}
+
+	public List<VerificationDetail> getLegalVerification() {
+		return legalVerification;
+	}
+
+	public void setLegalVerification(List<VerificationDetail> legalVerification) {
+		this.legalVerification = legalVerification;
+	}
+
+	public class VerificationDetail{
+		private String applicantName= "";
+		private String initiationDate= "";
+		private String completionDate= "";
+		private String finalStatus= "";
+		private String remarks= "";
+		private String doneBy= "";
+		private String agencyName= "";
+		private String addressType= "";
+		private String collateralType= "";
+		private String collateralReference= "";
+		private String verificationType= "";
+		private String documentName= "";
+		private String documentStatus= "";
+		
+		public VerificationDetail() {
+			super();
+			// TODO Auto-generated constructor stub
+		}
+
+		public String getApplicantName() {
+			return applicantName;
+		}
+
+		public void setApplicantName(String applicantName) {
+			this.applicantName = applicantName;
+		}
+
+		public String getInitiationDate() {
+			return initiationDate;
+		}
+
+		public void setInitiationDate(String initiationDate) {
+			this.initiationDate = initiationDate;
+		}
+
+		public String getCompletionDate() {
+			return completionDate;
+		}
+
+		public void setCompletionDate(String completionDate) {
+			this.completionDate = completionDate;
+		}
+
+		public String getFinalStatus() {
+			return finalStatus;
+		}
+
+		public void setFinalStatus(String finalStatus) {
+			this.finalStatus = finalStatus;
+		}
+
+		public String getRemarks() {
+			return remarks;
+		}
+
+		public void setRemarks(String remarks) {
+			this.remarks = remarks;
+		}
+
+		public String getDoneBy() {
+			return doneBy;
+		}
+
+		public void setDoneBy(String doneBy) {
+			this.doneBy = doneBy;
+		}
+
+		public String getAgencyName() {
+			return agencyName;
+		}
+
+		public void setAgencyName(String agencyName) {
+			this.agencyName = agencyName;
+		}
+
+		public String getAddressType() {
+			return addressType;
+		}
+
+		public void setAddressType(String addressType) {
+			this.addressType = addressType;
+		}
+
+		public String getCollateralType() {
+			return collateralType;
+		}
+
+		public void setCollateralType(String collateralType) {
+			this.collateralType = collateralType;
+		}
+
+		public String getCollateralReference() {
+			return collateralReference;
+		}
+
+		public void setCollateralReference(String collateralReference) {
+			this.collateralReference = collateralReference;
+		}
+
+		public String getVerificationType() {
+			return verificationType;
+		}
+
+		public void setVerificationType(String verificationType) {
+			this.verificationType = verificationType;
+		}
+
+		public String getDocumentName() {
+			return documentName;
+		}
+
+		public void setDocumentName(String documentName) {
+			this.documentName = documentName;
+		}
+
+		public String getDocumentStatus() {
+			return documentStatus;
+		}
+
+		public void setDocumentStatus(String documentStatus) {
+			this.documentStatus = documentStatus;
+		}
+	}
 }

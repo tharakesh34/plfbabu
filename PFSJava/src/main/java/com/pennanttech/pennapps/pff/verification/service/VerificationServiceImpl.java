@@ -84,12 +84,18 @@ import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.FieldInvestigationDAO;
 import com.pennanttech.pennapps.pff.verification.dao.LegalVerificationDAO;
+import com.pennanttech.pennapps.pff.verification.dao.RiskContainmentUnitDAO;
+import com.pennanttech.pennapps.pff.verification.dao.TechnicalVerificationDAO;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
 import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
+import com.pennanttech.pennapps.pff.verification.fi.LVStatus;
+import com.pennanttech.pennapps.pff.verification.fi.RCUStatus;
+import com.pennanttech.pennapps.pff.verification.fi.TVStatus;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
+import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
@@ -120,6 +126,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private CustomerDetailsService customerDetailsService;
 	@Autowired
 	private LegalVerificationDAO legalVerificationDAO;
+	@Autowired
+	private TechnicalVerificationDAO technicalVerificationDAO;
+	@Autowired
+	private RiskContainmentUnitDAO riskContainmentUnitDAO;
 
 	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType,
 			String tableType, String auditTranType, boolean isInitTab) {
@@ -955,5 +965,82 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	public List<Verification> getCollateralDocumentsStatus(String collateralReference) {
 		return legalVerificationDAO.getCollateralDocumentsStatus(collateralReference);
 	}
-	
+
+	@Override
+	public List<Verification> getVerificationsForAggrement(String finReference) {
+		List<Verification> list = new ArrayList<>();
+
+		list.addAll(verificationDAO.getVeriFications(finReference, VerificationType.FI.getKey()));
+		list.addAll(verificationDAO.getVeriFications(finReference, VerificationType.TV.getKey()));
+		list.addAll(verificationDAO.getVeriFications(finReference, VerificationType.LV.getKey()));
+		list.addAll(verificationDAO.getVeriFications(finReference, VerificationType.RCU.getKey()));
+
+		for (Verification verification : list) {
+			VerificationType type = VerificationType.getVerificationType(verification.getVerificationType());
+			long verificationId = verification.getId();
+
+			switch (type) {
+			case FI:
+				if (FIStatus.getType(verification.getStatus()).getKey() == 0) {
+					verification.setVerificationStatus("Verification not completed");
+				} else {
+					verification.setVerificationStatus(FIStatus.getType(verification.getStatus()).getValue());
+				}
+
+				verification
+						.setFieldInvestigation(fieldInvestigationDAO.getFieldInvestigation(verificationId, "_View"));
+
+				break;
+			case TV:
+				if (TVStatus.getType(verification.getStatus()).getKey() == 0) {
+					verification.setVerificationStatus("Verification not completed");
+				} else {
+					verification.setVerificationStatus(TVStatus.getType(verification.getStatus()).getValue());
+				}
+
+				TechnicalVerification technicalVerification = technicalVerificationDAO.getTechnicalVerification(verificationId, "_View");
+				verification.setTechnicalVerification(technicalVerification);
+				break;
+			case LV:
+				if (LVStatus.getType(verification.getStatus()).getKey() == 0) {
+					verification.setVerificationStatus("Verification not completed");
+				} else {
+					verification.setVerificationStatus(LVStatus.getType(verification.getStatus()).getValue());
+				}
+				LegalVerification legalVerification = legalVerificationDAO.getLegalVerification(verificationId, "_View");
+				verification.setLegalVerification(legalVerification);
+				
+				
+
+				break;
+			case RCU:
+				if (RCUStatus.getType(verification.getStatus()).getKey() == 0) {
+					verification.setVerificationStatus("Verification not completed");
+				} else {
+					verification.setVerificationStatus(RCUStatus.getType(verification.getStatus()).getValue());
+				}
+				RiskContainmentUnit riskContainmentUnit = riskContainmentUnitDAO.getRiskContainmentUnit(verificationId, "_View");
+				
+				if(null!=riskContainmentUnit){
+					// RCU Document Details
+					List<RCUDocument> rcuDocuments = riskContainmentUnitDAO.getRCUDocuments(verificationId, "_View");
+					riskContainmentUnit.setRcuDocuments(rcuDocuments);
+
+					// Document Details
+					List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
+							String.valueOf(verificationId), VerificationType.RCU.getCode(), "", "_View");
+					if (riskContainmentUnit.getDocuments() != null && !riskContainmentUnit.getDocuments().isEmpty()) {
+						riskContainmentUnit.getDocuments().addAll(documentList);
+					} else {
+						riskContainmentUnit.setDocuments(documentList);
+					}
+				}
+				verification.setRcuVerification(riskContainmentUnit);
+				break;
+			}
+
+		}
+
+		return list;
+	}
 }

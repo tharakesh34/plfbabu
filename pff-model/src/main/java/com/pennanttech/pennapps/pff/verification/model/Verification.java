@@ -88,6 +88,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private String lastAgency;
 	private long documentId;
 	private long docRefId;
+	private String verificationStatus;
 
 	public Verification() {
 		super();
@@ -131,6 +132,7 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("documentId");
 		excludeFields.add("docRefId");
 		excludeFields.add("initiated");
+		excludeFields.add("verificationStatus");
 		return excludeFields;
 	}
 
@@ -582,4 +584,12 @@ public class Verification extends AbstractWorkflowEntity {
 		this.initiated = initiated;
 	}
 
+	public String getVerificationStatus() {
+		return verificationStatus;
+	}
+
+	public void setVerificationStatus(String verificationStatus) {
+		this.verificationStatus = verificationStatus;
+	}
+	
 }
