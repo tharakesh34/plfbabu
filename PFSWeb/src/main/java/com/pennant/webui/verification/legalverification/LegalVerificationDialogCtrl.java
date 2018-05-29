@@ -783,11 +783,11 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		}
 	}
 
-	private void setValue(Listitem listitem, String comonentId) {
+	private void setValue(Listitem listitem, String componentId) {
 		LVDocument lvDoc = null;
 
 		lvDoc = (LVDocument) listitem.getAttribute("data");
-		switch (comonentId) {
+		switch (componentId) {
 		case "RemarksFin":
 			lvDoc.setRemarks1(((Textbox) getComponent(listitem, "RemarksFin")).getValue());
 			break;

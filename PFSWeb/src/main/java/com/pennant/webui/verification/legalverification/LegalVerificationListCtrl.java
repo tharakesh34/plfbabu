@@ -20,6 +20,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.verification.legalverification.model.LegalVerificationListModelItemRender;
+import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -142,6 +143,7 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 		agencyFilter[0] = new Filter("DealerType", Agencies.LVAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
 
+		this.createdOn.setFormat(DateFormat.SHORT_DATE.getPattern());
 		logger.debug(Literal.LEAVING);
 	}
 

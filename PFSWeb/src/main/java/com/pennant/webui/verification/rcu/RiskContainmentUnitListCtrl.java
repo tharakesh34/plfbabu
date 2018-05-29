@@ -21,6 +21,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.verification.rcu.model.RiskContainmentUnitListModelItemRender;
+import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -135,6 +136,7 @@ public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainment
 		agencyFilter[0] = new Filter("DealerType", Agencies.RCUVAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
 
+		this.createdOn.setFormat(DateFormat.SHORT_DATE.getPattern());
 		logger.debug(Literal.LEAVING);
 	}
 

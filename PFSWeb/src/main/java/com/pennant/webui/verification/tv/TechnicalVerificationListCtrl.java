@@ -32,6 +32,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.verification.technicalverification.model.TechnicalVerificationListModelItemRenderer;
+import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -161,7 +162,8 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		Filter agencyFilter[] = new Filter[1];
 		agencyFilter[0] = new Filter("DealerType", Agencies.TVAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
-
+		
+		this.CreadtedOn.setFormat(DateFormat.SHORT_DATE.getPattern());
 		logger.debug(Literal.LEAVING);
 	}
 
