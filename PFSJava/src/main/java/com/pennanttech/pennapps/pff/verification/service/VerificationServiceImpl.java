@@ -947,7 +947,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	@Override
+	public List<Integer> getVerificationTypes(String keyReference) {
+		return verificationDAO.getVerificationTypes(keyReference);
+	}
+
+	@Override
 	public List<Verification> getCollateralDocumentsStatus(String collateralReference) {
 		return legalVerificationDAO.getCollateralDocumentsStatus(collateralReference);
 	}
+	
 }

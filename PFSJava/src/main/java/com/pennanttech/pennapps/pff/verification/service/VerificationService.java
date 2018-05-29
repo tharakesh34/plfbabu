@@ -80,5 +80,8 @@ public interface VerificationService {
 
 	boolean isVerificationInRecording(Verification verification, VerificationType tv,RCUDocument rcuDocument);
 	
+	List<Integer> getVerificationTypes(String keyReference);
+	
 	List<Verification> getCollateralDocumentsStatus(String collateralReference);
+	
 }
