@@ -409,5 +409,28 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
+	
+	@Override
+	public List<Integer> getVerificationTypes(String keyReference) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append("select distinct verificationtype from verifications");
+		sql.append(" Where keyreference = :keyReference");
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+
+		parameterSource.addValue("keyReference", keyReference);
+
+		try {
+			return jdbcTemplate.queryForList(sql.toString(), parameterSource, Integer.class);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
 
 }
