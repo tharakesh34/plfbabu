@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+        
+        <property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+		<changeSet id="1" author="vijaykumar.L">
+		<sql>
+   DELETE FROM SECRIGHTS  WHERE rightname='menu_Item_FinDeptReports_CollateralReport';
+   
+   Insert into SECRIGHTS 
+   values ((select max(rightid)+1 from SECRIGHTS),0,'menu_Item_FinDeptReports_CollateralReport','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
+		</sql>
+		</changeSet>
+		
+		<changeSet id="2" author="vijaykumar.L">
+		<sql>
+		 DELETE FROM SECRIGHTS   where rightname='menu_Item_FinDeptReports_PendingChequeReport';
+		 
+		 Insert into SECRIGHTS 
+   values ((select max(rightid)+1 from SECRIGHTS),0,'menu_Item_FinDeptReports_PendingChequeReport','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
+		</sql>
+		</changeSet>
+		
+		<changeSet id="3" author="vijaykumar.L">
+		<sql>
+		 DELETE FROM SECRIGHTS   where rightname='menu_Item_FinDeptReports_ChequeBounceReport';
+		  Insert into SECRIGHTS 
+     values ((select max(rightid)+1 from SECRIGHTS),0,'menu_Item_FinDeptReports_ChequeBounceReport','MENU',1,1000,current_timestamp,null,null,null,null,null,null,0);
+		
+		</sql>
+		</changeSet>
+		<changeSet id="4" author="vijaykumar.L">
+		<sql>
+    delete from REPORTFILTERFIELDS where reportid =(select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CollateralReport');
+
+    delete from REPORTCONFIGURATION where menuitemcode='menu_Item_CollateralReport';
+   Insert into REPORTCONFIGURATION 
+   values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Collateral Report','Collateral Report',1,'CollateralReport','dataSource',1,'menu_Item_CollateralReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+
+   Insert into REPORTFILTERFIELDS
+   values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CollateralReport'),1,'CustCIF','LOVSEARCH','Customer Number','CustCIF',null,'Customer','getCustCIF','getCustShrtName',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+   Insert into REPORTFILTERFIELDS 
+   values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CollateralReport'),2,'FinReference','LOVSEARCH','Loan Reference','finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+   Insert into REPORTFILTERFIELDS 
+   values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CollateralReport'),3,'Collateral Reference','LOVSEARCH','Collateral Reference','T1.collateralref',null,'CollateralAssignment','getCollateralRef','getCollateralRef',0,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+   Insert into REPORTFILTERFIELDS 
+   values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CollateralReport'),4,'FinStartDate','DATERANGE','Loan Start Date','finstartdate',null,'---Select----',null,null,0,0,0,0,4,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+   Insert into REPORTFILTERFIELDS 
+    values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CollateralReport'),5,'FinType','LOVSEARCH','Loan Type','fintype',null,'FinanceType','getFinType','getFinTypeDesc',0,0,0,0,5,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+		</sql>
+	 </changeSet>
+	 
+	 <changeSet id="5" author="vijaykumar.L">
+	 <sql>
+	 delete from REPORTFILTERFIELDS where reportid =(select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PendingChequeReport');
+	 delete from REPORTCONFIGURATION where menuitemcode='menu_Item_PendingChequeReport';
+	 Insert into REPORTCONFIGURATION 
+     values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Pending Cheque Report','Pending Cheque Report',1,'PendingChequeReport','dataSource',1,'menu_Item_PendingChequeReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+
+     Insert into REPORTFILTERFIELDS
+     values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PendingChequeReport'),1,'CustCIF','LOVSEARCH','Customer Number','CustCIF',null,'Customer','getCustCIF','getCustShrtName',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+     Insert into REPORTFILTERFIELDS 
+     values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PendingChequeReport'),2,'FinReference','LOVSEARCH','Loan Reference','T1.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+     Insert into REPORTFILTERFIELDS 
+     values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PendingChequeReport'),3,'FinType','LOVSEARCH','Loan Type','T1.fintype',null,'FinanceType','getFinType','getFinTypeDesc',0,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+     Insert into REPORTFILTERFIELDS 
+     values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PendingChequeReport'),4,'FinStartDate','DATERANGE','Loan Start Date','T1.finstartdate',null,'---Select----',null,null,0,0,0,0,4,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+     Insert into REPORTFILTERFIELDS 
+     values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PendingChequeReport'),5,'Cheque Received Date','DATERANGE','Cheque Received Date','T3.ReceivedDate',null,'---Select----',null,null,0,0,0,0,5,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+     Insert into REPORTFILTERFIELDS 
+     values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PendingChequeReport'),6,'Cheque Number','TXT','Cheque Number','T3.FavourNumber',null,null,null,null,0,20,0,0,6,0,null,null,null,null,250,1,'%',4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+     Insert into REPORTFILTERFIELDS 
+     values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PendingChequeReport'),7,'Deposit Date','DATERANGE','Deposit Date','T3.DepositDate',null,'---Select----',null,null,0,0,0,0,7,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+     Insert into REPORTFILTERFIELDS 
+     values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PendingChequeReport'),8,'Deposit Bank ID','TXT','Deposit Bank ID','T3.FundingAc',null,null,null,null,0,20,0,0,8,0,null,null,null,null,250,1,'%',4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+     Insert into REPORTFILTERFIELDS
+    values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PendingChequeReport'),9,'Branch','LOVSEARCH','Branch','T1.finbranch',null,'Branch','getBranchCode','getBranchDesc',0,0,0,0,9,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+	 </sql>
+	 </changeSet>
+	 
+	 <changeSet id="6" author="vijaykumar.l">
+	<sql>
+	delete from REPORTFILTERFIELDS where reportid =(select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ChequeBounceReport');
+	delete from REPORTCONFIGURATION where menuitemcode='menu_Item_ChequeBounceReport';
+	Insert into REPORTCONFIGURATION 
+    values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Cheque Bounce Report','Cheque Bounce Report',1,'ChequeBounceReport','dataSource',1,'menu_Item_ChequeBounceReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+
+     Insert into REPORTFILTERFIELDS
+     values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ChequeBounceReport'),1,'CustCIF','LOVSEARCH','Customer Number','T1.custcif',null,'Customer','getCustCIF','getCustShrtName',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+     Insert into REPORTFILTERFIELDS 
+     values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ChequeBounceReport'),2,'FinReference','LOVSEARCH','Loan Reference','T1.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+     Insert into REPORTFILTERFIELDS 
+     values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ChequeBounceReport'),3,'FinType','LOVSEARCH','Loan Type','T1.fintype',null,'FinanceType','getFinType','getFinTypeDesc',0,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+     Insert into REPORTFILTERFIELDS 
+     values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ChequeBounceReport'),4,'Cheque Number','TXT','Cheque Number','T4.FavourNumber',null,null,null,null,0,20,0,0,4,0,null,null,null,null,250,1,'%',4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+     Insert into REPORTFILTERFIELDS 
+     values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ChequeBounceReport'),5,'Cheque Received Date','DATERANGE','Cheque Received Date','T4.ReceivedDate',null,'---Select----',null,null,0,0,0,0,5,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+     Insert into REPORTFILTERFIELDS 
+     values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ChequeBounceReport'),6,'Cheque Bounce Date','DATERANGE','Cheque Bounce Date','T3.bouncedate',null,'---Select----',null,null,0,0,0,0,6,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+	
+	</sql>
+	 </changeSet>
+	 <changeSet id="7" author="vijaykumar.l">
+	 <sql>
+	  Delete from RBFIELDDETAILS where RBMODULE = 'SCORES' and RBEVENT = 'RSCORE' and RbFldName = 'reqFinType';
+	 Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) 
+	 values ('SCORES','RSCORE','reqFinType','Fin Type','nvarchar',8,'0','1','RMTFinanceTypes','static,dbvalue','FinanceType');
+	 </sql>
+	 
+	 </changeSet>
+	 <changeSet id="8" author="vijaykumar.l">
+	 <sql>
+	 delete   from  BMTAMOUNTCODES  where allowedevent = 'EARLYSTL' and amountcode= 'bounceCharge_CGST_P';
+     delete  from BMTAMOUNTCODES  where allowedevent = 'EARLYSTL' and amountcode= 'bounceCharge_SGST_P';
+     delete  from BMTAMOUNTCODES  where allowedevent = 'EARLYSTL' and amountcode= 'bounceCharge_IGST_P';
+     delete  from BMTAMOUNTCODES  where allowedevent = 'EARLYSTL' and amountcode= 'bounceCharge_UGST_P';
+     delete  from BMTAMOUNTCODES  where allowedevent = 'INSTDATE' and amountcode= 'ae_dAmz';
+
+     insert into BMTAMOUNTCODES values('EARLYSTL',0,'bounceCharge_CGST_P','Bounce charge CGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+     insert into BMTAMOUNTCODES values('EARLYSTL',0,'bounceCharge_SGST_P','Bounce charge SGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+     insert into BMTAMOUNTCODES values('EARLYSTL',0,'bounceCharge_IGST_P','Bounce charge IGSTpaid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+     insert into BMTAMOUNTCODES values('EARLYSTL',0,'bounceCharge_UGST_P','Bounce charge UGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+     insert into BMTAMOUNTCODES  values ('INSTDATE',0,'ae_dAmz','Amortized Interest From previous Amz Date','1',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+	 </sql>
+	 
+	 </changeSet>
+	 
+	 <changeSet id="9" author="vijay.l">
+	 <sql>
+	 delete from data_engine_column;
+     delete from data_Engine_table;
+     delete from data_Engine_config;
+INSERT INTO data_engine_config (id, name, description, parser, worksheet, textqualifier, rowdelimiter, columndelimiter, startingrow, skipheaderrow, fieldnames, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, lastprocessedon, filenameformat, cronexpression, notificationstatusemail, postevent, backupfile, active) VALUES (6, 'MANDATES_IMPORT', 'Mandate Response file', 12, 'Mandates', NULL, NULL, NULL, 0, 1, NULL, NULL, '', 'C', '/opt/pennant/PFF/BASE/mandates/response', 'NIYOGINMAN', '.xlsx', 0, NULL, NULL, NULL, '0', NULL, 1, 1);
+INSERT INTO data_engine_config (id, name, description, parser, worksheet, textqualifier, rowdelimiter, columndelimiter, startingrow, skipheaderrow, fieldnames, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, lastprocessedon, filenameformat, cronexpression, notificationstatusemail, postevent, backupfile, active) VALUES (10, 'POSTINGS_DOWNLOAD', 'Daily posting downloads', 3, 'Postings', NULL, NULL, NULL, 0, 0, NULL, 'ROW:{"date","number","type","glcode","description","profit_center","debit_credit","amount","narration"}', '', 'A', '/opt/pennant/PFF/BASE/voucherdetails/request', 'NIYOGIN_POSTINGS', '.csv', 0, '2018-04-26 13:38:31.764', '${ddMMYYYYHms}', NULL, '0', NULL, 1, 1);
+INSERT INTO data_engine_config (id, name, description, parser, worksheet, textqualifier, rowdelimiter, columndelimiter, startingrow, skipheaderrow, fieldnames, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, lastprocessedon, filenameformat, cronexpression, notificationstatusemail, postevent, backupfile, active) VALUES (8, 'DISB_HDFC_IMPORT', 'HDFC Bank Disbursement Response File', 1, NULL, NULL, NULL, ',', 0, 1, NULL, NULL, NULL, 'C', '/opt/pennant/PFF/BASE/disbursement/response', 'NIYOGINPAY', '.txt', 0, NULL, NULL, '0 0/5 * * * ?', '0', NULL, 1, 1);
+INSERT INTO data_engine_config (id, name, description, parser, worksheet, textqualifier, rowdelimiter, columndelimiter, startingrow, skipheaderrow, fieldnames, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, lastprocessedon, filenameformat, cronexpression, notificationstatusemail, postevent, backupfile, active) VALUES (59, 'DISB_IMPS_RESPONSE', 'Disbrsement imps response.', 1, NULL, NULL, NULL, ',', 0, 0, NULL, NULL, NULL, 'S', NULL, 'Disbrsement imps', NULL, 0, NULL, NULL, '0 0/5 * * * ?', '0', NULL, 1, 1);
+INSERT INTO data_engine_config (id, name, description, parser, worksheet, textqualifier, rowdelimiter, columndelimiter, startingrow, skipheaderrow, fieldnames, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, lastprocessedon, filenameformat, cronexpression, notificationstatusemail, postevent, backupfile, active) VALUES (19, 'DISB_IMPS_EXPORT', 'Disbursement imps export.', 10, NULL, NULL, NULL, ',', 0, 0, NULL, NULL, NULL, 'A', NULL, 'DBFILE', NULL, 0, NULL, NULL, NULL, '0', NULL, 1, 1);
+INSERT INTO data_engine_config (id, name, description, parser, worksheet, textqualifier, rowdelimiter, columndelimiter, startingrow, skipheaderrow, fieldnames, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, lastprocessedon, filenameformat, cronexpression, notificationstatusemail, postevent, backupfile, active) VALUES (5, 'MANDATES_EXPORT', 'Mandates export', 3, 'Mandates', NULL, NULL, NULL, 0, 0, NULL, 'ROW:{Sr.no.,Start Date,End Date,Client code,Unique reference no.,Account No.,Account Holder name,Account type,Bank Name,Bank Branch,Amount,Finreference}', '', 'A', '/opt/pennant/PFF/BASE/mandates/request', 'PROFECTUSMAN', '.xlsx', 1, '2018-05-26 12:17:05.501', '${ddMMYYYYHms}', NULL, '0', NULL, 1, 1);
+INSERT INTO data_engine_config (id, name, description, parser, worksheet, textqualifier, rowdelimiter, columndelimiter, startingrow, skipheaderrow, fieldnames, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, lastprocessedon, filenameformat, cronexpression, notificationstatusemail, postevent, backupfile, active) VALUES (60, 'PRESENTMENT_REQUEST', 'PresentmentRequest.', 3, NULL, NULL, NULL, NULL, 0, 0, NULL, 'ROW:{
+Name, Batch ID, UMRN NO, Amount, Settelement Date, Account Type, Dealer Code, Payment Due Date, Loan Reference,}', '', 'A', '/opt/pennant/PFF/BASE/presentment/request', 'PRESENTREQ', '.xlsx', 15, '2018-05-27 21:35:37.895', '${SEQ_FILE},_${yyyyMMddHHmmss}', NULL, '0', NULL, 1, 1);
+INSERT INTO data_engine_config (id, name, description, parser, worksheet, textqualifier, rowdelimiter, columndelimiter, startingrow, skipheaderrow, fieldnames, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, lastprocessedon, filenameformat, cronexpression, notificationstatusemail, postevent, backupfile, active) VALUES (7, 'DISB_HDFC_EXPORT', 'HDFC Bank Disbursements[NEFT/RTGS/CHEQUE/DD] Download.', 2, NULL, NULL, NULL, ',', 0, 0, NULL, 'ROW:{Debit Account Number,Value Date,Customer Reference No,Beneficiary Name,Payment Type,Bene Account Number,Bank Code,Account type,Amount,POD 1,POD 2,POD 3 / RTGS PP,POD 4,Payable Location Name,Print Location Name,Beneficiary Address 1,Beneficiary Address 2,Beneficiary Address 3,Beneficiary Address 4,Delivery Method,Cheque Number,Bene E-mail ID,Mobile,Print Date,Id}', NULL, 'A', '/opt/pennant/PFF/BASE/disbursement/request', 'DISB_HDFC', '.txt', 2, '2018-05-27 20:32:28.805', '${ddmm},.${SEQ_DATE_FILE}', NULL, '0', NULL, 1, 1); 
+	 </sql>
+	 </changeSet>
+	 <changeSet id="10" author="vijay">
+	 <sql>
+INSERT INTO data_engine_table (id, configid, name, operation, keyfields, filter, statusupdate, skiprows, identifier, description, startindex, endindex, recordlength, multirow, headertable) VALUES (5, 5, 'MANDATE_REQUESTS', 0, 'ID', 'ID IN (:ID)', 'UPDATE MANDATE_REQUESTS SET BATCH_ID = :FILEID, STATUS = ''AC'' WHERE ID IN (:ID)QUERY:UPDATE MANDATES SET STATUS = ''AC'' WHERE MANDATEID IN (SELECT MANDATEID FROM MANDATE_REQUESTS WHERE ID IN (:ID) AND STATUS = ''AC'')', NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+INSERT INTO data_engine_table (id, configid, name, operation, keyfields, filter, statusupdate, skiprows, identifier, description, startindex, endindex, recordlength, multirow, headertable) VALUES (6, 6, 'MANDATE_RESPONSE', 1, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 14, 0, 0);
+INSERT INTO data_engine_table (id, configid, name, operation, keyfields, filter, statusupdate, skiprows, identifier, description, startindex, endindex, recordlength, multirow, headertable) VALUES (7, 7, 'DISBURSEMENT_REQUESTS', 0, 'ID', 'ID IN (:ID)', 'UPDATE DISBURSEMENT_REQUESTS SET BATCH_ID = :FILEID, STATUS = ''AC'' WHERE ID IN (:ID)QUERY:UPDATE FINADVANCEPAYMENTS SET STATUS = ''AC'' WHERE PAYMENTID IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS WHERE ID IN (:ID) AND STATUS = ''AC'')', NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+INSERT INTO data_engine_table (id, configid, name, operation, keyfields, filter, statusupdate, skiprows, identifier, description, startindex, endindex, recordlength, multirow, headertable) VALUES (10, 10, 'PostingDownloads_View', 0, 'ID', 'POSTDATE =:POSTDATE', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+INSERT INTO data_engine_table (id, configid, name, operation, keyfields, filter, statusupdate, skiprows, identifier, description, startindex, endindex, recordlength, multirow, headertable) VALUES (8, 8, 'DISBURSEMENT_REQUESTS', 2, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 28, 0, 0);
+INSERT INTO data_engine_table (id, configid, name, operation, keyfields, filter, statusupdate, skiprows, identifier, description, startindex, endindex, recordlength, multirow, headertable) VALUES (11, 60, 'PRESENTMENT_REQ_DETAILS', 0, 'TXN_REF', 'TXN_REF IN (:TXN_REF)', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+	 </sql>
+	 </changeSet>
+	<changeSet id="11" author="vijaykumar.l">
+	 <sql>
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (230, 5, 'Finreference', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (231, 6, 'Finreference', 0, 'N', NULL, NULL, NULL, NULL, '11', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (97, 6, 'STATUS', 0, 'N', NULL, NULL, NULL, NULL, '12', NULL, NULL, NULL, NULL, 'M');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (88, 6, 'END_DATE', 0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, 'YYYYMMDD', 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (232, 7, 'Id', 0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (233, 8, 'CustCif', 0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (234, 8, 'Benficiary_name', 0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (235, 8, 'Disbursement_type', 0, 'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (236, 8, 'Benficiary_account', 0, 'N', NULL, NULL, NULL, NULL, '5', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (237, 8, 'Benficiary_bank', 0, 'N', NULL, NULL, NULL, NULL, '6', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (76, 5, 'BANK_SEQ', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (79, 5, 'CUSTCIF', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (80, 5, 'MANDATEID', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (81, 5, 'ACCT_NUMBER', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (82, 5, 'ACCT_HOLDER_NAME', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (83, 5, 'ACCT_TYPE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (84, 5, 'BANK_NAME', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (85, 5, 'BRANCH_NAME', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (89, 6, 'CUSTCIF', 0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, NULL, 'M');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (238, 8, 'Disbursement_amount', 0, 'N', NULL, NULL, NULL, NULL, '8', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (239, 8, 'Drawee_location', 0, 'N', NULL, NULL, NULL, NULL, '13', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (240, 8, 'Print_location', 0, 'N', NULL, NULL, NULL, NULL, '14', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (241, 8, 'Benficiary_address1', 0, 'N', NULL, NULL, NULL, NULL, '15', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (242, 8, 'Benficiary_address2', 0, 'N', NULL, NULL, NULL, NULL, '16', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (243, 8, 'Benficiary_address3', 0, 'N', NULL, NULL, NULL, NULL, '17', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (244, 8, 'Benficiary_address4', 0, 'N', NULL, NULL, NULL, NULL, '18', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (245, 8, 'Cheque_number', 0, 'N', NULL, NULL, NULL, NULL, '20', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (246, 8, 'Benficiry_email', 0, 'N', NULL, NULL, NULL, NULL, '21', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (247, 8, 'Benficiary_mobile', 0, 'N', NULL, NULL, NULL, NULL, '22', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (248, 8, 'Id', 0, 'N', NULL, NULL, NULL, NULL, '24', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (249, 8, 'Status', 0, 'N', NULL, NULL, NULL, NULL, '25', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (250, 8, 'Transactionref', 0, 'N', NULL, NULL, NULL, NULL, '26', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (251, 8, 'Remarks', 0, 'N', NULL, NULL, NULL, NULL, '27', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (252, 8, 'RESP_BATCH_ID', 0, 'N', NULL, NULL, '${FILE_ID}', NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (86, 5, 'UPPER_LIMIT', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (96, 6, 'UPPER_LIMIT', 0, 'N', NULL, NULL, NULL, NULL, '10', NULL, NULL, NULL, NULL, 'M');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (77, 5, 'START_DATE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'YYYYMMDD', 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (78, 5, 'END_DATE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'YYYYMMDD', 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (87, 6, 'START_DATE', 0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, 'YYYYMMDD', 'M');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (90, 6, 'MANDATEID', 0, 'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'M');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (91, 6, 'ACCT_NUMBER', 0, 'N', NULL, NULL, NULL, NULL, '5', NULL, NULL, NULL, NULL, 'M');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (92, 6, 'ACCT_HOLDER_NAME', 0, 'N', NULL, NULL, NULL, NULL, '6', NULL, NULL, NULL, NULL, 'M');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (93, 6, 'ACCT_TYPE', 0, 'N', NULL, NULL, NULL, NULL, '7', NULL, NULL, NULL, NULL, 'M');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (94, 6, 'BANK_NAME', 0, 'N', NULL, NULL, NULL, NULL, '8', NULL, NULL, NULL, NULL, 'M');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (95, 6, 'BRANCH_NAME', 0, 'N', NULL, NULL, NULL, NULL, '9', NULL, NULL, NULL, NULL, 'M');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (100, 6, 'RESP_BATCH_ID', 0, 'N', NULL, NULL, '${FILE_ID}', NULL, '0', NULL, NULL, NULL, NULL, 'M');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (101, 7, 'BENFICIARY_ACCOUNT', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (103, 7, 'CUSTCIF', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (104, 7, 'BENFICIARY_NAME', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (105, 7, 'PAYMENT_DETAIL6', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (106, 7, 'BENFICIARY_ACCOUNT', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (107, 7, 'IFSC_CODE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (108, 7, 'DISBURSEMENT_TYPE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (109, 7, 'DISBURSEMENT_AMOUNT', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (110, 7, 'PAYMENT_DETAIL1', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (111, 7, 'PAYMENT_DETAIL2', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (112, 7, 'PAYMENT_DETAIL3', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (113, 7, 'PAYMENT_DETAIL4', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (114, 7, 'DRAWEE_LOCATION', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (115, 7, 'PRINT_LOCATION', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (116, 7, 'BENFICIARY_ADDRESS1', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (117, 7, 'BENFICIARY_ADDRESS2', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (118, 7, 'BENFICIARY_ADDRESS3', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (119, 7, 'BENFICIARY_ADDRESS4', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (120, 7, 'DISBURSEMENT_TYPE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (121, 7, 'CHEQUE_NUMBER', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (122, 7, 'BENFICIRY_EMAIL', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (123, 7, 'BENFICIARY_ADDRESS5', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (102, 7, 'DISBURSEMENT_DATE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'DATE:yyyyMMdd', 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (124, 7, 'PAYMENT_DATE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'DATE:yyyyMMdd', 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (161, 10, 'number', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (162, 10, 'Acctype', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (163, 10, 'glcode', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (167, 10, 'amount', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (168, 10, 'narration', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (164, 10, 'description', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (165, 10, 'profit_center', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (166, 10, 'debit_credit', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (160, 10, 'PostDate', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'DATE:dd.MM.yyyy', 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (98, 6, 'MANDATE_REG_NO', 0, 'N', NULL, NULL, NULL, NULL, '13', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (99, 6, 'REMARKS', 0, 'N', NULL, NULL, NULL, NULL, '14', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (253, 11, 'DEST_ACC_HOLDER', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (254, 11, 'BATCHID', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (255, 11, 'UMRN_NO', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (256, 11, 'CHEQUEAMOUNT', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (257, 11, 'CycleDate', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'DATE:dd-MM-yyyy', 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (258, 11, 'ACC_TYPE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (259, 11, 'BR_CODE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (260, 11, 'CycleDate', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'DATE:dd-MM-yyyy', 'O');
+INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (261, 11, 'AGREEMENTNO', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+	 </sql>
+	 </changeSet>
+	 </databaseChangeLog>
