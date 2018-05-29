@@ -121,6 +121,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.interfacebajaj.MandateRegistrationListCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -421,6 +422,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.mandateRef.setDescColumn("MandateRef");
 		this.mandateRef.setDisplayStyle(2);
 		this.mandateRef.setInputAllowed(false);
+		this.mandateRef.setValueType(DataType.LONG);
 		this.mandateRef.setValidateColumns(new String[] { "MandateID" });
 		addMandateFiletrs(null);
 		this.active.setChecked(true);
