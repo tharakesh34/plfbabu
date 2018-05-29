@@ -340,6 +340,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private int	roundingTarget;
 
 	private boolean	alwMultiDisb;
+	
+	private long postingId=Long.MIN_VALUE;
 
 	// ===========================================
 	// =========BPI Details ============
@@ -770,6 +772,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("devFinCalReq");
 		excludeFields.add("resetOrgBal");
 		excludeFields.add("resetNxtRpyInstReq");
+		excludeFields.add("postingId");
 
 		//GST
 		excludeFields.add("recalCGSTFee");
@@ -3639,6 +3642,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setDmaName(String dmaName) {
 		this.dmaName = dmaName;
+	}
+	
+	public long getPostingId() {
+		return postingId;
+	}
+	public void setPostingId(long postingId) {
+		this.postingId = postingId;
 	}
 
 }

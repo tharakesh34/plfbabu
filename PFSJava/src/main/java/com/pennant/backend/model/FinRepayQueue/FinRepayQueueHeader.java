@@ -30,6 +30,7 @@ public class FinRepayQueueHeader {
 	private String partnerBankAc;
 	private String partnerBankAcType;
 	private boolean pftChgAccReq;
+	private long receiptId;
 	
 	private Map<String , BigDecimal> extDataMap = null;
 	private List<FinRepayQueue> queueList = null;
@@ -216,5 +217,14 @@ public class FinRepayQueueHeader {
 	public void setExtDataMap(Map<String , BigDecimal> extDataMap) {
 		this.extDataMap = extDataMap;
 	}
+
+	public long getReceiptId() {
+		return receiptId;
+	}
+
+	public void setReceiptId(long receiptId) {
+		this.receiptId = receiptId;
+	}
+
 
 }

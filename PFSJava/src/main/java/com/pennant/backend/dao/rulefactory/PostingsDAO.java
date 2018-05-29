@@ -54,11 +54,17 @@ public interface PostingsDAO {
 
 	void saveBatch(List<ReturnDataSet> dataSetList);
 	void updateStatusByLinkedTranId(long linkedTranId, String postStatus);
+	void updateStatusByPostRef(long postingId, String postStatus);
 	void updateStatusByFinRef(String finReference, String postStatus);
 
 	long getLinkedTransId();
+	long getPostingId();
+	
+	List<ReturnDataSet> getPostingsByPostRef(Long postref);
 
 	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranId);
+	
+	List<ReturnDataSet> getPostingsByPostRef(long postingId);
 
 	List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
 			String postingGroupBy);
@@ -73,7 +79,7 @@ public interface PostingsDAO {
 
 	List<ReturnDataSet> getPostingsbyFinanceBranch(String branchCode);
 
-	List<ReturnDataSet> getPostingsByPostref(String finReference, String finEvent);
+	List<ReturnDataSet> getPostingsByVasref(String finReference, String finEvent);
 
 	List<ReturnDataSet> getPostingsByFinRef(String finReference, boolean reqReversals);
 

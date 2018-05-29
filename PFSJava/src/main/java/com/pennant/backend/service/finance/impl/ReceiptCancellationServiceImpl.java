@@ -187,6 +187,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	public List<ReturnDataSet> getPostingsByTranIdList(List<Long> tranIdList) {
 		return getPostingsDAO().getPostingsByTransIdList(tranIdList);
 	}
+	@Override
+	public List<ReturnDataSet> getPostingsByPostRef(long postRef) {
+		return getPostingsDAO().getPostingsByPostRef(postRef);
+	}
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -671,6 +675,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		logger.debug("Entering");
 		
 		boolean alwSchdReversalByLog = false;
+		long postingId=getPostingsDAO().getPostingId();
 
 		// Valid Check for Finance Reversal On Active Finance Or not with ValueDate CheckUp
 		String finReference = receiptHeader.getReference();
@@ -692,6 +697,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		long logKey = 0;
 		BigDecimal totalPriAmount = BigDecimal.ZERO;
 		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
+		// Posting Reversal Case Program Calling in Equation
+		// ============================================
+		//getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
+		getPostingsPreparationUtil().postReversalsByPostRef(receiptHeader.getReceiptID(),postingId);
 		BigDecimal unRealizeAmz = BigDecimal.ZERO;
 		if (receiptDetails != null && !receiptDetails.isEmpty()) {
 			for (int i = receiptDetails.size() - 1; i >= 0; i--) {
@@ -744,10 +753,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 							return errorDetail.getMessage();
 						}
 						
-						// Posting Reversal Case Program Calling in Equation
-						// ============================================
-						getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
-						
 						// Excess Amounts reversal Updations
 						getFinExcessAmountDAO().updateExcessBal(excess.getExcessID(),
 								rpyHeader.getRepayAmount().negate());
@@ -761,10 +766,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					}
 
 					isRcdFound = true;
-
-					// Posting Reversal Case Program Calling in Equation
-					// ============================================
-					getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
 
 					// Remove Repayments Terms based on Linked Transaction ID
 					// ============================================

@@ -6581,6 +6581,7 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="postingsDAO" ref="postingsDAO" />
 	</bean>
 
 	<!--============ Finance Repayment Details ============== -->

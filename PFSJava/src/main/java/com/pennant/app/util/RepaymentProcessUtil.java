@@ -36,6 +36,7 @@ import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
+import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -91,6 +92,7 @@ public class RepaymentProcessUtil {
 	private ReceiptAllocationDetailDAO	allocationDetailDAO;	
 	private PostingsPreparationUtil		postingsPreparationUtil;
 	private FinanceMainDAO				financeMainDAO;
+	private PostingsDAO					postingsDAO;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -389,7 +391,7 @@ public class RepaymentProcessUtil {
 	/**
 	 * Method for Processing Payment details as per receipt details
 	 * 
-	 * @param receiptHeader
+	 * @param receiptHeaderFinReceiptDetail
 	 */
 	@SuppressWarnings("unchecked")
 	public  List<Object> doProcessReceipts(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
@@ -444,6 +446,8 @@ public class RepaymentProcessUtil {
 		BigDecimal totPayable = BigDecimal.ZERO;
 		int rcptSize = receiptDetailList.size();
 		List<RepayScheduleDetail> repaySchdList = null;
+		long postingId =getPostingsDAO().getPostingId();
+		financeMain.setPostingId(postingId);
 		for (int rcpt = 0; rcpt < receiptDetailList.size(); rcpt++) {
 			
 			FinReceiptDetail receiptDetail = receiptDetailList.get(rcpt);
@@ -470,6 +474,11 @@ public class RepaymentProcessUtil {
 			}else{
 				extDataMap.put("PB_ReceiptAmount", receiptDetail.getAmount());
 			}
+			
+			addZeroifNotContains(extDataMap, "PA_ReceiptAmount");
+			addZeroifNotContains(extDataMap, "EX_ReceiptAmount");
+			addZeroifNotContains(extDataMap, "EA_ReceiptAmount");
+			addZeroifNotContains(extDataMap, "PB_ReceiptAmount");
 			
 			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
 				if(extDataMap.containsKey(receiptDetail.getFeeTypeCode()+"_P")){
@@ -568,6 +577,8 @@ public class RepaymentProcessUtil {
 						aeEvent.setLinkedTranId(0);
 						aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
 						aeEvent.setValueDate(valueDate);
+						aeEvent.setPostRefId(receiptHeader.getReceiptID());
+						aeEvent.setPostingId(financeMain.getPostingId());
 						
 						amountCodes.setFinType(financeMain.getFinType());
 						amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
@@ -778,6 +789,8 @@ public class RepaymentProcessUtil {
 		aeEvent.setLinkedTranId(0);
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
 		aeEvent.setValueDate(dateValueDate);
+		aeEvent.setPostRefId(receiptDetail.getReceiptID());
+		aeEvent.setPostingId(financeMain.getPostingId());
 		
 		aeEvent.getAcSetIDList().clear();
 		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
@@ -1450,6 +1463,7 @@ public class RepaymentProcessUtil {
 			rpyQueueHeader.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 			rpyQueueHeader.setPftChgAccReq(pftChgAccReq);
 			rpyQueueHeader.setExtDataMap(extDataMap);
+			rpyQueueHeader.setReceiptId(receiptDetail.getReceiptID());
 
 			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, finFeeDetailList,profitDetail,
 					rpyQueueHeader, eventCode, valuedate,postDate);
@@ -1871,4 +1885,12 @@ public class RepaymentProcessUtil {
 	}
 	
 	
+	public PostingsDAO getPostingsDAO() {
+		return postingsDAO;
+	}
+
+	public void setPostingsDAO(PostingsDAO postingsDAO) {
+		this.postingsDAO = postingsDAO;
+	}
+
 }

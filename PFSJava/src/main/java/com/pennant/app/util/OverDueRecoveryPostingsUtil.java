@@ -135,7 +135,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		amountCodes.setPenaltyPaid(penaltyPaidNow);
 		amountCodes.setPenaltyWaived(penaltyWaived);
-
+        aeEvent.setPostRefId(rpyQueueHeader.getReceiptId());
+        aeEvent.setPostingId(financeMain.getPostingId());
 		aeEvent.setSchdDate(schDate);
 		aeEvent.setEOD(false);
 

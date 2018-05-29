@@ -31,6 +31,8 @@ public class AEEvent {
 	private boolean					postingSucess		= true;
 	private String					errorMessage;
 	private long					linkedTranId		= Long.MIN_VALUE;
+	private long					postRefId		    = Long.MIN_VALUE;
+	private long					postingId		    = Long.MIN_VALUE;
 
 	private long					custID;
 	private String					custCIF;
@@ -338,5 +340,22 @@ public class AEEvent {
 	public void setuAmzExists(boolean uAmzExists) {
 		this.uAmzExists = uAmzExists;
 	}
+
+	public long getPostRefId() {
+		return postRefId;
+	}
+
+	public void setPostRefId(long postRefId) {
+		this.postRefId = postRefId;
+	}
+
+	public long getPostingId() {
+		return postingId;
+	}
+
+	public void setPostingId(long postingId) {
+		this.postingId = postingId;
+	}
+
 
 }

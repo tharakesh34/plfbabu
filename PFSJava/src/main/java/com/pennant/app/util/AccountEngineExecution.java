@@ -161,6 +161,37 @@ public class AccountEngineExecution implements Serializable {
 	}
 	
 	
+	/**
+	 * 
+	 * @param returnDataSet
+	 */
+	public void getReversePostings(List<ReturnDataSet> returnDataSetList, long newLinkedTranID,long postingId){
+		logger.debug("Entering");
+		String tranCode = "";
+		//Method for Checking for Reverse Calculations Based upon Negative Amounts
+		int seq= 1;
+		for (ReturnDataSet returnDataSet : returnDataSetList) {
+			returnDataSet.setOldLinkedTranId(returnDataSet.getLinkedTranId());
+			returnDataSet.setLinkedTranId(newLinkedTranID);
+			returnDataSet.setPostAmount(returnDataSet.getPostAmount());
+			returnDataSet.setPostingId(String.valueOf(postingId));
+			tranCode = returnDataSet.getTranCode();
+			returnDataSet.setTranCode(returnDataSet.getRevTranCode());
+			returnDataSet.setRevTranCode(tranCode);
+			//FIXME CH to be discussed with PV
+			returnDataSet.setPostDate(DateUtility.getAppDate());
+			if (returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)) {
+				returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+			} else {
+				returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+			}
+			returnDataSet.setTransOrder(seq);
+			seq++;
+		}
+		logger.debug("Leaving");
+	}
+	
+	
 
 	/**
 	 * Method for Execution Of Fee & Charges Rules
@@ -479,6 +510,7 @@ public class AccountEngineExecution implements Serializable {
 		logger.debug("Entering");
 		logger.trace("FIN REFERENCE: " + aeEvent.getFinReference());
 		
+		String zeroPostingFlag = SysParamUtil.getValueAsString("ALLOW_ZERO_POSTINGS");
 		HashMap<String, Object> dataMap = aeEvent.getDataMap();
 		List<Long> acSetIDList = aeEvent.getAcSetIDList();
 		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>();
@@ -607,12 +639,20 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setPostToSys(transactionEntry.getPostToSys());
 			returnDataSet.setDerivedTranOrder(transactionEntry.getDerivedTranOrder());
 			returnDataSet.setTransOrder(++seq);
-			String ref = aeEvent.getFinReference() + "/" + aeEvent.getAccountingEvent() + "/"
-					+ transactionEntry.getTransOrder();
-			returnDataSet.setPostingId(ref);
-
-			returnDataSet.setPostref(aeEvent.getBranch() + "-" + transactionEntry.getAccountType() + "-"
-					+ aeEvent.getCcy());
+			if(aeEvent.getPostingId()>0){
+			returnDataSet.setPostingId(String.valueOf(aeEvent.getPostingId()));
+			}else{
+				String ref = aeEvent.getFinReference() + "/" + aeEvent.getAccountingEvent() + "/"
+						+ transactionEntry.getTransOrder();
+				returnDataSet.setPostingId(ref);
+				
+			}
+			if (aeEvent.getPostRefId()<=0){
+				returnDataSet.setPostref(aeEvent.getBranch() + "-" + transactionEntry.getAccountType() + "-"
+						+ aeEvent.getCcy());
+			}else{
+				returnDataSet.setPostref(String.valueOf(aeEvent.getPostRefId()));
+			}
 			returnDataSet.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
 			returnDataSet.setAmountType(transactionEntry.getChargeType());
 			returnDataSet.setUserBranch(aeEvent.getPostingUserBranch());
@@ -621,6 +661,11 @@ public class AccountEngineExecution implements Serializable {
 			//Set Account Number
 			IAccounts acc = (IAccounts) accountsMap.get(String.valueOf(transactionEntry.getTransOrder()));
 			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), transactionEntry, aeEvent.getCcy(), dataMap);
+			
+			//If parameter flag is 'N' for zero postings not allow to insert zero postings
+			if (BigDecimal.ZERO.compareTo(postAmt) == 0 && "N".equalsIgnoreCase(zeroPostingFlag)) {
+				continue;
+			}
 			
 			if (acc == null ||  StringUtils.isBlank(acc.getAccountId())) {
 				if (BigDecimal.ZERO.compareTo(postAmt) != 0) {

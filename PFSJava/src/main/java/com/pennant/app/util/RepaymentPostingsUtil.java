@@ -191,6 +191,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				.add(rpyQueueHeader.getSuplRentWaived()).add(rpyQueueHeader.getIncrCostWaived());
 
 
+
 		if ((totalPayAmount.add(totalWaivedAmount)).compareTo(BigDecimal.ZERO) > 0) {
 			actReturnList = doSchedulePostings(rpyQueueHeader, valuedate,postDate, financeMain, scheduleDetails,
 					finFeeDetailList,financeProfitDetail, eventCode, aeEvent);
@@ -617,6 +618,8 @@ public class RepaymentPostingsUtil implements Serializable {
 		final BigDecimal totPftSchdOld = financeProfitDetail.getTotalPftSchd();
 		AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, scheduleDetails, financeProfitDetail, eventCode,
 				valueDate, dateSchdDate);
+		aeEvent.setPostRefId(rpyQueueHeader.getReceiptId());
+		aeEvent.setPostingId(financeMain.getPostingId());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent.setPostingUserBranch(rpyQueueHeader.getPostBranch());
 		amountCodes.setPartnerBankAc(rpyQueueHeader.getPartnerBankAc());
@@ -828,6 +831,12 @@ public class RepaymentPostingsUtil implements Serializable {
 			dataMap.putAll(rpyQueueHeader.getExtDataMap());
 		}
 		prepareFeeRulesMap(amountCodes, dataMap, finFeeDetailList, rpyQueueHeader.getPayType());
+		addZeroifNotContainsObj(dataMap, "bounceChargePaid");
+		addZeroifNotContainsObj(dataMap,"bounceCharge_CGST_P");
+		addZeroifNotContainsObj(dataMap,"bounceCharge_IGST_P");
+		addZeroifNotContainsObj(dataMap,"bounceCharge_SGST_P");
+		addZeroifNotContainsObj(dataMap,"bounceCharge_UGST_P");
+		
 		aeEvent.setDataMap(dataMap);
 
 		// Accounting Entry Execution
@@ -836,6 +845,15 @@ public class RepaymentPostingsUtil implements Serializable {
 		logger.debug("Leaving");
 		return aeEvent;
 	}
+	
+	private void addZeroifNotContainsObj(Map<String, Object> dataMap,String key){
+		if (dataMap!=null) {
+			if (!dataMap.containsKey(key)) {
+				dataMap.put(key, BigDecimal.ZERO);
+			}
+		}
+	}
+	
 	
 	private HashMap<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap, List<FinFeeDetail> finFeeDetailList,
 			String payType) {

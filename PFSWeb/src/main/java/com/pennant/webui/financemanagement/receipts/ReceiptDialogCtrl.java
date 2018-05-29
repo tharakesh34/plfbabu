@@ -5556,13 +5556,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
 				}
 				
-				if (!movementMap.containsKey("bounceChargePaid")) {
-					addZeroifNotContains(movementMap, "bounceChargePaid");
-					addZeroifNotContains(movementMap,"bounceCharge_CGST_P");
-					addZeroifNotContains(movementMap,"bounceCharge_IGST_P");
-					addZeroifNotContains(movementMap,"bounceCharge_SGST_P");
-					addZeroifNotContains(movementMap,"bounceCharge_UGST_P");
-				}
+
+				addZeroifNotContains(movementMap, "bounceChargePaid");
+				addZeroifNotContains(movementMap,"bounceCharge_CGST_P");
+				addZeroifNotContains(movementMap,"bounceCharge_IGST_P");
+				addZeroifNotContains(movementMap,"bounceCharge_SGST_P");
+				addZeroifNotContains(movementMap,"bounceCharge_UGST_P");
+			
 				
 
 				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 

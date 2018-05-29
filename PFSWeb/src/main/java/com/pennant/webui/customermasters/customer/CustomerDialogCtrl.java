@@ -1314,7 +1314,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			extendedFieldCtrl.setWindow(this.window_CustomerDialog);
 			// for getting rights in ExtendeFieldGenerator these two fields required.
 			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
+			extendedFieldCtrl.setTabHeight(140);
 			extendedFieldCtrl.setUserRole(getRole());
+			
 			extendedFieldCtrl.render();
 		} catch (Exception e) {
 			logger.error("Exception", e);

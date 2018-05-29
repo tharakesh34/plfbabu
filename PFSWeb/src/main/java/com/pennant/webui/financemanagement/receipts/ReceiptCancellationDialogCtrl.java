@@ -972,44 +972,9 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.posting_finBranch.setValue(header.getFinBranch()+"-"+header.getFinBranchDesc());;
 		this.posting_CustCIF.setValue(header.getCustCIF()+"-"+header.getCustShrtName());
 		
-		boolean isBounceProcess = false;
-		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
-			isBounceProcess = true;
-		}
-		
-		// Identifying Transaction List
-		List<Long> tranIdList = new ArrayList<>();
-		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){
-			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
-				
-				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
-				boolean isReceiptModeDetail = false;
-				
-				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) && 
-						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) &&
-						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
-					
-					isReceiptModeDetail = true;
-				}
-				
-				// If Bounce Process and not a Receipt Mode Record then Continue process
-				if(isBounceProcess && !isReceiptModeDetail){
-					continue;
-				}
-				
-				// List out all Transaction Id's
-				List<FinRepayHeader> repayHeaderList = receiptDetail.getRepayHeaders();
-				for (int j = 0; j < repayHeaderList.size(); j++) {
-					tranIdList.add(repayHeaderList.get(j).getLinkedTranId());
-				}
-			}
-		}
-		
 		// Posting Details Rendering
-		if(!tranIdList.isEmpty()){
-			List<ReturnDataSet> postings = getReceiptCancellationService().getPostingsByTranIdList(tranIdList);
+			List<ReturnDataSet> postings = getReceiptCancellationService().getPostingsByPostRef(header.getReceiptID());
 			doFillPostings(postings);
-		}
 		logger.debug("Leaving");
 	}
 

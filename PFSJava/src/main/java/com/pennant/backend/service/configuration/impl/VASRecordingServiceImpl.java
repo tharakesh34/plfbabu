@@ -466,8 +466,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 					List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 
-					list = getPostingsDAO().getPostingsByPostref(vasRecording.getVasReference(),
-							AccountEventConstants.ACCEVENT_VAS_FEE);
+
+					list = getPostingsDAO().getPostingsByVasref(vasRecording.getVasReference(), AccountEventConstants.ACCEVENT_VAS_FEE);
 
 					for (ReturnDataSet returnDataSet : list) {
 						String tranCode = returnDataSet.getTranCode();
@@ -486,9 +486,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 					vasRecording.setReturnDataSetList(list);
 				}
-			} else {
-				vasRecording.setReturnDataSetList(getPostingsDAO().getPostingsByPostref(vasRecording.getVasReference(),
-						AccountEventConstants.ACCEVENT_VAS_FEE));
+			}else{
+				vasRecording.setReturnDataSetList(getPostingsDAO().getPostingsByVasref(vasRecording.getVasReference(), AccountEventConstants.ACCEVENT_VAS_FEE));
 			}
 		}
 		logger.debug("Leaving");

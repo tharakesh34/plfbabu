@@ -653,7 +653,8 @@ public class PostingsPreparationUtil implements Serializable {
 		if (aeEvent.getLinkedTranId() <= 0) {
 			aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId());
 		}
-
+		
+		
 		getEngineExecution().getAccEngineExecResults(aeEvent);
 		
 		validateCreditandDebitAmounts(aeEvent);
@@ -772,6 +773,29 @@ public class PostingsPreparationUtil implements Serializable {
 		logger.debug("Leaving");
 		return returnDataSets;
 	}
+	
+	/**
+	 * 
+	 * @param linkedTranId
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws InterfaceException
+	 */
+	public List<ReturnDataSet> postReversalsByPostRef(long postRef,long postingId) {
+		logger.debug("Entering");
+
+		List<ReturnDataSet> returnDataSets =  getReversalsByPostRef(postRef,postingId);
+		
+		getPostingsDAO().updateStatusByPostRef(postRef, AccountConstants.POSTINGS_REVERSE);
+
+		getPostingsDAO().saveBatch(returnDataSets);
+
+		getAccountProcessUtil().procAccountUpdate(returnDataSets);
+
+		logger.debug("Leaving");
+		return returnDataSets;
+	}
 
 
 	/**
@@ -790,6 +814,28 @@ public class PostingsPreparationUtil implements Serializable {
 		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByLinkTransId(linkedTranId);
 
 		getEngineExecution().getReversePostings(returnDataSets, newLinkedTranID);
+
+		logger.debug("Leaving");
+		return returnDataSets;
+	}
+	
+	
+	/**
+	 * 
+	 * @param postingId
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws InterfaceException
+	 */
+	public List<ReturnDataSet> getReversalsByPostRef(long postRef,long postingId) {
+		logger.debug("Entering");
+		
+		long newLinkedTranID = getPostingsDAO().getLinkedTransId();
+
+		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByPostRef(postRef);
+
+		getEngineExecution().getReversePostings(returnDataSets, newLinkedTranID,postingId);
 
 		logger.debug("Leaving");
 		return returnDataSets;

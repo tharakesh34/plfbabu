@@ -163,6 +163,27 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		logger.debug("Leaving");
 		return postings;
 	}
+	
+	@Override
+	public List<ReturnDataSet> getPostingsByPostRef(Long postref) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Postref", postref);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent, PostDate,ValueDate,TranCode, ");
+		selectSql.append(" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
+		selectSql.append(" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
+		selectSql.append(" FROM Postings");
+		selectSql.append(" Where Postref  =:Postref) ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		List<ReturnDataSet> postings = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		logger.debug("Leaving");
+		return postings;
+	}
 
 
 	@Override
@@ -254,6 +275,23 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		long count = 0;
 		try {
 			count = nextidviewDAO.getNextId("SeqPostings");
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug("Leaving" + count);
+		return count;
+	}
+	
+	/**
+	 * Generate Posting ID
+	 */
+	public long getPostingId() {
+		logger.debug("Entering");
+
+		long count = 0;
+		try {
+			count = nextidviewDAO.getNextId("SeqPostingId");
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -397,7 +435,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 	 */
 
 	@Override
-	public List<ReturnDataSet> getPostingsByPostref(String finReference,String finEvent) {
+	public List<ReturnDataSet> getPostingsByVasref(String finReference,String finEvent) {
 		logger.debug("Entering");
 
 		ReturnDataSet dataSet = new ReturnDataSet();
@@ -487,5 +525,50 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 
 	public static void setNextidviewDAO(NextidviewDAO nextidviewDAO) {
 		PostingsDAOImpl.nextidviewDAO = nextidviewDAO;
+	}
+
+	@Override
+	public List<ReturnDataSet> getPostingsByPostRef(long postrRef) {
+
+		logger.debug("Entering");
+		
+		ReturnDataSet dataSet = new ReturnDataSet();
+		dataSet.setPostref(String.valueOf(postrRef));
+		dataSet.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent,");
+		selectSql.append(" T1.PostDate, T1.ValueDate, T1.TranCode, T1.TranDesc, T1.RevTranCode, T1.DrOrCr, T1.Account,  T1.ShadowPosting,");
+		selectSql.append(" T1.PostAmount, T1.AmountType, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T1.AcCcy, T1.TranOrderId, T1.TransOrder,");
+		selectSql.append(" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T2.AcType AccountType ");
+		selectSql.append(" FROM Postings T1");
+		selectSql.append(" Left join Accounts T2 on Accountid = Account ");
+		selectSql.append(" Where PostStatus = :PostStatus and Postref =:Postref");
+		selectSql.append(" Order By T1.LinkedTranId, T1.TranOrderId ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
+		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	
+	}
+
+	@Override
+	public void updateStatusByPostRef(long postRef, String postStatus) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("PostRef", String.valueOf(postRef));
+		paramSource.addValue("PostStatus", postStatus);
+		
+		StringBuilder insertSql = new StringBuilder();
+		insertSql.append(" Update Postings SET ");
+		insertSql.append(" PostStatus = :PostStatus where PostRef = :PostRef");
+		
+		logger.debug("insertSql: " + insertSql.toString());
+		this.namedParameterJdbcTemplate.update(insertSql.toString(), paramSource);
+		logger.debug("Leaving");
+		
 	}
 }
