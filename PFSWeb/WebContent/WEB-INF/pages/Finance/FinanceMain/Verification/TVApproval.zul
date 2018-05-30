@@ -13,77 +13,80 @@
 		<radiogroup id="tv" visible="false" />
 
 		<borderlayout width="100%">
-			<center border="none" autoscroll="true" style="overflow:auto;">
-				<groupbox height="100%" contentStyle="overflow:auto">
+			<center border="none" autoscroll="true"
+				style="overflow:auto;">
+				<groupbox height="100%" contentStyle="overflow:auto"
+					style="border:none;">
 					<groupbox id="finBasicdetails" style="border:none;" />
-					<groupbox style="border:none;" >
+					<groupbox style="border:none;"
+						contentStyle="border-top-width: 0px;">
 						<listbox id="listBoxTechnicalVerification"
 							width="100%" span="true" style="overflow:auto;"
-							emptyMessage="${c:l('listbox.emptyMessage')}"
-							sizedByContent="true" xmlns:w="client"
+							emptyMessage="${c:l('listbox.emptyMessage')}" xmlns:w="client"
 							w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
 							w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});">
 							<listhead sizable="false">
 								<listheader
 									id="listheader_TechnicalVerification_Select"
 									label="${c:l('listheader_TechnicalVerification_Select.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_TechnicalVerification_CollateralType"
 									label="${c:l('listheader_TechnicalVerification_CollateralType.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_TechnicalVerification_DepositorCIF"
 									label="${c:l('listheader_TechnicalVerification_DepositorCIF.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_TechnicalVerification_DepositorName"
 									label="${c:l('listheader_TechnicalVerification_DepositorName.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_TechnicalVerification_CollateralReference"
 									label="${c:l('listheader_TechnicalVerification_CollateralReference.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_TechnicalVerification_TV"
 									label="${c:l('listheader_TechnicalVerification_TV.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_TechnicalVerification_Agency"
 									label="${c:l('listheader_TechnicalVerification_Agency.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_TechnicalVerification_Reason"
 									label="${c:l('listheader_TechnicalVerification_Reason.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_TechnicalVerification_Remarks"
 									label="${c:l('listheader_TechnicalVerification_Remarks.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_TechnicalVerification_Status"
 									label="${c:l('listheader_TechnicalVerification_Status.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_TechnicalVerification_VrfDate"
 									label="${c:l('listheader_TechnicalVerification_VrfDate.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_TechnicalVerification_Decision"
 									label="${c:l('listheader_TechnicalVerification_Decision.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_TechnicalVerification_ReInitAgency"
 									label="${c:l('listheader_TechnicalVerification_Agency.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_TechnicalVerification_ReInitRemarks"
 									label="${c:l('listheader_TechnicalVerification_Remarks.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 							</listhead>
 						</listbox>
 					</groupbox>
-					<groupbox id="tvInquiry" style="border:none;" height="100%" />
+					<groupbox id="tvInquiry" style="border:none;"
+						contentStyle="border-top-width: 0px;" vflex="true" />
 				</groupbox>
 			</center>
 		</borderlayout>

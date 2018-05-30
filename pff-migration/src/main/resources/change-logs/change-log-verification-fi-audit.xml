@@ -262,4 +262,9 @@
 	<changeSet id="6" author="murthy.y">
 		<renameColumn tableName="adtverification_fi" oldColumnName="date" newColumnName="VerifiedDate"/>
 	</changeSet>
+	<changeSet id="7" author="murthy.y">
+		<modifyDataType tableName="adtverifications" columnName="referencetype" newDataType="varchar(50)"/>
+		<modifyDataType tableName="adtverifications" columnName="referencefor" newDataType="varchar(50)"/>
+		<modifyDataType tableName="adtverifications" columnName="reference" newDataType="varchar(50)"/>
+	</changeSet>
 </databaseChangeLog>

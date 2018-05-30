@@ -1635,5 +1635,205 @@
 			) t
 		</createView>
 	</changeSet>
+	<changeSet id="6" author="murthy.y">
+		<modifyDataType tableName="Verification_rcu_details" columnName="documentsubid" newDataType="varchar(50)"/>
+		<modifyDataType tableName="Verification_rcu_details_temp" columnName="documentsubid" newDataType="varchar(50)"/>
+		<modifyDataType tableName="Verification_rcu_details_stage" columnName="documentsubid" newDataType="varchar(50)"/>
+	</changeSet>
+	<changeSet id="7" author="murthy.y">
+		<createView viewName="verification_rcu_details_view">
+			SELECT t.verificationid,
+			t.seqno,
+			t.doctype,
+			t.docmodule,
+			t.docname,
+			t.referenceid,
+			t.code,
+			t.description,
+			t.documentid,
+			t.documenttype,
+			t.docrefid,
+			t.documentsubid,
+			t.documentrefid,
+			t.documenturi,
+			t.reinitid,
+			t.verificationtype,
+			t.status,
+			t.pageseyeballed,
+			t.pagessampled,
+			t.initremarks,
+			t.agentremarks,
+			t.decision,
+			t.decisionremarks,
+			t.version,
+			t.lastmntby,
+			t.lastmnton,
+			t.recordstatus,
+			t.rolecode,
+			t.nextrolecode,
+			t.taskid,
+			t.nexttaskid,
+			t.recordtype,
+			t.workflowid
+			FROM ( SELECT rcud.verificationid,
+			rcud.seqno,
+			doc.doctype,
+			doc.docmodule,
+			doc.doccategory AS docname,
+			doc.referenceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			rcud.documentid,
+			rcud.documenttype,
+			doc.docrefid,
+			rcud.documentsubid,
+			rcud.documentrefid,
+			rcud.documenturi,
+			rcud.reinitid,
+			rcud.verificationtype,
+			rcud.status,
+			rcud.pageseyeballed,
+			rcud.pagessampled,
+			rcud.initremarks,
+			rcud.agentremarks,
+			rcud.decision,
+			rcud.decisionremarks,
+			rcud.version,
+			rcud.lastmntby,
+			rcud.lastmnton,
+			rcud.recordstatus,
+			rcud.rolecode,
+			rcud.nextrolecode,
+			rcud.taskid,
+			rcud.nexttaskid,
+			rcud.recordtype,
+			rcud.workflowid
+			FROM verification_rcu_details_temp rcud
+			JOIN documentdetails_view doc ON doc.docid = rcud.documentid
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.doccategory
+			WHERE rcud.documenttype = ANY (ARRAY[1, 2])
+			UNION ALL
+			SELECT rcud.verificationid,
+			rcud.seqno,
+			doc.doctype,
+			doc.docmodule,
+			doc.doccategory AS docname,
+			doc.referenceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			rcud.documentid,
+			rcud.documenttype,
+			doc.docrefid,
+			rcud.documentsubid,
+			rcud.documentrefid,
+			rcud.documenturi,
+			rcud.reinitid,
+			rcud.verificationtype,
+			rcud.status,
+			rcud.pageseyeballed,
+			rcud.pagessampled,
+			rcud.initremarks,
+			rcud.agentremarks,
+			rcud.decision,
+			rcud.decisionremarks,
+			rcud.version,
+			rcud.lastmntby,
+			rcud.lastmnton,
+			rcud.recordstatus,
+			rcud.rolecode,
+			rcud.nextrolecode,
+			rcud.taskid,
+			rcud.nexttaskid,
+			rcud.recordtype,
+			rcud.workflowid
+			FROM verification_rcu_details rcud
+			JOIN verification_rcu rcu ON rcu.verificationid = rcud.verificationid
+			JOIN documentdetails_view doc ON doc.docid = rcud.documentid
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.doccategory
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_rcu_details_temp
+			WHERE verification_rcu_details_temp.verificationid = rcud.verificationid AND verification_rcu_details_temp.seqno = rcud.seqno)) AND (rcud.documenttype = ANY (ARRAY[1, 2]))
+			UNION ALL
+			SELECT rcud.verificationid,
+			rcud.seqno,
+			doc.custdoctype AS doctype,
+			'Customer'::citext AS docmodule,
+			doc.custdoccategory AS docname,
+			c.custcif as refereceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			rcud.documentid,
+			rcud.documenttype,
+			doc.docrefid,
+			rcud.documentsubid,
+			rcud.documentrefid,
+			rcud.documenturi,
+			rcud.reinitid,
+			rcud.verificationtype,
+			rcud.status,
+			rcud.pageseyeballed,
+			rcud.pagessampled,
+			rcud.initremarks,
+			rcud.agentremarks,
+			rcud.decision,
+			rcud.decisionremarks,
+			rcud.version,
+			rcud.lastmntby,
+			rcud.lastmnton,
+			rcud.recordstatus,
+			rcud.rolecode,
+			rcud.nextrolecode,
+			rcud.taskid,
+			rcud.nexttaskid,
+			rcud.recordtype,
+			rcud.workflowid
+			FROM verification_rcu_details_temp rcud
+			JOIN customerdocuments_view doc ON doc.custid = rcud.documentid AND doc.custdoccategory = rcud.documentsubid
+			JOIN customers_view c on c.custid = doc.custid
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.custdoccategory
+			WHERE rcud.documenttype = 3
+			UNION ALL
+			SELECT rcud.verificationid,
+			rcud.seqno,
+			doc.custdoctype AS doctype,
+			'Customer'::citext AS docmodule,
+			doc.custdoccategory AS docname,
+			c.custcif as refereceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			rcud.documentid,
+			rcud.documenttype,
+			doc.docrefid,
+			rcud.documentsubid,
+			rcud.documentrefid,
+			rcud.documenturi,
+			rcud.reinitid,
+			rcud.verificationtype,
+			rcud.status,
+			rcud.pageseyeballed,
+			rcud.pagessampled,
+			rcud.initremarks,
+			rcud.agentremarks,
+			rcud.decision,
+			rcud.decisionremarks,
+			rcud.version,
+			rcud.lastmntby,
+			rcud.lastmnton,
+			rcud.recordstatus,
+			rcud.rolecode,
+			rcud.nextrolecode,
+			rcud.taskid,
+			rcud.nexttaskid,
+			rcud.recordtype,
+			rcud.workflowid
+			FROM verification_rcu_details rcud
+			JOIN customerdocuments_view doc ON doc.custid = rcud.documentid AND doc.custdoccategory = rcud.documentsubid
+			JOIN customers_view c on c.custid = doc.custid
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.custdoccategory
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_rcu_details_temp
+			WHERE verification_rcu_details_temp.verificationid = rcud.verificationid AND verification_rcu_details_temp.seqno = rcud.seqno)) AND rcud.documenttype = 3) t;
+		</createView>
+	</changeSet>
 </databaseChangeLog>
  

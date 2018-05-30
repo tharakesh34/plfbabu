@@ -431,7 +431,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
-		return null;
+		return new ArrayList<>();
 	}
 
 }

@@ -1443,6 +1443,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.enquiryCombobox.setVisible(true);
 			fillComboBox(this.enquiryCombobox, "", enquiryList, "");
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 

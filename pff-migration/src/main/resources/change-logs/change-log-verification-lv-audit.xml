@@ -400,4 +400,7 @@
 			columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
 			constraintName="pk_adtverification_lv_details" />
 	</changeSet>
+	<changeSet id="6" author="murthy.y">
+		<modifyDataType tableName="adtverification_lv_details" columnName="documentsubid" newDataType="varchar(50)"/>
+	</changeSet>
 </databaseChangeLog>

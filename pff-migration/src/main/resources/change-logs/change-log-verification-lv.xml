@@ -3109,5 +3109,175 @@
 			) t
 		</createView>
 	</changeSet>
+	<changeSet id="18" author="murthy.y">
+		<modifyDataType tableName="Verification_lv_details" columnName="documentsubid" newDataType="varchar(50)"/>
+		<modifyDataType tableName="Verification_lv_details_temp" columnName="documentsubid" newDataType="varchar(50)"/>
+		<modifyDataType tableName="Verification_lv_details_stage" columnName="documentsubid" newDataType="varchar(50)"/>
+	</changeSet>
+	<changeSet id="19" author="murthy.y">
+		<createView viewName="verification_lv_details_view">
+			SELECT t.verificationid,
+			t.seqno,
+			t.doctype,
+			t.docmodule,
+			t.docname,
+			t.referenceid,
+			t.code,
+			t.description,
+			t.documentid,
+			t.documenttype,
+			t.docrefid,
+			t.documentsubid,
+			t.documentrefid,
+			t.documenturi,
+			t.remarks1,
+			t.remarks2,
+			t.remarks3,
+			t.version,
+			t.lastmntby,
+			t.lastmnton,
+			t.recordstatus,
+			t.rolecode,
+			t.nextrolecode,
+			t.taskid,
+			t.nexttaskid,
+			t.recordtype,
+			t.workflowid
+			FROM ( SELECT lvd.verificationid,
+			lvd.seqno,
+			doc.doctype,
+			doc.docmodule,
+			doc.doccategory AS docname,
+			doc.referenceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			lvd.documentid,
+			lvd.documenttype,
+			doc.docrefid,
+			lvd.documentsubid,
+			lvd.documentrefid,
+			lvd.documenturi,
+			lvd.remarks1,
+			lvd.remarks2,
+			lvd.remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid
+			FROM verification_lv_details_temp lvd
+			JOIN documentdetails_view doc ON doc.docid = lvd.documentid
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.doccategory
+			WHERE lvd.documenttype = ANY (ARRAY[1, 2])
+			UNION ALL
+			SELECT lvd.verificationid,
+			lvd.seqno,
+			doc.doctype,
+			doc.docmodule,
+			doc.doccategory AS docname,
+			doc.referenceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			lvd.documentid,
+			lvd.documenttype,
+			doc.docrefid,
+			lvd.documentsubid,
+			lvd.documentrefid,
+			lvd.documenturi,
+			lvd.remarks1,
+			lvd.remarks2,
+			lvd.remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid
+			FROM verification_lv_details lvd
+			JOIN verification_lv lv ON lv.verificationid = lvd.verificationid
+			JOIN documentdetails_view doc ON doc.docid = lvd.documentid
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.doccategory
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_lv_details_temp
+			WHERE verification_lv_details_temp.verificationid = lvd.verificationid AND verification_lv_details_temp.seqno = lvd.seqno)) AND (lvd.documenttype = ANY (ARRAY[1, 2]))
+			UNION ALL
+			SELECT lvd.verificationid,
+			lvd.seqno,
+			doc.custdoctype AS doctype,
+			'Customer'::citext AS docmodule,
+			doc.custdoccategory AS docname,
+			c.custcif as refereceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			lvd.documentid,
+			lvd.documenttype,
+			doc.docrefid,
+			lvd.documentsubid,
+			lvd.documentrefid,
+			lvd.documenturi,
+			lvd.remarks1,
+			lvd.remarks2,
+			lvd.remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid
+			FROM verification_lv_details_temp lvd
+			JOIN customerdocuments_view doc ON doc.custid = lvd.documentid AND doc.custdoccategory= lvd.documentsubid
+			JOIN customers_view c on c.custid = doc.custid    
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.custdoccategory
+			WHERE lvd.documenttype = 3
+			UNION ALL
+			SELECT lvd.verificationid,
+			lvd.seqno,
+			doc.custdoctype AS doctype,
+			'Customer'::citext AS docmodule,
+			doc.custdoccategory AS docname,
+			c.custcif as refereceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			lvd.documentid,
+			lvd.documenttype,
+			doc.docrefid,
+			lvd.documentsubid,
+			lvd.documentrefid,
+			lvd.documenturi,
+			lvd.remarks1,
+			lvd.remarks2,
+			lvd.remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid
+			FROM verification_lv_details lvd
+			JOIN customerdocuments_view doc ON doc.custid = lvd.documentid AND doc.custdoccategory = lvd.documentsubid
+			JOIN customers_view c on c.custid = doc.custid        
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.custdoccategory
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_lv_details_temp
+			WHERE verification_lv_details_temp.verificationid = lvd.verificationid AND verification_lv_details_temp.seqno = lvd.seqno)) AND lvd.documenttype = 3) t
+		</createView>
+	</changeSet>
 </databaseChangeLog>
  

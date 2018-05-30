@@ -2391,4 +2391,9 @@
 	          WHERE verification_fi_temp.verificationid = fi.verificationid))
 	 		</createView>
 	</changeSet>
+	<changeSet id="16" author="murthy.y">
+		<modifyDataType tableName="Verifications" columnName="referencetype" newDataType="varchar(50)"/>
+		<modifyDataType tableName="Verifications" columnName="referencefor" newDataType="varchar(50)"/>
+		<modifyDataType tableName="Verifications" columnName="reference" newDataType="varchar(50)"/>
+	</changeSet>
 </databaseChangeLog>
