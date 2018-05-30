@@ -2000,7 +2000,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("financeDetail", getFinanceDetail());
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_CHEQUE));
 			map.put("fromLoan", true);
-			map.put("isReadOnly", isReadOnly("FinanceMainDialog_finPurpose"));
 			map.put("ccyFormatter",
 					CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
 			map.put("chequeHeader", chequeHeader);
@@ -2907,7 +2906,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!aFinanceMain.isNewRecord()) {
 			this.dmaCode.setValue(StringUtils.trimToEmpty((aFinanceMain.getDmaName())),
 					StringUtils.trimToEmpty(aFinanceMain.getDmaCodeDesc()));
-			if (aFinanceMain.getDmaCode() != null) {
+			if (aFinanceMain.getDsaCode() != null) {
 				this.dmaCode.setAttribute("DMAdealerID", aFinanceMain.getDmaCode());
 			} else {
 				this.dmaCode.setAttribute("DMAdealerID", null);
@@ -8064,7 +8063,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving");
 	}
-
 	//FinanceMain Details Tab ---> 2. Grace Period Details
 
 	/**
@@ -14388,7 +14386,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (getChequeDetailDialogCtrl() != null) {
-			getChequeDetailDialogCtrl().checkTabDisplay(this.financeDetail, repymethod, false);
+			getChequeDetailDialogCtrl().checkTabDisplay(this.financeDetail, repymethod, true);
 		}
 
 		logger.debug(Literal.LEAVING + event.toString());
