@@ -19,15 +19,15 @@
 					<label />
 
 					<toolbar align="center" sclass="toolbar-center">
-						<button id="button_Search"
+						<button id="button_Search"  autodisable="button_Search"
 							label="${c:l('label_Filter')}"
 							tooltiptext="${c:l('label_FinanceEnquiryList_button_Search.tooltiptext')}"
 							sclass="z-toolbarbutton" />
-						<button id="button_Print"
+						<button id="button_Print" autodisable="button_Print"
 							label="${c:l('label_Print')}"
 							tooltiptext="${c:l('button_FinanceEnquiryList_PrintList.tooltiptext')}"
 							sclass="z-toolbarbutton" />
-						<button id="button_Reset"
+						<button id="button_Reset"  autodisable="button_Reset"
 							label="${c:l('label_Refresh')}"
 							tooltiptext="${c:l('button_FinanceEnquiryList_ResetList.tooltiptext')}"
 							sclass="z-toolbarbutton" />
