@@ -143,6 +143,10 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
+		
+		if (arguments.get("enqiryModule") != null) {
+			enqiryModule = (Boolean) arguments.get("enqiryModule");
+		}
 
 		setDocumentDetails();
 
@@ -898,6 +902,12 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					decision.setDisabled(true);
 					reInitRemarks.setReadonly(true);
 				}
+				
+				if(enqiryModule){
+					decision.setDisabled(true);
+					reInitAgency.setReadonly(true);
+					reInitRemarks.setReadonly(true);
+				}
 			}
 
 			item.setAttribute("requestType", vrf.getRequestType());
@@ -917,6 +927,14 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				reason.setReadonly(true);
 				remarks.setReadonly(true);
 			}
+			
+			if(enqiryModule){
+				requestType.setDisabled(true);
+				agency.setReadonly(true);
+				reason.setReadonly(true);
+				remarks.setReadonly(true);
+			}
+			
 		}
 
 		// Creating empty list groups.

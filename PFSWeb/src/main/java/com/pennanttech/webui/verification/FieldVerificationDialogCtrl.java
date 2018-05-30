@@ -140,6 +140,10 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
+		
+		if (arguments.get("enqiryModule") != null) {
+			enqiryModule = (Boolean) arguments.get("enqiryModule");
+		}
 
 		requiredCodes = addressTypeDAO.getFiRequiredCodes();
 
@@ -512,6 +516,12 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					reInitAgency.setReadonly(true);
 					reInitRemarks.setReadonly(true);
 				}
+				
+				if (enqiryModule) {
+					decision.setDisabled(true);
+					agency.setReadonly(true);
+					reInitRemarks.setReadonly(true);
+				}
 			}
 
 			requestType.addForward("onChange", self, "onChnageFiv", item);
@@ -530,6 +540,14 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				reason.setReadonly(true);
 				remarks.setReadonly(true);
 			}
+			
+			if (enqiryModule) {
+				requestType.setDisabled(true);
+				agency.setReadonly(true);
+				reason.setReadonly(true);
+				remarks.setReadonly(true);
+			}
+			
 		}
 		logger.debug(Literal.LEAVING);
 

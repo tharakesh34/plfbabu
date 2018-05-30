@@ -127,6 +127,11 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
+		
+		if (arguments.get("enqiryModule") != null) {
+			enqiryModule = (Boolean) arguments.get("enqiryModule");
+		}
+		
 
 		financeMainDialogCtrl.settVerificationDialogCtrl(this);
 
@@ -657,6 +662,12 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					reInitAgency.setReadonly(true);
 					reInitRemarks.setReadonly(true);
 				}
+				
+				if(enqiryModule){
+					decision.setDisabled(true);
+					reInitAgency.setReadonly(true);
+					reInitRemarks.setReadonly(true);
+				}
 			}
 
 			requestType.addForward("onChange", self, "onChnageTv", item);
@@ -671,6 +682,13 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			this.listBoxTechnicalVerification.appendChild(item);
 
 			if (!initType || vrf.isInitiated()) {
+				requestType.setDisabled(true);
+				agency.setReadonly(true);
+				reason.setReadonly(true);
+				remarks.setReadonly(true);
+			}
+			
+			if(enqiryModule){
 				requestType.setDisabled(true);
 				agency.setReadonly(true);
 				reason.setReadonly(true);

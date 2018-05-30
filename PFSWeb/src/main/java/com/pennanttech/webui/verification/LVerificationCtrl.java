@@ -144,6 +144,10 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
+		
+		if (arguments.get("enqiryModule") != null) {
+			enqiryModule = (Boolean) arguments.get("enqiryModule");
+		}
 
 		doShowDialog();
 
@@ -441,6 +445,12 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 					btnReInit.setDisabled(true);
 					reInitRemarks.setReadonly(true);
 				}
+				
+				if(enqiryModule){
+					decision.setDisabled(true);
+					reInitRemarks.setReadonly(true);
+					btnReInit.setDisabled(true);
+				}
 			}
 
 			item.setAttribute("vrf", vrf);
@@ -449,7 +459,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onVerificationItemDoubleClicked");
 			}
 			this.listBoxInitiation.appendChild(item);
-
+			
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -770,6 +780,12 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 					btnReInit.setDisabled(true);
 					reInitRemarks.setReadonly(true);
 				}
+				
+				if(enqiryModule){
+					decision.setDisabled(true);
+					reInitRemarks.setReadonly(true);
+					btnReInit.setDisabled(true);
+				}
 			}
 
 			item.setAttribute("vrf", vrf);
@@ -781,6 +797,11 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			}
 
 			this.listBoxWaiver.appendChild(item);
+			
+			if(enqiryModule){
+				reason.setReadonly(true);
+				remarks.setReadonly(true);
+			}
 
 		}
 		logger.debug(Literal.LEAVING);

@@ -304,7 +304,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
-import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
+import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
@@ -741,6 +741,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	//Finance Flag
 	protected Button btnFlagDetails;
 	protected Textbox flagDetails;
+	
+	// Enquiry Components
+	protected Combobox enquiryCombobox;
+	protected Label enquiryLabel;
 
 	protected transient boolean oldVar_pftServicingODLimit;
 	protected transient String oldVar_droplineFrq;
@@ -893,8 +897,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private VehicleDealerService vehicleDealerService;
 
 	@Autowired
-	private FieldInvestigationService fieldInvestigationService;
-
+	private VerificationService verificationService;
+	
 	private String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
 	private String isCreditRevTabReq = SysParamUtil.getValueAsString(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ);
 	private List<String> assignCollateralRef = new ArrayList<>();
@@ -1426,6 +1430,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		this.flagDetails.setValue(tempflagcode);
 		logger.debug("Entering");
+	}
+	
+	private void doFillEnquiryList(ArrayList<Object> finBasicDetail) {
+		logger.debug(Literal.ENTERING);
+		List<ValueLabel> enquiryList = new ArrayList<>();
+		enquiryList.add(new ValueLabel("1", "Verifications"));
+		List<Integer> verificationTypes = verificationService.getVerificationTypes(StringUtils.trimToEmpty((finBasicDetail.get(3).toString())));
+	
+		if (!verificationTypes.isEmpty()) {
+			this.enquiryLabel.setValue("Enquiry");
+			this.enquiryCombobox.setVisible(true);
+			fillComboBox(this.enquiryCombobox, "", enquiryList, "");
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -3745,6 +3763,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.row_secondaryAccount.setVisible(false);
 			}
 		}
+		 doFillEnquiryList(getFinBasicDetails());
+    		
 		logger.debug("Leaving");
 	}
 
@@ -17254,6 +17274,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void onChange$enquiryCombobox(Event event) throws Exception {
+		logger.debug(Literal.ENTERING + event.toString());
+		String enquiryType = this.enquiryCombobox.getSelectedItem().getValue();
+		Map<String, Object> map = getDefaultArguments();
+		map.put("finHeaderList", getFinBasicDetails());
+		map.put("financeDetail", financeDetail);
+		map.put("financeMainBaseCtrl", this);
+		map.put("enquiryModule", true);
+		map.put("enuiryCombobox", enquiryCombobox);
+		if (enquiryType.equals("1")) {
+			Executions.createComponents("/WEB-INF/pages/Verification/FieldInvestigation/VerificationEnquiryDialog.zul",
+					null, map);
+		} 
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+	
 	public void setCustomerBankInfoService(CustomerBankInfoService customerBankInfoService) {
 		this.customerBankInfoService = customerBankInfoService;
 	}
