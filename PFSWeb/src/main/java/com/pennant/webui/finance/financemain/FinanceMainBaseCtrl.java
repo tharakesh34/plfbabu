@@ -14876,9 +14876,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			iIRVAlue = detail.getCustomerEligibilityCheck().getInstallmentAmount();
 			iIRVAlue = iIRVAlue.divide(customer.getCustTotalIncome(),RoundingMode.HALF_UP);
 			iIRVAlue = iIRVAlue.divide(new BigDecimal(100),RoundingMode.HALF_UP);
-			detail.getCustomerEligibilityCheck().addExtendedField("IIR_RATIO",iIRVAlue);
 		}
-		
+		detail.getCustomerEligibilityCheck().addExtendedField("IIR_RATIO",iIRVAlue);		
 		detail.getCustomerEligibilityCheck().addExtendedField("maturityAge", maturityAge);
 		detail.getCustomerEligibilityCheck().setCurrentAssetValue(financeMain.getFinCurrAssetValue());
 
