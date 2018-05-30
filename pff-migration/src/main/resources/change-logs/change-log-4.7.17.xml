@@ -379,5 +379,18 @@ SELECT M.MANDATEID,
 <changeSet id="15" author="Jayant">
 	<createSequence sequenceName="SeqPostingId" startValue="1" incrementBy="1"/>
 </changeSet>
+<changeSet id="16" author="vijaykumar.l">
+<sql>
+			Delete from RBFIELDDETAILS where RBMODULE = 'SCORES' and RBEVENT = 'RSCORE' and RbFldName = 'IIR_RATIO';
+			Delete from RBFIELDDETAILS where RBMODULE = 'SCORES' and RBEVENT = 'RSCORE' and RbFldName = 'MRKVALUE_CONSIDER';
+			Delete from RBFIELDDETAILS where RBMODULE = 'SCORES' and RBEVENT = 'RSCORE' and RbFldName = 'PROP_LTV';
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('SCORES','RSCORE','IIR_RATIO',' Installment Income Ratio','decimal',18,'1','1',null,'static,calvalue',null);
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('SCORES','RSCORE','MRKVALUE_CONSIDER',' Market Value Considered','decimal',18,'1','1',null,'static,calvalue',null);
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('SCORES','RSCORE','PROP_LTV',' LTV On Property ','decimal',18,'1','1',null,'static,calvalue',null);
+</sql>
+</changeSet>
 </databaseChangeLog>
 	
