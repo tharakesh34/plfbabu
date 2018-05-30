@@ -225,7 +225,7 @@
 		</createIndex>
 	</changeSet>
 
-	<!-- <changeSet id="12" author="Ganesh.p">
+	 <changeSet id="12" author="Ganesh.p">
 		<modifyDataType tableName="CollateralCoOwners_Temp"
 			columnName="CoOwnerIDType" newDataType="VARCHAR(50)" />
 	</changeSet>
@@ -233,7 +233,7 @@
 	<changeSet id="13" author="Ganesh.p">
 		<modifyDataType tableName="CollateralCoOwners"
 			columnName="CoOwnerIDType" newDataType="VARCHAR(50)" />
-	</changeSet> -->
+	</changeSet>
 	<changeSet id="14" author="srikanth.m">
 	<addColumn tableName="mandate_requests">
 		<column name="ifsc_code" type= "varchar(20)"/>
