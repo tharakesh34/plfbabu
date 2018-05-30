@@ -45,6 +45,7 @@ public class LVDocument extends AbstractWorkflowEntity {
 	private String docType;
 	private String docName;
 	private String collateralRef;
+	private String referenceId;
 	private boolean newRecord = false;
 	private LoggedInUser userDetails;
 	private LVDocument befImage;
@@ -72,6 +73,7 @@ public class LVDocument extends AbstractWorkflowEntity {
 		excludeFields.add("documentType");
 		excludeFields.add("documentUri");
 		excludeFields.add("collateralRef");
+		excludeFields.add("referenceId");
 		return excludeFields;
 	}
 
@@ -261,6 +263,14 @@ public class LVDocument extends AbstractWorkflowEntity {
 
 	public void setCollateralRef(String collateralRef) {
 		this.collateralRef = collateralRef;
+	}
+
+	public String getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(String referenceId) {
+		this.referenceId = referenceId;
 	}
 
 }

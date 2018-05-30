@@ -409,7 +409,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		sql.append(" Select verificationId, documentid,documentType, documentsubid,");
 		if (type.contains("View")) {
 			sql.append(
-					" code, description, docmodule, docrefid, seqno, docname, doctype, remarks1, remarks2, remarks3, ");
+					" code, description, docmodule, docrefid, seqno, docname, doctype, remarks1, remarks2, remarks3, referenceid, ");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");

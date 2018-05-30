@@ -37,6 +37,7 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	private int docTypeId;
 	private String docName;
 	private String collateralRef;
+	private String referenceId;
 	private boolean newRecord = false;
 	private LoggedInUser userDetails;
 	private RCUDocument befImage;
@@ -64,6 +65,7 @@ public class RCUDocument extends AbstractWorkflowEntity {
 		excludeFields.add("docTypeId");
 		excludeFields.add("reinitid");
 		excludeFields.add("reInitiated");
+		excludeFields.add("referenceId");
 		return excludeFields;
 	}
 
@@ -300,6 +302,14 @@ public class RCUDocument extends AbstractWorkflowEntity {
 
 	public void setDecision(int decision) {
 		this.decision = decision;
+	}
+
+	public String getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(String referenceId) {
+		this.referenceId = referenceId;
 	}
 
 }

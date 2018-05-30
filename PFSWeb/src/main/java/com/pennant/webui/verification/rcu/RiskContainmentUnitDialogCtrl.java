@@ -33,6 +33,7 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -72,6 +73,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.StatuReasons;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.fi.RCUDocStatus;
@@ -431,14 +433,21 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				Listcell lc;
 				lc = new Listcell(document.getDocModule());
 				lc.setParent(item);
+				
+				lc = new Listcell();
+				if (document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
+					Label label = new Label();
+					label.setValue(document.getReferenceId() + " - ");
+					lc.appendChild(label);
+					lc.setParent(item);
+				}
 				A docLink = new A();
 				docLink.setLabel(document.getDescription());
-				lc = new Listcell();
 				docLink.addForward("onClick", self, "onClickDoDownload", document);
 				docLink.setStyle("text-decoration:underline;");
 				lc.appendChild(docLink);
 				lc.setParent(item);
-
+               
 				lc = new Listcell();
 				lc.setId("VerificationType".concat(String.valueOf(i)));
 				Combobox verificationType = new Combobox();

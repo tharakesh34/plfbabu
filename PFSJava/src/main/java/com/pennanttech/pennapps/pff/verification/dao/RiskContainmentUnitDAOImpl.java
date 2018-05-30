@@ -343,7 +343,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 
 		sql.append(" Select verificationId, SeqNo, documentid, documentsubid, reinitid, documentType,initRemarks,");
 		if (type.contains("View")) {
-			sql.append(" code, description, docmodule, documentrefid, seqno, docname, doctype,  ");
+			sql.append(" code, description, docmodule, documentrefid, seqno, docname, doctype, referenceid, ");
 			sql.append(" verificationtype, status, pageseyeballed, pagessampled, agentremarks, ");
 		}
 		sql.append(
