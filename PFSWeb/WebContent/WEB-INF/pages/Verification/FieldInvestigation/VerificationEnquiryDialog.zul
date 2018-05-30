@@ -31,10 +31,10 @@
 								<tab label="${c:l('label_RCU_Verification')}" id="rcuDetailTab" visible="false" />
 							</tabs>
 							<tabpanels id="tabpanelsBoxIndexCenter">
-								<tabpanel id="fiDetailTabPanel" height="500px"/>
-								<tabpanel id="tvDetailTabPanel" height="500px"/>
-								<tabpanel id="lvDetailTabPAnel" height="500px"/>
-								<tabpanel id="rcuDetailTabPanel" height="500px"/>
+								<tabpanel id="fiDetailTabPanel"/>
+								<tabpanel id="tvDetailTabPanel"/>
+								<tabpanel id="lvDetailTabPAnel"/>
+								<tabpanel id="rcuDetailTabPanel"/>
 							</tabpanels>
 						</tabbox>
 					</groupbox>

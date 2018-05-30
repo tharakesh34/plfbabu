@@ -70,6 +70,11 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 		financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
 		enquiryCombobox = (Combobox) arguments.get("enuiryCombobox");
+		
+		fiDetailTabPanel.setHeight(getDesktopHeight()-10+"px");
+		tvDetailTabPanel.setHeight(getDesktopHeight()-10+"px");
+		lvDetailTabPAnel.setHeight(getDesktopHeight()-10+"px");
+		rcuDetailTabPanel.setHeight(getDesktopHeight()-10+"px");
 
 		doShowDialog();
 

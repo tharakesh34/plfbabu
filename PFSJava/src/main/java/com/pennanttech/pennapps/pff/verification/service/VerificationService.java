@@ -50,6 +50,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
+import com.pennanttech.pff.core.TableType;
 
 public interface VerificationService {
 
@@ -78,11 +79,13 @@ public interface VerificationService {
 
 	void setLastStatus(Verification verification);
 
-	boolean isVerificationInRecording(Verification verification, VerificationType tv,RCUDocument rcuDocument);
-	
+	boolean isVerificationInRecording(Verification verification, VerificationType tv, RCUDocument rcuDocument);
+
 	List<Integer> getVerificationTypes(String keyReference);
-	
+
 	List<Verification> getCollateralDocumentsStatus(String collateralReference);
-	
+
 	List<Verification> getVerificationsForAggrement(String finReference);
+
+	void deleteVerification(Verification verification, TableType tableType);
 }

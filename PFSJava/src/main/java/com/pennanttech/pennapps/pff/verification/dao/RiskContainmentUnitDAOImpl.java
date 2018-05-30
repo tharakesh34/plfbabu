@@ -99,7 +99,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		StringBuilder sql = new StringBuilder("delete from verification_rcu");
 		sql.append(tableType.getSuffix());
 		sql.append(" where verificationId = :verificationId ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -216,25 +216,28 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 	@Override
 	public void deleteRCUDocuments(RCUDocument rcuDocument, String tableType) {
 		logger.debug(Literal.ENTERING);
-
+		MapSqlParameterSource source=null;
+		
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from verification_rcu_details");
 		sql.append(tableType);
-		sql.append(" where verificationId = :verificationId and seqno = :seqno");
+		sql.append(" where verificationId = :verificationId and seqNo = :seqNo");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(rcuDocument);
+		source = new MapSqlParameterSource();
+		source.addValue("verificationId", rcuDocument.getVerificationId());
+		source.addValue("seqNo", rcuDocument.getSeqNo());
 		int recordCount = 0;
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), source);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
-			throw new ConcurrencyException();
+			//throw new ConcurrencyException();
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -350,7 +353,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" FROM  verification_rcu_details");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where verificationId = :verificationId");
+		sql.append(" Where verificationId = :verificationId order by verificationId desc");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
@@ -556,4 +559,31 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
+
+	@Override
+	public int getRCUDocumentsCount(long verificationId, int documentType) {
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+		sql = new StringBuilder();
+
+		sql.append(" select count(*) from  verification_rcu_details_stage");
+		sql.append(" where documentType=:documentType and verificationId=:verificationId");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("documentType", documentType);
+		source.addValue("verificationId", verificationId);
+
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return 0;
+	}
+
 }

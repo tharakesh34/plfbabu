@@ -43,4 +43,10 @@ public interface RiskContainmentUnitService {
 	void updateRCUDocuments(Verification item);
 
 	RCUDocument getRCUDocument(long verificationId, RCUDocument rcuDocument);
+	
+	void deleteRCUDocuments(RCUDocument rcuDocument, String tableType);
+	
+	int getRCUDocumentsCount(long verificationId, int documentType);
+	
+	void delete(long id, TableType tableType);
 }

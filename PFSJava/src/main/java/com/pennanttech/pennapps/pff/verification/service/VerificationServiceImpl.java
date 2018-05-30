@@ -176,11 +176,26 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			setVerificationWorkflowData(verification, item);
 
 			if (isInitTab) {
-				//delete non verification Records
+				//delete non verification Records from FI and TV
 				if (item.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
 						&& (verificationType == VerificationType.TV || verificationType == VerificationType.FI)) {// FIXME
 					verificationDAO.delete(item, TableType.BOTH_TAB);
 					continue;
+				}
+
+				//delete non verification Records from RCU
+				if (verificationType == VerificationType.RCU) {
+					if (item.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+						if (item.getRcuDocument() != null) {
+							riskContainmentUnitService.deleteRCUDocuments(item.getRcuDocument(), "_stage");
+						}
+						if (riskContainmentUnitService.getRCUDocumentsCount(item.getId(),
+								DocumentType.CUSTOMER.getKey()) == 0) {
+							riskContainmentUnitService.delete(item.getId(), TableType.STAGE_TAB);
+							verificationDAO.delete(item, TableType.BOTH_TAB);
+						}
+						continue;
+					}
 				}
 
 				// clear Re-init for non initiated records
@@ -857,7 +872,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				}
 
 			} else if (verificationType == VerificationType.RCU.getKey()) {
-				
+
 			}
 		}
 	}
@@ -998,7 +1013,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					verification.setVerificationStatus(TVStatus.getType(verification.getStatus()).getValue());
 				}
 
-				TechnicalVerification technicalVerification = technicalVerificationDAO.getTechnicalVerification(verificationId, "_View");
+				TechnicalVerification technicalVerification = technicalVerificationDAO
+						.getTechnicalVerification(verificationId, "_View");
 				verification.setTechnicalVerification(technicalVerification);
 				break;
 			case LV:
@@ -1007,10 +1023,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				} else {
 					verification.setVerificationStatus(LVStatus.getType(verification.getStatus()).getValue());
 				}
-				LegalVerification legalVerification = legalVerificationDAO.getLegalVerification(verificationId, "_View");
+				LegalVerification legalVerification = legalVerificationDAO.getLegalVerification(verificationId,
+						"_View");
 				verification.setLegalVerification(legalVerification);
-				
-				
 
 				break;
 			case RCU:
@@ -1019,9 +1034,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				} else {
 					verification.setVerificationStatus(RCUStatus.getType(verification.getStatus()).getValue());
 				}
-				RiskContainmentUnit riskContainmentUnit = riskContainmentUnitDAO.getRiskContainmentUnit(verificationId, "_View");
-				
-				if(null!=riskContainmentUnit){
+				RiskContainmentUnit riskContainmentUnit = riskContainmentUnitDAO.getRiskContainmentUnit(verificationId,
+						"_View");
+
+				if (null != riskContainmentUnit) {
 					// RCU Document Details
 					List<RCUDocument> rcuDocuments = riskContainmentUnitDAO.getRCUDocuments(verificationId, "_View");
 					riskContainmentUnit.setRcuDocuments(rcuDocuments);
@@ -1042,5 +1058,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		}
 
 		return list;
+	}
+
+	@Override
+	public void deleteVerification(Verification verification, TableType tableType) {
+		logger.info(Literal.ENTERING);
+		verificationDAO.delete(verification, tableType);
+		logger.info(Literal.LEAVING);
+
 	}
 }
