@@ -606,7 +606,6 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 					fieldSize = fieldSize + 1;
 				}
 			}
-			this.observationsFieldTabPanel.setHeight((fieldSize * 37) + "px");
 
 			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
 					.getExtendedFieldRender(String.valueOf(tv.getVerificationId()), tableName.toString(), "_View");
@@ -626,6 +625,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			extendedFieldCtrl.render();
 			this.verificationDetails
 					.setLabel(Labels.getLabel("label_FieldInvestigationDialog_VerificationDetails.value"));
+			this.observationsFieldTabPanel.setHeight((fieldSize * 37) + "px");
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

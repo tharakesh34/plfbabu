@@ -419,10 +419,10 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		StringBuilder sql = new StringBuilder();
 		sql.append("select distinct verificationtype from verifications");
 		sql.append(" Where keyreference = :keyReference");
+		sql.append(" order by verificationtype asc");
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-
 		parameterSource.addValue("keyReference", keyReference);
 
 		try {

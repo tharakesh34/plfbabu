@@ -587,7 +587,6 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 					fieldSize = fieldSize + 1;
 				}
 			}
-			this.observationsFieldTabPanel.setHeight((fieldSize * 37) + "px");
 
 			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
 					.getExtendedFieldRender(String.valueOf(lv.getVerificationId()), tableName.toString(), "_View");
@@ -606,6 +605,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			extendedFieldCtrl.render();
 			this.verificationDetails
 					.setLabel(Labels.getLabel("label_LegalVerificationDialog_VerificationDetails.value"));
+			this.observationsFieldTabPanel.setHeight((fieldSize * 37) + "px");
 		} catch (Exception e) {
 			closeDialog();
 			logger.error(Literal.EXCEPTION, e);
