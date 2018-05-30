@@ -100,7 +100,8 @@
 											value="${c:l('panel_UnAssginedRoles.title')}"
 											style="padding:5px; " />
 										<space width="120px" />
-										<button id="btn_SearchRoles" autodisable="false"
+										<button id="btn_SearchRoles"
+											autodisable="btn_SearchRoles,btnRefresh,btnSelectRoles,btnUnSelectRoles,btnUnSelectAllRoles"
 											 label ="Search" />
 										<space width="200px" />
 										<button id="btnRefresh"
