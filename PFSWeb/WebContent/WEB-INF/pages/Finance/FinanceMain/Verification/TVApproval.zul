@@ -13,8 +13,8 @@
 		<radiogroup id="tv" visible="false" />
 
 		<borderlayout width="100%">
-			<center border="none" autoscroll="true">
-				<div>
+			<center border="none" autoscroll="true" style="overflow:auto;">
+				<groupbox height="100%" contentStyle="overflow:auto">
 					<groupbox id="finBasicdetails" style="border:none;" />
 					<groupbox style="border:none;" >
 						<listbox id="listBoxTechnicalVerification"
@@ -83,8 +83,8 @@
 							</listhead>
 						</listbox>
 					</groupbox>
-					<groupbox id="tvInquiry" style="border:none;" height="330px"/>
-				</div>
+					<groupbox id="tvInquiry" style="border:none;" height="100%" />
+				</groupbox>
 			</center>
 		</borderlayout>
 	</window>
