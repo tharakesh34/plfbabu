@@ -376,5 +376,8 @@ SELECT M.MANDATEID,
 			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
 			</createView>
 </changeSet>
+<changeSet id="15" author="Jayant">
+	<createSequence sequenceName="SeqPostingId" startValue="1" incrementBy="1"/>
+</changeSet>
 </databaseChangeLog>
 	
