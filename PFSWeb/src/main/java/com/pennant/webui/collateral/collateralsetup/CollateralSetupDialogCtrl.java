@@ -1759,7 +1759,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		coOwnerDetail.setCoOwnerId(getCoOwnerId());
 		map.put("coOwnerDetail", coOwnerDetail);
 		map.put("collateralSetupCtrl", this);
-		map.put("newRecord", "true");
+		map.put("newRecord", true);
 		map.put("roleCode", getRole());
 		map.put("filter", getCustomerCIF());
 		map.put("primaryCustCif", this.depositorCif.getValue());

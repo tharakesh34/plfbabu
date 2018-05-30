@@ -124,8 +124,6 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	protected Uppercasebox				coOwnerIDNumber;
 	protected Textbox					coOwnerCIFName;
 
-//	protected Textbox					phoneCountryCode;
-	//protected Textbox					phoneAreaCode;
 	protected Textbox					mobileNo;
 	protected Textbox					emailId;
 
@@ -781,28 +779,6 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			wve.add(we);
 		}
 
-		// Percentage
-		try {
-			BigDecimal percValue = this.coOwnerPercentage.getValue()==null ? BigDecimal.ZERO : this.coOwnerPercentage.getValue();
-			
-			List<CoOwnerDetail> coOwnerDetailsList = getCollateralSetupDialogCtrl().getCoOwnerDetailList();
-			if (coOwnerDetailsList != null && !coOwnerDetailsList.isEmpty()) {
-				for (CoOwnerDetail coOwnerDetail : coOwnerDetailsList) {
-					percValue = percValue.add(coOwnerDetail.getCoOwnerPercentage());
-				}
-			}
-			// Discussed with raju below validation changed.
-			if (percValue.compareTo(new BigDecimal(100)) > 0) {
-				throw new WrongValueException(coOwnerPercentage, Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] {
-						Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerPercentageValidation.value"), "100" }));
-			}
-
-			aCoOwnerDetail.setCoOwnerPercentage(this.coOwnerPercentage.getValue());
-
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
 		// CoOwner CIF
 		try {
 			aCoOwnerDetail.setCoOwnerCIFName(this.coOwnerCIFName.getValue());
@@ -920,6 +896,19 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			wve.add(we);
 		}
 
+		// Percentage
+		try {
+			BigDecimal percValue = getTotalPercentageValue(aCoOwnerDetail);
+			// Discussed with raju below validation changed.
+			if (percValue.compareTo(new BigDecimal(100)) > 0) {
+				throw new WrongValueException(coOwnerPercentage, Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] {
+						Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerPercentageValidation.value"), "100" }));
+			}
+			aCoOwnerDetail.setCoOwnerPercentage(this.coOwnerPercentage.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 		if (!wve.isEmpty()) {
@@ -933,6 +922,39 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 
 		setCoOwnerDetail(aCoOwnerDetail);
 		logger.debug("Leaving");
+	}
+
+	private BigDecimal getTotalPercentageValue(CoOwnerDetail aCoOwnerDetail) {
+		BigDecimal percValue = this.coOwnerPercentage.getValue() == null ? BigDecimal.ZERO : this.coOwnerPercentage.getValue();
+
+		List<CoOwnerDetail> coOwnerDetailsList = getCollateralSetupDialogCtrl().getCoOwnerDetailList();
+		if (isNewRecord()) {
+			if (coOwnerDetailsList != null && !coOwnerDetailsList.isEmpty()) {
+				for (CoOwnerDetail coOwnerDetail : coOwnerDetailsList) {
+					percValue = percValue.add(coOwnerDetail.getCoOwnerPercentage());
+				}
+			}
+		} else {
+			for (CoOwnerDetail oldCoOwnerDetail : coOwnerDetailsList) {
+				boolean duplicateRecord = false;
+				if (!aCoOwnerDetail.isBankCustomer() && !oldCoOwnerDetail.isBankCustomer()) {
+					if (oldCoOwnerDetail.getCoOwnerIDNumber().equals(aCoOwnerDetail.getCoOwnerIDNumber())) {
+						duplicateRecord = true;
+					}
+				} else if (aCoOwnerDetail.isBankCustomer() && oldCoOwnerDetail.isBankCustomer()) {
+					if (oldCoOwnerDetail.getCustomerId() == aCoOwnerDetail.getCustomerId()) {
+						duplicateRecord = true;
+					}
+				} else if (StringUtils.equals(oldCoOwnerDetail.getCoOwnerIDTypeName(), aCoOwnerDetail.getCoOwnerIDTypeName()) && 
+						StringUtils.equals(oldCoOwnerDetail.getCoOwnerIDNumber(), aCoOwnerDetail.getCoOwnerIDNumber())) {
+					duplicateRecord = true;
+				}
+				if (!duplicateRecord) {
+					percValue = percValue.add(oldCoOwnerDetail.getCoOwnerPercentage());
+				}
+			}
+		}
+		return percValue;
 	}
 
 	/**
