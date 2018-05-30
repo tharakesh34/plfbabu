@@ -248,6 +248,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				}
 				if (gurantorsAccDetailList != null && !gurantorsAccDetailList.isEmpty()) {
 					doFillGurantorsDetails(gurantorsAccDetailList);
+				}else{
+					rules.put("Guarantors_Bank_CustomerCount", 0);
+					rules.put("Guarantors_Other_CustomerCount", 0);
+					rules.put("Guarantors_Total_Count", 0);
 				}
 			}
 			this.finBasicdetails.setVisible(false);
@@ -264,6 +268,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			List<GuarantorDetail> gurantorsDetailList = financeDetail.getGurantorsDetailList();
 			if (gurantorsDetailList != null && !gurantorsDetailList.isEmpty()) {
 				doFillGurantorsDetails(gurantorsDetailList);
+			}else{
+				rules.put("Guarantors_Bank_CustomerCount", 0);
+				rules.put("Guarantors_Other_CustomerCount", 0);
+				rules.put("Guarantors_Total_Count", 0);
 			}
 			try {
 				Class[] paramType = { this.getClass() };

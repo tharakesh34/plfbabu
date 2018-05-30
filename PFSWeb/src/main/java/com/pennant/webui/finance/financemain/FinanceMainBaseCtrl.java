@@ -14858,10 +14858,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// ### 10-05-2018 - Start- Development Item 82
 		if (jointAccountDetailDialogCtrl != null) {
 			detail.getCustomerEligibilityCheck().setExtendedFields(jointAccountDetailDialogCtrl.getRules());
+		}else{
+			detail.getCustomerEligibilityCheck().addExtendedField("Co_Applicants_Count", 0);
+			detail.getCustomerEligibilityCheck().addExtendedField("Guarantors_Bank_CustomerCount", 0);
+			detail.getCustomerEligibilityCheck().addExtendedField("Guarantors_Other_CustomerCount", 0);
+			detail.getCustomerEligibilityCheck().addExtendedField("Guarantors_Total_Count", 0);
 		}
 
 		if (collateralHeaderDialogCtrl != null) {
 			detail.getCustomerEligibilityCheck().setExtendedFields(collateralHeaderDialogCtrl.getRules());
+		}else{
+			detail.getCustomerEligibilityCheck().addExtendedField("Collaterals_Total_Assigned", 0);
+			detail.getCustomerEligibilityCheck().addExtendedField("Collaterals_Total_UN_Assigned", 0);
+			detail.getCustomerEligibilityCheck().addExtendedField("Collateral_Bank_Valuation", 0);
+			detail.getCustomerEligibilityCheck().addExtendedField("Collateral_Average_LTV", 0);
+
 		}
 		// ### 10-05-2018 - End - Development Item 82
 		detail.getCustomerEligibilityCheck().setExtendedFields(setCollateralRuleValues(detail));
