@@ -442,12 +442,12 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		final HashMap<String, Object> map = new HashMap<>();
 		TechnicalVerification technicalVerification = technicalVerificationService
 				.getTechnicalVerification(tv.getSelectedItem().getValue(), "_View");
+		if (tvInquiry.getChildren() != null) {
+			tvInquiry.getChildren().clear();
+		}
 		if (technicalVerification != null && StringUtils.isEmpty(technicalVerification.getNextRoleCode())) {
 			map.put("LOAN_ORG", true);
 			map.put("technicalVerification", technicalVerification);
-			if (tvInquiry.getChildren() != null) {
-				tvInquiry.getChildren().clear();
-			}
 			Executions.createComponents(
 					"/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationDialog.zul", tvInquiry,
 					map);
