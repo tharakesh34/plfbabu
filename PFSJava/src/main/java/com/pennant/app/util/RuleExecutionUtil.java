@@ -59,6 +59,7 @@ import javax.script.ScriptEngine;
 import javax.script.SimpleBindings;
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
@@ -155,7 +156,7 @@ public class RuleExecutionUtil implements Serializable {
 		}
 		
 		rule = replaceCurrencyCode(rule, finccy);
-
+		rule = StringUtils.replace(rule, "{BLANK}", "");
 		Object result = null;
 		try {
 			result = processEngineRule(rule, bindings, returnType);
