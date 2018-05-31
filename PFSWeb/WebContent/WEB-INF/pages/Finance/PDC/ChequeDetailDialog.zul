@@ -12,7 +12,7 @@
 		font-weight:bold; }
 	</style>
 
-	<window id="window_ChequeDetailDialog" border="normal"
+	<window id="window_ChequeDetailDialog" border="normal" 
 		apply="${chequeDetailDialogCtrl}" width="100%" height="100%"
 		sizable="false">
 		<borderlayout id="borderlayoutChequeDetail">
@@ -68,7 +68,7 @@
 					</hbox>
 				</div>
 			</north>
-			<center border="none" autoscroll="false">
+			<center border="none"  autoscroll="true">
 				<div style="border:none;">
 					<groupbox id="finBasicdetails" style="border:none;"/>
 					<groupbox id="gb_basicDetails" style="border:none;">
@@ -112,8 +112,7 @@
 									<label id="label_ChequeType"
 										value="${c:l('label_ChequeDetailDialog_ChequeType.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
+										<space spacing="2px" />
 										<combobox id="chequeType"
 											width="200px" />
 									</hbox>
@@ -169,7 +168,7 @@
 									<label
 										value="${c:l('label_ChequeDetailDialog_AccType.value')}" />
 									<hbox>
-										<space spacing="2px" sclass="mandatory"/>
+										<space spacing="2px" />
 										<combobox id="accountType"
 											width="200px" />
 									</hbox>
@@ -177,7 +176,7 @@
 									<label
 										value="${c:l('label_ChequeDetailDialog_AccHolderName.value')}" />
 									<hbox>
-										<space spacing="2px" sclass="mandatory"/>
+										<space spacing="2px" />
 										<textbox id="accHolderName" maxlength="200" width="200px" />
 									</hbox>
 								</row>
@@ -186,16 +185,14 @@
 									<label id="label_AccNumber"
 										value="${c:l('label_ChequeDetailDialog_AccNumber.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
+										<space spacing="2px" />
 										<textbox id="accNumber"
 											width="200px" />
 									</hbox>
 									<label id="label_ChequeSerialNo"
 										value="${c:l('label_ChequeDetailDialog_ChequeSerialNo.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
+										<space spacing="2px"  />
 										<intbox id="chequeSerialNo"
 											maxlength="20" width="200px" />
 									</hbox>
@@ -205,8 +202,7 @@
 									<currencyBox id="amount"  width="200px" />
 									<label value="${c:l('label_ChequeDetailDialog_NoOfChequesCalc.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
+										<space spacing="2px"  />
 										<intbox id="noOfCheques"
 											width="120px" />
 										<button id="btnGen"
