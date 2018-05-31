@@ -228,7 +228,6 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
@@ -2471,21 +2470,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.isLvInitTab()) {
 				Verification verification = financeDetail.getLvVerification();
 				verification.setVerificationType(VerificationType.LV.getKey());
-
-				List<Verification> verificationsList = verificationService
-						.getVerifications(verification.getKeyReference(), VerificationType.LV.getKey());
-
-				for (Verification oldVrf : verificationsList) {
-					for (Verification newVrf : verification.getVerifications()) {
-						if (newVrf.getId() == oldVrf.getId() && newVrf.getRequestType() == RequestType.WAIVE.getKey()) {
-							BeanUtils.copyProperties(newVrf, oldVrf);
-						}
-					}
-				}
-				verification.setVerifications(verificationsList);
-				verificationService.setLVDetails(verification.getVerifications());
-				adtVerifications.addAll(
-						verificationService.saveOrUpdate(financeDetail, VerificationType.LV, tableType.getSuffix(), auditTranType, true));
+				adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.LV,
+						tableType.getSuffix(), auditTranType, true));
 			}
 			
 			// save LV Approval details

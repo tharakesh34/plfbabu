@@ -622,16 +622,15 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		sql.append(" inner join verifications v on v.id=vd.verificationid");
 		sql.append(" inner join documentdetails dd on dd.docid=vd.documentid and dd.docrefid=vd.docrefid");
 		sql.append(" where documentType=:documentType and verificationType=:verificationType");
-		sql.append(" referenceFor=:referenceFor");
+		sql.append(" and vd.referenceId=:referenceId");
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("documentType", DocumentType.COLLATRL.getKey());
 		paramSource.addValue("verificationType", VerificationType.LV.getKey());
-		paramSource.addValue("referenceFor", collateralRef);
+		paramSource.addValue("referenceId", collateralRef);
 
-		RowMapper<Integer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Integer.class);
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -648,17 +647,16 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		sql.append(" select count(*) from  verification_lv_details_view vd");
 		sql.append(" inner join verifications v on v.id=vd.verificationid ");
-		sql.append(" where documentType=:documentType and referenceFor=:referenceFor");
+		sql.append(" where documentType=:documentType and referenceId=:referenceId");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
-		source.addValue("documentType", DocumentType.COLLATRL);
-		source.addValue("collateralRef", collateralRef);
+		source.addValue("documentType", DocumentType.COLLATRL.getKey());
+		source.addValue("referenceId", collateralRef);
 
-		RowMapper<Integer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Integer.class);
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

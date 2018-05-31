@@ -57,6 +57,8 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
@@ -109,6 +111,8 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	private transient DocumentDetailsDAO documentDetailsDAO;
 	@Autowired
 	private transient CollateralSetupDAO collateralSetupDAO;
+	@Autowired
+	private SearchProcessor searchProcessor;
 
 	protected Radiogroup lv;
 
@@ -144,7 +148,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
-		
+
 		if (arguments.get("enqiryModule") != null) {
 			enqiryModule = (Boolean) arguments.get("enqiryModule");
 		}
@@ -164,8 +168,8 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		renderLVWaiverList();
 		setScreenDocuments();
 
-		int divHeight = this.borderLayoutHeight - 80;
-		int borderlayoutHeights = divHeight / 3;
+		//int divHeight = this.borderLayoutHeight - 80;
+		//int borderlayoutHeights = divHeight / 3;
 		//this.listBoxInitiation.setHeight(borderlayoutHeights - 30 + "px");
 		//this.listBoxWaiver.setHeight(borderlayoutHeights - 30 + "px");
 		//this.window_LVerificationDialog.setHeight(this.borderLayoutHeight - 80 + "px");
@@ -445,8 +449,8 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 					btnReInit.setDisabled(true);
 					reInitRemarks.setReadonly(true);
 				}
-				
-				if(enqiryModule){
+
+				if (enqiryModule) {
 					decision.setDisabled(true);
 					reInitRemarks.setReadonly(true);
 					btnReInit.setDisabled(true);
@@ -459,7 +463,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onVerificationItemDoubleClicked");
 			}
 			this.listBoxInitiation.appendChild(item);
-			
+
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -670,6 +674,9 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		if (initType) {
 			verifications = verificationService.getVerifications(this.verification.getKeyReference(),
 					VerificationType.LV.getKey());
+			for (Verification verification : verifications) {
+				verificationService.setLastStatus(verification);
+			}
 		} else {
 			verifications = getWaiveVerifications();
 		}
@@ -729,15 +736,23 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			//Status
 			listCell = new Listcell();
 			Label status = new Label();
-			if (vrf.getStatus() != 0) {
+			if (initType && vrf.getLastStatus() != 0) {
+				status.setValue(LVStatus.getType(vrf.getLastStatus()).getValue());
+
+			} else if (!initType && vrf.getStatus() != 0) {
 				status.setValue(LVStatus.getType(vrf.getStatus()).getValue());
 			}
+
 			listCell.appendChild(status);
 			listCell.setParent(item);
 
-			//Verification Date
+			// Verification Date
 			listCell = new Listcell();
-			listCell.appendChild(new Label(DateUtil.formatToShortDate(vrf.getVerificationDate())));
+			if (initType) {
+				listCell.appendChild(new Label(DateUtil.formatToShortDate(vrf.getLastVerificationDate())));
+			} else {
+				listCell.appendChild(new Label(DateUtil.formatToShortDate(vrf.getVerificationDate())));
+			}
 			listCell.setParent(item);
 
 			if (!initType) {
@@ -780,8 +795,8 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 					btnReInit.setDisabled(true);
 					reInitRemarks.setReadonly(true);
 				}
-				
-				if(enqiryModule){
+
+				if (enqiryModule) {
 					decision.setDisabled(true);
 					reInitRemarks.setReadonly(true);
 					btnReInit.setDisabled(true);
@@ -797,8 +812,8 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			}
 
 			this.listBoxWaiver.appendChild(item);
-			
-			if(enqiryModule){
+
+			if (enqiryModule) {
 				reason.setReadonly(true);
 				remarks.setReadonly(true);
 			}
@@ -1106,7 +1121,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public boolean doSave(FinanceDetail financeDetail, Tab tab) throws InterruptedException {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
 		logger.debug("Entering");
 
 		doClearMessage();
@@ -1123,13 +1138,80 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		this.verification.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		financeDetail.setLvVerification(this.verification);
 
-		logger.debug("Leaving");
-
 		if (tab.getId().equals("TAB".concat(AssetConstants.UNIQUE_ID_LVAPPROVAL))) {
 			return validateReinitiation(financeDetail.getLvVerification().getVerifications());
+		} else {
+			prepareVerifications();
+			if (!recSave) {
+				return validateCollateralDocuments(tab);
+			}
 		}
 		return true;
 
+	}
+
+	private void prepareVerifications() {
+		List<Verification> verificationsList = verificationService.getVerifications(this.verification.getKeyReference(),
+				VerificationType.LV.getKey());
+
+		for (Verification oldVrf : verificationsList) {
+			for (Verification newVrf : verification.getVerifications()) {
+				if (newVrf.getId() == oldVrf.getId() && newVrf.getRequestType() == RequestType.WAIVE.getKey()) {
+					BeanUtils.copyProperties(newVrf, oldVrf);
+				}
+			}
+		}
+		this.verification.setVerifications(verificationsList);
+		verificationService.setLVDetails(this.verification.getVerifications());
+	}
+
+	private List<String> getRequiredDocuments() {
+		List<String> lvRequiredDocs = new ArrayList<>();
+		Search search = new Search(com.pennant.backend.model.systemmasters.DocumentType.class);
+		search.addField("doctypecode");
+		search.addTabelName("BMTDocumentTypes");
+		search.addFilter(new Filter("lvreq", 1));
+		search.addFilter(new Filter("categoryId", 3));
+		List<com.pennant.backend.model.systemmasters.DocumentType> list = searchProcessor.getResults(search);
+
+		for (com.pennant.backend.model.systemmasters.DocumentType documentType : list) {
+			lvRequiredDocs.add(documentType.getDocTypeCode());
+
+		}
+		return lvRequiredDocs;
+	}
+
+	private List<Long> getRequiredCollateralDocuments() {
+		List<String> lvRequiredDocs = getRequiredDocuments();
+		List<Long> result = new ArrayList<>();
+
+		for (LVDocument document : collateralDocuments) {
+			if (lvRequiredDocs.contains(document.getDocumentSubId())) {
+				result.add(document.getDocumentId());
+			}
+		}
+		return result;
+	}
+
+	private boolean validateCollateralDocuments(Tab tab) {
+		List<Long> requiredCollateralDocs = getRequiredCollateralDocuments();
+		List<Long> collateralDocuments = new ArrayList<>();
+		for (Verification verification : this.verification.getVerifications()) {
+			for (LVDocument document : verification.getLvDocuments()) {
+				if (document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
+					collateralDocuments.add(document.getDocumentId());
+				}
+			}
+		}
+		for (long documentId : requiredCollateralDocs) {
+			if (!collateralDocuments.contains(documentId)) {
+				MessageUtil
+						.showError("No further proceed until Required collateral documets should be initiated/Waived");
+				tab.setSelected(true);
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private boolean validateReinitiation(List<Verification> verifications) {

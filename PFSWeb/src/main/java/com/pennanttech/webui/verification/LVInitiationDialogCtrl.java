@@ -530,7 +530,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			checkbox.setValue(document);
 			checkbox.setLabel(getDocumentName(document.getDocumentSubId()));
 
-			if ((lvRequiredDocs.contains(document.getDocumentSubId()) && this.verification.isNewRecord())
+			if ((initiation  && lvRequiredDocs.contains(document.getDocumentSubId()) && this.verification.isNewRecord())
 					|| checkedDocuments.contains(reference)) {
 				checkbox.setChecked(true);
 			}
@@ -987,8 +987,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		for (Listitem listitem : listBoxCollateralDocuments.getItems()) {
 			Checkbox docIdBox = (Checkbox) listitem.getFirstChild().getFirstChild();
 			LVDocument document = docIdBox.getValue();
-			if (!docIdBox.isChecked() && lvRequiredDocs.contains(document.getDocumentSubId())) {
-				if (MessageUtil.YES == MessageUtil
+			if (!docIdBox.isChecked() && lvRequiredDocs.contains(document.getDocumentSubId()) && initiation) {
+				if ( MessageUtil.YES == MessageUtil
 						.confirm("Required collateral documets are not selected, Do you want to proceed?")) {
 					return true;
 				} else {

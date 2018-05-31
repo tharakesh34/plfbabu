@@ -6265,13 +6265,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// LV Init Verification Detail
 		Tab lvInitTab = getTab(AssetConstants.UNIQUE_ID_LVINITIATION);
 		if (lvInitTab != null && lvInitTab.isVisible() && lVerificationCtrl != null) {
-			lVerificationCtrl.doSave(aFinanceDetail, lvInitTab);
+			if(!lVerificationCtrl.doSave(aFinanceDetail, lvInitTab,recSave)){
+				return;
+			}
 		}
 
 		// LV Approval Verification Detail
 		Tab lvApprovalTab = getTab(AssetConstants.UNIQUE_ID_LVAPPROVAL);
 		if (lvApprovalTab != null && lvApprovalTab.isVisible() && lVerificationCtrl != null) {
-			if (!lVerificationCtrl.doSave(aFinanceDetail, lvApprovalTab)) {
+			if (!lVerificationCtrl.doSave(aFinanceDetail, lvApprovalTab,recSave)) {
 				return;
 			}
 
