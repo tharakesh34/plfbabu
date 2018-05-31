@@ -1164,8 +1164,8 @@ public class ReceiptCalculator implements Serializable {
 												
 												// In case of Exclusive
 												if(addGSTAmount){
-													movement.setPaidAmount(balAdvise.subtract(movement.getPaidCGST().subtract(
-															movement.getPaidIGST().subtract(movement.getPaidSGST().subtract(movement.getPaidUGST())))));
+													movement.setPaidAmount(balAdvise.subtract(movement.getPaidCGST()).subtract(
+															movement.getPaidIGST()).subtract(movement.getPaidSGST()).subtract(movement.getPaidUGST()));
 												}else{
 													movement.setPaidAmount(balAdvise);
 												}
