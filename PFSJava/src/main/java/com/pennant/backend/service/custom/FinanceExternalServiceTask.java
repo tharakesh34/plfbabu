@@ -98,7 +98,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		}
 
 		try {
-			switch (serviceTask.getOperation()) {/*
+			switch (serviceTask.getOperation()) {
 			case PennantConstants.method_doCheckScore:
 				doCheckScore(afinanceDetail);
 				taskExecuted = true;
@@ -238,7 +238,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				break;
 			default:
 				return taskExecuted;
-			*/}
+			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			ServiceTaskDetail serviceTaskDetail = new ServiceTaskDetail();
