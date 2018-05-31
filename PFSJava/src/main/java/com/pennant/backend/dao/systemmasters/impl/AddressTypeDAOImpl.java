@@ -42,9 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -233,20 +230,4 @@ public class AddressTypeDAOImpl extends BasicDao<AddressType> implements Address
 		logger.debug(Literal.LEAVING);
 	}
 	
-	@Override
-	public List<String> getFiRequiredCodes() {
-		List<String> codes;
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("addrtypefirequired", 1);
-
-		try {
-			codes = jdbcTemplate.queryForList(
-					"select addrtypeCode from BMTAddressTypes where addrtypefirequired=:addrtypefirequired",
-					parameterSource, String.class);
-		} catch (Exception e) {
-			codes = new ArrayList<>();
-		}
-
-		return codes;
-	}	
 }

@@ -4239,7 +4239,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		if (serviceTasks != null && !serviceTasks.isEmpty()) {
 			for(ServiceTask task: serviceTasks) {
-				auditHeader = execute(auditHeader, task, role, usrAction, engine);
+				//auditHeader = execute(auditHeader, task, role, usrAction, engine);
 
 				// Check whether to proceed with next service tasks.
 				auditHeader = nextProcess(auditHeader);
