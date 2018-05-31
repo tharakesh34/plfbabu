@@ -3279,5 +3279,14 @@
 			WHERE verification_lv_details_temp.verificationid = lvd.verificationid AND verification_lv_details_temp.seqno = lvd.seqno)) AND lvd.documenttype = 3) t
 		</createView>
 	</changeSet>
+	<changeSet id="20" author="lakshmi.n">
+	<sql>
+		<![CDATA[
+	       Delete from reportlist where code='LegalVerification';
+           INSERT INTO REPORTLIST Values ('LegalVerification','LegalVerification','listheader_CIF.label,listheader_CollateralType.label,listheader_CollateralReference.label,listheader_LoanReference.label,listheader_Agency.label,listheader_CreatedOn.label', 'cif,collateralType,referenceFor,keyReference,agencyName,createdOn','String,String,String,String,String,Date',' ','ReportList06','Legal Verification',
+          'Legal Verification',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);		
+  		]]>
+	</sql>
+	</changeSet>
 </databaseChangeLog>
  

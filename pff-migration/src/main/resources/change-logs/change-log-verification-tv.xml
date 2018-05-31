@@ -1547,4 +1547,13 @@
 				where not (exists ( select 1 from verification_tv_temp where verification_tv_temp.verificationid = tv.verificationid))
 		</createView>
 	</changeSet>
+	<changeSet id="11" author="lakshmi.n">
+	<sql>
+		<![CDATA[
+	       Delete from reportlist where code='TechnicalVerification';
+           INSERT INTO REPORTLIST Values ('TechnicalVerification','TechnicalVerification','listheader_CIF.label,listheader_CollateralType.label,listheader_CollateralReference.label,listheader_LoanReference.label,listheader_Agency.label,listheader_CreadtedOn.label', 'cif,collateralType,collateralRef,keyReference,agencyName,createdOn','String,String,String,String,String,Date',' ','ReportList06','Technical Verification',
+          'Technical Verification',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);		
+        ]]>
+	</sql>
+	</changeSet>
 </databaseChangeLog>
