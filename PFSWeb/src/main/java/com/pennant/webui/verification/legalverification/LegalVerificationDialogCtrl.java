@@ -483,14 +483,14 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				Listcell lc;
 				lc = new Listcell(document.getDocModule());
 				lc.setParent(item);
-				
-				lc = new Listcell();
 				if(document.getDocumentType() == DocumentType.COLLATRL.getKey()){
 					Label label=new Label();
-					label.setValue(document.getReferenceId() + " - ");
+					label.setValue(" - " + document.getReferenceId());
 					lc.appendChild(label);
 					lc.setParent(item);
 				}
+				
+				lc = new Listcell();
 				A docLink = new A();
 				docLink.setLabel(document.getDescription());
 				docLink.addForward("onClick", self, "onClickDoDownload", document);
