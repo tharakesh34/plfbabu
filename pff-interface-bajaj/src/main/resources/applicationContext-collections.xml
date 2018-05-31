@@ -10,7 +10,7 @@
 	<!-- Data source -->
 	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
 	  	<property name="resourceRef" value="true" />
-		<property name="jndiName" value="jdbc/PFFCORE" />
+		<property name="jndiName" value="jdbc/PFF" />
 		<property name="lookupOnStartup" value="true" />
 	</bean>
 	
