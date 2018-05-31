@@ -409,7 +409,7 @@ public class AgreementGeneration implements Serializable {
 	 * @return
 	 */
 	public AgreementDetail getAggrementData(FinanceDetail detail, String aggModuleDetails, User userDetails) {
-		logger.debug("Entering");
+ 		logger.debug("Entering");
 		
 		// Create New Object For The Agreement Detail
 		AgreementDetail agreement = new AgreementDetail();
@@ -924,6 +924,7 @@ public class AgreementGeneration implements Serializable {
 			
 			if(CollectionUtils.isEmpty(agreement.getScoringDetails())){
 				agreement.setScoringDetails(new ArrayList<>());
+				agreement.getScoringDetails().add(agreement.new Score());
 			}
 			
 			// -----------------Eligibility Detail
@@ -966,6 +967,7 @@ public class AgreementGeneration implements Serializable {
 			
 			if(CollectionUtils.isEmpty(agreement.getEligibilityList())){
 				agreement.setEligibilityList(new ArrayList<>());
+				agreement.getEligibilityList().add(agreement.new Eligibility());
 			}
 			
 			// ----------------Finance Details
@@ -983,7 +985,7 @@ public class AgreementGeneration implements Serializable {
 				agreement = getScheduleDetails(agreement, detail, formatter);
 			}
 
-			// -------------------Recommendations
+			// -------------------Recommendations and Notes
 			if (aggModuleDetails.contains(PennantConstants.AGG_RECOMMD)) {
 				agreement = getRecommendations(agreement, finRef);
 			}
@@ -1119,15 +1121,19 @@ public class AgreementGeneration implements Serializable {
 			
 			if(CollectionUtils.isEmpty(agreement.getFiVerification())){
 				agreement.setFiVerification(new ArrayList<>());
+				agreement.getFiVerification().add(agreement.new VerificationDetail());
 			}
 			if(CollectionUtils.isEmpty(agreement.getLegalVerification())){
 				agreement.setLegalVerification(new ArrayList<>());
+				agreement.getLegalVerification().add(agreement.new VerificationDetail());
 			}
 			if(CollectionUtils.isEmpty(agreement.getRcuVerification())){
 				agreement.setRcuVerification(new ArrayList<>());
+				agreement.getRcuVerification().add(agreement.new VerificationDetail());
 			}
 			if(CollectionUtils.isEmpty(agreement.getTechnicalVerification())){
 				agreement.setTechnicalVerification(new ArrayList<>());
+				agreement.getTechnicalVerification().add(agreement.new VerificationDetail());
 			}
 			
 			if(CollectionUtils.isEmpty(agreement.getExtendedDetails())){
