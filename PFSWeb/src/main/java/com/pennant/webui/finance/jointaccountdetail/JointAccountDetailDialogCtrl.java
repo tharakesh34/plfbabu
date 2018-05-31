@@ -546,7 +546,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.sumPrimaryDetails = getJointAccountDetailService().getExposureSummaryDetail(primaryList);
 			this.sumSecondaryDetails = getJointAccountDetailService().getExposureSummaryDetail(secoundaryList);
 			this.sumGurantorDetails = getJointAccountDetailService().getExposureSummaryDetail(guarantorList);
-
+			
+			getJountAccountDetail().setCustomerIncomeList(getJointAccountDetailService().getJointAccountIncomeList(customer.getCustID()));
+			
 			if(this.primaryList != null) {
 				doFillPrimaryExposureDetails(this.primaryList);
 			}

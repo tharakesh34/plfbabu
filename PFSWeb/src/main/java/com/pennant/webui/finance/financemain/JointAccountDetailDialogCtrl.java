@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
@@ -64,6 +65,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GuarantorDetail;
@@ -72,6 +74,7 @@ import com.pennant.backend.service.finance.GuarantorDetailService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -191,6 +194,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		if (arguments.containsKey("fromApproved")) {
 			this.fromApproved = (Boolean) arguments.get("fromApproved");
 		}
+
+		rules.put("Total_Co_Applicants_Income", BigDecimal.ZERO);
+		rules.put("Total_Co_Applicants_Expense", BigDecimal.ZERO);
 
 		doCheckRights();
 		doShowDialog();
@@ -384,7 +390,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		setJountAccountDetailList(jountAccountDetails);
 		//### 10-05-2018 Development Item 82
 		rules.put("Co_Applicants_Count", jountAccountDetails.size());
-		
+		rules.put("Total_Co_Applicants_Income", BigDecimal.ZERO);
+		rules.put("Total_Co_Applicants_Expense", BigDecimal.ZERO);
+
 		for (JointAccountDetail jountAccountDetail : jountAccountDetails) {
 			Listitem listitem = new Listitem();
 			Listcell listcell;
@@ -412,6 +420,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			listitem.appendChild(listcell);
 			listitem.setAttribute("data", jountAccountDetail);
 			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onFinJointItemDoubleClicked");
+			setRuleIncomes(jountAccountDetail);
 			this.listBoxJountAccountDetails.appendChild(listitem);
 		}
 		
@@ -421,6 +430,32 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Leaving");
 	}
 
+	private void setRuleIncomes(JointAccountDetail jountAccountDetail){
+		
+		BigDecimal totIncome = BigDecimal.ZERO;
+		BigDecimal totExpense = BigDecimal.ZERO;
+
+		// 1 Currency Conversion Required
+		// 2 Un Formate should be based on the Customer Base Currency. 
+		if(CollectionUtils.isNotEmpty(jountAccountDetail.getCustomerIncomeList())){
+			for (CustomerIncome income : jountAccountDetail.getCustomerIncomeList()) {
+				if (income.getIncomeExpense().equals(PennantConstants.INCOME)) {
+					totIncome = totIncome.add(PennantAppUtil.formateAmount(income.getCustIncome(), ccDecimal));
+				}else{
+					totExpense = totIncome.add(PennantAppUtil.formateAmount(income.getCustIncome(), ccDecimal));
+				}	
+			}
+		}
+
+		if(rules.containsKey("Total_Co_Applicants_Income")){
+			totIncome = totIncome.add((BigDecimal) rules.get("Total_Co_Applicants_Income"));
+			totExpense = totExpense.add((BigDecimal) rules.get("Total_Co_Applicants_Income"));
+		}
+		
+		rules.put("Total_Co_Applicants_Income", totIncome);
+		rules.put("Total_Co_Applicants_Expense", totExpense);
+
+	}
 	public void onFinJointItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		// get the selected invoiceHeader object
