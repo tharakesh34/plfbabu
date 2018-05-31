@@ -84,6 +84,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected Groupbox finBasicdetails;
 	protected Listbox listBoxRCUVerification;
 	protected Groupbox rcuInquiry;
+	protected Radiogroup rcuRadioGroup;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
@@ -92,7 +93,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private transient boolean validationOn;
 	private transient boolean initType;
-	protected Radiogroup rcuRadioGroup;
+	private boolean recSave;
 
 	private Map<String, Verification> customerDocuments = new LinkedHashMap<>();
 	private Map<String, Verification> loanDocuments = new LinkedHashMap<>();
@@ -281,7 +282,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Verification item;
 			if (deleteSet.contains(entrySet.getKey())) {
 				item = entrySet.getValue();
-				if (item.getRcuDocument() == null || !verificationService.isVerificationInRecording(item, VerificationType.RCU)) {
+				if (item.getRcuDocument() == null
+						|| !verificationService.isVerificationInRecording(item, VerificationType.RCU)) {
 					item.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 					deleteVerifications.add(item);
 				}
@@ -1214,7 +1216,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				verification.setIgnoreFlag(true);
 			}
 			verification.setDecision(decision);
-			if (!combobox.isDisabled() && decision == 0) {
+			if (!combobox.isDisabled() && decision == 0 && !this.recSave) {
 				throw new WrongValueException(combobox,
 						Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
 			} else if (verification.getOldRequestType() == RequestType.INITIATE.getKey()
@@ -1376,7 +1378,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	public boolean doSave(FinanceDetail financeDetail, Tab tab) {
 		logger.debug(Literal.ENTERING);
-
+		this.recSave = recSave;
 		doClearMessage();
 		doSetValidation();
 

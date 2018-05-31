@@ -92,10 +92,11 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private List<Verification> customerVerifications = new ArrayList<>();
 	private List<Verification> coApplicantVerifications = new ArrayList<>();
 	private Set<String> requiredCodes = new HashSet<>();
-	
+
 	private transient List<Long> deletedJointAccountS;
 	private transient boolean validationOn;
 	private transient boolean initType;
+	private boolean recSave;
 
 	@Autowired
 	private SearchProcessor searchProcessor;
@@ -142,7 +143,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
-		
+
 		if (arguments.get("enqiryModule") != null) {
 			enqiryModule = (Boolean) arguments.get("enqiryModule");
 		}
@@ -518,7 +519,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					reInitAgency.setReadonly(true);
 					reInitRemarks.setReadonly(true);
 				}
-				
+
 				if (enqiryModule) {
 					decision.setDisabled(true);
 					agency.setReadonly(true);
@@ -542,14 +543,14 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				reason.setReadonly(true);
 				remarks.setReadonly(true);
 			}
-			
+
 			if (enqiryModule) {
 				requestType.setDisabled(true);
 				agency.setReadonly(true);
 				reason.setReadonly(true);
 				remarks.setReadonly(true);
 			}
-			
+
 		}
 		logger.debug(Literal.LEAVING);
 
@@ -981,7 +982,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				verification.setIgnoreFlag(true);
 			}
 			verification.setDecision(decision);
-			if (!combobox.isDisabled() && decision == 0) {
+			if (!combobox.isDisabled() && decision == 0 && !this.recSave) {
 				throw new WrongValueException(combobox,
 						Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
 			}
@@ -1135,6 +1136,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
 		logger.debug("Entering");
+		this.recSave = recSave;
 		List<Verification> list = new ArrayList<>();
 		doClearMessage();
 		doSetValidation();
@@ -1175,7 +1177,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 		return true;
 	}
-	
+
 	private void setFiRequiredCodes() {
 		this.requiredCodes.clear();
 

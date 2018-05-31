@@ -82,6 +82,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private transient boolean validationOn;
 	private transient boolean initType;
+	private boolean recSave;
 	List<String> requiredCodes;
 
 	@Autowired
@@ -127,11 +128,10 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
-		
+
 		if (arguments.get("enqiryModule") != null) {
 			enqiryModule = (Boolean) arguments.get("enqiryModule");
 		}
-		
 
 		financeMainDialogCtrl.settVerificationDialogCtrl(this);
 
@@ -662,8 +662,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					reInitAgency.setReadonly(true);
 					reInitRemarks.setReadonly(true);
 				}
-				
-				if(enqiryModule){
+
+				if (enqiryModule) {
 					decision.setDisabled(true);
 					reInitAgency.setReadonly(true);
 					reInitRemarks.setReadonly(true);
@@ -687,8 +687,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				reason.setReadonly(true);
 				remarks.setReadonly(true);
 			}
-			
-			if(enqiryModule){
+
+			if (enqiryModule) {
 				requestType.setDisabled(true);
 				agency.setReadonly(true);
 				reason.setReadonly(true);
@@ -890,7 +890,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				item.setIgnoreFlag(true);
 			}
 			item.setDecision(decision);
-			if (!combobox.isDisabled() && decision == 0) {
+			if (!combobox.isDisabled() && decision == 0 && !this.recSave) {
 				throw new WrongValueException(combobox,
 						Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
 			}
@@ -1062,7 +1062,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
-
+		this.recSave = recSave;
 		doClearMessage();
 		doSetValidation();
 

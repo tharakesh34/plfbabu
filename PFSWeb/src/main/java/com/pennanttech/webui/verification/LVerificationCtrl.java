@@ -94,10 +94,11 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private Verification verification;
+	private FinanceDetail financeDetail;
 
 	private transient boolean validationOn;
 	private transient boolean initType;
-	private FinanceDetail financeDetail;
+	private boolean recSave;
 
 	private List<LVDocument> customerDocuments = new ArrayList<>();
 	private List<LVDocument> loanDocuments = new ArrayList<>();
@@ -978,7 +979,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				} else if (decision == Decision.RE_INITIATE.getKey()) {
 					verification.setApproveTab(true);
 				}
-				if (!combobox.isDisabled() && decision == 0) {
+				if (!combobox.isDisabled() && decision == 0 && !this.recSave) {
 					throw new WrongValueException(combobox,
 							Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
 				}
@@ -1031,7 +1032,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				} else if (decision == Decision.RE_INITIATE.getKey()) {
 					throw new WrongValueException(combobox, "Change the decision or Reinitiate the record");
 				}
-				if (!combobox.isDisabled() && decision == 0) {
+				if (!combobox.isDisabled() && decision == 0 && !this.recSave) {
 					throw new WrongValueException(combobox,
 							Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
 				}
@@ -1123,7 +1124,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 
 	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
 		logger.debug("Entering");
-
+		this.recSave = recSave;
 		doClearMessage();
 		doSetValidation();
 
