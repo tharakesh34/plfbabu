@@ -1498,5 +1498,11 @@ update Customers set marginDeviation=0;
 update customers_temp set marginDeviation=0;	
 </sql>
 </changeSet>
+
+<changeSet id="Durgaprasad G" author="33">
+	<modifyDataType tableName="PRESENTMENT_REQ_DETAILS_TEMP" columnName="UMRN_NO" newDataType="VARCHAR(50)"/>
+	<modifyDataType tableName="PRESENTMENT_REQ_DETAILS" columnName="UMRN_NO" newDataType="VARCHAR(50)"/>
+</changeSet>
+
 </databaseChangeLog>
 	
