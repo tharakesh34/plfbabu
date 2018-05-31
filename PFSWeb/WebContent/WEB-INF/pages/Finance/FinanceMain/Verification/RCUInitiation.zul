@@ -11,47 +11,52 @@
 		apply="${rcuVerificationDialogCtrl}" width="100%" height="100%"
 		sizable="false" contentStyle="padding:0px;border:none;">
 		<groupbox height="100%" contentStyle="overflow:auto;">
-			<groupbox id="finBasicdetails"/>
-			<groupbox style="border:none;" contentStyle="border-top-width: 0px;" vflex="true">
-				<listbox id="listBoxRCUVerification"
-							width="100%" span="true" style="overflow:auto;"
-							emptyMessage="${c:l('listbox.emptyMessage')}" xmlns:w="client"
-							w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
-							w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});" vflex="true">
+			<groupbox id="finBasicdetails">
+				<caption
+					label="${c:l('label_CustomerDialog_BasicDetails.value') }" />
+			</groupbox>
+			<groupbox style="border:none;"
+				contentStyle="border-top-width: 0px;" vflex="true">
+				<caption label="Verifications" />
+				<listbox id="listBoxRCUVerification" width="100%"
+					span="true" style="overflow:auto;"
+					emptyMessage="${c:l('listbox.emptyMessage')}" xmlns:w="client"
+					w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
+					w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});"
+					vflex="true">
 
-							<listhead sizable="true">
-								<listheader
-									id="listheader_RCUVerification_DocumentName"
-									label="Document Type - Name" sort="false" hflex="min" />
-								<listheader
-									id="listheader_RCUVerification_RCU"
-									label="${c:l('listheader_RCUVerification_RCU.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									id="listheader_RCUVerification_Agency"
-									label="${c:l('listheader_RCUVerification_Agency.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									id="listheader_RCUVerification_Reason"
-									label="${c:l('listheader_RCUVerification_Reason.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									id="listheader_RCUVerification_Remarks"
-									label="${c:l('listheader_RCUVerification_Remarks.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									label="${c:l('listheader_RCUVerification_LastAgency.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									id="listheader_RCUVerification_LastStatus"
-									label="${c:l('listheader_RCUVerification_LastStatus.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									id="listheader_RCUVerification_LastVrfDate"
-									label="${c:l('listheader_RCUVerification_LastVrfDate.label')}"
-									sort="false" hflex="min" />
-							</listhead>
-						</listbox>
+					<listhead sizable="true">
+						<listheader
+							id="listheader_RCUVerification_DocumentName"
+							label="Document Type - Name" sort="false" hflex="min" />
+						<listheader id="listheader_RCUVerification_RCU"
+							label="${c:l('listheader_RCUVerification_RCU.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							id="listheader_RCUVerification_Agency"
+							label="${c:l('listheader_RCUVerification_Agency.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							id="listheader_RCUVerification_Reason"
+							label="${c:l('listheader_RCUVerification_Reason.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							id="listheader_RCUVerification_Remarks"
+							label="${c:l('listheader_RCUVerification_Remarks.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							label="${c:l('listheader_RCUVerification_LastAgency.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							id="listheader_RCUVerification_LastStatus"
+							label="${c:l('listheader_RCUVerification_LastStatus.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							id="listheader_RCUVerification_LastVrfDate"
+							label="${c:l('listheader_RCUVerification_LastVrfDate.label')}"
+							sort="false" hflex="min" />
+					</listhead>
+				</listbox>
 			</groupbox>
 		</groupbox>
 	</window>

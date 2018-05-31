@@ -9,101 +9,102 @@
 
 	<window id="window_LVerificationDialog" border="none"
 		apply="${lVerificationCtrl}" width="100%" height="100%"
-		sizable="false">
+		sizable="false" contentStyle="padding:0px;border:none;">
 
-		<borderlayout id="borderlayoutLVInitiation">
-			<center border="none" autoscroll="true"
-				style="overflow:auto;">
-				<groupbox height="100%" contentStyle="overflow:auto" style="border:none;">
-					<groupbox id="finBasicdetails" style="border:none;" />
-					<groupbox id="gb_Initiation" sclass="gb-dialog" contentStyle="border-top-width: 0px;">
-						<caption label="${c:l('gb_Initiation')}" />
-						<toolbar align="end">
-							<button id="btnNew_Initiation"
-								label="${c:l('label_New')}"
-								tooltiptext="${c:l('button_LegalVerificationDialog_InitDoc.tooltiptext')}"
-								sclass="z-toolbarbutton" />
-						</toolbar>
+		<groupbox height="100%" contentStyle="overflow:auto;">
+			<groupbox id="finBasicdetails">
+				<caption
+					label="${c:l('label_CustomerDialog_BasicDetails.value') }" />
+			</groupbox>
+			<groupbox style="border:none;"
+				contentStyle="border-top-width: 0px;" vflex="true">
+				<caption label="${c:l('gb_Initiation')}" />
+				<toolbar align="end">
+					<button id="btnNew_Initiation"
+						label="${c:l('label_New')}"
+						tooltiptext="${c:l('button_LegalVerificationDialog_InitDoc.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+				</toolbar>
 
-						<listbox id="listBoxInitiation"
-							fixedLayout="true" span="true"
-							emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
-							multiple="false" xmlns:w="client"
-							w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
-							w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});">
-							<listhead sizable="false">
-								<listheader
-									id="listheader_LegalVerification_Collateral"
-									label="${c:l('listheader_LegalVerification_Collateral.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									id="listheader_LegalVerification_Agency"
-									label="${c:l('listheader_LegalVerification_Agency.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									id="listheader_LegalVerification_Initiation_Remarks"
-									label="${c:l('listheader_LegalVerification_Remarks.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									label="${c:l('listheader_LegalVerification_LastAgency.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									id="listheader_LegalVerification_Initiation_LastStatus"
-									label="${c:l('listheader_LegalVerification_LastStatus.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									id="listheader_LegalVerification_Initiation_LastVrfDate"
-									label="${c:l('listheader_LegalVerification_LastVrfDate.label')}"
-									sort="false" hflex="min" />
-							</listhead>
-						</listbox>
-					</groupbox>
-					<groupbox id="gb_Waiver" sclass="gb-dialog">
-						<caption label="${c:l('gb_Waiver')}" />
-						<toolbar align="end">
-							<button id="btnNew_Waiver"
-								label="${c:l('label_New')}"
-								tooltiptext="${c:l('button_LegalVerificationDialog_WaiveDoc.tooltiptext')}"
-								sclass="z-toolbarbutton" />
-						</toolbar>
-						<listbox id="listBoxWaiver" fixedLayout="true"
-							span="true" emptyMessage="${c:l('listbox.emptyMessage')}"
-							width="100%" multiple="false" xmlns:w="client"
-							w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
-							w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});">
-							<listhead sizable="false">
-								<listheader
-									id="listheader_LegalVerification_CollateraRefl"
-									label="${c:l('listheader_LegalVerification_CollateralRef.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									id="listheader_LegalVerification_DocumentType"
-									label="${c:l('listheader_LegalVerification_DocumentType.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									id="listheader_LegalVerification_Reason"
-									label="${c:l('listheader_LegalVerification_Reason.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									id="listheader_LegalVerification_Waiver_Remarks"
-									label="${c:l('listheader_LegalVerification_Remarks.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									label="${c:l('listheader_LegalVerification_LastAgency.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									id="listheader_LegalVerification_Waiver_LastStatus"
-									label="${c:l('listheader_LegalVerification_LastStatus.label')}"
-									sort="false" hflex="min" />
-								<listheader
-									id="listheader_LegalVerification_Waiver_LastVrfDate"
-									label="${c:l('listheader_LegalVerification_LastVrfDate.label')}"
-									sort="false" hflex="min" />
-							</listhead>
-						</listbox>
-					</groupbox>
-				</groupbox>
-			</center>
-		</borderlayout>
+				<listbox id="listBoxInitiation" fixedLayout="true"
+					span="true" emptyMessage="${c:l('listbox.emptyMessage')}"
+					width="100%" multiple="false" xmlns:w="client"
+					w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
+					w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});"
+					vflex="true">
+					<listhead sizable="true">
+						<listheader
+							id="listheader_LegalVerification_Collateral"
+							label="${c:l('listheader_LegalVerification_Collateral.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							id="listheader_LegalVerification_Agency"
+							label="${c:l('listheader_LegalVerification_Agency.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							id="listheader_LegalVerification_Initiation_Remarks"
+							label="${c:l('listheader_LegalVerification_Remarks.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							label="${c:l('listheader_LegalVerification_LastAgency.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							id="listheader_LegalVerification_Initiation_LastStatus"
+							label="${c:l('listheader_LegalVerification_LastStatus.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							id="listheader_LegalVerification_Initiation_LastVrfDate"
+							label="${c:l('listheader_LegalVerification_LastVrfDate.label')}"
+							sort="false" hflex="min" />
+					</listhead>
+				</listbox>
+			</groupbox>
+			<groupbox style="border:none;"
+				contentStyle="border-top-width: 0px;" vflex="true">
+				<caption label="${c:l('gb_Waiver')}" />
+				<toolbar align="end">
+					<button id="btnNew_Waiver"
+						label="${c:l('label_New')}"
+						tooltiptext="${c:l('button_LegalVerificationDialog_WaiveDoc.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+				</toolbar>
+				<listbox id="listBoxWaiver" fixedLayout="true"
+					span="true" emptyMessage="${c:l('listbox.emptyMessage')}"
+					width="100%" multiple="false" xmlns:w="client"
+					w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
+					w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});"
+					vflex="true" sizedByContent="true">
+					<listhead sizable="true">
+						<listheader
+							id="listheader_LegalVerification_CollateraRefl"
+							label="${c:l('listheader_LegalVerification_CollateralRef.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							id="listheader_LegalVerification_DocumentType"
+							label="${c:l('listheader_LegalVerification_DocumentType.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							id="listheader_LegalVerification_Reason"
+							label="${c:l('listheader_LegalVerification_Reason.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							id="listheader_LegalVerification_Waiver_Remarks"
+							label="${c:l('listheader_LegalVerification_Remarks.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							label="${c:l('listheader_LegalVerification_LastAgency.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							id="listheader_LegalVerification_Waiver_LastStatus"
+							label="${c:l('listheader_LegalVerification_LastStatus.label')}"
+							sort="false" hflex="min" />
+						<listheader
+							id="listheader_LegalVerification_Waiver_LastVrfDate"
+							label="${c:l('listheader_LegalVerification_LastVrfDate.label')}"
+							sort="false" hflex="min" />
+					</listhead>
+				</listbox>
+			</groupbox>
+		</groupbox>
 	</window>
 </zk>

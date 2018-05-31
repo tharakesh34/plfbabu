@@ -168,12 +168,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		renderLVInitiationList();
 		renderLVWaiverList();
 		setScreenDocuments();
-
-		//int divHeight = this.borderLayoutHeight - 80;
-		//int borderlayoutHeights = divHeight / 3;
-		//this.listBoxInitiation.setHeight(borderlayoutHeights - 30 + "px");
-		//this.listBoxWaiver.setHeight(borderlayoutHeights - 30 + "px");
-		//this.window_LVerificationDialog.setHeight(this.borderLayoutHeight - 80 + "px");
+		
 		if (!initType) {
 			this.toolbar_Initiation.setVisible(false);
 			this.toolbar_Waiver.setVisible(false);
