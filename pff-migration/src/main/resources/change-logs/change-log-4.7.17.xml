@@ -392,5 +392,1111 @@ SELECT M.MANDATEID,
 			('SCORES','RSCORE','PROP_LTV',' LTV On Property ','decimal',18,'1','1',null,'static,calvalue',null);
 </sql>
 </changeSet>
+<changeSet id="17" author="Vinay">
+		<createView viewName="querydetail_aview" replaceIfExists="true">
+			SELECT t1.finreference,
+		    t1.id,
+		    s1.usrlogin,
+		    t1.raisedon,
+		    b1.description,
+		    t1.qrynotes,
+		    t1.status,
+		    t1.raisedby,
+		    b1.code AS categorycode,
+		    b1.description AS categorydescription,
+		    t1.categoryid,
+		    t1.assignedrole,
+		    t1.notifyto,
+		    t1.responsnotes,
+		    t1.responseby,
+		    s2.usrlogin AS responseuser,
+		    t1.responseon,
+		    t1.closernotes,
+		    t1.closerby,
+		    s3.usrlogin AS closeruser,
+		    t1.closeron,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid
+		   FROM querydetail t1
+		     JOIN bmtquerycategories b1 ON t1.categoryid = b1.id
+		     JOIN secusers s1 ON t1.raisedby = s1.usrid
+		     LEFT JOIN secusers s2 ON t1.responseby = s2.usrid
+		     LEFT JOIN secusers s3 ON t1.closerby = s3.usrid
+		</createView>
+	</changeSet>
+	
+	<changeSet id="18" author="Vinay">
+		<createView viewName="querydetail_view" replaceIfExists="true"> 
+			SELECT t1.finreference,
+			    t1.id,
+			    s1.usrlogin,
+			    t1.raisedon,
+			    b1.description,
+			    t1.qrynotes,
+			    t1.status,
+			    t1.raisedby,
+			    b1.code AS categorycode,
+			    b1.description AS categorydescription,
+			    t1.categoryid,
+			    t1.assignedrole,
+			    t1.notifyto,
+			    t1.responsnotes,
+			    t1.responseby,
+			    s2.usrlogin AS responseuser,
+			    t1.responseon,
+			    t1.closernotes,
+			    t1.closerby,
+			    s3.usrlogin AS closeruser,
+			    t1.closeron,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			   FROM querydetail t1
+			     JOIN bmtquerycategories b1 ON t1.categoryid = b1.id
+			     JOIN secusers s1 ON t1.raisedby = s1.usrid
+			     LEFT JOIN secusers s2 ON t1.responseby = s2.usrid
+			     LEFT JOIN secusers s3 ON t1.closerby = s3.usrid
+		</createView>
+	</changeSet>
+	
+	<changeSet id="19" author="Vinay">
+		<sql>
+			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='QUERYDETAIL_MAKER') and rightid=(select rightid from secrights where rightname='menuItem_LoanQuery_QueryDetail');
+			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='QUERYDETAIL_APPROVER') and rightid=(select rightid from secrights where rightname='menuItem_LoanQuery_QueryDetail');
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='QUERYDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_LoanQuery_QueryDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='QUERYDETAIL_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_LoanQuery_QueryDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		</sql>
+	</changeSet>
+		
+	<changeSet id="20" author="Vinay">
+		<modifyDataType tableName="QueryDetail" columnName="closernotes" newDataType="varchar(200)"/>
+		<modifyDataType tableName="QueryDetail_Temp" columnName="closernotes" newDataType="varchar(200)"/>
+	</changeSet>
+	
+	<changeSet id="21" author="Vinay">
+		<dropSequence sequenceName="seqQuerydetail"/>
+	</changeSet>
+	
+	<changeSet id="22" author="Vinay">
+		<createTable tableName="seqQuerydetail">
+			<column name="SeqNo" type="bigint"/>
+		</createTable>
+	</changeSet>
+	 <changeSet id="23" author="Vinay">
+		<sql>
+			delete from errordetails where code='QRYMGMT1';
+			Insert into ERRORDETAILS values ('QRYMGMT1','EN','E','Please close if any query is open or resolve from this {0}.','test','Approved',null,null,null,null,null,0,null,1000,3);
+		</sql>
+	</changeSet>
+	<changeSet id="24" author="Umarohini">
+		<comment>Add marginDeviation column as null in customers.</comment>
+		<addColumn tableName="customers">
+			<column name="marginDeviation" type="boolean"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="25" author="Umarohini">
+		<comment>Add marginDeviation column as null in customers_temp.</comment>
+		<addColumn tableName="customers_temp">
+			<column name="marginDeviation" type="boolean"/>
+		</addColumn>
+	</changeSet>	
+	
+	<changeSet id="26" author="Umarohini">
+		<createView viewName="customers_view" replaceIfExists="true">
+			SELECT t1.custid,
+    t1.custcif,
+    t1.custcorebank,
+    t1.custctgcode,
+    t1.custtypecode,
+    t1.custsalutationcode,
+    t1.custfname,
+    t1.custmname,
+    t1.custlname,
+    t1.custshrtname,
+    t1.custfnamelcllng,
+    t1.custmnamelcllng,
+    t1.custlnamelcllng,
+    t1.custshrtnamelcllng,
+    t1.custdftbranch,
+    t1.custgendercode,
+    t1.custdob,
+    t1.custpob,
+    t1.custcob,
+    t1.custpassportno,
+    t1.custmothermaiden,
+    t1.custisminor,
+    t1.custreferedby,
+    t1.custdsa,
+    t1.custdsadept,
+    t1.custro1,
+    t1.custro2,
+    t1.custgroupid,
+    t1.custsts,
+    t1.custstschgdate,
+    t1.custgroupsts,
+    t1.custisblocked,
+    t1.custisactive,
+    t1.custisclosed,
+    t1.custinactivereason,
+    t1.custisdecease,
+    t1.custisdormant,
+    t1.custisdelinquent,
+    t1.custistradefincust,
+    t1.custtradelicencenum,
+    t1.custtradelicenceexpiry,
+    t1.custpassportexpiry,
+    t1.custvisanum,
+    t1.custvisaexpiry,
+    t1.custisstaff,
+    t1.custstaffid,
+    t1.custindustry,
+    t1.custsector,
+    t1.custsubsector,
+    t1.custprofession,
+    t1.custtotalincome,
+    t1.custmaritalsts,
+    t1.custempsts,
+    t1.custsegment,
+    t1.custsubsegment,
+    t1.custisblacklisted,
+    t1.custblrsncode,
+    t1.custisrejected,
+    t1.custrejectedrsn,
+    t1.custbaseccy,
+    t1.custlng,
+    t1.custparentcountry,
+    t1.custresdcountry,
+    t1.custriskcountry,
+    t1.custnationality,
+    t1.custclosedon,
+    t1.custstmtfrq,
+    t1.custisstmtcombined,
+    t1.custstmtlastdate,
+    t1.custstmtnextdate,
+    t1.custstmtdispatchmode,
+    t1.custfirstbusinessdate,
+    t1.custaddlvar81,
+    t1.custaddlvar82,
+    t1.custaddlvar83,
+    t1.custaddlvar84,
+    t1.custaddlvar85,
+    t1.custaddlvar86,
+    t1.custaddlvar87,
+    t1.custaddlvar88,
+    t1.custaddlvar89,
+    t1.custaddldate1,
+    t1.custaddldate2,
+    t1.custaddldate3,
+    t1.custaddldate4,
+    t1.custaddldate5,
+    t1.custaddlvar1,
+    t1.custaddlvar2,
+    t1.custaddlvar3,
+    t1.custaddlvar4,
+    t1.custaddlvar5,
+    t1.custaddlvar6,
+    t1.custaddlvar7,
+    t1.custaddlvar8,
+    t1.custaddlvar9,
+    t1.custaddlvar10,
+    t1.custaddlvar11,
+    t1.custaddldec1,
+    t1.custaddldec2,
+    t1.custaddldec3,
+    t1.custaddldec4,
+    t1.custaddldec5,
+    t1.custaddlint1,
+    t1.custaddlint2,
+    t1.custaddlint3,
+    t1.custaddlint4,
+    t1.custaddlint5,
+    t1.custsourceid,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.custtypedesc AS lovdesccusttypecodename,
+    t3.maritalstsdesc AS lovdesccustmaritalstsname,
+    t4.empstsdesc AS lovdesccustempstsname,
+    t6.custstsdescription AS lovdesccuststsname,
+    t7.industrydesc AS lovdesccustindustryname,
+    t8.sectordesc AS lovdesccustsectorname,
+    t9.subsectordesc AS lovdesccustsubsectorname,
+    t10.professiondesc AS lovdesccustprofessionname,
+    t11.countrydesc AS lovdesccustcobname,
+    t20.segmentdesc AS lovdesccustsegmentname,
+    t12.nationalitydesc AS lovdesccustnationalityname,
+    t13.genderdesc AS lovdesccustgendercodename,
+    t14.deptdesc AS lovdesccustdsadeptname,
+    t15.dealername AS lovdesccustro1name,
+    t15.dealercity AS lovdesccustro1city,
+    t16.grpstsdescription AS lovdesccustgroupstsname,
+    t17.branchdesc AS lovdesccustdftbranchname,
+    t17.bankrefno AS branchrefno,
+    t17.branchswiftbrncde AS custswiftbrncode,
+    t18.custctgdesc AS lovdesccustctgcodename,
+    t2.custtypectg AS lovdesccustctgtype,
+    t19.saluationdesc AS lovdesccustsalutationcodename,
+    t21.countrydesc AS lovdesccustparentcountryname,
+    t22.countrydesc AS lovdesccustresdcountryname,
+    t23.countrydesc AS lovdesccustriskcountryname,
+    t24.rofficerdesc AS lovdesccustro2name,
+    t25.blrsndesc AS lovdesccustblrsncodename,
+    t26.rejectdesc AS lovdesccustrejectedrsnname,
+    t27.custgrpdesc AS lovdesccustgroupidname,
+    t28.subsegmentdesc AS lovdesccustsubsegmentname,
+    t29.lngdesc AS lovdesccustlngname,
+    t30.dispatchmodedesc AS lovdescdispatchmodedescname,
+    t1.dedupfound,
+    t1.skipdedup,
+    t1.custtotalexpense,
+    t1.custblacklistdate,
+    t1.noofdependents,
+    t1.custcrcpr,
+    t1.jointcust,
+    t1.jointcustname,
+    t1.jointcustdob,
+    t27.custgrpcode AS lovdesccustgroupcode,
+    t1.custrelation,
+    t1.contactpersonname,
+    t1.phonenumber,
+    t1.emailid,
+    t1.salariedcustomer,
+    t31.targetdesc AS lovdesctargetname,
+    t1.custsuspsts,
+    t1.custsuspdate,
+    t1.custsusptrigger,
+    t1.subcategory,
+    t1.casteid,
+    t1.religionid,
+    t32.castecode,
+    t32.castedesc,
+    t33.religioncode,
+    t33.religiondesc,
+    COALESCE((t34.roledesc), fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
+	t1.marginDeviation
+   FROM ((((((((((((((((((((((((((((((((customers_temp t1
+     LEFT JOIN rmtcusttypes t2 ON ((t1.custtypecode = t2.custtypecode)))
+     LEFT JOIN bmtmaritalstatuscodes t3 ON ((t1.custmaritalsts = t3.maritalstscode)))
+     LEFT JOIN bmtempstscodes t4 ON ((t1.custempsts = t4.empstscode)))
+     LEFT JOIN bmtcuststatuscodes t6 ON ((t1.custsts = t6.custstscode)))
+     LEFT JOIN bmtindustries t7 ON ((t1.custindustry = t7.industrycode)))
+     LEFT JOIN bmtsectors t8 ON ((t1.custsector = t8.sectorcode)))
+     LEFT JOIN bmtsubsectors t9 ON (((t1.custsector = t9.sectorcode) AND (t1.custsubsector = t9.subsectorcode))))
+     LEFT JOIN bmtprofessions t10 ON ((t1.custprofession = t10.professioncode)))
+     LEFT JOIN bmtcountries t11 ON ((t1.custcob = t11.countrycode)))
+     LEFT JOIN bmtnationalitycodes t12 ON ((t1.custnationality = t12.nationalitycode)))
+     LEFT JOIN bmtgenders t13 ON ((t1.custgendercode = t13.gendercode)))
+     LEFT JOIN bmtdepartments t14 ON ((t1.custdsadept = t14.deptcode)))
+     LEFT JOIN amtvehicledealer t15 ON ((t1.custro1 = t15.dealerid)))
+     LEFT JOIN bmtgrpstatuscodes t16 ON ((t1.custgroupsts = t16.grpstscode)))
+     LEFT JOIN rmtbranches t17 ON ((t1.custdftbranch = t17.branchcode)))
+     LEFT JOIN bmtcustcategories t18 ON ((t1.custctgcode = t18.custctgcode)))
+     LEFT JOIN bmtsalutations t19 ON ((t1.custsalutationcode = t19.salutationcode)))
+     LEFT JOIN bmtsegments t20 ON ((t1.custsegment = t20.segmentcode)))
+     LEFT JOIN bmtcountries t21 ON ((t1.custparentcountry = t21.countrycode)))
+     LEFT JOIN bmtcountries t22 ON ((t1.custresdcountry = t22.countrycode)))
+     LEFT JOIN bmtcountries t23 ON ((t1.custriskcountry = t23.countrycode)))
+     LEFT JOIN relationshipofficers t24 ON ((t1.custro2 = t24.rofficercode)))
+     LEFT JOIN bmtblacklistrsncodes t25 ON ((t1.custblrsncode = t25.blrsncode)))
+     LEFT JOIN bmtrejectcodes t26 ON (((t1.custrejectedrsn) = (t26.rejectcode))))
+     LEFT JOIN customergroups t27 ON ((t1.custgroupid = t27.custgrpid)))
+     LEFT JOIN bmtsubsegments t28 ON ((t1.custsubsegment = t28.subsegmentcode)))
+     LEFT JOIN bmtlanguage t29 ON ((t1.custlng = t29.lngcode)))
+     LEFT JOIN bmtdispatchmodes t30 ON ((t1.custstmtdispatchmode = t30.dispatchmodecode)))
+     LEFT JOIN targetdetails t31 ON ((t1.custaddlvar82 = t31.targetcode)))
+     LEFT JOIN secroles t34 ON ((t1.nextrolecode = t34.rolecd)))
+     LEFT JOIN caste t32 ON ((t1.casteid = t32.casteid)))
+     LEFT JOIN religion t33 ON ((t1.religionid = t33.religionid)))
+UNION ALL
+ SELECT t1.custid,
+    t1.custcif,
+    t1.custcorebank,
+    t1.custctgcode,
+    t1.custtypecode,
+    t1.custsalutationcode,
+    t1.custfname,
+    t1.custmname,
+    t1.custlname,
+    t1.custshrtname,
+    t1.custfnamelcllng,
+    t1.custmnamelcllng,
+    t1.custlnamelcllng,
+    t1.custshrtnamelcllng,
+    t1.custdftbranch,
+    t1.custgendercode,
+    t1.custdob,
+    t1.custpob,
+    t1.custcob,
+    t1.custpassportno,
+    t1.custmothermaiden,
+    t1.custisminor,
+    t1.custreferedby,
+    t1.custdsa,
+    t1.custdsadept,
+    t1.custro1,
+    t1.custro2,
+    t1.custgroupid,
+    t1.custsts,
+    t1.custstschgdate,
+    t1.custgroupsts,
+    t1.custisblocked,
+    t1.custisactive,
+    t1.custisclosed,
+    t1.custinactivereason,
+    t1.custisdecease,
+    t1.custisdormant,
+    t1.custisdelinquent,
+    t1.custistradefincust,
+    t1.custtradelicencenum,
+    t1.custtradelicenceexpiry,
+    t1.custpassportexpiry,
+    t1.custvisanum,
+    t1.custvisaexpiry,
+    t1.custisstaff,
+    t1.custstaffid,
+    t1.custindustry,
+    t1.custsector,
+    t1.custsubsector,
+    t1.custprofession,
+    t1.custtotalincome,
+    t1.custmaritalsts,
+    t1.custempsts,
+    t1.custsegment,
+    t1.custsubsegment,
+    t1.custisblacklisted,
+    t1.custblrsncode,
+    t1.custisrejected,
+    t1.custrejectedrsn,
+    t1.custbaseccy,
+    t1.custlng,
+    t1.custparentcountry,
+    t1.custresdcountry,
+    t1.custriskcountry,
+    t1.custnationality,
+    t1.custclosedon,
+    t1.custstmtfrq,
+    t1.custisstmtcombined,
+    t1.custstmtlastdate,
+    t1.custstmtnextdate,
+    t1.custstmtdispatchmode,
+    t1.custfirstbusinessdate,
+    t1.custaddlvar81,
+    t1.custaddlvar82,
+    t1.custaddlvar83,
+    t1.custaddlvar84,
+    t1.custaddlvar85,
+    t1.custaddlvar86,
+    t1.custaddlvar87,
+    t1.custaddlvar88,
+    t1.custaddlvar89,
+    t1.custaddldate1,
+    t1.custaddldate2,
+    t1.custaddldate3,
+    t1.custaddldate4,
+    t1.custaddldate5,
+    t1.custaddlvar1,
+    t1.custaddlvar2,
+    t1.custaddlvar3,
+    t1.custaddlvar4,
+    t1.custaddlvar5,
+    t1.custaddlvar6,
+    t1.custaddlvar7,
+    t1.custaddlvar8,
+    t1.custaddlvar9,
+    t1.custaddlvar10,
+    t1.custaddlvar11,
+    t1.custaddldec1,
+    t1.custaddldec2,
+    t1.custaddldec3,
+    t1.custaddldec4,
+    t1.custaddldec5,
+    t1.custaddlint1,
+    t1.custaddlint2,
+    t1.custaddlint3,
+    t1.custaddlint4,
+    t1.custaddlint5,
+    t1.custsourceid,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.custtypedesc AS lovdesccusttypecodename,
+    t3.maritalstsdesc AS lovdesccustmaritalstsname,
+    t4.empstsdesc AS lovdesccustempstsname,
+    t6.custstsdescription AS lovdesccuststsname,
+    t7.industrydesc AS lovdesccustindustryname,
+    t8.sectordesc AS lovdesccustsectorname,
+    t9.subsectordesc AS lovdesccustsubsectorname,
+    t10.professiondesc AS lovdesccustprofessionname,
+    t11.countrydesc AS lovdesccustcobname,
+    t20.segmentdesc AS lovdesccustsegmentname,
+    t12.nationalitydesc AS lovdesccustnationalityname,
+    t13.genderdesc AS lovdesccustgendercodename,
+    t14.deptdesc AS lovdesccustdsadeptname,
+    t15.dealername AS lovdesccustro1name,
+    t15.dealercity AS lovdesccustro1city,
+    t16.grpstsdescription AS lovdesccustgroupstsname,
+    t17.branchdesc AS lovdesccustdftbranchname,
+    t17.bankrefno AS branchrefno,
+    t17.branchswiftbrncde AS custswiftbrncode,
+    t18.custctgdesc AS lovdesccustctgcodename,
+    t2.custtypectg AS lovdesccustctgtype,
+    t19.saluationdesc AS lovdesccustsalutationcodename,
+    t21.countrydesc AS lovdesccustparentcountryname,
+    t22.countrydesc AS lovdesccustresdcountryname,
+    t23.countrydesc AS lovdesccustriskcountryname,
+    t24.rofficerdesc AS lovdesccustro2name,
+    t25.blrsndesc AS lovdesccustblrsncodename,
+    t26.rejectdesc AS lovdesccustrejectedrsnname,
+    t27.custgrpdesc AS lovdesccustgroupidname,
+    t28.subsegmentdesc AS lovdesccustsubsegmentname,
+    t29.lngdesc AS lovdesccustlngname,
+    t30.dispatchmodedesc AS lovdescdispatchmodedescname,
+    t1.dedupfound,
+    t1.skipdedup,
+    t1.custtotalexpense,
+    t1.custblacklistdate,
+    t1.noofdependents,
+    t1.custcrcpr,
+    t1.jointcust,
+    t1.jointcustname,
+    t1.jointcustdob,
+    t27.custgrpcode AS lovdesccustgroupcode,
+    t1.custrelation,
+    t1.contactpersonname,
+    t1.phonenumber,
+    t1.emailid,
+    t1.salariedcustomer,
+    t31.targetdesc AS lovdesctargetname,
+    t1.custsuspsts,
+    t1.custsuspdate,
+    t1.custsusptrigger,
+    t1.subcategory,
+    t1.casteid,
+    t1.religionid,
+    t32.castecode,
+    t32.castedesc,
+    t33.religioncode,
+    t33.religiondesc,
+    COALESCE((t34.roledesc), fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
+	t1.marginDeviation
+   FROM ((((((((((((((((((((((((((((((((customers t1
+     LEFT JOIN rmtcusttypes t2 ON ((t1.custtypecode = t2.custtypecode)))
+     LEFT JOIN bmtmaritalstatuscodes t3 ON ((t1.custmaritalsts = t3.maritalstscode)))
+     LEFT JOIN bmtempstscodes t4 ON ((t1.custempsts = t4.empstscode)))
+     LEFT JOIN bmtcuststatuscodes t6 ON ((t1.custsts = t6.custstscode)))
+     LEFT JOIN bmtindustries t7 ON ((t1.custindustry = t7.industrycode)))
+     LEFT JOIN bmtsectors t8 ON ((t1.custsector = t8.sectorcode)))
+     LEFT JOIN bmtsubsectors t9 ON (((t1.custsector = t9.sectorcode) AND (t1.custsubsector = t9.subsectorcode))))
+     LEFT JOIN bmtprofessions t10 ON ((t1.custprofession = t10.professioncode)))
+     LEFT JOIN bmtcountries t11 ON ((t1.custcob = t11.countrycode)))
+     LEFT JOIN bmtnationalitycodes t12 ON ((t1.custnationality = t12.nationalitycode)))
+     LEFT JOIN bmtgenders t13 ON ((t1.custgendercode = t13.gendercode)))
+     LEFT JOIN bmtdepartments t14 ON ((t1.custdsadept = t14.deptcode)))
+     LEFT JOIN amtvehicledealer t15 ON ((t1.custro1 = t15.dealerid)))
+     LEFT JOIN bmtgrpstatuscodes t16 ON ((t1.custgroupsts = t16.grpstscode)))
+     LEFT JOIN rmtbranches t17 ON ((t1.custdftbranch = t17.branchcode)))
+     LEFT JOIN bmtcustcategories t18 ON ((t1.custctgcode = t18.custctgcode)))
+     LEFT JOIN bmtsalutations t19 ON ((t1.custsalutationcode = t19.salutationcode)))
+     LEFT JOIN bmtsegments t20 ON ((t1.custsegment = t20.segmentcode)))
+     LEFT JOIN bmtcountries t21 ON ((t1.custparentcountry = t21.countrycode)))
+     LEFT JOIN bmtcountries t22 ON ((t1.custresdcountry = t22.countrycode)))
+     LEFT JOIN bmtcountries t23 ON ((t1.custriskcountry = t23.countrycode)))
+     LEFT JOIN relationshipofficers t24 ON ((t1.custro2 = t24.rofficercode)))
+     LEFT JOIN bmtblacklistrsncodes t25 ON ((t1.custblrsncode = t25.blrsncode)))
+     LEFT JOIN bmtrejectcodes t26 ON (((t1.custrejectedrsn) = (t26.rejectcode))))
+     LEFT JOIN customergroups t27 ON ((t1.custgroupid = t27.custgrpid)))
+     LEFT JOIN bmtsubsegments t28 ON ((t1.custsubsegment = t28.subsegmentcode)))
+     LEFT JOIN bmtlanguage t29 ON ((t1.custlng = t29.lngcode)))
+     LEFT JOIN bmtdispatchmodes t30 ON ((t1.custstmtdispatchmode = t30.dispatchmodecode)))
+     LEFT JOIN targetdetails t31 ON ((t1.custaddlvar82 = t31.targetcode)))
+     LEFT JOIN secroles t34 ON ((t1.nextrolecode = t34.rolecd)))
+     LEFT JOIN caste t32 ON ((t1.casteid = t32.casteid)))
+     LEFT JOIN religion t33 ON ((t1.religionid = t33.religionid)))
+  WHERE (NOT (EXISTS ( SELECT 1 AS expr1
+           FROM customers_temp
+          WHERE (customers_temp.custid = t1.custid))))
+		</createView>
+		</changeSet>
+		
+		<changeSet  author="umarohini" id="28">
+		<createView replaceIfExists="true" viewName="customers_tview">
+		 SELECT t1.custid,
+    t1.custcif,
+    t1.custcorebank,
+    t1.custctgcode,
+    t1.custtypecode,
+    t1.custsalutationcode,
+    t1.custfname,
+    t1.custmname,
+    t1.custlname,
+    t1.custshrtname,
+    t1.custfnamelcllng,
+    t1.custmnamelcllng,
+    t1.custlnamelcllng,
+    t1.custshrtnamelcllng,
+    t1.custdftbranch,
+    t1.custgendercode,
+    t1.custdob,
+    t1.custpob,
+    t1.custcob,
+    t1.custpassportno,
+    t1.custmothermaiden,
+    t1.custisminor,
+    t1.custreferedby,
+    t1.custdsa,
+    t1.custdsadept,
+    t1.custro1,
+    t1.custro2,
+    t1.custgroupid,
+    t1.custsts,
+    t1.custstschgdate,
+    t1.custgroupsts,
+    t1.custisblocked,
+    t1.custisactive,
+    t1.custisclosed,
+    t1.custinactivereason,
+    t1.custisdecease,
+    t1.custisdormant,
+    t1.custisdelinquent,
+    t1.custistradefincust,
+    t1.custtradelicencenum,
+    t1.custtradelicenceexpiry,
+    t1.custpassportexpiry,
+    t1.custvisanum,
+    t1.custvisaexpiry,
+    t1.custisstaff,
+    t1.custstaffid,
+    t1.custindustry,
+    t1.custsector,
+    t1.custsubsector,
+    t1.custprofession,
+    t1.custtotalincome,
+    t1.custmaritalsts,
+    t1.custempsts,
+    t1.custsegment,
+    t1.custsubsegment,
+    t1.custisblacklisted,
+    t1.custblrsncode,
+    t1.custisrejected,
+    t1.custrejectedrsn,
+    t1.custbaseccy,
+    t1.custlng,
+    t1.custparentcountry,
+    t1.custresdcountry,
+    t1.custriskcountry,
+    t1.custnationality,
+    t1.custclosedon,
+    t1.custstmtfrq,
+    t1.custisstmtcombined,
+    t1.custstmtlastdate,
+    t1.custstmtnextdate,
+    t1.custstmtdispatchmode,
+    t1.custfirstbusinessdate,
+    t1.custaddlvar81,
+    t1.custaddlvar82,
+    t1.custaddlvar83,
+    t1.custaddlvar84,
+    t1.custaddlvar85,
+    t1.custaddlvar86,
+    t1.custaddlvar87,
+    t1.custaddlvar88,
+    t1.custaddlvar89,
+    t1.custaddldate1,
+    t1.custaddldate2,
+    t1.custaddldate3,
+    t1.custaddldate4,
+    t1.custaddldate5,
+    t1.custaddlvar1,
+    t1.custaddlvar2,
+    t1.custaddlvar3,
+    t1.custaddlvar4,
+    t1.custaddlvar5,
+    t1.custaddlvar6,
+    t1.custaddlvar7,
+    t1.custaddlvar8,
+    t1.custaddlvar9,
+    t1.custaddlvar10,
+    t1.custaddlvar11,
+    t1.custaddldec1,
+    t1.custaddldec2,
+    t1.custaddldec3,
+    t1.custaddldec4,
+    t1.custaddldec5,
+    t1.custaddlint1,
+    t1.custaddlint2,
+    t1.custaddlint3,
+    t1.custaddlint4,
+    t1.custaddlint5,
+    t1.custsourceid,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.custtypedesc AS lovdesccusttypecodename,
+    t3.maritalstsdesc AS lovdesccustmaritalstsname,
+    t4.empstsdesc AS lovdesccustempstsname,
+    t6.custstsdescription AS lovdesccuststsname,
+    t7.industrydesc AS lovdesccustindustryname,
+    t8.sectordesc AS lovdesccustsectorname,
+    t9.subsectordesc AS lovdesccustsubsectorname,
+    t10.professiondesc AS lovdesccustprofessionname,
+    t11.countrydesc AS lovdesccustcobname,
+    t20.segmentdesc AS lovdesccustsegmentname,
+    t12.nationalitydesc AS lovdesccustnationalityname,
+    t13.genderdesc AS lovdesccustgendercodename,
+    t14.deptdesc AS lovdesccustdsadeptname,
+    t15.dealername AS lovdesccustro1name,
+    t15.dealercity AS lovdesccustro1city,
+    t16.grpstsdescription AS lovdesccustgroupstsname,
+    t17.branchdesc AS lovdesccustdftbranchname,
+    t17.bankrefno AS branchrefno,
+    t17.branchswiftbrncde AS custswiftbrncode,
+    t18.custctgdesc AS lovdesccustctgcodename,
+    t2.custtypectg AS lovdesccustctgtype,
+    t19.saluationdesc AS lovdesccustsalutationcodename,
+    t21.countrydesc AS lovdesccustparentcountryname,
+    t22.countrydesc AS lovdesccustresdcountryname,
+    t23.countrydesc AS lovdesccustriskcountryname,
+    t24.rofficerdesc AS lovdesccustro2name,
+    t25.blrsndesc AS lovdesccustblrsncodename,
+    t26.rejectdesc AS lovdesccustrejectedrsnname,
+    t27.custgrpdesc AS lovdesccustgroupidname,
+    t28.subsegmentdesc AS lovdesccustsubsegmentname,
+    t29.lngdesc AS lovdesccustlngname,
+    t30.dispatchmodedesc AS lovdescdispatchmodedescname,
+    t1.dedupfound,
+    t1.skipdedup,
+    t1.custtotalexpense,
+    t1.custblacklistdate,
+    t1.noofdependents,
+    t1.custcrcpr,
+    t1.jointcust,
+    t1.jointcustname,
+    t1.jointcustdob,
+    t27.custgrpcode AS lovdesccustgroupcode,
+    t1.contactpersonname,
+    t1.phonenumber,
+    t1.emailid,
+    t1.salariedcustomer,
+    t31.targetdesc AS lovdesctargetname,
+    t1.custrelation,
+    t1.custsuspsts,
+    t1.custsuspdate,
+    t1.custsusptrigger,
+    t1.subcategory,
+    t1.casteid,
+    t1.religionid,
+    t32.castecode,
+    t32.castedesc,
+    t33.religioncode,
+    t33.religiondesc,
+    COALESCE((t34.roledesc), fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
+    t1.marginDeviation
+   FROM ((((((((((((((((((((((((((((((((customers_temp t1
+     LEFT JOIN rmtcusttypes t2 ON ((t1.custtypecode = t2.custtypecode)))
+     LEFT JOIN bmtmaritalstatuscodes t3 ON ((t1.custmaritalsts = t3.maritalstscode)))
+     LEFT JOIN bmtempstscodes t4 ON ((t1.custempsts = t4.empstscode)))
+     LEFT JOIN bmtcuststatuscodes t6 ON ((t1.custsts = t6.custstscode)))
+     LEFT JOIN bmtindustries t7 ON ((t1.custindustry = t7.industrycode)))
+     LEFT JOIN bmtsectors t8 ON ((t1.custsector = t8.sectorcode)))
+     LEFT JOIN bmtsubsectors t9 ON (((t1.custsector = t9.sectorcode) AND (t1.custsubsector = t9.subsectorcode))))
+     LEFT JOIN bmtprofessions t10 ON ((t1.custprofession = t10.professioncode)))
+     LEFT JOIN bmtcountries t11 ON ((t1.custcob = t11.countrycode)))
+     LEFT JOIN bmtnationalitycodes t12 ON ((t1.custnationality = t12.nationalitycode)))
+     LEFT JOIN bmtgenders t13 ON ((t1.custgendercode = t13.gendercode)))
+     LEFT JOIN bmtdepartments t14 ON ((t1.custdsadept = t14.deptcode)))
+     LEFT JOIN amtvehicledealer t15 ON ((t1.custro1 = t15.dealerid)))
+     LEFT JOIN bmtgrpstatuscodes t16 ON ((t1.custgroupsts = t16.grpstscode)))
+     LEFT JOIN rmtbranches t17 ON ((t1.custdftbranch = t17.branchcode)))
+     LEFT JOIN bmtcustcategories t18 ON ((t1.custctgcode = t18.custctgcode)))
+     LEFT JOIN bmtsalutations t19 ON ((t1.custsalutationcode = t19.salutationcode)))
+     LEFT JOIN bmtsegments t20 ON ((t1.custsegment = t20.segmentcode)))
+     LEFT JOIN bmtcountries t21 ON ((t1.custparentcountry = t21.countrycode)))
+     LEFT JOIN bmtcountries t22 ON ((t1.custresdcountry = t22.countrycode)))
+     LEFT JOIN bmtcountries t23 ON ((t1.custriskcountry = t23.countrycode)))
+     LEFT JOIN relationshipofficers t24 ON ((t1.custro2 = t24.rofficercode)))
+     LEFT JOIN bmtblacklistrsncodes t25 ON ((t1.custblrsncode = t25.blrsncode)))
+     LEFT JOIN bmtrejectcodes t26 ON (((t1.custrejectedrsn) = (t26.rejectcode))))
+     LEFT JOIN customergroups t27 ON ((t1.custgroupid = t27.custgrpid)))
+     LEFT JOIN bmtsubsegments t28 ON ((t1.custsubsegment = t28.subsegmentcode)))
+     LEFT JOIN bmtlanguage t29 ON ((t1.custlng = t29.lngcode)))
+     LEFT JOIN bmtdispatchmodes t30 ON ((t1.custstmtdispatchmode = t30.dispatchmodecode)))
+     LEFT JOIN targetdetails t31 ON ((t1.custaddlvar82 = t31.targetcode)))
+     LEFT JOIN caste t32 ON ((t1.casteid = t32.casteid)))
+     LEFT JOIN religion t33 ON ((t1.religionid = t33.religionid)))
+     LEFT JOIN secroles t34 ON ((t1.nextrolecode = t34.rolecd)))
+</createView>
+	</changeSet>
+
+	<changeSet  author="umarohini" id="29">
+		<createView replaceIfExists="true" viewName="customers_aview">
+ 	 SELECT t1.custid,
+    t1.custcif,
+    t1.custcorebank,
+    t1.custctgcode,
+    t1.custtypecode,
+    t1.custsalutationcode,
+    t1.custfname,
+    t1.custmname,
+    t1.custlname,
+    t1.custshrtname,
+    t1.custfnamelcllng,
+    t1.custmnamelcllng,
+    t1.custlnamelcllng,
+    t1.custshrtnamelcllng,
+    t1.custdftbranch,
+    t1.custgendercode,
+    t1.custdob,
+    t1.custpob,
+    t1.custcob,
+    t1.custpassportno,
+    t1.custmothermaiden,
+    t1.custisminor,
+    t1.custreferedby,
+    t1.custdsa,
+    t1.custdsadept,
+    t1.custro1,
+    t1.custro2,
+    t1.custgroupid,
+    t1.custsts,
+    t1.custstschgdate,
+    t1.custgroupsts,
+    t1.custisblocked,
+    t1.custisactive,
+    t1.custisclosed,
+    t1.custinactivereason,
+    t1.custisdecease,
+    t1.custisdormant,
+    t1.custisdelinquent,
+    t1.custistradefincust,
+    t1.custtradelicencenum,
+    t1.custtradelicenceexpiry,
+    t1.custpassportexpiry,
+    t1.custvisanum,
+    t1.custvisaexpiry,
+    t1.custisstaff,
+    t1.custstaffid,
+    t1.custindustry,
+    t1.custsector,
+    t1.custsubsector,
+    t1.custprofession,
+    t1.custtotalincome,
+    t1.custmaritalsts,
+    t1.custempsts,
+    t1.custsegment,
+    t1.custsubsegment,
+    t1.custisblacklisted,
+    t1.custblrsncode,
+    t1.custisrejected,
+    t1.custrejectedrsn,
+    t1.custbaseccy,
+    t1.custlng,
+    t1.custparentcountry,
+    t1.custresdcountry,
+    t1.custriskcountry,
+    t1.custnationality,
+    t1.custclosedon,
+    t1.custstmtfrq,
+    t1.custisstmtcombined,
+    t1.custstmtlastdate,
+    t1.custstmtnextdate,
+    t1.custstmtdispatchmode,
+    t1.custfirstbusinessdate,
+    t1.custaddlvar81,
+    t1.custaddlvar82,
+    t1.custaddlvar83,
+    t1.custaddlvar84,
+    t1.custaddlvar85,
+    t1.custaddlvar86,
+    t1.custaddlvar87,
+    t1.custaddlvar88,
+    t1.custaddlvar89,
+    t1.custaddldate1,
+    t1.custaddldate2,
+    t1.custaddldate3,
+    t1.custaddldate4,
+    t1.custaddldate5,
+    t1.custaddlvar1,
+    t1.custaddlvar2,
+    t1.custaddlvar3,
+    t1.custaddlvar4,
+    t1.custaddlvar5,
+    t1.custaddlvar6,
+    t1.custaddlvar7,
+    t1.custaddlvar8,
+    t1.custaddlvar9,
+    t1.custaddlvar10,
+    t1.custaddlvar11,
+    t1.custaddldec1,
+    t1.custaddldec2,
+    t1.custaddldec3,
+    t1.custaddldec4,
+    t1.custaddldec5,
+    t1.custaddlint1,
+    t1.custaddlint2,
+    t1.custaddlint3,
+    t1.custaddlint4,
+    t1.custaddlint5,
+    t1.version,
+    t1.custsourceid,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.custtypedesc AS lovdesccusttypecodename,
+    t3.maritalstsdesc AS lovdesccustmaritalstsname,
+    t4.empstsdesc AS lovdesccustempstsname,
+    t6.custstsdescription AS lovdesccuststsname,
+    t7.industrydesc AS lovdesccustindustryname,
+    t8.sectordesc AS lovdesccustsectorname,
+    t9.subsectordesc AS lovdesccustsubsectorname,
+    t10.professiondesc AS lovdesccustprofessionname,
+    t11.countrydesc AS lovdesccustcobname,
+    t20.segmentdesc AS lovdesccustsegmentname,
+    t12.nationalitydesc AS lovdesccustnationalityname,
+    t13.genderdesc AS lovdesccustgendercodename,
+    t14.deptdesc AS lovdesccustdsadeptname,
+    t15.dealername AS lovdesccustro1name,
+    t15.dealercity AS lovdesccustro1city,
+    t16.grpstsdescription AS lovdesccustgroupstsname,
+    t17.branchdesc AS lovdesccustdftbranchname,
+    t17.bankrefno AS branchrefno,
+    t17.branchswiftbrncde AS custswiftbrncode,
+    t18.custctgdesc AS lovdesccustctgcodename,
+    t2.custtypectg AS lovdesccustctgtype,
+    t19.saluationdesc AS lovdesccustsalutationcodename,
+    t21.countrydesc AS lovdesccustparentcountryname,
+    t22.countrydesc AS lovdesccustresdcountryname,
+    t23.countrydesc AS lovdesccustriskcountryname,
+    t24.rofficerdesc AS lovdesccustro2name,
+    t25.blrsndesc AS lovdesccustblrsncodename,
+    t26.rejectdesc AS lovdesccustrejectedrsnname,
+    t27.custgrpdesc AS lovdesccustgroupidname,
+    t28.subsegmentdesc AS lovdesccustsubsegmentname,
+    t29.lngdesc AS lovdesccustlngname,
+    t30.dispatchmodedesc AS lovdescdispatchmodedescname,
+    t1.dedupfound,
+    t1.skipdedup,
+    t1.custtotalexpense,
+    t1.custblacklistdate,
+    t1.noofdependents,
+    t1.custcrcpr,
+    t1.jointcust,
+    t1.jointcustname,
+    t1.jointcustdob,
+    t27.custgrpcode AS lovdesccustgroupcode,
+    t1.custrelation,
+    t1.contactpersonname,
+    t1.phonenumber,
+    t1.emailid,
+    t1.salariedcustomer,
+    t31.targetdesc AS lovdesctargetname,
+    t1.custsuspsts,
+    t1.custsuspdate,
+    t1.custsusptrigger,
+    t1.subcategory,
+    t1.casteid,
+    t1.religionid,
+    t32.castecode,
+    t32.castedesc,
+    t33.religioncode,
+    t33.religiondesc,
+    COALESCE((t34.roledesc), fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
+    t1.marginDeviation
+   FROM ((((((((((((((((((((((((((((((((customers t1
+     LEFT JOIN rmtcusttypes t2 ON ((t1.custtypecode = t2.custtypecode)))
+     LEFT JOIN bmtmaritalstatuscodes t3 ON ((t1.custmaritalsts = t3.maritalstscode)))
+     LEFT JOIN bmtempstscodes t4 ON ((t1.custempsts = t4.empstscode)))
+     LEFT JOIN bmtcuststatuscodes t6 ON ((t1.custsts = t6.custstscode)))
+     LEFT JOIN bmtindustries t7 ON ((t1.custindustry = t7.industrycode)))
+     LEFT JOIN bmtsectors t8 ON ((t1.custsector = t8.sectorcode)))
+     LEFT JOIN bmtsubsectors t9 ON (((t1.custsector = t9.sectorcode) AND (t1.custsubsector = t9.subsectorcode))))
+     LEFT JOIN bmtprofessions t10 ON ((t1.custprofession = t10.professioncode)))
+     LEFT JOIN bmtcountries t11 ON ((t1.custcob = t11.countrycode)))
+     LEFT JOIN bmtnationalitycodes t12 ON ((t1.custnationality = t12.nationalitycode)))
+     LEFT JOIN bmtgenders t13 ON ((t1.custgendercode = t13.gendercode)))
+     LEFT JOIN bmtdepartments t14 ON ((t1.custdsadept = t14.deptcode)))
+     LEFT JOIN amtvehicledealer t15 ON ((t1.custro1 = t15.dealerid)))
+     LEFT JOIN bmtgrpstatuscodes t16 ON ((t1.custgroupsts = t16.grpstscode)))
+     LEFT JOIN rmtbranches t17 ON ((t1.custdftbranch = t17.branchcode)))
+     LEFT JOIN bmtcustcategories t18 ON ((t1.custctgcode = t18.custctgcode)))
+     LEFT JOIN bmtsalutations t19 ON ((t1.custsalutationcode = t19.salutationcode)))
+     LEFT JOIN bmtsegments t20 ON ((t1.custsegment = t20.segmentcode)))
+     LEFT JOIN bmtcountries t21 ON ((t1.custparentcountry = t21.countrycode)))
+     LEFT JOIN bmtcountries t22 ON ((t1.custresdcountry = t22.countrycode)))
+     LEFT JOIN bmtcountries t23 ON ((t1.custriskcountry = t23.countrycode)))
+     LEFT JOIN relationshipofficers t24 ON ((t1.custro2 = t24.rofficercode)))
+     LEFT JOIN bmtblacklistrsncodes t25 ON ((t1.custblrsncode = t25.blrsncode)))
+     LEFT JOIN bmtrejectcodes t26 ON (((t1.custrejectedrsn) = (t26.rejectcode))))
+     LEFT JOIN customergroups t27 ON ((t1.custgroupid = t27.custgrpid)))
+     LEFT JOIN bmtsubsegments t28 ON ((t1.custsubsegment = t28.subsegmentcode)))
+     LEFT JOIN bmtlanguage t29 ON ((t1.custlng = t29.lngcode)))
+     LEFT JOIN bmtdispatchmodes t30 ON ((t1.custstmtdispatchmode = t30.dispatchmodecode)))
+     LEFT JOIN targetdetails t31 ON ((t1.custaddlvar82 = t31.targetcode)))
+     LEFT JOIN caste t32 ON ((t1.casteid = t32.casteid)))
+     LEFT JOIN religion t33 ON ((t1.religionid = t33.religionid)))
+     LEFT JOIN secroles t34 ON ((t1.nextrolecode = t34.rolecd)))
+		</createView>
+	</changeSet>
+	<changeSet  author="umarohini" id="30">
+		<createView replaceIfExists="true" viewName="customers_aeview">
+ 	 		 SELECT t1.custid,
+		    t1.custcif,
+		    t1.custcorebank,
+		    t1.custctgcode,
+		    t1.custtypecode,
+		    t1.custshrtname,
+		    t1.custfname,
+		    t1.custlname,
+		    t1.custdob,
+		    t1.custnationality,
+		    t1.custsector,
+		    t1.custsubsector,
+		    t2.phonenumber,
+		    t2.phoneareacode,
+		    t2.phonecountrycode,
+		    t1.custcrcpr,
+		    t1.custpassportno,
+		    t3.custemail AS emailid,
+		    t1.custaddlvar82,
+		    t4.custtypedesc AS lovdesccusttypecodename,
+		    t1.custbaseccy,
+		    t4.custtypectg AS lovdesccustctgtype,
+		    t5.custctgdesc AS lovdesccustctgcodename,
+		    t6.custstsdescription AS lovdesccuststsname,
+		    t1.custdftbranch,
+		    t7.branchdesc AS lovdesccustdftbranchname,
+		    t1.subcategory,
+		    t1.casteid,
+		    t1.religionid,
+		    t8.castecode,
+		    t8.castedesc,
+		    t9.religioncode,
+		    t9.religiondesc,
+    COALESCE((t32.roledesc), fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
+    t1.marginDeviation
+   FROM (((((((((customers t1
+     LEFT JOIN customerphonenumbers t2 ON (((t1.custid = t2.phonecustid) AND (t2.phonetypepriority = 5))))
+     LEFT JOIN customeremails t3 ON (((t1.custid = t3.custid) AND (t3.custemailtypecode = 'OFFICE'))))
+     LEFT JOIN rmtcusttypes t4 ON ((t1.custtypecode = t4.custtypecode)))
+     LEFT JOIN bmtcustcategories t5 ON ((t1.custctgcode = t5.custctgcode)))
+     LEFT JOIN bmtcuststatuscodes t6 ON ((t1.custsts = t6.custstscode)))
+     LEFT JOIN rmtbranches t7 ON ((t1.custdftbranch = t7.branchcode)))
+     LEFT JOIN caste t8 ON ((t1.casteid = t8.casteid)))
+     LEFT JOIN religion t9 ON ((t1.religionid = t9.religionid)))
+     LEFT JOIN secroles t32 ON ((t1.nextrolecode = t32.rolecd)))
+		</createView>
+	</changeSet>
+<changeSet  author="umarohini" id="31">
+		<createView replaceIfExists="true" viewName="customers_lview">
+ 	 		SELECT c.custid,
+		    c.custcif,
+		    c.custcorebank,
+		    c.custctgcode,
+		    c.custtypecode,
+		    c.custshrtname,
+		    c.custdftbranch,
+		    c.recordstatus,
+		    c.rolecode,
+		    c.nextrolecode,
+		    c.recordtype,
+		    ct.custtypedesc AS lovdesccusttypecodename,
+		    t1.custctgdesc AS lovdesccustctgcodename,
+		    c.subcategory,
+		    c.casteid,
+		    c.religionid,
+		    t2.castecode,
+		    t2.castedesc,
+		    t3.religioncode,
+		    t3.religiondesc,
+		    COALESCE((t4.roledesc), fn_get_roledesc((c.nextrolecode))) AS lovdescrequeststage,
+    c.marginDeviation
+   FROM (((((customers_temp c
+     LEFT JOIN rmtcusttypes ct ON ((c.custtypecode = ct.custtypecode)))
+     LEFT JOIN bmtcustcategories t1 ON ((c.custctgcode = t1.custctgcode)))
+     LEFT JOIN secroles t4 ON ((c.nextrolecode = t4.rolecd)))
+     LEFT JOIN caste t2 ON ((c.casteid = t2.casteid)))
+     LEFT JOIN religion t3 ON ((c.religionid = t3.religionid)))
+UNION ALL
+ SELECT c.custid,
+    c.custcif,
+    c.custcorebank,
+    c.custctgcode,
+    c.custtypecode,
+    c.custshrtname,
+    c.custdftbranch,
+    c.recordstatus,
+    c.rolecode,
+    c.nextrolecode,
+    c.recordtype,
+    ct.custtypedesc AS lovdesccusttypecodename,
+    t1.custctgdesc AS lovdesccustctgcodename,
+    c.subcategory,
+    c.casteid,
+    c.religionid,
+    t2.castecode,
+    t2.castedesc,
+    t3.religioncode,
+    t3.religiondesc,
+    COALESCE((t4.roledesc), fn_get_roledesc((c.nextrolecode))) AS lovdescrequeststage,
+    c.marginDeviation
+   FROM (((((customers c
+     LEFT JOIN rmtcusttypes ct ON ((c.custtypecode = ct.custtypecode)))
+     LEFT JOIN bmtcustcategories t1 ON ((c.custctgcode = t1.custctgcode)))
+     LEFT JOIN secroles t4 ON ((c.nextrolecode = t4.rolecd)))
+     LEFT JOIN caste t2 ON ((c.casteid = t2.casteid)))
+     LEFT JOIN religion t3 ON ((c.religionid = t3.religionid)))
+  WHERE (NOT (c.custid IN ( SELECT customers_temp.custid
+           FROM customers_temp
+          WHERE (customers_temp.custid = c.custid))))
+		</createView>
+</changeSet>
+<changeSet  author="Umarohini" id="32">
+<sql>
+update Customers set marginDeviation=0;	
+update customers_temp set marginDeviation=0;	
+</sql>
+</changeSet>
 </databaseChangeLog>
 	

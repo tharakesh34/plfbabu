@@ -47,6 +47,15 @@
 		<modifyDataType tableName="ADTCollateralCoOwners"
 			columnName="CoOwnerIDType" newDataType="VARCHAR(50)" />
 	</changeSet>
-
-
+<changeSet id="3" author="Umarohini">
+		<comment>Add marginDeviation column as null in customers.</comment>
+		<addColumn tableName="adtcustomers">
+			<column name="marginDeviation" type="boolean"/>
+		</addColumn>
+	</changeSet>
+<changeSet  id="4" author="Umarohini" >
+<sql>
+update adtCustomers set marginDeviation=0;	
+</sql>
+</changeSet>
 	</databaseChangeLog>
