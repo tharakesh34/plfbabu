@@ -1725,6 +1725,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			appendExtendedFieldDetails(aFinanceDetail, moduleDefiner);
 		}
 
+		//Query Mangement Tab 
+		appendQueryMangementTab(false);
+				
 		logger.debug("Leaving");
 	}
 
@@ -2731,6 +2734,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		case AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW:
 			logger.debug("TIME MILLI SECONDS ENTERING" + System.currentTimeMillis());
 			appendCreditReviewDetailTab(true);
+			break;
+		case AssetConstants.UNIQUE_ID_QUERY_MGMT:
+			tab.removeForward(Events.ON_SELECT, (Tab) null, selectMethodName);
+			appendQueryMangementTab(true);
 			break;
 		default:
 			break;
@@ -3769,6 +3776,29 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * Method for Query Management Details Tab in finance
+	 */
+	protected void appendQueryMangementTab(boolean onLoadProcess) {
+		logger.debug("Entering");
+		final HashMap<String, Object> map = getDefaultArguments();
+		map.put("financeMain", financeDetail.getFinScheduleData().getFinanceMain());
+		boolean createTab = false;
+		if (getTab(AssetConstants.UNIQUE_ID_QUERY_MGMT) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_QUERY_MGMT, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_QUERY_MGMT);
+		}
+		if (onLoadProcess) {
+			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/FinQueryDetailList.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_QUERY_MGMT), map);
+		}
+		logger.debug("Leaving");
+	}
+	
 	/**
 	 * Method for Credit Review Details Data in finance
 	 */
@@ -15148,6 +15178,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
+		//Query Management Tab
+		appendQueryMangementTab(false);
+				
 		logger.debug("Leaving");
 	}
 

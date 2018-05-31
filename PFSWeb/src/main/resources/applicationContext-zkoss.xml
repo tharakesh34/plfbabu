@@ -5307,8 +5307,6 @@
 		<property name="queryCategoryService" ref="queryCategoryService"/>
 	</bean>
 
-
-
 	<!-- QueryDetail -->
 	<bean id="queryDetailListCtrl" class="com.pennant.webui.loanquery.querydetail.QueryDetailListCtrl"
 		parent="basisListCtrl" scope="prototype">
@@ -5316,7 +5314,16 @@
 	</bean>
 	<bean id="queryDetailDialogCtrl" class="com.pennant.webui.loanquery.querydetail.QueryDetailDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="queryDetailService" ref="queryDetailService"/>
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="mailUtil" ref="mailUtil" />
+		<property name="mailTemplateService" ref="mailTemplateService" />
+		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
+		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
 	</bean>
-	
+	<bean id="queryDocumentViewCtrl" class="com.pennant.webui.loanquery.querydetail.QueryDocumentViewCtrl" parent="basisCtrl" scope="prototype"/>
+	<bean id="finQueryDetailListCtrl" class="com.pennant.webui.loanquery.querydetail.FinQueryDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="queryDetailService" ref="queryDetailService" />
+	</bean>
 
 </beans>

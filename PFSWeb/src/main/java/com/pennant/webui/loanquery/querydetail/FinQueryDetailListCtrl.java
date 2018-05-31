@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  QueryDetailListCtrl.java                                                   * 	  
+ * FileName    		:  FinQueryDetailListCtrl.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -43,6 +43,8 @@
 
 package com.pennant.webui.loanquery.querydetail;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -51,35 +53,37 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.service.loanquery.QueryDetailService;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.loanquery.querydetail.model.QueryDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.framework.core.SearchOperator.Operators;
-import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailList.zul file.
+ * This is the controller class for the /WEB-INF/pages/LoanQuery/QueryDetail/FinQueryDetailList.zul file.
  * 
  */
-public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
+public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(QueryDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinQueryDetailListCtrl.class);
 
-	protected Window window_QueryDetailList;
-	protected Borderlayout borderLayout_QueryDetailList;
-	protected Paging pagingQueryDetailList;
-	protected Listbox listBoxQueryDetail;
+	protected Window window_FinQueryDetailList;
+	protected Borderlayout borderLayout_FinQueryDetailList;
+	protected Paging pagingFinQueryDetailList;
+	protected Listbox listBoxFinQueryDetail;
 
 	// List headers
 	protected Listheader listheader_Id;
@@ -92,43 +96,33 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	protected Listheader listheader_Description;
 	protected Listheader listheader_UsrLogin;
 	// checkRights
-	protected Button button_QueryDetailList_NewQueryDetail;
-	protected Button button_QueryDetailList_QueryDetailSearch;
+	protected Button button_FinQueryDetailList_NewQueryDetail;
 
-	// Search Fields
-	protected Textbox id; // autowired
-	protected Textbox finReference; // autowired
-	protected Textbox categoryId; // autowired
-	protected Textbox status; // autowired
-	protected Textbox qryNotes; // autowired
-	protected Textbox usrLogin; // autowired
-	protected Textbox raisedBy; // autowired
-	protected Datebox raisedOn; // autowired
-	protected Textbox description; // autowired
-	
-	protected Listbox sortOperator_Id;
-	protected Listbox sortOperator_FinReference;
-	protected Listbox sortOperator_CategoryId;
-	protected Listbox sortOperator_Status;
-	protected Listbox sortOperator_QryNotes;
-	protected Listbox sortOperator_UsrLogin;
-	protected Listbox sortOperator_RaisedBy;
-	protected Listbox sortOperator_RaisedOn;
-	protected Listbox sortOperator_Description;
+	protected Groupbox finBasicdetails;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	
 	private transient QueryDetailService queryDetailService;
+	private FinanceMain financeMain = null;
 
 	/**
 	 * default constructor.<br>
 	 */
-	public QueryDetailListCtrl() {
+	public FinQueryDetailListCtrl() {
 		super();
 	}
 
 	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+		if (financeMain != null) {
+			this.searchObject.addFilterEqual("FinReference", financeMain.getFinReference());
+		}
+	}
+	
+	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "QueryDetail";
-		super.pageRightName = "QueryDetailList";
+		super.pageRightName = "FinQueryDetailList";
 		super.tableName = "QUERYDETAIL_View";
 		super.queueTableName = "QUERYDETAIL_View";
 		super.enquiryTableName = "QUERYDETAIL_View";
@@ -140,52 +134,46 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_QueryDetailList(Event event) {
+	@SuppressWarnings("unchecked")
+	public void onCreate$window_FinQueryDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_QueryDetailList, borderLayout_QueryDetailList, listBoxQueryDetail,
-				pagingQueryDetailList);
+		setPageComponents(window_FinQueryDetailList, borderLayout_FinQueryDetailList, listBoxFinQueryDetail,
+				pagingFinQueryDetailList);
 		setItemRender(new QueryDetailListModelItemRenderer());
 		
+		if(arguments.containsKey("financeMain")){
+			this.financeMain = (FinanceMain) arguments.get("financeMain");
+		}
+		
+		if (arguments.containsKey("finHeaderList")) {
+			appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
+		} else {
+			appendFinBasicDetails(null);
+		}
+		
 		// Register buttons and fields.
-		registerButton(button_QueryDetailList_QueryDetailSearch);
-		//registerButton(button_QueryDetailList_NewQueryDetail, "button_QueryDetailList_NewQueryDetail", true);
-		this.button_QueryDetailList_NewQueryDetail.setVisible(false);
+		//registerButton(button_FinQueryDetailList_NewQueryDetail, "button_FinQueryDetailList_NewQueryDetail", true);
+		this.button_FinQueryDetailList_NewQueryDetail.setVisible(true);
 
-		registerField("id", listheader_Id, SortOrder.NONE, id, sortOperator_Id, Operators.STRING);
-		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference, Operators.STRING);
+		registerField("id");
+		registerField("finReference");
 		registerField("categoryId");
 		registerField("qryNotes");		
-		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
-		registerField("Coalesce(raisedBy,0) raisedBy");		
-		registerField("raisedOn", listheader_RaisedOn, SortOrder.NONE, raisedOn, sortOperator_RaisedOn, Operators.DATE);		
+		registerField("assignedRole");		
+		registerField("notifyTo");	
 		registerField("categoryCode");	
+		registerField("status");
+		registerField("raisedBy");		
+		registerField("raisedOn");	
 		registerField("categoryDescription");	
 		registerField("usrLogin");	
-		// Render the page and display the data.
+		
+		getBorderLayoutHeight();
+		this.listBoxFinQueryDetail.setHeight(this.borderLayoutHeight - 210 + "px");
+		this.window_FinQueryDetailList.setHeight(this.borderLayoutHeight - 80 + "px");
+		
 		doRenderPage();
-		search();
-	}
-
-	/**
-	 * The framework calls this event handler when user clicks the search button.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
-	public void onClick$button_QueryDetailList_QueryDetailSearch(Event event) {
-		search();
-	}
-	
-
-	/**
-	 * The framework calls this event handler when user clicks the refresh button.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
-	public void onClick$btnRefresh(Event event) {
-		doReset();
 		search();
 	}
 
@@ -195,7 +183,7 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$button_QueryDetailList_NewQueryDetail(Event event) {
+	public void onClick$button_FinQueryDetailList_NewQueryDetail(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Create a new entity.
@@ -208,7 +196,27 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
+	/**
+	 * This method is for append finance basic details to respective parent tabs
+	 */
+	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
+		logger.debug(Literal.ENTERING);
+		
+		try {
+			final HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("parentCtrl", this);
+			if (finHeaderList != null) {
+				map.put("finHeaderList", finHeaderList);
+			}
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
+					map);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		
+		logger.debug(Literal.LEAVING);
+	}
+	
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -221,7 +229,7 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		logger.debug("Entering");
 		
 		// Get the selected record.
-		Listitem selectedItem = this.listBoxQueryDetail.getSelectedItem();
+		Listitem selectedItem = this.listBoxFinQueryDetail.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
 		QueryDetail querydetail = queryDetailService.getQueryDetail(id);
 
@@ -260,7 +268,8 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("queryDetail", querydetail);
-		arg.put("queryDetailListCtrl", this);
+		arg.put("finQueryDetailListCtrl", this);
+		arg.put("financeMain", financeMain);
 		
 		try {
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailNewDialog.zul", null, arg);
@@ -277,7 +286,8 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("queryDetail", querydetail);
-		arg.put("queryDetailListCtrl", this);
+		arg.put("finQueryDetailListCtrl", this);
+		arg.put("financeMain", financeMain);
 		
 		try {
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailDialog.zul", null, arg);
@@ -289,102 +299,16 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * The framework calls this event handler when user clicks the print button to print the results.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
-	public void onClick$print(Event event) {
-		doPrintResults();
-	}
-
-	/**
-	 * The framework calls this event handler when user clicks the help button.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
-	public void onClick$help(Event event) {
-		doShowHelp(event);
-	}
-	
-	/**
-	 * When user clicks on "fromApproved"
-	 * 
-	 * @param event
-	 */
-	public void onCheck$fromApproved(Event event) {
-		search();
-	}
-
-	/**
-	 * When user clicks on "fromWorkFlow"
-	 * 
-	 * @param event
-	 */
-	public void onCheck$fromWorkFlow(Event event) {
-		search();
-	}
-
 	public void setQueryDetailService(QueryDetailService queryDetailService) {
 		this.queryDetailService = queryDetailService;
 	}
 	
-	/**
-	 * When user clicks on "fromWorkFlow"
-	 * 
-	 * @param event
-	 */
-	public void onClick$btnSearchQueryId(Event event) {
-		logger.debug("Entering " + event.toString());
+	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {
+		return finBasicDetailsCtrl;
+	}
 
-		setSearchValue(sortOperator_Id, this.id, "id");
-
-		logger.debug("Leaving " + event.toString());
+	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
+		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
 	}
 	
-	public void onClick$btnSearchFinReference(Event event) {
-		logger.debug("Entering " + event.toString());
-
-		setSearchValue(sortOperator_Id, this.id, "finReference");
-
-		logger.debug("Leaving " + event.toString());
-	}
-	
-
-	public void onClick$btnSearchDescription(Event event) {
-		logger.debug("Entering " + event.toString());
-
-		setSearchValue(sortOperator_Id, this.id, "code");
-
-		logger.debug("Leaving " + event.toString());
-	}
-	
-
-	public void onClick$btnSearchstatus(Event event) {
-		logger.debug("Entering " + event.toString());
-
-		setSearchValue(sortOperator_Id, this.id, "status");
-
-		logger.debug("Leaving " + event.toString());
-	}
-	
-
-	public void onClick$btnRaisedBy(Event event) {
-		logger.debug("Entering " + event.toString());
-
-		setSearchValue(sortOperator_Id, this.id, "raisedBy");
-
-		logger.debug("Leaving " + event.toString());
-	}
-
-	public void onClick$btnRaisedOn(Event event) {
-		logger.debug("Entering " + event.toString());
-
-		setSearchValue(sortOperator_Id, this.id, "raisedOn");
-
-		logger.debug("Leaving " + event.toString());
-	}
-
 }

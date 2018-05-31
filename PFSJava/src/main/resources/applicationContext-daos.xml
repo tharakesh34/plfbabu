@@ -4170,6 +4170,7 @@
 		<property name="installmentDueService" ref="installmentDueService" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="customServiceTask" ref="customServiceTask" />
+		<property name="queryDetailService" ref="queryDetailService" />
 
 		<!-- Limits -->
 		<property name="limitManagement" ref="limitManagement" />
@@ -11417,6 +11418,8 @@
  	<bean name="queryDetailServiceTarget" class="com.pennant.backend.service.loanquery.impl.QueryDetailServiceImpl">
        <property name="queryDetailDAO" ref="queryDetailDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	   <property name="documentDetailsDAO" ref="documentDetailsDAO" />
+	   <property name="documentManagerDAO" ref="documentManagerDAO" />
    </bean>
 	
 	<!-- Master Definition -->

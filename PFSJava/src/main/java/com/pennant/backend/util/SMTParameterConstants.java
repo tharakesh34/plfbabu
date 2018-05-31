@@ -65,4 +65,5 @@ public class SMTParameterConstants {
 	public static final String	PRESENTMENT_RESPONSE_ROW_LENGTH	= "PRESENTMENT_RESPONSE_ROW_LENGTH";
 	public static final String	NUMBEROF_UNDATED_CHEQUES	= "NUMBEROF_UNDATED_CHEQUES";
 	public static final String	NUMBEROF_PDC_CHEQUES	= "NUMBEROF_PDC_CHEQUES";
+	public static final String	QRY_MGMT_TEMPLATE	= "QRY_MGMT_TEMPLATE";
 }

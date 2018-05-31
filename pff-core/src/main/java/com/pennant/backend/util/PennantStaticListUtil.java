@@ -250,6 +250,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> eligibilityMethod;
 	private static ArrayList<ValueLabel> financeClosingStatusList;
 	private static List<Property> manualDeviationSeverities;
+	private static ArrayList<ValueLabel> queryModuleStatusList;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -3354,4 +3355,15 @@ public class PennantStaticListUtil {
 			}
 		}
 	}
+	
+	public static ArrayList<ValueLabel> getQueryModuleStatusList() {
+		if (queryModuleStatusList == null) {
+			queryModuleStatusList = new ArrayList<ValueLabel>(2);
+			queryModuleStatusList.add(new ValueLabel("Open", Labels.getLabel("label_QueryDetailDialog_Opened")));
+			queryModuleStatusList.add(new ValueLabel("Resolve", Labels.getLabel("label_QueryDetailDialog_Resolved")));
+			queryModuleStatusList.add(new ValueLabel("Close", Labels.getLabel("label_QueryDetailDialog_Closed")));
+		}
+		return queryModuleStatusList;
+	}
+	
 }

@@ -98,9 +98,9 @@
 				<listbox id="listBoxQueryDetail" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" 
 						multiple="false" sizedByContent="true" span="true">
 					<listhead sizable="true">
-						<listheader id="listheader_FinReference" label="${c:l('listheader_FinReference.label')}" sort="auto" hflex="min"  />
-						<listheader id="listheader_Id" label="${c:l('listheader_Id.label')}" sort="auto" hflex="min"  />
-						<listheader id="listheader_UsrLogin" label="${c:l('listheader_UsrLogin.label')}" sort="auto" hflex="min"  />
+						<listheader id="listheader_FinReference" label="${c:l('listheader_FinReference.label')}" sort="auto" hflex="min" />
+						<listheader id="listheader_Id" label="${c:l('listheader_Id.label')}" sort="auto" hflex="min"  visible="false"/>
+						<listheader id="listheader_UsrLogin" label="${c:l('listheader_UsrRaisedBy.label')}" sort="auto" hflex="min"  />
 						<listheader id="listheader_RaisedOn" label="${c:l('listheader_RaisedOn.label')}" sort="auto"  hflex="min"  />
 						<listheader id="listheader_Description" label="${c:l('listheader_QryType.label')}" sort="auto" hflex="min"  />
 						<listheader id="listheader_QryNotes" label="${c:l('listheader_QryNotes.label')}" sort="auto" hflex="min"  />

@@ -54,18 +54,18 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>QueryCategory table</b>.<br>
  *
  */
-public class QueryCategory extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class QueryCategory extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
-private String code;
-private String description;
-private boolean active= true;
-	private boolean newRecord=false;
+	private String code;
+	private String description;
+	private boolean active = true;
+	private boolean newRecord = false;
 	private String lovValue;
 	private QueryCategory befImage;
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -78,39 +78,44 @@ private boolean active= true;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
+
 	public long getId() {
 		return id;
 	}
+
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public String getCode() {
 		return code;
 	}
+
 	public void setCode(String code) {
 		this.code = code;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -118,7 +123,7 @@ private boolean active= true;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -127,19 +132,19 @@ private boolean active= true;
 		this.lovValue = lovValue;
 	}
 
-	public QueryCategory getBefImage(){
+	public QueryCategory getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(QueryCategory beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(QueryCategory beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.loanquery;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.loanquery.QueryDetail;
 
@@ -57,5 +59,7 @@ public interface QueryDetailDAO extends BasicCrudDao<QueryDetail> {
 	 * @return QueryDetail
 	 */
 	QueryDetail getQueryDetail(long id,String type);
+
+	List<QueryDetail> getQueryMgmtList(String finReference, String type);
 	
 }

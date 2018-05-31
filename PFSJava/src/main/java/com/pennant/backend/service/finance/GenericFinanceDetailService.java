@@ -134,6 +134,7 @@ import com.pennant.backend.service.collateral.impl.FinAssetTypesValidation;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.contractor.ContractorAssetDetailService;
 import com.pennant.backend.service.finance.impl.FinInsuranceValidation;
+import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.util.CollateralConstants;
@@ -242,6 +243,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	//GST
 	private GSTInvoiceTxnService			gstInvoiceTxnService;
 
+	// Query Management
+	private QueryDetailService				queryDetailService;
+	
 	public GenericFinanceDetailService() {
 		super();
 	}
@@ -3111,5 +3115,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setFinIRRDetailsDAO(FinIRRDetailsDAO finIRRDetailsDAO) {
 		this.finIRRDetailsDAO = finIRRDetailsDAO;
+	}
+
+	public QueryDetailService getQueryDetailService() {
+		return queryDetailService;
+	}
+
+	public void setQueryDetailService(QueryDetailService queryDetailService) {
+		this.queryDetailService = queryDetailService;
 	}
 }

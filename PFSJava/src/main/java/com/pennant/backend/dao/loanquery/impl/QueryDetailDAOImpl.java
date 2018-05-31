@@ -42,6 +42,9 @@
 */
 package com.pennant.backend.dao.loanquery.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -83,11 +86,13 @@ public class QueryDetailDAOImpl extends BasisNextidDaoImpl<QueryDetail> implemen
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, finReference, categoryId, qryNotes, assignedRole, notifyTo, ");
-		sql.append(" status, raisedBy, raisedOn, responsNotes, responseBy, responseOn, ");
-		sql.append(" closerNotes, closerBy, closerOn");		
+		sql.append(" status, Coalesce(raisedBy,0) raisedBy, raisedOn, responsNotes, Coalesce(responseBy,0) responseBy, responseOn, ");
+		sql.append(" closerNotes, Coalesce(closerBy,0) closerBy, closerOn,");		
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(" code, description,usrLogin " );
+			//sql.append(" code, description,usrLogin " );
+			sql.append(" categorycode, categoryDescription,usrLogin, " );
+			sql.append(" responseUser, closerUser " );
 		}
 		sql.append(" From QUERYDETAIL");
 		sql.append(type);
@@ -119,12 +124,12 @@ public class QueryDetailDAOImpl extends BasisNextidDaoImpl<QueryDetail> implemen
 		
 		// Prepare the SQL.
 		StringBuilder sql =new StringBuilder(" insert into QUERYDETAIL");
-		sql.append(tableType.getSuffix());
+		//sql.append(tableType.getSuffix());
 		sql.append("(id, finReference, categoryId, qryNotes, assignedRole, notifyTo, ");
-		sql.append("status, raisedBy, raisedOn)" );
+		sql.append("status, raisedBy, raisedOn, Version, LastMntBy,WorkflowId)" );
 		sql.append(" values(");
 		sql.append(" :id, :finReference, :categoryId, :qryNotes, :assignedRole, :notifyTo, ");
-		sql.append(" :status, :raisedBy, :raisedOn)");
+		sql.append(" :status, :raisedBy, :raisedOn, :Version, :LastMntBy, :WorkflowId)");
 
 		if (queryDetail.getId()==Long.MIN_VALUE){
 			queryDetail.setId(getNextidviewDAO().getNextId("SeqQUERYDETAIL"));
@@ -151,29 +156,18 @@ public class QueryDetailDAOImpl extends BasisNextidDaoImpl<QueryDetail> implemen
 		
 		// Prepare the SQL.
 		StringBuilder	sql =new StringBuilder("update QUERYDETAIL" );
-		sql.append(tableType.getSuffix());
-		sql.append("  set finReference = :finReference, categoryId = :categoryId, qryNotes = :qryNotes, ");
-		sql.append(" assignedRole = :assignedRole, notifyTo = :notifyTo, status = :status, ");
-		sql.append(" raisedBy = :raisedBy, raisedOn = :raisedOn, responsNotes = :responsNotes, ");
+		//sql.append(tableType.getSuffix());
+		sql.append("  set status = :status, responsNotes = :responsNotes, ");
 		sql.append(" responseBy = :responseBy, responseOn = :responseOn, closerNotes = :closerNotes, ");
-		sql.append(" closerBy = :closerBy, closerOn = :closerOn, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" closerBy = :closerBy, closerOn = :closerOn ");
 		sql.append(" where id = :id ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 	
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryDetail);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -214,6 +208,39 @@ public class QueryDetailDAOImpl extends BasisNextidDaoImpl<QueryDetail> implemen
 	 */
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+
+	@Override
+	public List<QueryDetail> getQueryMgmtList(String finReference, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		List<QueryDetail> queryDetails = new ArrayList<QueryDetail>();
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT status ");
+
+		sql.append(" From QUERYDETAIL");
+		sql.append(type);
+		sql.append(" Where finReference = :FinReference");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		QueryDetail queryDetail = new QueryDetail();
+		queryDetail.setFinReference(finReference);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryDetail);
+		RowMapper<QueryDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(QueryDetail.class);
+
+		try {
+			queryDetails = this.namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			queryDetail = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return queryDetails;
 	}
 	
 }	

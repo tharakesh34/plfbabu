@@ -2271,11 +2271,14 @@ public class PennantJavaUtil {
 				new String[][] { { "FieldCode", "0", "ELGMETHOD" } }, 300));
 	
 		ModuleUtil.register("QueryCategory", new ModuleMapping("QueryCategory", QueryCategory.class, new String[] { "BMTQueryCategories",
-		"BMTQueryCategories_AView" }, masterWF, new String[] {"Code","Description","Active"},new Object[][] { { "Active", "0", 1 } }, 600));
+		"BMTQueryCategories_AView" }, masterWF, new String[] {"Id","Code","Description"},new Object[][] { { "Active", "0", 1 } }, 600));
 		
 		ModuleUtil.register("QueryDetail", new ModuleMapping("QueryDetail", QueryDetail.class, new String[] { "QUERYDETAIL",
-		"QUERYDETAIL_AView" }, masterWF, new String[] {"FinReference","CategoryId","Status"},null, 600));
+		"QUERYDETAIL_AView" }, null, new String[] {"FinReference","CategoryId","Status"},null, 600));
 
+		ModuleUtil.register("SecurityUserEmails", new ModuleMapping("SecurityUser", SecurityUser.class, new String[] {
+				"UserOperationRoles_View", "UserOperationRoles_View" }, securityWF, new String[] { "UsrEmail" }, null, 300));
+		
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

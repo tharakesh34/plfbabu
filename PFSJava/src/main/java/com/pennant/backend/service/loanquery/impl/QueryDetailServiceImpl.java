@@ -42,17 +42,28 @@
 */
 package com.pennant.backend.service.loanquery.impl;
 
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.zkoss.util.resource.Labels;
+import org.zkoss.zul.Messagebox;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
+import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.loanquery.QueryDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -65,7 +76,8 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private QueryDetailDAO queryDetailDAO;
-
+	private DocumentDetailsDAO documentDetailsDAO;
+	private DocumentManagerDAO documentManagerDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -137,7 +149,19 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 			getQueryDetailDAO().update(queryDetail,tableType);
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		// Documents
+		if (queryDetail.getDocumentDetailsList() != null && !queryDetail.getDocumentDetailsList().isEmpty()) {
+			for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
+				if (documentDetails.getDocRefId() <= 0) {
+					DocumentManager documentManager = new DocumentManager();
+					documentManager.setDocImage(documentDetails.getDocImage());
+					documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
+				}
+				documentDetailsDAO.save(documentDetails, tableType.getSuffix());
+			}
+		}
+
+		//getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -184,7 +208,13 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	 */
 	@Override
 	public QueryDetail getQueryDetail(long id) {
-		return getQueryDetailDAO().getQueryDetail(id,"_View");
+		// LV Document Details
+		QueryDetail queryDetail = getQueryDetailDAO().getQueryDetail(id,"_View");
+		if(queryDetail != null){
+			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(queryDetail.getFinReference(),FinanceConstants.QUERY_MANAGEMENT, "_View");
+			queryDetail.setDocumentDetailsList(documentList);
+		}
+		return queryDetail;
 	}
 
 	/**
@@ -200,7 +230,25 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	public QueryDetail getApprovedQueryDetail(long id) {
 		return getQueryDetailDAO().getQueryDetail(id,"_AView");
 	}	
-		
+	
+	@Override
+	public void getQueryMgmtList(String finReference) {
+		List<QueryDetail> list = getQueryDetailDAO().getQueryMgmtList(finReference,"_AView");
+		String message = "Please close query management";
+		String	SUFFIX		= "\n\n";
+		int		OK			= Messagebox.OK;
+		String	ERROR		= Messagebox.ERROR;
+		if (list != null && list.size() > 0) {
+			for (QueryDetail queryDetail : list) {
+				if(StringUtils.equals(queryDetail.getStatus(), Labels.getLabel("label_QueryDetailDialog_Closed"))){
+					Messagebox.setTemplate(message);
+					Messagebox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
+					return;
+				}
+			}
+		}
+	}	
+	
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by
 	 * using businessValidation(auditHeader) method if there is any error or
@@ -351,6 +399,22 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 			
 			logger.debug(Literal.LEAVING);
 			return auditDetail;
+		}
+
+		public DocumentDetailsDAO getDocumentDetailsDAO() {
+			return documentDetailsDAO;
+		}
+
+		public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+			this.documentDetailsDAO = documentDetailsDAO;
+		}
+
+		public DocumentManagerDAO getDocumentManagerDAO() {
+			return documentManagerDAO;
+		}
+
+		public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
+			this.documentManagerDAO = documentManagerDAO;
 		}
 
 }
