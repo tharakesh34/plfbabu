@@ -57,9 +57,11 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
+import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceExposure;
@@ -80,7 +82,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	private AuditHeaderDAO auditHeaderDAO;
 	private JountAccountDetailDAO jountAccountDetailDAO;
 	private ExtendedFieldRenderDAO				extendedFieldRenderDAO;
-
+	private CustomerIncomeDAO customerIncomeDAO;
 
 	public JointAccountDetailServiceImpl() {
 		super();
@@ -114,6 +116,14 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+
+	public CustomerIncomeDAO getCustomerIncomeDAO() {
+		return customerIncomeDAO;
+	}
+
+	public void setCustomerIncomeDAO(CustomerIncomeDAO customerIncomeDAO) {
+		this.customerIncomeDAO = customerIncomeDAO;
 	}
 
 	/**
@@ -894,12 +904,19 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				currentExpoSure =  doFillExposureDetails(guarantorList, detail);
 				detail.setGuarantorExposure(String.valueOf(currentExpoSure));
 
+				detail.setCustomerIncomeList(getJointAccountIncomeList(detail.getCustID()));
 			}
 
 		}
 
 		return jointAccountDetailList;
 	}
+	
+	@Override
+	public List<CustomerIncome> getJointAccountIncomeList(long custID){
+		
+		return getCustomerIncomeDAO().getCustomerIncomeByCustomer(custID,false,"");
+	} 
 	
 	@Override
 	public BigDecimal doFillExposureDetails(List<FinanceExposure> primaryList, JointAccountDetail detail) {

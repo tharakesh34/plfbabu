@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -78,6 +79,7 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	private JointAccountDetail befImage;
 	private LoggedInUser userDetails;
 	private CustomerDetails customerDetails;
+	private List<CustomerIncome> customerIncomeList;
 	
 	private long custID;
 
@@ -107,6 +109,7 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("status");
 		excludeFields.add("custID");
 		excludeFields.add("customerDetails");
+		excludeFields.add("customerIncomeList");
 		return excludeFields;
 	}
 
@@ -304,6 +307,14 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 
 	public void setCustomerDetails(CustomerDetails customerDetails) {
 		this.customerDetails = customerDetails;
+	}
+
+	public List<CustomerIncome> getCustomerIncomeList() {
+		return customerIncomeList;
+	}
+
+	public void setCustomerIncomeList(List<CustomerIncome> customerIncomeList) {
+		this.customerIncomeList = customerIncomeList;
 	}
 
 }
