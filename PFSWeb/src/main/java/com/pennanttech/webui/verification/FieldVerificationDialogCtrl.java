@@ -37,7 +37,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.dao.systemmasters.AddressTypeDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -47,6 +46,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.AssetConstants;
@@ -58,6 +58,8 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.Module;
@@ -84,27 +86,27 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected Groupbox fiInquiry;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
-	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
+	private FinanceMainBaseCtrl financeMainDialogCtrl;
 	private Verification verification;
 	private FinanceDetail financeDetail;
 	private List<Verification> customerVerifications = new ArrayList<>();
 	private List<Verification> coApplicantVerifications = new ArrayList<>();
-	List<Long> deletedJointAccountS;
-	List<String> requiredCodes;
-
+	private Set<String> requiredCodes = new HashSet<>();
+	
+	private transient List<Long> deletedJointAccountS;
 	private transient boolean validationOn;
 	private transient boolean initType;
 
 	@Autowired
-	private FieldInvestigationService fieldInvestigationService;
+	private SearchProcessor searchProcessor;
+	@Autowired
+	private transient FieldInvestigationService fieldInvestigationService;
 	@Autowired
 	private transient VerificationService verificationService;
 	@Autowired
-	private AddressTypeDAO addressTypeDAO;
+	private transient CustomerDetailsService customerDetailsService;
 	@Autowired
-	private CustomerDetailsService customerDetailsService;
-	@Autowired
-	private CustomerAddresService customerAddresService;
+	private transient CustomerAddresService customerAddresService;
 
 	protected Radiogroup fi;
 
@@ -145,7 +147,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			enqiryModule = (Boolean) arguments.get("enqiryModule");
 		}
 
-		requiredCodes = addressTypeDAO.getFiRequiredCodes();
+		setFiRequiredCodes();
 
 		doShowDialog();
 
@@ -158,7 +160,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		financeMainDialogCtrl.setFieldVerificationDialogCtrl(this);
 
 		setVerifications();
-		renderFIVerificationList(verification);
+		renderFIVerificationList();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -330,19 +332,19 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * 
 	 * @param customer
 	 */
-	public void renderFIVerificationList(Verification verification) {
+	public void renderFIVerificationList() {
 		logger.debug(Literal.ENTERING);
 
-		if (listBoxFIVerification.getItems() != null) {
-			listBoxFIVerification.getItems().clear();
+		if (this.listBoxFIVerification.getItems() != null) {
+			this.listBoxFIVerification.getItems().clear();
 		}
 
 		//set Initiated flag to initiated Records
-		setInitiated(verification.getVerifications());
+		setInitiated(this.verification.getVerifications());
 
 		//Render Verifications
 		int i = 0;
-		for (Verification vrf : verification.getVerifications()) {
+		for (Verification vrf : this.verification.getVerifications()) {
 			i++;
 			Listitem item = new Listitem();
 			Listcell listCell;
@@ -554,10 +556,10 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private void setInitiated(List<Verification> verifications) {
-		for (Verification verification : verifications) {
-			if (verification.getRequestType() == RequestType.INITIATE.getKey()
-					&& verificationService.isVerificationInRecording(verification, VerificationType.FI, null)) {
-				verification.setInitiated(true);
+		for (Verification item : verifications) {
+			if (item.getRequestType() == RequestType.INITIATE.getKey()
+					&& verificationService.isVerificationInRecording(item, VerificationType.FI)) {
+				item.setInitiated(true);
 			}
 		}
 	}
@@ -641,7 +643,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			getTotalVerifications();
 			if (flag) {
-				renderFIVerificationList(this.verification);
+				renderFIVerificationList();
 			}
 		}
 	}
@@ -670,7 +672,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			getTotalVerifications();
 			if (flag) {
-				renderFIVerificationList(this.verification);
+				renderFIVerificationList();
 			}
 		}
 	}
@@ -699,7 +701,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		} else {
 			this.verification.setVerifications(getOldVerifications(null));
 		}
-		renderFIVerificationList(this.verification);
+		renderFIVerificationList();
 	}
 
 	private List<Verification> getVerifications(CustomerDetails customerDetails, boolean coApplicant) {
@@ -752,7 +754,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 						CustomerAddres oldAddres = customerAddresService.getCustomerAddresById(previous.getCustId(),
 								previous.getReferenceFor());
 						if (fieldInvestigationService.isAddressChange(oldAddres, newAddress)) {
-							if (verificationService.isVerificationInRecording(previous, VerificationType.FI, null)) {
+							Verification temp = new Verification();
+							temp.setId(previous.getId());
+							if (verificationService.isVerificationInRecording(temp, VerificationType.FI)) {
 								BeanUtils.copyProperties(current, newVrf);
 								newVrf.setNewRecord(true);
 								verifications.add(newVrf);
@@ -780,10 +784,10 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		verifications.addAll(newAddressMap.values());
 		verifications.addAll(oldVerifications);
 
-		for (Verification object : verifications) {
-			if ((deletedSet.contains(object.getReferenceFor()) && (object.isNew()
-					|| !verificationService.isVerificationInRecording(object, VerificationType.FI, null)))) {
-				object.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		for (Verification item : verifications) {
+			if ((deletedSet.contains(item.getReferenceFor())
+					&& (item.isNew() || !verificationService.isVerificationInRecording(item, VerificationType.FI)))) {
+				item.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 		}
 
@@ -820,17 +824,17 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (custCif == null) {
 			List<FieldInvestigation> fiList = fieldInvestigationService.getList(keyReference);
 			for (Verification vrf : verifications) {
-				for (FieldInvestigation fi : fiList) {
-					if (vrf.getId() == fi.getVerificationId()) {
-						vrf.setFieldInvestigation(fi);
+				for (FieldInvestigation item : fiList) {
+					if (vrf.getId() == item.getVerificationId()) {
+						vrf.setFieldInvestigation(item);
 					}
 				}
 			}
 			return verifications;
 		}
-		for (Verification verification : verifications) {
-			if (verification.getReference().equals(custCif)) {
-				result.add(verification);
+		for (Verification item : verifications) {
+			if (item.getReference().equals(custCif)) {
+				result.add(item);
 			}
 		}
 		return result;
@@ -1001,8 +1005,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		default:
 			break;
 		}
-
-		verification.setRecordStatus(this.recordStatus.getValue());
 	}
 
 	/**
@@ -1172,6 +1174,20 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 		return true;
+	}
+	
+	private void setFiRequiredCodes() {
+		this.requiredCodes.clear();
+
+		Search search = new Search(AddressType.class);
+		search.addField("addrtypecode");
+		search.addTabelName("bmtaddresstypes");
+		search.addFilter(new Filter("addrtypefirequired", 1));
+		List<AddressType> list = searchProcessor.getResults(search);
+
+		for (AddressType addressType : list) {
+			requiredCodes.add(addressType.getAddrTypeCode());
+		}
 	}
 
 	public class PhonePriority implements Comparator<CustomerPhoneNumber> {

@@ -17275,8 +17275,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("financeDetail", financeDetail);
 			map.put("InitType", true);
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUInitiation.zul",
-					getTabpanel(AssetConstants.UNIQUE_ID_RCUINITIATION), map);
+			
+			Tabpanel tabpanel = getTabpanel(AssetConstants.UNIQUE_ID_RCUINITIATION);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUInitiation.zul", tabpanel, map);
 		}
 		logger.debug(Literal.LEAVING);
 	}

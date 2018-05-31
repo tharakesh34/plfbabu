@@ -445,7 +445,6 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		// Verification details
 		appendVerificationFieldDetails(tv);
 
-		this.recordStatus.setValue(tv.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1027,7 +1026,6 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
-			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
 		logger.debug(Literal.LEAVING);

@@ -13,7 +13,6 @@
 
 package com.pennanttech.pennapps.pff.verification.service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,7 +28,6 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
-import com.pennant.backend.dao.systemmasters.AddressTypeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -49,7 +47,6 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
@@ -73,8 +70,6 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	private FieldInvestigationDAO fieldInvestigationDAO;
 	@Autowired
 	private VerificationDAO verificationDAO;
-	@Autowired
-	private AddressTypeDAO addressTypeDAO;
 	@Autowired
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	@Autowired
@@ -802,77 +797,6 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		fi.setNextTaskId(engine.getUserTaskId(fi.getNextRoleCode()) + ";");
 	}
 
-	private List<Verification> getScreenVerifications(Verification verification) {
-		List<Verification> verifications = new ArrayList<>();
-		List<CustomerDetails> customerDetailsList = verification.getCustomerDetailsList();
-		List<String> requiredCodes = addressTypeDAO.getFiRequiredCodes();
-
-		for (CustomerDetails customerDetails : customerDetailsList) {
-			if (customerDetails.getAddressList() == null) {
-				continue;
-			}
-
-			for (CustomerAddres address : customerDetails.getAddressList()) {
-				Verification vrf = new Verification();
-				vrf.setNewRecord(true);
-				vrf.setVerificationType(verification.getVerificationType());
-				vrf.setModule(verification.getModule());
-				vrf.setKeyReference(verification.getKeyReference());
-				vrf.setVerificationType(VerificationType.FI.getKey());
-				vrf.setCustId(customerDetails.getCustomer().getCustID());
-				vrf.setCif(customerDetails.getCustomer().getCustCIF());
-				vrf.setReference(vrf.getCif());
-				vrf.setCustomerName(customerDetails.getCustomer().getCustShrtName());
-				if (verification.getCif().equals(vrf.getCif())) {
-					vrf.setReferenceType("Primary");
-				} else {
-					vrf.setReferenceType("Co-applicant");
-				}
-
-				if (requiredCodes.contains(address.getCustAddrType())) {
-					vrf.setRequestType(RequestType.INITIATE.getKey());
-				} else {
-					vrf.setRequestType(RequestType.NOT_REQUIRED.getKey());
-				}
-				vrf.setRecordType(address.getRecordType());
-				vrf.setReferenceFor(address.getCustAddrType());
-				vrf.setCreatedOn(DateUtil.getDatePart(DateUtil.getSysDate()));
-				setFiFields(vrf, address, customerDetails.getCustomerPhoneNumList());
-
-				verifications.add(vrf);
-			}
-		}
-		return verifications;
-	}
-
-	@Override
-	public Verification getFiVeriFication(Verification verification) {
-		logger.info(Literal.ENTERING);
-		List<Verification> preVerifications = verificationDAO.getVeriFications(verification.getKeyReference(),
-				VerificationType.FI.getKey());
-		List<Verification> screenVerifications = getScreenVerifications(verification);
-
-		setLastStatus(screenVerifications);
-
-		if (!preVerifications.isEmpty()) {
-			List<FieldInvestigation> fiList = fieldInvestigationDAO.getList(verification.getKeyReference());
-
-			for (Verification pvr : preVerifications) {
-				for (FieldInvestigation fi : fiList) {
-					if (pvr.getId() == fi.getVerificationId()) {
-						pvr.setFieldInvestigation(fi);
-					}
-				}
-			}
-		}
-		getChangedVerifications(preVerifications, screenVerifications, verification.getKeyReference());
-		verification.setVerifications(
-				compareVerifications(screenVerifications, preVerifications, verification.getKeyReference()));
-
-		logger.info(Literal.LEAVING);
-		return verification;
-	}
-
 	@Override
 	public boolean isAddressChanged(Verification verification) {
 		List<FieldInvestigation> list = fieldInvestigationDAO.getList(verification.getReference());
@@ -890,53 +814,6 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		return false;
 	}
 
-	private void setLastStatus(List<Verification> verifications) {
-		String[] cif = new String[verifications.size()];
-
-		int i = 0;
-		for (Verification verification : verifications) {
-			cif[i++] = verification.getCif();
-		}
-		if (cif.length != 0) {
-			List<FieldInvestigation> list = fieldInvestigationDAO.getList(cif);
-
-			for (Verification verification : verifications) {
-				FieldInvestigation current = verification.getFieldInvestigation();
-				for (FieldInvestigation previous : list) {
-					if (previous.getCif().equals(verification.getCif())
-							&& previous.getAddressType().equals(current.getAddressType())) {
-						if (!isAddressChange(previous, current)) {
-							verification.setStatus(previous.getStatus());
-							if (previous.getVerifiedDate() != null) {
-								verification.setVerificationDate(new Timestamp(previous.getVerifiedDate().getTime()));
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	private void getChangedVerifications(List<Verification> oldList, List<Verification> newList, String keyReference) {
-		List<Long> fiIds = getFieldInvestigationIds(oldList, keyReference);
-		for (Verification newVer : newList) {
-			for (Verification oldVer : oldList) {
-				if (oldVer.getCustId().compareTo(newVer.getCustId()) == 0
-						&& oldVer.getReferenceFor().equals(newVer.getReferenceFor())) {
-					if (oldVer.getRequestType() != RequestType.INITIATE.getKey() || !fiIds.contains(oldVer.getId())) {
-						break;
-					}
-					if (oldVer.getRequestType() == RequestType.INITIATE.getKey()
-							&& isAddressChange(oldVer.getFieldInvestigation(), newVer.getFieldInvestigation())
-							&& fiIds.contains(oldVer.getId())) {
-						newVer.setReinitid(oldVer.getId());
-					}
-				}
-
-			}
-		}
-	}
-
 	@Override
 	public boolean isAddressChanged(long verificationId, CustomerAddres customerAddres) {
 		FieldInvestigation newAddress = null;
@@ -946,14 +823,12 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		setFiFields(verification, customerAddres, null);
 
 		oldAddress = fieldInvestigationDAO.getFieldInvestigation(verificationId, "_view");
-		oldAddress = verification.getFieldInvestigation();
 
-		if (oldAddress == null || oldAddress == null) {
+		if (oldAddress == null) {
 			return false;
+		} else {
+			return isAddressChange(oldAddress, newAddress);
 		}
-
-		return isAddressChange(oldAddress, newAddress);
-
 	}
 
 	public boolean isAddressChange(CustomerAddres oldAddress, CustomerAddres newAddress) {
@@ -1046,57 +921,6 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		return false;
 	}
 
-	private List<Verification> compareVerifications(List<Verification> screenVerifications,
-			List<Verification> preVerifications, String keyReference) {
-		List<Verification> tempList = new ArrayList<>();
-		tempList.addAll(screenVerifications);
-		Collections.reverse(preVerifications);
-		tempList.addAll(preVerifications);
-		Collections.reverse(preVerifications);
-		List<Long> fiIds = getFieldInvestigationIds(preVerifications, keyReference);
-
-		screenVerifications.addAll(preVerifications);
-
-		for (Verification vrf : tempList) {
-			for (Verification preVrf : preVerifications) {
-				if (vrf.getCustId().compareTo(preVrf.getCustId()) == 0
-						&& vrf.getReferenceFor().equals(preVrf.getReferenceFor())
-						&& (StringUtils.isEmpty(vrf.getRecordType())
-								|| !vrf.getRecordType().equals(PennantConstants.RCD_UPD))
-						&& vrf.getReinitid() == null
-						&& !isAddressChange(preVrf.getFieldInvestigation(), vrf.getFieldInvestigation())
-						&& !fiIds.contains(vrf.getId())) {
-					screenVerifications.remove(vrf);
-					preVerifications.remove(preVrf);
-					break;
-				}
-			}
-		}
-
-		return screenVerifications;
-	}
-
-	@Override
-	public boolean isAddressesAdded(List<CustomerAddres> screenCustomerAddresses,
-			List<CustomerAddres> savedCustomerAddresses) {
-		boolean flag = true;
-
-		for (CustomerAddres screenCustomerAddres : screenCustomerAddresses) {
-			for (CustomerAddres savedCustomerAddres : savedCustomerAddresses) {
-				if (savedCustomerAddres.getCustAddrType().equals(screenCustomerAddres.getCustAddrType())
-						|| (StringUtils.isNotEmpty(screenCustomerAddres.getRecordType())
-								&& screenCustomerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL))) {
-					flag = false;
-				}
-			}
-			if (flag) {
-				return flag;
-			}
-			flag = true;
-		}
-		return false;
-	}
-
 	public class PhonePriority implements Comparator<CustomerPhoneNumber> {
 		@Override
 		public int compare(CustomerPhoneNumber o1, CustomerPhoneNumber o2) {
@@ -1120,7 +944,6 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 	@Override
 	public FieldInvestigation getVerificationFromRecording(long verificationId) {
-
 		return fieldInvestigationDAO.getFieldInvestigation(verificationId, "_view");
 	}
 }

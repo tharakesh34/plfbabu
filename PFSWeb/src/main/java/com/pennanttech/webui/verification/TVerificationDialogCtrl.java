@@ -251,7 +251,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		for (Verification object : verifications) {
 			if ((deletedSet.contains(object.getReferenceFor()) && (object.isNew()
-					|| !verificationService.isVerificationInRecording(object, VerificationType.TV, null)))) {
+					|| !verificationService.isVerificationInRecording(object, VerificationType.TV)))) {
 				object.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 		}
@@ -699,10 +699,10 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private void setInitiated(List<Verification> verifications) {
-		for (Verification verification : verifications) {
-			if (verification.getRequestType() == RequestType.INITIATE.getKey()
-					&& verificationService.isVerificationInRecording(verification, VerificationType.TV, null)) {
-				verification.setInitiated(true);
+		for (Verification item : verifications) {
+			if (item.getRequestType() == RequestType.INITIATE.getKey()
+					&& verificationService.isVerificationInRecording(item, VerificationType.TV)) {
+				item.setInitiated(true);
 			}
 		}
 	}

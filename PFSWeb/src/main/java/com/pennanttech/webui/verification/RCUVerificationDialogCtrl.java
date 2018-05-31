@@ -206,12 +206,14 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
+			Verification item;
 			if (deleteSet.contains(entrySet.getKey())) {
-				if (entrySet.getValue().getRcuDocument() == null
-						|| !verificationService.isVerificationInRecording(entrySet.getValue(), VerificationType.RCU,
-								entrySet.getValue().getRcuDocument())) {
-					entrySet.getValue().setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					deleteVerifications.add(entrySet.getValue());
+				item = entrySet.getValue();
+
+				if (item.getRcuDocument() == null
+						|| !verificationService.isVerificationInRecording(item, VerificationType.RCU)) {
+					item.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					deleteVerifications.add(item);
 				}
 			}
 		}
@@ -276,12 +278,12 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
+			Verification item;
 			if (deleteSet.contains(entrySet.getKey())) {
-				if (entrySet.getValue().getRcuDocument() == null
-						|| !verificationService.isVerificationInRecording(entrySet.getValue(), VerificationType.RCU,
-								entrySet.getValue().getRcuDocument())) {
-					entrySet.getValue().setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					deleteVerifications.add(entrySet.getValue());
+				item = entrySet.getValue();
+				if (item.getRcuDocument() == null || !verificationService.isVerificationInRecording(item, VerificationType.RCU)) {
+					item.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					deleteVerifications.add(item);
 				}
 			}
 		}
@@ -1012,11 +1014,11 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private void setInitiated(List<Verification> verifications) {
-		for (Verification verification : verifications) {
-			RCUDocument rcuDocument = verification.getRcuDocument();
-			if (verification.getRequestType() == RequestType.INITIATE.getKey() && (rcuDocument.getDocumentId() != null)
-					&& verificationService.isVerificationInRecording(verification, VerificationType.RCU, rcuDocument)) {
-				verification.setInitiated(true);
+		for (Verification item : verifications) {
+			RCUDocument rcuDocument = item.getRcuDocument();
+			if (item.getRequestType() == RequestType.INITIATE.getKey() && (rcuDocument.getDocumentId() != null)
+					&& verificationService.isVerificationInRecording(item, VerificationType.RCU)) {
+				item.setInitiated(true);
 			}
 		}
 	}
@@ -1239,8 +1241,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		default:
 			break;
 		}
-
-		verification.setRecordStatus(this.recordStatus.getValue());
 	}
 
 	/**

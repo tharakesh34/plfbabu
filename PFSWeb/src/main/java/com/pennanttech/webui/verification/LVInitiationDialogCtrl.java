@@ -895,7 +895,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		if (isWorkFlowEnabled()) {
-			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
 		logger.debug(Literal.LEAVING);

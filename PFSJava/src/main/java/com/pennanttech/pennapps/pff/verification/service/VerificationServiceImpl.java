@@ -823,7 +823,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		List<Verification> verifications = verificationDAO.getVeriFications(keyReference, verificationType);
 
 		if (VerificationType.LV.getKey() != verificationType) {
-			setDecision(verificationType, verifications);
+			setDecision(verifications);
 		}
 
 		for (Verification verification : verifications) {
@@ -892,8 +892,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		}
 	}
 
-	private void setDecision(int verificationType, List<Verification> verifications) {
-
+	private void setDecision(List<Verification> verifications) {
 		for (Verification verification : verifications) {
 			if ((verification.getStatus() == FIStatus.POSITIVE.getKey()
 					|| verification.getRequestType() == RequestType.NOT_REQUIRED.getKey())
@@ -950,8 +949,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	@Override
-	public boolean isVerificationInRecording(Verification verification, VerificationType verificationType,
-			RCUDocument rcuDocument) {
+	public boolean isVerificationInRecording(Verification verification, VerificationType verificationType) {
 		boolean exists = false;
 		if (verificationType == VerificationType.FI) {
 			if (fieldInvestigationService.getVerificationFromRecording(verification.getId()) != null) {
@@ -964,7 +962,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		} else if (verificationType == VerificationType.LV) {
 
 		} else if (verificationType == VerificationType.RCU) {
-			if (riskContainmentUnitService.getRCUDocument(verification.getId(), rcuDocument) != null) {
+			if (riskContainmentUnitService.getRCUDocument(verification.getId(), verification.getRcuDocument()) != null) {
 				exists = true;
 			}
 		}

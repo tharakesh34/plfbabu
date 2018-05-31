@@ -48,7 +48,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
-import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 
@@ -79,7 +78,7 @@ public interface VerificationService {
 
 	void setLastStatus(Verification verification);
 
-	boolean isVerificationInRecording(Verification verification, VerificationType tv, RCUDocument rcuDocument);
+	boolean isVerificationInRecording(Verification verification, VerificationType tv);
 
 	List<Integer> getVerificationTypes(String keyReference);
 

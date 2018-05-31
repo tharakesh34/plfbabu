@@ -43,10 +43,6 @@ public interface FieldInvestigationService {
 
 	void save(CustomerDetails applicant, List<CustomerPhoneNumber> phoneNumbers, Verification item);
 
-	Verification getFiVeriFication(Verification verification);
-
-	boolean isAddressesAdded(List<CustomerAddres> screenCustomerAddresses, List<CustomerAddres> savedCustomerAddresses);
-
 	void save(FieldInvestigation fieldInvestigation, TableType tempTab);
 
 	boolean isAddressChanged(Verification verification);
