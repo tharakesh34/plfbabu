@@ -44,6 +44,7 @@
 package com.pennant.backend.model.customermasters;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -75,10 +76,21 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 	@XmlElement
 	private String category;
 	private String lovDescCategoryName;
+	@XmlElement
 	private BigDecimal margin;
+	
 	private String lovDescCustIncomeTypeName;
 	@XmlElement
 	private BigDecimal custIncome;
+	
+	public BigDecimal getCalculatedAmount() {
+		if(margin==null || custIncome==null){
+			return BigDecimal.ZERO;
+		}else{
+			return custIncome.multiply(margin.divide(new BigDecimal(100),RoundingMode.HALF_UP)).divide(new BigDecimal(100),RoundingMode.HALF_UP);	
+		}
+	}
+
 	private boolean jointCust = false;
 	private boolean newRecord;
 	private String lovValue;
@@ -92,8 +104,8 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 	private Date finStartDate;
 	private String finCcy;
 	private String toCcy;
-
-
+	private boolean marginDeviation=false;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -115,6 +127,7 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 		excludeFields.add("finStartDate");
 		excludeFields.add("finCcy");
 		excludeFields.add("toCcy");
+		excludeFields.add("marginDeviation");
 		return excludeFields;
 	}
 
@@ -292,4 +305,11 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 		this.toCcy = toCcy;
 	}
 
+	public boolean isMarginDeviation() {
+		return marginDeviation;
+	}
+
+	public void setMarginDeviation(boolean marginDeviation) {
+		this.marginDeviation = marginDeviation;
+	}
 }

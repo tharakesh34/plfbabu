@@ -936,17 +936,25 @@
 												label="${c:l('listheader_CustIncomeType.label')}"
 												sort="false" hflex="min" />
 											<listheader
+												id="listheader_CustInc_Margin"
+												label="${c:l('listheader_Margin.label')}" sort="false"
+												hflex="min" style="text-align:right;"/>
+											<listheader
 												id="listheader_CustInc_CustIncome"
 												label="${c:l('listheader_CustIncome.label')}" sort="false"
-												hflex="min" />
+												hflex="min" style="text-align:right;"/>
 											<listheader
+												id="listheader_CustInc_CalculatedAmount"
+												label="${c:l('listheader_CalculatedAmount.label')}" sort="false"
+												hflex="min" style="text-align:right;"/>
+											<!-- <listheader
 												id="listheader_JointCust"
 												label="${c:l('listheader_JointCust.label')}" sort="false"
-												hflex="min" visible="false" />
-											<listheader
+												hflex="min" visible="false" /> -->
+											<!-- <listheader
 												id="listheader_CustInc_RecordStatus"
 												label="${c:l('listheader_RecordStatus.label')}" sort="false"
-												hflex="min" visible="false" />
+												hflex="min" visible="false" /> -->
 											<listheader
 												id="listheader_CustInc_RecordType"
 												label="${c:l('listheader_RecordType.label')}" sort="false"

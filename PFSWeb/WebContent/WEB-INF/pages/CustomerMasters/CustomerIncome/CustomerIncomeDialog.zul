@@ -95,6 +95,15 @@
 							</row>
 							<row>
 								<label
+									value="${c:l('label_CustomerIncomeDialog_Margin.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<decimalbox id="margin"
+										maxlength="6" width="200px" />
+								</hbox>
+							</row>
+							<row>
+								<label
 									id="label_CustomerIncomeDialog_CustIncome"
 									value="${c:l('label_CustomerIncomeDialog_CustIncome.value')}" />
 								<hbox>
@@ -127,6 +136,7 @@
 										image="/images/icons/LOVSearch.png"  />
 								</hbox>
 							</row>
+							
 						</rows>
 					</grid>
 				</groupbox>

@@ -138,7 +138,7 @@ public class IncomeTypeDAOImpl extends BasisCodeDAO<IncomeType> implements Incom
 		logger.debug("Entering");
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT IncomeExpense,Category,IncomeTypeCode, IncomeTypeDesc,Margin ,IncomeTypeIsActive, lovDescCategoryName " );
+		selectSql.append("SELECT IncomeExpense,Category,IncomeTypeCode, IncomeTypeDesc, Margin ,IncomeTypeIsActive, lovDescCategoryName " );
 		selectSql.append(" FROM  BMTIncomeTypes_AView");
 				
 		logger.debug("selectSql: " + selectSql.toString());

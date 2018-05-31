@@ -4368,7 +4368,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			break;
 			//### Query Management Validations
 		case PennantConstants.METHOD_DO_VALIDATE_QUERYMGMT_APPROVAL:
-			getQueryDetailService().getQueryMgmtList(financeDetail.getFinReference());
+			getQueryDetailService().getQueryMgmtList(auditHeader);
 
 			break;
 			// ### 01-05-2018 - End

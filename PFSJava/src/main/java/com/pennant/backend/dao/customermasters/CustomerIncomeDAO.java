@@ -41,7 +41,6 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
-import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -57,7 +56,7 @@ public interface CustomerIncomeDAO {
 	 void delete(CustomerIncome customerIncome,String type);
 	 long save(CustomerIncome customerIncome,String type);
 	 void deleteByCustomer(final long id,String type, boolean isWIF);
-	 BigDecimal getTotalIncomeByCustomer(long custId);
+	 /*BigDecimal getTotalIncomeByCustomer(long custId);*/
 	 void saveBatch(List<CustomerIncome> customerIncome, String type, boolean isWIF);
 	 int getVersion(CustomerIncome customerIncome);
 	

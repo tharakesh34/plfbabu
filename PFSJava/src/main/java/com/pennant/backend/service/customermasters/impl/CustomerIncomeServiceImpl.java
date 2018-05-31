@@ -192,10 +192,10 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 		return getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_View");
 	}
 	
-	@Override
+/*	@Override
 	public BigDecimal getTotalIncomeByCustomer(long custId) {
 		return getCustomerIncomeDAO().getTotalIncomeByCustomer(custId);
-	}
+	}*/
 
 	/**
 	 * getApprovedCustomerIncomeById fetch the details by using

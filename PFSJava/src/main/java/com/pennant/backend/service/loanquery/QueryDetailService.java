@@ -53,5 +53,5 @@ public interface QueryDetailService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
-	void getQueryMgmtList(String finReference);
+	AuditHeader getQueryMgmtList(AuditHeader auditHeader);
 }

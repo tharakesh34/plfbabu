@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  CustomerTypeDialogCtrl.java                                                   * 	  
+ * FileName    		:  CustomerTypeDialogCtrl.java                                          * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*

@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -162,7 +161,7 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
 	}
 	
-	@Override
+	/*@Override
 	public BigDecimal getTotalIncomeByCustomer(long custId) {
 		logger.debug("Entering");
 		
@@ -184,7 +183,7 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 		}
 		return totalIncome;
 	}
-
+*/
 	/**
 	 * @param dataSource
 	 *            the dataSource to set
@@ -365,7 +364,7 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 		updateSql.append(" Set CustIncome = :CustIncome,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType," );
+		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,Margin =:Margin," );
 		updateSql.append(" WorkflowId = :WorkflowId ");
 		updateSql.append(" Where CustID =:CustID AND CustIncomeType =:CustIncomeType " );
 		updateSql.append(" AND IncomeExpense =:IncomeExpense AND Category =:Category AND JointCust = :JointCust");

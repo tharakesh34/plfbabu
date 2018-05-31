@@ -329,7 +329,9 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private Customer customer = this;
 	@XmlElement
 	private WSReturnStatus returnStatus;
-
+	@XmlElement
+	private boolean marginDeviation=false;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -1889,6 +1891,14 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setReligionCode(String religionCode) {
 		this.religionCode = religionCode;
+	}
+
+	public boolean isMarginDeviation() {
+		return marginDeviation;
+	}
+
+	public void setMarginDeviation(boolean marginDeviation) {
+		this.marginDeviation = marginDeviation;
 	}
 
 }

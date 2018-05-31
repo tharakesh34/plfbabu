@@ -332,7 +332,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			if ("image/jpeg".equals(media.getContentType()) || "image/png".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_IMAGE;
 			} else {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
+				MessageUtil.showError(Labels.getLabel("UnSupported_DocumentFiles"));
 				return;
 			}
 			// Process for Correct Format Document uploading
@@ -1139,7 +1139,9 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
 		}
-
+		
+		this.btnSave.setLabel("Send Query");
+		
 		this.btnNotes.setVisible(false);
 		if (financeMain != null && financeMain.getWorkflowId() > 0) {
 			this.window_QueryDetailDialog.setHeight("70%");

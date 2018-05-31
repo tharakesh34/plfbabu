@@ -48,8 +48,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zul.Messagebox;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
@@ -58,12 +58,15 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennanttech.pennapps.core.App;
+import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -232,21 +235,28 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	}	
 	
 	@Override
-	public void getQueryMgmtList(String finReference) {
-		List<QueryDetail> list = getQueryDetailDAO().getQueryMgmtList(finReference,"_AView");
-		String message = "Please close query management";
-		String	SUFFIX		= "\n\n";
-		int		OK			= Messagebox.OK;
-		String	ERROR		= Messagebox.ERROR;
+	public AuditHeader getQueryMgmtList(AuditHeader auditHeader) {
+		
+		AuditDetail auditDetail = auditHeader.getAuditDetail();
+		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = financeMain.getFinReference();
+		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
+		
+		List<QueryDetail> list = getQueryDetailDAO().getQueryMgmtList(financeMain.getFinReference(),"_AView");
+		
 		if (list != null && list.size() > 0) {
 			for (QueryDetail queryDetail : list) {
-				if(StringUtils.equals(queryDetail.getStatus(), Labels.getLabel("label_QueryDetailDialog_Closed"))){
-					Messagebox.setTemplate(message);
-					Messagebox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
-					return;
+				if(!StringUtils.equals(queryDetail.getStatus(), Labels.getLabel("label_QueryDetailDialog_Closed"))){
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
+							"QRYMGMT1", errParm, valueParm), "EN"));
 				}
 			}
 		}
+		return auditHeader;
 	}	
 	
 	/**

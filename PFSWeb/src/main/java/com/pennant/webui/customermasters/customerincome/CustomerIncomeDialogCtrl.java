@@ -42,7 +42,6 @@
  */
 package com.pennant.webui.customermasters.customerincome;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,8 +57,10 @@ import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Row;
@@ -74,6 +75,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.systemmasters.IncomeType;
+import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -105,14 +107,15 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CustomerIncomeDialog; 		// autoWired
-
+	
+	IncomeType 	 incomeType=null;
 	protected Longbox 	 custID; 						// autoWired
 	protected ExtendedCombobox 	 custIncomeType; 		// autoWired
 	protected CurrencyBox custIncome; 					// autoWired
 	protected Textbox 	 custCIF;						// autoWired
 	protected Label   	 custShrtName;					// autoWired
 	protected Checkbox   jointCust;
-
+	protected Decimalbox margin;
 	protected Row   	 row_isJoint;					// autoWired
 
 	// not auto wired variables
@@ -421,7 +424,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		this.custCIF.setValue(aCustomerIncome.getLovDescCustCIF()==null?"":aCustomerIncome.getLovDescCustCIF().trim());
 		this.custShrtName.setValue(aCustomerIncome.getLovDescCustShrtName()==null?"":aCustomerIncome.getLovDescCustShrtName().trim());
 		this.jointCust.setChecked(aCustomerIncome.isJointCust());
-
+		this.margin.setValue(PennantAppUtil.formateAmount(aCustomerIncome.getMargin(), 2));
+		
 		if (isNewRecord()) {
 			this.custIncomeType.setDescription("");
 		} else {
@@ -439,13 +443,17 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	public void doWriteComponentsToBean(CustomerIncome aCustomerIncome) {
 		logger.debug("Entering");
 		doSetLOVValidation();
-
+		
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-
 		try {
 			aCustomerIncome.setCustID(this.custID.getValue());	
 			aCustomerIncome.setLovDescCustCIF(this.custCIF.getValue());
 		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aCustomerIncome.setMargin(PennantAppUtil.unFormateAmount(this.margin.getValue(),ccyFormatter));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -454,7 +462,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		
 		try {
 			aCustomerIncome.setCustIncome(PennantAppUtil.unFormateAmount(this.custIncome.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
@@ -462,7 +470,6 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		}
 
 		aCustomerIncome.setJointCust(this.jointCust.isChecked());
-		aCustomerIncome.setMargin(BigDecimal.ZERO);
 //		try {
 //			aCustomerIncome.setLovDescCustIncomeCountryName(this.lovDescCustIncomeCountryName.getValue());
 //			aCustomerIncome.setCustIncomeCountry(this.custIncomeCountry.getValue());
@@ -481,11 +488,29 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			throw new WrongValuesException(wvea);
 		}
 
+		IncomeType type = getIncomeType(this.custIncomeType.getValue().trim());
+		if(type!=null && type.getMargin()!=null){
+			aCustomerIncome.setMarginDeviation(!type.getMargin().equals(this.margin.getValue()));	
+		}
+
 		aCustomerIncome.setRecordStatus(this.recordStatus.getValue());
 		setCustomerIncome(aCustomerIncome);
 		logger.debug("Leaving");
 	}
 
+	private IncomeType  getIncomeType(String incomeType){
+		
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<IncomeType> searchObject = new JdbcSearchObject<IncomeType>(IncomeType.class);
+		searchObject.addFilterEqual("IncomeTypeCode",incomeType);
+		searchObject.addTabelName("BMTIncomeTypes_AView");
+		List<IncomeType> incomeList = pagedListService.getBySearchObject(searchObject);
+		if (incomeList != null && !incomeList.isEmpty()) {
+			return incomeList.get(0);
+		}else{
+			return null;
+		}
+	}
 	/**
 	 * Opens the Dialog window modal.
 	 * 
@@ -565,6 +590,10 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		if (!this.custIncome.isReadonly()) {
 			this.custIncome.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerIncomeDialog_CustIncome.value"), ccyFormatter, true, false));
 		}
+		if (!this.margin.isReadonly()) {
+			this.margin.setConstraint(new 	PTDecimalValidator(Labels.getLabel("label_CustomerIncomeDialog_Margin.value"), 2,false,false,100));
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -795,6 +824,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
+		/*if(this.margin.getvalue().compare{
+			
+		}*/
 		// fill the CustomerIncome object with the components data
 		doWriteComponentsToBean(aCustomerIncome);
 
@@ -845,7 +877,16 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 				}
 			}			
 		}
-
+	/*	IncomeType type = null;
+		IncomeTypeServiceImpl income;
+		if (this.margin.getValue().compareTo(type.getMargin())==0) {
+			boolean Flag = false;
+			if(Flag=false){
+				
+			}
+		} else {
+			
+		}*/
 		// save it to database
 		try {
 			if(isNewCustomer()){
@@ -1127,6 +1168,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 				getCustomerIncome().setCategory(details.getCategory().trim());
 				getCustomerIncome().setLovDescCategoryName(details.getLovDescCategoryName());
 				getCustomerIncome().setMargin(details.getMargin());
+				this.margin.setValue(PennantAppUtil.formateAmount(details.getMargin(), 2));
 			}
 		}
 		logger.debug("Leaving" + event.toString());
