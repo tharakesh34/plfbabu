@@ -14914,6 +14914,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			detail.getCustomerEligibilityCheck().addExtendedField("Guarantors_Bank_CustomerCount", 0);
 			detail.getCustomerEligibilityCheck().addExtendedField("Guarantors_Other_CustomerCount", 0);
 			detail.getCustomerEligibilityCheck().addExtendedField("Guarantors_Total_Count", 0);
+			detail.getCustomerEligibilityCheck().addExtendedField("Total_Co_Applicants_Income", 0);
+			detail.getCustomerEligibilityCheck().addExtendedField("Total_Co_Applicants_Expense", 0);
 		}
 
 		if (collateralHeaderDialogCtrl != null) {
