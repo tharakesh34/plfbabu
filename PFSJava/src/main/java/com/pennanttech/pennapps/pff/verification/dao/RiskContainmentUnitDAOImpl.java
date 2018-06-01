@@ -444,15 +444,8 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append(
-				"select verificationid, seqno, documentid,documentType, documentsubid, documentrefid, documenturi, initRemarks,decision, decisionremarks, reinitId,");
-		if (documentType == DocumentType.CUSTOMER) {
-			sql.append(" custdoccategory as docCategory");
-		} else {
-			sql.append(" doccategory as docCategory");
-		}
-		if (tableType == TableType.BOTH_TAB) {
-			sql.append(" ,description ");
-		}
+				"select verificationid, seqno, documentid, documentType, documentsubid, documentrefid, documenturi, initRemarks, decision, decisionremarks, reinitId,");
+		sql.append(" documentsubid as docCategory");
 		sql.append(" From verification_rcu_details");
 
 		if (tableType == TableType.BOTH_TAB) {
@@ -460,7 +453,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		} else {
 			sql.append(tableType.getSuffix());
 		}
-		sql.append(" rcu ");
+		/*sql.append(" rcu ");
 
 		if (documentType == DocumentType.CUSTOMER) {
 			sql.append(" inner join customerdocuments_view doc");
@@ -468,7 +461,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		} else {
 			sql.append(" inner join documentdetails_view doc");
 			sql.append(" on doc.docid = rcu.documentId");
-		}
+		}*/
 
 		sql.append(
 				" Where verificationId in (select verificationId from verifications where keyReference =:keyReference)");
