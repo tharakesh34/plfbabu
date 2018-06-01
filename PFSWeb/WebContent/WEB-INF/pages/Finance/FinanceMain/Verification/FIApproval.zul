@@ -18,6 +18,7 @@
 			</groupbox>
 			<groupbox style="border:none;"
 				contentStyle="border-top-width: 0px;" vflex="true">
+				<caption label="Verifications" />
 				<listbox id="listBoxFIVerification" width="100%"
 					span="true" style="overflow:auto;"
 					emptyMessage="${c:l('listbox.emptyMessage')}" xmlns:w="client"

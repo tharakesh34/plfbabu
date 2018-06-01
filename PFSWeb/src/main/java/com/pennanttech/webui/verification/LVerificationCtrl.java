@@ -287,8 +287,8 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	public void onCheck$lv(Event event) {
 		final HashMap<String, Object> map = new HashMap<>();
 		LegalVerification legalVerification = lv.getSelectedItem().getValue();
-		if (lvInquiry.getChildren() != null) {
-			lvInquiry.getChildren().clear();
+		if (lvInquiry.getChildren().size() >= 2) {
+			lvInquiry.getChildren().remove(1);
 		}
 
 		if (legalVerification != null) {
@@ -298,9 +298,6 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		if (legalVerification != null && StringUtils.isEmpty(legalVerification.getNextRoleCode())) {
 			map.put("LOAN_ORG", true);
 			map.put("legalVerification", legalVerification);
-			if (lvInquiry.getChildren() != null) {
-				lvInquiry.getChildren().clear();
-			}
 			Executions.createComponents("/WEB-INF/pages/Verification/LegalVerification/LegalVerificationDialog.zul",
 					lvInquiry, map);
 		} else if (legalVerification != null) {
@@ -322,8 +319,8 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		if (initType) {
 			verifications = getVerifications();
 		} else {
-			if (lvInquiry.getChildren() != null) {
-				lvInquiry.getChildren().clear();
+			if (lvInquiry.getChildren().size() >= 2) {
+				lvInquiry.getChildren().remove(1);
 			}
 			verifications = getInitVerifications();
 		}

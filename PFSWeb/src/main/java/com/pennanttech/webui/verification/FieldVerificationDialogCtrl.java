@@ -307,8 +307,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	public void onCheck$fi(Event event) {
 		FieldInvestigation fieldInvestigation = null;
-		if (fiInquiry.getChildren() != null) {
-			fiInquiry.getChildren().clear();
+		if (fiInquiry.getChildren().size() >= 2) {
+			fiInquiry.getChildren().remove(1);
 		}
 
 		final HashMap<String, Object> map = new HashMap<>();
@@ -316,9 +316,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (fieldInvestigation != null && StringUtils.isEmpty(fieldInvestigation.getNextRoleCode())) {
 			map.put("LOAN_ORG", true);
 			map.put("fieldInvestigation", fieldInvestigation);
-			if (fiInquiry.getChildren() != null) {
-				fiInquiry.getChildren().clear();
-			}
 			Executions.createComponents("/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationDialog.zul",
 					fiInquiry, map);
 		} else if (fieldInvestigation != null) {

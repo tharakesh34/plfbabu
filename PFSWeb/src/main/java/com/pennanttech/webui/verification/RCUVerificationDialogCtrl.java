@@ -669,8 +669,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		final HashMap<String, Object> map = new HashMap<>();
 		RiskContainmentUnit riskContainmentUnit = riskContainmentUnitService
 				.getRiskContainmentUnit(Long.parseLong(rcuRadioGroup.getSelectedItem().getValue().toString()));
-		if (rcuInquiry.getChildren() != null) {
-			rcuInquiry.getChildren().clear();
+		if (rcuInquiry.getChildren().size() >= 2) {
+			rcuInquiry.getChildren().remove(1);
 		}
 		if (riskContainmentUnit != null) {
 			riskContainmentUnit = riskContainmentUnitService.getRiskContainmentUnit(riskContainmentUnit, "_View");
@@ -678,9 +678,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (riskContainmentUnit != null && StringUtils.isEmpty(riskContainmentUnit.getNextRoleCode())) {
 			map.put("LOAN_ORG", true);
 			map.put("riskContainmentUnit", riskContainmentUnit);
-			if (rcuInquiry.getChildren() != null) {
-				rcuInquiry.getChildren().clear();
-			}
 			Executions.createComponents("/WEB-INF/pages/Verification/RiskContainmentUnit/RiskContainmentUnitDialog.zul",
 					rcuInquiry, map);
 		} else if (riskContainmentUnit != null) {
