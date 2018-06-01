@@ -774,7 +774,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							&& finSchdDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
 						soaTransactionReport = new SOATransactionReport();
 						soaTransactionReport.setEvent(brokenPeriodEvent+finRef);
-						soaTransactionReport.setTransactionDate(finMain.getFinApprovedDate());
+						soaTransactionReport.setTransactionDate(finSchdDetail.getSchDate());
 						soaTransactionReport.setValueDate(finSchdDetail.getSchDate());
 						soaTransactionReport.setCreditAmount(BigDecimal.ZERO);
 						soaTransactionReport.setDebitAmount(finSchdDetail.getRepayAmount());
