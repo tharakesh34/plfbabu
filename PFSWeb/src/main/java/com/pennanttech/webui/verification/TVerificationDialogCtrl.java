@@ -913,9 +913,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		default:
 			break;
 		}
-
-		item.setRecordStatus(this.recordStatus.getValue());
-
+		
 		return item;
 	}
 
