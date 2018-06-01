@@ -333,14 +333,16 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private boolean isAgencyChanged(Verification verification) {
-		Search search = new Search(RiskContainmentUnit.class);
+		Search search = new Search(Verification.class);
 		search.addTabelName("verifications");
 		search.addFilter(new Filter("id", verification.getId()));
-		search.addFilter(new Filter("agency", verification.getAgency()));
-		int count = searchProcessor.getCount(search);
-		if (verification.getAgency() == null) {
-			return false;
+		if (verification.getAgency() != null) {
+			search.addFilter(new Filter("agency", verification.getAgency()));
+		} else {
+			search.addWhereClause("agency is null");
 		}
+		int count = searchProcessor.getCount(search);
+
 		return count > 0 ? false : true;
 	}
 
@@ -731,6 +733,11 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					CollateralConstants.MODULE_NAME, "", "_View");
 
 			if (list != null) {
+				for (DocumentDetails documentDetails : list) {
+					if (!isNotDeleted(collateral.getRecordType())) {
+						documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					}
+				}
 				documents.addAll(list);
 			}
 		}
@@ -1467,7 +1474,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			for (Verification newVrf : newverifications) {
 				for (Verification vrf : this.verification.getVerifications()) {
-					if (!vrf.isNewRecord() && newVrf.getAgency() == vrf.getAgency()) {
+					if (!vrf.isNewRecord() && newVrf.getAgency()!=null && newVrf.getAgency() == vrf.getAgency()) {
 						if (!isRCUExists(vrf.getId())) {
 							newVrf.setNewRecord(false);
 							newVrf.setId(vrf.getId());

@@ -245,6 +245,37 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 	}
 
 	@Override
+	public void deleteRCUDocument(RCUDocument rcuDocument, String tableType) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource source = null;
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from verification_rcu_details");
+		sql.append(tableType);
+		sql.append(" where verificationId = :verificationId and documentId=:documentId");
+		sql.append(" and documentSubId=:documentSubId");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		source = new MapSqlParameterSource();
+		source.addValue("verificationId", rcuDocument.getVerificationId());
+		source.addValue("documentId", rcuDocument.getDocumentId());
+		source.addValue("documentSubId", rcuDocument.getDocumentSubId());
+		int recordCount = 0;
+
+		try {
+			recordCount = jdbcTemplate.update(sql.toString(), source);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			//throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
 	public void deleteRCUDocumentsList(List<RCUDocument> documents, String tableType) {
 		logger.debug(Literal.ENTERING);
 
@@ -563,19 +594,18 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 	}
 
 	@Override
-	public int getRCUDocumentsCount(long verificationId, int documentType) {
+	public int getRCUDocumentsCount(long verificationId) {
 
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
 
 		sql.append(" select count(*) from  verification_rcu_details_stage");
-		sql.append(" where documentType=:documentType and verificationId=:verificationId");
+		sql.append(" where verificationId=:verificationId");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
-		source.addValue("documentType", documentType);
 		source.addValue("verificationId", verificationId);
 
 		try {

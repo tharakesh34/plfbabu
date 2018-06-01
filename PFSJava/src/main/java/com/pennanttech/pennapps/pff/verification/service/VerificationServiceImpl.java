@@ -182,10 +182,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				if (verificationType == VerificationType.RCU) {
 					if (item.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 						if (item.getRcuDocument() != null) {
-							riskContainmentUnitService.deleteRCUDocuments(item.getRcuDocument(), "_stage");
+							riskContainmentUnitService.deleteRCUDocument(item.getRcuDocument(), "_stage");
 						}
-						if (riskContainmentUnitService.getRCUDocumentsCount(item.getId(),
-								DocumentType.CUSTOMER.getKey()) == 0) {
+						if (riskContainmentUnitService.getRCUDocumentsCount(item.getId()) == 0) {
 							riskContainmentUnitService.delete(item.getId(), TableType.STAGE_TAB);
 							verificationDAO.delete(item, TableType.BOTH_TAB);
 						}

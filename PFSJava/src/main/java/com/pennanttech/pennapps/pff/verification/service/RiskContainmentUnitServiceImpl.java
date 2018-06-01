@@ -842,13 +842,13 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	}
 
 	@Override
-	public void deleteRCUDocuments(RCUDocument rcuDocument, String tableType) {
-		riskContainmentUnitDAO.deleteRCUDocuments(rcuDocument, tableType);
+	public void deleteRCUDocument(RCUDocument rcuDocument, String tableType) {
+		riskContainmentUnitDAO.deleteRCUDocument(rcuDocument, tableType);
 	}
 
 	@Override
-	public int getRCUDocumentsCount(long verificationId, int documentType) {
-		return riskContainmentUnitDAO.getRCUDocumentsCount(verificationId, documentType);
+	public int getRCUDocumentsCount(long verificationId) {
+		return riskContainmentUnitDAO.getRCUDocumentsCount(verificationId);
 	}
 
 	@Override
