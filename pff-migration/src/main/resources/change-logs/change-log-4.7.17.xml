@@ -1513,5 +1513,294 @@ update customers_temp set marginDeviation=0;
 	('SCORES','RSCORE','Total_Co_Applicants_Expense',' Total CoApplicants Expense','decimal',18,'1','1',null,'static,calvalue',null);
 </sql>
 </changeSet>
+<changeSet id="35" author="madhubabu.p">
+	<createView viewName="fincovenanttype_view" replaceIfExists="true">
+SELECT t1.finreference,
+    t1.covenanttype,
+    t1.description,
+    t1.mandrole,
+    t1.alwwaiver,
+    t1.alwpostpone,
+    t1.postponedays,
+    t1.alwotc,
+    t3.doctypedesc AS covenanttypedesc,
+    t5.code AS categorycode,
+    t4.roledesc AS mandroledesc,
+    t1.receivabledate,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t3.pdd AS pddFlag,
+    t3.otc AS otcFlag
+   FROM fincovenanttype_temp t1
+     JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
+     LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
+     LEFT JOIN secroles t4 ON t4.rolecd = t1.mandrole
+UNION ALL
+ SELECT t1.finreference,
+    t1.covenanttype,
+    t1.description,
+    t1.mandrole,
+    t1.alwwaiver,
+    t1.alwpostpone,
+    t1.postponedays,
+    t1.alwotc,
+    t3.doctypedesc AS covenanttypedesc,
+    t5.code AS categorycode,
+    t4.roledesc AS mandroledesc,
+    t1.receivabledate,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t3.pdd AS pddFlag,
+    t3.otc AS otcFlag
+   FROM fincovenanttype t1
+     JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
+     LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
+     LEFT JOIN secroles t4 ON t4.rolecd = t1.mandrole
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM fincovenanttype_temp
+          WHERE fincovenanttype_temp.finreference = t1.finreference AND fincovenanttype_temp.covenanttype = t1.covenanttype));
+			</createView>
+</changeSet>
+<changeSet id="36" author="madhubabu.p">
+	<createView viewName="fincovenanttype_aview" replaceIfExists="true">
+SELECT t1.finreference,
+    t1.covenanttype,
+    t1.description,
+    t1.mandrole,
+    t1.alwwaiver,
+    t1.alwpostpone,
+    t1.postponedays,
+    t1.alwotc,
+    t3.doctypedesc AS covenanttypedesc,
+    t5.code AS categorycode,
+    t4.roledesc AS mandroledesc,
+    t1.receivabledate,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t3.pdd AS pddFlag,
+    t3.otc AS otcFlag
+   FROM fincovenanttype t1
+     JOIN financemain t2 ON t2.finreference = t1.finreference
+     JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
+     LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
+     JOIN secroles t4 ON t4.rolecd = t1.mandrole;
+			</createView>
+</changeSet>
+<changeSet id="37" author="madhubabu.p">
+	<createView viewName="fincovenanttype_eaview" replaceIfExists="true">
+SELECT t.finreference,
+    t.custid,
+    t.covenanttype,
+    t.description,
+    t.mandrole,
+    t.alwwaiver,
+    t.alwpostpone,
+    t.alwotc,
+    t.postponedays,
+    t.covenanttypedesc,
+    t.categorycode,
+    t.receivabledate,
+    t.version,
+    t.lastmntby,
+    t.lastmnton,
+    t.recordstatus,
+    t.rolecode,
+    t.nextrolecode,
+    t.taskid,
+    t.nexttaskid,
+    t.recordtype,
+    t.workflowid,
+        CASE
+            WHEN t.docreceiveddate IS NULL THEN cd.lastmnton
+            ELSE t.docreceiveddate
+        END AS docreceiveddate,
+     t.pddFlag,
+     t.otcFlag
+   FROM ( SELECT t1.finreference,
+            t4.custid,
+            t1.covenanttype,
+            t1.description,
+            t1.mandrole,
+            t1.alwwaiver,
+            t1.alwpostpone,
+            t1.alwotc,
+            t1.postponedays,
+            t3.doctypedesc AS covenanttypedesc,
+            t5.code AS categorycode,
+            t1.receivabledate,
+            t1.version,
+            t1.lastmntby,
+            t1.lastmnton,
+            t1.recordstatus,
+            t1.rolecode,
+            t1.nextrolecode,
+            t1.taskid,
+            t1.nexttaskid,
+            t1.recordtype,
+            t1.workflowid,
+            t7.docreceiveddate,
+         	t3.pdd AS pddFlag,
+    		t3.otc AS otcFlag
+         
+           FROM fincovenanttype t1
+             JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
+             LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
+             JOIN financemain t4 ON t4.finreference = t1.finreference
+             LEFT JOIN documentdetails t7 ON t7.referenceid = t1.finreference AND t1.covenanttype = t7.doccategory) t
+     LEFT JOIN customerdocuments cd ON cd.custid = t.custid AND t.covenanttype = cd.custdoccategory;
+			</createView>
+</changeSet>
+<changeSet id="38" author="madhubabu.p">
+	<createView viewName="fincovenanttype_eview" replaceIfExists="true">
+SELECT t.finreference,
+    t.custid,
+    t.covenanttype,
+    t.description,
+    t.mandrole,
+    t.alwwaiver,
+    t.alwpostpone,
+    t.alwotc,
+    t.postponedays,
+    t.covenanttypedesc,
+    t.categorycode,
+    t.receivabledate,
+    t.version,
+    t.lastmntby,
+    t.lastmnton,
+    t.recordstatus,
+    t.rolecode,
+    t.nextrolecode,
+    t.taskid,
+    t.nexttaskid,
+    t.recordtype,
+    t.workflowid,
+        CASE
+            WHEN t.docreceiveddate IS NULL THEN cd.lastmnton
+            ELSE t.docreceiveddate
+        END AS docreceiveddate,
+     t.pddFlag,
+     t.otcFlag
+   FROM ( SELECT t1.finreference,
+            t4.custid,
+            t1.covenanttype,
+            t1.description,
+            t1.mandrole,
+            t1.alwwaiver,
+            t1.alwpostpone,
+            t1.postponedays,
+            t1.alwotc,
+            t3.doctypedesc AS covenanttypedesc,
+            t5.code AS categorycode,
+            t1.receivabledate,
+            t1.version,
+            t1.lastmntby,
+            t1.lastmnton,
+            t1.recordstatus,
+            t1.rolecode,
+            t1.nextrolecode,
+            t1.taskid,
+            t1.nexttaskid,
+            t1.recordtype,
+            t1.workflowid,
+            t7.docreceiveddate,
+         	t3.pdd AS pddFlag,
+    		t3.otc AS otcFlag
+           FROM fincovenanttype_temp t1
+             JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
+             LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
+             JOIN financemain t4 ON t4.finreference = t1.finreference
+             LEFT JOIN documentdetails t7 ON t7.referenceid = t1.finreference AND t1.covenanttype = t7.doccategory
+        UNION ALL
+         SELECT t1.finreference,
+            t4.custid,
+            t1.covenanttype,
+            t1.description,
+            t1.mandrole,
+            t1.alwwaiver,
+            t1.alwpostpone,
+            t1.postponedays,
+            t1.alwotc,
+            t3.doctypedesc AS covenanttypedesc,
+            t5.code AS categorycode,
+            t1.receivabledate,
+            t1.version,
+            t1.lastmntby,
+            t1.lastmnton,
+            t1.recordstatus,
+            t1.rolecode,
+            t1.nextrolecode,
+            t1.taskid,
+            t1.nexttaskid,
+            t1.recordtype,
+            t1.workflowid,
+            t7.docreceiveddate
+           FROM fincovenanttype t1
+             JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
+             LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
+             JOIN financemain t4 ON t4.finreference = t1.finreference
+             LEFT JOIN documentdetails t7 ON t7.referenceid = t1.finreference AND t1.covenanttype = t7.doccategory
+          WHERE NOT (EXISTS ( SELECT 1
+                   FROM fincovenanttype_temp
+                  WHERE fincovenanttype_temp.finreference = t1.finreference AND fincovenanttype_temp.covenanttype = t1.covenanttype))) t
+     LEFT JOIN customerdocuments cd ON cd.custid = t.custid AND t.covenanttype = cd.custdoccategory;
+			</createView>
+</changeSet>
+<changeSet id="39" author="madhubabu.p">
+	<createView viewName="fincovenanttype_tview" replaceIfExists="true">
+SELECT t1.finreference,
+    t1.covenanttype,
+    t1.description,
+    t1.mandrole,
+    t1.alwwaiver,
+    t1.alwpostpone,
+    t1.postponedays,
+    t1.alwotc,
+    t3.doctypedesc AS covenanttypedesc,
+    t5.code AS categorycode,
+    t4.roledesc AS mandroledesc,
+    t1.receivabledate,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t3.pdd AS pddFlag,
+    t3.otc AS otcFlag
+   FROM fincovenanttype_temp t1
+     JOIN financemain_temp t2 ON t2.finreference = t1.finreference
+     JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
+     LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
+     JOIN secroles t4 ON t4.rolecd = t1.mandrole;
+			</createView>
+</changeSet>
 </databaseChangeLog>
 	
