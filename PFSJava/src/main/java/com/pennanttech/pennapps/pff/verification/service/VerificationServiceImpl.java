@@ -59,7 +59,6 @@ import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
-import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -136,18 +135,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		logger.debug(Literal.ENTERING);
 
 		List<Long> idList = null;
-		List<CustomerDetails> customerDetailsList = null;
-		List<CollateralSetup> collateralSetupList = null;
 		Verification verification = null;
 
 		if (verificationType == VerificationType.FI) {
 			verification = financeDetail.getFiVerification();
-			customerDetailsList = verification.getCustomerDetailsList();
 			idList = fieldInvestigationService.getFieldInvestigationIds(verification.getVerifications(),
 					verification.getKeyReference());
 		} else if (verificationType == VerificationType.TV) {
 			verification = financeDetail.getTvVerification();
-			collateralSetupList = verification.getCollateralSetupList();
 			idList = technicalVerificationService.getTechnicalVerificaationIds(verification.getVerifications(),
 					verification.getKeyReference());
 		} else if (verificationType == VerificationType.LV) {
@@ -176,14 +171,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			setVerificationWorkflowData(verification, item);
 
 			if (isInitTab) {
-				//delete non verification Records from FI and TV
+				// delete non verification Records from FI and TV
 				if (item.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
 						&& (verificationType == VerificationType.TV || verificationType == VerificationType.FI)) {// FIXME
 					verificationDAO.delete(item, TableType.BOTH_TAB);
 					continue;
 				}
 
-				//delete non verification Records from RCU
+				// delete non verification Records from RCU
 				if (verificationType == VerificationType.RCU) {
 					if (item.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 						if (item.getRcuDocument() != null) {
@@ -231,8 +226,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					if (verificationType == VerificationType.LV) {
 						savereInitLegalVerification(financeDetail, item);
 					} else {
-						reInitVerification(financeDetail, verificationType, customerDetailsList, collateralSetupList,
-								item);
+						reInitVerification(financeDetail, verificationType, item);
 					}
 				} else {
 					if (item.getId() != 0) {
@@ -271,8 +265,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		}
 	}
 
-	private void reInitVerification(FinanceDetail financeDetail, VerificationType verificationType,
-			List<CustomerDetails> customerDetailsList, List<CollateralSetup> collateralSetupList, Verification item) {
+	private void reInitVerification(FinanceDetail financeDetail, VerificationType verificationType, Verification item) {
 		Verification reInit = new Verification();
 		RCUDocument document;
 		int requestType = item.getRequestType();
@@ -345,7 +338,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 	@Override
 	public void savereInitLegalVerification(FinanceDetail financeDetail, Verification verification) {
-		reInitVerification(financeDetail, VerificationType.LV, null, null, verification);
+		reInitVerification(financeDetail, VerificationType.LV, verification);
 		saveLVInit(verification);
 
 	}
@@ -376,7 +369,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			// Legal verification
 			legalVerificationService.save(item, TableType.MAIN_TAB);
 
-			//LV Documents
+			// LV Documents
 			legalVerificationService.saveDocuments(item.getLvDocuments(), TableType.MAIN_TAB);
 		}
 	}
@@ -638,10 +631,12 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * verifications by using verificationsDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
-	 * and Adtverifications by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) delete Record for the DB
+	 * table verifications by using verificationsDAO's delete method with type
+	 * as Blank 3) Audit the record in to AuditHeader and Adtverifications by
+	 * using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -667,8 +662,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * getApprovedverificationsById fetch the details by using verificationsDAO's getverificationsById method . with
-	 * parameter id and type as blank. it fetches the approved records from the verifications.
+	 * getApprovedverificationsById fetch the details by using
+	 * verificationsDAO's getverificationsById method . with parameter id and
+	 * type as blank. it fetches the approved records from the verifications.
 	 * 
 	 * @param id
 	 *            id of the Verification. (String)
@@ -679,15 +675,19 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using verificationDAO.delete with parameters
-	 * verification,"" b) NEW Add new record in to main table by using verificationDAO.save with parameters
-	 * verification,"" c) EDIT Update record in the main table by using verificationDAO.update with parameters
-	 * verification,"" 3) Delete the record from the workFlow table by using verificationDAO.delete with parameters
-	 * verification,"_Temp" 4) Audit the record in to AuditHeader and Adtverifications by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and Adtverifications by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) based on the Record type
+	 * do following actions a) DELETE Delete the record from the main table by
+	 * using verificationDAO.delete with parameters verification,"" b) NEW Add
+	 * new record in to main table by using verificationDAO.save with parameters
+	 * verification,"" c) EDIT Update record in the main table by using
+	 * verificationDAO.update with parameters verification,"" 3) Delete the
+	 * record from the workFlow table by using verificationDAO.delete with
+	 * parameters verification,"_Temp" 4) Audit the record in to AuditHeader and
+	 * Adtverifications by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow 5) Audit the record in to AuditHeader and Adtverifications by using
+	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -748,10 +748,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using verificationDAO.delete with parameters verification,"_Temp" 3) Audit the record in to
-	 * AuditHeader and Adtverifications by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) Delete the record from
+	 * the workFlow table by using verificationDAO.delete with parameters
+	 * verification,"_Temp" 3) Audit the record in to AuditHeader and
+	 * Adtverifications by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -779,8 +782,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
+	 * businessValidation method do the following steps. 1) get the details from
+	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
+	 * Record based on the record details. 4) Validate for any business
+	 * validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -799,9 +804,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from verificationDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
-	 * the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any
+	 * mismatch conditions Fetch the error details from
+	 * verificationDAO.getErrorDetail with Error ID and language as parameters.
+	 * if any error/Warnings then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -962,7 +968,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		} else if (verificationType == VerificationType.LV) {
 
 		} else if (verificationType == VerificationType.RCU) {
-			if (riskContainmentUnitService.getRCUDocument(verification.getId(), verification.getRcuDocument()) != null) {
+			if (riskContainmentUnitService.getRCUDocument(verification.getId(),
+					verification.getRcuDocument()) != null) {
 				exists = true;
 			}
 		}
