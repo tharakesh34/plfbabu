@@ -149,6 +149,7 @@ import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
@@ -161,6 +162,7 @@ import com.pennant.backend.service.applicationmaster.MMAgreementService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -214,6 +216,8 @@ public class AgreementGeneration implements Serializable {
 	private BranchService branchService;
 	@Autowired
 	private DeviationHelper	deviationHelper;
+	@Autowired
+	private QueryDetailService queryDetailService;
 
 	public AgreementGeneration() {
 		super();
@@ -1056,7 +1060,6 @@ public class AgreementGeneration implements Serializable {
 			setCustomerBankInfo(detail, agreement, aggModuleDetails);
 			
 			// Verification details
-			aggModuleDetails=aggModuleDetails.concat("VERIFIC");
 			if (aggModuleDetails.contains(PennantConstants.AGG_VERIFIC)) {
 				if(CollectionUtils.isEmpty(agreement.getFiVerification())){
 					agreement.setFiVerification(new ArrayList<>());
@@ -1095,6 +1098,12 @@ public class AgreementGeneration implements Serializable {
 				agreement.setExtendedDetails(new ArrayList<>());
 				agreement.getExtendedDetails().add(agreement.new ExtendedDetail());
 			}
+			
+			/*Search search = new Search(QueryDetail.class);
+			search.addTabelName("QUERYDETAIL_View");
+			search.addFilterEqual("FinReference", finRef);
+			List<QueryDetail> list = searchProcessor.getResults(search);*/
+			//List<QueryDetail> list = queryDetailService.getQueryDetailsforAgreements(finRef);
 			
 		} catch (Exception e) {
 			logger.debug(e);
@@ -1186,6 +1195,8 @@ public class AgreementGeneration implements Serializable {
 									}
 									agreement.getRcuVerification().add(verificationData);
 								}
+							}else{
+								agreement.getRcuVerification().add(verificationData);
 							}
 							break;
 						}
