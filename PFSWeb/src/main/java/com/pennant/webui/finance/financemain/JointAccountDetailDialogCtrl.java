@@ -440,9 +440,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		if(CollectionUtils.isNotEmpty(jountAccountDetail.getCustomerIncomeList())){
 			for (CustomerIncome income : jountAccountDetail.getCustomerIncomeList()) {
 				if (income.getIncomeExpense().equals(PennantConstants.INCOME)) {
-					totIncome = totIncome.add(PennantAppUtil.formateAmount(income.getCustIncome(), ccDecimal));
+					totIncome = totIncome.add(PennantAppUtil.formateAmount(income.getCalculatedAmount(), ccDecimal));
 				}else{
-					totExpense = totIncome.add(PennantAppUtil.formateAmount(income.getCustIncome(), ccDecimal));
+					totExpense = totIncome.add(PennantAppUtil.formateAmount(income.getCalculatedAmount(), ccDecimal));
 				}	
 			}
 		}
