@@ -6282,13 +6282,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// RCU Init Verification Detail
 		Tab rcuInitTab = getTab(AssetConstants.UNIQUE_ID_RCUINITIATION);
 		if ((rcuInitTab != null && rcuInitTab.isVisible()) && rcuVerificationDialogCtrl != null) {
-			rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuInitTab);
+			rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuInitTab,recSave);
 		}
 
 		// RCU Approval Verification Detail
 		Tab rcuApprovalTab = getTab(AssetConstants.UNIQUE_ID_RCUAPPROVAL);
 		if ((rcuApprovalTab != null && rcuApprovalTab.isVisible()) && rcuVerificationDialogCtrl != null) {
-			if(!rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuApprovalTab)){
+			if(!rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuApprovalTab,recSave)){
 				return;
 			}
 			

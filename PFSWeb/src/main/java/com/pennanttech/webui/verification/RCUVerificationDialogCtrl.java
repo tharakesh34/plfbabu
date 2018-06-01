@@ -338,7 +338,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		search.addFilter(new Filter("id", verification.getId()));
 		search.addFilter(new Filter("agency", verification.getAgency()));
 		int count = searchProcessor.getCount(search);
-
+		if (verification.getAgency() == null) {
+			return false;
+		}
 		return count > 0 ? false : true;
 	}
 
@@ -1376,7 +1378,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public boolean doSave(FinanceDetail financeDetail, Tab tab) {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave) {
 		logger.debug(Literal.ENTERING);
 		this.recSave = recSave;
 		doClearMessage();
@@ -1442,6 +1444,18 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			for (Verification verification : this.verification.getVerifications()) {
 				if (!verification.isNewRecord() && isAgencyChanged(verification)) {
 					verification.setNewRecord(true);
+					if (verification.getRcuDocument() == null
+							|| !verificationService.isVerificationInRecording(verification, VerificationType.RCU)) {
+						Verification vrf = new Verification();
+						BeanUtils.copyProperties(verification, vrf);
+						if (verification.getRcuDocument() != null) {
+							RCUDocument rcuDoc = new RCUDocument();
+							BeanUtils.copyProperties(verification.getRcuDocument(), rcuDoc);
+							vrf.setRcuDocument(rcuDoc);
+						}
+						vrf.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						deleteVerifications.add(vrf);
+					}
 				}
 			}
 

@@ -760,7 +760,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
-				fillComboBox(decision, vrf.getDecision(), Decision.getList());
+				fillDecision(vrf, decision);
 				decision.setParent(listCell);
 				listCell.setParent(item);
 

@@ -74,6 +74,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -530,7 +531,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			checkbox.setValue(document);
 			checkbox.setLabel(getDocumentName(document.getDocumentSubId()));
 
-			if ((initiation  && lvRequiredDocs.contains(document.getDocumentSubId()) && this.verification.isNewRecord())
+			if ((initiation && lvRequiredDocs.contains(document.getDocumentSubId()) && this.verification.isNewRecord())
 					|| checkedDocuments.contains(reference)) {
 				checkbox.setChecked(true);
 			}
@@ -932,11 +933,11 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
-			
+
 		// fill the CustomerPhoneNumber object with the components data
 		doWriteComponentsToBean(this.verification);
-		
-		if (!validateLVDocuments()){
+
+		if (!validateLVDocuments()) {
 			return;
 		}
 
@@ -970,6 +971,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		// save it to list
 		try {
 			verification.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
+			if (verification.getCreatedOn() == null) {
+				verification.setCreatedOn(DateUtility.getAppDate());
+			}
 			if (doProcess(verification, tranType)) {
 
 				refreshList();
@@ -988,7 +992,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Checkbox docIdBox = (Checkbox) listitem.getFirstChild().getFirstChild();
 			LVDocument document = docIdBox.getValue();
 			if (!docIdBox.isChecked() && lvRequiredDocs.contains(document.getDocumentSubId()) && initiation) {
-				if ( MessageUtil.YES == MessageUtil
+				if (MessageUtil.YES == MessageUtil
 						.confirm("Required collateral documets are not selected, Do you want to proceed?")) {
 					return true;
 				} else {

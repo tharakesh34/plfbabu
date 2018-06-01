@@ -113,7 +113,9 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		}
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
-			throw new ConcurrencyException();
+			if (tableType != TableType.STAGE_TAB) {
+				throw new ConcurrencyException();
+			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -216,8 +218,8 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 	@Override
 	public void deleteRCUDocuments(RCUDocument rcuDocument, String tableType) {
 		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource source=null;
-		
+		MapSqlParameterSource source = null;
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from verification_rcu_details");
 		sql.append(tableType);
