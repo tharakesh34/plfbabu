@@ -1503,6 +1503,15 @@ update customers_temp set marginDeviation=0;
 	<modifyDataType tableName="PRESENTMENT_REQ_DETAILS_TEMP" columnName="UMRN_NO" newDataType="VARCHAR(50)"/>
 	<modifyDataType tableName="PRESENTMENT_REQ_DETAILS" columnName="UMRN_NO" newDataType="VARCHAR(50)"/>
 </changeSet>
-
+<changeSet id="34" author="vijaykumar.l">
+<sql>
+	Delete from RBFIELDDETAILS where RBMODULE = 'SCORES' and RBEVENT = 'RSCORE' and RbFldName = 'Total_Co_Applicants_Income';
+	Delete from RBFIELDDETAILS where RBMODULE = 'SCORES' and RBEVENT = 'RSCORE' and RbFldName = 'Total_Co_Applicants_Expense';
+    Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+	('SCORES','RSCORE','Total_Co_Applicants_Income','  Total CoApplicants Income','decimal',18,'1','1',null,'static,calvalue',null);
+	Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+	('SCORES','RSCORE','Total_Co_Applicants_Expense',' Total CoApplicants Expense','decimal',18,'1','1',null,'static,calvalue',null);
+</sql>
+</changeSet>
 </databaseChangeLog>
 	
