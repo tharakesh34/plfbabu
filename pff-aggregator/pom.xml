@@ -19,7 +19,7 @@
 		<spring.ws.version>2.1.0.RELEASE</spring.ws.version>
 		<spring.web.version>3.0.5</spring.web.version>
 		<zk.version>8.0.4</zk.version>
-		<atlantic.version>8.0.0</atlantic.version>
+		<atlantic.version>8.0.1</atlantic.version>
 		<jasperreports.version>6.5.0</jasperreports.version>
 		<jackson.version>1.9.13</jackson.version>
 	</properties>
