@@ -497,38 +497,6 @@ public class AgreementGeneration implements Serializable {
 						}
 					}*/
 					
-					//Contact Details
-					if(CollectionUtils.isEmpty(agreement.getContactDetails())){
-						agreement.setContactDetails(new ArrayList<>());
-					}
-					if (detail.getCustomerDetails().getCustomerPhoneNumList() != null) {
-						populateContactDetails(detail, agreement);
-					}
-					if(CollectionUtils.isEmpty(agreement.getContactDetails())){
-						agreement.getContactDetails().add(agreement.new ContactDetail());
-					}
-					
-					//Email Details
-					if(CollectionUtils.isEmpty(agreement.getEmailDetails())){
-						agreement.setEmailDetails(new ArrayList<>());
-					}
-					if (CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerEMailList())) {
-						int highPriorty=0;
-						for (CustomerEMail email : detail.getCustomerDetails().getCustomerEMailList()) {
-							if(highPriorty<email.getCustEMailPriority()){
-								agreement.setCustEmail(StringUtils.trimToEmpty(email.getCustEMail()));
-								highPriorty=email.getCustEMailPriority();
-							}
-							EmailDetail emailDetails=agreement.new EmailDetail();
-							emailDetails.setEmailType(StringUtils.trimToEmpty(email.getLovDescCustEMailTypeCode()));
-							emailDetails.setEmailValue(StringUtils.trimToEmpty(email.getCustEMail()));
-							agreement.getEmailDetails().add(emailDetails);
-						}
-					}
-					if(CollectionUtils.isEmpty(agreement.getEmailDetails())){
-						agreement.getEmailDetails().add(agreement.new EmailDetail());
-					}
-					
 					//Customer address
 					List<CustomerAddres> addressList = detail.getCustomerDetails().getAddressList();
 					setCustomerAddress(agreement, addressList);
@@ -572,6 +540,40 @@ public class AgreementGeneration implements Serializable {
 				}
 			}
 			
+			//Contact Details
+			if(CollectionUtils.isEmpty(agreement.getContactDetails())){
+				agreement.setContactDetails(new ArrayList<>());
+			}
+			if (aggModuleDetails.contains(PennantConstants.AGG_CONTACT)
+					&& detail.getCustomerDetails().getCustomerPhoneNumList() != null) {
+				populateContactDetails(detail, agreement);
+			}
+			if(CollectionUtils.isEmpty(agreement.getContactDetails())){
+				agreement.getContactDetails().add(agreement.new ContactDetail());
+			}
+			
+			//Email Details
+			if(CollectionUtils.isEmpty(agreement.getEmailDetails())){
+				agreement.setEmailDetails(new ArrayList<>());
+			}
+			if (aggModuleDetails.contains(PennantConstants.AGG_CONTACT)
+					&& CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerEMailList())) {
+				int highPriorty=0;
+				for (CustomerEMail email : detail.getCustomerDetails().getCustomerEMailList()) {
+					if(highPriorty<email.getCustEMailPriority()){
+						agreement.setCustEmail(StringUtils.trimToEmpty(email.getCustEMail()));
+						highPriorty=email.getCustEMailPriority();
+					}
+					EmailDetail emailDetails=agreement.new EmailDetail();
+					emailDetails.setEmailType(StringUtils.trimToEmpty(email.getLovDescCustEMailTypeCode()));
+					emailDetails.setEmailValue(StringUtils.trimToEmpty(email.getCustEMail()));
+					agreement.getEmailDetails().add(emailDetails);
+				}
+			}
+			if(CollectionUtils.isEmpty(agreement.getEmailDetails())){
+				agreement.getEmailDetails().add(agreement.new EmailDetail());
+			}
+			
 			//Populate Employee Experience Details
 			if (null!=detail.getCustomerDetails() && CollectionUtils.isNotEmpty(detail.getCustomerDetails().getEmploymentDetailsList())) {
 				setCustomerEmpDetails(detail, agreement);
@@ -582,7 +584,8 @@ public class AgreementGeneration implements Serializable {
 				agreement.setInternalLiabilityDetails(new ArrayList<>());
 			}
 			
-			if(null!=detail.getCustomerDetails() && CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustFinanceExposureList())){
+			if (aggModuleDetails.contains(PennantConstants.AGG_LIABILI) && null != detail.getCustomerDetails()
+					&& CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustFinanceExposureList())) {
 				List<FinanceEnquiry> custFinanceExposureList = detail.getCustomerDetails().getCustFinanceExposureList();
 				for(FinanceEnquiry financeEnquiry:custFinanceExposureList){
 					if(null!=financeEnquiry){
@@ -608,7 +611,8 @@ public class AgreementGeneration implements Serializable {
 				agreement.setExtendedDetails(new ArrayList<>());
 			}
 			
-			if (null != detail.getCustomerDetails() && null != detail.getCustomerDetails().getExtendedFieldRender()
+			if (aggModuleDetails.contains(PennantConstants.AGG_EXTENDE) && null != detail.getCustomerDetails()
+					&& null != detail.getCustomerDetails().getExtendedFieldRender()
 					&& MapUtils.isNotEmpty(detail.getCustomerDetails().getExtendedFieldRender().getMapValues())) {
 				agreement=populateCustomerExtendedDetails(detail, agreement);
 			}
@@ -618,7 +622,8 @@ public class AgreementGeneration implements Serializable {
 				agreement.setExternalLiabilityDetails(new ArrayList<>());
 			}
 			
-			if(null!=detail.getCustomerDetails() && CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerExtLiabilityList())){
+			if (aggModuleDetails.contains(PennantConstants.AGG_LIABILI) && null != detail.getCustomerDetails()
+					&& CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerExtLiabilityList())) {
 				
 				List<CustomerExtLiability> customerExtLiabilityList = detail.getCustomerDetails().getCustomerExtLiabilityList();
 				for(CustomerExtLiability extLiability:customerExtLiabilityList){
@@ -651,7 +656,7 @@ public class AgreementGeneration implements Serializable {
 
 				String loanRef = detail.getFinScheduleData().getFinanceMain().getFinReference();
 				List<Activity> activities = getActivityLogService().getActivities("FinanceMain", loanRef);
-				if (CollectionUtils.isNotEmpty(activities)) {
+				if (aggModuleDetails.contains(PennantConstants.AGG_ACTIVIT)&&CollectionUtils.isNotEmpty(activities)) {
 					for (Activity activity : activities) {
 						if (null != activity) {
 							ActivityDetail activityDetail = agreement.new ActivityDetail();
@@ -670,7 +675,9 @@ public class AgreementGeneration implements Serializable {
 						}
 					}
 				}
-			}else{
+			}
+			if(CollectionUtils.isEmpty(agreement.getActivityDetails())){
+				agreement.setActivityDetails(new ArrayList<>());
 				agreement.getActivityDetails().add(agreement.new ActivityDetail());
 			}
 			
@@ -678,7 +685,8 @@ public class AgreementGeneration implements Serializable {
 			if(CollectionUtils.isEmpty(agreement.getExtendedDetails())){
 				agreement.setExtendedDetails(new ArrayList<>());
 			}
-			if(null!=detail.getExtendedFieldRender()&&MapUtils.isNotEmpty(detail.getExtendedFieldRender().getMapValues())){
+			if (aggModuleDetails.contains(PennantConstants.AGG_EXTENDE) && null != detail.getExtendedFieldRender()
+					&& MapUtils.isNotEmpty(detail.getExtendedFieldRender().getMapValues())) {
 				agreement = populateExtendedDetails(detail, agreement);
 			}
 			
@@ -693,16 +701,19 @@ public class AgreementGeneration implements Serializable {
 				agreement.setExistingCustomer((StringUtils.isNotBlank(custCoreBank))?"YES":"NO");
 			}
 			
-			List<FinanceDeviations> financeDeviations = detail.getFinanceDeviations();
-			setDeviationDetails(agreement, financeDeviations);
-			List<FinanceDeviations> manualDeviations = detail.getManualDeviations();
-			setDeviationDetails(agreement, manualDeviations);
-			List<FinanceDeviations> approvedFinanceDeviations = detail.getApprovedFinanceDeviations();
-			setDeviationDetails(agreement, approvedFinanceDeviations);
-			List<FinanceDeviations> approvedManualDeviations = detail.getApprovedManualDeviations();
-			setDeviationDetails(agreement, approvedManualDeviations);
+			if(aggModuleDetails.contains(PennantConstants.AGG_DEVIATI)){
+				List<FinanceDeviations> financeDeviations = detail.getFinanceDeviations();
+				setDeviationDetails(agreement, financeDeviations);
+				List<FinanceDeviations> manualDeviations = detail.getManualDeviations();
+				setDeviationDetails(agreement, manualDeviations);
+				List<FinanceDeviations> approvedFinanceDeviations = detail.getApprovedFinanceDeviations();
+				setDeviationDetails(agreement, approvedFinanceDeviations);
+				List<FinanceDeviations> approvedManualDeviations = detail.getApprovedManualDeviations();
+				setDeviationDetails(agreement, approvedManualDeviations);
+			}
 			
 			if(CollectionUtils.isEmpty(agreement.getLoanDeviations())){
+				agreement.setLoanDeviations(new ArrayList<>());
 				agreement.getLoanDeviations().add(agreement.new LoanDeviation());
 			}
 			
@@ -716,7 +727,8 @@ public class AgreementGeneration implements Serializable {
 			if(CollectionUtils.isEmpty(agreement.getBankingDetails())){
 				agreement.setBankingDetails(new ArrayList<>());
 			}
-			if (null!=detail.getCustomerDetails() && CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerIncomeList())) {
+			if (aggModuleDetails.contains(PennantConstants.AGG_INCOMDE) && null != detail.getCustomerDetails()
+					&& CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerIncomeList())) {
 				List<CustomerIncome> customerIncomeList = detail.getCustomerDetails().getCustomerIncomeList();
 				populateAppIncExpDetails(customerIncomeList, agreement, formatter, "Primary Applicant");
 			}
@@ -724,39 +736,44 @@ public class AgreementGeneration implements Serializable {
 			if (detail.getJountAccountDetailList()!=null && !detail.getJountAccountDetailList().isEmpty()) {
 				for (JointAccountDetail jointAccountDetail : detail.getJountAccountDetailList()) {
 					CustomerDetails custdetails = customerDetailsService.getCustomerDetailsById(jointAccountDetail.getCustID(), true, "_AView");
-					if(null!=custdetails&&CollectionUtils.isNotEmpty(custdetails.getCustomerIncomeList())){
+					if(aggModuleDetails.contains(PennantConstants.AGG_INCOMDE)&&null!=custdetails&&CollectionUtils.isNotEmpty(custdetails.getCustomerIncomeList())){
 						populateAppIncExpDetails(custdetails.getCustomerIncomeList(), agreement, formatter, "Co-Applicant");
 					}
-					if(null!=custdetails&&CollectionUtils.isNotEmpty(custdetails.getCustomerBankInfoList())){
+					if (aggModuleDetails.contains(PennantConstants.AGG_BANKING) && null != custdetails
+							&& CollectionUtils.isNotEmpty(custdetails.getCustomerBankInfoList())) {
 						populateBankingDetails(agreement, formatter, "Co-Applicant", custdetails);
 					}
 					
-					populateInternalLiabilities(detail, agreement, formatter, custdetails, "Co-Applicant");
-					
-					List<CustomerExtLiability> customerExtLiabilityList = custdetails.getCustomerExtLiabilityList();
-					for(CustomerExtLiability extLiability:customerExtLiabilityList){
-						if(null!=extLiability){
-							ExternalLiabilityDetail externalLiabilityDetail=agreement.new ExternalLiabilityDetail();
-							externalLiabilityDetail.setAppType("Co-Applicant");
-							if(null!=custdetails.getCustomer()){
-								Customer customer=custdetails.getCustomer();
-								externalLiabilityDetail.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
-								externalLiabilityDetail.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
+					if(aggModuleDetails.contains(PennantConstants.AGG_LIABILI)){
+						populateInternalLiabilities(detail, agreement, formatter, custdetails, "Co-Applicant");
+						
+						List<CustomerExtLiability> customerExtLiabilityList = custdetails.getCustomerExtLiabilityList();
+						for(CustomerExtLiability extLiability:customerExtLiabilityList){
+							if(null!=extLiability){
+								ExternalLiabilityDetail externalLiabilityDetail=agreement.new ExternalLiabilityDetail();
+								externalLiabilityDetail.setAppType("Co-Applicant");
+								if(null!=custdetails.getCustomer()){
+									Customer customer=custdetails.getCustomer();
+									externalLiabilityDetail.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
+									externalLiabilityDetail.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
+								}
+								externalLiabilityDetail.setEmiAmt(PennantAppUtil.amountFormate(extLiability.getInstalmentAmount(), formatter));
+								externalLiabilityDetail.setFinInstName(StringUtils.trimToEmpty(extLiability.getLovDescBankName()));
+								externalLiabilityDetail.setOutStandingAmt(PennantAppUtil.amountFormate(extLiability.getOutStandingBal(), formatter));
+								externalLiabilityDetail.setLoanDate(DateUtility.formatToLongDate(extLiability.getFinDate()));
+								externalLiabilityDetail.setAmt(PennantAppUtil.amountFormate(extLiability.getOriginalAmount(), formatter));
+								externalLiabilityDetail.setStatus(StringUtils.trimToEmpty(extLiability.getLovDescFinStatus()));
+								agreement.getExternalLiabilityDetails().add(externalLiabilityDetail);
 							}
-							externalLiabilityDetail.setEmiAmt(PennantAppUtil.amountFormate(extLiability.getInstalmentAmount(), formatter));
-							externalLiabilityDetail.setFinInstName(StringUtils.trimToEmpty(extLiability.getLovDescBankName()));
-							externalLiabilityDetail.setOutStandingAmt(PennantAppUtil.amountFormate(extLiability.getOutStandingBal(), formatter));
-							externalLiabilityDetail.setLoanDate(DateUtility.formatToLongDate(extLiability.getFinDate()));
-							externalLiabilityDetail.setAmt(PennantAppUtil.amountFormate(extLiability.getOriginalAmount(), formatter));
-							externalLiabilityDetail.setStatus(StringUtils.trimToEmpty(extLiability.getLovDescFinStatus()));
-							agreement.getExternalLiabilityDetails().add(externalLiabilityDetail);
 						}
 					}
 				}
 			}
 			
-			if (null!=detail.getCustomerDetails() && CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerBankInfoList())) {
-				populateBankingDetails(agreement, formatter, "Primary Applicant", detail.getCustomerDetails());
+			if(aggModuleDetails.contains(PennantConstants.AGG_BANKING)){
+				if (null!=detail.getCustomerDetails() && CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerBankInfoList())) {
+					populateBankingDetails(agreement, formatter, "Primary Applicant", detail.getCustomerDetails());
+				}
 			}
 			
 			//Size Checks
@@ -782,28 +799,34 @@ public class AgreementGeneration implements Serializable {
 			}
 			
 			//Setting Sourcing Details
+			if(aggModuleDetails.contains(PennantConstants.AGG_SOURCIN)){
+				if(CollectionUtils.isEmpty(agreement.getSourcingDetails())){
+					agreement.setSourcingDetails(new ArrayList<>());
+				}
+				if (null!=detail.getFinScheduleData() && null!=detail.getFinScheduleData().getFinanceMain()) {
+					SourcingDetail sourcingDetail=agreement.new SourcingDetail();
+					FinanceMain financeMain2=detail.getFinScheduleData().getFinanceMain();
+					sourcingDetail.setDsaName(StringUtils.trimToEmpty(financeMain2.getDsaCode()));
+					sourcingDetail.setSourceChannel(StringUtils.trimToEmpty(financeMain2.getSalesDepartmentDesc()));
+					agreement.getSourcingDetails().add(sourcingDetail);
+				}
+			}
 			if(CollectionUtils.isEmpty(agreement.getSourcingDetails())){
 				agreement.setSourcingDetails(new ArrayList<>());
-			}
-			if (null!=detail.getFinScheduleData() && null!=detail.getFinScheduleData().getFinanceMain()) {
-				SourcingDetail sourcingDetail=agreement.new SourcingDetail();
-				FinanceMain financeMain2=detail.getFinScheduleData().getFinanceMain();
-				sourcingDetail.setDsaName(StringUtils.trimToEmpty(financeMain2.getDsaCode()));
-				sourcingDetail.setSourceChannel(StringUtils.trimToEmpty(financeMain2.getSalesDepartmentDesc()));
-				agreement.getSourcingDetails().add(sourcingDetail);
-			}
-			else{
 				agreement.getSourcingDetails().add(agreement.new SourcingDetail());
 			}
 			//-------------- Setting IRR Details
+			if(aggModuleDetails.contains(PennantConstants.AGG_IRRDTLS)){
+				if(CollectionUtils.isEmpty(agreement.getIrrDetails())){
+					agreement.setIrrDetails(new ArrayList<>());
+				}
+				
+				if(null!=detail.getFinScheduleData()&&CollectionUtils.isNotEmpty(detail.getFinScheduleData().getiRRDetails())){
+					setIrrDetails(detail, agreement);
+				}
+			}
 			if(CollectionUtils.isEmpty(agreement.getIrrDetails())){
 				agreement.setIrrDetails(new ArrayList<>());
-			}
-			
-			if(null!=detail.getFinScheduleData()&&CollectionUtils.isNotEmpty(detail.getFinScheduleData().getiRRDetails())){
-				setIrrDetails(detail, agreement);
-			}
-			if(CollectionUtils.isEmpty(agreement.getIrrDetails())){
 				agreement.getIrrDetails().add(agreement.new IrrDetail());
 			}
 			
@@ -830,53 +853,62 @@ public class AgreementGeneration implements Serializable {
 					&&null!=detail.getFinScheduleData().getFinanceScheduleDetails().get(0).getCalculatedRate()){
 				agreement.setEffDateFltRate(PennantApplicationUtil.formatRate(
 						detail.getFinScheduleData().getFinanceScheduleDetails().get(0).getCalculatedRate().doubleValue(), 2));
-				
 			}
 			
 			
 			// ----------------Customer Repayment Details
 			Mandate mandate = detail.getMandate();
-			if(null!=mandate){
+			if(aggModuleDetails.contains(PennantConstants.AGG_REPAYDT)&&null!=mandate){
 				setRepaymentDetails(agreement, mandate);
 			}
 			
 			// ----------------Customer Charges Details
+			if(aggModuleDetails.contains(PennantConstants.AGG_CHRGDET)){
+				if(CollectionUtils.isEmpty(agreement.getCusCharges())){
+					agreement.setCusCharges(new ArrayList<>());
+				}
+				if(null!=detail.getFinScheduleData()&&CollectionUtils.isNotEmpty(detail.getFinScheduleData().getFinFeeDetailList())){
+					setFeeChargeDetails(agreement, formatter, detail.getFinScheduleData().getFinFeeDetailList());
+				}
+			}
 			if(CollectionUtils.isEmpty(agreement.getCusCharges())){
 				agreement.setCusCharges(new ArrayList<>());
-			}
-			if(null!=detail.getFinScheduleData()&&CollectionUtils.isNotEmpty(detail.getFinScheduleData().getFinFeeDetailList())){
-				setFeeChargeDetails(agreement, formatter, detail.getFinScheduleData().getFinFeeDetailList());
-			}
-			if(CollectionUtils.isEmpty(agreement.getCusCharges())){
 				agreement.getCusCharges().add(agreement.new CusCharge());
 			}
 			
 			// ----------------Disbursement Details
+			if(aggModuleDetails.contains(PennantConstants.AGG_DISBURS)){
+				if(CollectionUtils.isEmpty(agreement.getDisbursements())){
+					agreement.setDisbursements(new ArrayList<>());
+				}
+				List<FinAdvancePayments> advancePaymentsList = detail.getAdvancePaymentsList();
+				if(CollectionUtils.isNotEmpty(advancePaymentsList)){
+					setDisbursementDetails(agreement, advancePaymentsList,formatter);
+				}
+			}
 			if(CollectionUtils.isEmpty(agreement.getDisbursements())){
 				agreement.setDisbursements(new ArrayList<>());
-			}
-			List<FinAdvancePayments> advancePaymentsList = detail.getAdvancePaymentsList();
-			if(CollectionUtils.isNotEmpty(advancePaymentsList)){
-				setDisbursementDetails(agreement, advancePaymentsList,formatter);
-			}else{
 				agreement.getDisbursements().add(agreement.new Disbursement());
 			}
 			
 			// ----------------Document Details
-			if(CollectionUtils.isEmpty(agreement.getDocuments())){
-				agreement.setDocuments(new ArrayList<>());
-			}
-			List<DocumentDetails> documentDetailsList = detail.getDocumentDetailsList();
-			if(CollectionUtils.isNotEmpty(documentDetailsList)){
-				setLoanDocuments(agreement, documentDetailsList);
-			}
-			if(null!=detail.getCustomerDetails()){
-				List<CustomerDocument> customerDocuments=detail.getCustomerDetails().getCustomerDocumentsList();
-				if(CollectionUtils.isNotEmpty(customerDocuments)){
-					setCustomerDocuments(agreement, customerDocuments);
+			if(aggModuleDetails.contains(PennantConstants.AGG_DOCDTLS)){
+				if(CollectionUtils.isEmpty(agreement.getDocuments())){
+					agreement.setDocuments(new ArrayList<>());
+				}
+				List<DocumentDetails> documentDetailsList = detail.getDocumentDetailsList();
+				if(CollectionUtils.isNotEmpty(documentDetailsList)){
+					setLoanDocuments(agreement, documentDetailsList);
+				}
+				if(null!=detail.getCustomerDetails()){
+					List<CustomerDocument> customerDocuments=detail.getCustomerDetails().getCustomerDocumentsList();
+					if(CollectionUtils.isNotEmpty(customerDocuments)){
+						setCustomerDocuments(agreement, customerDocuments);
+					}
 				}
 			}
 			if(CollectionUtils.isEmpty(agreement.getDocuments())){
+				agreement.setDocuments(new ArrayList<>());
 				agreement.getDocuments().add(agreement.new Document());
 			}
 			
@@ -885,7 +917,7 @@ public class AgreementGeneration implements Serializable {
 				agreement.setCovenants(new ArrayList<>());
 			}
 			List<FinCovenantType> covenantTypeList = detail.getCovenantTypeList();
-			if(CollectionUtils.isNotEmpty(covenantTypeList)){
+			if(aggModuleDetails.contains(PennantConstants.AGG_COVENAN)&&CollectionUtils.isNotEmpty(covenantTypeList)){
 				setCovenantDetails(agreement,covenantTypeList);
 			}
 			if(CollectionUtils.isEmpty(agreement.getCovenants())){
@@ -897,7 +929,7 @@ public class AgreementGeneration implements Serializable {
 			if(CollectionUtils.isEmpty(agreement.getCollateralData())){
 				agreement.setCollateralData(new ArrayList<AgreementDetail.FinCollaterals>());
 			}
-			if (CollectionUtils.isNotEmpty(detail.getCollateralAssignmentList())) {				
+			if (aggModuleDetails.contains(PennantConstants.AGG_COLLTRL)&&CollectionUtils.isNotEmpty(detail.getCollateralAssignmentList())) {
 				agreement = getCollateralDetails(agreement, detail, formatter);
 			}
 			if(CollectionUtils.isEmpty(agreement.getCollateralData())){
@@ -928,7 +960,8 @@ public class AgreementGeneration implements Serializable {
 			}
 			
 			// -----------------Eligibility Detail
-			if(CollectionUtils.isNotEmpty(detail.getElgRuleList())){
+			if (aggModuleDetails.contains(PennantConstants.AGG_ELGBLTY)
+					&& CollectionUtils.isNotEmpty(detail.getElgRuleList())) {
 				if(CollectionUtils.isEmpty(agreement.getEligibilityList())){
 					agreement.setEligibilityList(new ArrayList<>());
 				}
@@ -1016,107 +1049,29 @@ public class AgreementGeneration implements Serializable {
 						.getFinScheduleData().getFinanceMain().getFinCcy());
 			}
 			// Co-applicant details
-			setCoapplicantDetails(detail, agreement);
+			setCoapplicantDetails(detail, agreement, aggModuleDetails);
 			//Mandate details
 			setMandateDetails(detail, agreement);
 			//customer bank info
-			setCustomerBankInfo(detail, agreement);
+			setCustomerBankInfo(detail, agreement, aggModuleDetails);
 			
 			// Verification details
-			
-			if(CollectionUtils.isEmpty(agreement.getFiVerification())){
-				agreement.setFiVerification(new ArrayList<>());
-			}
-			if(CollectionUtils.isEmpty(agreement.getLegalVerification())){
-				agreement.setLegalVerification(new ArrayList<>());
-			}
-			if(CollectionUtils.isEmpty(agreement.getRcuVerification())){
-				agreement.setRcuVerification(new ArrayList<>());
-			}
-			if(CollectionUtils.isEmpty(agreement.getTechnicalVerification())){
-				agreement.setTechnicalVerification(new ArrayList<>());
-			}
-			
-			if(null!= finRef){
-				List<Verification> verifications = verificationService.getVerificationsForAggrement(finRef);
-				
-				if(CollectionUtils.isNotEmpty(verifications)){
-					for (Verification verification : verifications) {
-						if(null!=verification){
-							VerificationType type = VerificationType.getVerificationType(verification.getVerificationType());
-							VerificationDetail verificationData=agreement.new VerificationDetail();
-							verificationData.setInitiationDate(DateUtility.formatToLongDate(verification.getCreatedOn()));
-							verificationData.setCompletionDate(DateUtility.formatToLongDate(verification.getLastVerificationDate()));
-							verificationData.setFinalStatus(StringUtils.trimToEmpty(verification.getVerificationStatus()));
-							verificationData.setRemarks(StringUtils.trimToEmpty(verification.getRemarks()));
-							verificationData.setAgencyName(StringUtils.trimToEmpty(verification.getAgencyName()));
-
-							switch (type) {
-							case FI:
-								verificationData.setApplicantName(StringUtils.trimToEmpty(verification.getCustomerName()));
-								if(null!=verification.getFieldInvestigation()){
-									FieldInvestigation fieldInvestigation=verification.getFieldInvestigation();
-									verificationData.setAddressType(StringUtils.trimToEmpty(fieldInvestigation.getAddressType()));
-									verificationData.setDoneBy(StringUtils.trimToEmpty(fieldInvestigation.getAgentCode()).concat("-").concat(StringUtils.trimToEmpty(fieldInvestigation.getAgentName())));
-								}
-								agreement.getFiVerification().add(verificationData);
-								break;
-							case TV:
-								TechnicalVerification technicalVerification = verification.getTechnicalVerification();
-								if(null!=technicalVerification){
-									verificationData.setCollateralType(StringUtils.trimToEmpty(technicalVerification.getCollateralType()));
-									verificationData.setCollateralReference(StringUtils.trimToEmpty(technicalVerification.getCollateralRef()));
-									verificationData.setDoneBy(StringUtils.trimToEmpty(technicalVerification.getAgentCode()).concat("-").concat(StringUtils.trimToEmpty(technicalVerification.getAgentName())));
-								}
-								agreement.getTechnicalVerification().add(verificationData);
-								break;
-							case LV:
-								LegalVerification legalVerification = verification.getLegalVerification();
-								if(null!=legalVerification){
-									verificationData.setDoneBy(StringUtils.trimToEmpty(legalVerification.getAgentCode()).concat("-").concat(StringUtils.trimToEmpty(legalVerification.getAgentName())));
-								}
-								agreement.getLegalVerification().add(verificationData);
-								break;
-							case RCU:
-								RiskContainmentUnit riskContainmentUnit = verification.getRcuVerification();
-								if(null!=riskContainmentUnit){
-									verificationData.setDoneBy(StringUtils.trimToEmpty(riskContainmentUnit.getAgentCode()).concat("-").concat(StringUtils.trimToEmpty(riskContainmentUnit.getAgentName())));
-								}
-								if(null!=riskContainmentUnit&&CollectionUtils.isNotEmpty(riskContainmentUnit.getRcuDocuments())){
-									for (RCUDocument rcuDocument : riskContainmentUnit.getRcuDocuments()) {
-										if(null!=rcuDocument){
-											String rcuDocVerficationType=null;
-											if(rcuDocument.getVerificationType()==0){
-												rcuDocVerficationType="RCU Document Verification Not Available";
-											}else{
-												for(RCUDocVerificationType rcuDocVerification:RCUDocVerificationType.values()){
-													if(rcuDocVerification.getKey()==rcuDocument.getVerificationType()){
-														rcuDocVerficationType=rcuDocVerification.getValue();
-													}
-												}
-											}
-											String rcuDocStatus=null;
-											if(rcuDocument.getStatus()==0){
-												rcuDocStatus="RCU Document Status Not Available";
-											}else{
-												for(RCUDocStatus rcuDoc:RCUDocStatus.values()){
-													if(rcuDoc.getKey()==rcuDocument.getStatus()){
-														rcuDocStatus=rcuDoc.getValue();
-													}
-												}
-											}
-											verificationData.setVerificationType(StringUtils.trimToEmpty(rcuDocVerficationType));
-											verificationData.setDocumentName(StringUtils.trimToEmpty(rcuDocument.getDocName()));
-											verificationData.setDocumentStatus(StringUtils.trimToEmpty(rcuDocStatus));
-										}
-										agreement.getRcuVerification().add(verificationData);
-									}
-								}
-								break;
-							}
-						}
-					}
+			aggModuleDetails=aggModuleDetails.concat("VERIFIC");
+			if (aggModuleDetails.contains(PennantConstants.AGG_VERIFIC)) {
+				if(CollectionUtils.isEmpty(agreement.getFiVerification())){
+					agreement.setFiVerification(new ArrayList<>());
 				}
+				if(CollectionUtils.isEmpty(agreement.getLegalVerification())){
+					agreement.setLegalVerification(new ArrayList<>());
+				}
+				if(CollectionUtils.isEmpty(agreement.getRcuVerification())){
+					agreement.setRcuVerification(new ArrayList<>());
+				}
+				if(CollectionUtils.isEmpty(agreement.getTechnicalVerification())){
+					agreement.setTechnicalVerification(new ArrayList<>());
+				}
+				
+				populateVerificationDetails(agreement, finRef);
 			}
 			
 			if(CollectionUtils.isEmpty(agreement.getFiVerification())){
@@ -1146,6 +1101,98 @@ public class AgreementGeneration implements Serializable {
 		}
 		logger.debug("Leaving");
 		return agreement;
+	}
+
+	/**
+	 * Method to populate tge verification details
+	 * 
+	 * @param agreement
+	 * @param finRef
+	 */
+	private void populateVerificationDetails(AgreementDetail agreement, String finRef) {
+		if(null!= finRef){
+			List<Verification> verifications = verificationService.getVerificationsForAggrement(finRef);
+			
+			if(CollectionUtils.isNotEmpty(verifications)){
+				for (Verification verification : verifications) {
+					if(null!=verification){
+						VerificationType type = VerificationType.getVerificationType(verification.getVerificationType());
+						VerificationDetail verificationData=agreement.new VerificationDetail();
+						verificationData.setInitiationDate(DateUtility.formatToLongDate(verification.getCreatedOn()));
+						verificationData.setCompletionDate(DateUtility.formatToLongDate(verification.getVerificationDate()));
+						verificationData.setFinalStatus(StringUtils.trimToEmpty(verification.getVerificationStatus()));
+						//TODO:: Need confirmation for remarks for now taking decision remarks
+						//verificationData.setRemarks(StringUtils.trimToEmpty(verification.getRemarks()));
+						verificationData.setRemarks(StringUtils.trimToEmpty(verification.getDecisionRemarks()));
+						verificationData.setAgencyName(StringUtils.trimToEmpty(verification.getAgencyName()));
+
+						switch (type) {
+						case FI:
+							verificationData.setApplicantName(StringUtils.trimToEmpty(verification.getCustomerName()));
+							if(null!=verification.getFieldInvestigation()){
+								FieldInvestigation fieldInvestigation=verification.getFieldInvestigation();
+								verificationData.setAddressType(StringUtils.trimToEmpty(fieldInvestigation.getAddressType()));
+								verificationData.setDoneBy(StringUtils.trimToEmpty(fieldInvestigation.getAgentCode()).concat("-").concat(StringUtils.trimToEmpty(fieldInvestigation.getAgentName())));
+							}
+							agreement.getFiVerification().add(verificationData);
+							break;
+						case TV:
+							TechnicalVerification technicalVerification = verification.getTechnicalVerification();
+							if(null!=technicalVerification){
+								verificationData.setCollateralType(StringUtils.trimToEmpty(technicalVerification.getCollateralType()));
+								verificationData.setCollateralReference(StringUtils.trimToEmpty(technicalVerification.getCollateralRef()));
+								verificationData.setDoneBy(StringUtils.trimToEmpty(technicalVerification.getAgentCode()).concat("-").concat(StringUtils.trimToEmpty(technicalVerification.getAgentName())));
+							}
+							agreement.getTechnicalVerification().add(verificationData);
+							break;
+						case LV:
+							LegalVerification legalVerification = verification.getLegalVerification();
+							if(null!=legalVerification){
+								verificationData.setDoneBy(StringUtils.trimToEmpty(legalVerification.getAgentCode()).concat("-").concat(StringUtils.trimToEmpty(legalVerification.getAgentName())));
+							}
+							agreement.getLegalVerification().add(verificationData);
+							break;
+						case RCU:
+							RiskContainmentUnit riskContainmentUnit = verification.getRcuVerification();
+							if(null!=riskContainmentUnit){
+								verificationData.setDoneBy(StringUtils.trimToEmpty(riskContainmentUnit.getAgentCode()).concat("-").concat(StringUtils.trimToEmpty(riskContainmentUnit.getAgentName())));
+							}
+							if(null!=riskContainmentUnit&&CollectionUtils.isNotEmpty(riskContainmentUnit.getRcuDocuments())){
+								for (RCUDocument rcuDocument : riskContainmentUnit.getRcuDocuments()) {
+									if(null!=rcuDocument){
+										String rcuDocVerficationType=null;
+										if(rcuDocument.getVerificationType()==0){
+											rcuDocVerficationType="RCU Document Verification Not Available";
+										}else{
+											for(RCUDocVerificationType rcuDocVerification:RCUDocVerificationType.values()){
+												if(rcuDocVerification.getKey()==rcuDocument.getVerificationType()){
+													rcuDocVerficationType=rcuDocVerification.getValue();
+												}
+											}
+										}
+										String rcuDocStatus=null;
+										if(rcuDocument.getStatus()==0){
+											rcuDocStatus="RCU Document Status Not Available";
+										}else{
+											for(RCUDocStatus rcuDoc:RCUDocStatus.values()){
+												if(rcuDoc.getKey()==rcuDocument.getStatus()){
+													rcuDocStatus=rcuDoc.getValue();
+												}
+											}
+										}
+										verificationData.setVerificationType(StringUtils.trimToEmpty(rcuDocVerficationType));
+										verificationData.setDocumentName(StringUtils.trimToEmpty(rcuDocument.getDocName()));
+										verificationData.setDocumentStatus(StringUtils.trimToEmpty(rcuDocStatus));
+									}
+									agreement.getRcuVerification().add(verificationData);
+								}
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -1338,9 +1385,9 @@ public class AgreementGeneration implements Serializable {
 		int empExperence=0;
 		for(CustomerEmploymentDetail custEmploymentDetail:employmentDetailsList){
 			if(null!=custEmploymentDetail){
-				empExperence+=DateUtility.getYearsBetween(custEmploymentDetail.getCustEmpTo(),
-						custEmploymentDetail.getCustEmpFrom());
-				
+				Date toDate=(custEmploymentDetail.isCurrentEmployer())?DateUtility.getAppDate():custEmploymentDetail.getCustEmpFrom();
+				int tempExperence=DateUtility.getYearsBetween(custEmploymentDetail.getCustEmpTo(),toDate);
+				empExperence=(tempExperence>0)?(empExperence+tempExperence):empExperence;
 			}
 		}
 		agreement.setCustYearsExp(Integer.toString(empExperence));
@@ -1443,9 +1490,12 @@ public class AgreementGeneration implements Serializable {
 		agreement.setRepayMode(StringUtils.trimToEmpty(mandate.getMandateType()));
 	}
 
-	private void setCustomerBankInfo(FinanceDetail detail, AgreementDetail agreement) {
-		agreement.setCustomerBankInfos(new ArrayList<com.pennant.backend.model.finance.AgreementDetail.CustomerBankInfo>());
-		if (detail!=null && detail.getCustomerDetails()!=null && detail.getCustomerDetails().getCustomerBankInfoList()!=null) {
+	private void setCustomerBankInfo(FinanceDetail detail, AgreementDetail agreement, String aggModuleDetails) {
+		agreement.setCustomerBankInfos(
+				new ArrayList<com.pennant.backend.model.finance.AgreementDetail.CustomerBankInfo>());
+		if (aggModuleDetails.contains(PennantConstants.AGG_BANKING) && detail != null
+				&& detail.getCustomerDetails() != null
+				&& detail.getCustomerDetails().getCustomerBankInfoList() != null) {
 			List<CustomerBankInfo> list = detail.getCustomerDetails().getCustomerBankInfoList();
 			for (CustomerBankInfo customerBankInfo : list) {
 				com.pennant.backend.model.finance.AgreementDetail.CustomerBankInfo custbank = agreement.new CustomerBankInfo();
@@ -1455,11 +1505,12 @@ public class AgreementGeneration implements Serializable {
 				custbank.setAccountNumber(StringUtils.trimToEmpty(customerBankInfo.getAccountNumber()));
 				agreement.getCustomerBankInfos().add(custbank);
 			}
-			
-		}else{
+
+		}
+		if (CollectionUtils.isEmpty(agreement.getCustomerBankInfos())) {
 			agreement.getCustomerBankInfos().add(agreement.new CustomerBankInfo());
 		}
-		
+
 	}
 
 	private void setCustomerAddress(AgreementDetail agreement, List<CustomerAddres> addressList) {
@@ -1609,9 +1660,9 @@ public class AgreementGeneration implements Serializable {
 		
 	}
 
-	private void setCoapplicantDetails(FinanceDetail detail, AgreementDetail agreement) {
+	private void setCoapplicantDetails(FinanceDetail detail, AgreementDetail agreement, String aggModuleDetails) {
 		agreement.setCoApplicants(new ArrayList<>());
-		if (detail.getJountAccountDetailList()!=null && !detail.getJountAccountDetailList().isEmpty()) {
+		if (aggModuleDetails.contains(PennantConstants.AGG_COAPPDT)&&detail.getJountAccountDetailList()!=null && !detail.getJountAccountDetailList().isEmpty()) {
 			List<CustomerDetails> custIDs=new ArrayList<CustomerDetails>();
 			for (JointAccountDetail jointAccountDetail : detail.getJountAccountDetailList()) {
 				CustomerDetails custdetails = customerDetailsService.getCustomerDetailsById(jointAccountDetail.getCustID(), true, "_AView");
@@ -1646,7 +1697,7 @@ public class AgreementGeneration implements Serializable {
 			}
 		}
 		
-		if (CollectionUtils.isNotEmpty(detail.getGurantorsDetailList())) {
+		if (aggModuleDetails.contains(PennantConstants.AGG_COAPPDT)&&CollectionUtils.isNotEmpty(detail.getGurantorsDetailList())) {
 			detail.getGurantorsDetailList().forEach((guarantorDetail)->{
 				CoApplicant coapplicant = agreement.new CoApplicant();
 				if(guarantorDetail.getCustID()>0){

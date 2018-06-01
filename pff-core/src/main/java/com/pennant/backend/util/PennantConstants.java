@@ -307,6 +307,23 @@ public class PennantConstants {
 	public static final String AGG_CHKLSTD = "CHKLSTD";
 	public static final String AGG_RECOMMD = "RECOMMD";
 	public static final String AGG_EXCEPTN = "EXCEPTN";
+	public static final String AGG_VERIFIC = "VERIFIC";
+	public static final String AGG_CONTACT = "CONTACT";
+	public static final String AGG_COAPPDT = "COAPPDT";
+	public static final String AGG_COLLTRL = "COLLTRL";
+	public static final String AGG_REPAYDT = "REPAYDT";
+	public static final String AGG_CHRGDET = "CHRGDET";
+	public static final String AGG_DISBURS = "DISBURS";
+	public static final String AGG_DOCDTLS = "DOCDTLS";
+	public static final String AGG_COVENAN = "COVENAN";
+	public static final String AGG_LIABILI = "LIABILI";
+	public static final String AGG_BANKING = "BANKING";
+	public static final String AGG_SOURCIN = "SOURCIN";
+	public static final String AGG_EXTENDE = "EXTENDE";
+	public static final String AGG_IRRDTLS = "IRRDTLS";
+	public static final String AGG_DEVIATI = "DEVIATI";
+	public static final String AGG_ACTIVIT = "ACTIVIT";
+	public static final String AGG_ELGBLTY = "ELGBLTY";
 
 	// Workflow definition Constants
 	public static final String WORFLOW_MODULE_FINANCE = "FINANCE";

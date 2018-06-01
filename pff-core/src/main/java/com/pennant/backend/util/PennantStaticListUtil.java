@@ -1161,6 +1161,23 @@ public class PennantStaticListUtil {
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_CHKLSTD,Labels.getLabel("label_AggCheckListDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_RECOMMD,Labels.getLabel("label_AggRecommendations")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_EXCEPTN,Labels.getLabel("label_AggExceptions")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_VERIFIC,Labels.getLabel("label_AggVerifications")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_CONTACT,Labels.getLabel("label_AggContact")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_COAPPDT,Labels.getLabel("label_AggCoApplicantDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_COLLTRL,Labels.getLabel("label_AggCollateralDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_REPAYDT,Labels.getLabel("label_AggRepaymentDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_CHRGDET,Labels.getLabel("label_AggChargesDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_DISBURS,Labels.getLabel("label_AggDisbursementDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_DOCDTLS,Labels.getLabel("label_AggDocumentsDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_COVENAN,Labels.getLabel("label_AggCovenantDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_LIABILI,Labels.getLabel("label_AggLiabilityDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_BANKING,Labels.getLabel("label_AggBankingDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_SOURCIN,Labels.getLabel("label_AggSourcingDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_EXTENDE,Labels.getLabel("label_AggExtendedDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_IRRDTLS,Labels.getLabel("label_AggIRRDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_DEVIATI,Labels.getLabel("label_AggDeviationDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_ACTIVIT,Labels.getLabel("label_AggActivityDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_ELGBLTY,Labels.getLabel("label_AggEligibilityDetails")));
 		}
 		return aggDetails;
 	}
