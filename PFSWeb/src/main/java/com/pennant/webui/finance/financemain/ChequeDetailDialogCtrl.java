@@ -1627,12 +1627,23 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					for (FinanceScheduleDetail detail : schedules) {
 						if (DateUtility.compare(emiDate, detail.getSchDate()) == 0) {
 
-							BigDecimal repayAmount = PennantApplicationUtil.formateAmount(detail.getRepayAmount(), CurrencyUtil.getFormat(detail.getFinCcy()));
-							if (repayAmount.compareTo(emiAmount.getActualValue()) != 0) {
+							boolean isTDS = false;
+							BigDecimal repayAmount = detail.getRepayAmount();
+							BigDecimal emiAmounte = BigDecimal.ZERO;
+							if (detail.getTDSAmount() != null && detail.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
+								repayAmount = repayAmount.subtract(detail.getTDSAmount());
+								isTDS = true;
+							}
+							emiAmounte = PennantApplicationUtil.unFormateAmount(emiAmount.getActualValue(), CurrencyUtil.getFormat(detail.getFinCcy()));
+							if (repayAmount.compareTo(emiAmounte) != 0) {
 								if (fromLoan) {
 									parenttab.setSelected(true);
 								}
-								throw new WrongValueException(emiAmount, Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
+								if (isTDS) {
+									throw new WrongValueException(emiAmount, Labels.getLabel("ChequeDetailDialog_EMI_TDS_Amount"));
+								} else {
+									throw new WrongValueException(emiAmount, Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
+								}
 							}
 						}
 					}
