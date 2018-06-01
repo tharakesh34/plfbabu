@@ -91,8 +91,8 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	private Date docReceivedDate;
 	private String categoryCode;
 	
-	private boolean isPdd;
-	private boolean isOtc;
+	private boolean pddFlag;
+	private boolean otcFlag;
 	
 
 	// API validation purpose only
@@ -119,8 +119,8 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 		excludeFields.add("validateCovenantType");
 		excludeFields.add("docReceivedDate");
 		excludeFields.add("categoryCode");
-		excludeFields.add("isPdd");
-		excludeFields.add("isOtc");
+		excludeFields.add("pddFlag");
+		excludeFields.add("otcFlag");
 		
 		return excludeFields;
 	}
@@ -259,20 +259,20 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 		this.alwOtc = alwOtc;
 	}
 
-	public boolean isPdd() {
-		return isPdd;
+	public boolean isPddFlag() {
+		return pddFlag;
 	}
 
-	public void setPdd(boolean isPdd) {
-		this.isPdd = isPdd;
+	public void setPddFlag(boolean pddFlag) {
+		this.pddFlag = pddFlag;
 	}
 
-	public boolean isOtc() {
-		return isOtc;
+	public boolean isOtcFlag() {
+		return otcFlag;
 	}
 
-	public void setOtc(boolean isOtc) {
-		this.isOtc = isOtc;
+	public void setOtcFlag(boolean otcFlag) {
+		this.otcFlag = otcFlag;
 	}
 
 }

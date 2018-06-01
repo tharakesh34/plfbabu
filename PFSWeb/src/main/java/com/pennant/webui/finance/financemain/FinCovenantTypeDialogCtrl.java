@@ -52,7 +52,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.xpath.operations.Bool;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -602,13 +601,13 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		if (aFinAdvnancePayments.getReceivableDate() != null) {
 			this.receivableDate.setValue(aFinAdvnancePayments.getReceivableDate());
 		}
-		this.covenantType.setAttribute("pdd",aFinAdvnancePayments.isPdd());
-		this.covenantType.setAttribute("otc",aFinAdvnancePayments.isOtc());
+		this.covenantType.setAttribute("pdd",aFinAdvnancePayments.isPddFlag());
+		this.covenantType.setAttribute("otc",aFinAdvnancePayments.isOtcFlag());
 		this.recordStatus.setValue(aFinAdvnancePayments.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aFinAdvnancePayments.getRecordType()));
 		if(aFinAdvnancePayments.getRecordType()!=null){
-			this.alwPostpone.setDisabled(!aFinAdvnancePayments.isPdd());
-			this.alwOtc.setDisabled(!aFinAdvnancePayments.isOtc());			
+			this.alwPostpone.setDisabled(!aFinAdvnancePayments.isPddFlag());
+			this.alwOtc.setDisabled(!aFinAdvnancePayments.isOtcFlag());			
 		}
 		
 		
@@ -1162,8 +1161,8 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				this.covenantType.setDescription(dcoType.getDocTypeDesc());
 				this.covenantType.setAttribute("pdd", dcoType.isPdd());
 				this.covenantType.setAttribute("otc", dcoType.isOtc());
-				getFinCovenantType().setPdd(dcoType.isPdd());
-				getFinCovenantType().setOtc(dcoType.isOtc());
+				getFinCovenantType().setPddFlag(dcoType.isPdd());
+				getFinCovenantType().setOtcFlag(dcoType.isOtc());
 				this.alwPostpone.setDisabled(!dcoType.isPdd());
 				this.alwOtc.setDisabled(!dcoType.isOtc());
 				validateDocumentExistance(dcoType);

@@ -168,7 +168,7 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 			selectSql.append(" CovenantTypeDesc,DocReceivedDate,");
 		}else{
 			if (StringUtils.trimToEmpty(type).contains("View")){
-				selectSql.append(" CovenantTypeDesc,MandRoleDesc,");
+				selectSql.append(" CovenantTypeDesc,MandRoleDesc,pddFlag,otcFlag,");
 			}
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
