@@ -68,6 +68,8 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	@XmlElement
 	private boolean					authoritySignatory;
 	@XmlElement
+	private boolean					includeIncome;
+	@XmlElement
 	private int						sequence;
 
 	private List<FinanceExposure> primaryList = null;
@@ -315,6 +317,14 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 
 	public void setCustomerIncomeList(List<CustomerIncome> customerIncomeList) {
 		this.customerIncomeList = customerIncomeList;
+	}
+
+	public boolean isIncludeIncome() {
+		return includeIncome;
+	}
+
+	public void setIncludeIncome(boolean includeIncome) {
+		this.includeIncome = includeIncome;
 	}
 
 }

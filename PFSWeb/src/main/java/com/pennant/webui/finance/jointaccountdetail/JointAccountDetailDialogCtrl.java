@@ -156,6 +156,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	protected Space space_CatOfCoApplicant;
 	protected Combobox catOfCoApplicant;
 	
+	protected Checkbox includeIncome;
+
 	protected Checkbox															authoritySignatory;
 	protected Intbox															sequence;
 	protected Hbox																hbox_Sequence;
@@ -866,6 +868,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.recordType.setValue(PennantJavaUtil.getLabel(aJountAccountDetail.getRecordType()));
 		this.authoritySignatory.setChecked(aJountAccountDetail.isAuthoritySignatory());
 		this.sequence.setValue(aJountAccountDetail.getSequence());
+		this.includeIncome.setChecked(aJountAccountDetail.isIncludeIncome());
 		logger.debug("Leaving");
 	}
 
@@ -1244,6 +1247,12 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 		try {
 			aJountAccountDetail.setSequence(this.sequence.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			aJountAccountDetail.setIncludeIncome(this.includeIncome.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
