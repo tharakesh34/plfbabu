@@ -235,8 +235,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		if (!StringUtils.equals(RepayConstants.PAYMENT_SUCCESS, status.toString())) {
 			if (reasonCode == null) {
 				throw new Exception("ReasonCode should be mandatory.");
-			} else if (reasonCode.toString().length() != 3) {
-				throw new Exception("ReasonCode length should be 3.");
+			} else if (reasonCode.toString().length() == 0) {
+				throw new Exception("ReasonCode should not be empty.");
 			}
 		}
 	}
