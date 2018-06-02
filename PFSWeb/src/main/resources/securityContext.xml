@@ -55,7 +55,7 @@
 	
 	<beans:bean id="ldapContext" class="com.pennanttech.pennapps.core.security.LdapContext" scope="prototype"/>
 		
-	<beans:bean id="daoAuthenticationProvider" class="com.pennanttech.pennapps.core.security.ldap.ActiveDirectoryLdapAuthenticationProvider">
+	<beans:bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
 		<beans:property name="passwordEncoder" ref="passwordEncoder"/>
 		<beans:property name="userDetailsService" ref="userDetailsService"/>
 	</beans:bean>
