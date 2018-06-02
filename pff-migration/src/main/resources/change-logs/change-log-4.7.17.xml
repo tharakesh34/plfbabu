@@ -1947,5 +1947,11 @@ UNION ALL
 	</createView>
 </changeSet>
 
+<changeSet id="45" author="vinay">
+<sql>
+	update finjointaccountdetails set  IncludeIncome=0;
+	update finjointaccountdetails_temp set  IncludeIncome=0;
+</sql>
+</changeSet>
 </databaseChangeLog>
 	
