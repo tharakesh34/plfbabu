@@ -1640,8 +1640,9 @@
 		<modifyDataType tableName="Verification_rcu_details_temp" columnName="documentsubid" newDataType="varchar(50)"/>
 		<modifyDataType tableName="Verification_rcu_details_stage" columnName="documentsubid" newDataType="varchar(50)"/>
 	</changeSet>
-	<changeSet id="7" author="murthy.y">
-		<createView viewName="verification_rcu_details_view">
+	<changeSet id="7.1" author="murthy.y">
+		<comment> ARRAY[] replaced with IN , Removed semicolon and replacedIfExists attribute</comment>
+		<createView viewName="verification_rcu_details_view" replaceIfExists="true">
 			SELECT t.verificationid,
 			t.seqno,
 			t.doctype,
@@ -1711,7 +1712,7 @@
 			FROM verification_rcu_details_temp rcud
 			JOIN documentdetails_view doc ON doc.docid = rcud.documentid
 			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.doccategory
-			WHERE rcud.documenttype = ANY (ARRAY[1, 2])
+			WHERE rcud.documenttype in(1, 2)
 			UNION ALL
 			SELECT rcud.verificationid,
 			rcud.seqno,
@@ -1752,12 +1753,12 @@
 			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.doccategory
 			WHERE NOT (EXISTS ( SELECT 1
 			FROM verification_rcu_details_temp
-			WHERE verification_rcu_details_temp.verificationid = rcud.verificationid AND verification_rcu_details_temp.seqno = rcud.seqno)) AND (rcud.documenttype = ANY (ARRAY[1, 2]))
+			WHERE verification_rcu_details_temp.verificationid = rcud.verificationid AND verification_rcu_details_temp.seqno = rcud.seqno)) AND (rcud.documenttype in(1, 2))
 			UNION ALL
 			SELECT rcud.verificationid,
 			rcud.seqno,
 			doc.custdoctype AS doctype,
-			'Customer'::citext AS docmodule,
+			'Customer' AS docmodule,
 			doc.custdoccategory AS docname,
 			c.custcif as refereceid,
 			dt.doctypecode AS code,
@@ -1796,7 +1797,7 @@
 			SELECT rcud.verificationid,
 			rcud.seqno,
 			doc.custdoctype AS doctype,
-			'Customer'::citext AS docmodule,
+			'Customer' AS docmodule,
 			doc.custdoccategory AS docname,
 			c.custcif as refereceid,
 			dt.doctypecode AS code,
@@ -1832,7 +1833,7 @@
 			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.custdoccategory
 			WHERE NOT (EXISTS ( SELECT 1
 			FROM verification_rcu_details_temp
-			WHERE verification_rcu_details_temp.verificationid = rcud.verificationid AND verification_rcu_details_temp.seqno = rcud.seqno)) AND rcud.documenttype = 3) t;
+			WHERE verification_rcu_details_temp.verificationid = rcud.verificationid AND verification_rcu_details_temp.seqno = rcud.seqno)) AND rcud.documenttype = 3) t
 		</createView>
 	</changeSet>
 </databaseChangeLog>
