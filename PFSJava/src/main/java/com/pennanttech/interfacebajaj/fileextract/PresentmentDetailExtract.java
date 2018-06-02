@@ -141,15 +141,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					map.addValue("UMRNNo", getCellValue(row, pos_UMRNNo));
 					map.addValue("AccountType", getCellValue(row, pos_AccountType));
 					map.addValue("PaymentDue", getDateValue(row, pos_PaymentDue),Types.DATE);
+					map.addValue("ReasonCode", getCellValue(row, pos_ReasonCode));
 					
-					//ReasonCode unformatting 
-					String reasonCode = getCellValue(row, pos_ReasonCode);
-					if (StringUtils.isNotBlank(reasonCode)) {
-						map.addValue("ReasonCode", getFieldValue(reasonCode, 0, 3));
-					} else {
-						map.addValue("ReasonCode", reasonCode);
-					}
-
 					//TODO:check set the value
 					if (row.getPhysicalNumberOfCells() > pos_FailureReasons) {
 						map.addValue("Failure reason", StringUtils.trimToNull(row.getCell(pos_FailureReasons).getStringCellValue()));
@@ -235,7 +228,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		if (!StringUtils.equals(RepayConstants.PAYMENT_SUCCESS, status.toString())) {
 			if (reasonCode == null) {
 				throw new Exception("ReasonCode should be mandatory.");
-			} else if (reasonCode.toString().length() == 0) {
+			} else if (StringUtils.isBlank(reasonCode.toString())) {
 				throw new Exception("ReasonCode should not be empty.");
 			}
 		}
