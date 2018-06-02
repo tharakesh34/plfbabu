@@ -1804,5 +1804,148 @@ SELECT t1.finreference,
      JOIN secroles t4 ON t4.rolecd = t1.mandrole;
 			</createView>
 </changeSet>
+
+<changeSet id="40" author="vinay">
+		<addColumn tableName="finjointaccountdetails">
+			<column name="IncludeIncome" type="boolean" />
+		</addColumn>
+	</changeSet>
+<changeSet id="41" author="vinay">
+		<addColumn tableName="finjointaccountdetails_temp">
+			<column name="IncludeIncome" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+<changeSet id="42" author="vinay">
+	<createView viewName="finjointaccountdetails_aview" replaceIfExists="true">
+	SELECT t1.jointaccountid,
+    t1.finreference,
+    t1.custcif,
+    t1.includerepay,
+    t1.repayaccountid,
+    t1.catofcoapplicant,
+    t1.authoritysignatory,
+    t1.sequence,
+	t1.IncludeIncome,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.usrlogin,
+    t2.usrfname,
+    t2.usrmname,
+    t2.usrlname,
+    t3.custshrtname AS lovdesccifname,
+    t3.custid
+   FROM finjointaccountdetails t1
+     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+     JOIN customers t3 ON t1.custcif = t3.custcif
+	</createView>
+</changeSet>
+	
+<changeSet id="43" author="vinay">
+	<createView viewName="finjointaccountdetails_tview" replaceIfExists="true">
+	SELECT t1.jointaccountid,
+    t1.finreference,
+    t1.custcif,
+    t1.includerepay,
+    t1.repayaccountid,
+    t1.catofcoapplicant,
+    t1.authoritysignatory,
+    t1.sequence,
+	t1.IncludeIncome,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.usrlogin,
+    t2.usrfname,
+    t2.usrmname,
+    t2.usrlname,
+    t3.custshrtname AS lovdesccifname,
+    t3.custid
+   FROM finjointaccountdetails_temp t1
+     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+     JOIN customers t3 ON t1.custcif = t3.custcif
+	</createView>
+</changeSet>
+	 
+<changeSet id="44" author="vinay">
+	<createView viewName="finjointaccountdetails_view" replaceIfExists="true">
+	SELECT t1.jointaccountid,
+    t1.finreference,
+    t1.custcif,
+    t1.includerepay,
+    t1.repayaccountid,
+    t1.catofcoapplicant,
+    t1.authoritysignatory,
+    t1.sequence,
+	t1.includeIncome,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.usrlogin,
+    t2.usrfname,
+    t2.usrmname,
+    t2.usrlname,
+    t3.custshrtname AS lovdesccifname,
+    t3.custid
+   FROM finjointaccountdetails_temp t1
+     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+     JOIN customers t3 ON t1.custcif = t3.custcif
+UNION ALL
+ SELECT t1.jointaccountid,
+    t1.finreference,
+    t1.custcif,
+    t1.includerepay,
+    t1.repayaccountid,
+    t1.catofcoapplicant,
+    t1.authoritysignatory,
+    t1.sequence,
+    t1.version,
+	t1.includeIncome,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.usrlogin,
+    t2.usrfname,
+    t2.usrmname,
+    t2.usrlname,
+    t3.custshrtname AS lovdesccifname,
+    t3.custid
+   FROM finjointaccountdetails t1
+     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+     JOIN customers t3 ON t1.custcif = t3.custcif
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM finjointaccountdetails_temp
+          WHERE finjointaccountdetails_temp.jointaccountid = t1.jointaccountid))
+	</createView>
+</changeSet>
+
 </databaseChangeLog>
 	

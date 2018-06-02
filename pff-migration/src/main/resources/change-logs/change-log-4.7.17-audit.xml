@@ -58,4 +58,11 @@
 update adtCustomers set marginDeviation=0;	
 </sql>
 </changeSet>
+
+<changeSet id="5" author="vinay">
+		<addColumn tableName="adtfinjointaccountdetails">
+			<column name="IncludeIncome" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
 	</databaseChangeLog>
