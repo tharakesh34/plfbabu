@@ -234,7 +234,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (customerDocuments.get(entrySet.getKey()) == null) {
 				rcuDocument = entrySet.getValue().getRcuDocument();
 
-				if (rcuDocument != null) {
+				if (rcuDocument != null && verificationService.isVerificationInRecording(entrySet.getValue(), VerificationType.RCU)) {
 					entrySet.getValue().setDocName(getDocumentName(rcuDocument.getDocumentSubId()));
 					customerDocuments.put(entrySet.getKey(), entrySet.getValue());
 				}
@@ -317,6 +317,20 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
+		
+		for (Entry<String, Verification> entrySet : map.entrySet()) {
+			RCUDocument rcuDocument;
+			if (docMap.get(entrySet.getKey()) == null) {
+				rcuDocument = entrySet.getValue().getRcuDocument();
+
+				if (rcuDocument != null && verificationService.isVerificationInRecording(entrySet.getValue(), VerificationType.RCU)) {
+					entrySet.getValue().setDocName(getDocumentName(rcuDocument.getDocumentSubId()));
+					docMap.put(entrySet.getKey(), entrySet.getValue());
+				}
+			}
+
+		}
+		
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			if (entrySet.getKey().startsWith(String.valueOf(documentType).concat("dummy$#"))) {
 				RCUDocument document = entrySet.getValue().getRcuDocument();
