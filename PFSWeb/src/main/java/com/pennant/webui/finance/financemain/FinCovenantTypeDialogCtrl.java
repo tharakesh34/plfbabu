@@ -614,8 +614,17 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		doSetWaiverProp();
 		doSetOTCProp();
 		doSetPostponeProp();
-			
-
+		
+		if(!isReadOnly("FinCovenantTypeDialog_alwPostpone")){
+			this.alwPostpone.setDisabled(!aFinAdvnancePayments.isPddFlag());
+		}else{
+			this.alwPostpone.setDisabled(true);
+		}
+		if(!isReadOnly("FinCovenantTypeDialog_alwOtc")){
+			this.alwOtc.setDisabled(!aFinAdvnancePayments.isOtcFlag());
+		}else{
+			this.alwOtc.setDisabled(true);
+		}
 		logger.debug("Leaving");
 	}
 
