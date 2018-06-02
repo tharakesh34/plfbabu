@@ -505,10 +505,10 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		}
 		
 		try {
-			if (this.row_FeeScheduleMethod.isVisible() && "#".equals(getComboboxValue(this.feeScheduleMethod))) {
+		/*	if (this.row_FeeScheduleMethod.isVisible() && "#".equals(getComboboxValue(this.feeScheduleMethod))) {
 				throw new WrongValueException(this.feeScheduleMethod, Labels.getLabel("STATIC_INVALID",
 						new String[] { Labels.getLabel("label_FinTypeFeesDialog_FeeScheduleMethod.value") }));
-			}
+			}*/
 			aFinTypeFees.setFeeScheduleMethod(getComboboxValue(this.feeScheduleMethod));
 		} catch (WrongValueException we) {
 			wve.add(we);
