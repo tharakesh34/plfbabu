@@ -1513,7 +1513,7 @@ update customers_temp set marginDeviation=0;
 	('SCORES','RSCORE','Total_Co_Applicants_Expense',' Total CoApplicants Expense','decimal',18,'1','1',null,'static,calvalue',null);
 </sql>
 </changeSet>
-<changeSet id="35" author="madhubabu.p">
+<changeSet id="35.1" author="madhubabu.p">
 	<createView viewName="fincovenanttype_view" replaceIfExists="true">
 SELECT t1.finreference,
     t1.covenanttype,
@@ -1574,10 +1574,10 @@ UNION ALL
      LEFT JOIN secroles t4 ON t4.rolecd = t1.mandrole
   WHERE NOT (EXISTS ( SELECT 1
            FROM fincovenanttype_temp
-          WHERE fincovenanttype_temp.finreference = t1.finreference AND fincovenanttype_temp.covenanttype = t1.covenanttype));
+          WHERE fincovenanttype_temp.finreference = t1.finreference AND fincovenanttype_temp.covenanttype = t1.covenanttype))
 			</createView>
 </changeSet>
-<changeSet id="36" author="madhubabu.p">
+<changeSet id="36.1" author="madhubabu.p">
 	<createView viewName="fincovenanttype_aview" replaceIfExists="true">
 SELECT t1.finreference,
     t1.covenanttype,
@@ -1607,10 +1607,10 @@ SELECT t1.finreference,
      JOIN financemain t2 ON t2.finreference = t1.finreference
      JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
      LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
-     JOIN secroles t4 ON t4.rolecd = t1.mandrole;
+     JOIN secroles t4 ON t4.rolecd = t1.mandrole
 			</createView>
 </changeSet>
-<changeSet id="37" author="madhubabu.p">
+<changeSet id="37.1" author="madhubabu.p">
 	<createView viewName="fincovenanttype_eaview" replaceIfExists="true">
 SELECT t.finreference,
     t.custid,
@@ -1671,10 +1671,10 @@ SELECT t.finreference,
              LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
              JOIN financemain t4 ON t4.finreference = t1.finreference
              LEFT JOIN documentdetails t7 ON t7.referenceid = t1.finreference AND t1.covenanttype = t7.doccategory) t
-     LEFT JOIN customerdocuments cd ON cd.custid = t.custid AND t.covenanttype = cd.custdoccategory;
+     LEFT JOIN customerdocuments cd ON cd.custid = t.custid AND t.covenanttype = cd.custdoccategory
 			</createView>
 </changeSet>
-<changeSet id="38" author="madhubabu.p">
+<changeSet id="38.1" author="madhubabu.p">
 	<createView viewName="fincovenanttype_eview" replaceIfExists="true">
 SELECT t.finreference,
     t.custid,
@@ -1758,7 +1758,7 @@ SELECT t.finreference,
             t1.recordtype,
             t1.workflowid,
             t7.docreceiveddate,
-         	t3.pdd AS pddFlag,
+            t3.pdd AS pddFlag,
     		t3.otc AS otcFlag
            FROM fincovenanttype t1
              JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
@@ -1768,7 +1768,7 @@ SELECT t.finreference,
           WHERE NOT (EXISTS ( SELECT 1
                    FROM fincovenanttype_temp
                   WHERE fincovenanttype_temp.finreference = t1.finreference AND fincovenanttype_temp.covenanttype = t1.covenanttype))) t
-     LEFT JOIN customerdocuments cd ON cd.custid = t.custid AND t.covenanttype = cd.custdoccategory;
+     LEFT JOIN customerdocuments cd ON cd.custid = t.custid AND t.covenanttype = cd.custdoccategory
 			</createView>
 </changeSet>
 <changeSet id="39" author="madhubabu.p">
@@ -1801,7 +1801,7 @@ SELECT t1.finreference,
      JOIN financemain_temp t2 ON t2.finreference = t1.finreference
      JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
      LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
-     JOIN secroles t4 ON t4.rolecd = t1.mandrole;
+     JOIN secroles t4 ON t4.rolecd = t1.mandrole
 			</createView>
 </changeSet>
 
