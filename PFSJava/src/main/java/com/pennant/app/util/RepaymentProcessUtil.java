@@ -348,6 +348,11 @@ public class RepaymentProcessUtil {
 			receiptDetail.setRepayHeaders(repayHeaderList);
 		}
 
+		long receiptId=getFinReceiptHeaderDAO().generatedReceiptID(receiptHeader);
+		receiptHeader.setReceiptID(receiptId);
+		for (FinReceiptDetail receiptDetail : receiptDetails) {
+			receiptDetail.setReceiptID(receiptId);
+		}
 		List<Object> returnList = doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, finFeeDetailList, scheduleData,
 				valuedate,postDate);
 		
@@ -602,6 +607,12 @@ public class RepaymentProcessUtil {
 							feesExecuted = true;
 							prepareFeeRulesMap(amountCodes, dataMap, finFeeDetailList, receiptDetail.getPaymentType());
 						}
+						
+						addZeroifNotContainsObj(dataMap,"bounceChargePaid");
+						addZeroifNotContainsObj(dataMap,"bounceCharge_CGST_P");
+						addZeroifNotContainsObj(dataMap,"bounceCharge_IGST_P");
+						addZeroifNotContainsObj(dataMap,"bounceCharge_SGST_P");
+						addZeroifNotContainsObj(dataMap,"bounceCharge_UGST_P");
 						
 						// Receipt Detail external usage Fields Insertion into DataMap
 						dataMap.putAll(extDataMap);
@@ -1877,6 +1888,14 @@ public class RepaymentProcessUtil {
 	}
 
 	private void addZeroifNotContains(Map<String, BigDecimal> dataMap,String key){
+		if (dataMap!=null) {
+			if (!dataMap.containsKey(key)) {
+				dataMap.put(key, BigDecimal.ZERO);
+			}
+		}
+	}
+	
+	private void addZeroifNotContainsObj(Map<String, Object> dataMap,String key){
 		if (dataMap!=null) {
 			if (!dataMap.containsKey(key)) {
 				dataMap.put(key, BigDecimal.ZERO);

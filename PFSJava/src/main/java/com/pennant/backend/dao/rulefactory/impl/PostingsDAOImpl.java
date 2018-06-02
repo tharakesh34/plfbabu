@@ -29,8 +29,8 @@
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 07-02-2012       PENNANT TECHONOLOGIES	                 0.1                            * 
- *                                                                                          * 
+ * 07-02-2012       PENNANT TECHONOLOGIES	    0.1                                         * 
+ * 02-06-2018		Satish						1.0			Fix for the posting reversal values mismatch                                                                                         * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -130,9 +130,9 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		selectSql.append(" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent,");
 		selectSql.append(" T1.PostDate, T1.ValueDate, T1.TranCode, T1.TranDesc, T1.RevTranCode, T1.DrOrCr, T1.Account,  T1.ShadowPosting,");
 		selectSql.append(" T1.PostAmount, T1.AmountType, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T1.AcCcy, T1.TranOrderId, T1.TransOrder,");
-		selectSql.append(" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T2.AcType AccountType ");
+		selectSql.append(" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T1.AccountType ");
 		selectSql.append(" FROM Postings T1");
-		selectSql.append(" Left join Accounts T2 on Accountid = Account ");
+		//selectSql.append(" Left join Accounts T2 on Accountid = Account ");
 		selectSql.append(" Where LinkedTranId =:LinkedTranId");
 		selectSql.append(" Order By T1.LinkedTranId, T1.TranOrderId ");
 		
@@ -472,12 +472,14 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		dataSet.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent,");
+		//FIX version 1.0
+		selectSql.append(" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostAmountLcCcy, T1.CustAppDate,");
 		selectSql.append(" T1.PostDate, T1.ValueDate, T1.TranCode, T1.TranDesc, T1.RevTranCode, T1.DrOrCr, T1.Account,  T1.ShadowPosting,");
 		selectSql.append(" T1.PostAmount, T1.AmountType, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T1.AcCcy, T1.TranOrderId, T1.TransOrder,");
-		selectSql.append(" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T2.AcType AccountType ");
+		selectSql.append(" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T1.AccountType ");
 		selectSql.append(" FROM Postings T1");
-		selectSql.append(" Left join Accounts T2 on Accountid = Account ");
+		//FIX version 1.0
+		//selectSql.append(" Left join Accounts T2 on Accountid = Account ");
 		selectSql.append(" Where FinReference =:FinReference and PostStatus = :PostStatus");
 		if(!reqReversals){
 			selectSql.append(" and OldLinkedTranID = 0 ");
@@ -537,12 +539,14 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		dataSet.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent,");
+		//FIX version 1.0
+		selectSql.append(" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostAmountLcCcy, T1.CustAppDate, ");
 		selectSql.append(" T1.PostDate, T1.ValueDate, T1.TranCode, T1.TranDesc, T1.RevTranCode, T1.DrOrCr, T1.Account,  T1.ShadowPosting,");
 		selectSql.append(" T1.PostAmount, T1.AmountType, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T1.AcCcy, T1.TranOrderId, T1.TransOrder,");
-		selectSql.append(" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T2.AcType AccountType ");
+		selectSql.append(" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T1.AccountType ");
 		selectSql.append(" FROM Postings T1");
-		selectSql.append(" Left join Accounts T2 on Accountid = Account ");
+		//FIX version 1.0
+		//selectSql.append(" Left join Accounts T2 on Accountid = Account ");
 		selectSql.append(" Where PostStatus = :PostStatus and Postref =:Postref");
 		selectSql.append(" Order By T1.LinkedTranId, T1.TranOrderId ");
 		

@@ -115,6 +115,20 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 		logger.debug("Leaving");
 		return header;
 	}
+	
+	
+	/**
+	 * @param receiptHeader
+	 * @return
+	 */
+	@Override
+	public long generatedReceiptID(FinReceiptHeader receiptHeader) {
+		if (receiptHeader.getId() == 0 || receiptHeader.getId() == Long.MIN_VALUE) {
+			receiptHeader.setId(getNextidviewDAO().getNextId("SeqFinReceiptHeader"));
+			logger.debug("get NextID:" + receiptHeader.getId());
+		}
+		return receiptHeader.getId();
+	}
 
 	@Override
 	public long save(FinReceiptHeader receiptHeader, TableType tableType) {
