@@ -1857,11 +1857,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (!isDeleteRecord(custIncome.getRecordType())) {
 					if (isIncome) {
 						if (StringUtils.equals(PennantConstants.INCOME, custIncome.getIncomeExpense())) {
-							custTotIncomeExp = custTotIncomeExp.add(custIncome.getCustIncome());
+							custTotIncomeExp = custTotIncomeExp.add(custIncome.getCalculatedAmount());
 						}
 					} else {
 						if (StringUtils.equals(PennantConstants.EXPENSE, custIncome.getIncomeExpense())) {
-							custTotIncomeExp = custTotIncomeExp.add(custIncome.getCustIncome());
+							custTotIncomeExp = custTotIncomeExp.add(custIncome.getCalculatedAmount());
 						}
 					}
 				}

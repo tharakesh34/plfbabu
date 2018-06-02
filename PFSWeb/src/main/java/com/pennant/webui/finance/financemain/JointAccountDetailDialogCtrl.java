@@ -420,7 +420,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			listitem.appendChild(listcell);
 			listitem.setAttribute("data", jountAccountDetail);
 			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onFinJointItemDoubleClicked");
-			setRuleIncomes(jountAccountDetail);
+			
+			if(jountAccountDetail.isIncludeIncome()){
+				setRuleIncomes(jountAccountDetail);
+			}
+			
 			this.listBoxJountAccountDetails.appendChild(listitem);
 		}
 		
