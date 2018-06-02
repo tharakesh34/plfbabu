@@ -81,23 +81,23 @@ import eu.bitwalker.useragentutils.UserAgent;
  * This class is called from spring AOP as an aspect and is for logging.
  */
 public class AuthenticationManager implements AuthenticationProvider {
-	private final static Logger		logger	= Logger.getLogger(Authentication.class);
+	private final static Logger logger = Logger.getLogger(Authentication.class);
 
 	@Autowired
-	private UserDetailsService		userDetailsService;
+	private UserDetailsService userDetailsService;
 	@Autowired
-	private UserService				userService;
+	private UserService userService;
 	@Autowired
-	private DaoAuthenticationProvider	daoAuthenticationProvider;
+	private DaoAuthenticationProvider daoAuthenticationProvider;
 	@Autowired
-	private AuthenticationProvider	ldapAuthenticationProvider;
+	private AuthenticationProvider ldapAuthenticationProvider;
 
 	@Value("${authentication.default}")
-	private String					defaultAuthType;
+	private String defaultAuthType;
 	@Value("${authentication.ldap}")
-	private boolean					ldapAuthentication;
+	private boolean ldapAuthentication;
 	@Value("${authentication.dao}")
-	private boolean					daoAuthentication;
+	private boolean daoAuthentication;
 
 	public AuthenticationManager() {
 		super();
@@ -176,9 +176,9 @@ public class AuthenticationManager implements AuthenticationProvider {
 		} else {
 			result = daoAuthenticationProvider.authenticate(authentication);
 		}
-		
+
 		SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(result);
+		securityContext.setAuthentication(result);
 
 		return result;
 	}
@@ -317,11 +317,11 @@ public class AuthenticationManager implements AuthenticationProvider {
 
 		return userAgent.getBrowser().getName() + " Version " + userAgent.getBrowserVersion();
 	}
-	
+
 	private static UserAgent getUserAgent() {
 		return UserAgent.parseUserAgentString(getRequestAttribute().getRequest().getHeader("User-Agent"));
 	}
-	
+
 	private static ServletRequestAttributes getRequestAttribute() {
 		return (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 	}
