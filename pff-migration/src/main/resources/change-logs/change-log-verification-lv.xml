@@ -3114,7 +3114,8 @@
 		<modifyDataType tableName="Verification_lv_details_temp" columnName="documentsubid" newDataType="varchar(50)"/>
 		<modifyDataType tableName="Verification_lv_details_stage" columnName="documentsubid" newDataType="varchar(50)"/>
 	</changeSet>
-	<changeSet id="19" author="murthy.y">
+	<changeSet id="19.1" author="murthy.y">
+		<comment> Removed ARRAY[] function replaced with IN</comment>
 		<createView viewName="verification_lv_details_view">
 			SELECT t.verificationid,
 			t.seqno,
@@ -3173,7 +3174,7 @@
 			FROM verification_lv_details_temp lvd
 			JOIN documentdetails_view doc ON doc.docid = lvd.documentid
 			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.doccategory
-			WHERE lvd.documenttype = ANY (ARRAY[1, 2])
+			WHERE lvd.documenttype in(1, 2)
 			UNION ALL
 			SELECT lvd.verificationid,
 			lvd.seqno,
@@ -3208,12 +3209,12 @@
 			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.doccategory
 			WHERE NOT (EXISTS ( SELECT 1
 			FROM verification_lv_details_temp
-			WHERE verification_lv_details_temp.verificationid = lvd.verificationid AND verification_lv_details_temp.seqno = lvd.seqno)) AND (lvd.documenttype = ANY (ARRAY[1, 2]))
+			WHERE verification_lv_details_temp.verificationid = lvd.verificationid AND verification_lv_details_temp.seqno = lvd.seqno)) AND (lvd.documenttype in(1, 2))
 			UNION ALL
 			SELECT lvd.verificationid,
 			lvd.seqno,
 			doc.custdoctype AS doctype,
-			'Customer'::citext AS docmodule,
+			'Customer' AS docmodule,
 			doc.custdoccategory AS docname,
 			c.custcif as refereceid,
 			dt.doctypecode AS code,
@@ -3246,7 +3247,7 @@
 			SELECT lvd.verificationid,
 			lvd.seqno,
 			doc.custdoctype AS doctype,
-			'Customer'::citext AS docmodule,
+			'Customer' AS docmodule,
 			doc.custdoccategory AS docname,
 			c.custcif as refereceid,
 			dt.doctypecode AS code,
