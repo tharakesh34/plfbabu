@@ -5,8 +5,8 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
 	<property name="add.schema" value="dbo." dbms="mssql" />
-	<property name="add.schema" value=" " dbms="oracle" />
-	<property name="add.schema" value=" " dbms="postgresql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
 	<property name="call.substr" value="substring" dbms="mssql" />
 	<property name="call.substr" value="substr" dbms="oracle" />
 	<property name="call.substr" value="substring" dbms="postgresql" />
@@ -695,7 +695,7 @@ SELECT M.MANDATEID,
     t32.castedesc,
     t33.religioncode,
     t33.religiondesc,
-    COALESCE((t34.roledesc), fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
+    COALESCE((t34.roledesc), ${add.schema}fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
 	t1.marginDeviation
    FROM ((((((((((((((((((((((((((((((((customers_temp t1
      LEFT JOIN rmtcusttypes t2 ON ((t1.custtypecode = t2.custtypecode)))
@@ -907,7 +907,7 @@ UNION ALL
     t32.castedesc,
     t33.religioncode,
     t33.religiondesc,
-    COALESCE((t34.roledesc), fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
+    COALESCE((t34.roledesc), ${add.schema}fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
 	t1.marginDeviation
    FROM ((((((((((((((((((((((((((((((((customers t1
      LEFT JOIN rmtcusttypes t2 ON ((t1.custtypecode = t2.custtypecode)))
@@ -1126,7 +1126,7 @@ UNION ALL
     t32.castedesc,
     t33.religioncode,
     t33.religiondesc,
-    COALESCE((t34.roledesc), fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
+    COALESCE((t34.roledesc), ${add.schema}fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
     t1.marginDeviation
    FROM ((((((((((((((((((((((((((((((((customers_temp t1
      LEFT JOIN rmtcusttypes t2 ON ((t1.custtypecode = t2.custtypecode)))
@@ -1342,7 +1342,7 @@ UNION ALL
     t32.castedesc,
     t33.religioncode,
     t33.religiondesc,
-    COALESCE((t34.roledesc), fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
+    COALESCE((t34.roledesc), ${add.schema}fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
     t1.marginDeviation
    FROM ((((((((((((((((((((((((((((((((customers t1
      LEFT JOIN rmtcusttypes t2 ON ((t1.custtypecode = t2.custtypecode)))
@@ -1414,7 +1414,7 @@ UNION ALL
 		    t8.castedesc,
 		    t9.religioncode,
 		    t9.religiondesc,
-    COALESCE((t32.roledesc), fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
+    COALESCE((t32.roledesc), ${add.schema}fn_get_roledesc((t1.nextrolecode))) AS lovdescrequeststage,
     t1.marginDeviation
    FROM (((((((((customers t1
      LEFT JOIN customerphonenumbers t2 ON (((t1.custid = t2.phonecustid) AND (t2.phonetypepriority = 5))))
@@ -1450,7 +1450,7 @@ UNION ALL
 		    t2.castedesc,
 		    t3.religioncode,
 		    t3.religiondesc,
-		    COALESCE((t4.roledesc), fn_get_roledesc((c.nextrolecode))) AS lovdescrequeststage,
+		    COALESCE((t4.roledesc), ${add.schema}fn_get_roledesc((c.nextrolecode))) AS lovdescrequeststage,
     c.marginDeviation
    FROM (((((customers_temp c
      LEFT JOIN rmtcusttypes ct ON ((c.custtypecode = ct.custtypecode)))
@@ -1479,7 +1479,7 @@ UNION ALL
     t2.castedesc,
     t3.religioncode,
     t3.religiondesc,
-    COALESCE((t4.roledesc), fn_get_roledesc((c.nextrolecode))) AS lovdescrequeststage,
+    COALESCE((t4.roledesc), ${add.schema}fn_get_roledesc((c.nextrolecode))) AS lovdescrequeststage,
     c.marginDeviation
    FROM (((((customers c
      LEFT JOIN rmtcusttypes ct ON ((c.custtypecode = ct.custtypecode)))
