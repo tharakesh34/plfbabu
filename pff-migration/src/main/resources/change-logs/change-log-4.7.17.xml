@@ -1757,7 +1757,9 @@ SELECT t.finreference,
             t1.nexttaskid,
             t1.recordtype,
             t1.workflowid,
-            t7.docreceiveddate
+            t7.docreceiveddate,
+         	t3.pdd AS pddFlag,
+    		t3.otc AS otcFlag
            FROM fincovenanttype t1
              JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
              LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
