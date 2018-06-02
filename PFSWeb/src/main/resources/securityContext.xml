@@ -48,7 +48,7 @@
 		<authentication-provider ref="authenticationProvider"/>
 	</authentication-manager>
 	
-	<beans:bean id="ldapAuthenticationProvider" class="org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider">
+	<beans:bean id="ldapAuthenticationProvider" class="com.pennanttech.pennapps.core.security.ldap.ActiveDirectoryLdapAuthenticationProvider">
 		<beans:constructor-arg value="${ldap.domain.name}"/>
 		<beans:constructor-arg value="${ldap.domain.url}"/>
 	</beans:bean>
