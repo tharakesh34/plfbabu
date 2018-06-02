@@ -252,7 +252,6 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	private void doSetFieldProperties() {
 		logger.debug("Entering ");
-		
 		this.docCategory.setMaxlength(50);
 		this.docCategory.setTextBoxWidth(160);
 		this.docCategory.setMandatoryStyle(true);
@@ -269,7 +268,16 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				|| DocumentCategories.COLLATERAL.getKey().equals(module)) {
 			this.docCategory.setFilters(new Filter[] { new Filter("CategoryCode", module, Filter.OP_EQUAL) });
 		} else {
-			this.docCategory.setFilters(new Filter[] { new Filter("CategoryCode",DocumentCategories.CUSTOMER.getKey(), Filter.OP_EQUAL) });
+			if(module==null){
+				Filter[] filters = new Filter[1];
+				List<String> types=new ArrayList<>();
+				types.add(DocumentCategories.FINANCE.getKey());
+				types.add(DocumentCategories.COLLATERAL.getKey());
+				filters[0]= Filter.in("CategoryCode", types.toArray(new String[types.size()]));
+				this.docCategory.setFilters(filters);
+			}else{				
+				this.docCategory.setFilters(new Filter[] { new Filter("CategoryCode",DocumentCategories.CUSTOMER.getKey(), Filter.OP_EQUAL) });
+			}
 		}
 		
 		logger.debug("Leaving ");

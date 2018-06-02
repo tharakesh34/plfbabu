@@ -90,6 +90,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -544,6 +545,13 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		this.covenantType.setValueColumn("DocTypeCode");
 		this.covenantType.setDescColumn("DocTypeDesc");
 		this.covenantType.setValidateColumns(new String[] { "DocTypeCode" });
+		
+		Filter[] filters = new Filter[1];
+		List<String> types=new ArrayList<>();
+		types.add(DocumentCategories.FINANCE.getKey());
+		types.add(DocumentCategories.COLLATERAL.getKey());
+		filters[0]= Filter.in("CategoryCode", types.toArray(new String[types.size()]));
+		this.covenantType.setFilters(filters);
 		
 		this.mandRole.setMaxlength(100);
 		this.mandRole.setTextBoxWidth(151);
