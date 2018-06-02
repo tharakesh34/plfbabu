@@ -60,7 +60,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		sql.append(" v.id, verificationType, module, keyReference, referenceType, reference, ");
 		sql.append(" referenceFor, c.custId, c.custCif as cif, c.custshrtname customerName,");
 		sql.append(
-				" requesttype, reinitid, agency, a.dealerName agencyName, reason, r.description reasonName, remarks, ");
+				" requesttype, reinitid, agency, a.dealerName agencyName, reason, r.code reasonName, remarks, ");
 		sql.append(" createdBy, createdOn, status, agencyRemarks, agencyReason, decision, ");
 		sql.append(" verificationDate, decisionRemarks, ");
 		sql.append(" v.LastMntOn, v.LastMntBy");

@@ -10,6 +10,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -188,17 +189,17 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private void setOldVerificationFields(Verification current, Verification previous) {
-		current.setId(previous.getId());
 		current.setRequestType(previous.getRequestType());
 		current.setAgency(previous.getAgency());
 		current.setAgencyName(previous.getAgencyName());
 		current.setReason(previous.getReason());
+		current.setReasonName((previous.getReasonName()));
 		current.setRemarks(previous.getRemarks());
 		current.setDecision(previous.getDecision());
 		current.setDecisionRemarks(previous.getDecisionRemarks());
 		current.setReference(previous.getReference());
+		current.setCreatedOn(previous.getCreatedOn());
 		current.setVerificationType(VerificationType.TV.getKey());
-		current.setNewRecord(false);
 	}
 
 	private Verification getVerification(CollateralAssignment collateral) {
@@ -223,6 +224,10 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<Verification> verifications = new ArrayList<>();
 		Map<String, Verification> collateralMap = new HashMap<>();
 		Set<String> deletedSet = new HashSet<>();
+		List<Verification> tempVerifications = new ArrayList<>();
+		Map<String, Verification> newcollateralMap = new HashMap<>();
+		boolean exists = false;
+		Verification newVrf;
 
 		if (initType) {
 			// Prepare Customer Collaterals
@@ -238,16 +243,46 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		// Set the old verification fields back.
 		List<Verification> oldVerifications = getOldVerifications();
-		for (Verification previous : oldVerifications) {
+		tempVerifications.addAll(oldVerifications);
+		for (Verification previous : tempVerifications) {
+			if (previous.getReinitid() != null) {
+				verifications.add(previous);
+				oldVerifications.remove(previous);
+				continue;
+			}
+			//create new Verification if initiated Collateral has Changed
 			Verification current = collateralMap.get(previous.getReferenceFor());
 			if (current != null) {
-				setOldVerificationFields(current, previous);
+				for (CollateralAssignment collateral : collaterals) {
+					if (StringUtils.equals(collateral.getCollateralRef(), previous.getReferenceFor())) {
+						if (technicalVerificationService.isCollateralChanged(previous)) {
+							if (verificationService.isVerificationInRecording(previous, VerificationType.TV)) {
+								newVrf = new Verification();
+								BeanUtils.copyProperties(current, newVrf);
+								newVrf.setNewRecord(true);
+								verifications.add(newVrf);
+							} else {
+								exists = true;
+							}
+						}
+						break;
+					}
+				}
+				if (!exists) {
+					setOldVerificationFields(current, previous);
+				}
+				exists = false;
+				current.setId(previous.getId());
+				current.setNewRecord(false);
+				oldVerifications.remove(previous);
+				newcollateralMap.put(current.getReferenceFor(), current);
 				collateralMap.remove(current.getReferenceFor());
 			}
 		}
 
-		verifications.addAll(oldVerifications);
+		verifications.addAll(newcollateralMap.values());
 		verifications.addAll(collateralMap.values());
+		verifications.addAll(oldVerifications);
 
 		for (Verification object : verifications) {
 			if ((deletedSet.contains(object.getReferenceFor()) && (object.isNew()
@@ -286,9 +321,12 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 							}
 
 						}
-						verificationService.setLastStatus(ver);
 					}
 				}
+			}
+
+			for (Verification ver : verifications) {
+				verificationService.setLastStatus(ver);
 			}
 		}
 
@@ -913,7 +951,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		default:
 			break;
 		}
-		
+
 		return item;
 	}
 

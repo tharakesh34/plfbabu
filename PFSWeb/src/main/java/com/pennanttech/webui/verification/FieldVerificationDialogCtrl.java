@@ -710,7 +710,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		Map<String, Verification> addressMap = new HashMap<>();
 		Map<String, Verification> newAddressMap = new HashMap<>();
 		List<Verification> tempVerifications = new ArrayList<>();
-		Set<String> deletedSet = new HashSet<>();
+		Set<String> deleteSet = new HashSet<>();
 		Verification newVrf;
 
 		//set deleted addresses of Co-Applicant
@@ -729,7 +729,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					Verification object = getVerification(customer, address, coApplicant);
 					addressMap.put(object.getReferenceFor(), object);
 				} else {
-					deletedSet.add(address.getCustAddrType());
+					deleteSet.add(address.getCustAddrType());
 				}
 			}
 		}
@@ -743,18 +743,17 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				oldVerifications.remove(previous);
 				continue;
 			}
+			//create new Verification if initiated Address has changed
 			Verification current = addressMap.get(previous.getReferenceFor());
 			if (current != null) {
-				newVrf = new Verification();
 				for (CustomerAddres newAddress : addresses) {
 					if (StringUtils.equals(newAddress.getCustAddrType(), previous.getReferenceFor())
 							&& (newAddress.getCustID() == previous.getCustId())) {
 						CustomerAddres oldAddres = customerAddresService.getCustomerAddresById(previous.getCustId(),
 								previous.getReferenceFor());
 						if (fieldInvestigationService.isAddressChange(oldAddres, newAddress)) {
-							Verification temp = new Verification();
-							temp.setId(previous.getId());
-							if (verificationService.isVerificationInRecording(temp, VerificationType.FI)) {
+							if (verificationService.isVerificationInRecording(previous, VerificationType.FI)) {
+								newVrf = new Verification();
 								BeanUtils.copyProperties(current, newVrf);
 								newVrf.setNewRecord(true);
 								verifications.add(newVrf);
@@ -783,7 +782,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		verifications.addAll(oldVerifications);
 
 		for (Verification item : verifications) {
-			if ((deletedSet.contains(item.getReferenceFor())
+			if ((deleteSet.contains(item.getReferenceFor())
 					&& (item.isNew() || !verificationService.isVerificationInRecording(item, VerificationType.FI)))) {
 				item.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
@@ -804,13 +803,11 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 								ver.setRequestType(RequestType.NOT_REQUIRED.getKey());
 							}
 						}
-
 						verificationService.setLastStatus(ver);
 					}
 				}
 			}
 		}
-
 		return verifications;
 	}
 
