@@ -3116,7 +3116,7 @@
 	</changeSet>
 	<changeSet id="19.1" author="murthy.y">
 		<comment> Removed ARRAY[] function replaced with IN</comment>
-		<createView viewName="verification_lv_details_view">
+		<createView viewName="verification_lv_details_view" replaceIfExists="true">
 			SELECT t.verificationid,
 			t.seqno,
 			t.doctype,
