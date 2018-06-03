@@ -74,8 +74,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.xml.stream.FactoryConfigurationError;
@@ -204,6 +206,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExt;
@@ -11537,13 +11540,31 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceMain.setGuidedValue((BigDecimal) this.collateralRuleMap.get("GUIDED_VALUE"));
 		}
 
-		// FIXME VASU CUSTOMER EXPOSURE IN CLUDING CO APPLICANT 
-		List<FinanceExposure>  exposures= null;
+		Set<String> finReferens= new HashSet<>();
+
+		aFinanceMain.setTotalExposure(BigDecimal.ZERO);
+		// Customer Exposure
+		for (FinanceEnquiry financeEnquiry  :getFinanceDetail().getCustomerDetails().getCustFinanceExposureList()) {
+			if(!finReferens.contains(financeEnquiry.getFinReference())){
+				finReferens.add(financeEnquiry.getFinReference());
+				aFinanceMain.setTotalExposure(aFinanceMain.getTotalExposure().add(financeEnquiry.getFinCurrAssetValue()));
+				
+			}
+		}
+
+		// Co Applicent Exposure
+		List<FinanceExposure>  exposures= new ArrayList<>();
 		if (jointAccountDetailDialogCtrl != null) {
 			exposures= jointAccountDetailDialogCtrl.getExposureList();
-		}else{
-			 exposures= new ArrayList<>();
 		}
+		for (FinanceExposure financeExposure : exposures) {
+			if(!finReferens.contains(financeExposure.getFinReference())){
+				finReferens.add(financeExposure.getFinReference());
+				aFinanceMain.setTotalExposure(aFinanceMain.getTotalExposure().add(financeExposure.getCurrentExpoSure()));
+			}
+		}
+
+		logger.debug(" Total Exposure for Reference "+aFinanceMain.getFinReference()+"---" + aFinanceMain.getTotalExposure());
 		
 		return wve;
 	}

@@ -67,6 +67,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -801,6 +802,21 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 	
 	
+	public List<FinanceExposure> getExposureList(){
+		
+		List<String> listCIF= new ArrayList<>();
+		List<FinanceExposure>  exposures= new ArrayList<>();
+		
+		if(CollectionUtils.isNotEmpty(jountAccountDetailList)){
+			for (JointAccountDetail joAccountDetail : jountAccountDetailList) {
+				listCIF.add(joAccountDetail.getCustCIF());
+			}
+			exposures = getJointAccountDetailService().getJointExposureList(listCIF);
+		} 
+		
+		return exposures;
+		
+	}
 	
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
 		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);

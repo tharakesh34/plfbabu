@@ -24,7 +24,8 @@ public class FinanceReference {
 	private List<FinanceReferenceDetail> returnChequeList;
 	private List<FinanceReferenceDetail> limitCodeDetailList;
 	private List<FinanceReferenceDetail> tatNotificationList;
-
+	private List<FinanceReferenceDetail> financeTabsList;
+	
 	private String workFlowType;
 	private String lovDescWorkFlowTypeName;
 	private String lovDescWorkFlowRolesName;
@@ -197,6 +198,14 @@ public class FinanceReference {
 
 	public void setReturnChequeList(List<FinanceReferenceDetail> returnChequeList) {
 		this.returnChequeList = returnChequeList;
+	}
+
+	public List<FinanceReferenceDetail> getFinanceTabsList() {
+		return financeTabsList;
+	}
+
+	public void setFinanceTabsList(List<FinanceReferenceDetail> financeTabsList) {
+		this.financeTabsList = financeTabsList;
 	}
 
 }

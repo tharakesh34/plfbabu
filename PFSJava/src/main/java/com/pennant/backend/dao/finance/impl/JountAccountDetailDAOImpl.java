@@ -44,6 +44,7 @@
 package com.pennant.backend.dao.finance.impl;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -54,6 +55,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -427,6 +429,43 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 	}
 
 	@Override
+    public List<FinanceExposure> getPrimaryExposureList(List<String> listCIF) {
+		logger.debug("Entering");
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("CUSTCIF", listCIF);
+		paramSource.addValue("ACTIVE", true);
+		
+		RowMapper<FinanceExposure> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);;
+		StringBuilder query = new StringBuilder();		
+		query.append(" SELECT T1.FinType, T6.FinTypeDesc, T1.FinReference,"); 
+		query.append(" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,"); 
+		query.append(" (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure, " );
+		query.append(" T1.FinCcy finCcy, T7.ccyEditField ccyEditField, T4.custStsDescription status,"); 
+		query.append(" T5.custStsDescription WorstStatus, T3.CustCIF ");
+		query.append(" FROM  FinanceMain T1"); 
+		query.append(" INNER JOIN FinPftDetails T2 ON T1.FinReference = T2.FinReference"); 
+		query.append(" INNER JOIN Customers T3 ON T3.CustId = T1.CustID ");
+		query.append(" LEFT JOIN BMTCustStatusCodes T4 ON T4.CustStsCode=T3.CustSts"); 
+		query.append(" LEFT JOIN BMTCustStatusCodes T5 ON T5.CustStsCode=T1.FinStatus ");
+		query.append(" INNER JOIN RMTFinanceTypes T6 ON T6.FinType = T1.FinType ");
+		query.append(" INNER JOIN RMTCurrencies T7 ON T7.CcyCode = T1.FinCcy ");
+		query.append(" WHERE T3.CustCIF IN (:CUSTCIF) AND T1.FinIsActive = :ACTIVE");
+		query.append(" ORDER BY T1.FINSTARTDATE ASC");
+		logger.debug("selectSql: " + query.toString());
+
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.query(query.toString(), paramSource,typeRowMapper );
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		} finally {
+			typeRowMapper = null;
+			paramSource= null;
+			query = null;
+		}
+		return null;
+	}
+	@Override
     public List<FinanceExposure> getSecondaryExposureList(JointAccountDetail jointAccountDetail) {
 		logger.debug("Entering");
 		SqlParameterSource beanParameters = null;
@@ -463,9 +502,50 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 			typeRowMapper = null;
 			query = null;
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
+	@Override
+    public List<FinanceExposure> getSecondaryExposureList(List<String> listCIF) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("CUSTCIF", listCIF);
+		paramSource.addValue("ACTIVE", true);
+		RowMapper<FinanceExposure> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);;
+
+		
+		StringBuilder query = null;
+		query = new StringBuilder();
+		query.append(" SELECT T1.FinType, T6.FinTypeDesc, T1.FinReference,"); 
+		query.append(" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,"); 
+		query.append(" (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure, ");
+		query.append(" T1.FinCcy finCcy, T8.ccyEditField ccyEditField, T4.custStsDescription status,"); 
+		query.append(" T5.custStsDescription WorstStatus, T3.CustCIF ");
+		query.append(" FROM  FinanceMain T1"); 
+		query.append(" INNER JOIN FinPftDetails T2 ON T1.FinReference = T2.FinReference"); 
+		query.append(" INNER JOIN Customers T3 ON T3.CustId = T1.CustID ");
+		query.append(" LEFT JOIN BMTCustStatusCodes T4 ON T4.CustStsCode=T3.CustSts"); 
+		query.append(" LEFT JOIN BMTCustStatusCodes T5 ON T5.CustStsCode=T1.FinStatus ");
+		query.append(" INNER JOIN RMTFinanceTypes T6 ON T6.FinType = T1.FinType ");
+		query.append(" INNER JOIN FinJointAccountDetails_View T7  ON T7.FinReference=T1.FinReference");
+		query.append(" INNER JOIN RMTCurrencies T8 ON T8.CcyCode = T1.FinCcy ");
+		query.append(" WHERE T7.CustCIF IN (:CUSTCIF) AND T1.FinIsActive = :ACTIVE");
+		
+		logger.debug("selectSql: " + query.toString());
+
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.query(query.toString(), paramSource,typeRowMapper );
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		} finally {
+			paramSource = null;
+			typeRowMapper = null;
+			query = null;
+		}
+		return new ArrayList<>();
+	}
 	@Override
     public List<FinanceExposure> getGuarantorExposureList(JointAccountDetail jointAccountDetail) {
 		logger.debug("Entering");

@@ -919,6 +919,15 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	} 
 	
 	@Override
+	public List<FinanceExposure> getJointExposureList(List<String> listCIF){
+		
+		List<FinanceExposure> exposures= getJountAccountDetailDAO().getPrimaryExposureList(listCIF);
+		exposures.addAll(getJountAccountDetailDAO().getSecondaryExposureList(listCIF));
+		return exposures;
+	}
+	
+	
+	@Override
 	public BigDecimal doFillExposureDetails(List<FinanceExposure> primaryList, JointAccountDetail detail) {
 		BigDecimal currentExpoSure = BigDecimal.ZERO;
 		if(primaryList != null && !primaryList.isEmpty() )  {

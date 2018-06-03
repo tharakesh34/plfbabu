@@ -75,4 +75,5 @@ public interface JointAccountDetailService {
 	List<AuditDetail> validate(List<JointAccountDetail> jointAcDetailList, long workflowId, String method, String auditTranType, String  usrLanguage);
 	List<AuditDetail> delete(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType);
 	List<CustomerIncome> getJointAccountIncomeList(long custID);
+	List<FinanceExposure> getJointExposureList(List<String> listCIF);
 }
