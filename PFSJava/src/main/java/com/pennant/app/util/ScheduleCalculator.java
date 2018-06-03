@@ -1218,20 +1218,28 @@ public class ScheduleCalculator {
 		int sdSize = finSchdDetails.size();
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
-		String recaltype = finMain.getRecalType();
+		String recalType = finMain.getRecalType();
+		String rcvRecalType = recalType;
 		Date evtFromDate = finMain.getEventFromDate();
 		Date evtToDate = finMain.getEventToDate();
 
 		finMain.setCompareToExpected(false);
 		finMain.setCompareExpectedResult(BigDecimal.ZERO);
 
+		//To allow recaclulation happens as per Adjust to maturity. Once calculation completes
+		//addting terms will be done if required
+		if (StringUtils.equals(recalType, CalculationConstants.RPYCHG_ADJTERMS)) {
+			recalType = CalculationConstants.RPYCHG_ADJMDT;
+			finMain.setRecalType(recalType);
+		}
+		
 		// Current Period or Till MDT set Recal from date and recal todate
-		if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_CURPRD)) {
+		if (StringUtils.equals(recalType, CalculationConstants.RPYCHG_CURPRD)) {
 			finScheduleData = getCurPerodDates(finScheduleData);
 		}
 
 		// Force Set recaltype and recal to date to TILLMDT
-		if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_CURPRD)) {
+		if (StringUtils.equals(recalType, CalculationConstants.RPYCHG_CURPRD)) {
 
 			if (DateUtility.compare(evtToDate, finMain.getGrcPeriodEndDate()) <= 0) {
 				finMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
@@ -1247,7 +1255,7 @@ public class ScheduleCalculator {
 		// Same code is kept in add disbursement also (Whereever recal is
 		// possible in two periods..)
 
-		if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT)) {
+		if (StringUtils.equals(recalType, CalculationConstants.RPYCHG_ADJMDT)) {
 			finMain.setRecalFromDate(finMain.getMaturityDate());
 			finMain.setRecalToDate(finMain.getMaturityDate());
 		}
@@ -1367,6 +1375,43 @@ public class ScheduleCalculator {
 			}
 			
 			finScheduleData = calSchdProcess(finScheduleData, false, false);
+		}
+		
+		//Actual Requirement is adjust terms
+		if (StringUtils.equals(rcvRecalType, CalculationConstants.RPYCHG_ADJTERMS)) {
+			recalType = CalculationConstants.RPYCHG_ADJTERMS;
+			finMain.setRecalType(recalType);
+
+			int iSchd = finScheduleData.getFinanceScheduleDetails().size() - 1;
+			int iLast = finScheduleData.getRepayInstructions().size() - 1;
+			BigDecimal lastInstruction = BigDecimal.ZERO;
+			BigDecimal lastSchdAmt = BigDecimal.ZERO;
+
+			lastInstruction = finScheduleData.getRepayInstructions().get(iLast).getRepayAmount();
+
+			String schdMethod = finScheduleData.getRepayInstructions().get(iLast).getRepaySchdMethod();
+
+			if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
+				lastSchdAmt = finScheduleData.getFinanceScheduleDetails().get(iSchd).getRepayAmount();
+			} else if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PRI)
+					|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PRI_PFT)) {
+				lastSchdAmt = finScheduleData.getFinanceScheduleDetails().get(iSchd).getPrincipalSchd();
+			}
+
+			if (lastSchdAmt.compareTo(lastInstruction) <= 0) {
+				logger.debug("Leaving");
+				return finScheduleData;
+			}
+
+			BigDecimal lastTermPercent = new BigDecimal(SysParamUtil.getValueAsString("ADJTERM_LASTTERM_PERCENT"));
+
+			lastInstruction = lastInstruction.multiply(lastTermPercent);
+			lastInstruction = round(lastInstruction);
+			lastInstruction = finScheduleData.getRepayInstructions().get(iLast).getRepayAmount().add(lastInstruction);
+
+			if (lastSchdAmt.compareTo(lastInstruction) > 0) {
+				finScheduleData = adjTerms(finScheduleData, true);
+			}
 		}
 
 		logger.debug("Leaving");

@@ -3308,8 +3308,8 @@ public class PennantStaticListUtil {
 		//schedulCalculationCodes.put(CalculationConstants.RPYCHG_ADDTERM, new ValueLabel(CalculationConstants.RPYCHG_ADDTERM, Labels.getLabel("label_Add_Terms")));
 		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_ADDRECAL, new ValueLabel(CalculationConstants.RPYCHG_ADDRECAL, Labels.getLabel("label_Add_Recal")));
 		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_STEPPOS, new ValueLabel(CalculationConstants.RPYCHG_STEPPOS, Labels.getLabel("label_POSStep")));
-		/*schedulCalculationCodes.put(CalculationConstants.RPYCHG_ADDLAST, new ValueLabel(CalculationConstants.RPYCHG_ADDLAST, Labels.getLabel("label_Add_Last")));
-		schedulCalculationCodes.put(CalculationConstants.RPYCHG_ADJTERMS, new ValueLabel(CalculationConstants.RPYCHG_ADJTERMS, Labels.getLabel("label_Adj_Terms")));*/
+		/*schedulCalculationCodes.put(CalculationConstants.RPYCHG_ADDLAST, new ValueLabel(CalculationConstants.RPYCHG_ADDLAST, Labels.getLabel("label_Add_Last")));*/
+		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_ADJTERMS, new ValueLabel(CalculationConstants.RPYCHG_ADJTERMS, Labels.getLabel("label_Adj_Terms")));
 		
 		// BPI Treatment
 		bpimethods.put(FinanceConstants.BPI_NO, new ValueLabel(FinanceConstants.BPI_NO, Labels.getLabel("label_NO_BPI")));

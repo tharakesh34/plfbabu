@@ -291,7 +291,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		FinanceType aFinType = aFinSchData.getFinanceType();
 
 		this.reviewDatesRow.setVisible(true);
-		StringBuilder excludeFileds=new StringBuilder(",ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+		// FIXME PV @03/JUN/2018 ADJTERMS Testing
+		//StringBuilder excludeFileds=new StringBuilder(",ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+		StringBuilder excludeFileds=new StringBuilder(",ADDTERM,ADDLAST,ADDRECAL,");
 		if(aFinType.isRateChgAnyDay()){
 			this.anyDate.setDisabled(false);
 			this.anyDate.setVisible(true);
@@ -1319,9 +1321,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.cbRateChangeToDate.setVisible(true);
 		this.anyDateFromDateRow.setVisible(false);
 		this.anyDateToDateRow.setVisible(false);
-		
-		StringBuilder excludeFileds=new StringBuilder(",ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
-		
+		// FIXME PV @03/JUN/2018 ADJTERMS Testing
+		//StringBuilder excludeFileds=new StringBuilder(",ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+		StringBuilder excludeFileds=new StringBuilder(",ADDTERM,ADDLAST,ADDRECAL,");
 		// Stepping POS Exclude for Recal Type
 		if(!getFinScheduleData().getFinanceMain().isStepFinance() ||
 				!StringUtils.equals(getFinScheduleData().getFinanceMain().getStepType(), FinanceConstants.STEPTYPE_PRIBAL) ||
@@ -1357,8 +1359,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.anyDateRateChangeFromDate.setVisible(true);
 		this.anyDateRateChangeToDate.setVisible(true);
 		this.anyDateToDateRow.setVisible(true);
-		
-		StringBuilder excludeFileds=new StringBuilder(",CURPRD,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+		// FIXME PV @03/JUN/2018 ADJTERMS Testing
+		//StringBuilder excludeFileds=new StringBuilder(",CURPRD,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+		StringBuilder excludeFileds=new StringBuilder(",CURPRD,ADDTERM,ADDLAST,ADDRECAL,");
 		// Stepping POS Exclude for Recal Type
 		if(!getFinScheduleData().getFinanceMain().isStepFinance() ||
 				!StringUtils.equals(getFinScheduleData().getFinanceMain().getStepType(), FinanceConstants.STEPTYPE_PRIBAL) ||
@@ -1414,10 +1417,14 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (isValidComboValue(this.cbRateChangeFromDate,Labels.getLabel("label_RateChangeDialog_FromDate.value"))) {
 			
 			if(getFinScheduleData().getFinanceMain().getNumberOfTerms() == 1){
-				excludeFileds.append(",TILLMDT,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+				// FIXME PV @03/JUN/2018 ADJTERMS Testing
+				//excludeFileds.append(",TILLMDT,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+				excludeFileds.append(",TILLMDT,ADDTERM,ADDLAST,ADDRECAL,");
 				fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
 			}else{
-				excludeFileds.append(",ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+				// FIXME PV @03/JUN/2018 ADJTERMS Testing
+				//excludeFileds.append(",ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+				excludeFileds.append(",ADDTERM,ADDLAST,ADDRECAL,");
 				fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(),  excludeFileds.toString());
 			}
 			
@@ -1444,9 +1451,13 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						getFinScheduleData().getFinanceMain().getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_NOPAY)){
 
 					if(getFinScheduleData().getFinanceMain().getNumberOfTerms() == 1){
-						excludeFileds.append(",TILLMDT,CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+						// FIXME PV @03/JUN/2018 ADJTERMS Testing
+						//excludeFileds.append(",TILLMDT,CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+						excludeFileds.append(",TILLMDT,CURPRD,TILLDATE,ADDTERM,ADDLAST,ADDRECAL,");
 						fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(),  excludeFileds.toString());
 					}else{
+						// FIXME PV @03/JUN/2018 ADJTERMS Testing
+						//excludeFileds.append(",CURPRD,TILLDATE,ADDTERM,ADDLAST,ADDRECAL,");
 						excludeFileds.append(",CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
 						fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(),  excludeFileds.toString());
 					}
