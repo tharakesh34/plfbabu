@@ -776,5 +776,8 @@ public class CustomerEligibilityCheck implements Serializable {
 		this.extendedFields.putAll(ruleMap);
 	}
 
+	public Object getExtendedValue(String fieldName) {
+		return this.extendedFields.get(fieldName);
+	}
 	
 }

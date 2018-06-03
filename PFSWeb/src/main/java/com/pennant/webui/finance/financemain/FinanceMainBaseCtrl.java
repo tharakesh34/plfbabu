@@ -11521,6 +11521,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
+		if(getFinanceDetail().getCustomerEligibilityCheck().getExtendedValue("COLLATERAL_TYPES")!=null){
+			aFinanceMain.setCollateralType(getFinanceDetail().getCustomerEligibilityCheck().getExtendedValue("COLLATERAL_TYPES").toString());	
+		}
+		
+		if(getFinanceDetail().getCustomerEligibilityCheck().getExtendedValue("MARKET_VALUE")!=null){
+			aFinanceMain.setMarketValue((BigDecimal) getFinanceDetail().getCustomerEligibilityCheck().getExtendedValue("MARKET_VALUE"));
+		}
+		
+		if(getFinanceDetail().getCustomerEligibilityCheck().getExtendedValue("GUIDED_VALUE")!=null){
+			aFinanceMain.setGuidedValue((BigDecimal) getFinanceDetail().getCustomerEligibilityCheck().getExtendedValue("GUIDED_VALUE"));
+		}
+
 		return wve;
 	}
 
@@ -14943,7 +14955,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			iIRVAlue = iIRVAlue.divide(customer.getCustTotalIncome(),RoundingMode.HALF_UP);
 			iIRVAlue = iIRVAlue.divide(new BigDecimal(100),RoundingMode.HALF_UP);
 		}
-		detail.getCustomerEligibilityCheck().addExtendedField("IIR_RATIO",iIRVAlue);		
+		
+		detail.getCustomerEligibilityCheck().addExtendedField("IIR_RATIO",iIRVAlue);
+		
+		detail.getCustomerEligibilityCheck().getExtendedValue("COLLATERAL_TYPES");		
 		detail.getCustomerEligibilityCheck().addExtendedField("maturityAge", maturityAge);
 		detail.getCustomerEligibilityCheck().setCurrentAssetValue(financeMain.getFinCurrAssetValue());
 		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Margin", customer.isMarginDeviation());
@@ -14988,12 +15003,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		BigDecimal unitPrice 			= BigDecimal.ZERO;
 		BigDecimal marketValue_Consider	= BigDecimal.ZERO;
 		BigDecimal propertyLTV			= BigDecimal.ZERO;
-
+		StringBuffer collateralType = new StringBuffer();
+		
 		if (collateralHeaderDialogCtrl != null
 				&& CollectionUtils.isNotEmpty(collateralHeaderDialogCtrl.getCollateralAssignments())) {
 			for (CollateralAssignment assignment : collateralHeaderDialogCtrl.getCollateralAssignments()) {
 				CollateralSetup setup = getCollateralSetupService()
 						.getCollateralSetupByRef(assignment.getCollateralRef(), curNextRoleCode, isEnquiry);
+				if(setup!=null){
+					collateralType.append(setup.getCollateralType());
+					collateralType.append(",");
+				}
+				
 				if (setup != null && setup.getCollateralStructure() != null) {
 
 					for (ExtendedFieldDetail fieldDetail : setup.getCollateralStructure().getExtendedFieldHeader()
@@ -15031,7 +15052,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-
+		
+		ruleValues.put("COLLATERAL_TYPES", collateralType.toString());
+		ruleValues.put("MARKET_VALUE", marketValue);
+		ruleValues.put("GUIDED_VALUE", guidedValue);
+		
+		
 		// (Guided Value/MarketValue)/100
 		if(!marketValue.equals(BigDecimal.ZERO) && !guidedValue.equals(BigDecimal.ZERO)){
 			marketValue_Consider = marketValue.divide(guidedValue,RoundingMode.HALF_UP);

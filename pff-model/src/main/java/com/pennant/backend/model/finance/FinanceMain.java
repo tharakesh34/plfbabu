@@ -648,7 +648,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal recalUGSTFee = BigDecimal.ZERO;
 	
 	private String eligibilityMethod;
-
+	
+	// Exposed For Workflow Rules
+	private String collateralType=null;
+	private BigDecimal marketValue = BigDecimal.ZERO;
+	private BigDecimal guidedValue = BigDecimal.ZERO;
+	private BigDecimal totalExposure = BigDecimal.ZERO;
+	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("calculateRepay");
@@ -784,7 +790,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		
 		// BPI Reset
 		excludeFields.add("bpiResetReq");
-
+		excludeFields.add("collateralType");
+		excludeFields.add("marketValue");
+		excludeFields.add("guidedValue");
+		excludeFields.add("totalExposure");
+		
 		return excludeFields;
 	}
 
@@ -3649,6 +3659,38 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	}
 	public void setPostingId(long postingId) {
 		this.postingId = postingId;
+	}
+
+	public String getCollateralType() {
+		return collateralType;
+	}
+
+	public void setCollateralType(String collateralType) {
+		this.collateralType = collateralType;
+	}
+
+	public BigDecimal getMarketValue() {
+		return marketValue;
+	}
+
+	public void setMarketValue(BigDecimal marketValue) {
+		this.marketValue = marketValue;
+	}
+
+	public BigDecimal getGuidedValue() {
+		return guidedValue;
+	}
+
+	public void setGuidedValue(BigDecimal guidedValue) {
+		this.guidedValue = guidedValue;
+	}
+
+	public BigDecimal getTotalExposure() {
+		return totalExposure;
+	}
+
+	public void setTotalExposure(BigDecimal totalExposure) {
+		this.totalExposure = totalExposure;
 	}
 
 }
