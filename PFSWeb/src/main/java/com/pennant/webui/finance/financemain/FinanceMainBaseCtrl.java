@@ -204,6 +204,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
+import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExt;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -903,7 +904,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private String isCreditRevTabReq = SysParamUtil.getValueAsString(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ);
 	private List<String> assignCollateralRef = new ArrayList<>();
 	private CollateralSetupService collateralSetupService;
-
+	private Map<String ,Object> collateralRuleMap= new HashMap<>();
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -11521,18 +11523,26 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		if(getFinanceDetail().getCustomerEligibilityCheck().getExtendedValue("COLLATERAL_TYPES")!=null){
-			aFinanceMain.setCollateralType(getFinanceDetail().getCustomerEligibilityCheck().getExtendedValue("COLLATERAL_TYPES").toString());	
+		if(this.collateralRuleMap.containsKey("COLLATERAL_TYPES")){
+			aFinanceMain.setCollateralType(this.collateralRuleMap.get("COLLATERAL_TYPES").toString());	
 		}
 		
-		if(getFinanceDetail().getCustomerEligibilityCheck().getExtendedValue("MARKET_VALUE")!=null){
-			aFinanceMain.setMarketValue((BigDecimal) getFinanceDetail().getCustomerEligibilityCheck().getExtendedValue("MARKET_VALUE"));
+		if(this.collateralRuleMap.containsKey("MARKET_VALUE")){
+			aFinanceMain.setMarketValue((BigDecimal) this.collateralRuleMap.get("MARKET_VALUE"));
 		}
 		
-		if(getFinanceDetail().getCustomerEligibilityCheck().getExtendedValue("GUIDED_VALUE")!=null){
-			aFinanceMain.setGuidedValue((BigDecimal) getFinanceDetail().getCustomerEligibilityCheck().getExtendedValue("GUIDED_VALUE"));
+		if(this.collateralRuleMap.containsKey("GUIDED_VALUE")){
+			aFinanceMain.setGuidedValue((BigDecimal) this.collateralRuleMap.get("GUIDED_VALUE"));
 		}
 
+		/*// FIXME VASU CUSTOMER EXPOSURE IN CLUDING CO APPLICANT 
+		List<FinanceExposure>  exposures= null;
+		if (jointAccountDetailDialogCtrl != null) {
+			exposures= jointAccountDetailDialogCtrl.getExposureList();
+		}else{
+			 exposures= new ArrayList<>();
+		}*/
+		
 		return wve;
 	}
 
@@ -14942,7 +14952,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}
 		// ### 10-05-2018 - End - Development Item 82
-		detail.getCustomerEligibilityCheck().setExtendedFields(setCollateralRuleValues(detail));
+		setCollateralRuleValues(detail);
+		detail.getCustomerEligibilityCheck().setExtendedFields(collateralRuleMap);
 
 		int maturityAge = 0;
 		if (customer.getCustDOB() != null && maturityDate_two.getValue() != null) {
@@ -14996,8 +15007,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return value;
 	}
 
-	private Map<String, Object> setCollateralRuleValues(FinanceDetail detail) {
-		Map<String, Object> ruleValues = new HashMap<>();
+	private void setCollateralRuleValues(FinanceDetail detail) {
+		
+		
 		BigDecimal guidedValue 			= BigDecimal.ZERO;
 		BigDecimal marketValue 			= BigDecimal.ZERO;
 		BigDecimal unitPrice 			= BigDecimal.ZERO;
@@ -15026,25 +15038,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							if (CollectionUtils.isNotEmpty(setup.getExtendedFieldRenderList())) {
 								for (ExtendedFieldRender extendedFieldRender : setup.getExtendedFieldRenderList()) {
 									// FIXME currently it  is available for the first REcord only 
-									if (!ruleValues.containsKey(key)) {
+									if (!collateralRuleMap.containsKey(key)) {
 										Object value = extendedFieldRender.getMapValues()
 												.get(fieldDetail.getFieldName());
 										value = getRuleValue(value, fieldDetail.getFieldType(),
 												setup.getCollateralCcy());
-										ruleValues.put(key, value);
+										collateralRuleMap.put(key, value);
 									}
 								}
 							}
 						}
 						if(CollectionUtils.isNotEmpty(setup.getExtendedFieldRenderList())){
 							ExtendedFieldRender extendedFieldRender = setup.getExtendedFieldRenderList().get(0);
-							if(!ruleValues.containsKey("GLNVAL")){
+							if(!collateralRuleMap.containsKey("GLNVAL")){
 								guidedValue  = decimalValue(extendedFieldRender.getMapValues().get("GLNVAL"), setup.getCollateralCcy());
 							}
-							if(!ruleValues.containsKey("MKTVAL")){
+							if(!collateralRuleMap.containsKey("MKTVAL")){
 								marketValue  = decimalValue(extendedFieldRender.getMapValues().get("MKTVAL"), setup.getCollateralCcy());
 							}	
-							if(!ruleValues.containsKey("UNITPRICE")){
+							if(!collateralRuleMap.containsKey("UNITPRICE")){
 								unitPrice  = decimalValue(extendedFieldRender.getMapValues().get("UNITPRICE"), setup.getCollateralCcy());
 							}
 						}	
@@ -15053,9 +15065,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		
-		ruleValues.put("COLLATERAL_TYPES", collateralType.toString());
-		ruleValues.put("MARKET_VALUE", marketValue);
-		ruleValues.put("GUIDED_VALUE", guidedValue);
+		collateralRuleMap.put("COLLATERAL_TYPES", collateralType.toString());
+		collateralRuleMap.put("MARKET_VALUE", marketValue);
+		collateralRuleMap.put("GUIDED_VALUE", guidedValue);
 		
 		
 		// (Guided Value/MarketValue)/100
@@ -15063,24 +15075,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			marketValue_Consider = marketValue.divide(guidedValue,RoundingMode.HALF_UP);
 			marketValue_Consider  = marketValue_Consider.multiply(new BigDecimal(100)); 
 		}
-		ruleValues.put("MRKVALUE_CONSIDER", marketValue_Consider);		
+		collateralRuleMap.put("MRKVALUE_CONSIDER", marketValue_Consider);		
 		
 		// PROP_LTV Property LTV	LoanAmount/UNITPRICE
 		if(!marketValue.equals(BigDecimal.ZERO) && !unitPrice.equals(BigDecimal.ZERO)){
 			propertyLTV = marketValue.divide(decimalValue(detail.getFinScheduleData().getFinanceMain().getFinAmount(),detail.getFinScheduleData().getFinanceMain().getFinCcy()),RoundingMode.HALF_UP);
 		}
-		ruleValues.put("PROP_LTV", propertyLTV);	
+		collateralRuleMap.put("PROP_LTV", propertyLTV);	
 		
 		List<ExtendedFieldDetail> extendedFieldDetails = PennantAppUtil.getCollateralExtendedFieldForRules();
 		for (ExtendedFieldDetail fieldDetail : extendedFieldDetails) {
 			String key = fieldDetail.getLovDescModuleName() + "_" + fieldDetail.getLovDescSubModuleName() + "_"
 					+ fieldDetail.getFieldName();
-			if (!ruleValues.containsKey(key)) {
+			if (!collateralRuleMap.containsKey(key)) {
 				Object value = getRuleValue(null, fieldDetail.getFieldType(), "INR");
-				ruleValues.put(key, value);
+				collateralRuleMap.put(key, value);
 			}
 		}
-		return ruleValues;
 	}
 
 		private BigDecimal decimalValue(Object mapvalue,String currency){
