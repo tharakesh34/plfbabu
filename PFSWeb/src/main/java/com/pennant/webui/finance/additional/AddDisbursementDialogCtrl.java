@@ -77,6 +77,7 @@ import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -881,7 +882,22 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			fillSchDates(cbFromDate, getFinScheduleData(), null);
 			this.label_AddDisbursementDialog_TillFromDate.setValue(Labels.getLabel("label_AddDisbursementDialog_CalFromDate.value"));
 			this.fromDateRow.setVisible(true);
-			this.cbFromDate.setSelectedIndex(0);
+			int value = 1;
+			boolean disableDate =false; 
+			try {
+				value = SysParamUtil.getValueAsInt("DEFAULT_TILLMDT");
+				disableDate =true;
+			} catch (Exception e) {
+				
+			}
+			readOnlyComponent(disableDate,cbFromDate);
+			if(this.cbFromDate.getItemCount()>value+1){
+				this.cbFromDate.setSelectedIndex(value);	
+			}else{
+				readOnlyComponent(!fromDateRow.isVisible(),cbFromDate);
+				this.cbFromDate.setSelectedIndex(0);
+			}
+		
 		} 	
 	}
 	
