@@ -882,6 +882,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			fillSchDates(cbFromDate, getFinScheduleData(), null);
 			this.label_AddDisbursementDialog_TillFromDate.setValue(Labels.getLabel("label_AddDisbursementDialog_CalFromDate.value"));
 			this.fromDateRow.setVisible(true);
+			// If DEFAULT_TILLMDT is Specified then Set From Date as Readonly based on the Equitas Requirement .
 			int value = 1;
 			boolean disableDate =false; 
 			try {
@@ -894,7 +895,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if(this.cbFromDate.getItemCount()>value+1){
 				this.cbFromDate.setSelectedIndex(value);	
 			}else{
-				readOnlyComponent(!fromDateRow.isVisible(),cbFromDate);
+				readOnlyComponent(false,cbFromDate);
 				this.cbFromDate.setSelectedIndex(0);
 			}
 		
