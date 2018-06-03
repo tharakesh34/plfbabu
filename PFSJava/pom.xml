@@ -23,11 +23,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${pff.groupId}</groupId>
-			<artifactId>pff-service-extension</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${pff.groupId}</groupId>
 			<artifactId>PLFInterface</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -223,7 +218,7 @@
 		<dependency>
 			<groupId>com.pennanttech.document</groupId>
 			<artifactId>document-parser</artifactId>
-			<version>1.0.7</version>
+			<version>1.0.8</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
