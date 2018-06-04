@@ -138,7 +138,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 	@Override
 	protected void doSetProperties() {
-		super.pageRightName = "PresentmentHeaderDialog";
+		super.pageRightName = "PresentmentDetailDialog";
 	}
 
 	@Override
@@ -169,6 +169,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			if (this.presentmentHeader == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
+			getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			
 			doSetFieldProperties();
 			doCheckRights();
@@ -222,13 +223,15 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
+		
+		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 		if ("N".equalsIgnoreCase(moduleType)) {
-			this.btnSave.setVisible(true);
-			this.btn_AddExlude.setVisible(true);
-			this.btn_AddInclude.setVisible(true);
-			readOnlyComponent(false, this.partnerBank);
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnSave"));
+			this.btn_AddExlude.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnExclude"));
+			this.btn_AddInclude.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnInclude"));
+			readOnlyComponent(isReadOnly("PresentmentDetailDialog_partnerBank"), this.partnerBank);
 		} else if ("A".equalsIgnoreCase(moduleType)) {
-			this.btnSave.setVisible(true);
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnSave"));
 			this.btn_AddExlude.setVisible(false);
 			this.btn_AddInclude.setVisible(false);
 			readOnlyComponent(true, this.partnerBank);

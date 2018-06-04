@@ -754,6 +754,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 				((Timebox) component).setStyle(generalStyle);
 			} else if (component instanceof Intbox) {
 				((Intbox) component).setTabindex(0);
+				((Intbox) component).setReadonly(false);
 			} else if (component instanceof Decimalbox) {
 				((Decimalbox) component).setTabindex(0);
 				((Decimalbox) component).setReadonly(false);

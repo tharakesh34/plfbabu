@@ -66,11 +66,13 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.financemanagement.presentmentheader.model.PresentmentHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -189,8 +191,13 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 			this.sortOperator_BankCode.setVisible(false);
 			this.bankCode.setVisible(false);
 		}
-		
 		this.row_AlwWorkflow.setVisible(false);
+
+		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("PresentmentHeader");
+		if (moduleMapping.getWorkflowType() != null) {
+			setFirstTask(true);
+		}
+		
 		// Render the page and display the data.
 		doRenderPage();
 		search();

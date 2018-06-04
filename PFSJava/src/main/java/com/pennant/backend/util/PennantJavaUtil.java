@@ -428,6 +428,7 @@ public class PennantJavaUtil {
 	private final static String WF_VERIFICATION_TV="VERIFICATION_TV";
 	private final static String WF_VERIFICATION_LV="VERIFICATION_LV";
 	private final static String WF_VERIFICATION_RCU="VERIFICATION_RCU";
+	private final static String PRESENTMENT_BATCH="PRESENTMENTBATCH";
 
 	public static String getLabel(String label) {
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
@@ -2102,7 +2103,7 @@ public class PennantJavaUtil {
 
 		/*PresentmentHeader*/
 		ModuleUtil.register("PresentmentHeader", new ModuleMapping("PresentmentHeader", PresentmentHeader.class, new String[] { "PresentmentHeader",
-				"PresentmentHeader_AView" }, masterWF, new String[] {"Reference","PresentmentDate","PartnerBankId","FromDate","ToDate","Status","MandateType","LoanType","FinBranch","Schdate"},null, 600));
+				"PresentmentHeader_AView" }, PRESENTMENT_BATCH , new String[] {"Reference","PresentmentDate","PartnerBankId","FromDate","ToDate","Status","MandateType","LoanType","FinBranch","Schdate"},null, 600));
 	
 		ModuleUtil.register("PresentmentExcludeHeader", new ModuleMapping("PresentmentExcludeHeader", PresentmentHeader.class, new String[] { "PresentmentHeader",
 		"presentmentexcludehdr_view" }, masterWF, new String[] {"Id","Reference"},null, 600));
