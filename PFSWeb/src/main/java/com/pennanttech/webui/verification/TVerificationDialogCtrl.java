@@ -169,7 +169,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			collaterls = financeDetail.getCollateralAssignmentList();
 		}
 
-		renderList(getVerifications(collaterls));
+		renderList(getFinalVerifications(collaterls));
 	}
 
 	private boolean isNotDeleted(String recordType) {
@@ -182,7 +182,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			return;
 		}
 		if (collaterals != null) {
-			renderList(getVerifications(collaterals));
+			renderList(getFinalVerifications(collaterals));
 		}
 	}
 
@@ -218,7 +218,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		return item;
 	}
 
-	private List<Verification> getVerifications(List<CollateralAssignment> collaterals) {
+	private List<Verification> getFinalVerifications(List<CollateralAssignment> collaterals) {
 		List<Verification> verifications = new ArrayList<>();
 		Map<String, Verification> collateralMap = new HashMap<>();
 		Set<String> deletedSet = new HashSet<>();

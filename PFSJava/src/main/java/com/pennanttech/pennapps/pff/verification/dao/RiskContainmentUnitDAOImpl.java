@@ -453,15 +453,6 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		} else {
 			sql.append(tableType.getSuffix());
 		}
-		/*sql.append(" rcu ");
-
-		if (documentType == DocumentType.CUSTOMER) {
-			sql.append(" inner join customerdocuments_view doc");
-			sql.append(" on doc.custid = rcu.documentId and rcu.documentsubid = doc.custdoccategory");
-		} else {
-			sql.append(" inner join documentdetails_view doc");
-			sql.append(" on doc.docid = rcu.documentId");
-		}*/
 
 		sql.append(
 				" Where verificationId in (select verificationId from verifications where keyReference =:keyReference)");

@@ -1430,7 +1430,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		showErrorDetails(wve, tab);
-		List<Verification> vrfs = getVerifications();
+		List<Verification> vrfs = getFinalVerifications();
 		verification.getVerifications().clear();
 		verification.setVerifications(vrfs);
 		this.verification.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -1456,7 +1456,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		return true;
 	}
 
-	private List<Verification> getVerifications() {
+	private List<Verification> getFinalVerifications() {
 		Map<Long, Verification> reInitMap = new HashMap<>();
 		Map<Long, Verification> other = new HashMap<>();
 		List<Verification> verifications = new ArrayList<>();
@@ -1517,7 +1517,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 
 		}
-
+		
+		//Group the Verifications by Agency
 		for (Verification vrf : this.verification.getVerifications()) {
 			RCUDocument document = vrf.getRcuDocument();
 			document.setInitRemarks(vrf.getRemarks());

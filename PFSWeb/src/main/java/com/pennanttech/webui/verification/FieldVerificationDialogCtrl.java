@@ -634,7 +634,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 			custDetails.setAddressList(addresses);
 			customerVerifications.clear();
-			customerVerifications.addAll(getVerifications(custDetails, false));
+			customerVerifications.addAll(getFinalVerifications(custDetails, false));
 
 			getTotalVerifications();
 			if (flag) {
@@ -662,7 +662,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			coApplicantVerifications.clear();
 			for (CustomerDetails custDetail : customerDetails) {
 				addresses.addAll(getAddresses(custDetail));
-				coApplicantVerifications.addAll(getVerifications(custDetail, true));
+				coApplicantVerifications.addAll(getFinalVerifications(custDetail, true));
 			}
 
 			getTotalVerifications();
@@ -699,7 +699,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		renderFIVerificationList();
 	}
 
-	private List<Verification> getVerifications(CustomerDetails customerDetails, boolean coApplicant) {
+	private List<Verification> getFinalVerifications(CustomerDetails customerDetails, boolean coApplicant) {
 		boolean exists = false;
 		Customer customer = customerDetails.getCustomer();
 		List<CustomerAddres> addresses = customerDetails.getAddressList();
