@@ -287,4 +287,10 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES (261, 11, 'AGREEMENTNO', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 	 </sql>
 	 </changeSet>
+	 <changeSet id="12" author="vijaykumar.l">
+	 <sql>
+	 delete from SMTPARAMETERS where sysparmcode='DEFAULT_TILLMDT';
+     Insert into SMTPARAMETERS values ('DEFAULT_TILLMDT','Disbursement till maturity','int',1,'2',4,0,null,null,'Disbursement',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+	 </sql>
+	 </changeSet>
 	 </databaseChangeLog>
