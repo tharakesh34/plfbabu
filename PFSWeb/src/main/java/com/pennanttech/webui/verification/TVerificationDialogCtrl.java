@@ -1096,9 +1096,10 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		this.recSave = recSave;
+		this.userAction = userAction;
 		doClearMessage();
 		doSetValidation();
 

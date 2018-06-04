@@ -1415,8 +1415,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave) {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction) {
 		logger.debug(Literal.ENTERING);
+		this.userAction = userAction;
 		this.recSave = recSave;
 		doClearMessage();
 		doSetValidation();

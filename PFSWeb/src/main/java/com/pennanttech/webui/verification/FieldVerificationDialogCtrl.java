@@ -1128,8 +1128,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
-		logger.debug("Entering");
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+		this.userAction = userAction;
 		this.recSave = recSave;
 		List<Verification> list = new ArrayList<>();
 		doClearMessage();

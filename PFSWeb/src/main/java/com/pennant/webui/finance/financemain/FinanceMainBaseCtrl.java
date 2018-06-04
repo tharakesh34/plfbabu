@@ -6240,13 +6240,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// FI Init Verification Detail
 		Tab fiInitTab = getTab(AssetConstants.UNIQUE_ID_FIINITIATION);
 		if ((fiInitTab != null && fiInitTab.isVisible()) && fieldVerificationDialogCtrl != null) {
-			fieldVerificationDialogCtrl.doSave(aFinanceDetail, fiInitTab, recSave);
+			fieldVerificationDialogCtrl.doSave(aFinanceDetail, fiInitTab, recSave, userAction);
 		}
 
 		// FI Approval Verification Detail
 		Tab fiApprovalTab = getTab(AssetConstants.UNIQUE_ID_FIAPPROVAL);
 		if ((fiApprovalTab != null && fiApprovalTab.isVisible()) && fieldVerificationDialogCtrl != null) {
-			if (!fieldVerificationDialogCtrl.doSave(aFinanceDetail, fiApprovalTab, recSave)) {
+			if (!fieldVerificationDialogCtrl.doSave(aFinanceDetail, fiApprovalTab, recSave, userAction)) {
 				return;
 			}
 
@@ -6255,13 +6255,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// TV Init Verification Detail
 		Tab tvInitTab = getTab(AssetConstants.UNIQUE_ID_TVINITIATION);
 		if ((tvInitTab != null && tvInitTab.isVisible()) && tVerificationDialogCtrl != null) {
-			tVerificationDialogCtrl.doSave(aFinanceDetail, tvInitTab, recSave);
+			tVerificationDialogCtrl.doSave(aFinanceDetail, tvInitTab, recSave, userAction);
 		}
 
 		// TV Approval Verification Detail
 		Tab tvApprovalTab = getTab(AssetConstants.UNIQUE_ID_TVAPPROVAL);
 		if ((tvApprovalTab != null && tvApprovalTab.isVisible()) && tVerificationDialogCtrl != null) {
-			if (!tVerificationDialogCtrl.doSave(aFinanceDetail, tvApprovalTab, recSave)) {
+			if (!tVerificationDialogCtrl.doSave(aFinanceDetail, tvApprovalTab, recSave, userAction)) {
 				return;
 			}
 
@@ -6270,7 +6270,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// LV Init Verification Detail
 		Tab lvInitTab = getTab(AssetConstants.UNIQUE_ID_LVINITIATION);
 		if (lvInitTab != null && lvInitTab.isVisible() && lVerificationCtrl != null) {
-			if(!lVerificationCtrl.doSave(aFinanceDetail, lvInitTab,recSave)){
+			if(!lVerificationCtrl.doSave(aFinanceDetail, lvInitTab,recSave, userAction)){
 				return;
 			}
 		}
@@ -6278,7 +6278,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// LV Approval Verification Detail
 		Tab lvApprovalTab = getTab(AssetConstants.UNIQUE_ID_LVAPPROVAL);
 		if (lvApprovalTab != null && lvApprovalTab.isVisible() && lVerificationCtrl != null) {
-			if (!lVerificationCtrl.doSave(aFinanceDetail, lvApprovalTab,recSave)) {
+			if (!lVerificationCtrl.doSave(aFinanceDetail, lvApprovalTab, recSave, userAction)) {
 				return;
 			}
 
@@ -6287,13 +6287,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// RCU Init Verification Detail
 		Tab rcuInitTab = getTab(AssetConstants.UNIQUE_ID_RCUINITIATION);
 		if ((rcuInitTab != null && rcuInitTab.isVisible()) && rcuVerificationDialogCtrl != null) {
-			rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuInitTab,recSave);
+			rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuInitTab,recSave, userAction);
 		}
 
 		// RCU Approval Verification Detail
 		Tab rcuApprovalTab = getTab(AssetConstants.UNIQUE_ID_RCUAPPROVAL);
 		if ((rcuApprovalTab != null && rcuApprovalTab.isVisible()) && rcuVerificationDialogCtrl != null) {
-			if(!rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuApprovalTab,recSave)){
+			if (!rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuApprovalTab, recSave, userAction)) {
 				return;
 			}
 			
