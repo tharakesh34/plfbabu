@@ -1149,7 +1149,7 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getAggDetails() {
 
 		if(aggDetails == null){
-			aggDetails = new ArrayList<ValueLabel>(16);
+			aggDetails = new ArrayList<ValueLabel>(35);
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_BASICDE, Labels.getLabel("label_AggCustomerBasicDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_EMPMNTD,Labels.getLabel("label_AggCustomerEmployment")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_INCOMDE,Labels.getLabel("label_AggCustomerIncomeDetails")));
@@ -1178,6 +1178,7 @@ public class PennantStaticListUtil {
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_DEVIATI,Labels.getLabel("label_AggDeviationDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_ACTIVIT,Labels.getLabel("label_AggActivityDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_ELGBLTY,Labels.getLabel("label_AggEligibilityDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_QRYMODL,Labels.getLabel("label_AggQueryDetails")));
 		}
 		return aggDetails;
 	}

@@ -242,5 +242,46 @@ public class QueryDetailDAOImpl extends BasisNextidDaoImpl<QueryDetail> implemen
 		logger.debug(Literal.LEAVING);
 		return queryDetails;
 	}
+
+	@Override
+	public List<QueryDetail> getQueryMgmtListForAgreements(String finReference, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		List<QueryDetail> queryDetails = new ArrayList<QueryDetail>();
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" id, finReference, categoryId, qryNotes, assignedRole, notifyTo, ");
+		sql.append(" status, Coalesce(raisedBy,0) raisedBy, raisedOn, responsNotes, Coalesce(responseBy,0) responseBy, responseOn, ");
+		sql.append(" closerNotes, Coalesce(closerBy,0) closerBy, closerOn,");		
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			//sql.append(" code, description,usrLogin " );
+			sql.append(" categorycode, categoryDescription,usrLogin, " );
+			sql.append(" responseUser, closerUser " );
+		}
+		sql.append(" From QUERYDETAIL");
+		sql.append(type);
+		sql.append(" Where finReference = :FinReference");		
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		QueryDetail queryDetail = new QueryDetail();
+		queryDetail.setFinReference(finReference);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryDetail);
+		RowMapper<QueryDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(QueryDetail.class);
+
+		try {
+			queryDetails = this.namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			queryDetail = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return queryDetails;
+	}
 	
 }	

@@ -390,6 +390,20 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
+		
+		/**
+		 * Method to get the QueryDetails based on the loan reference.
+		 * 
+		 * @return List<QueryDetail>
+		 * 
+		 */
+		@Override
+		public List<QueryDetail> getQueryDetailsforAgreements(String finReference) {
+			logger.debug(Literal.ENTERING);
+			List<QueryDetail> list = getQueryDetailDAO().getQueryMgmtListForAgreements(finReference,"_AView");
+			logger.debug(Literal.LEAVING);
+			return list;
+		}
 
 		/**
 		 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details

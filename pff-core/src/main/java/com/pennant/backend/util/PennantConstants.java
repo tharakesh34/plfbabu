@@ -324,6 +324,7 @@ public class PennantConstants {
 	public static final String AGG_DEVIATI = "DEVIATI";
 	public static final String AGG_ACTIVIT = "ACTIVIT";
 	public static final String AGG_ELGBLTY = "ELGBLTY";
+	public static final String AGG_QRYMODL = "QRYMODL";
 
 	// Workflow definition Constants
 	public static final String WORFLOW_MODULE_FINANCE = "FINANCE";

@@ -126,6 +126,7 @@ import com.pennant.backend.model.finance.AgreementDetail.GroupRecommendation;
 import com.pennant.backend.model.finance.AgreementDetail.InternalLiabilityDetail;
 import com.pennant.backend.model.finance.AgreementDetail.IrrDetail;
 import com.pennant.backend.model.finance.AgreementDetail.LoanDeviation;
+import com.pennant.backend.model.finance.AgreementDetail.LoanQryDetails;
 import com.pennant.backend.model.finance.AgreementDetail.Score;
 import com.pennant.backend.model.finance.AgreementDetail.SourcingDetail;
 import com.pennant.backend.model.finance.AgreementDetail.VerificationDetail;
@@ -1099,17 +1100,47 @@ public class AgreementGeneration implements Serializable {
 				agreement.getExtendedDetails().add(agreement.new ExtendedDetail());
 			}
 			
-			/*Search search = new Search(QueryDetail.class);
-			search.addTabelName("QUERYDETAIL_View");
-			search.addFilterEqual("FinReference", finRef);
-			List<QueryDetail> list = searchProcessor.getResults(search);*/
-			//List<QueryDetail> list = queryDetailService.getQueryDetailsforAgreements(finRef);
+			if(CollectionUtils.isEmpty(agreement.getQueryDetails())){
+				agreement.setQueryDetails(new ArrayList<>());
+			}
+			
+			if (aggModuleDetails.contains(PennantConstants.AGG_QRYMODL)) {
+				populateQueryDetails(agreement, finRef);
+			}
+			
+			if(CollectionUtils.isEmpty(agreement.getQueryDetails())){
+				agreement.setQueryDetails(new ArrayList<>());
+				agreement.getQueryDetails().add(agreement.new LoanQryDetails());
+			}
 			
 		} catch (Exception e) {
 			logger.debug(e);
 		}
 		logger.debug("Leaving");
 		return agreement;
+	}
+
+	/**
+	 * Populate the query details associated to the loan by calling the queryDetailsservice by sending the loan reference.
+	 * 
+	 * @param agreement
+	 * @param finRef
+	 */
+	private void populateQueryDetails(AgreementDetail agreement, String finRef) {
+		List<QueryDetail> queryList = queryDetailService.getQueryDetailsforAgreements(finRef);
+		if(CollectionUtils.isNotEmpty(queryList)){
+			for (QueryDetail queryDetail : queryList) {
+				if(null!=queryDetail){
+					LoanQryDetails loanQryDetails=agreement.new LoanQryDetails();
+					loanQryDetails.setRaisedBy(new StringBuilder().append(queryDetail.getRaisedBy()).append("-").append(queryDetail.getUsrLogin()).toString());
+					loanQryDetails.setRaisedOn(DateUtil.formatToShortDate(queryDetail.getRaisedOn()));
+					loanQryDetails.setCategory(new StringBuilder().append(queryDetail.getCategoryCode()).append("-").append(queryDetail.getCategoryDescription()).toString());
+					loanQryDetails.setDescription(queryDetail.getQryNotes());
+					loanQryDetails.setStatus(queryDetail.getStatus());
+					agreement.getQueryDetails().add(loanQryDetails);
+				}
+			}
+		}
 	}
 
 	/**

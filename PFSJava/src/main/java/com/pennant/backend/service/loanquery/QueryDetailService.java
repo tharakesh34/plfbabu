@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.service.loanquery;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.loanquery.QueryDetail;
 
@@ -54,4 +56,5 @@ public interface QueryDetailService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	AuditHeader getQueryMgmtList(AuditHeader auditHeader);
+	List<QueryDetail> getQueryDetailsforAgreements(String finReference);
 }
