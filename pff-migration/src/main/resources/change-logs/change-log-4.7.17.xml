@@ -2096,5 +2096,11 @@ UNION ALL
 					UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
 			</sql>
 	</changeSet>
+	<changeSet id="52" author="Durgaprasad G">
+			<sql>
+				Delete from SECGROUPRIGHTS Where GRPID = (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PRESENTMENTBATCH_APPROVER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_PresentmentDetail_PresentmentBatchCreation');
+				Delete from SECGROUPRIGHTS Where GRPID = (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PRESENTMENTBATCH_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_PresentmentDetail_PresentmentApprove');
+			</sql>
+	</changeSet>
 </databaseChangeLog>
 	
