@@ -101,7 +101,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 */
 	public AEEvent recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date postDate, Date schDate, String finODFor,
 			Date movementDate, BigDecimal penaltyPaidNow, BigDecimal penaltyWaived, String chargeType,
-			AEEvent aeEvent, FinRepayQueueHeader rpyQueueHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+			AEEvent aeEvent, FinRepayQueueHeader rpyQueueHeader, boolean isFirstTimePay) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		String finReference = financeMain.getFinReference();
@@ -152,9 +152,11 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				&& rpyQueueHeader.getPrincipal().compareTo(BigDecimal.ZERO) == 0
 				&& rpyQueueHeader.getTds().compareTo(BigDecimal.ZERO) == 0
 				&& rpyQueueHeader.getLateProfit().compareTo(BigDecimal.ZERO) == 0
-				&& rpyQueueHeader.getPenalty().compareTo(BigDecimal.ZERO) > 0) {
+				&& rpyQueueHeader.getPenalty().compareTo(BigDecimal.ZERO) > 0 && isFirstTimePay) {
 
-			postToExcess(financeMain, penaltyPaidNow, dataMap, aeEvent);
+			if(rpyQueueHeader.getExtDataMap() != null){
+				dataMap.putAll(rpyQueueHeader.getExtDataMap());
+			}
 		}
 		
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
@@ -192,23 +194,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		logger.debug("Leaving");
 		return aeEvent;
-	}
-
-	/*
-	 * Posting from bank to Excess before posting from Excess to LatePay
-	 */
-	private void postToExcess(FinanceMain financeMain, BigDecimal penaltyPaidNow, HashMap<String, Object> dataMap,
-			AEEvent aeEvent) {
-
-		dataMap.put("PB_ReceiptAmount", penaltyPaidNow);
-		aeEvent.setDataMap(dataMap);
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
-		aeEvent.getAcSetIDList().clear();
-		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-				AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
-		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
-		dataMap.put("PB_ReceiptAmount", 0);
-
 	}
 
 	/**

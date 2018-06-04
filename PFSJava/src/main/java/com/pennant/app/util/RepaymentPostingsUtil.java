@@ -254,14 +254,17 @@ public class RepaymentPostingsUtil implements Serializable {
 			Date dateValueDate, FinanceMain financeMain, FinRepayQueueHeader repayQueueHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
-		for (FinRepayQueue repayQueue : finRepayQueueList) {
-
+		int count = 0;
+		for (int i = 0; i < finRepayQueueList.size(); i++) {
+			
+			FinRepayQueue repayQueue = finRepayQueueList.get(i);
 			if (repayQueue.getRpyDate().compareTo(dateValueDate) < 0) {
 
 				aeEvent = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate, postDate, repayQueue.getRpyDate(), 
 						repayQueue.getFinRpyFor(), dateValueDate, repayQueue.getPenaltyPayNow(), repayQueue.getWaivedAmount(), 
-						repayQueue.getChargeType(), aeEvent, repayQueueHeader);
+						repayQueue.getChargeType(), aeEvent, repayQueueHeader, count == 0);
 
+				count = count +1;
 				if (!aeEvent.isPostingSucess()) {
 					return aeEvent;
 				} 
@@ -466,6 +469,10 @@ public class RepaymentPostingsUtil implements Serializable {
 			if (receiptPurpose !=null && StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, receiptPurpose)) {
 				financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_EARLYSETTLE);	
 			}
+			
+			// Previous Month Amortization reset to Total Profit to avoid posting on closing Month End
+			pftDetail.setPrvMthAmz(pftDetail.getTotalPftSchd());
+			
 		} else {
 			financeMain.setFinIsActive(true);
 			financeMain.setClosingStatus(null);
