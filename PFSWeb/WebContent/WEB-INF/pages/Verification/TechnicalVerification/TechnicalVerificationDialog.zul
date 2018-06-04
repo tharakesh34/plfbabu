@@ -291,7 +291,7 @@
 				</div>
 			</center>
 			<south id="south" sclass="south-dialog">
-				<groupbox id="groupboxWf" width="99%">
+				<groupbox id="groupboxWf" width="99%" closable="false">
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />
