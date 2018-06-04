@@ -84,9 +84,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected Groupbox finBasicdetails;
 	protected Listbox listBoxFIVerification;
 	protected Groupbox fiInquiry;
+	protected Radiogroup fi;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
-	private FinanceMainBaseCtrl financeMainDialogCtrl;
 	private Verification verification;
 	private FinanceDetail financeDetail;
 	private List<Verification> customerVerifications = new ArrayList<>();
@@ -109,7 +109,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	@Autowired
 	private transient CustomerAddresService customerAddresService;
 
-	protected Radiogroup fi;
 
 	/**
 	 * default constructor.<br>
@@ -138,7 +137,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
 
-		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
+		((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).setFieldVerificationDialogCtrl(this);
 
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
@@ -157,8 +156,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private void doShowDialog() {
 		logger.debug(Literal.ENTERING);
-
-		financeMainDialogCtrl.setFieldVerificationDialogCtrl(this);
 
 		setVerifications();
 		renderFIVerificationList();
@@ -605,7 +602,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		agency.setModuleName("VerificationAgencies");
 		agency.setValueColumn("DealerName");
 		agency.setValidateColumns(new String[] { "DealerName" });
-		Filter agencyFilter[] = new Filter[1];
+		Filter[] agencyFilter = new Filter[1];
 		agencyFilter[0] = new Filter("DealerType", Agencies.FIAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
 		logger.debug(Literal.LEAVING);
@@ -617,7 +614,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		reason.setModuleName("VerificationWaiverReason");
 		reason.setValueColumn("Code");
 		reason.setValidateColumns(new String[] { "Code" });
-		Filter reasonFilter[] = new Filter[1];
+		Filter[] reasonFilter = new Filter[1];
 		reasonFilter[0] = new Filter("ReasonTypecode", WaiverReasons.FIWRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
 
