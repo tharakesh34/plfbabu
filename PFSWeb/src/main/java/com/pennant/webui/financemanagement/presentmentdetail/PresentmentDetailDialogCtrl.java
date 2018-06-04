@@ -230,6 +230,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			this.btn_AddExlude.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnExclude"));
 			this.btn_AddInclude.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnInclude"));
 			readOnlyComponent(isReadOnly("PresentmentDetailDialog_partnerBank"), this.partnerBank);
+			this.partnerBank.setReadonly(!getUserWorkspace().isAllowed("PresentmentDetailDialog_partnerBank"));
 		} else if ("A".equalsIgnoreCase(moduleType)) {
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnSave"));
 			this.btn_AddExlude.setVisible(false);
