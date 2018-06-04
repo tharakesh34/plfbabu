@@ -75,19 +75,19 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected Groupbox finBasicdetails;
 	protected Listbox listBoxTechnicalVerification;
 	protected Groupbox tvInquiry;
+	protected Radiogroup tv;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
-	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private Verification verification;
 	private FinanceDetail financeDetail;
 
-	private transient boolean validationOn;
-	private transient boolean initType;
+	private boolean validationOn;
+	private boolean initType;
 	private boolean recSave;
-	List<String> requiredCodes;
+	private List<String> requiredCodes;
 
 	@Autowired
-	private TechnicalVerificationService technicalVerificationService;
+	private transient TechnicalVerificationService technicalVerificationService;
 	@Autowired
 	private transient VerificationService verificationService;
 	@Autowired
@@ -95,7 +95,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private List<Verification> deletedList = new ArrayList<>();
 
-	protected Radiogroup tv;
+	
 
 	/**
 	 * default constructor.<br>
@@ -124,7 +124,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
 
-		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
+		((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).settVerificationDialogCtrl(this);
 
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
@@ -133,8 +133,6 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (arguments.get("enqiryModule") != null) {
 			enqiryModule = (Boolean) arguments.get("enqiryModule");
 		}
-
-		financeMainDialogCtrl.settVerificationDialogCtrl(this);
 
 		requiredCodes = getRequiredCollaterals();
 
@@ -806,7 +804,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		reason.setModuleName("VerificationWaiverReason");
 		reason.setValueColumn("Code");
 		reason.setValidateColumns(new String[] { "Code" });
-		Filter reasonFilter[] = new Filter[1];
+		Filter[] reasonFilter = new Filter[1];
 		reasonFilter[0] = new Filter("ReasonTypecode", WaiverReasons.TVWRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
 
@@ -892,7 +890,6 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		Verification item = null;
 		String referenceFor = ((Label) getComponent(listitem, "ReferenceFor")).getValue();
 		String reference = ((Label) getComponent(listitem, "Reference")).getValue();
-
 		String key = referenceFor.concat(reference);
 
 		item = (Verification) listitem.getAttribute(key);
