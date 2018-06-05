@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -82,6 +83,8 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	private LoggedInUser userDetails;
 	private CustomerDetails customerDetails;
 	private List<CustomerIncome> customerIncomeList;
+	private List<CustomerExtLiability>  customerExtLiabilityList;
+	private List<FinanceEnquiry> custFinanceExposureList;
 	
 	private long custID;
 
@@ -112,6 +115,9 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("custID");
 		excludeFields.add("customerDetails");
 		excludeFields.add("customerIncomeList");
+		excludeFields.add("customerExtLiabilityList");
+		excludeFields.add("custFinanceExposureList");
+		
 		return excludeFields;
 	}
 
@@ -327,4 +333,19 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 		this.includeIncome = includeIncome;
 	}
 
+	public List<CustomerExtLiability> getCustomerExtLiabilityList() {
+		return customerExtLiabilityList;
+	}
+
+	public void setCustomerExtLiabilityList(List<CustomerExtLiability> customerExtLiabilityList) {
+		this.customerExtLiabilityList = customerExtLiabilityList;
+	}
+
+	public List<FinanceEnquiry> getCustFinanceExposureList() {
+		return custFinanceExposureList;
+	}
+
+	public void setCustFinanceExposureList(List<FinanceEnquiry> custFinanceExposureList) {
+		this.custFinanceExposureList = custFinanceExposureList;
+	}	
 }

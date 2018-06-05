@@ -57,6 +57,8 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -83,7 +85,9 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	private JountAccountDetailDAO jountAccountDetailDAO;
 	private ExtendedFieldRenderDAO				extendedFieldRenderDAO;
 	private CustomerIncomeDAO customerIncomeDAO;
-
+	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
+	private CustomerDAO customerDAO;
+	
 	public JointAccountDetailServiceImpl() {
 		super();
 	}
@@ -124,6 +128,23 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 
 	public void setCustomerIncomeDAO(CustomerIncomeDAO customerIncomeDAO) {
 		this.customerIncomeDAO = customerIncomeDAO;
+	}
+
+	
+	private CustomerExtLiabilityDAO getCustomerExtLiabilityDAO() {
+		return customerExtLiabilityDAO;
+	}
+
+	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
+		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
+	}
+
+	private CustomerDAO getCustomerDAO() {
+		return customerDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
 	}
 
 	/**
@@ -905,6 +926,8 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				detail.setGuarantorExposure(String.valueOf(currentExpoSure));
 
 				detail.setCustomerIncomeList(getJointAccountIncomeList(detail.getCustID()));
+				detail.setCustomerExtLiabilityList(getCustomerExtLiabilityDAO().getExtLiabilityByCustomer(detail.getCustID(),""));
+				detail.setCustFinanceExposureList(getCustomerDAO().getCustomerFinanceDetailById(detail.getCustID()));
 			}
 
 		}
