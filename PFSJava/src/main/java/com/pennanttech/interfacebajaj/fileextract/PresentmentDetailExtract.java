@@ -141,7 +141,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					map.addValue("UMRNNo", getCellValue(row, pos_UMRNNo));
 					map.addValue("AccountType", getCellValue(row, pos_AccountType));
 					map.addValue("PaymentDue", getDateValue(row, pos_PaymentDue),Types.DATE);
-					map.addValue("ReasonCode", getCellValue(row, pos_ReasonCode));
+					map.addValue("ReasonCode", getStringCellValue(row, pos_ReasonCode));
 					
 					//TODO:check set the value
 					if (row.getPhysicalNumberOfCells() > pos_FailureReasons) {

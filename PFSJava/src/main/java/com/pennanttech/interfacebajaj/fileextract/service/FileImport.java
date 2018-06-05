@@ -397,6 +397,28 @@ public class FileImport {
 		}
 		return null;
 	}
+	
+	protected String getStringCellValue(Row row, int pos) {
+		Cell cell = row.getCell(pos);
+		if (cell == null) {
+			return null;
+		}
+		CellType type = cell.getCellTypeEnum();
+		if (type == CellType.STRING) {
+			return StringUtils.trimToNull(cell.getStringCellValue());
+		} else if (type == CellType.NUMERIC) {
+			String value = String.valueOf(cell.getNumericCellValue());
+			if (StringUtils.contains(value, '.')) {
+				String[] strings = StringUtils.split(value, '.');
+				value = strings[0];
+				value = StringUtils.trimToEmpty(value);
+			}
+			return value;
+		} else if (type == CellType.BLANK) {
+			return null;
+		}
+		return null;
+	}
 
 	protected Date getDateValue(Row row, int pos) {
 		Cell cell = row.getCell(pos);
