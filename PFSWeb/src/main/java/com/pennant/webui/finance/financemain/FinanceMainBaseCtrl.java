@@ -15032,24 +15032,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	private void setCollateralRuleValues() {
-		
+		collateralRuleMap.clear();
 		
 		BigDecimal guidedValue 			= BigDecimal.ZERO;
 		BigDecimal marketValue 			= BigDecimal.ZERO;
 		BigDecimal unitPrice 			= BigDecimal.ZERO;
 		BigDecimal marketValue_Consider	= BigDecimal.ZERO;
 		BigDecimal propertyLTV			= BigDecimal.ZERO;
-		StringBuffer collateralType = new StringBuffer();
+		StringBuilder collateralType = new StringBuilder("");
 		
 		if (collateralHeaderDialogCtrl != null
 				&& CollectionUtils.isNotEmpty(collateralHeaderDialogCtrl.getCollateralAssignments())) {
 			for (CollateralAssignment assignment : collateralHeaderDialogCtrl.getCollateralAssignments()) {
 				CollateralSetup setup = getCollateralSetupService()
 						.getCollateralSetupByRef(assignment.getCollateralRef(), curNextRoleCode, isEnquiry);
-				if(setup!=null){
-					collateralType.append(setup.getCollateralType());
-					collateralType.append(",");
-				}
 				
 				if (setup != null && setup.getCollateralStructure() != null) {
 
@@ -15072,19 +15068,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								}
 							}
 						}
-						if(CollectionUtils.isNotEmpty(setup.getExtendedFieldRenderList())){
-							ExtendedFieldRender extendedFieldRender = setup.getExtendedFieldRenderList().get(0);
-							if(!collateralRuleMap.containsKey("GLNVAL")){
-								guidedValue  = decimalValue(extendedFieldRender.getMapValues().get("GLNVAL"), setup.getCollateralCcy());
-							}
-							if(!collateralRuleMap.containsKey("MKTVAL")){
-								marketValue  = decimalValue(extendedFieldRender.getMapValues().get("MKTVAL"), setup.getCollateralCcy());
-							}	
-							if(!collateralRuleMap.containsKey("UNITPRICE")){
-								unitPrice  = decimalValue(extendedFieldRender.getMapValues().get("UNITPRICE"), setup.getCollateralCcy());
-							}
-						}	
 					}
+					if(CollectionUtils.isNotEmpty(setup.getExtendedFieldRenderList())){
+						ExtendedFieldRender extendedFieldRender = setup.getExtendedFieldRenderList().get(0);
+						if(!collateralRuleMap.containsKey("GLNVAL")){
+							guidedValue  = decimalValue(extendedFieldRender.getMapValues().get("GLNVAL"), setup.getCollateralCcy());
+						}
+						if(!collateralRuleMap.containsKey("MKTVAL")){
+							marketValue  = decimalValue(extendedFieldRender.getMapValues().get("MKTVAL"), setup.getCollateralCcy());
+						}	
+						if(!collateralRuleMap.containsKey("UNITPRICE")){
+							unitPrice  = decimalValue(extendedFieldRender.getMapValues().get("UNITPRICE"), setup.getCollateralCcy());
+						}
+
+						String type  = (String) extendedFieldRender.getMapValues().get("COLLATERALTYPE");
+						if(type!=null && !StringUtils.contains(collateralType.toString(), type)){
+							collateralType.append(type);
+							collateralType.append(",");
+						}
+					}	
 				}
 			}
 		}
@@ -15097,13 +15099,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// (Guided Value/MarketValue)/100
 		if(!marketValue.equals(BigDecimal.ZERO) && !guidedValue.equals(BigDecimal.ZERO)){
 			marketValue_Consider = marketValue.divide(guidedValue,RoundingMode.HALF_UP);
-			marketValue_Consider  = marketValue_Consider.multiply(new BigDecimal(100)); 
+			//marketValue_Consider  = marketValue_Consider.multiply(new BigDecimal(100)); 
 		}
 		collateralRuleMap.put("MRKVALUE_CONSIDER", marketValue_Consider);		
 		
 		// PROP_LTV Property LTV	LoanAmount/UNITPRICE
-		if(!marketValue.equals(BigDecimal.ZERO) && !unitPrice.equals(BigDecimal.ZERO)){
-			propertyLTV = marketValue.divide(decimalValue(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount(),getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()),RoundingMode.HALF_UP);
+		if(!marketValue.equals(BigDecimal.ZERO) && !getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount().equals(BigDecimal.ZERO)){
+			propertyLTV = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount().divide(marketValue,RoundingMode.HALF_UP);
 		}
 		collateralRuleMap.put("PROP_LTV", propertyLTV);	
 		
