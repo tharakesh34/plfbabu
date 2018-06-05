@@ -3113,5 +3113,70 @@ UNION ALL
 				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
 			</sql>
 	</changeSet>
+	<changeSet id="58" author="madhubabu.p">
+	<comment> covenants Enquiry view only to show the temp records</comment>
+	<createView viewName="fincovenanttype_eview" replaceIfExists="true">
+			SELECT t.finreference,
+    t.custid,
+    t.covenanttype,
+    t.description,
+    t.mandrole,
+    t.alwwaiver,
+    t.alwpostpone,
+    t.alwotc,
+    t.postponedays,
+    t.covenanttypedesc,
+    t.categorycode,
+    t.receivabledate,
+    t.version,
+    t.lastmntby,
+    t.lastmnton,
+    t.recordstatus,
+    t.rolecode,
+    t.nextrolecode,
+    t.taskid,
+    t.nexttaskid,
+    t.recordtype,
+    t.workflowid,
+        CASE
+            WHEN t.docreceiveddate IS NULL THEN cd.lastmnton
+            ELSE t.docreceiveddate
+        END AS docreceiveddate,
+    t.pddflag,
+    t.otcflag
+   FROM ( SELECT t1.finreference,
+            t4.custid,
+            t1.covenanttype,
+            t1.description,
+            t1.mandrole,
+            t1.alwwaiver,
+            t1.alwpostpone,
+            t1.postponedays,
+            t1.alwotc,
+            t3.doctypedesc AS covenanttypedesc,
+            t5.code AS categorycode,
+            t1.receivabledate,
+            t1.version,
+            t1.lastmntby,
+            t1.lastmnton,
+            t1.recordstatus,
+            t1.rolecode,
+            t1.nextrolecode,
+            t1.taskid,
+            t1.nexttaskid,
+            t1.recordtype,
+            t1.workflowid,
+            t7.docreceiveddate,
+            t3.pdd AS pddflag,
+            t3.otc AS otcflag
+           FROM fincovenanttype_temp t1
+             JOIN bmtdocumenttypes t3 ON t3.doctypecode = t1.covenanttype
+             LEFT JOIN documentcategory t5 ON t5.id = t3.categoryid
+             JOIN financemain_temp t4 ON t4.finreference = t1.finreference
+             LEFT JOIN documentdetails t7 ON t7.referenceid = t1.finreference AND t1.covenanttype = t7.doccategory
+        ) t
+     LEFT JOIN customerdocuments cd ON cd.custid = t.custid AND t.covenanttype = cd.custdoccategory
+			</createView>
+</changeSet>
 </databaseChangeLog>
 	
