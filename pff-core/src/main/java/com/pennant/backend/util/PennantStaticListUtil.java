@@ -3291,9 +3291,15 @@ public class PennantStaticListUtil {
 	private static Map<String, ValueLabel> bpimethods = new HashMap<>();
 	private static ArrayList<ValueLabel> paymentTypes= new ArrayList<>();
 	private static ArrayList<ValueLabel> disbRegistrationTypes= new ArrayList<>();
+	// This Should be Similar to the Schedule Calculation Codes. 
+	private static Map<String, ValueLabel> disbCalculationCodes = new HashMap<>();
 	
 	public static List<ValueLabel> getSchCalCodes() {
 		return new ArrayList<>(scheduleCalculationCodes.values());
+	}
+	
+	public static List<ValueLabel> getDisbCalCodes() {
+		return new ArrayList<>(disbCalculationCodes.values());
 	}
 	
 	public static List<ValueLabel> getDftBpiTreatment() {
@@ -3378,6 +3384,7 @@ public class PennantStaticListUtil {
 		if (queryModuleStatusList == null) {
 			queryModuleStatusList = new ArrayList<ValueLabel>(2);
 			queryModuleStatusList.add(new ValueLabel("Open", Labels.getLabel("label_QueryDetailDialog_Opened")));
+			queryModuleStatusList.add(new ValueLabel("Resubmit", Labels.getLabel("label_QueryDetailDialog_Resubmitted")));
 			queryModuleStatusList.add(new ValueLabel("Resolve", Labels.getLabel("label_QueryDetailDialog_Resolved")));
 			queryModuleStatusList.add(new ValueLabel("Close", Labels.getLabel("label_QueryDetailDialog_Closed")));
 		}
