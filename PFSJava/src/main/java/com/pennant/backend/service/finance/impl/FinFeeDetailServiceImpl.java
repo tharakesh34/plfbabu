@@ -999,7 +999,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 			
 		} else if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, finTypeFee.getTaxComponent())) {
-			gstNetOriginal = calculateInclusivePercentage(finTypeFee.getAmount(), gstPercentage, financeMain);
+			gstNetOriginal = calculateInclusivePercentage(finTypeFee.getAmount(), finFeeDetail.getCgst(),finFeeDetail.getSgst(),finFeeDetail.getUgst(),finFeeDetail.getIgst(), financeMain);
 			gstNetOriginal = CalculationUtil.roundAmount(gstNetOriginal, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
 			
 			finFeeDetail.setNetAmount(finTypeFee.getAmount());
@@ -1048,7 +1048,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 			
 		} else {
-			BigDecimal gstNetOriginal =  calculateInclusivePercentage(feeResult, gstPercentage, financeMain);
+			BigDecimal gstNetOriginal =  calculateInclusivePercentage(feeResult, finFeeDetail.getCgst(),finFeeDetail.getSgst(),finFeeDetail.getUgst(),finFeeDetail.getIgst(), financeMain);
 			
 			finFeeDetail.setNetAmount(feeResult);
 			finFeeDetail.setNetAmountOriginal(gstNetOriginal);
@@ -1096,7 +1096,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				}
 			}
 		} else {
-			BigDecimal gstNetOriginal =  calculateInclusivePercentage(calPercentageFee, gstPercentage, financeMain);
+			BigDecimal gstNetOriginal =  calculateInclusivePercentage(calPercentageFee, finFeeDetail.getCgst(),finFeeDetail.getSgst(),finFeeDetail.getUgst(),finFeeDetail.getIgst(), financeMain);
 			
 			finFeeDetail.setNetAmount(calPercentageFee);
 			finFeeDetail.setNetAmountOriginal(gstNetOriginal);
@@ -1156,22 +1156,44 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		return tgstPercentage;
 	}
 	
-	@Override
-	public BigDecimal calculateInclusivePercentage(BigDecimal amount, BigDecimal gstPercentage, FinanceMain financeMain) {
+	private BigDecimal calculateInclusivePercentage(BigDecimal amount, BigDecimal cgstPerc, BigDecimal sgstPerc, 
+			BigDecimal ugstPerc, BigDecimal igstPerc, FinanceMain financeMain) {
 		logger.debug(Literal.ENTERING);
 		
-		//Eg: (amount/(100+<percentage>)%)
-		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
-		//adding 100
-		BigDecimal percentage = gstPercentage.add(new BigDecimal(100));
+		if(amount.compareTo(BigDecimal.ZERO) == 0){
+			return BigDecimal.ZERO;
+		}
 		
-		//divide by 100
-		percentage = percentage.divide(BigDecimal.valueOf(100), formatter, RoundingMode.HALF_DOWN);
-		BigDecimal result = amount.divide(percentage, formatter, RoundingMode.HALF_DOWN);
-		result = CalculationUtil.roundAmount(result, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+		BigDecimal totalGSTPerc = cgstPerc.add(sgstPerc).add(ugstPerc).add(igstPerc);
+		BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+		BigDecimal actualAmt = amount.divide(percentage, 9, RoundingMode.HALF_DOWN);
+		actualAmt = CalculationUtil.roundAmount(actualAmt, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+		BigDecimal actTaxAmount = amount.subtract(actualAmt);
+		
+		BigDecimal gstAmount = BigDecimal.ZERO;
+		if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
+			BigDecimal cgst = (actTaxAmount.multiply(cgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+			cgst = CalculationUtil.roundAmount(cgst, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+			gstAmount = gstAmount.add(cgst);
+		}
+		if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
+			BigDecimal sgst = (actTaxAmount.multiply(sgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+			sgst = CalculationUtil.roundAmount(sgst, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+			gstAmount = gstAmount.add(sgst);
+		}
+		if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
+			BigDecimal ugst = (actTaxAmount.multiply(ugstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+			ugst = CalculationUtil.roundAmount(ugst, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+			gstAmount = gstAmount.add(ugst);
+		}
+		if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
+			BigDecimal igst = (actTaxAmount.multiply(igstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+			igst = CalculationUtil.roundAmount(igst, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+			gstAmount = gstAmount.add(igst);
+		}
 		
 		logger.debug(Literal.LEAVING);
-		return result;
+		return amount.subtract(gstAmount);
 	}
 	
 	/**
@@ -1287,7 +1309,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				
 				//Net Amount
 				BigDecimal totalNetFee = finFeeDetail.getNetAmount().subtract(finFeeDetail.getWaivedAmount());
-				BigDecimal netFeeOriginal = calculateInclusivePercentage(totalNetFee, tgstPercentage, financeMain);
+				BigDecimal netFeeOriginal = calculateInclusivePercentage(totalNetFee, cgstPercentage,sgstPercentage, ugstPercentage, igstPercentage, financeMain);
 				
 				finTaxDetails.setNetCGST(calculatePercentage(netFeeOriginal, cgstPercentage, financeMain));
 				finTaxDetails.setNetIGST(calculatePercentage(netFeeOriginal, igstPercentage, financeMain));
@@ -1321,7 +1343,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			
 				//Paid Amounts
 				BigDecimal totalPaidFee = finFeeDetail.getPaidAmount();
-				BigDecimal paidFeeOriginal = calculateInclusivePercentage(totalPaidFee, tgstPercentage, financeMain);
+				BigDecimal paidFeeOriginal = calculateInclusivePercentage(totalPaidFee, cgstPercentage,sgstPercentage,ugstPercentage,igstPercentage, financeMain);
 				
 				finTaxDetails.setPaidCGST(calculatePercentage(paidFeeOriginal, cgstPercentage, financeMain));
 				finTaxDetails.setPaidIGST(calculatePercentage(paidFeeOriginal, igstPercentage, financeMain));
@@ -1337,7 +1359,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				
 				//Remaining Amount
 				BigDecimal totalRemainingFee = totalNetFee.subtract(totalPaidFee);
-				BigDecimal remainingFeeOriginal = calculateInclusivePercentage(totalRemainingFee, tgstPercentage, financeMain);
+				BigDecimal remainingFeeOriginal = calculateInclusivePercentage(totalRemainingFee,cgstPercentage,sgstPercentage,ugstPercentage,igstPercentage, financeMain);
 				
 				finTaxDetails.setRemFeeCGST(calculatePercentage(remainingFeeOriginal, cgstPercentage, financeMain));
 				finTaxDetails.setRemFeeIGST(calculatePercentage(remainingFeeOriginal, igstPercentage, financeMain));
