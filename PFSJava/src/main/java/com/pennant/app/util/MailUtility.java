@@ -31,6 +31,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import com.pennant.backend.model.mail.MailTemplate;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class MailUtility implements Serializable {
     private static final long serialVersionUID = 7959183655705303553L;
@@ -44,7 +45,8 @@ public class MailUtility implements Serializable {
 	private String outgoingUserName;
 	private String outgoingPassword;
 	private String outgoingEncType;
-	private Session outgoingSession = null;
+	private String fromEmail;
+	private transient Session outgoingSession = null;
 	
 	// Incoming Mail Properties
 	private String incomingHost;
@@ -55,11 +57,11 @@ public class MailUtility implements Serializable {
 	private String incomingEncType;
 	private String incomingProtocol;
 	private String incomingFolder;
-	private Session incomingSession = null;
+	private transient Session incomingSession = null;
 	
 	// Mail Constants
-	static String ENCRYPTION_TYPE_SSL = "SSL";
-	static String ENCRYPTION_TYPE_TLS = "TLS";
+	private static final String ENCRYPTION_TYPE_SSL = "SSL";
+	private static final String ENCRYPTION_TYPE_TLS = "TLS";
 	
 	public MailUtility(){
 		super();
@@ -98,7 +100,7 @@ public class MailUtility implements Serializable {
 	 * 
 	 */
 	private void createOutgoingSession() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Authenticator authenticator = null;
 		if(isOutgoingAuth()){
 			authenticator = new Authenticator(getOutgoingUserName(), getOutgoingPassword());
@@ -121,7 +123,7 @@ public class MailUtility implements Serializable {
 			props.put("mail.smtp.socketFactory.fallback", false);
 		}
 		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
  		setOutgoingSession(Session.getInstance(props, authenticator));
 	}
 	
@@ -131,7 +133,8 @@ public class MailUtility implements Serializable {
 		public Authenticator(String userName, String password) {
 			authentication = new PasswordAuthentication(userName, password);
 		}
-
+		
+		@Override
 		protected PasswordAuthentication getPasswordAuthentication() {
 			return authentication;
 		}
@@ -153,7 +156,7 @@ public class MailUtility implements Serializable {
 	public void sendMail(MailTemplate mailTemplate, String smtpHost, String smtpPort,
 	        boolean auth, boolean debug, String userName, String password, String encType)
 	        throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		//Check all parameters was given or not.
 		if (StringUtils.isBlank(smtpHost)
 		        || StringUtils.isBlank(smtpPort)
@@ -171,7 +174,7 @@ public class MailUtility implements Serializable {
 		setOutgoingEncType(encType);
 		// Send Mail
 		sendMail(mailTemplate);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	
@@ -181,7 +184,7 @@ public class MailUtility implements Serializable {
 	 * @throws Exception
 	 */
 	public void sendMail(MailTemplate mailTemplate) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Transport transport = null; 
 		Session session = null;
 		try {
@@ -195,7 +198,13 @@ public class MailUtility implements Serializable {
 			
 			MimeMessage message = new MimeMessage(session);			
 			MimeMessageHelper helper = new MimeMessageHelper(message, true);
-			helper.setFrom(new InternetAddress(getOutgoingUserName()));
+			
+			if(fromEmail != null) {
+				helper.setFrom(new InternetAddress(fromEmail));
+			} else {
+				helper.setFrom(new InternetAddress(getOutgoingUserName()));
+			}
+			
 			helper.setSubject(mailTemplate.getEmailSubject());
 			helper.setText(mailTemplate.getLovDescFormattedContent(), true);
 			helper.setTo(mailTemplate.getLovDescMailId());
@@ -210,10 +219,10 @@ public class MailUtility implements Serializable {
 			transport.sendMessage(message, message.getAllRecipients());
 			
 		} catch(NoSuchProviderException e){
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("Provider for the given protocol is not found. Mail sending failed...!");
 		} catch (MessagingException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("Mail sending failed...!");
 		} finally{
 			if(null != transport && transport.isConnected()){
@@ -223,7 +232,7 @@ public class MailUtility implements Serializable {
 				session = null;
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/***
@@ -242,7 +251,7 @@ public class MailUtility implements Serializable {
 	public Session getIncomingSession(String host, String port, 
 	        String userName, String password, String encType, String protocol)
 	        throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		//Check all parameters was given or not.
 		if (StringUtils.isBlank(host)
@@ -262,7 +271,7 @@ public class MailUtility implements Serializable {
 		setIncomingEncType(encType);
 		setIncomingAuth(true);
 		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		if("POP3".equalsIgnoreCase(protocol)){
 			setIncomingSession(getPOP3Session());
 		}else {
@@ -277,7 +286,7 @@ public class MailUtility implements Serializable {
 	 * @return Store
 	 */
 	public Session getPOP3Session(){
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Session session = null;
 		try {
 			Properties props = new Properties();
@@ -294,9 +303,9 @@ public class MailUtility implements Serializable {
 			}
 			session = Session.getInstance(props, authenticator);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return session;
 	}
 	
@@ -306,7 +315,7 @@ public class MailUtility implements Serializable {
 	 * @return Store
 	 */
 	public Session getIMAPSession(){
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Session session = null;
 		try {
 			Properties props = new Properties();
@@ -323,9 +332,9 @@ public class MailUtility implements Serializable {
 			}
 			session = Session.getInstance(props, authenticator);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return session;
 	}
 	
@@ -337,7 +346,7 @@ public class MailUtility implements Serializable {
 	 * @throws Exception 
 	 */
 	public void closeSession(Session session) throws Exception{
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if(null != session){
 			try {
 				Store store = session.getStore();
@@ -345,15 +354,15 @@ public class MailUtility implements Serializable {
 	            	store.close();
 	            }
             }catch(NoSuchProviderException e){
-    			logger.error("Exception: ", e);
+    			logger.error(Literal.EXCEPTION, e);
     			throw new Exception("Provider for the given protocol is not found. Session not closed...!");
     		} catch (MessagingException e) {
-    			logger.error("Exception: ", e);
+    			logger.error(Literal.EXCEPTION, e);
     			throw new Exception("Session not closed...!");
     		} 
 			session = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/***
@@ -373,7 +382,7 @@ public class MailUtility implements Serializable {
 	 * @throws Exception
 	 */
 	public String downloadAttachment(String downloadPath) throws Exception{
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Session session = null;
 		Folder folder = null;
 		Store store = null;
@@ -409,10 +418,10 @@ public class MailUtility implements Serializable {
 			}
 			
 		} catch(NoSuchProviderException e){
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("Provider for the given protocol is not found. Mail messages reading failed...!");
 		} catch (MessagingException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("Mail messages reading failed...!");
 		} finally{
 			try {
@@ -424,7 +433,7 @@ public class MailUtility implements Serializable {
 					store.close();
 				}
 			} catch (MessagingException e) {
-				logger.error("Exception: ", e);
+				logger.error(Literal.EXCEPTION, e);
 			}
 			folder = null;
 			store = null;
@@ -433,12 +442,12 @@ public class MailUtility implements Serializable {
 			}
 		}
 		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return downloadPath;
 	}
 	
 	private String download(String downloadPath, Message message, long msgId) throws MessagingException, IOException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String fileName = null;
 
 		if (null != message.getContentType() && message.getContentType().contains("multipart")) {
@@ -483,7 +492,7 @@ public class MailUtility implements Serializable {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return fileName;
 	}
 	
@@ -554,6 +563,14 @@ public class MailUtility implements Serializable {
 
 	public void setOutgoingEncType(String outgoingEncType) {
 		this.outgoingEncType = outgoingEncType;
+	}
+	
+	public String getFromEmail() {
+		return fromEmail;
+	}
+
+	public void setFromEmail(String fromEmail) {
+		this.fromEmail = fromEmail;
 	}
 
 	public Session getOutgoingSession() {

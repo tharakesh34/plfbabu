@@ -408,6 +408,7 @@
 		<property name="incomingEncType" value="${mail.incomingserver.encryptiontype}" />
 		<property name="incomingFolder" value="${mail.incomingserver.folder}" />
 		<property name="incomingProtocol" value="${mail.incomingserver.protocol}" />
+		<property name="fromEmail" value="${mail.outgoingserver.fromMail}" />
 	</bean>
 	<bean id="mailUtil" class="com.pennant.app.util.MailUtil" parent="mailUtility" scope="prototype">
 		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
