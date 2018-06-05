@@ -43,8 +43,10 @@
 package com.pennanttech.framework.security.core;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,7 +60,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -81,7 +82,7 @@ import eu.bitwalker.useragentutils.UserAgent;
  * This class is called from spring AOP as an aspect and is for logging.
  */
 public class AuthenticationManager implements AuthenticationProvider {
-	private final static Logger logger = Logger.getLogger(Authentication.class);
+	private static final Logger logger = Logger.getLogger(Authentication.class);
 
 	@Autowired
 	private UserDetailsService userDetailsService;
@@ -113,7 +114,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 	 *             - If the authentication fails.
 	 */
 	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+	public Authentication authenticate(Authentication authentication) {
 		Authentication result = null;
 
 		try {
@@ -129,7 +130,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 						result = authenticate(authentication, false);
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.warn(String.format("Login Attemp with default authentication %s failed.", defaultAuthType));
 				}
 
 				if (result == null) {
@@ -232,7 +233,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 		Authentication currentUser = getAuthentication();
 
 		if (currentUser == null) {
-			return null;
+			return new HashSet<>();
 		}
 
 		User userImpl = (User) currentUser.getPrincipal();
@@ -247,7 +248,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 		Authentication currentUser = getAuthentication();
 
 		if (currentUser == null) {
-			return null;
+			return new ArrayList<>();
 		}
 
 		User userImpl = (User) currentUser.getPrincipal();
@@ -290,7 +291,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 		try {
 
 			ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-			HttpServletRequest httpRequest = (HttpServletRequest) attr.getRequest();
+			HttpServletRequest httpRequest = attr.getRequest();
 
 			// Get the remote host.
 			String host;
