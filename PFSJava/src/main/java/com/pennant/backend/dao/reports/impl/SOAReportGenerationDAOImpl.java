@@ -767,7 +767,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		List<PresentmentDetail> presentmentDetailsList = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT Distinct ReceiptId FROM PRESENTMENTDETAILS");
+		sql.append(" SELECT Distinct ReceiptId,SchDate FROM PRESENTMENTDETAILS");
 		sql.append(" Where RECEIPTID != 0 and FinReference = :FinReference");
 		
 		logger.trace(Literal.SQL + sql.toString());
