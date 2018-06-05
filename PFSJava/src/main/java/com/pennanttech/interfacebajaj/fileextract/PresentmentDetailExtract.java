@@ -273,7 +273,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						String presentmentRef = rs.getString("BATCHID");
 						String status = rs.getString("STATUS");
 						String reasonCode = rs.getString("REASONCODE");
-
+						reasonCode = StringUtils.trimToEmpty(reasonCode);
 						if (RepayConstants.PEXC_SUCCESS.equals(status)) {
 							successCount++;
 							updatePresentmentDetails(presentmentRef, status);
