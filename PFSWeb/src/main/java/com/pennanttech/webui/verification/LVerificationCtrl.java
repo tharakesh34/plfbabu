@@ -278,7 +278,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		} else {
 			ReasonCode reasonCode = (ReasonCode) dataObject;
 			if (reasonCode != null) {
-				reason.setValue(reasonCode.getDescription());
+				reason.setValue(reasonCode.getCode());
 				reason.setAttribute("reasonId", reasonCode.getId());
 			}
 		}

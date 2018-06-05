@@ -70,11 +70,11 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 		financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
 		enquiryCombobox = (Combobox) arguments.get("enuiryCombobox");
-		
-		fiDetailTabPanel.setHeight(getDesktopHeight()-10+"px");
-		tvDetailTabPanel.setHeight(getDesktopHeight()-10+"px");
-		lvDetailTabPAnel.setHeight(getDesktopHeight()-10+"px");
-		rcuDetailTabPanel.setHeight(getDesktopHeight()-10+"px");
+
+		fiDetailTabPanel.setHeight(getDesktopHeight() - 10 + "px");
+		tvDetailTabPanel.setHeight(getDesktopHeight() - 10 + "px");
+		lvDetailTabPAnel.setHeight(getDesktopHeight() - 10 + "px");
+		rcuDetailTabPanel.setHeight(getDesktopHeight() - 10 + "px");
 
 		doShowDialog();
 
@@ -105,32 +105,36 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 			for (Integer verificationType : verificationTypes) {
 				if (verificationType == VerificationType.FI.getKey()) {
 					this.fiDetailTab.setVisible(true);
-					if(!isSelected){
-						isSelected=true;
+					if (!isSelected) {
+						isSelected = true;
 						this.fiDetailTab.setSelected(true);
 					}
-					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/FIApproval.zul", this.fiDetailTabPanel, map);
+					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/FIApproval.zul",
+							this.fiDetailTabPanel, map);
 				} else if (verificationType == VerificationType.TV.getKey()) {
 					this.tvDetailTab.setVisible(true);
-					if(!isSelected){
-						isSelected=true;
+					if (!isSelected) {
+						isSelected = true;
 						this.tvDetailTab.setSelected(true);
 					}
-					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/TVApproval.zul", this.tvDetailTabPanel, map);
+					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/TVApproval.zul",
+							this.tvDetailTabPanel, map);
 				} else if (verificationType == VerificationType.LV.getKey()) {
 					this.lvDetailTab.setVisible(true);
-					if(!isSelected){
-						isSelected=true;
+					if (!isSelected) {
+						isSelected = true;
 						this.lvDetailTab.setSelected(true);
 					}
-					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVApproval.zul", this.lvDetailTabPAnel, map);
+					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVApproval.zul",
+							this.lvDetailTabPAnel, map);
 				} else if (verificationType == VerificationType.RCU.getKey()) {
 					this.rcuDetailTab.setVisible(true);
-					if(!isSelected){
-						isSelected=true;
+					if (!isSelected) {
+						isSelected = true;
 						this.rcuDetailTab.setSelected(true);
 					}
-					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUApproval.zul", this.rcuDetailTabPanel, map);
+					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUApproval.zul",
+							this.rcuDetailTabPanel, map);
 				}
 			}
 		} catch (Exception e) {

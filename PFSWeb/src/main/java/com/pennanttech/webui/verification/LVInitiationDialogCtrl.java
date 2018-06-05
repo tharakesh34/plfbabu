@@ -126,6 +126,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected ExtendedCombobox agency;
 	protected Row collateralRow;
 	protected Row agencyRow;
+	protected Row loanRow;
+	protected Row customerRow;
 
 	//Waiver components
 	protected ExtendedCombobox reason;
@@ -447,9 +449,10 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			fillDocuments(this.listBoxCollateralDocuments, this.lvDocuments, DocumentType.COLLATRL,
 					verification.getReferenceFor());
 		}
-
-		fillDocuments(this.listBoxLoanDocuments, this.lvDocuments, DocumentType.LOAN, null);
-		fillDocuments(this.listBoxCustomerDocuments, this.lvDocuments, DocumentType.CUSTOMER, null);
+		if (initiation) {
+			fillDocuments(this.listBoxLoanDocuments, this.lvDocuments, DocumentType.LOAN, null);
+			fillDocuments(this.listBoxCustomerDocuments, this.lvDocuments, DocumentType.CUSTOMER, null);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -499,10 +502,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 					&& StringUtils.isNotEmpty(lvDocument.getCollateralRef())) {
 				idList.add(String.valueOf(lvDocument.getCollateralRef()
 						.concat(String.valueOf(lvDocument.getDocumentType())).concat(lvDocument.getDocumentSubId())));
-			} else {
-				idList.add(String.valueOf(lvDocument.getDocumentType()).concat(lvDocument.getDocumentSubId()));
-			}
-
+			} 
 		}
 
 		for (LVDocument document : documents) {
@@ -676,6 +676,11 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				this.verification.getLvDocuments().add(docIdBox.getValue());
 			}
 		}
+		if (this.verification.getLvDocuments().isEmpty()) {
+			throw new WrongValueException(listBoxCollateralDocuments,
+					Labels.getLabel("ATLEAST_ONE", new String[] { "Collateral Document" }));
+		}
+
 		for (Listitem listitem : listBoxLoanDocuments.getItems()) {
 			Checkbox docIdBox = (Checkbox) listitem.getFirstChild().getFirstChild();
 			if (docIdBox.isChecked()) {
@@ -687,11 +692,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (docIdBox.isChecked()) {
 				this.verification.getLvDocuments().add(docIdBox.getValue());
 			}
-		}
-
-		if (this.verification.getLvDocuments().isEmpty()) {
-			throw new WrongValueException(listBoxCollateralDocuments,
-					Labels.getLabel("ATLEAST_ONE", new String[] { "Document" }));
 		}
 
 	}
@@ -732,6 +732,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (initiation) {
 			this.reasonRow.setVisible(false);
 		} else {
+			this.loanRow.setVisible(false);
+			this.customerRow.setVisible(false);
 			this.agencyRow.setVisible(false);
 		}
 
@@ -864,7 +866,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
 		} else {
-
 			if ("ENQ".equals(this.moduleType)) {
 				this.btnCtrl.setBtnStatus_New();
 				this.btnSave.setVisible(false);

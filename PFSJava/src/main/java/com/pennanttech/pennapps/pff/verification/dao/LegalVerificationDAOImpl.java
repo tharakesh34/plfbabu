@@ -356,9 +356,11 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 				" select vs.verificationId,vs.documentid,vs.documentType, vs.documentSubId,v.referencefor collateralRef");
 		sql.append(" from verification_lv_details_stage vs left join verifications v on  v.id=vs.verificationId");
 		sql.append(" where vs.verificationId in ( select id from verifications where keyReference=:keyReference)");
+		sql.append(" and documentType=:documentType");
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("keyReference", keyReference);
+		paramSource.addValue("documentType", DocumentType.COLLATRL.getKey());
 
 		RowMapper<LVDocument> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LVDocument.class);
 

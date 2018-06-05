@@ -95,7 +95,7 @@
 									</listhead>
 								</listbox>
 							</row>
-							<row>
+							<row id="loanRow">
 								<label
 									id="label_LVInitiationDialog_Loan_Documents"
 									value="${c:l('label_LegalVerificationDialog_LoanDoc.value')}" />
@@ -110,7 +110,7 @@
 									</listhead>
 								</listbox>
 							</row>
-							<row>
+							<row id="customerRow">
 								<label
 									id="label_LVInitiationDialog_Customer_Documents"
 									value="${c:l('label_LegalVerificationDialog_CustomerDoc.value')}" />
