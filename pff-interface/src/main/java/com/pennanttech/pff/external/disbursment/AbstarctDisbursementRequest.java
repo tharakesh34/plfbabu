@@ -126,7 +126,7 @@ public abstract class AbstarctDisbursementRequest extends AbstractInterface impl
 				break;
 			}
 		}
-
+/*
 		if (!stp_IMPS.isEmpty()) {
 			List<Long> idList = null;
 			try {
@@ -147,7 +147,7 @@ public abstract class AbstarctDisbursementRequest extends AbstractInterface impl
 			}
 			
 			sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId);
-		}
+		}*/
 
 		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT, fileNamePrefix);
 		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS, fileNamePrefix);
