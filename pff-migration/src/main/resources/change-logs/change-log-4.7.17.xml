@@ -3082,5 +3082,20 @@ UNION ALL
 		INSERT INTO SMTPARAMETERS VALUES ('EXT_CRM_INT_ENABLED', 'CRM Required or Not(Y, N)', 'String', 1, 'Y', 1, 0, NULL, NULL,'CRM Required or Not', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 	</sql>
 </changeSet>
+<changeSet id="60" author="vijaykumar.l">
+<sql>
+delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Customer_Oblication_Internal';
+delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Customer_Oblication_External';
+delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Co_Applicants_Obglication_Internal';
+delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Co_Applicants_Obglication_External';
+
+Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+ ('ELGRULE','ELGRULE','Customer_Oblication_Internal','  Customer Oblication Internal','decimal',18,'1','1','','static,calvalue','');
+Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','Customer_Oblication_External',' Customer Oblication External','decimal',18,'1','1','','static,calvalue','');
+Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','Co_Applicants_Obglication_Internal',' Co Applicants Obglication Internal','decimal',18,'1','1','','static,calvalue','');
+ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values  ('ELGRULE','ELGRULE','Co_Applicants_Obglication_External','Co Applicants Obglication External','decimal',18,'1','1','','static,calvalue','');
+	   
+</sql>
+</changeSet>
 </databaseChangeLog>
 	
