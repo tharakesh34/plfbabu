@@ -29,7 +29,7 @@
 							autodisable="button_Search,button_Print,button_Reset"
 							tooltiptext="${c:l('button_FinanceEnquiryList_PrintList.tooltiptext')}"
 							sclass="z-toolbarbutton" />
-						<button id="button_Reset"  
+						<button id="button_Reset" 
 							label="${c:l('label_Refresh')}"
 							autodisable="button_Search,button_Print,button_Reset"
 							tooltiptext="${c:l('button_FinanceEnquiryList_ResetList.tooltiptext')}"

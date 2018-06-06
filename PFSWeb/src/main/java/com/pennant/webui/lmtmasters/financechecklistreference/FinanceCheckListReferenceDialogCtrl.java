@@ -373,7 +373,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 						checkListDetail.setLovDescRemarks(remarks);
 						checkListDetailsList.add(checkListDetail);
 						ansDescMap.put(key, checkListDetail.getAnsDesc());
-						if (isLoadProcess) {
+						if (isLoadProcess && !screenLevelRemarks.containsKey(key) ) {
 							screenLevelRemarks.put(key, checkListDetail.getLovDescRemarks());
 						}
 					}

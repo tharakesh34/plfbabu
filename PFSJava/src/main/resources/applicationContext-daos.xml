@@ -4249,6 +4249,8 @@
 		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="customerIncomeDAO" ref="customerIncomeDAO" />
+		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
+		<property name="customerDAO" ref="customerDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
