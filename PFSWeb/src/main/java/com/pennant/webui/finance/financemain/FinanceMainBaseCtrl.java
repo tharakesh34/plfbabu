@@ -307,6 +307,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -1439,16 +1440,36 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	
 	private void doFillEnquiryList(ArrayList<Object> finBasicDetail) {
 		logger.debug(Literal.ENTERING);
+		boolean isEnquiryVisible = false;
 		List<ValueLabel> enquiryList = new ArrayList<>();
 		enquiryList.add(new ValueLabel("1", "Verifications"));
 		List<Integer> verificationTypes = verificationService.getVerificationTypes(StringUtils.trimToEmpty((finBasicDetail.get(3).toString())));
-	
-		if (!verificationTypes.isEmpty()) {
-			this.enquiryLabel.setValue("Enquiry");
-			this.enquiryCombobox.setVisible(true);
-			fillComboBox(this.enquiryCombobox, "", enquiryList, "");
-		}
 		
+		for (Integer verificationType : verificationTypes){
+			if (verificationType == VerificationType.FI.getKey()
+					&& (!(financeDetail.isFiInitTab() || financeDetail.isFiApprovalTab()))) {
+				isEnquiryVisible = true;
+			} else if (verificationType == VerificationType.TV.getKey()
+					&& (!(financeDetail.isTvInitTab() || financeDetail.isTvApprovalTab()))) {
+				isEnquiryVisible = true;
+			} else if (verificationType == VerificationType.LV.getKey()
+					&& (!(financeDetail.isLvInitTab() || financeDetail.isLvApprovalTab()))) {
+				isEnquiryVisible = true;
+			}
+			else if (verificationType == VerificationType.RCU.getKey()
+					&& !(financeDetail.isRcuInitTab() || financeDetail.isRcuApprovalTab())) {
+				isEnquiryVisible = true;
+			}
+			
+			//Check whether enquiry is visible or not.
+			if(isEnquiryVisible){
+				this.enquiryLabel.setValue("Enquiry");
+				this.enquiryCombobox.setVisible(true);
+				fillComboBox(this.enquiryCombobox, "", enquiryList, "");
+				break;
+			}
+		}
+	
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -3776,7 +3797,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.row_secondaryAccount.setVisible(false);
 			}
 		}
-		 doFillEnquiryList(getFinBasicDetails());
+		doFillEnquiryList(getFinBasicDetails());
     		
 		logger.debug("Leaving");
 	}
@@ -17386,7 +17407,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void onChange$enquiryCombobox(Event event) throws Exception {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 		String enquiryType = this.enquiryCombobox.getSelectedItem().getValue();
 		Map<String, Object> map = getDefaultArguments();
 		map.put("finHeaderList", getFinBasicDetails());
@@ -17398,7 +17419,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Executions.createComponents("/WEB-INF/pages/Verification/FieldInvestigation/VerificationEnquiryDialog.zul",
 					null, map);
 		} 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 	
 	public void setCustomerBankInfoService(CustomerBankInfoService customerBankInfoService) {

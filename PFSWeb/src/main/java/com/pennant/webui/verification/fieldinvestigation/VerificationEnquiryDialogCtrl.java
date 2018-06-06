@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -70,11 +72,11 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 		financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
 		enquiryCombobox = (Combobox) arguments.get("enuiryCombobox");
-
-		fiDetailTabPanel.setHeight(getDesktopHeight() - 10 + "px");
-		tvDetailTabPanel.setHeight(getDesktopHeight() - 10 + "px");
-		lvDetailTabPAnel.setHeight(getDesktopHeight() - 10 + "px");
-		rcuDetailTabPanel.setHeight(getDesktopHeight() - 10 + "px");
+		
+		fiDetailTabPanel.setHeight(getDesktopHeight()-10+"px");
+		tvDetailTabPanel.setHeight(getDesktopHeight()-10+"px");
+		lvDetailTabPAnel.setHeight(getDesktopHeight()-10+"px");
+		rcuDetailTabPanel.setHeight(getDesktopHeight()-10+"px");
 
 		doShowDialog();
 
@@ -95,15 +97,25 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected void visibleTabs() {
 		logger.debug(Literal.ENTERING);
 		boolean isSelected = false;
-		verificationTypes = verificationService.getVerificationTypes(String.valueOf(finHeaderList.get(3)));
+		String finReference = String.valueOf(finHeaderList.get(3));
+		FinanceDetail temp = new FinanceDetail();
+		
+		if (StringUtils.isBlank(finReference)) {
+			return;
+		} else {
+			BeanUtils.copyProperties(financeDetail, temp);
+		}
+		
+		verificationTypes = verificationService.getVerificationTypes(finReference);
 		Map<String, Object> map = new HashMap<>();
 		map.put("finHeaderList", finHeaderList);
-		map.put("financeDetail", financeDetail);
+		map.put("financeDetail", temp);
 		map.put("financeMainBaseCtrl", financeMainDialogCtrl);
 		map.put("enqiryModule", true);
 		try {
 			for (Integer verificationType : verificationTypes) {
-				if (verificationType == VerificationType.FI.getKey()) {
+				if (verificationType == VerificationType.FI.getKey()
+						&& (!(financeDetail.isFiInitTab() || financeDetail.isFiApprovalTab()))) {
 					this.fiDetailTab.setVisible(true);
 					if (!isSelected) {
 						isSelected = true;
@@ -111,7 +123,8 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/FIApproval.zul",
 							this.fiDetailTabPanel, map);
-				} else if (verificationType == VerificationType.TV.getKey()) {
+				} else if (verificationType == VerificationType.TV.getKey()
+						&& (!(financeDetail.isTvInitTab() || financeDetail.isTvApprovalTab()))) {
 					this.tvDetailTab.setVisible(true);
 					if (!isSelected) {
 						isSelected = true;
@@ -119,7 +132,8 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/TVApproval.zul",
 							this.tvDetailTabPanel, map);
-				} else if (verificationType == VerificationType.LV.getKey()) {
+				} else if (verificationType == VerificationType.LV.getKey()
+						&& (!(financeDetail.isLvInitTab() || financeDetail.isLvApprovalTab()))) {
 					this.lvDetailTab.setVisible(true);
 					if (!isSelected) {
 						isSelected = true;
@@ -127,7 +141,8 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVApproval.zul",
 							this.lvDetailTabPAnel, map);
-				} else if (verificationType == VerificationType.RCU.getKey()) {
+				} else if (verificationType == VerificationType.RCU.getKey()
+						&& (!(financeDetail.isRcuInitTab() || financeDetail.isRcuApprovalTab()))) {
 					this.rcuDetailTab.setVisible(true);
 					if (!isSelected) {
 						isSelected = true;

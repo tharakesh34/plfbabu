@@ -563,6 +563,8 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			}
 			Filedownload.save(amedia);
 
+		}else {
+			MessageUtil.showMessage("Document details not available.");
 		}
 		logger.debug(Literal.LEAVING);
 	}

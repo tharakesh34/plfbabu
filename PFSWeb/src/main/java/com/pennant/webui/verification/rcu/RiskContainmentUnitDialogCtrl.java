@@ -520,7 +520,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 
 		DocumentManager docDetails = riskContainmentUnitService.getDocumentById(details.getDocumentRefId());
 		AMedia amedia = null;
-		if (docDetails.getDocImage() != null) {
+		if (docDetails!=null && docDetails.getDocImage() != null) {
 			final InputStream data = new ByteArrayInputStream(docDetails.getDocImage());
 			String docName = details.getDocName();
 			if (details.getDocType().equals(PennantConstants.DOC_TYPE_PDF)) {
@@ -533,6 +533,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			}
 			Filedownload.save(amedia);
 
+		}else{
+			MessageUtil.showMessage("Document details not available.");
 		}
 		logger.debug(Literal.LEAVING);
 	}
