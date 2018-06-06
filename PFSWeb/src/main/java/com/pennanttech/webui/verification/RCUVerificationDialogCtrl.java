@@ -1420,6 +1420,10 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 		this.userAction = userAction;
 		this.recSave = recSave;
+		if (this.verification.isSave()) {
+			return true;
+		}
+
 		doClearMessage();
 		doSetValidation();
 
@@ -1431,6 +1435,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		showErrorDetails(wve, tab);
 		List<Verification> vrfs = getFinalVerifications();
+		verification.setSave(true);
 		verification.getVerifications().clear();
 		verification.setVerifications(vrfs);
 		this.verification.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -1464,7 +1469,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		Verification aVerification = null;
 
 		for (Verification vrf : this.verification.getVerifications()) {
-			if (vrf.getRequestType() != RequestType.INITIATE.getKey()) {
+			if (vrf.getRequestType() != RequestType.INITIATE.getKey()
+					&& vrf.getDecision() != Decision.RE_INITIATE.getKey()) {
 				verifications.add(vrf);
 			}
 			if ((vrf.getAgency() != null && !reInitMap.containsKey(vrf.getAgency()))
@@ -1517,7 +1523,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 
 		}
-		
+
 		//Group the Verifications by Agency
 		for (Verification vrf : this.verification.getVerifications()) {
 			RCUDocument document = vrf.getRcuDocument();
@@ -1541,7 +1547,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				aVerification.getRcuDocuments().add(document);
 			}
 		}
-
 		verifications.addAll(reInitMap.values());
 		verifications.addAll(other.values());
 

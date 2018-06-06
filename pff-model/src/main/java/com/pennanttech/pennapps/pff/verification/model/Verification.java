@@ -61,6 +61,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private CollateralSetup collateralSetup;
 	private boolean ignoreFlag;
 	private boolean initiated;
+	private boolean save;
 
 	private String cif;
 	private String customerName;
@@ -133,6 +134,7 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("docRefId");
 		excludeFields.add("initiated");
 		excludeFields.add("verificationStatus");
+		excludeFields.add("save");
 		return excludeFields;
 	}
 
@@ -591,5 +593,14 @@ public class Verification extends AbstractWorkflowEntity {
 	public void setVerificationStatus(String verificationStatus) {
 		this.verificationStatus = verificationStatus;
 	}
+
+	public boolean isSave() {
+		return save;
+	}
+
+	public void setSave(boolean save) {
+		this.save = save;
+	}
+	
 	
 }
