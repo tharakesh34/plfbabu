@@ -5325,5 +5325,9 @@
 		parent="basisListCtrl" scope="prototype">
 		<property name="queryDetailService" ref="queryDetailService" />
 	</bean>
+	<bean id="customerDedupDialogCtrl"
+	class="com.pennant.webui.finance.financemain.CustomerDedupDialogCtrl"
+	parent="basisCtrl" scope="prototype">
+</bean>
 
 </beans>

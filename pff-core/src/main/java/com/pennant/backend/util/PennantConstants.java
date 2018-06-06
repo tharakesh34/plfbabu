@@ -198,6 +198,7 @@ public class PennantConstants {
 	public static final String method_LegalDesk = "executeLegalDesk";
 	public static final String method_HoldFinance = "executeHold";
 	public static final String method_bre = "executeBRE";
+	public static final String method_notifyCrm = "notifyCrm";
 	public static final String METHOD_DO_CHECK_DEVIATION_APPROVAL = "doCheckDeviationApproval";
 	public static final String METHOD_DO_VALIDATE_QUERYMGMT_APPROVAL = "doValidateQueryMGMTApproval";
 	// Error Severity Codes

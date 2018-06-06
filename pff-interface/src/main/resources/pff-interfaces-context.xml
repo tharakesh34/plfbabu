@@ -33,5 +33,7 @@
 	<bean id="abstarctDisbursementRequest" class="com.pennanttech.pff.external.disbursment.AbstarctDisbursementRequest" abstract="true" parent="abstractInterface"/>
 	<bean id="abstarctDisbursementResponse" class="com.pennanttech.pff.external.disbursment.AbstarctDisbursementResponse" abstract="true" parent="abstractInterface"/>
 	
-	<bean id="abstractCibilEnquiryProcess" class="com.pennanttech.pff.external.creditInformation.AbstractCibilEnquiryProcess" abstract="true" parent="abstractInterface"/>
+
+	<bean id="abstarctCibilEnquiryProcess" class="com.pennanttech.pff.external.creditInformation.AbstractCibilEnquiryProcess" abstract="true" parent="abstractInterface"/>
+	
 </beans>

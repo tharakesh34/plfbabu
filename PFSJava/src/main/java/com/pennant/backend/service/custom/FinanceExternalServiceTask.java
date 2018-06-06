@@ -22,6 +22,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -43,6 +44,7 @@ import com.pennanttech.pff.external.BreService;
 import com.pennanttech.pff.external.BureauScore;
 import com.pennanttech.pff.external.CibilConsumerService;
 import com.pennanttech.pff.external.CriffBureauService;
+import com.pennanttech.pff.external.Crm;
 import com.pennanttech.pff.external.ExperianBureauService;
 import com.pennanttech.pff.external.ExternalDedup;
 import com.pennanttech.pff.external.HoldFinanceService;
@@ -79,6 +81,9 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	@Autowired(required = false)
 	private BreService				breService;
 
+	@Autowired(required = false)
+	private Crm				crm;
+	
 	private CollateralMarkProcess	collateralMarkProcess;
 	private DDAControllerService	ddaControllerService;
 	private ServiceTaskDAO			serviceTaskDAO;
@@ -86,7 +91,6 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	@Override
 	public boolean executeExternalServiceTask(AuditHeader auditHeader, ServiceTask serviceTask) throws Exception {
 		logger.debug(Literal.ENTERING);
-
 		FinanceDetail afinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = afinanceDetail.getFinScheduleData().getFinanceMain();
 		List<ErrorDetail> errors = new ArrayList<>();
@@ -235,6 +239,24 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					taskExecuted = true;
 					setRemarks(auditHeader, PennantConstants.method_bre, e.getMessage());
 				}
+			case PennantConstants.method_notifyCrm:
+				try {
+					if (crm != null && "Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED"))) {
+						System.out.println("Started CRM service task");
+						FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+						CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+						System.out.println("|" + customerDetails.getCustomer().getCustCoreBank() + "|");
+						if (StringUtils.isEmpty(customerDetails.getCustomer().getCustCoreBank())) {
+							logger.debug("Calling CRM...");
+							customerDetails = crm.create(customerDetails);
+							taskExecuted = true;
+						}
+					}
+				} catch (InterfaceException e) {
+					logger.error("Exception in CRM:", e);
+					taskExecuted = true;
+					setRemarks(auditHeader, PennantConstants.method_bre, e.getMessage());
+				}	
 				break;
 			default:
 				return taskExecuted;

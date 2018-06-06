@@ -323,6 +323,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String religionCode;
 	private String casteDesc;
 	private String religionDesc;
+	private String aadhaarNo;
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -369,6 +370,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("religionCode");
 		excludeFields.add("casteDesc");
 		excludeFields.add("religionDesc");
+		excludeFields.add("aadhaarNo");
 		return excludeFields;
 	}
 
@@ -1893,6 +1895,16 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		this.religionCode = religionCode;
 	}
 
+
+	public String getAadhaarNo() {
+		return aadhaarNo;
+	}
+
+	public void setAadhaarNo(String aadhaarNo) {
+		this.aadhaarNo = aadhaarNo;
+	}
+
+
 	public boolean isMarginDeviation() {
 		return marginDeviation;
 	}
@@ -1900,5 +1912,6 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	public void setMarginDeviation(boolean marginDeviation) {
 		this.marginDeviation = marginDeviation;
 	}
+
 
 }

@@ -44,12 +44,16 @@ package com.pennant.webui.customermasters.customer;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -65,13 +69,13 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.WIFCustomer;
@@ -91,6 +95,8 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.CustomerDedupCheckService;
+import com.pennanttech.pff.external.CustomerInterfaceService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.
@@ -127,7 +133,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private CustomerDetailsService customerDetailsService;
 	private CustomerService customerService;
 	private CustomerIncomeService customerIncomeService;
-	private CustomerInterfaceService customerInterfaceService;
+	private com.pennant.Interface.service.CustomerInterfaceService customerInterfaceService;
 	private RelationshipOfficerService relationshipOfficerService;
 	private BranchService branchService;
 	private CustomerTypeService customerTypeService;
@@ -136,6 +142,10 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private String primaryIdLabel;
 	private String primaryIdRegex;
 	private boolean primaryIdMandatory;
+	@Autowired(required = false)	
+	private CustomerInterfaceService			customerExternalInterfaceService;
+	@Autowired(required = false)
+	private CustomerDedupCheckService			customerDedupService;
 
 	/**
 	 * default constructor.<br>
@@ -283,6 +293,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		doSetValidation();
 		CustomerDetails customerDetails = null;
+		boolean isDedupFound = false;
 
 		// Get the data of Customer from Core Banking Customer
 		try {
@@ -299,6 +310,24 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					customer = getCustomerDetailsService().getCheckCustomerByCIF(cif);
 				}
 
+				
+				if (customer == null && "Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED"))
+						&& customerExternalInterfaceService != null) {
+					newRecord = true;
+					customer = new Customer();
+					customer.setCustCoreBank(cif);
+					if (isRetailCustomer) {
+						customer.setCustCtgCode("RETAIL");
+					} else {
+						customer.setCustCtgCode("CORP");
+					}
+					customerDetails = customerExternalInterfaceService.getCustomerDetail(customer);
+					if (customerDetails == null) {
+						throw new InterfaceException("9999", Labels.getLabel("Cust_NotFound"));
+					}
+					customerDetails.setCustomer(customer);
+				}
+				
 				if (customer == null) {
 					newRecord = true;
 					customerDetails = getCustomerInterfaceService().getCustomerInfoByInterface(cif, "");
@@ -306,6 +335,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 						throw new InterfaceException("9999", Labels.getLabel("Cust_NotFound"));
 					}
 				}
+				
 			} else if (prospect.isChecked()) {
 				newRecord = true;
 				String ctgType = custCtgType.getSelectedItem().getValue().toString();
@@ -382,66 +412,38 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 							throw new InterfaceException("9999", Labels.getLabel("Cust_NotFound"));
 						}
 					}
-				} else {
-					customerDetails = getCustomerDetailsService().getNewCustomer(true);
-					customerDetails.getCustomer().setLovDescCustCtgType(ctgType);
-					customerDetails.getCustomer().setCustCtgCode(ctgType);
-					customerDetails.getCustomer().setLovDescCustCtgCodeName(ctgType);
-					customerDetails.getCustomer().setCustCIF(getCustomerDetailsService().getNewProspectCustomerCIF());
-					customerDetails.getCustomer().setCustCRCPR(primaryIdNumber);
-					customerDetails.getCustomer().setCustNationality(custNationality.getValue());
-					customerDetails.getCustomer().setLovDescCustNationalityName(custNationality.getDescription());
+				}
+				
+				if (customer != null) {
+					customerDetails = getCustomerDetailsService().getCustomerById(customer.getId());
+				}
+				
+				if (customer == null && "Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED"))
+						&& customerDedupService != null) {
+					newRecord = true;
+					customerDetails = checkExternalDedup(customerDetails, primaryIdNumber);
 
-					//Setting Primary Relation Ship Officer
-					RelationshipOfficer officer = getRelationshipOfficerService()
-							.getApprovedRelationshipOfficerById(getUserWorkspace().getUserDetails().getUsername());
-					if (officer != null) {
-						customerDetails.getCustomer().setCustRO1(Long.parseLong(officer.getROfficerCode()));
-						customerDetails.getCustomer().setLovDescCustRO1Name(officer.getROfficerDesc());
+					if (customerDetails == null) {
+						throw new InterfaceException("9999", Labels.getLabel("Cust_NotFound"));
+					} else {
+						showDetailViewforDedUp(customerDetails);
+						isDedupFound = true;
 					}
-
-					//Setting User Branch to Customer Branch
-					Branch branch = getBranchService().getApprovedBranchById(
-							getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
-					if (branch != null) {
-						customerDetails.getCustomer().setCustDftBranch(branch.getBranchCode());
-						customerDetails.getCustomer().setLovDescCustDftBranchName(branch.getBranchDesc());
-					}
-
-					//Reset Data from WIF Details if Exists
-					String custCPRCR = "";
-
-					if (!(StringUtils.isEmpty(custCPRCR))) {
-						WIFCustomer wifCustomer = getCustomerService().getWIFCustomerByID(0, custCPRCR);
-						if (wifCustomer != null) {
-							BeanUtils.copyProperties(wifCustomer, customerDetails.getCustomer());
-							customerDetails.getCustomer().setCustID(Long.MIN_VALUE);
-							customerDetails.setCustomerIncomeList(
-									getCustomerIncomeService().getCustomerIncomes(wifCustomer.getCustID(), true));
-
-							if (customerDetails.getCustomerIncomeList() != null
-									&& !customerDetails.getCustomerIncomeList().isEmpty()) {
-								for (CustomerIncome income : customerDetails.getCustomerIncomeList()) {
-									income.setLovDescCustCIF(customerDetails.getCustomer().getCustCIF());
-								}
-							}
-						}
-					}
-					setCustomerStatus(customerDetails);
+				}
+				
+				else {
+					customerDetails = proceedAsNewCustomer(customerDetails, ctgType, primaryIdNumber, true);
 				}
 			}
 
-			if (customer != null) {
-				customerDetails = getCustomerDetailsService().getCustomerById(customer.getId());
-			}
-
-			if (StringUtils.isNotEmpty(customerDetails.getCustomer().getNextRoleCode())) {
+			if (customerDetails != null && customerDetails.getCustomer() != null
+					&& StringUtils.isNotEmpty(customerDetails.getCustomer().getNextRoleCode())) {
 				if (!getUserWorkspace().getUserRoles().contains(customerDetails.getCustomer().getNextRoleCode())) {
 					throw new AppException(Labels.getLabel("customer_maintainance_otherQueue"));
 				}
 
 			}
-			if (customerDetails != null) {
+			if (customerDetails != null & !isDedupFound) {
 				customerListCtrl.buildDialogWindow(customerDetails, newRecord);
 			}
 			window_CoreCustomer.onClose();
@@ -454,6 +456,111 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private CustomerDetails checkExternalDedup(CustomerDetails customerDetails, String primaryIdNumber) throws Exception {
+		customerDetails = new CustomerDetails();
+		CustomerDedup custDedup = new CustomerDedup();
+		String primaryIDType = null;
+
+		if (isRetailCustomer) {
+			primaryIDType = SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL");
+		} else {
+			primaryIDType = SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP");
+
+		}
+
+		if ("PAN".equals(primaryIDType)) {
+			custDedup.setPanNumber(primaryIdNumber);
+		} else if ("AADHAAR".equals(primaryIDType)) {
+			custDedup.setAadharNumber(primaryIdNumber);
+		} else {
+			custDedup.setCustCRCPR(primaryIdNumber);
+		}
+
+		List<CustomerDedup> customerDedupList = null;
+		try {
+			customerDedupList = customerDedupService.invokeDedup(custDedup);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+			throw e;
+		}
+
+		if (customerDedupList != null && !customerDedupList.isEmpty()) {
+			customerDetails.setCustomerDedupList(customerDedupList);
+			customerDetails.getCustomer().setCustCRCPR(primaryIdNumber);
+			return customerDetails;
+		}
+		return customerDetails;
+	}
+	
+	
+	
+	private void showDetailViewforDedUp(CustomerDetails customerDetails) {
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			map.put("parentWindow", window_CoreCustomer);
+			map.put("customerDetails", customerDetails);
+			map.put("CoreCustomerSelectCtrl", this);
+			map.put("CustomerListCtrl", customerListCtrl);
+			map.put("isFromCustomer", true);
+			Executions.createComponents("/WEB-INF/pages/Finance/CustomerDedUp/CustomerDedupDialog.zul", null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+	}
+
+	public CustomerDetails proceedAsNewCustomer(CustomerDetails customerDetails, String ctgType, String primaryIdNumber, boolean newRecord) {
+		if(newRecord) {
+		customerDetails = getCustomerDetailsService().getNewCustomer(true);
+		}
+		customerDetails.getCustomer().setLovDescCustCtgType(ctgType);
+		customerDetails.getCustomer().setCustCtgCode(ctgType);
+		customerDetails.getCustomer().setLovDescCustCtgCodeName(ctgType);
+		customerDetails.getCustomer().setCustCIF(getCustomerDetailsService().getNewProspectCustomerCIF());
+		customerDetails.getCustomer().setCustCRCPR(primaryIdNumber);
+		customerDetails.getCustomer().setCustNationality(custNationality.getValue());
+		customerDetails.getCustomer().setLovDescCustNationalityName(custNationality.getDescription());
+
+		//Setting Primary Relation Ship Officer
+		RelationshipOfficer officer = getRelationshipOfficerService()
+				.getApprovedRelationshipOfficerById(getUserWorkspace().getUserDetails().getUsername());
+		if (officer != null) {
+			customerDetails.getCustomer().setCustRO1(Long.parseLong(officer.getROfficerCode()));
+			customerDetails.getCustomer().setLovDescCustRO1Name(officer.getROfficerDesc());
+		}
+
+		//Setting User Branch to Customer Branch
+		Branch branch = getBranchService().getApprovedBranchById(
+				getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
+		if (branch != null) {
+			customerDetails.getCustomer().setCustDftBranch(branch.getBranchCode());
+			customerDetails.getCustomer().setLovDescCustDftBranchName(branch.getBranchDesc());
+		}
+
+		//Reset Data from WIF Details if Exists
+		String custCPRCR = "";
+
+		if (!(StringUtils.isEmpty(custCPRCR))) {
+			WIFCustomer wifCustomer = getCustomerService().getWIFCustomerByID(0, custCPRCR);
+			if (wifCustomer != null) {
+				BeanUtils.copyProperties(wifCustomer, customerDetails.getCustomer());
+				customerDetails.getCustomer().setCustID(Long.MIN_VALUE);
+				customerDetails.setCustomerIncomeList(
+						getCustomerIncomeService().getCustomerIncomes(wifCustomer.getCustID(), true));
+
+				if (customerDetails.getCustomerIncomeList() != null
+						&& !customerDetails.getCustomerIncomeList().isEmpty()) {
+					for (CustomerIncome income : customerDetails.getCustomerIncomeList()) {
+						income.setLovDescCustCIF(customerDetails.getCustomer().getCustCIF());
+					}
+				}
+			}
+		}
+		setCustomerStatus(customerDetails);
+		return customerDetails;
 	}
 
 	public void onCheck$exsiting(Event event) {
@@ -551,13 +658,6 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.customerIncomeService = customerIncomeService;
 	}
 
-	public void setCustomerInterfaceService(CustomerInterfaceService customerInterfaceService) {
-		this.customerInterfaceService = customerInterfaceService;
-	}
-
-	public CustomerInterfaceService getCustomerInterfaceService() {
-		return customerInterfaceService;
-	}
 
 	public RelationshipOfficerService getRelationshipOfficerService() {
 		return relationshipOfficerService;
@@ -581,5 +681,13 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setCustomerTypeService(CustomerTypeService customerTypeService) {
 		this.customerTypeService = customerTypeService;
+	}
+
+	public com.pennant.Interface.service.CustomerInterfaceService getCustomerInterfaceService() {
+		return customerInterfaceService;
+	}
+
+	public void setCustomerInterfaceService(com.pennant.Interface.service.CustomerInterfaceService customerInterfaceService) {
+		this.customerInterfaceService = customerInterfaceService;
 	}
 }

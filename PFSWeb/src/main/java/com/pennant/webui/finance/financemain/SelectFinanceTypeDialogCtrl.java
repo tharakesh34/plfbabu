@@ -48,8 +48,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.stream.FactoryConfigurationError;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -68,7 +71,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
@@ -81,6 +83,7 @@ import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -122,10 +125,13 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.external.CustomerDedupCheckService;
+import com.pennanttech.pff.external.CustomerInterfaceService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/SelectFinanceTypeDialog.zul file.
@@ -180,8 +186,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private RelationshipOfficerService			relationshipOfficerService;
 	private BranchService						branchService;
 	private CustomerTypeService					customerTypeService;
-	private CustomerInterfaceService			customerInterfaceService;
+	private com.pennant.Interface.service.CustomerInterfaceService customerInterfaceService;
 	private PagedListService					pagedListService;
+	@Autowired(required = false)
+	private CustomerDedupCheckService			customerDedupService;
+	@Autowired(required = false)	
+	private CustomerInterfaceService			customerExternalInterfaceService;
 
 	private String								menuItemRightName	= null;
 	private FinanceEligibility					financeEligibility	= null;
@@ -194,6 +204,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private String primaryIdLabel;
 	private String primaryIdRegex;
 	private boolean primaryIdMandatory;
+	boolean proceedFurther = false;
 	
 	/**
 	 * default constructor.<br>
@@ -801,30 +812,40 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * @throws Exception
 	 */
 	public void onClick$btnProceed(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		if (!isPromotionPick) {
-			if (!doFieldValidation()) {
-				logger.debug("Leaving " + event.toString());
+			doFieldValidation();
+			
+			if (checkDedup()) {
+				logger.debug(Literal.LEAVING);
 				return;
 			}
 		}
 
+		processCustomer(false);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected boolean processCustomer(boolean isRetail) throws InterruptedException, FactoryConfigurationError {
+		FinanceDetail financeDetail = null;
+		
 		//Customer Data Fetching
 		CustomerDetails customerDetails;
 		if (isPromotionPick) {
 			customerDetails = this.financeEligibility.getFinanceDetail().getCustomerDetails();
 		} else {
-			customerDetails = fetchCustomerData();
+			customerDetails = fetchCustomerData(isRetail);
 		}
 
 		// Check Customer Details exists with entered data or not
 		if (customerDetails == null) {
-			logger.debug("Leaving " + event.toString());
-			return;
+			logger.debug(Literal.LEAVING);
+			return false;
 		}
 
-		FinanceDetail financeDetail = this.financeDetailService.getNewFinanceDetail(false);
+		 financeDetail = this.financeDetailService.getNewFinanceDetail(false);
 		FinanceDetail befImage = new FinanceDetail();
 		financeDetail.setBefImage(befImage);
 
@@ -1025,9 +1046,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 
 		}
-		
 		showDetailView(financeDetail);
-		logger.debug("Leaving " + event.toString());
+		return true;
 	}
 
 	/**
@@ -1184,7 +1204,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * 
 	 * @throws InterruptedException
 	 */
-	private boolean doFieldValidation() throws InterruptedException {
+	private void doFieldValidation() throws InterruptedException {
 		logger.debug("Entering ");
 		doClearMessage();
 		doRemoveValidation();
@@ -1289,32 +1309,101 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			throw new WrongValuesException(wvea);
 		}
 
+		logger.debug("Leaving ");
+	}
+
+	private boolean checkDedup() throws Exception {
 		if (newCust.isChecked()) {
-			if (StringUtils.isNotBlank(this.eidNumber.getValue())) {
-				String eidNum = PennantApplicationUtil.unFormatEIDNumber(this.eidNumber.getValue());
+			String primaryId = eidNumber.getValue();
 
-				String custCIF = this.customerDetailsService.getEIDNumberById(eidNum, "");
+			// Check whether the primary identity exists in PLF.
+			String cif = customerDetailsService.getEIDNumberById(primaryId, "");
 
-				if (custCIF != null) {
-					String msg = Labels
-							.getLabel("label_SelectFinanceTypeDialog_ProspectExist",
-									new String[] {
-											isRetailCustomer ? Labels.getLabel("label_CustCRCPR")
-													: Labels.getLabel("label_CustTradeLicenseNumber"),
-											custCIF + ". \n" });
+			if (cif != null) {
+				String msg = Labels.getLabel("label_SelectFinanceTypeDialog_ProspectExist",
+						new String[] { isRetailCustomer ? Labels.getLabel("label_CustCRCPR")
+								: Labels.getLabel("label_CustTradeLicenseNumber"), cif + ". \n" });
 
-					if (MessageUtil.confirm(msg) != MessageUtil.YES) {
-						return false;
-					}
-					this.existingCust.setSelected(true);
-					this.custCIF.setValue(custCIF);
+				// The user doesn't want to proceed with duplicate found.
+				if (MessageUtil.confirm(msg) != MessageUtil.YES) {
+					return true;
 				}
+
+				existingCust.setSelected(true);
+				custCIF.setValue(cif);
+
+				return false;
+			}
+
+			// Check the de-duplication in external CRM.
+			try {
+				if ("Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED")) && customerDedupService != null)
+					return !checkExternalDedup(primaryId);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+				
+				return true;
 			}
 		}
 
-		logger.debug("Leaving ");
+		return false;
+	}
+
+	private boolean checkExternalDedup(String primaryId) throws Exception {
+		CustomerDetails customerDetails = new CustomerDetails();
+		CustomerDedup custDedup = new CustomerDedup();
+		String primaryIDType = null;
+
+		if (isRetailCustomer) {
+			primaryIDType = SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL");
+		} else {
+			primaryIDType = SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP");
+
+		}
+
+		if ("PAN".equals(primaryIDType)) {
+			custDedup.setPanNumber(primaryId);
+		} else if ("AADHAAR".equals(primaryIDType)) {
+			custDedup.setAadharNumber(primaryId);
+		} else {
+			custDedup.setCustCRCPR(primaryId);
+		}
+
+		List<CustomerDedup> customerDedupList = null;
+		try {
+			customerDedupList = customerDedupService.invokeDedup(custDedup);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+			throw e;
+		}
+
+		if (customerDedupList != null && !customerDedupList.isEmpty()) {
+			customerDetails.setCustomerDedupList(customerDedupList);
+			customerDetails.getCustomer().setCustCRCPR(this.eidNumber.getValue());
+			showDetailViewforDedUp(customerDetails);
+			return false;
+			
+		}
+		
 		return true;
 	}
+	
+	
+	private void showDetailViewforDedUp(CustomerDetails customerDetails) {
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			map.put("parentWindow", window_SelectFinanceTypeDialog);
+			map.put("customerDetails", customerDetails);
+			map.put("SelectFinanceTypeDialogCtrl", this);
+			map.put("isFromLoan", true);
+			Executions.createComponents("/WEB-INF/pages/Finance/CustomerDedUp/CustomerDedupDialog.zul", null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+	}
+
 
 	/**
 	 * Method for remove constraints of fields
@@ -1413,7 +1502,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * @throws InterfaceException
 	 * @throws Exception
 	 */
-	public CustomerDetails fetchCustomerData() throws InterruptedException, InterfaceException {
+	public CustomerDetails fetchCustomerData(boolean isRetail) throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		CustomerDetails customerDetails = new CustomerDetails();
@@ -1436,6 +1525,45 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					customer = this.customerDetailsService.checkCustomerByCIF(cif, TableType.MAIN_TAB.getSuffix());
 
 				}
+				
+				if (customer != null) {
+
+					if (isCustFromTemp) {
+						customerDetails = this.customerDetailsService.getCustomerDetailsById(customer.getId(), true,
+								"_TView");
+					} else {
+						customerDetails = this.customerDetailsService.getCustomerDetailsById(customer.getId(), true,
+								"_AView");
+					}
+				}
+				
+				//Interface Core Banking System call CRM
+				if (customer == null && "Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED")) && customerExternalInterfaceService != null) {
+					customerDetails.setNewRecord(true);
+					customer = new Customer();
+					customer.setCustCoreBank(cif);
+					if (isRetail) {
+						customer.setCustCtgCode("RETAIL");
+					} else {
+						customer.setCustCtgCode("CORP");
+					}
+					customerDetails = customerExternalInterfaceService.getCustomerDetail(customer);
+					getNewCustomerDetail(customerDetails);
+					
+					if (customerDetails == null) {
+						throw new InterfaceException("9999", "Customer Not found.");
+
+					}
+					
+					/*if (isRetailCustomer) {
+						customerDetails.getCustomer().setCustCtgCode("RETAIL");
+					} else {
+						customerDetails.getCustomer().setCustCtgCode("CORP");
+						customerDetails.getCustomer().setCustShrtName(customerDetails.getCustomer().getCustFName());
+					}
+					customerDetails.getCustomer().setCustCoreBank(cif);*/
+					
+				}
 
 				//Interface Core Banking System call
 				if (customer == null) {
@@ -1449,20 +1577,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 						throw new InterfaceException(InterfaceConstants.CUST_NOT_FOUND, "Customer Not found.");
 					}
 				}
+				
 
-				if (customer != null) {
-
-					if (isCustFromTemp) {
-						customerDetails = this.customerDetailsService.getCustomerDetailsById(customer.getId(), true,
-								"_TView");
-					} else {
-						customerDetails = this.customerDetailsService.getCustomerDetailsById(customer.getId(), true,
-								"_AView");
-					}
-				}
+				
 			
 			} else if (this.newCust.isChecked()) {
-				customerDetails = getNewCustomerDetail();
+				customerDetails = getNewCustomerDetail(customerDetails);
 			}
 
 		} catch (InterfaceException pfe) {
@@ -1473,7 +1593,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					if (conf == MessageUtil.YES) {
 						return null;
 					} else {
-						customerDetails = getNewCustomerDetail();
+						customerDetails = getNewCustomerDetail(customerDetails);
 					}
 				} else {
 					this.custCIF.setValue("");
@@ -1496,33 +1616,47 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * 
 	 * @return
 	 */
-	private CustomerDetails getNewCustomerDetail() {
-
-		CustomerDetails customerDetails = new CustomerDetails();
+	private CustomerDetails getNewCustomerDetail(CustomerDetails customerDetails) {
 		customerDetails.setNewRecord(true);
-		Customer customer = new Customer();
+		Customer customer = customerDetails.getCustomer();
 
 		CustomerStatusCode statusCode = this.customerDetailsService.getCustStatusByMinDueDays();
-		customer.setCustSts(statusCode.getCustStsCode());
-		customer.setLovDescCustStsName(statusCode.getCustStsDescription());
+		
+		if (customerDetails.getCustomer().getCustSts() == null
+				&& customerDetails.getCustomer().getLovDescCustStsName() == null) {
+			customer.setCustSts(statusCode.getCustStsCode());
+			customer.setLovDescCustStsName(statusCode.getCustStsDescription());
+		}
+		
 		String custCategoryType = this.custCtgType.getSelectedItem().getValue().toString();
-		if (!StringUtils.equals(custCategoryType, PennantConstants.List_Select)) {
+		if (!StringUtils.equals(custCategoryType, PennantConstants.List_Select)
+				&& customerDetails.getCustomer().getCustCtgCode() == null
+				&& customerDetails.getCustomer().getLovDescCustCtgCodeName() == null) {
 			customer.setCustCtgCode(custCategoryType);
 			customer.setLovDescCustCtgCodeName(custCategoryType);
 		}
+		
 		customer.setLovDescCustCtgType(custCategoryType);
 
 		customer.setCustCIF(this.customerDetailsService.getNewProspectCustomerCIF());
+		
 		if (isRetailCustomer) {
 			customer.setCustCRCPR(PennantApplicationUtil.unFormatEIDNumber(this.eidNumber.getValue()));
 		} else {
 			customer.setCustCRCPR(this.eidNumber.getValue());
 		}
 
+		if(customerDetails.getCustomer().getCustBaseCcy() == null) {
 		customer.setCustBaseCcy(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
+		}
+		
+		
 		PFSParameter parameter = SysParamUtil.getSystemParameterObject("APP_LNG");
-		customer.setCustLng(parameter.getSysParmValue().trim());
-		customer.setLovDescCustLngName(parameter.getSysParmDescription());
+		
+		if (customerDetails.getCustomer().getCustLng() == null) {
+			customer.setCustLng(parameter.getSysParmValue().trim());
+			customer.setLovDescCustLngName(parameter.getSysParmDescription());
+		}
 
 		Filter[] countrysystemDefault = new Filter[1];
 		countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
@@ -1530,23 +1664,27 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		if (countryObj != null) {
 			Country country = (Country) countryObj;
-			customer.setCustCOB(country.getCountryCode());
-			customer.setCustParentCountry(country.getCountryCode());
-			customer.setCustResdCountry(country.getCountryCode());
-			customer.setCustRiskCountry(country.getCountryCode());
-			customer.setCustNationality(country.getCountryCode());
 
-			customer.setLovDescCustCOBName(country.getCountryDesc());
-			customer.setLovDescCustParentCountryName(country.getCountryDesc());
-			customer.setLovDescCustResdCountryName(country.getCountryDesc());
-			customer.setLovDescCustRiskCountryName(country.getCountryDesc());
-			customer.setLovDescCustNationalityName(country.getCountryDesc());
+			if (customerDetails.getCustomer().getCustCOB() == null) {
+				customer.setCustCOB(country.getCountryCode());
+				customer.setCustParentCountry(country.getCountryCode());
+				customer.setCustResdCountry(country.getCountryCode());
+				customer.setCustRiskCountry(country.getCountryCode());
+				customer.setCustNationality(country.getCountryCode());
+
+				customer.setLovDescCustCOBName(country.getCountryDesc());
+				customer.setLovDescCustParentCountryName(country.getCountryDesc());
+				customer.setLovDescCustResdCountryName(country.getCountryDesc());
+				customer.setLovDescCustRiskCountryName(country.getCountryDesc());
+				customer.setLovDescCustNationalityName(country.getCountryDesc());
+			}
 		}
 
 		//Setting Primary Relation Ship Officer
 		RelationshipOfficer officer = this.relationshipOfficerService
 				.getApprovedRelationshipOfficerById(getUserWorkspace().getUserDetails().getUsername());
-		if (officer != null) {
+		
+		if (officer != null && String.valueOf(customerDetails.getCustomer().getCustRO1()) == null) {
 			customer.setCustRO1(Long.parseLong(officer.getROfficerCode()));
 			customer.setLovDescCustRO1Name(officer.getROfficerDesc());
 		}
@@ -1554,7 +1692,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		//Setting User Branch to Customer Branch
 		Branch branch = this.branchService.getApprovedBranchById(getUserWorkspace().getUserDetails().getSecurityUser()
 				.getUsrBranchCode());
-		if (branch != null) {
+		
+		if (branch != null && customerDetails.getCustomer().getCustDftBranch() == null) {
 			customer.setCustDftBranch(branch.getBranchCode());
 			customer.setLovDescCustDftBranchName(branch.getBranchDesc());
 			customer.setCustSwiftBrnCode(branch.getBranchSwiftBrnCde());
@@ -1562,7 +1701,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		CustomerType customerType = this.customerTypeService
 				.getApprovedCustomerTypeById(PennantConstants.DEFAULT_CUST_TYPE);
-		if (customerType != null) {
+		if (customerType != null && customerDetails.getCustomer().getCustTypeCode() == null) {
 			customer.setCustTypeCode(customerType.getCustTypeCode());
 			customer.setLovDescCustTypeCodeName(customerType.getCustTypeDesc());
 		}
@@ -1574,7 +1713,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		Filter[] systemDefault = new Filter[1];
 		systemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
 		Object genderObj = PennantAppUtil.getSystemDefault("Gender", "", systemDefault);
-		if (genderObj != null) {
+		if (genderObj != null && customerDetails.getCustomer().getCustGenderCode() == null) {
 			Gender gender = (Gender) genderObj;
 			Filter[] saltufilters = new Filter[2];
 			saltufilters[0] = new Filter("SalutationGenderCode", gender.getGenderCode(), Filter.OP_EQUAL);
@@ -1591,7 +1730,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		customer.setSalariedCustomer(true);
 
 		Object salutionObj = PennantAppUtil.getSystemDefault("MaritalStatusCode", "", systemDefault);
-		if (salutionObj != null) {
+		if (salutionObj != null && customerDetails.getCustomer().getCustMaritalSts() == null) {
 			MaritalStatusCode maritalStatusCode = (MaritalStatusCode) salutionObj;
 			customer.setCustMaritalSts(maritalStatusCode.getMaritalStsCode());
 		}
@@ -1734,7 +1873,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.relationshipOfficerService = relationshipOfficerService;
 	}
 
-	public void setCustomerInterfaceService(CustomerInterfaceService customerInterfaceService) {
+	public void setCustomerInterfaceService(com.pennant.Interface.service.CustomerInterfaceService customerInterfaceService) {
 		this.customerInterfaceService = customerInterfaceService;
 	}
 

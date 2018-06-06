@@ -182,6 +182,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
+import com.pennanttech.pff.external.Crm;
 import com.pennanttech.pff.external.FinnovService;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
 import com.pennanttech.webui.verification.LVerificationCtrl;
@@ -464,6 +465,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private FinnovService finnovService;
 
 	private boolean marginDeviation=false;	
+	@Autowired(required = false)
+	private Crm				crm;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -3337,6 +3341,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						}
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doFinnov)) {
 						auditHeader = finnovService.getFinnovReport(auditHeader);
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_notifyCrm)) {
+						if (crm != null && "Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED"))) {
+							CustomerDetails customerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
+							if (customerDetails.getCustomer().getCustCoreBank() == null) {
+								customerDetails = crm.create(customerDetails);
+							}
+						}
 					} else {
 						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
