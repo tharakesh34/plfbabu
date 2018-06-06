@@ -63,9 +63,11 @@ import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.GenericService;
@@ -926,10 +928,9 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				detail.setGuarantorExposure(String.valueOf(currentExpoSure));
 
 				detail.setCustomerIncomeList(getJointAccountIncomeList(detail.getCustID()));
-				detail.setCustomerExtLiabilityList(getCustomerExtLiabilityDAO().getExtLiabilityByCustomer(detail.getCustID(),""));
-				detail.setCustFinanceExposureList(getCustomerDAO().getCustomerFinanceDetailById(detail.getCustID()));
+				detail.setCustomerExtLiabilityList(getJointExtLiabilityByCustomer(detail.getCustID()));
+				detail.setCustFinanceExposureList(getJointCustFinanceExposureByCustomer(detail.getCustID()));
 			}
-
 		}
 
 		return jointAccountDetailList;
@@ -937,9 +938,19 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	
 	@Override
 	public List<CustomerIncome> getJointAccountIncomeList(long custID){
-		
 		return getCustomerIncomeDAO().getCustomerIncomeByCustomer(custID,false,"");
 	} 
+	
+	@Override
+	public List<CustomerExtLiability>  getJointExtLiabilityByCustomer(long custID){
+		return getCustomerExtLiabilityDAO().getExtLiabilityByCustomer(custID,"");
+	} 
+
+	@Override
+	public List<FinanceEnquiry>  getJointCustFinanceExposureByCustomer(long custID){
+		return getCustomerDAO().getCustomerFinanceDetailById(custID);
+	}
+	
 	
 	@Override
 	public List<FinanceExposure> getJointExposureList(List<String> listCIF){

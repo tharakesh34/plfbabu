@@ -65,8 +65,10 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GuarantorDetail;
@@ -75,7 +77,6 @@ import com.pennant.backend.service.finance.GuarantorDetailService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -195,10 +196,16 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		if (arguments.containsKey("fromApproved")) {
 			this.fromApproved = (Boolean) arguments.get("fromApproved");
 		}
-
+		
+		rules.put("Guarantors_Bank_CustomerCount", 0);
+		rules.put("Guarantors_Other_CustomerCount", 0);
+		rules.put("Guarantors_Total_Count", 0);
+		rules.put("Co_Applicants_Count", 0);
 		rules.put("Total_Co_Applicants_Income", BigDecimal.ZERO);
 		rules.put("Total_Co_Applicants_Expense", BigDecimal.ZERO);
-
+		rules.put("Co_Applicants_Obligation_Internal", BigDecimal.ZERO);
+		rules.put("Co_Applicants_Obligation_External", BigDecimal.ZERO);
+		
 		doCheckRights();
 		doShowDialog();
 		logger.debug("Leaving " + event.toString());
@@ -243,8 +250,6 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				}
 				if (jointAccountDetailList != null && !jointAccountDetailList.isEmpty()) {
 					doFillJointDetails(jointAccountDetailList);
-				}else{
-					rules.put("Co_Applicants_Count", 0);	
 				}
 				if(fromApproved){
 				 gurantorsAccDetailList = this.guarantorDetailService
@@ -255,10 +260,6 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				}
 				if (gurantorsAccDetailList != null && !gurantorsAccDetailList.isEmpty()) {
 					doFillGurantorsDetails(gurantorsAccDetailList);
-				}else{
-					rules.put("Guarantors_Bank_CustomerCount", 0);
-					rules.put("Guarantors_Other_CustomerCount", 0);
-					rules.put("Guarantors_Total_Count", 0);
 				}
 			}
 			this.finBasicdetails.setVisible(false);
@@ -267,18 +268,12 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			List<JointAccountDetail> jointAcctDetailList = financeDetail.getJountAccountDetailList();
 			if (jointAcctDetailList != null && !jointAcctDetailList.isEmpty()) {
 				doFillJointDetails(jointAcctDetailList);
-			}else{
-				rules.put("Co_Applicants_Count", 0);
 			}
 
 			// Rendering Guaranteer Details
 			List<GuarantorDetail> gurantorsDetailList = financeDetail.getGurantorsDetailList();
 			if (gurantorsDetailList != null && !gurantorsDetailList.isEmpty()) {
 				doFillGurantorsDetails(gurantorsDetailList);
-			}else{
-				rules.put("Guarantors_Bank_CustomerCount", 0);
-				rules.put("Guarantors_Other_CustomerCount", 0);
-				rules.put("Guarantors_Total_Count", 0);
 			}
 			try {
 				Class[] paramType = { this.getClass() };
@@ -393,6 +388,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		rules.put("Co_Applicants_Count", jountAccountDetails.size());
 		rules.put("Total_Co_Applicants_Income", BigDecimal.ZERO);
 		rules.put("Total_Co_Applicants_Expense", BigDecimal.ZERO);
+		rules.put("Co_Applicants_Obligation_Internal", BigDecimal.ZERO);
+		rules.put("Co_Applicants_Obligation_External", BigDecimal.ZERO);
 
 		for (JointAccountDetail jountAccountDetail : jountAccountDetails) {
 			Listitem listitem = new Listitem();
@@ -439,7 +436,21 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		
 		BigDecimal totIncome = BigDecimal.ZERO;
 		BigDecimal totExpense = BigDecimal.ZERO;
-
+		BigDecimal obligation_Internal = BigDecimal.ZERO;
+		BigDecimal obligation_external = BigDecimal.ZERO;
+		
+		if(CollectionUtils.isNotEmpty(jountAccountDetail.getCustomerExtLiabilityList())){
+			for (CustomerExtLiability liability : jountAccountDetail.getCustomerExtLiabilityList()) {
+				obligation_external = obligation_external.add(liability.getInstalmentAmount());
+			}
+		}	
+		
+		if(CollectionUtils.isNotEmpty(jountAccountDetail.getCustFinanceExposureList())){
+			for (FinanceEnquiry enquiry : jountAccountDetail.getCustFinanceExposureList()) {
+				obligation_Internal = obligation_Internal.add(enquiry.getMaxInstAmount());
+			}
+		}	
+		
 		// 1 Currency Conversion Required
 		// 2 Un Formate should be based on the Customer Base Currency. 
 		if(CollectionUtils.isNotEmpty(jountAccountDetail.getCustomerIncomeList())){
@@ -457,8 +468,18 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			totExpense = totExpense.add((BigDecimal) rules.get("Total_Co_Applicants_Income"));
 		}
 		
+		if(rules.containsKey("Co_Applicants_Obligation_Internal")){
+			obligation_Internal = obligation_Internal.add((BigDecimal) rules.get("Co_Applicants_Obligation_Internal"));
+		}
+			
+		if(rules.containsKey("Co_Applicants_Obligation_External")){
+			obligation_external = obligation_external.add((BigDecimal) rules.get("Co_Applicants_Obligation_External"));
+		}
+		
 		rules.put("Total_Co_Applicants_Income", totIncome);
 		rules.put("Total_Co_Applicants_Expense", totExpense);
+		rules.put("Co_Applicants_Obligation_Internal", obligation_Internal);
+		rules.put("Co_Applicants_Obligation_External", obligation_external);
 
 	}
 	public void onFinJointItemDoubleClicked(Event event) throws Exception {

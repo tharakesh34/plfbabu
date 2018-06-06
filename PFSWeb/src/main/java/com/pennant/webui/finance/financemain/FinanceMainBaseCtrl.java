@@ -188,6 +188,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -14991,6 +14992,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			detail.getCustomerEligibilityCheck().addExtendedField("Guarantors_Total_Count", 0);
 			detail.getCustomerEligibilityCheck().addExtendedField("Total_Co_Applicants_Income", 0);
 			detail.getCustomerEligibilityCheck().addExtendedField("Total_Co_Applicants_Expense", 0);
+			detail.getCustomerEligibilityCheck().addExtendedField("Co_Applicants_Obligation_Internal", BigDecimal.ZERO);
+			detail.getCustomerEligibilityCheck().addExtendedField("Co_Applicants_Obligation_External", BigDecimal.ZERO);
 		}
 
 		if (collateralHeaderDialogCtrl != null) {
@@ -15027,6 +15030,26 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Margin", customer.isMarginDeviation());
 		detail.getCustomerEligibilityCheck().addExtendedField("CUSTOMER_MARGIN_DEVIATION",customer.isMarginDeviation());	
 		
+		// Customer Oblication 
+		BigDecimal internal_Obligation = new BigDecimal(0);
+		BigDecimal external_Obligation = new BigDecimal(0);
+		
+		
+		if(CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustFinanceExposureList())){
+			for (FinanceEnquiry enquiry : detail.getCustomerDetails().getCustFinanceExposureList()) {
+				internal_Obligation = internal_Obligation.add(enquiry.getMaxInstAmount());
+			}
+		}
+		
+		if(CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerExtLiabilityList())){
+			for (CustomerExtLiability liability : detail.getCustomerDetails().getCustomerExtLiabilityList()) {
+				external_Obligation = external_Obligation.add(liability.getInstalmentAmount());
+			}
+		}
+		
+		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Oblication_Internal", internal_Obligation);
+		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Oblication_External", external_Obligation);
+	
 		setFinanceDetail(detail);
 		logger.debug("Leaving");
 		return getFinanceDetail();

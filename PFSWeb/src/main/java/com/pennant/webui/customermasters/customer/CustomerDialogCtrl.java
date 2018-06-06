@@ -1838,13 +1838,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private BigDecimal getCustTotExpense() {
 		logger.debug("Entering");
 		BigDecimal custTotExpense = BigDecimal.ZERO;
-		if (this.customerExtLiabilityDetailList != null && !this.customerExtLiabilityDetailList.isEmpty()) {
+		/*if (this.customerExtLiabilityDetailList != null && !this.customerExtLiabilityDetailList.isEmpty()) {
 			for (CustomerExtLiability cusExtLiability : this.customerExtLiabilityDetailList) {
 				if (!isDeleteRecord(cusExtLiability.getRecordType())) {
 					custTotExpense = custTotExpense.add(cusExtLiability.getInstalmentAmount());
 				}
 			}
-		}
+		}*/
 		logger.debug("Leaving");
 		return custTotExpense;
 	}

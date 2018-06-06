@@ -48,7 +48,9 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.JointAccountDetail;
 
@@ -76,4 +78,6 @@ public interface JointAccountDetailService {
 	List<AuditDetail> delete(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType);
 	List<CustomerIncome> getJointAccountIncomeList(long custID);
 	List<FinanceExposure> getJointExposureList(List<String> listCIF);
+	List<CustomerExtLiability> getJointExtLiabilityByCustomer(long custID);
+	List<FinanceEnquiry> getJointCustFinanceExposureByCustomer(long custID);
 }
