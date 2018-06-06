@@ -65,16 +65,17 @@ public class APILogDetailDAOImpl  extends BasisCodeDAO<APILogDetail>  implements
 	 * @return
 	 */
 	@Override
-	public APILogDetail getLogByMessageId(String messageId) {
+	public APILogDetail getLogByMessageId(String messageId,String entityCode) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder(
 				"SELECT RESPONSE, REFERENCE, KEYFIELDS, STATUSCODE, ERROR  FROM  PLFAPILOGDETAILS ");
-		sql.append(" WHERE messageId= :messageId AND processed = :processed ");
+		sql.append(" WHERE messageId= :messageId AND processed = :processed AND entityId= :entityId ");
 		logger.debug("selectSql: " + sql.toString());
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("messageId", messageId);
+		parameterSource.addValue("entityId", entityCode);
 		parameterSource.addValue("processed", true);
 		RowMapper<APILogDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(APILogDetail.class);
 		APILogDetail apiLogDetail;

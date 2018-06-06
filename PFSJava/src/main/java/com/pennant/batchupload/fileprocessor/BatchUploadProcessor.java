@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +39,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.batchupload.customexception.ValidationException;
 import com.pennant.batchupload.model.FaultDetails;
 import com.pennanttech.batchupload.util.BatchProcessorUtil;
@@ -53,13 +56,17 @@ public class BatchUploadProcessor {
 	private String sourceFileName = null;
 	private FormulaEvaluator objFormulaEvaluator = null; // for cell value formating
 	private DataFormatter objDefaultFormat = new DataFormatter();// for cell value formating
+	private String entityId = null;
+	private long userId=Long.MIN_VALUE;
 
-	public BatchUploadProcessor(File file, String authorization, String apiUrl, String extraHeader, String sourceFileName) {
+	public BatchUploadProcessor(File file, String authorization, String apiUrl, String extraHeader, String sourceFileName, String entityId,long userId) {
 		this.file = file;
 		this.authorization = authorization;
 		this.apiUrl = apiUrl;
 		this.extraHeader = extraHeader; // it could be blank.
 		this.sourceFileName = sourceFileName;
+		this.entityId=entityId;
+		this.userId=userId;
 		inIt(file);
 	}
 
@@ -105,7 +112,9 @@ public class BatchUploadProcessor {
 			JSONObject jsonForextendedField = new JSONObject();
 			Row row = rows.next();
 			int rowIndex = row.getRowNum();
-			String messageId = file.getName() + "/" + getTime() + "/" + rowIndex;
+			Calendar calendar = Calendar.getInstance();
+			
+			String messageId =  userId+"-"+calendar.getTimeInMillis()+"/" + rowIndex;
 			int cellIndex = 0;
 			Iterator<Cell> cellIterator = row.cellIterator();
 			// to check how many cells are blank in a row.
@@ -587,6 +596,12 @@ public class BatchUploadProcessor {
 			client.type(MediaType.APPLICATION_JSON);
 			client.header(BatchUploadProcessorConstatnt.AUTHORIZATION_KEY, authorization);
 			client.header(BatchUploadProcessorConstatnt.MESSAGE_ID, messageId);
+			String[] values = serviceEndPoint.split("/");
+			client.header(BatchUploadProcessorConstatnt.SERVICENAME, values[values.length - 1]);
+			client.header(BatchUploadProcessorConstatnt.SERVICEVERSION, BatchUploadProcessorConstatnt.SERVICEVERSIONVALUE);
+			client.header(BatchUploadProcessorConstatnt.LANGUAGE, BatchUploadProcessorConstatnt.LANGUAGEVALUE);
+			client.header(BatchUploadProcessorConstatnt.REQUESTTIME,DateUtility.getSysDate(PennantConstants.APIDateFormatter));
+			client.header(BatchUploadProcessorConstatnt.ENTITYID,entityId.concat("BU"));
 		} catch (Exception e) {
 			logger.error(BatchUploadProcessorConstatnt.EXCEPTION, e);
 		}

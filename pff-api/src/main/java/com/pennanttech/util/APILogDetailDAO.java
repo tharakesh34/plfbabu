@@ -5,6 +5,6 @@ import com.pennanttech.ws.log.model.APILogDetail;
 public interface APILogDetailDAO {
 	void saveLogDetails(APILogDetail aPILogDetail);
 
-	APILogDetail getLogByMessageId(String messageId);
+	APILogDetail getLogByMessageId(String messageId,String entityCode);
 
 }

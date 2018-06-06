@@ -43,5 +43,11 @@ public class BatchUploadProcessorConstatnt {
 	public static final String FILE_PATH = "BatchUploadTemplates/";
 	public static final String UNABLE_TO_PROCESS = "Unable To Process Your Request Please Contact To System Administrator.";
 	public static final String DATE_EXCEPTION = "Check Your Excel Sheet Date Column, It Should Be In 'dd-MMM-yyyy'(26-Jul-2017) Formate";
-	
+	public static final String ENTITYID="EntityId";
+	public static final String LANGUAGE = "Language";
+	public static final String REQUESTTIME = "RequestTime";
+	public static final String SERVICENAME = "Servicename";
+	public static final String SERVICEVERSION = "ServiceVersion";
+	public static final String LANGUAGEVALUE="EN";
+	public static final String SERVICEVERSIONVALUE="01";
 }

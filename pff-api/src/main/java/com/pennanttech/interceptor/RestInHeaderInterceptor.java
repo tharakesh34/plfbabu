@@ -374,7 +374,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	 */
 	private void validateMessageId(Message message, APIHeader header, APILogDetail apiLogDetail) {
 		logger.debug(Literal.ENTERING);
-		APILogDetail previousApiLogDetail = getLogMessageById(header.getMessageId());
+		APILogDetail previousApiLogDetail = getLogMessageById(header.getMessageId(),header.getEntityId());
 		if (previousApiLogDetail != null) {
 			//if the given messageId is already processed then sets the previous response as current response.
 			//conflict response code is 409.
@@ -580,8 +580,8 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	 * 
 	 * @return apiLogDetail
 	 */
-	private APILogDetail getLogMessageById(String messageId) {
-		return apiLogDetailDAO.getLogByMessageId(messageId);
+	private APILogDetail getLogMessageById(String messageId, String entityCode) {
+		return apiLogDetailDAO.getLogByMessageId(messageId,entityCode);
 	}
 
 	/**** SETTER/GETTERS ****/

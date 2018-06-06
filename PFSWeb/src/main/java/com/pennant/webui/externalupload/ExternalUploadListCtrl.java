@@ -99,6 +99,8 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	// ### 10-05-2018---- PSD TCT No :125164 
 	@Value("${api.url}")
 	private String baseurl;
+	@Value("${api.entityId}")
+	private String entityId;
 	private String extraHeader = null;
 	private String apiUrl = null;
 	private String sourceFileName = null;
@@ -252,8 +254,10 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	private void doFileProcess() throws Exception {
 		logger.debug(Literal.ENTERING);
 		if (org.apache.commons.lang3.StringUtils.isNotBlank(apiUrl)) {
+			long userId=getUserWorkspace().getUserId();
+
 			BatchUploadProcessor batchProcessor = new BatchUploadProcessor(file, authorization, apiUrl, extraHeader,
-					sourceFileName);
+					sourceFileName,entityId,userId);
 			batchProcessor.process();
 			fileName.setValue("");
 		}
