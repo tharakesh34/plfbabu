@@ -3075,5 +3075,12 @@ UNION ALL
      LEFT JOIN customerdocuments cd ON cd.custid = t.custid AND t.covenanttype = cd.custdoccategory
 			</createView>
 </changeSet>
+
+<changeSet id="59" author="Manoj">
+	<sql>
+		DELETE FROM SMTPARAMETERS where SYSPARMCODE = 'EXT_CRM_INT_ENABLED';
+		INSERT INTO SMTPARAMETERS VALUES ('EXT_CRM_INT_ENABLED', 'CRM Required or Not(Y, N)', 'String', 1, 'Y', 1, 0, NULL, NULL,'CRM Required or Not', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	</sql>
+</changeSet>
 </databaseChangeLog>
 	
