@@ -11565,15 +11565,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		Set<String> finReferens= new HashSet<>();
 
 		aFinanceMain.setTotalExposure(BigDecimal.ZERO);
+		
 		// Customer Exposure
-		for (FinanceEnquiry financeEnquiry  :getFinanceDetail().getCustomerDetails().getCustFinanceExposureList()) {
-			if(!finReferens.contains(financeEnquiry.getFinReference())){
-				finReferens.add(financeEnquiry.getFinReference());
-				aFinanceMain.setTotalExposure(aFinanceMain.getTotalExposure().add(financeEnquiry.getFinCurrAssetValue()));
-				
-			}
+		if(!CollectionUtils.isEmpty(getFinanceDetail().getCustomerDetails().getCustFinanceExposureList())){
+				for (FinanceEnquiry financeEnquiry  :getFinanceDetail().getCustomerDetails().getCustFinanceExposureList()) {
+					if(!finReferens.contains(financeEnquiry.getFinReference())){
+						finReferens.add(financeEnquiry.getFinReference());
+						aFinanceMain.setTotalExposure(aFinanceMain.getTotalExposure().add(financeEnquiry.getFinCurrAssetValue()));
+						
+					}
+				}
 		}
-
 		// Co Applicent Exposure
 		List<FinanceExposure>  exposures= new ArrayList<>();
 		if (jointAccountDetailDialogCtrl != null) {
@@ -15034,7 +15036,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		BigDecimal internal_Obligation = new BigDecimal(0);
 		BigDecimal external_Obligation = new BigDecimal(0);
 		
-		
 		if(CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustFinanceExposureList())){
 			for (FinanceEnquiry enquiry : detail.getCustomerDetails().getCustFinanceExposureList()) {
 				internal_Obligation = internal_Obligation.add(enquiry.getMaxInstAmount());
@@ -15049,7 +15050,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		
 		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Oblication_Internal", internal_Obligation);
 		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Oblication_External", external_Obligation);
-	
+		
+		
 		setFinanceDetail(detail);
 		logger.debug("Leaving");
 		return getFinanceDetail();
