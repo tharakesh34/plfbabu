@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.AutoDisbursementService;
 import com.pennant.app.core.CustEODEvent;
@@ -142,8 +143,10 @@ public class EodService {
 		//custEODEvent = projectedAmortizationService.processAmortization(custEODEvent);
 
 		//Auto disbursements
-		if (custEODEvent.isDisbExist()) {
-			autoDisbursementService.processDisbursementPostings(custEODEvent);
+		if (ImplementationConstants.ALLOW_ADDDBSF) {
+			if (custEODEvent.isDisbExist()) {
+				autoDisbursementService.processDisbursementPostings(custEODEvent);
+			}
 		}
 
 		//installment
