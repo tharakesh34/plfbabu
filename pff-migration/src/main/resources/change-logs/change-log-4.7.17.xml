@@ -3084,16 +3084,16 @@ UNION ALL
 </changeSet>
 <changeSet id="60" author="vijaykumar.l">
 <sql>
-delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Customer_Oblication_Internal';
-delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Customer_Oblication_External';
-delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Co_Applicants_Obglication_Internal';
-delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Co_Applicants_Obglication_External';
+delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Customer_Obligation_Internal';
+delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Customer_Obligation_External';
+delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Co_Applicants_Obligation_Internal';
+delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Co_Applicants_Obligation_External';
 
 Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
- ('ELGRULE','ELGRULE','Customer_Oblication_Internal','  Customer Oblication Internal','decimal',18,'1','1','','static,calvalue','');
-Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','Customer_Oblication_External',' Customer Oblication External','decimal',18,'1','1','','static,calvalue','');
-Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','Co_Applicants_Obglication_Internal',' Co Applicants Obglication Internal','decimal',18,'1','1','','static,calvalue','');
- Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values  ('ELGRULE','ELGRULE','Co_Applicants_Obglication_External','Co Applicants Obglication External','decimal',18,'1','1','','static,calvalue','');
+ ('ELGRULE','ELGRULE','Customer_Obligation_Internal','  Customer Obligation Internal','decimal',18,'1','1','','static,calvalue','');
+Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','Customer_Obligation_External',' Customer Oblication External','decimal',18,'1','1','','static,calvalue','');
+Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','Co_Applicants_Obligation_Internal',' Co Applicants Obgligation Internal','decimal',18,'1','1','','static,calvalue','');
+ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values  ('ELGRULE','ELGRULE','Co_Applicants_Obligation External','Co Applicants Obgligation External','decimal',18,'1','1','','static,calvalue','');
 	   
 </sql>
 </changeSet>
