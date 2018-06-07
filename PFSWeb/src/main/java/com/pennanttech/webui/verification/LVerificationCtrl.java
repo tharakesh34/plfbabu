@@ -173,7 +173,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		renderLVInitiationList();
 		renderLVWaiverList();
 		setScreenDocuments();
-		
+
 		if (!initType) {
 			this.toolbar_Initiation.setVisible(false);
 			this.toolbar_Waiver.setVisible(false);
@@ -594,6 +594,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			lvDocument.setDocumentType(DocumentType.COLLATRL.getKey());
 			lvDocument.setDescription(document.getLovDescDocCategoryName());
 			lvDocument.setCollateralRef(document.getReferenceId());
+			lvDocument.setDocumentRefId(document.getDocRefId());
 
 			collateralDocuments.add(lvDocument);
 		}
@@ -850,12 +851,6 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		// Get the selected entity.
 		Verification vrf = (Verification) listitem.getAttribute("verification");
 
-		/*
-		 * List<LVDocument> list = getDocuments();
-		 * 
-		 * for (LVDocument LVDocument : list) { if (vrf.getReferenceType().equals(LVDocument.getDocumentSubId())) {
-		 * vrf.getLvDocuments().add(LVDocument); break; } }
-		 */
 		if (vrf == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
@@ -1127,7 +1122,8 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction) throws InterruptedException {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction)
+			throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		this.recSave = recSave;
 		this.userAction = userAction;
@@ -1183,7 +1179,6 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 
 		for (com.pennant.backend.model.systemmasters.DocumentType documentType : list) {
 			lvRequiredDocs.add(documentType.getDocTypeCode());
-
 		}
 		return lvRequiredDocs;
 	}
@@ -1194,7 +1189,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 
 		for (LVDocument document : collateralDocuments) {
 			if (lvRequiredDocs.contains(document.getDocumentSubId())) {
-				result.add(document.getDocumentId());
+				result.add(document.getDocumentRefId());
 			}
 		}
 		return result;
@@ -1206,7 +1201,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		for (Verification verification : this.verification.getVerifications()) {
 			for (LVDocument document : verification.getLvDocuments()) {
 				if (document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
-					collateralDocuments.add(document.getDocumentId());
+					collateralDocuments.add(document.getDocumentRefId());
 				}
 			}
 		}

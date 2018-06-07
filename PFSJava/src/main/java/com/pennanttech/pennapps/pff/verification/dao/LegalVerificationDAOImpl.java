@@ -218,11 +218,6 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into verification_lv_details");
 		sql.append(tableType.getSuffix());
-
-		if (tableType == TableType.MAIN_TAB) {
-			sql.append("_stage");
-		}
-
 		sql.append(" (verificationId, seqNo, documentId, documentType, documentsubId, documentrefid, documenturi, ");
 		sql.append(
 				"Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
@@ -245,10 +240,10 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 				ps.setInt(4, document.getDocumentType());
 				ps.setString(5, document.getDocumentSubId());
-				if (document.getDocRefID() == null) {
+				if (document.getDocumentRefId() == null) {
 					ps.setLong(6, 0);
 				} else {
-					ps.setLong(6, document.getDocRefID());
+					ps.setLong(6, document.getDocumentRefId());
 				}
 				ps.setString(7, document.getDocumentUri());
 				ps.setInt(8, document.getVersion());
@@ -331,9 +326,8 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 	@Override
 	public List<LVDocument> getLVDocumentsFromStage(long verificationId) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(
-				"select verificationId, seqno, documentId,documentType, documentsubId from verification_lv_details_stage");
-		sql.append(" where verificationId=:verificationId");
+		sql.append("select verificationId, seqno, documentId,documentRefId,documentType, documentsubId");
+		sql.append(" from verification_lv_details_stage where verificationId=:verificationId");
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("verificationId", verificationId);
@@ -353,7 +347,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 	public List<LVDocument> getLVDocuments(String keyReference) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(
-				" select vs.verificationId,vs.documentid,vs.documentType, vs.documentSubId,v.referencefor collateralRef");
+				" select vs.verificationId,vs.documentid,vs.documentType, vs.documentSubId,vs.documentRefId,v.referencefor collateralRef");
 		sql.append(" from verification_lv_details_stage vs left join verifications v on  v.id=vs.verificationId");
 		sql.append(" where vs.verificationId in ( select id from verifications where keyReference=:keyReference)");
 		sql.append(" and documentType=:documentType");
@@ -639,7 +633,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		logger.debug(Literal.LEAVING);
 		return 0;
 	}
-	
+
 	@Override
 	public int getLVDocumentsCount(String collateralRef) {
 

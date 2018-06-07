@@ -59,8 +59,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		StringBuilder sql = new StringBuilder("select ");
 		sql.append(" v.id, verificationType, module, keyReference, referenceType, reference, ");
 		sql.append(" referenceFor, c.custId, c.custCif as cif, c.custshrtname customerName,");
-		sql.append(
-				" requesttype, reinitid, agency, a.dealerName agencyName, reason, r.code reasonName, remarks, ");
+		sql.append(" requesttype, reinitid, agency, a.dealerName agencyName, reason, r.code reasonName, remarks, ");
 		sql.append(" createdBy, createdOn, status, agencyRemarks, agencyReason, decision, ");
 		sql.append(" verificationDate, decisionRemarks, ");
 		sql.append(" v.LastMntOn, v.LastMntBy");
@@ -264,9 +263,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			if (verificationId != null) {
 				return verificationId;
 			}
-		} catch (EmptyResultDataAccessException e) {
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -410,7 +407,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
-	
+
 	@Override
 	public List<Integer> getVerificationTypes(String keyReference) {
 		logger.debug(Literal.ENTERING);

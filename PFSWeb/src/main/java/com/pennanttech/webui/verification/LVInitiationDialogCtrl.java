@@ -96,6 +96,7 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.RequestType;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.fi.LVStatus;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
@@ -346,10 +347,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				for (Verification item : list) {
 					documentStatus.put(item.getDocumentId(), item);
 				}
-
 				fillDocuments(this.listBoxCollateralDocuments, this.lvDocuments, DocumentType.COLLATRL,
 						object.getCollateralRef());
-
 			}
 		}
 	}
@@ -461,32 +460,28 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<String> docKeys = new ArrayList<>();
 		for (LVDocument document : lvDocuments) {
 			if (document.getDocumentType() == DocumentType.COLLATRL.getKey()) {
-				docKeys.add(this.verification.getReferenceFor()
-						.concat(String.valueOf(document.getDocumentType()).concat(document.getDocumentSubId())));
+				docKeys.add(String.valueOf(document.getDocumentId()));
 			} else {
 				docKeys.add(String.valueOf(document.getDocumentType()).concat(document.getDocumentSubId()));
 			}
-
 		}
 		return docKeys;
 	}
 
-	private List<LVDocument> getWaiveDocIds(List<Verification> verifications) {
-		List<LVDocument> documentIds = new ArrayList<>();
-		for (Verification item : verifications) {
-			if (item.getRequestType() == RequestType.WAIVE.getKey()) {
-				LVDocument document = new LVDocument();
-				document.setDocumentSubId(item.getReferenceType());
-				document.setDocModule("W");
-				documentIds.add(document);
-			}
+	private List<String> getOldDocumentRefIds(List<LVDocument> oldDocuments) {
+		List<String> documentRefIds = new ArrayList<>();
+		for (LVDocument oldDoc : oldDocuments) {
+			documentRefIds.add(String.valueOf(oldDoc.getDocumentRefId()));
 		}
-		return documentIds;
+		return documentRefIds;
 	}
 
 	public void fillDocuments(Listbox listbox, List<LVDocument> documents, DocumentType docType, String collateralRef) {
 		List<String> checkedDocuments = new ArrayList<>();
+		Map<Long, String> changedDocuments = new HashMap();
+		Map<Long, String> tempChangedDocumentIds = new HashMap<>();
 		List<String> idList = new ArrayList<>();
+		List<String> oldDocumentRefIds;
 
 		if (initiation) {
 			listbox.getItems().clear();
@@ -495,14 +490,37 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		List<LVDocument> oldDocumentIds = legalVerificationService.getLVDocuments(verification.getKeyReference());
+		List<LVDocument> oldDocuments = legalVerificationService.getLVDocuments(verification.getKeyReference());
 
-		for (LVDocument lvDocument : oldDocumentIds) {
-			if ((lvDocument.getDocumentType() == DocumentType.COLLATRL.getKey())
-					&& StringUtils.isNotEmpty(lvDocument.getCollateralRef())) {
-				idList.add(String.valueOf(lvDocument.getCollateralRef()
-						.concat(String.valueOf(lvDocument.getDocumentType())).concat(lvDocument.getDocumentSubId())));
-			} 
+		//Find changed collateral document and added it as new Document
+		if (collateralRef != null) {
+			for (LVDocument newDoc : documents) {
+				for (LVDocument oldDoc : oldDocuments) {
+					if (newDoc.getDocumentType() == DocumentType.COLLATRL.getKey()
+							&& newDoc.getDocumentId().equals(oldDoc.getDocumentId())) {
+						Verification vrf = new Verification();
+						vrf.setId(oldDoc.getVerificationId());
+						if (!newDoc.getDocumentRefId().equals(oldDoc.getDocumentRefId())
+								&& verificationService.isVerificationInRecording(vrf, VerificationType.LV)) {
+							changedDocuments.put(newDoc.getDocumentRefId(), String.valueOf(newDoc.getDocumentId()));
+						}
+					}
+				}
+			}
+		}
+
+		//Remove ChangedDocument if already exist in oldDocuments
+		tempChangedDocumentIds.putAll(changedDocuments);
+		oldDocumentRefIds = getOldDocumentRefIds(oldDocuments);
+		for (Map.Entry<Long, String> entrySet : tempChangedDocumentIds.entrySet()) {
+			if (oldDocumentRefIds.contains(String.valueOf(entrySet.getKey()))) {
+				changedDocuments.remove(entrySet.getKey());
+			}
+		}
+
+		//get saved collateral documents ids.
+		for (LVDocument lvDocument : oldDocuments) {
+			idList.add(String.valueOf(lvDocument.getDocumentId()));
 		}
 
 		for (LVDocument document : documents) {
@@ -516,12 +534,13 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				if (StringUtils.isNotEmpty(collateralRef) && !collateralRef.equals(document.getCollateralRef())) {
 					continue;
 				} else {
-					reference = String.valueOf(collateralRef.concat(String.valueOf(document.getDocumentType()))
-							.concat(document.getDocumentSubId()));
+					reference = String.valueOf(document.getDocumentId());
 				}
 			}
 
-			if (idList.contains(reference) && !checkedDocuments.contains(reference)) {
+			//invisible the saved collateral documets
+			if (idList.contains(reference) && !checkedDocuments.contains(reference)
+					&& !changedDocuments.values().contains(reference)) {
 				continue;
 			}
 

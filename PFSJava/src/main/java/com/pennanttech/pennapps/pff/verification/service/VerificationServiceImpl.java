@@ -369,22 +369,30 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			legalVerificationService.save(item, TableType.MAIN_TAB);
 
 			// LV Documents
-			legalVerificationService.saveDocuments(item.getLvDocuments(), TableType.MAIN_TAB);
+			legalVerificationService.saveDocuments(item.getLvDocuments(), TableType.STAGE_TAB);
 		}
 	}
 
 	private void saveLVInit(Verification verification) {
+		Long verificationId;
 		if (!verification.isApproveTab()) {
-			Long verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getKeyReference(),
+			verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getKeyReference(),
 					verification.getReferenceFor(), VerificationType.LV.getKey());
-
-			if (verification.isNewRecord() && verificationId != null) {
-				throw new AppException(
-						String.format("Collateral %s already initiated", verification.getReferenceFor()));
+			Verification vrf = new Verification();
+			if (verification.getId() != 0 || verificationId != null) {
+				if (verification.getId() != 0) {
+					vrf.setId(verification.getId());
+				} else {
+					vrf.setId(verificationId);
+				}
+				if (!isVerificationInRecording(vrf, VerificationType.LV) && verification.isNewRecord()) {
+					throw new AppException(
+							String.format("Collateral %s already initiated", verification.getReferenceFor()));
+				}
 			}
 
-			if (verificationId != null) {
-				verification.setId(verificationId);
+			if (verification.getId() != 0) {
+				verification.setId(verification.getId());
 				verificationDAO.update(verification, TableType.MAIN_TAB);
 			} else {
 				verificationDAO.save(verification, TableType.MAIN_TAB);
@@ -401,7 +409,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			document.setVerificationId(verification.getLegalVerification().getVerificationId());
 		}
 
-		legalVerificationService.saveDocuments(verification.getLvDocuments(), TableType.MAIN_TAB);
+		legalVerificationService.saveDocuments(verification.getLvDocuments(), TableType.STAGE_TAB);
 	}
 
 	private void saveFI(FinanceDetail financeDetail, Verification item) {
@@ -630,12 +638,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table verifications by using verificationsDAO's delete method with type
-	 * as Blank 3) Audit the record in to AuditHeader and Adtverifications by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * verifications by using verificationsDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and Adtverifications by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -661,9 +667,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * getApprovedverificationsById fetch the details by using
-	 * verificationsDAO's getverificationsById method . with parameter id and
-	 * type as blank. it fetches the approved records from the verifications.
+	 * getApprovedverificationsById fetch the details by using verificationsDAO's getverificationsById method . with
+	 * parameter id and type as blank. it fetches the approved records from the verifications.
 	 * 
 	 * @param id
 	 *            id of the Verification. (String)
@@ -674,19 +679,15 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using verificationDAO.delete with parameters verification,"" b) NEW Add
-	 * new record in to main table by using verificationDAO.save with parameters
-	 * verification,"" c) EDIT Update record in the main table by using
-	 * verificationDAO.update with parameters verification,"" 3) Delete the
-	 * record from the workFlow table by using verificationDAO.delete with
-	 * parameters verification,"_Temp" 4) Audit the record in to AuditHeader and
-	 * Adtverifications by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and Adtverifications by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using verificationDAO.delete with parameters
+	 * verification,"" b) NEW Add new record in to main table by using verificationDAO.save with parameters
+	 * verification,"" c) EDIT Update record in the main table by using verificationDAO.update with parameters
+	 * verification,"" 3) Delete the record from the workFlow table by using verificationDAO.delete with parameters
+	 * verification,"_Temp" 4) Audit the record in to AuditHeader and Adtverifications by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and Adtverifications by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -747,13 +748,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using verificationDAO.delete with parameters
-	 * verification,"_Temp" 3) Audit the record in to AuditHeader and
-	 * Adtverifications by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using verificationDAO.delete with parameters verification,"_Temp" 3) Audit the record in to
+	 * AuditHeader and Adtverifications by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -781,10 +779,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -803,10 +799,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * verificationDAO.getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from verificationDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -965,7 +960,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				exists = true;
 			}
 		} else if (verificationType == VerificationType.LV) {
-
+			if (!legalVerificationService.getLVDocuments(verification.getId()).isEmpty()) {
+				exists = true;
+			}
 		} else if (verificationType == VerificationType.RCU) {
 			if (riskContainmentUnitService.getRCUDocument(verification.getId(),
 					verification.getRcuDocument()) != null) {
