@@ -358,7 +358,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 		
 		FinanceMain aFinanceMain = aFinSchData.getFinanceMain();
-		fillComboBox(this.cbSchdMthd,aFinanceMain.getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY," );
+		fillComboBox(this.cbSchdMthd,aFinanceMain.getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP," );
 		this.cbSchdMthd.setDisabled(true);
 		
 		if(StringUtils.equals(aFinSchData.getFinanceType().getFinCategory(), FinanceConstants.PRODUCT_QARDHASSAN)){
@@ -879,7 +879,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.row_grcNextRepayDate.setVisible(true);
 		
 		this.cbSchdMthd.setDisabled(true);
-		fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,");
+		fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
 		
 		if(this.cbFrqFromDate.getSelectedIndex() != 0){
 			Date fromDate = (Date)this.cbFrqFromDate.getSelectedItem().getValue();
@@ -900,7 +900,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 								this.row_GrcRvwFrq.setVisible(true); 
 								fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,");
 							}else{
-								fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,");
+								fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
 							}
 							break;
 						}

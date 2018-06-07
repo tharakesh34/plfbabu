@@ -295,11 +295,11 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				fillComboBox(this.cbSchdMthd,getFinanceScheduleDetail().getSchdMethod(), PennantStaticListUtil.getScheduleMethods(), excludeFields);
 				this.cbSchdMthd.setDisabled(true);
 			}else {
-				fillComboBox(this.cbSchdMthd,getFinanceScheduleDetail().getSchdMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY," );
+				fillComboBox(this.cbSchdMthd,getFinanceScheduleDetail().getSchdMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP," );
 				this.cbSchdMthd.setDisabled(true);
 			}
 		}else {
-			fillComboBox(this.cbSchdMthd, "", PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,");
+			fillComboBox(this.cbSchdMthd, "", PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
 			this.cbSchdMthd.setDisabled(true);
 		}
 
@@ -951,13 +951,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				//fillSchDates(cbTillDate, getFinScheduleData());
 			}
 		}else{
-			
-			String value=getFinScheduleData().getFinanceMain().getScheduleMethod();
-			if(PennantStaticListUtil.getDisbCalCodes().size()==1){
-				value = PennantStaticListUtil.getDisbCalCodes().get(0).getValue();
-			}
-
-			fillComboBox(this.cbReCalType, value, PennantStaticListUtil.getDisbCalCodes() ,",GRCNDPAY,");
+			fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
 			this.cbSchdMthd.setDisabled(true);
 		}
 		

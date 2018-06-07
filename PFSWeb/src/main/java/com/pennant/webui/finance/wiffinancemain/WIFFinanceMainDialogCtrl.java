@@ -1270,7 +1270,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finRepayPftOnFrq.setChecked(aFinanceMain.isFinRepayPftOnFrq());
 		this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
 		this.repayRate.setMarginValue(aFinanceMain.getRepayMargin());
-		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), schMethodList, ",NO_PAY,GRCNDPAY,");
+		
+		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), schMethodList, ",NO_PAY,GRCNDPAY,PFTCAP,");
 
 		if (StringUtils.isNotEmpty(aFinanceMain.getRepayBaseRate())
 				&& StringUtils.equals(CalculationConstants.RATE_BASIS_R, this.repayRateBasis.getSelectedItem()
@@ -2735,7 +2736,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						PennantStaticListUtil.getInterestRateType(true), "");
 				this.repayRateBasis.setDisabled(true);
 				fillComboBox(this.cbScheduleMethod, CalculationConstants.SCHMTHD_EQUAL, schMethodList,
-						",NO_PAY,GRCNDPAY,");
+						",NO_PAY,GRCNDPAY,PFTCAP,");
 				this.cbScheduleMethod.setDisabled(true);
 				Events.sendEvent("onChange", repayRateBasis, true);
 			} else if (getFinanceDetail().getFinScheduleData().getFinanceType().isAllowDownpayPgm()) {
@@ -5947,7 +5948,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		// calling method to clear the constraints
 		logger.debug("Entering");
 		doClearMessage();
-
+		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 		//FinanceMain Details Tab ---> 1. Basic Details
 
 		if (this.finStartDate.getValue() == null) {
@@ -5961,9 +5962,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if ("#".equals(getComboboxValue(this.cbScheduleMethod))) {
-			fillComboBox(this.cbScheduleMethod, getFinanceDetail().getFinScheduleData().getFinanceType()
-					.getFinSchdMthd(), schMethodList, ",NO_PAY,GRCNDPAY,");
-		}
+			fillComboBox(this.cbScheduleMethod, financeType.getFinSchdMthd(), schMethodList, ",NO_PAY,GRCNDPAY,PFTCAP,");
+			}
 
 		if ("#".equals(getComboboxValue(this.cbProfitDaysBasis))) {
 			fillComboBox(this.cbProfitDaysBasis, getFinanceDetail().getFinScheduleData().getFinanceType()

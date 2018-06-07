@@ -283,9 +283,11 @@ public class ScheduleGenerator {
 					//Set Profit on Schedule Flag
 					if (StringUtils.equals(CalculationConstants.SCHMTHD_GRCENDPAY, curSchd.getSchdMethod())) {
 						curSchd.setPftOnSchDate(true);
-					} else if (StringUtils.equals(CalculationConstants.SCHMTHD_PFT, curSchd.getSchdMethod())) {
+					} else if (StringUtils.equals(CalculationConstants.SCHMTHD_PFT, curSchd.getSchdMethod())
+							|| StringUtils.equals(CalculationConstants.SCHMTHD_PFTCAP, curSchd.getSchdMethod())) {
 						if (FrequencyUtil.isFrqDate(financeMain.getGrcPftFrq(), financeMain.getGrcPeriodEndDate())) {
 							curSchd.setPftOnSchDate(true);
+							curSchd.setRepayOnSchDate(true);
 						}
 					}
 
@@ -766,41 +768,44 @@ public class ScheduleGenerator {
 				Calendar calendar = frequencyDetails.getScheduleList().get(i);
 				FinanceScheduleDetail schedule = null;
 
-				Date date = DateUtility.getDate(DateUtility.formateDate(calendar.getTime(), PennantConstants.DBDateFormat),
-						PennantConstants.DBDateFormat);
-				
-				HashMap<Date, FinanceScheduleDetail> scheduleMap = finScheduleData.getScheduleMap();
-				if (scheduleMap.containsKey(date)) {
-					schedule = scheduleMap.get(date);
+				if (finScheduleData.getScheduleMap()
+						.containsKey(
+								DateUtility.getDate(DateUtility.formatUtilDate(calendar.getTime(),
+										PennantConstants.dateFormat)))) {
+
+					schedule = finScheduleData.getScheduleMap().get(
+							DateUtility.getDate(DateUtility.formatUtilDate(calendar.getTime(),
+									PennantConstants.dateFormat)));
 				} else {
 					schedule = new FinanceScheduleDetail();
-					schedule.setSchDate(date);
-					schedule.setDefSchdDate(date);
+					schedule.setSchDate(calendar.getTime());
+					schedule.setDefSchdDate(calendar.getTime());
 				}
 
 				//SET various schedule flags
 				//Profit On Schedule Date
-				Date schDate = schedule.getSchDate();
 				if (scheduleFlag == 0) {
 					schedule.setPftOnSchDate(false);
 					schedule.setRepayOnSchDate(false);
 					schedule.setFrqDate(true);
 
-					Date grcPeriodEndDate = financeMain.getGrcPeriodEndDate();
-					String grcSchdMthd = financeMain.getGrcSchdMthd();
-					if (schDate.compareTo(grcPeriodEndDate) <= 0) {
+					if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
 						//Pay at Grace end and schedule date is grace end
-						if (schDate.compareTo(grcPeriodEndDate) == 0
-								&& grcSchdMthd.equals(CalculationConstants.SCHMTHD_GRCENDPAY)) {
+						if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0
+								&& financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_GRCENDPAY)) {
 							schedule.setPftOnSchDate(true);
-						} else if (grcSchdMthd.equals(CalculationConstants.SCHMTHD_PFT)) {
+						} else if (financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_PFT)
+								|| financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_PFTCAP)) {
 
-							if (schDate.compareTo(grcPeriodEndDate) == 0 && FrequencyUtil
-									.isFrqDate(financeMain.getGrcPftFrq(), grcPeriodEndDate)) {
+							schedule.setPftOnSchDate(true);
+							
+							//FIXME: PV why both if and else have some code
+							/*if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0 && FrequencyUtil
+									.isFrqDate(financeMain.getGrcPftFrq(), financeMain.getGrcPeriodEndDate())) {
 								schedule.setPftOnSchDate(true);
 							} else {
 								schedule.setPftOnSchDate(true);
-							}
+							}*/
 						}
 
 						schedule.setRepayOnSchDate(false);
@@ -818,9 +823,10 @@ public class ScheduleGenerator {
 					//Profit Capitalize On Schedule Date
 				} else if (scheduleFlag == 2) {
 
-					if (reCheckFlags && (schDate.compareTo(startDate) == 0
-							|| schDate.compareTo(endDate) == 0)) {
-						schedule.setCpzOnSchDate(FrequencyUtil.isFrqDate(frequency, schDate));
+					if (reCheckFlags
+							&& (schedule.getSchDate().compareTo(startDate) == 0 || schedule.getSchDate().compareTo(
+									endDate) == 0)) {
+						schedule.setCpzOnSchDate(FrequencyUtil.isFrqDate(frequency, schedule.getSchDate()));
 					} else {
 						schedule.setCpzOnSchDate(true);
 					}
@@ -830,8 +836,8 @@ public class ScheduleGenerator {
 					schedule.setPftOnSchDate(true);
 					schedule.setRepayOnSchDate(true);
 					schedule.setFrqDate(true);
-
-					if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+					
+					if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())){
 						financeMain.setNumberOfTerms(frequencyDetails.getScheduleList().size());
 					}
 				}

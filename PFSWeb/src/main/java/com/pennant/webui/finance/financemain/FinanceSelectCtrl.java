@@ -637,7 +637,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Entering " + event.toString());
 		String whereClause ="";
 		if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)){
-			whereClause = new String( " SchdMethod NOT IN ('EQUAL','GRCNDPAY','MAN_PRI','MANUAL','PRI','PRI_PFT') ");
+			whereClause = new String( " SchdMethod NOT IN ('EQUAL','GRCNDPAY','MAN_PRI','MANUAL','PRI','PRI_PFT','PFTCAP') ");
 		}
 		if(this.oldVar_sortOperator_scheduleMethod == Filter.OP_IN || this.oldVar_sortOperator_scheduleMethod == Filter.OP_NOT_IN){
 			//Calling MultiSelection ListBox From DB

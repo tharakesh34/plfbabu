@@ -266,7 +266,7 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 		
 		FinanceMain aFinanceMain = aFinSchData.getFinanceMain();
 		fillComboBox(this.oldSchdMthd,aFinanceMain.getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), "" );
-		fillComboBox(this.cbSchdMthd,"", PennantStaticListUtil.getScheduleMethods(),",GRCNDPAY,NO_PAY,");
+		fillComboBox(this.cbSchdMthd,"", PennantStaticListUtil.getScheduleMethods(),",GRCNDPAY,NO_PAY,PFTCAP,");
 		fillSchFromDates(aFinSchData.getFinanceScheduleDetails());
 		
 		logger.debug("Leaving");
@@ -415,7 +415,7 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 	public void onChange$cbFrqFromDate(Event event) {
 		logger.debug("Entering" + event.toString());
 		
-		//fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,");
+		//fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
 		
 		if(this.cbFrqFromDate.getSelectedIndex() != 0){
 			Date fromDate = (Date)this.cbFrqFromDate.getSelectedItem().getValue();
@@ -433,7 +433,7 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 							if(fromDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) < 0){
 							//	fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,");
 							}else{
-								//fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,");
+								//fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
 							}
 							break;
 						}

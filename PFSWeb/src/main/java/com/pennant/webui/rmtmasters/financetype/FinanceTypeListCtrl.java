@@ -213,9 +213,9 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 
 		fillComboBox(this.finDaysCalType, "", PennantStaticListUtil.getProfitDaysBasis(), "");
 		
-		String ecldSchdmethods = ",NO_PAY,GRCNDPAY,";
+		String ecldSchdmethods = ",NO_PAY,GRCNDPAY,PFTCAP,";
 		if(isOverdraft){
-			ecldSchdmethods = ",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,PRI_PFT,NO_PAY,";
+			ecldSchdmethods = ",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,PRI_PFT,NO_PAY,PFTCAP,";
 		}
 		
 		fillComboBox(this.finSchdMthd, "", PennantStaticListUtil.getScheduleMethods(), ecldSchdmethods);

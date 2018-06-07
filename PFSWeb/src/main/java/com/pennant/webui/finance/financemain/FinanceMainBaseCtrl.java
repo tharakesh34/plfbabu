@@ -3360,10 +3360,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (isOverdraft) {
 			fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(),
-					PennantStaticListUtil.getScheduleMethods(), ",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,PRI_PFT,NO_PAY,");
+					PennantStaticListUtil.getScheduleMethods(), ",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,PRI_PFT,NO_PAY,PFTCAP,");
 		} else {
 			fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(),
-					PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,");
+					PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,PFTCAP,");
 		}
 
 		if (StringUtils.isNotEmpty(aFinanceMain.getRepayBaseRate()) && StringUtils.equals(
@@ -5624,8 +5624,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			this.allowGrcRepay.setChecked(finType.isFinIsAlwGrcRepay());
-			fillComboBox(cbGrcSchdMthd, finType.getFinGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(),
-					",EQUAL,PRI_PFT,PRI,");
+			fillComboBox(cbGrcSchdMthd, finType.getFinGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(),",EQUAL,PRI_PFT,PRI,");
 
 			if (finType.isFinIsAlwGrcRepay()) {
 				this.grcRepayRow.setVisible(true);
@@ -8349,7 +8348,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			readOnlyComponent(false, this.cbGrcSchdMthd);
 			this.space_GrcSchdMthd.setStyle("background-color:red");
 			fillComboBox(this.cbGrcSchdMthd, getFinanceDetail().getFinScheduleData().getFinanceMain().getGrcSchdMthd(),
-					PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,");
+					PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,PFTCAP,");
 		} else {
 			readOnlyComponent(true, this.cbGrcSchdMthd);
 			this.cbGrcSchdMthd.setSelectedIndex(0);
@@ -8510,7 +8509,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
 						getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory())) {
 					fillComboBox(this.cbScheduleMethod, cbSchddemethod, PennantStaticListUtil.getScheduleMethods(),
-							",NO_PAY,GRCNDPAY,");
+							",NO_PAY,GRCNDPAY,PFTCAP,");
 					return;
 				}
 			}
@@ -12309,15 +12308,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (getComboboxValue(this.cbScheduleMethod).equals(PennantConstants.List_Select)) {
 
-			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
-					getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory())) {
-				fillComboBox(this.cbScheduleMethod, financeType.getFinSchdMthd(),
-						PennantStaticListUtil.getScheduleMethods(),
-						",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,NO_PAY,PRI,PRI_PFT,");
-			} else {
-				fillComboBox(this.cbScheduleMethod, financeType.getFinSchdMthd(),
-						PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,");
-			}
+			fillComboBox(this.cbScheduleMethod, financeType.getFinSchdMthd(),
+					PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,PFTCAP,");
 		}
 
 		if (getComboboxValue(this.cbProfitDaysBasis).equals(PennantConstants.List_Select)) {

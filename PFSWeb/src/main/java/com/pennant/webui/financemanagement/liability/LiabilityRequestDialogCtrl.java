@@ -1416,7 +1416,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		}
 		this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
 		this.repayRate.setMarginValue(aFinanceMain.getRepayMargin());
-		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,");
+		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,PFTCAP,");
 		if (StringUtils.isNotEmpty(aFinanceMain.getRepayBaseRate())
 				&& StringUtils.equals(CalculationConstants.RATE_BASIS_R, this.repayRateBasis.getSelectedItem()
 						.getValue().toString())) {

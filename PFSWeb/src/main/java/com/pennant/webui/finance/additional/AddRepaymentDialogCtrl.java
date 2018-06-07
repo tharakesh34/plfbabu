@@ -365,12 +365,12 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				this.cbSchdMthd.setDisabled(false);
 				this.wIAmount.setDisabled(true);
 			} else {
-				fillComboBox(this.cbSchdMthd, getFinanceScheduleDetail().getSchdMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,");
+				fillComboBox(this.cbSchdMthd, getFinanceScheduleDetail().getSchdMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
 				this.cbSchdMthd.setDisabled(true);
 				this.wIAmount.setDisabled(false);
 			}
 		} else {
-			fillComboBox(this.cbSchdMthd, "", PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,");
+			fillComboBox(this.cbSchdMthd, "", PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
 			this.cbSchdMthd.setDisabled(true);
 		}
 
@@ -403,7 +403,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				if(financeMain.getGrcPeriodEndDate().compareTo(curSchd.getSchDate()) >= 0) {
+				if (financeMain.getGrcPeriodEndDate().compareTo(curSchd.getSchDate()) >= 0
+						&& !CalculationConstants.SCHMTHD_PFTCAP.equals(curSchd.getSchdMethod())) {
 					continue;
 				}
 				
@@ -482,8 +483,16 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				if(financeMain.getGrcPeriodEndDate().compareTo(curSchd.getSchDate()) >= 0) {
-					continue;
+				
+				if ("cbRepayToDate".equals(dateCombobox.getId())) {
+					if (fillAfter.compareTo(financeMain.getGrcPeriodEndDate()) <= 0
+							&& curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) > 0) {
+						continue;
+					}
+				} else {
+					if (financeMain.getGrcPeriodEndDate().compareTo(curSchd.getSchDate()) >= 0) {
+						continue;
+					}
 				}
 				
 				// If maturity Terms, not include in list
@@ -923,15 +932,19 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		fillSchdMethod();
 		
 		int totalCount = this.cbRepayToDate.getItemCount();
+		
+		Date repayToDate = this.cbRepayToDate.getSelectedItem().getValue();
 
 		if (this.cbRepayToDate.getSelectedIndex() > 0) {
 			
-			if(this.cbRepayToDate.getSelectedIndex() == totalCount - 1){
-				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(),
-						PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,ADDTERM,TILLDATE,TILLMDT,ADDRECAL,STEPPOS,");
-			}else{
+			if (repayToDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0
+					|| this.cbRepayToDate.getSelectedIndex() != (totalCount - 1)) {
 				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(),
 						PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,ADDTERM,STEPPOS,");
+			} else {
+				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(),
+						PennantStaticListUtil.getSchCalCodes(),
+						",ADDLAST,ADJTERMS,CURPRD,ADDTERM,TILLDATE,TILLMDT,ADDRECAL,STEPPOS,");
 			}
 
 			fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
@@ -949,7 +962,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	public void onChange$cbRepayFromDate(Event event) {
 		logger.debug("Entering" + event.toString());
-		fillSchdMethod();
+		//fillSchdMethod();
 		this.cbRepayToDate.setDisabled(true);
 		if (isValidComboValue(this.cbRepayFromDate, Labels.getLabel("label_ChangeRepaymentDialog_FromDate.value"))) {
 			fillSchToDates(this.cbRepayToDate, getFinScheduleData().getFinanceScheduleDetails(),
@@ -992,14 +1005,14 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					.equals(CalculationConstants.SCH_SPECIFIER_GRACE_END))
 					&& (toSpecifier.equals(CalculationConstants.SCH_SPECIFIER_GRACE) || (toSpecifier
 							.equals(CalculationConstants.SCH_SPECIFIER_GRACE_END)))) {
-				this.cbSchdMthd.setDisabled(false);
-				fillComboBox(this.cbSchdMthd, "", PennantStaticListUtil.getScheduleMethods(), excludeFields);
+				this.cbSchdMthd.setDisabled(true);
+				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(), excludeFields);
 			} else if ((frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_REPAY) || frSpecifier
 					.equals(CalculationConstants.SCH_SPECIFIER_MATURITY))
 					&& (toSpecifier.equals(CalculationConstants.SCH_SPECIFIER_REPAY) || (toSpecifier
 							.equals(CalculationConstants.SCH_SPECIFIER_MATURITY)))) {
 				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(),
-						",GRCNDPAY,");
+						",GRCNDPAY,PFTCAP,");
 				this.cbSchdMthd.setDisabled(true);
 				if (this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.SCHMTHD_PFT)) {
 					this.wIAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy())));

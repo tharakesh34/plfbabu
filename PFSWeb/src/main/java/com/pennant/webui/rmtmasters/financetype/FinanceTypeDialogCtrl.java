@@ -1213,10 +1213,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		String schdMethod = aFinanceType.getFinSchdMthd();
 		if (isOverdraft) {
 			fillComboBox(this.cbfinSchdMthd, schdMethod, PennantStaticListUtil.getScheduleMethods(),
-					",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,NO_PAY,PRI_PFT,");
+					",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,NO_PAY,PRI_PFT,PFTCAP,");
 		} else {
 			fillComboBox(this.cbfinSchdMthd, schdMethod, PennantStaticListUtil.getScheduleMethods(),
-					",NO_PAY,GRCNDPAY,");
+					",NO_PAY,GRCNDPAY,PFTCAP,");
 		}
 		boolean isFinIsIntCpz = aFinanceType.isFinIsIntCpz();
 		if (isOverdraft) {
@@ -4992,9 +4992,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.cbFinScheduleOn.setDisabled(false);
 			this.btnSearchAlwEarlyMethod.setDisabled(false);
 			if (isOverdraft) {
-				fillComboBox(this.cbfinSchdMthd,this.financeType.getFinSchdMthd(), PennantStaticListUtil.getScheduleMethods(),",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,NO_PAY,PRI_PFT,");
+				fillComboBox(this.cbfinSchdMthd,this.financeType.getFinSchdMthd(), PennantStaticListUtil.getScheduleMethods(),",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,NO_PAY,PRI_PFT,PFTCAP,");
 			} else {
-				fillComboBox(this.cbfinSchdMthd,this.financeType.getFinSchdMthd(), PennantStaticListUtil.getScheduleMethods(),",NO_PAY,GRCNDPAY,");
+				fillComboBox(this.cbfinSchdMthd,this.financeType.getFinSchdMthd(), PennantStaticListUtil.getScheduleMethods(),",NO_PAY,GRCNDPAY,PFTCAP,");
 			}
 			
 			String cbFinScheduleOn=this.financeType.getFinScheduleOn();
