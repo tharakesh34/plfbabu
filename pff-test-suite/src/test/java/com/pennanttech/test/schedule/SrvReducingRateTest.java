@@ -533,6 +533,7 @@ public class SrvReducingRateTest {
 
 		if (srvTestCase.equals("DLTTERM")) {
 			fm.setRecalType(recalType);
+			fm.setException(true);
 
 			if (recalType.equals(CalculationConstants.RPYCHG_ADJMDT)) {
 				fm.setEventFromDate(fsdList.get(23).getSchDate());
@@ -542,6 +543,7 @@ public class SrvReducingRateTest {
 			}
 
 			schedule = ScheduleCalculator.deleteTerm(schedule);
+			fm.setException(false);
 		}
 
 		if (srvTestCase.equals("GRCCHG_E")) {

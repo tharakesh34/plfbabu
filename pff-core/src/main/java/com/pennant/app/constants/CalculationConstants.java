@@ -67,6 +67,7 @@ public class CalculationConstants {
 	public static final String	SCHMTHD_PFT							= "PFT";
 	public static final String	SCHMTHD_NOPAY						= "NO_PAY";
 	public static final String	SCHMTHD_GRCENDPAY					= "GRCNDPAY";
+	public static final String	SCHMTHD_PFTCAP						= "PFTCAP";
 
 	//Reducing, Flat, Convert FLat to Reducing, At Maturity, Discounted Deal
 	public static final String	RATE_BASIS_R						= "R";

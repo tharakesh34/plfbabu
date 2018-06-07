@@ -2267,6 +2267,7 @@ public class PennantStaticListUtil {
 			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PFT,Labels.getLabel("label_ScheduleMethod_CalculatedProfit")));
 			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PRI_PFT,Labels.getLabel("label_ScheduleMethod_ConstantPrinCalProfit")));
 			//schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PRI,Labels.getLabel("label_ScheduleMethod_ConstantPrincipal")));
+			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PFTCAP,Labels.getLabel("label_ScheduleMethod_CalculatedProfitCap")));
 		}
 		return schMthdList;
 	}
