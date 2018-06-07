@@ -30,6 +30,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
@@ -85,6 +86,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected Listbox listBoxRCUVerification;
 	protected Groupbox rcuInquiry;
 	protected Radiogroup rcuRadioGroup;
+	protected Listheader listheader_RCUVerification_ReInitAgency;
+	protected Listheader listheader_RCUVerification_ReInitRemarks;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
@@ -1001,8 +1004,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 				if (enqiryModule) {
 					decision.setDisabled(true);
-					reInitAgency.setReadonly(true);
-					reInitRemarks.setReadonly(true);
 				}
 			}
 
@@ -1025,6 +1026,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 
 			if (enqiryModule) {
+				listheader_RCUVerification_ReInitAgency.setVisible(false);
+				listheader_RCUVerification_ReInitRemarks.setVisible(false);
 				requestType.setDisabled(true);
 				agency.setReadonly(true);
 				reason.setReadonly(true);

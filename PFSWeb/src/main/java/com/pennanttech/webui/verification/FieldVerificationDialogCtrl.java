@@ -28,6 +28,7 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
@@ -85,6 +86,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected Listbox listBoxFIVerification;
 	protected Groupbox fiInquiry;
 	protected Radiogroup fi;
+	protected Listheader listheader_FIVerification_ReInitAgency;
+	protected Listheader listheader_FIVerification_ReInitRemarks;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private Verification verification;
@@ -516,8 +519,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 				if (enqiryModule) {
 					decision.setDisabled(true);
-					agency.setReadonly(true);
-					reInitRemarks.setReadonly(true);
 				}
 			}
 
@@ -539,6 +540,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 
 			if (enqiryModule) {
+				listheader_FIVerification_ReInitAgency.setVisible(false);
+				listheader_FIVerification_ReInitRemarks.setVisible(false);
 				requestType.setDisabled(true);
 				agency.setReadonly(true);
 				reason.setReadonly(true);

@@ -27,6 +27,7 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
@@ -90,7 +91,11 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	protected Button btnNew_Waiver;
 	protected Toolbar toolbar_Waiver;
 	protected Toolbar toolbar_Initiation;
-
+	protected Listheader listheader_LegalVerification_IReInitRemarks;
+	protected Listheader listheader_LegalVerification_Initiation_ReInitiate;
+	protected Listheader listheader_LegalVerification_WReInitRemarks;
+	protected Listheader listheader_LegalVerification_Initiation_WReInitiate;
+	
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private Verification verification;
@@ -444,6 +449,10 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				}
 
 				if (enqiryModule) {
+					listheader_LegalVerification_IReInitRemarks.setVisible(false);
+					listheader_LegalVerification_Initiation_ReInitiate.setVisible(false);
+					listheader_LegalVerification_WReInitRemarks.setVisible(false);
+					listheader_LegalVerification_Initiation_WReInitiate.setVisible(false);
 					decision.setDisabled(true);
 					reInitRemarks.setReadonly(true);
 					btnReInit.setDisabled(true);
@@ -807,6 +816,10 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			this.listBoxWaiver.appendChild(item);
 
 			if (enqiryModule) {
+				listheader_LegalVerification_IReInitRemarks.setVisible(false);
+				listheader_LegalVerification_Initiation_ReInitiate.setVisible(false);
+				listheader_LegalVerification_WReInitRemarks.setVisible(false);
+				listheader_LegalVerification_Initiation_WReInitiate.setVisible(false);
 				reason.setReadonly(true);
 				remarks.setReadonly(true);
 			}
