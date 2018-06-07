@@ -523,13 +523,14 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 					// Add Common Fields
 					HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
 					
-					Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(jointAccountDetail.getCustCIF(), tableName.toString(), null);
+					String custCIF = jointAccountDetail.getCustCIF();
+					Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(custCIF, tableName.toString(), null);
 					
 					if (extFieldMap == null) {
 						isSaveRecord = true;
 					}
 					if (isSaveRecord) {
-						extendedFieldRender.setReference(jointAccountDetail.getCustomerDetails().getCustomer().getCustCIF());
+						extendedFieldRender.setReference(custCIF);
 						mapValues.put("Reference", extendedFieldRender.getReference());
 						mapValues.put("SeqNo", extendedFieldRender.getSeqNo());
 					}
