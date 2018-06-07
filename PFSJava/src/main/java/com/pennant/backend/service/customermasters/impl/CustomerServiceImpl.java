@@ -134,11 +134,11 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	public void setCustomerEmploymentDetailDAO(CustomerEmploymentDetailDAO customerEmploymentDetailDAO) {
 		this.customerEmploymentDetailDAO = customerEmploymentDetailDAO;
 	}
-	public Customer getCustomer() {
-		return getCustomerDAO().getCustomer(false);
+	public Customer getCustomer(Customer customer) {
+		return getCustomerDAO().getCustomer(false, customer);
 	}
-	public Customer getNewCustomer() {
-		return getCustomerDAO().getNewCustomer(true);
+	public Customer getNewCustomer(Customer customer) {
+		return getCustomerDAO().getNewCustomer(true, customer);
 	}
 	
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {

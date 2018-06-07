@@ -20,7 +20,7 @@ public interface CustomerDetailsService {
 
 	CustomerDetails getApprovedCustomerById(long id);
 
-	CustomerDetails getNewCustomer(boolean createNew);
+	CustomerDetails getNewCustomer(boolean createNew, CustomerDetails customerDetails);
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader) throws InterfaceException; 
 

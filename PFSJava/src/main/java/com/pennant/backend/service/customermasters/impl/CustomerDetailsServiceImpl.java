@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
@@ -569,20 +570,45 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * @return the customer for New Record
 	 */
 	@Override
-	public CustomerDetails getNewCustomer(boolean createNew) {
-		CustomerDetails customerDetails = new CustomerDetails();
+	public CustomerDetails getNewCustomer(boolean createNew, CustomerDetails customerDetails) {
+		if(customerDetails == null) {
+			customerDetails = new CustomerDetails();
+		}
 		CustomerEmploymentDetail employmentDetail = new CustomerEmploymentDetail();
 		employmentDetail.setNewRecord(true);
 		CorporateCustomerDetail corporateCustomerDetail = new CorporateCustomerDetail();
 		corporateCustomerDetail.setNewRecord(true);
-		customerDetails.setCustomer(getCustomerDAO().getNewCustomer(createNew));
-		customerDetails.setRatingsList(new ArrayList<CustomerRating>());
-		customerDetails.setEmploymentDetailsList(new ArrayList<CustomerEmploymentDetail>());
-		customerDetails.setAddressList(new ArrayList<CustomerAddres>());
-		customerDetails.setCustomerEMailList(new ArrayList<CustomerEMail>());
-		customerDetails.setCustomerPhoneNumList(new ArrayList<CustomerPhoneNumber>());
-		customerDetails.setCustomerIncomeList(new ArrayList<CustomerIncome>());
-		customerDetails.setCustomerDocumentsList(new ArrayList<CustomerDocument>());
+
+		customerDetails.setCustomer(getCustomerDAO().getNewCustomer(createNew, customerDetails.getCustomer()));
+
+		if (CollectionUtils.isEmpty(customerDetails.getRatingsList())) {
+			customerDetails.setRatingsList(new ArrayList<CustomerRating>());
+		}
+
+		
+		if (CollectionUtils.isEmpty(customerDetails.getEmploymentDetailsList())) {
+			customerDetails.setEmploymentDetailsList(new ArrayList<CustomerEmploymentDetail>());
+		}
+
+		if (CollectionUtils.isEmpty(customerDetails.getAddressList())) {
+			customerDetails.setAddressList(new ArrayList<CustomerAddres>());
+		}
+
+		if (CollectionUtils.isEmpty(customerDetails.getCustomerEMailList())) {
+			customerDetails.setCustomerEMailList(new ArrayList<CustomerEMail>());
+		}
+
+		if (CollectionUtils.isEmpty(customerDetails.getCustomerPhoneNumList())) {
+			customerDetails.setCustomerPhoneNumList(new ArrayList<CustomerPhoneNumber>());
+		}
+
+		if (CollectionUtils.isEmpty(customerDetails.getCustomerIncomeList())) {
+			customerDetails.setCustomerIncomeList(new ArrayList<CustomerIncome>());
+		}
+
+		if (CollectionUtils.isEmpty(customerDetails.getCustomerDocumentsList())) {
+			customerDetails.setCustomerDocumentsList(new ArrayList<CustomerDocument>());
+		}
 		customerDetails.setNewRecord(true);
 		return customerDetails;
 	}

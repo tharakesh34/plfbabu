@@ -111,7 +111,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 	 * @return Customer
 	 */
 	@Override
-	public Customer getCustomer(boolean createNew) {
+	public Customer getCustomer(boolean createNew, Customer customer) {
 		logger.debug("Entering");
 		WorkFlowDetails workFlowDetails=null;
 		if(!createNew){
@@ -119,7 +119,6 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		}else{
 			workFlowDetails = WorkFlowUtil.getWorkFlowDetails("CustomerQDE");
 		}
-		Customer customer= new Customer();
 		if (workFlowDetails!=null){
 			customer.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
@@ -134,35 +133,70 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 	 * @return Customer
 	 */
 	@Override
-	public Customer getNewCustomer(boolean createNew) {
+	public Customer getNewCustomer(boolean createNew, Customer customer) {
 		logger.debug("Entering");
 
-		Customer customer = getCustomer(createNew);
+		customer = getCustomer(createNew, customer);
 		customer.setNewRecord(true);
-		
+
 		PFSParameter parameter = SysParamUtil.getSystemParameterObject("CURR_SYSTEM_COUNTRY");
-		customer.setCustCOB(parameter.getSysParmValue().trim());
-		customer.setLovDescCustCOBName(parameter.getSysParmDescription());
-		
+		if (customer.getCustCOB() == null) {
+			customer.setCustCOB(parameter.getSysParmValue().trim());
+		}
+
+		if (customer.getLovDescCustCOBName() == null) {
+			customer.setLovDescCustCOBName(parameter.getSysParmDescription());
+		}
+
 		parameter = SysParamUtil.getSystemParameterObject("APP_DFT_CURR");
-		customer.setCustBaseCcy(parameter.getSysParmValue().trim());
-		
+
+		if (customer.getCustBaseCcy() == null) {
+			customer.setCustBaseCcy(parameter.getSysParmValue().trim());
+		}
+
 		parameter = SysParamUtil.getSystemParameterObject("APP_LNG");
-		customer.setCustLng(parameter.getSysParmValue().trim());
-		customer.setLovDescCustLngName(parameter.getSysParmDescription());
-		
+		if (customer.getCustLng() == null) {
+			customer.setCustLng(parameter.getSysParmValue().trim());
+		}
+		if (customer.getLovDescCustLngName() == null) {
+			customer.setLovDescCustLngName(parameter.getSysParmDescription());
+		}
+
 		parameter = SysParamUtil.getSystemParameterObject("APP_DFT_NATION");
-		customer.setCustParentCountry(parameter.getSysParmValue().trim());
-		customer.setCustRiskCountry(parameter.getSysParmValue().trim());
-		customer.setCustNationality(parameter.getSysParmValue().trim());
-		customer.setLovDescCustParentCountryName(parameter.getSysParmDescription());
-		customer.setLovDescCustRiskCountryName(parameter.getSysParmDescription());
-		customer.setLovDescCustNationalityName(parameter.getSysParmDescription());
-		
+
+		if (customer.getCustParentCountry() == null) {
+			customer.setCustParentCountry(parameter.getSysParmValue().trim());
+		}
+
+		if (customer.getCustRiskCountry() == null) {
+			customer.setCustRiskCountry(parameter.getSysParmValue().trim());
+		}
+
+		if (customer.getCustNationality() == null) {
+			customer.setCustNationality(parameter.getSysParmValue().trim());
+		}
+
+		if (customer.getLovDescCustParentCountryName() == null) {
+			customer.setLovDescCustParentCountryName(parameter.getSysParmDescription());
+		}
+
+		if (customer.getLovDescCustRiskCountryName() == null) {
+			customer.setLovDescCustRiskCountryName(parameter.getSysParmDescription());
+		}
+
+		if (customer.getLovDescCustNationalityName() == null) {
+			customer.setLovDescCustNationalityName(parameter.getSysParmDescription());
+		}
+
 		parameter = SysParamUtil.getSystemParameterObject("CURR_SYSTEM_COUNTRY");
-		customer.setCustResdCountry(parameter.getSysParmValue().trim());
-		customer.setLovDescCustResdCountryName(parameter.getSysParmDescription());
-		
+
+		if (customer.getCustResdCountry() == null) {
+			customer.setCustResdCountry(parameter.getSysParmValue().trim());
+		}
+
+		if (customer.getLovDescCustResdCountryName() == null) {
+			customer.setLovDescCustResdCountryName(parameter.getSysParmDescription());
+		}
 		customer.setCustGroupID(0);
 
 		logger.debug("Leaving");

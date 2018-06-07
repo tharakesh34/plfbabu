@@ -28,9 +28,14 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
+import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerIncome;
+import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.applicationmaster.BranchService;
@@ -76,12 +81,16 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private PagedListWrapper<CustomerDedup> dedupPagedListWrapper;
 	protected Paging pagingCustomerDedupList;
 	protected Radiogroup radioButtonGroup = new Radiogroup();
+	@Autowired
 	private transient CustomerDetailsService customerDetailsService;
+	@Autowired
 	private transient BranchService branchService;
 	int listRows;
+	@Autowired
 	private RelationshipOfficerService relationshipOfficerService;
 	@Autowired(required = false)
 	private CustomerInterfaceService customerInterfaceService;
+	@Autowired
 	private CustomerTypeService customerTypeService;
 	protected Window parentWindow;
 	protected SelectFinanceTypeDialogCtrl selectFinanceTypeDialogCtrl;
@@ -267,7 +276,10 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			selectFinanceTypeDialogCtrl.existingCust.setSelected(false);
 			selectFinanceTypeDialogCtrl.processCustomer(false);
 		} else if (isFromCustomer) {
-			coreCustomerSelectCtrl.proceedAsNewCustomer(customerDetails, custCtgCode, customerDetails.getCustomer().getCustCtgCode(), false);
+			if (StringUtils.isEmpty(custCtgCode)) {
+				custCtgCode = customerDetails.getCustomer().getCustCtgCode();
+			}
+			customerDetails = coreCustomerSelectCtrl.proceedAsNewCustomer(customerDetails, custCtgCode, customerDetails.getCustomer().getCustCRCPR(), true);
 			customerListCtrl.buildDialogWindow(customerDetails, true);
 
 		}
@@ -280,8 +292,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		doRemoveValidation();
 
 		if (StringUtils.isBlank(custCIF)) {
-			throw new WrongValueException(this.btnExistingCustomer,
-					"Please select Customer CIF to proceed with existing customer  !!!");
+			throw new WrongValueException(this.btnExistingCustomer, "Please select Customer CIF to proceed with existing customer  !!!");
 		} else if (isFromLoan) {
 			selectFinanceTypeDialogCtrl.existingCust.setSelected(true);
 			selectFinanceTypeDialogCtrl.custCIF.setValue(custCIF);
@@ -309,13 +320,28 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					throw new InterfaceException("9999", Labels.getLabel("Cust_NotFound"));
 				}
 				customerDetails.setCustomer(customer);
-			}
-			coreCustomerSelectCtrl.proceedAsNewCustomer(customerDetails, custCtgCode, customerDetails.getCustomer().getCustCtgCode(), false);
-			customerListCtrl.buildDialogWindow(customerDetails, false);
+			
+
+			customerDetails = coreCustomerSelectCtrl.proceedAsNewCustomer(customerDetails, custCtgCode, customerDetails.getCustomer().getCustCRCPR(), true);
+			customerListCtrl.buildDialogWindow(customerDetails, true);
 			closeDialog();
 		}
-
+	}
 		logger.debug(Literal.LEAVING);
+	}
+	
+	private void setCustomerStatus(CustomerDetails customerDetails) {
+		try {
+			if (StringUtils.isBlank(customerDetails.getCustomer().getCustSts())) {
+				CustomerStatusCode customerStatusCode = getCustomerDetailsService().getCustStatusByMinDueDays();
+				if (customerStatusCode != null) {
+					customerDetails.getCustomer().setCustSts(customerStatusCode.getCustStsCode());
+					customerDetails.getCustomer().setLovDescCustStsName(customerStatusCode.getCustStsDescription());
+				}
+			}
+		} catch (Exception e) {
+			logger.debug("Exception: ", e);
+		}
 	}
 
 	private void doRemoveValidation() {

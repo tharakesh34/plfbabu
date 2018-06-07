@@ -53,8 +53,8 @@ import com.pennant.backend.model.customermasters.WIFCustomer;
 
 public interface CustomerService {
 	
-	Customer getCustomer();
-	Customer getNewCustomer();
+	Customer getCustomer(Customer customer);
+	Customer getNewCustomer(Customer customer);
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 	Customer getCustomerById(long id);
 	Customer getApprovedCustomerById(long id);

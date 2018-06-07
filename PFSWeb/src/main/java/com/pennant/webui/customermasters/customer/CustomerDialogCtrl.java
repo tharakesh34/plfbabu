@@ -3343,9 +3343,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						auditHeader = finnovService.getFinnovReport(auditHeader);
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_notifyCrm)) {
 						if (crm != null && "Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED"))) {
-							CustomerDetails customerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
-							if (customerDetails.getCustomer().getCustCoreBank() == null) {
-								customerDetails = crm.create(customerDetails);
+							if (aCustomerDetails.getCustomer().getCustCoreBank() == null) {
+								customerDetails = crm.create(aCustomerDetails);
 							}
 						}
 					} else {
@@ -3355,6 +3354,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						return processCompleted;
 					}
 				}
+				
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE) {

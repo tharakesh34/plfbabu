@@ -57,9 +57,9 @@ import com.pennant.backend.model.finance.ProspectCustomer;
 import com.pennant.backend.model.reports.AvailPastDue;
 
 public interface CustomerDAO {
-	Customer getCustomer(boolean createNew);
+	Customer getCustomer(boolean createNew, Customer customer);
 
-	Customer getNewCustomer(boolean createNew);
+	Customer getNewCustomer(boolean createNew, Customer customer);
 
 	Customer getCustomerByID(long id, String type);
 
