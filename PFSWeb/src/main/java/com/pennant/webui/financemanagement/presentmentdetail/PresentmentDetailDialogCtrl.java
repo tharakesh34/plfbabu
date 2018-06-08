@@ -105,6 +105,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	protected Listbox listBox_ManualExclude;
 	protected Listbox listBox_AutoExclude;
 	protected ExtendedCombobox partnerBank;
+	protected Label window_title;
 	
 	protected Label label_PresentmentReference;
 	protected Label label_PresentmentStatus;
@@ -226,17 +227,20 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 		if ("N".equalsIgnoreCase(moduleType)) {
+			this.window_title.setValue(Labels.getLabel("lable_window_PresentmentBatchCreation_title"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnSave"));
 			this.btn_AddExlude.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnExclude"));
 			this.btn_AddInclude.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnInclude"));
 			readOnlyComponent(isReadOnly("PresentmentDetailDialog_partnerBank"), this.partnerBank);
 			this.partnerBank.setReadonly(!getUserWorkspace().isAllowed("PresentmentDetailDialog_partnerBank"));
 		} else if ("A".equalsIgnoreCase(moduleType)) {
+			this.window_title.setValue(Labels.getLabel("lable_window_PresentmentBatchApprove_title"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnSave"));
 			this.btn_AddExlude.setVisible(false);
 			this.btn_AddInclude.setVisible(false);
 			readOnlyComponent(true, this.partnerBank);
 		} else if ("E".equalsIgnoreCase(moduleType)) {
+			this.window_title.setValue(Labels.getLabel("lable_window_PresentmentBatchEnquiry_title"));
 			this.btnSave.setVisible(false);
 			this.btn_AddExlude.setVisible(false);
 			this.btn_AddInclude.setVisible(false);
