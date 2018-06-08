@@ -62,6 +62,7 @@ import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinChequeHeaderService;
 import com.pennant.backend.service.pdc.impl.ChequeHeaderServiceImpl;
@@ -666,7 +667,9 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 		// Get the model object.
 		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+		chequeHeader.setRecordStatus(financeMain.getRecordStatus());
 
 		// Check the unique keys.
 		if (chequeHeader.isNew() && chequeHeaderDAO.isDuplicateKey(chequeHeader.getHeaderID(),
