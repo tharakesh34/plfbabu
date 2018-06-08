@@ -478,7 +478,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	public void fillDocuments(Listbox listbox, List<LVDocument> documents, DocumentType docType, String collateralRef) {
 		List<String> checkedDocuments = new ArrayList<>();
-		Map<Long, String> changedDocuments = new HashMap();
+		Map<Long, String> changedDocuments = new HashMap<>();
 		Map<Long, String> tempChangedDocumentIds = new HashMap<>();
 		List<String> idList = new ArrayList<>();
 		List<String> oldDocumentRefIds;
@@ -491,6 +491,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		List<LVDocument> oldDocuments = legalVerificationService.getLVDocuments(verification.getKeyReference());
+		oldDocumentRefIds = getOldDocumentRefIds(oldDocuments);
 
 		//Find changed collateral document and added it as new Document
 		if (collateralRef != null) {
@@ -501,20 +502,12 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 						Verification vrf = new Verification();
 						vrf.setId(oldDoc.getVerificationId());
 						if (!newDoc.getDocumentRefId().equals(oldDoc.getDocumentRefId())
-								&& verificationService.isVerificationInRecording(vrf, VerificationType.LV)) {
+								&& verificationService.isVerificationInRecording(vrf, VerificationType.LV)
+								&& !oldDocumentRefIds.contains(String.valueOf(newDoc.getDocumentRefId()))) {
 							changedDocuments.put(newDoc.getDocumentRefId(), String.valueOf(newDoc.getDocumentId()));
 						}
 					}
 				}
-			}
-		}
-
-		//Remove ChangedDocument if already exist in oldDocuments
-		tempChangedDocumentIds.putAll(changedDocuments);
-		oldDocumentRefIds = getOldDocumentRefIds(oldDocuments);
-		for (Map.Entry<Long, String> entrySet : tempChangedDocumentIds.entrySet()) {
-			if (oldDocumentRefIds.contains(String.valueOf(entrySet.getKey()))) {
-				changedDocuments.remove(entrySet.getKey());
 			}
 		}
 
