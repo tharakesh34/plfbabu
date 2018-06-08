@@ -15040,8 +15040,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		
-		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Oblication_Internal", internal_Obligation);
-		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Oblication_External", external_Obligation);
+		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Obligation_Internal", internal_Obligation);
+		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Obligation_External", external_Obligation);
 		
 		
 		setFinanceDetail(detail);
