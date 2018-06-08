@@ -3220,7 +3220,7 @@ public class PennantStaticListUtil {
 			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_NEW, Labels.getLabel("label_Finance_Cheque_Status_New")));
 			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_PRESENT, Labels.getLabel("label_Finance_Cheque_Status_Presented")));
 			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_BOUNCE, Labels.getLabel("label_Finance_Cheque_Status_Bounced")));
-			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_REALISE, Labels.getLabel("label_Finance_Cheque_Status_Realised")));
+			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_REALISED, Labels.getLabel("label_Finance_Cheque_Status_Realised")));
 		}
 		return chequeStatusList;
 	}
