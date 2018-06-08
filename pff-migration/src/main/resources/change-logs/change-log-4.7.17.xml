@@ -3115,5 +3115,13 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
 		UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
 	</sql>
 </changeSet>
+<changeSet id="62" author="vijay.l">
+<sql>
+delete from RBFIELDDETAILS where RBMODULE = 'CLRULE' and RBEVENT = 'CLRULE' and RbFldName = 'custEmpType';
+Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) 
+values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0','1','EmploymentType','static,dbvalue','EmploymentType');
+
+</sql>
+</changeSet>
 </databaseChangeLog>
 	
