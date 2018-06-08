@@ -242,10 +242,8 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 			case PennantConstants.method_notifyCrm:
 				try {
 					if (crm != null && "Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED"))) {
-						System.out.println("Started CRM service task");
 						FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 						CustomerDetails customerDetails = financeDetail.getCustomerDetails();
-						System.out.println("|" + customerDetails.getCustomer().getCustCoreBank() + "|");
 						if (StringUtils.isEmpty(customerDetails.getCustomer().getCustCoreBank())) {
 							logger.debug("Calling CRM...");
 							customerDetails = crm.create(customerDetails);

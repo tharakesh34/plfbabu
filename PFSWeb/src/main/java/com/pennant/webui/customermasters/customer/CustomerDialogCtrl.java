@@ -3343,7 +3343,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						auditHeader = finnovService.getFinnovReport(auditHeader);
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_notifyCrm)) {
 						if (crm != null && "Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED"))) {
-							if (aCustomerDetails.getCustomer().getCustCoreBank() == null) {
+							if (StringUtils.isEmpty(aCustomerDetails.getCustomer().getCustCoreBank())) {
 								customerDetails = crm.create(aCustomerDetails);
 							}
 						}
