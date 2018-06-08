@@ -293,13 +293,16 @@ public class AuditDetail implements java.io.Serializable {
 		if (errorDetails == null) {
 			return;
 		}
-
-		if (errors == null) {
-			errors = new ArrayList<>();
-		}
-
 		errors.add(errorDetails);
 	}
+	
+	public void addErrorDetails(List<ErrorDetail> errorDetails) {
+		if (errorDetails == null) {
+			return;
+		}
+		errors.addAll(errorDetails);
+	}
+
 
 	public void setErrorDetail(long errorCode) {
 		setErrorDetail(new ErrorDetail("Key", String.valueOf(errorCode), null, null));
