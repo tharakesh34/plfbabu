@@ -2049,7 +2049,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("financeDetail", getFinanceDetail());
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_CHEQUE));
 			map.put("fromLoan", true);
-			map.put("isReadOnly", isReadOnly("FinanceMainDialog_finPurpose"));
 			map.put("ccyFormatter",
 					CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
 			map.put("chequeHeader", chequeHeader);
@@ -15823,7 +15822,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		Tab pdcTab = getTab(AssetConstants.UNIQUE_ID_CHEQUE);
 		if (chequeDetailDialogCtrl != null && pdcTab.isVisible()) {
 			chequeDetailDialogCtrl
-					.setFinanceSchedules(getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
+					.setUpdatedFinanceSchedules(getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
 		}
 
 		logger.debug("Leaving" + event.toString());
