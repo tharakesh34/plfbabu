@@ -745,10 +745,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			}
 		}
 
-		this.totNoOfCheques.setValue(aChequeHeader.getNoOfCheques());
-		this.totAmount.setValue(PennantApplicationUtil.formateAmount(aChequeHeader.getTotalAmount(), ccyEditField));
-
 		doFillChequeDetails(listBoxChequeDetail, aChequeHeader.getChequeDetailList());
+		this.totNoOfCheques.setValue(this.listBoxChequeDetail.getItemCount());
+		this.totAmount.setValue(PennantApplicationUtil.formateAmount(aChequeHeader.getTotalAmount(), ccyEditField));
+		
 		this.recordStatus.setValue(aChequeHeader.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
@@ -1283,6 +1283,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		
 		if (chequeDetails != null && chequeDetails.size() > 0) {
 			for (ChequeDetail detail : chequeDetails) {
+				
+				if (!fromLoan && PennantConstants.RCD_STATUS_CANCELLED.equals(detail.getRecordStatus()) && !PennantConstants.RCD_STATUS_SUBMITTED.equals(getChequeHeader().getRecordStatus())) {
+					continue;
+				}
 				
 				boolean isReadOnly = this.btnGen.isDisabled();
 				if (!fromLoan && !((PennantConstants.CHEQUESTATUS_NEW.equals(detail.getChequeStatus())) || (PennantConstants.List_Select.equals(detail.getChequeStatus())))) {

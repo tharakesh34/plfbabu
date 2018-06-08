@@ -250,6 +250,9 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 				continue;
 			}
 
+			if (StringUtils.isEmpty(type.getSuffix()) && PennantConstants.RCD_STATUS_CANCELLED.equals(chequeDetail.getRecordStatus())) {
+					getChequeDetailDAO().delete(chequeDetail, type);
+			}  else {
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -311,6 +314,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 				chequeDetail.setRecordStatus(recordStatus);
 			}
 			auditDetails.get(i).setModelData(chequeDetail);
+		  }
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -400,7 +404,6 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 				}
 			}
 
-			detail.setRecordStatus(chequeHeader.getRecordStatus());
 			detail.setUserDetails(chequeHeader.getUserDetails());
 			detail.setLastMntOn(chequeHeader.getLastMntOn());
 			detail.setLastMntBy(chequeHeader.getLastMntBy());
