@@ -72,9 +72,7 @@
 				<div style="border:none;">
 					<groupbox id="finBasicdetails" style="border:none;"/>
 					<groupbox id="gb_basicDetails" style="border:none;">
-						<grid id="grid_NumbOfChqs"
-							sclass="GridLayoutNoBorder" fixedLayout="true"
-							style="border:0px">
+						<grid id="grid_NumbOfChqs" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 							<columns>
 								<column width="15%" />
 								<column width="35%" />
@@ -83,16 +81,13 @@
 							</columns>
 							<rows>
 								<row id="row_chequeDetails">
-									<label id="label_NoOfCheques"
-										value="${c:l('label_ChequeDetailDialog_NoOfCheques.value')}" />
+									<label id="label_NoOfCheques" value="${c:l('label_ChequeDetailDialog_NoOfCheques.value')}" />
 									<hbox>
 										<space spacing="0px" />
-										<intbox id="totNoOfCheques"
-											readonly="true" width="200px" />
+										<intbox id="totNoOfCheques" width="200px" />
 									</hbox>
-									<label id="label_Amount"
-										value="${c:l('label_ChequeDetailDialog_Amount.value')}" />
-										<currencyBox id="totAmount" width="200px" />
+									<label id="label_Amount" value="${c:l('label_ChequeDetailDialog_Amount.value')}" />
+									<currencyBox id="totAmount" width="200px" />
 								</row>
 							</rows>
 						</grid>
@@ -102,140 +97,101 @@
 							sclass="GridLayoutNoBorder" fixedLayout="true"
 							style="border:0px">
 							<columns>
-								<column width="15%" />
-								<column width="35%" />
-								<column width="15%" />
-								<column width="35%" />
+								<column width="10%" />
+								<column width="20%" />
+								<column width="10%" />
+								<column width="20%" />
+								<column width="10%" />
+								<column width="20%" />
 							</columns>
 							<rows>
-								<row visible="true">
-									<label id="label_ChequeType"
-										value="${c:l('label_ChequeDetailDialog_ChequeType.value')}" />
+								<row>
+									<label id="label_ChequeType" value="${c:l('label_ChequeDetailDialog_ChequeType.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<combobox id="chequeType"
-											width="200px" />
+										<combobox id="chequeType" width="200px" />
 									</hbox>
 									<label id="label_BankBranchID"
 										value="${c:l('label_ChequeDetailDialog_BankBranchID.value')}" />
 									<extendedcombobox id="bankBranchID" />
-								</row>
-								<row visible="true">
-									<label id="label_bank"
-										value="${c:l('label_ChequeDetailDialog_Bank.value')}" />
+									 
+									<label id="label_city" value="${c:l('label_ChequeDetailDialog_city.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="bankName"
-											maxlength="50" width="200px" readonly="true" />
-									</hbox>
-									<label id="label_city"
-										value="${c:l('label_ChequeDetailDialog_city.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="city"
-											maxlength="50" width="200px" readonly="true" />
+										<textbox id="city" maxlength="50" width="200px" readonly="true" />
 										<label id="cityName" />
 									</hbox>
-
 								</row>
-								<row visible="true">
-									<label
-										value="${c:l('label_ChequeDetailDialog_Micr.value')}" />
+								
+								<row>
+									<label value="${c:l('label_ChequeDetailDialog_Micr.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="micr"
 											maxlength="50" width="200px" readonly="true" />
 									</hbox>
-									<label
-										value="${c:l('label_ChequeDetailDialog_Ifsc.value')}" />
+									<label value="${c:l('label_ChequeDetailDialog_Ifsc.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="ifsc"
-											maxlength="50" width="200px" readonly="true" />
+										<textbox id="ifsc" maxlength="50" width="200px" readonly="true" />
+									</hbox>
+									<label value="${c:l('label_ChequeDetailDialog_ChequeStatus.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="chequeStatus" width="200px" />
 									</hbox>
 								</row>
-								<row visible="true">
-									<label
-										value="${c:l('label_ChequeDetailDialog_ChequeStatus.value')}" />
+								
+								<row>
+									<label value="${c:l('label_ChequeDetailDialog_AccType.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<combobox id="chequeStatus"
-											width="200px" />
+										<combobox id="accountType" width="200px" />
 									</hbox>
-
-								</row>
-								<row visible="true">
-									<label
-										value="${c:l('label_ChequeDetailDialog_AccType.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<combobox id="accountType"
-											width="200px" />
-									</hbox>
-
-									<label
-										value="${c:l('label_ChequeDetailDialog_AccHolderName.value')}" />
+									<label value="${c:l('label_ChequeDetailDialog_AccHolderName.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="accHolderName" maxlength="200" width="200px" />
 									</hbox>
-								</row>
-
-								<row id="row3">
-									<label id="label_AccNumber"
-										value="${c:l('label_ChequeDetailDialog_AccNumber.value')}" />
+									<label id="label_AccNumber" value="${c:l('label_ChequeDetailDialog_AccNumber.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="accNumber"
-											width="200px" />
-									</hbox>
-									<label id="label_ChequeSerialNo"
-										value="${c:l('label_ChequeDetailDialog_ChequeSerialNo.value')}" />
-									<hbox>
-										<space spacing="2px"  />
-										<intbox id="chequeSerialNo"
-											maxlength="20" width="200px" />
+										<textbox id="accNumber" width="200px" />
 									</hbox>
 								</row>
+
 								<row>
+									<label id="label_ChequeSerialNo" value="${c:l('label_ChequeDetailDialog_ChequeSerialNo.value')}" />
+									<hbox>
+										<space spacing="2px"  />
+										<intbox id="chequeSerialNo" maxlength="20" width="200px" />
+									</hbox>
 									<label id="label_AmountCD" value="${c:l('label_ChequeDetailDialog_AmountCD.value')}" />
 									<currencyBox id="amount"  width="200px" />
 									<label value="${c:l('label_ChequeDetailDialog_NoOfChequesCalc.value')}" />
 									<hbox>
 										<space spacing="2px"  />
-										<intbox id="noOfCheques"
-											width="120px" />
-										<button id="btnGen"
-											label="Generate" />
+										<intbox id="noOfCheques" width="120px" />
+										<button id="btnGen" label="Generate" />
 									</hbox>
 								</row>
 							</rows>
 						</grid>
 					</groupbox>
-					<listbox id="listBoxChequeDetail"
-						emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+					<listbox id="listBoxChequeDetail" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
 						sizedByContent="true" span="true" width="100%"  style="overflow:auto;">
 						<listhead sizable="true">
-							<listheader id="listheader_ChequeType"
-								label="${c:l('listheader_ChequeType.label')}" align="left" hflex="min" />
-							<listheader id="listheader_ChequeSerialNo"
-								label="${c:l('listheader_ChequeSerialNo.label')}" align="left" hflex="min" />
-							<listheader id="listheader_BankBranchID"
-								label="${c:l('listheader_BankBranchID.label')}" hflex="min" />
-							<listheader id="listheader_AccountNo"
-								label="${c:l('listheader_AccountNo.label')}" align="right" hflex="min" />
-							<listheader id="listheader_EMI"
-								label="${c:l('listheader_EMI.label')}" align="left" hflex="min" />
-							<listheader id="listheader_Amount"
-								label="${c:l('listheader_Amount.label')}" align="right" hflex="min" />
+							<listheader id="listheader_ChequeType" label="${c:l('listheader_ChequeType.label')}" align="left" hflex="min" />
+							<listheader id="listheader_ChequeSerialNo" label="${c:l('listheader_ChequeSerialNo.label')}" align="left" hflex="min" />
+							<listheader id="listheader_AccountType" label="${c:l('listheader_AccountType.label')}" align="right" hflex="min" />
+							<listheader id="listheader_AccHolderName" label="${c:l('listheader_ChequedetailAccHolderName.label')}" align="right" hflex="min" />
+							<listheader id="listheader_AccountNo" label="${c:l('listheader_AccountNo.label')}" align="right" hflex="min" />
+							<listheader id="listheader_BankIFSCCode" label="${c:l('listheader_BankIFSC.label')}" hflex="min" />
+							<listheader id="listheader_DueDate" label="${c:l('listheader_DueDate.label')}" align="left" hflex="min" />
+							<listheader id="listheader_Amount" label="${c:l('listheader_Amount.label')}" align="right" hflex="min" />
+							<listheader id="listheader_ChequeStatus" label="${c:l('listheader_ChequeStatus.label')}" align="right" hflex="min" />
 							<listheader hflex="min" />
 							<listheader hflex="min" />
-							<listheader id="listheader_ChequeStatus"
-								label="${c:l('listheader_ChequeStatus.label')}" align="right" hflex="min" />
-							<listheader id="listheader_AccountType"
-								label="${c:l('listheader_AccountType.label')}" align="right" hflex="min" />
-							<listheader id="listheader_AccHolderName"
-								label="${c:l('listheader_AccHolderName.label')}" align="right" hflex="min" />
 						</listhead>
 					</listbox>
 				</div>

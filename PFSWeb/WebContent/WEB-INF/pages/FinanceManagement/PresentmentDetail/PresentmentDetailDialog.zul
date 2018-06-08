@@ -25,7 +25,7 @@
 						</toolbar>
 				<!-- SEARCH AREA -->
 						<toolbar align="center" style="toolbar-center">
-							<label value="${c:l('window_PresentmentHeaderDialog.title')}" sclass="label-heading" />
+							<label id="window_title" sclass="label-heading" />
 						</toolbar>
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" style="float:right; border-style: none;">
