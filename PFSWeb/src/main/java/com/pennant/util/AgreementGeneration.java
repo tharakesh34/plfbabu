@@ -180,6 +180,8 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
+import com.pennanttech.pennapps.pff.verification.Decision;
+import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.fi.RCUDocStatus;
 import com.pennanttech.pennapps.pff.verification.fi.RCUDocVerificationType;
@@ -1135,8 +1137,8 @@ public class AgreementGeneration implements Serializable {
 					loanQryDetails.setRaisedBy(new StringBuilder().append(queryDetail.getRaisedBy()).append("-").append(queryDetail.getUsrLogin()).toString());
 					loanQryDetails.setRaisedOn(DateUtil.formatToShortDate(queryDetail.getRaisedOn()));
 					loanQryDetails.setCategory(new StringBuilder().append(queryDetail.getCategoryCode()).append("-").append(queryDetail.getCategoryDescription()).toString());
-					loanQryDetails.setDescription(queryDetail.getQryNotes());
-					loanQryDetails.setStatus(queryDetail.getStatus());
+					loanQryDetails.setDescription(StringUtils.trimToEmpty(queryDetail.getQryNotes()));
+					loanQryDetails.setStatus(StringUtils.trimToEmpty(queryDetail.getStatus()));
 					agreement.getQueryDetails().add(loanQryDetails);
 				}
 			}
@@ -1144,7 +1146,7 @@ public class AgreementGeneration implements Serializable {
 	}
 
 	/**
-	 * Method to populate tge verification details
+	 * Method to populate the verification details
 	 * 
 	 * @param agreement
 	 * @param finRef
@@ -1153,80 +1155,110 @@ public class AgreementGeneration implements Serializable {
 		if(null!= finRef){
 			List<Verification> verifications = verificationService.getVerificationsForAggrement(finRef);
 			
-			if(CollectionUtils.isNotEmpty(verifications)){
+			if (CollectionUtils.isNotEmpty(verifications)) {
 				for (Verification verification : verifications) {
-					if(null!=verification){
-						VerificationType type = VerificationType.getVerificationType(verification.getVerificationType());
-						VerificationDetail verificationData=agreement.new VerificationDetail();
+					if (null != verification) {
+						VerificationType type = VerificationType
+								.getVerificationType(verification.getVerificationType());
+						VerificationDetail verificationData = agreement.new VerificationDetail();
 						verificationData.setInitiationDate(DateUtility.formatToLongDate(verification.getCreatedOn()));
-						verificationData.setCompletionDate(DateUtility.formatToLongDate(verification.getVerificationDate()));
-						verificationData.setFinalStatus(StringUtils.trimToEmpty(verification.getVerificationStatus()));
-						//TODO:: Need confirmation for remarks for now taking decision remarks
-						//verificationData.setRemarks(StringUtils.trimToEmpty(verification.getRemarks()));
+						verificationData
+								.setCompletionDate(DateUtility.formatToLongDate(verification.getVerificationDate()));
+						String initialStatus = (null != RequestType.getType(verification.getRequestType()))
+								? RequestType.getType(verification.getRequestType()).getValue() : null;
+						verificationData.setInitialStatus(StringUtils.trimToEmpty(initialStatus));
+						verificationData
+								.setRecommanditionStatus(StringUtils.trimToEmpty(verification.getVerificationStatus()));
 						verificationData.setRemarks(StringUtils.trimToEmpty(verification.getDecisionRemarks()));
+						String finalDecision = (null != Decision.getType(verification.getDecision()))
+								? Decision.getType(verification.getDecision()).getValue() : null;
+						verificationData.setFinalDecision(StringUtils.trimToEmpty(finalDecision));
 						verificationData.setAgencyName(StringUtils.trimToEmpty(verification.getAgencyName()));
 
 						switch (type) {
 						case FI:
+							if (3 == verification.getRequestType()) {
+								break;
+							}
 							verificationData.setApplicantName(StringUtils.trimToEmpty(verification.getCustomerName()));
-							if(null!=verification.getFieldInvestigation()){
-								FieldInvestigation fieldInvestigation=verification.getFieldInvestigation();
-								verificationData.setAddressType(StringUtils.trimToEmpty(fieldInvestigation.getAddressType()));
-								verificationData.setDoneBy(StringUtils.trimToEmpty(fieldInvestigation.getAgentCode()).concat("-").concat(StringUtils.trimToEmpty(fieldInvestigation.getAgentName())));
+							if (null != verification.getFieldInvestigation()) {
+								FieldInvestigation fieldInvestigation = verification.getFieldInvestigation();
+								verificationData
+										.setAddressType(StringUtils.trimToEmpty(fieldInvestigation.getAddressType()));
+								verificationData.setDoneBy(
+										StringUtils.trimToEmpty(fieldInvestigation.getAgentCode()).concat("-")
+												.concat(StringUtils.trimToEmpty(fieldInvestigation.getAgentName())));
 							}
 							agreement.getFiVerification().add(verificationData);
 							break;
 						case TV:
+							if (3 == verification.getRequestType()) {
+								break;
+							}
 							TechnicalVerification technicalVerification = verification.getTechnicalVerification();
-							if(null!=technicalVerification){
-								verificationData.setCollateralType(StringUtils.trimToEmpty(technicalVerification.getCollateralType()));
-								verificationData.setCollateralReference(StringUtils.trimToEmpty(technicalVerification.getCollateralRef()));
-								verificationData.setDoneBy(StringUtils.trimToEmpty(technicalVerification.getAgentCode()).concat("-").concat(StringUtils.trimToEmpty(technicalVerification.getAgentName())));
+							if (null != technicalVerification) {
+								verificationData.setCollateralType(
+										StringUtils.trimToEmpty(technicalVerification.getCollateralType()));
+								verificationData.setCollateralReference(
+										StringUtils.trimToEmpty(technicalVerification.getCollateralRef()));
+								verificationData.setDoneBy(
+										StringUtils.trimToEmpty(technicalVerification.getAgentCode()).concat("-")
+												.concat(StringUtils.trimToEmpty(technicalVerification.getAgentName())));
 							}
 							agreement.getTechnicalVerification().add(verificationData);
 							break;
 						case LV:
 							LegalVerification legalVerification = verification.getLegalVerification();
-							if(null!=legalVerification){
-								verificationData.setDoneBy(StringUtils.trimToEmpty(legalVerification.getAgentCode()).concat("-").concat(StringUtils.trimToEmpty(legalVerification.getAgentName())));
+							if (null != legalVerification) {
+								verificationData.setDoneBy(StringUtils.trimToEmpty(legalVerification.getAgentCode())
+										.concat("-").concat(StringUtils.trimToEmpty(legalVerification.getAgentName())));
 							}
 							agreement.getLegalVerification().add(verificationData);
 							break;
 						case RCU:
-							RiskContainmentUnit riskContainmentUnit = verification.getRcuVerification();
-							if(null!=riskContainmentUnit){
-								verificationData.setDoneBy(StringUtils.trimToEmpty(riskContainmentUnit.getAgentCode()).concat("-").concat(StringUtils.trimToEmpty(riskContainmentUnit.getAgentName())));
+							if (3 == verification.getRequestType()) {
+								break;
 							}
-							if(null!=riskContainmentUnit&&CollectionUtils.isNotEmpty(riskContainmentUnit.getRcuDocuments())){
+							RiskContainmentUnit riskContainmentUnit = verification.getRcuVerification();
+							if (null != riskContainmentUnit) {
+								verificationData.setDoneBy(
+										StringUtils.trimToEmpty(riskContainmentUnit.getAgentCode()).concat("-")
+												.concat(StringUtils.trimToEmpty(riskContainmentUnit.getAgentName())));
+							}
+							if (null != riskContainmentUnit
+									&& CollectionUtils.isNotEmpty(riskContainmentUnit.getRcuDocuments())) {
 								for (RCUDocument rcuDocument : riskContainmentUnit.getRcuDocuments()) {
-									if(null!=rcuDocument){
-										String rcuDocVerficationType=null;
-										if(rcuDocument.getVerificationType()==0){
-											rcuDocVerficationType="RCU Document Verification Not Available";
-										}else{
-											for(RCUDocVerificationType rcuDocVerification:RCUDocVerificationType.values()){
-												if(rcuDocVerification.getKey()==rcuDocument.getVerificationType()){
-													rcuDocVerficationType=rcuDocVerification.getValue();
+									if (null != rcuDocument) {
+										String rcuDocVerficationType = null;
+										if (rcuDocument.getVerificationType() == 0) {
+											rcuDocVerficationType = "RCU Document Verification Not Available";
+										} else {
+											for (RCUDocVerificationType rcuDocVerification : RCUDocVerificationType
+													.values()) {
+												if (rcuDocVerification.getKey() == rcuDocument.getVerificationType()) {
+													rcuDocVerficationType = rcuDocVerification.getValue();
 												}
 											}
 										}
-										String rcuDocStatus=null;
-										if(rcuDocument.getStatus()==0){
-											rcuDocStatus="RCU Document Status Not Available";
-										}else{
-											for(RCUDocStatus rcuDoc:RCUDocStatus.values()){
-												if(rcuDoc.getKey()==rcuDocument.getStatus()){
-													rcuDocStatus=rcuDoc.getValue();
+										String rcuDocStatus = null;
+										if (rcuDocument.getStatus() == 0) {
+											rcuDocStatus = "RCU Document Status Not Available";
+										} else {
+											for (RCUDocStatus rcuDoc : RCUDocStatus.values()) {
+												if (rcuDoc.getKey() == rcuDocument.getStatus()) {
+													rcuDocStatus = rcuDoc.getValue();
 												}
 											}
 										}
-										verificationData.setVerificationType(StringUtils.trimToEmpty(rcuDocVerficationType));
-										verificationData.setDocumentName(StringUtils.trimToEmpty(rcuDocument.getDocName()));
+										verificationData
+												.setVerificationType(StringUtils.trimToEmpty(rcuDocVerficationType));
+										verificationData
+												.setDocumentName(StringUtils.trimToEmpty(rcuDocument.getDocName()));
 										verificationData.setDocumentStatus(StringUtils.trimToEmpty(rcuDocStatus));
 									}
 									agreement.getRcuVerification().add(verificationData);
 								}
-							}else{
+							} else {
 								agreement.getRcuVerification().add(verificationData);
 							}
 							break;
@@ -2110,7 +2142,7 @@ public class AgreementGeneration implements Serializable {
 
 			}
 			agreement.setContractDate(DateUtility.formatToLongDate(main.getFinContractDate()));
-			agreement.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), formatter));
+			agreement.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAssetValue(), formatter));
 			String finAmount = NumberToEnglishWords.getAmountInText(
 					PennantApplicationUtil.formateAmount(main.getFinAmount(), CurrencyUtil.getFormat(main.getFinCcy())),
 					main.getFinCcy());

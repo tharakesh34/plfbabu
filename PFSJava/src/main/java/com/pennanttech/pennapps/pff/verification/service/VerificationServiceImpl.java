@@ -998,7 +998,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			switch (type) {
 			case FI:
 				if (FIStatus.getType(verification.getStatus()).getKey() == 0) {
-					verification.setVerificationStatus("Verification not completed");
+					verification.setVerificationStatus(StringUtils.EMPTY);
 				} else {
 					verification.setVerificationStatus(FIStatus.getType(verification.getStatus()).getValue());
 				}
@@ -1009,7 +1009,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				break;
 			case TV:
 				if (TVStatus.getType(verification.getStatus()).getKey() == 0) {
-					verification.setVerificationStatus("Verification not completed");
+					verification.setVerificationStatus(StringUtils.EMPTY);
 				} else {
 					verification.setVerificationStatus(TVStatus.getType(verification.getStatus()).getValue());
 				}
@@ -1020,7 +1020,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				break;
 			case LV:
 				if (LVStatus.getType(verification.getStatus()).getKey() == 0) {
-					verification.setVerificationStatus("Verification not completed");
+					verification.setVerificationStatus(StringUtils.EMPTY);
 				} else {
 					verification.setVerificationStatus(LVStatus.getType(verification.getStatus()).getValue());
 				}
@@ -1031,7 +1031,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				break;
 			case RCU:
 				if (RCUStatus.getType(verification.getStatus()).getKey() == 0) {
-					verification.setVerificationStatus("Verification not completed");
+					verification.setVerificationStatus(StringUtils.EMPTY);
 				} else {
 					verification.setVerificationStatus(RCUStatus.getType(verification.getStatus()).getValue());
 				}

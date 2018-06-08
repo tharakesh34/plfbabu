@@ -6137,7 +6137,7 @@ private String custAccount ="";
 		private String applicantName= "";
 		private String initiationDate= "";
 		private String completionDate= "";
-		private String finalStatus= "";
+		private String initialStatus= "";
 		private String remarks= "";
 		private String doneBy= "";
 		private String agencyName= "";
@@ -6147,10 +6147,10 @@ private String custAccount ="";
 		private String verificationType= "";
 		private String documentName= "";
 		private String documentStatus= "";
+		private String recommanditionStatus = "";
+		private String finalDecision = "";
 		
 		public VerificationDetail() {
-			super();
-			// TODO Auto-generated constructor stub
 		}
 
 		public String getApplicantName() {
@@ -6175,14 +6175,6 @@ private String custAccount ="";
 
 		public void setCompletionDate(String completionDate) {
 			this.completionDate = completionDate;
-		}
-
-		public String getFinalStatus() {
-			return finalStatus;
-		}
-
-		public void setFinalStatus(String finalStatus) {
-			this.finalStatus = finalStatus;
 		}
 
 		public String getRemarks() {
@@ -6256,6 +6248,31 @@ private String custAccount ="";
 		public void setDocumentStatus(String documentStatus) {
 			this.documentStatus = documentStatus;
 		}
+
+		public String getRecommanditionStatus() {
+			return recommanditionStatus;
+		}
+
+		public void setRecommanditionStatus(String recommanditionStatus) {
+			this.recommanditionStatus = recommanditionStatus;
+		}
+
+		public String getInitialStatus() {
+			return initialStatus;
+		}
+
+		public void setInitialStatus(String initialStatus) {
+			this.initialStatus = initialStatus;
+		}
+
+		public String getFinalDecision() {
+			return finalDecision;
+		}
+
+		public void setFinalDecision(String finalDecision) {
+			this.finalDecision = finalDecision;
+		}
+		
 	}
 	
 	private List<LoanQryDetails> queryDetails;
@@ -6269,11 +6286,11 @@ private String custAccount ="";
 	}
 
 	public class LoanQryDetails{
-		private String raisedBy;
-		private String raisedOn;
-		private String category;
-		private String description;
-		private String status;
+		private String raisedBy = "";
+		private String raisedOn = "";
+		private String category = "";
+		private String description = "";
+		private String status = "";
 
 		public LoanQryDetails() {
 		}
