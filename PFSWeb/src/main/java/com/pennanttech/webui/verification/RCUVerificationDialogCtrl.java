@@ -1080,6 +1080,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
 		} else if (vrf.getStatus() == RCUStatus.NEGATIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
+			if (vrf.getDecision() == Decision.APPROVE.getKey()) {
+				vrf.setDecision(Decision.SELECT.getKey());
+			}
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
 		} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));

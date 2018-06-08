@@ -95,7 +95,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	protected Listheader listheader_LegalVerification_Initiation_ReInitiate;
 	protected Listheader listheader_LegalVerification_WReInitRemarks;
 	protected Listheader listheader_LegalVerification_Initiation_WReInitiate;
-	
+
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private Verification verification;
@@ -486,7 +486,10 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			fillComboBox(combobox, vrf.getDecision(), filterDecisions(decisionList));
 		} else if (status == TVStatus.NEGATIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
-			fillComboBox(combobox, decision, filterDecisions(decisionList));
+			if (decision == Decision.APPROVE.getKey()) {
+				vrf.setDecision(Decision.SELECT.getKey());
+			}
+			fillComboBox(combobox, vrf.getDecision(), filterDecisions(decisionList));
 		} else if (requestType == RequestType.WAIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
 			fillComboBox(combobox, decision, filterDecisions(decisionList));

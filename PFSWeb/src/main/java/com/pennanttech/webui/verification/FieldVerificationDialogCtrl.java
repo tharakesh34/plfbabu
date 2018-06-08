@@ -112,7 +112,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	@Autowired
 	private transient CustomerAddresService customerAddresService;
 
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -574,6 +573,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
 		} else if (vrf.getStatus() == FIStatus.NEGATIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
+			if (vrf.getDecision() == Decision.APPROVE.getKey()) {
+				vrf.setDecision(Decision.SELECT.getKey());
+			}
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
 		} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
@@ -1128,7 +1130,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction) throws InterruptedException {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction)
+			throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		this.userAction = userAction;
 		this.recSave = recSave;
