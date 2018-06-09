@@ -79,6 +79,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
@@ -384,8 +385,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Entering");
 		this.listBoxJountAccountDetails.getItems().clear();
 		setJountAccountDetailList(jountAccountDetails);
+		int count=0;
 		//### 10-05-2018 Development Item 82
-		rules.put("Co_Applicants_Count", jountAccountDetails.size());
 		rules.put("Total_Co_Applicants_Income", BigDecimal.ZERO);
 		rules.put("Total_Co_Applicants_Expense", BigDecimal.ZERO);
 		rules.put("Co_Applicants_Obligation_Internal", BigDecimal.ZERO);
@@ -412,9 +413,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			listcell = new Listcell(PennantApplicationUtil.amountFormate(new BigDecimal(jountAccountDetail.getGuarantorExposure() != null ? jountAccountDetail.getGuarantorExposure() : "0"), ccDecimal));
 			listcell.setStyle("text-align:right");
 			listitem.appendChild(listcell);
-			listcell = new Listcell(jountAccountDetail.getStatus());
+			listcell = new Listcell(jountAccountDetail.getRecordType());
 			listitem.appendChild(listcell);
-			listcell = new Listcell(jountAccountDetail.getWorstStatus());
+			listcell = new Listcell(jountAccountDetail.getRecordStatus());
 			listitem.appendChild(listcell);
 			listitem.setAttribute("data", jountAccountDetail);
 			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onFinJointItemDoubleClicked");
@@ -422,9 +423,13 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			if(jountAccountDetail.isIncludeIncome()){
 				setRuleIncomes(jountAccountDetail);
 			}
-			
+			if (!PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(jountAccountDetail.getRecordType()) && !PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(jountAccountDetail.getRecordType())) {
+				count++;
+			}
 			this.listBoxJountAccountDetails.appendChild(listitem);
 		}
+		
+		rules.put("Co_Applicants_Count", count);
 		
 		if (fieldVerificationDialogCtrl != null) {
 			fieldVerificationDialogCtrl.addCoApplicantAddresses(jountAccountDetails,true);
@@ -433,54 +438,60 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 
 	private void setRuleIncomes(JointAccountDetail jountAccountDetail){
+		logger.debug(Literal.ENTERING);
 		
 		BigDecimal totIncome = BigDecimal.ZERO;
 		BigDecimal totExpense = BigDecimal.ZERO;
 		BigDecimal obligation_Internal = BigDecimal.ZERO;
 		BigDecimal obligation_external = BigDecimal.ZERO;
 		
+	if (!PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(jountAccountDetail.getRecordType()) && !PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(jountAccountDetail.getRecordType())) {
+	
 		if(CollectionUtils.isNotEmpty(jountAccountDetail.getCustomerExtLiabilityList())){
-			for (CustomerExtLiability liability : jountAccountDetail.getCustomerExtLiabilityList()) {
-				obligation_external = obligation_external.add(liability.getInstalmentAmount());
-			}
-		}	
-		
-		if(CollectionUtils.isNotEmpty(jountAccountDetail.getCustFinanceExposureList())){
-			for (FinanceEnquiry enquiry : jountAccountDetail.getCustFinanceExposureList()) {
-				obligation_Internal = obligation_Internal.add(enquiry.getMaxInstAmount());
-			}
-		}	
-		
-		// 1 Currency Conversion Required
-		// 2 Un Formate should be based on the Customer Base Currency. 
-		if(CollectionUtils.isNotEmpty(jountAccountDetail.getCustomerIncomeList())){
-			for (CustomerIncome income : jountAccountDetail.getCustomerIncomeList()) {
-				if (income.getIncomeExpense().equals(PennantConstants.INCOME)) {
-					totIncome = totIncome.add(income.getCalculatedAmount());
-				}else{
-					totExpense = totIncome.add(income.getCalculatedAmount());
-				}	
-			}
-		}
-
-		if(rules.containsKey("Total_Co_Applicants_Income")){
-			totIncome = totIncome.add((BigDecimal) rules.get("Total_Co_Applicants_Income"));
-			totExpense = totExpense.add((BigDecimal) rules.get("Total_Co_Applicants_Income"));
-		}
-		
-		if(rules.containsKey("Co_Applicants_Obligation_Internal")){
-			obligation_Internal = obligation_Internal.add((BigDecimal) rules.get("Co_Applicants_Obligation_Internal"));
-		}
+				for (CustomerExtLiability liability : jountAccountDetail.getCustomerExtLiabilityList()) {
+					obligation_external = obligation_external.add(liability.getInstalmentAmount());
+				}
+			}	
 			
-		if(rules.containsKey("Co_Applicants_Obligation_External")){
-			obligation_external = obligation_external.add((BigDecimal) rules.get("Co_Applicants_Obligation_External"));
-		}
-		
-		rules.put("Total_Co_Applicants_Income", totIncome);
-		rules.put("Total_Co_Applicants_Expense", totExpense);
-		rules.put("Co_Applicants_Obligation_Internal", obligation_Internal);
-		rules.put("Co_Applicants_Obligation_External", obligation_external);
+			if(CollectionUtils.isNotEmpty(jountAccountDetail.getCustFinanceExposureList())){
+				for (FinanceEnquiry enquiry : jountAccountDetail.getCustFinanceExposureList()) {
+					obligation_Internal = obligation_Internal.add(enquiry.getMaxInstAmount());
+				}
+			}	
+			
+			// 1 Currency Conversion Required
+			// 2 Un Formate should be based on the Customer Base Currency. 
+			if(CollectionUtils.isNotEmpty(jountAccountDetail.getCustomerIncomeList())){
+				for (CustomerIncome income : jountAccountDetail.getCustomerIncomeList()) {
+					if (income.getIncomeExpense().equals(PennantConstants.INCOME)) {
+						totIncome = totIncome.add(income.getCalculatedAmount());
+					}else{
+						totExpense = totIncome.add(income.getCalculatedAmount());
+					}	
+				}
+			}
 
+			if(rules.containsKey("Total_Co_Applicants_Income")){
+				totIncome = totIncome.add((BigDecimal) rules.get("Total_Co_Applicants_Income"));
+				totExpense = totExpense.add((BigDecimal) rules.get("Total_Co_Applicants_Income"));
+			}
+			
+			if(rules.containsKey("Co_Applicants_Obligation_Internal")){
+				obligation_Internal = obligation_Internal.add((BigDecimal) rules.get("Co_Applicants_Obligation_Internal"));
+			}
+				
+			if(rules.containsKey("Co_Applicants_Obligation_External")){
+				obligation_external = obligation_external.add((BigDecimal) rules.get("Co_Applicants_Obligation_External"));
+			}
+
+			rules.put("Total_Co_Applicants_Income", totIncome);
+			rules.put("Total_Co_Applicants_Expense", totExpense);
+			rules.put("Co_Applicants_Obligation_Internal", obligation_Internal);
+			rules.put("Co_Applicants_Obligation_External", obligation_external);
+	}
+
+		logger.debug(Literal.LEAVING);
+		
 	}
 	public void onFinJointItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
@@ -562,16 +573,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		int otherCount = 0;
 		
 		for (GuarantorDetail guarantorDetail : guarantorDetailList) {
-			
-			if(guarantorDetail.isBankCustomer()){
-				customerCount++;	
-			}else{
-				otherCount++;	
-			}
-			
-			
 
-			
+			if (!PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(guarantorDetail.getRecordType()) && !PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(guarantorDetail.getRecordType())) {
+				if(guarantorDetail.isBankCustomer()){
+					customerCount++;	
+				}else{
+					otherCount++;	
+				}
+			}
 			Listitem listitem = new Listitem();
 			Listcell listcell;
 			if (StringUtils.isBlank(guarantorDetail.getGuarantorCIF())) {
@@ -599,9 +608,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			listcell = new Listcell(PennantApplicationUtil.amountFormate(new BigDecimal(guarantorDetail.getGuarantorExposure() != null ? guarantorDetail.getGuarantorExposure() : "0"), ccDecimal));
 			listcell.setStyle("text-align:right");
 			listitem.appendChild(listcell);
-			listcell = new Listcell(guarantorDetail.getStatus());
+			listcell = new Listcell(guarantorDetail.getRecordType());
 			listitem.appendChild(listcell);
-			listcell = new Listcell(guarantorDetail.getWorstStatus());
+			listcell = new Listcell(guarantorDetail.getRecordStatus());
 			listitem.appendChild(listcell);
 			listcell = new Listcell(guarantorDetail.getMobileNo());
 			listitem.appendChild(listcell);
