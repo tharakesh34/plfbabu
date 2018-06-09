@@ -3391,5 +3391,9 @@ public class PennantStaticListUtil {
 		}
 		return queryModuleStatusList;
 	}
+
+	public void OverideBranchTypeList(ArrayList<ValueLabel> branchType){
+		this.branchType=branchType;
+	}
 	
 }
