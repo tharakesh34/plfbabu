@@ -3123,5 +3123,14 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 
 </sql>
 </changeSet>
+
+	<changeSet id="63" author="Ganesh.p">
+		<modifyDataType tableName="FinanceDeviations_Temp"
+			columnName="Remarks" newDataType="VARCHAR(500)" />
+	</changeSet>
+	<changeSet id="64" author="Ganesh.p">
+		<modifyDataType tableName="FinanceDeviations"
+			columnName="Remarks" newDataType="VARCHAR(500)" />
+	</changeSet>
 </databaseChangeLog>
 	

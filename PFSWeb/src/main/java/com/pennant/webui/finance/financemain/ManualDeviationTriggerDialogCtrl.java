@@ -363,6 +363,8 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 			}
 			// ### 01-05-2018 - End
 		}
+		//### 09-06-2018 - set the maxLength of remarks Textbox.
+		this.remarks.setMaxlength(200);
 
 		// ### 01-05-2018 - Start - story #361(Tuleap server) Manual Deviations
 		// Set the components based on the record status.

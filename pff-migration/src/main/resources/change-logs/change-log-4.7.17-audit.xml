@@ -64,5 +64,10 @@ update adtCustomers set marginDeviation=0;
 			<column name="IncludeIncome" type="boolean" />
 		</addColumn>
 	</changeSet>
+
+	<changeSet id="6" author="Ganesh.p">
+		<modifyDataType tableName="ADTFinanceDeviations"
+			columnName="Remarks" newDataType="VARCHAR(500)" />
+	</changeSet>
 	
 	</databaseChangeLog>
