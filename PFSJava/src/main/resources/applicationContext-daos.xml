@@ -127,6 +127,7 @@
 		<property name="securityUserService" ref="securityUserService" />
 		<property name="workFlowDetailsService" ref="workFlowDetailsService" />
 		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
 
 	</bean>
 	

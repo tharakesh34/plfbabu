@@ -10,12 +10,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.SysNotificationDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -63,6 +65,7 @@ public class MailUtil extends MailUtility {
 	private SecurityUserService				securityUserService;
 	private WorkFlowDetailsService			workFlowDetailsService;
 	private NotesService					notesService;
+	private DocumentManagerDAO				documentManagerDAO;
 
 	public MailUtil() {
 		super();
@@ -422,7 +425,14 @@ public class MailUtil extends MailUtility {
 								for (DocumentDetails documentDetails : documentslist) {
 									if (docCtg.equals(documentDetails.getDocCategory())) {
 										mailTemplate.setLovDescAttachmentName(documentDetails.getDocName());
-										mailTemplate.setLovDescEmailAttachment(documentDetails.getDocImage());
+										byte[] docImg = documentDetails.getDocImage();
+										if (docImg == null && documentDetails.getDocRefId() != Long.MIN_VALUE) {
+											DocumentManager docManager = documentManagerDAO.getById(documentDetails.getDocRefId());
+											if (docManager != null) {
+												docImg = docManager.getDocImage();
+											}
+										}
+										mailTemplate.setLovDescEmailAttachment(docImg);
 									}
 								}
 							}
@@ -1175,5 +1185,9 @@ public class MailUtil extends MailUtility {
 
 	public void setWorkFlowDetailsService(WorkFlowDetailsService workFlowDetailsService) {
 		this.workFlowDetailsService = workFlowDetailsService;
+	}
+
+	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
+		this.documentManagerDAO = documentManagerDAO;
 	}
 }
