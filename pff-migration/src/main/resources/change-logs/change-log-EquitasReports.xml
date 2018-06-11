@@ -299,4 +299,9 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 	 		update data_Engine_Config set fileprefixname = 'EQUITASMAN' where name = 'MANDATES_EXPORT';
 	 	</sql>
 	 </changeSet>
+	  <changeSet id="14" author="vijaykumar.l">
+	 <sql>
+	 delete   from secgrouprights where grprightid in (select grprightid from secgrouprights where rightid in (select rightid from secrights where rightname='menuItem_FinanceManagement_CancelDisbursment'));
+	 </sql>
+	 </changeSet>
 	 </databaseChangeLog>
