@@ -66,6 +66,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.PathUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.batchupload.fileprocessor.BatchUploadProcessor;
@@ -92,7 +93,7 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	protected Button btnFileUpload;
 	protected Combobox apiType;
 
-	private final String uploadLoaction = "/opt/external";
+	private final String uploadLoaction =PathUtil.getPath(PathUtil.APP_ROOT_PATH);
 	private File file;
 	@Value("${api.authkey}")
 	private String authorization;
