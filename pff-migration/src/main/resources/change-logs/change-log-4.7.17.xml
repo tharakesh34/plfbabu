@@ -3093,7 +3093,7 @@ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLD
  ('ELGRULE','ELGRULE','Customer_Obligation_Internal','  Customer Obligation Internal','decimal',18,'1','1','','static,calvalue','');
 Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','Customer_Obligation_External',' Customer Oblication External','decimal',18,'1','1','','static,calvalue','');
 Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','Co_Applicants_Obligation_Internal',' Co Applicants Obgligation Internal','decimal',18,'1','1','','static,calvalue','');
- Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values  ('ELGRULE','ELGRULE','Co_Applicants_Obligation_External','Co Applicants Obgligation External','decimal',18,'1','1','','static,calvalue','');
+ Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values  ('ELGRULE','ELGRULE','Co_Applicants_Obligation External','Co Applicants Obgligation External','decimal',18,'1','1','','static,calvalue','');
 	   
 </sql>
 </changeSet>
@@ -3131,11 +3131,6 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 	<changeSet id="64" author="Ganesh.p">
 		<modifyDataType tableName="FinanceDeviations"
 			columnName="Remarks" newDataType="VARCHAR(500)" />
-	</changeSet>
-	<changeSet id="65" author="vijay.l">
-	<sql>
-	delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Co_Applicants_Obligation External';
-	</sql>
 	</changeSet>
 </databaseChangeLog>
 	
