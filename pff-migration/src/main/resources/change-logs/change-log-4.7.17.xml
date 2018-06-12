@@ -3140,5 +3140,12 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
  	values  ('ELGRULE','ELGRULE','Co_Applicants_Obligation_External','Co Applicants Obgligation External','decimal',18,'1','1','','static,calvalue','');
 	</sql>
 	</changeSet>
+	
+	<changeSet id="66" author="Vinay">
+		<sql>
+			Delete from ERRORDETAILS where code='41041';
+			Insert into ERRORDETAILS values ('41041','EN','E','{0} {1}  NOC already issued.','test','Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,3);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
