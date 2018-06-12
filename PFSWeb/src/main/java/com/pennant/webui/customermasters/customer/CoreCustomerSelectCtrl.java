@@ -322,8 +322,6 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					customer.setCustCoreBank(cif);
 					if (isRetailCustomer) {
 						customer.setCustCtgCode("RETAIL");
-					} else {
-						customer.setCustCtgCode("CORP");
 					}
 					customerDetails = customerExternalInterfaceService.getCustomerDetail(customer);
 					if (customerDetails == null) {

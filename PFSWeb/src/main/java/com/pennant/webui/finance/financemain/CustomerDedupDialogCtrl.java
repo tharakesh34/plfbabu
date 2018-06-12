@@ -314,6 +314,12 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if ("Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED"))
 					&& customerExternalInterfaceService != null) {
 				Customer customer = new Customer();
+				if ("RETAIL".equals(custCtgCode)) {
+					customer.setCustCtgCode("RETAIL");
+				} else {
+					customer.setCustCtgCode("CORP");
+				}
+
 				customer.setCustCoreBank(custCIF);
 				customerDetails = customerExternalInterfaceService.getCustomerDetail(customer);
 				if (customerDetails == null) {
