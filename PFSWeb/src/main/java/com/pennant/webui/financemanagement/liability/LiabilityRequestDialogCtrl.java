@@ -1439,6 +1439,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 				this.row_FinRepRates.setVisible(false);
 			} else {
 				this.row_FinRepRates.setVisible(true);
+				readOnlyComponent(true, this.finMinRate);
+				readOnlyComponent(true, this.finMaxRate);
 				if (aFinanceMain.isNewRecord()) {
 					this.finMinRate.setValue(financeType.getFInMinRate());
 					this.finMaxRate.setValue(financeType.getFinMaxRate());
@@ -1789,6 +1791,9 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		this.insClaimAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.insClaimAmount.setTextBoxWidth(180);
 		this.insClaimAmount.setScale(format);
+		this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
+		this.finAmount.setScale(format);
+		this.finRepaymentAmount.setScale(format);
 		logger.debug("Leaving");
 	}
 
