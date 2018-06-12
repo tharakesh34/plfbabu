@@ -15009,7 +15009,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		BigDecimal iIRVAlue = BigDecimal.ZERO;
 		iIRVAlue.setScale(6);
-		if(!detail.getCustomerEligibilityCheck().getInstallmentAmount().equals(BigDecimal.ZERO) && !customer.getCustTotalIncome().equals(BigDecimal.ZERO)){
+		if(detail.getCustomerEligibilityCheck().getInstallmentAmount().compareTo(BigDecimal.ZERO)!=0 && customer.getCustTotalIncome().compareTo(BigDecimal.ZERO) !=0){
 			iIRVAlue = detail.getCustomerEligibilityCheck().getInstallmentAmount();
 			iIRVAlue = iIRVAlue.divide(customer.getCustTotalIncome(),6,RoundingMode.HALF_EVEN);
 			iIRVAlue = iIRVAlue.multiply(new BigDecimal(100));
@@ -15143,14 +15143,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		
 		// (Guided Value/MarketValue)/100
 		if(!marketValue.equals(BigDecimal.ZERO) && !guidedValue.equals(BigDecimal.ZERO)){
-			marketValue_Consider = marketValue.divide(guidedValue,RoundingMode.HALF_UP);
+			marketValue_Consider = marketValue.divide(guidedValue,6,RoundingMode.HALF_UP);
 			//marketValue_Consider  = marketValue_Consider.multiply(new BigDecimal(100)); 
 		}
 		collateralRuleMap.put("MRKVALUE_CONSIDER", marketValue_Consider);		
 		
 		// PROP_LTV Property LTV	LoanAmount/UNITPRICE
-		if(!unitPrice.equals(BigDecimal.ZERO) && !getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount().equals(BigDecimal.ZERO)){
-			propertyLTV = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue().divide(unitPrice,RoundingMode.HALF_UP);
+
+		if(unitPrice.compareTo(BigDecimal.ZERO)!=0 && getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount().compareTo(BigDecimal.ZERO)!=0){
+			propertyLTV = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue().divide(unitPrice,6,RoundingMode.HALF_UP);
 		}
 		collateralRuleMap.put("PROP_LTV", propertyLTV);	
 		
