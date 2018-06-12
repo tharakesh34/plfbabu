@@ -1737,7 +1737,7 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 					return errorDetails;
 				}
-				if(!ImplementationConstants.CLIENT_NFL) {
+				if(ImplementationConstants.ALLOW_BARCODE) {
 					if(StringUtils.isBlank(mandate.getBarCodeNumber())) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "BarCodeNumber";

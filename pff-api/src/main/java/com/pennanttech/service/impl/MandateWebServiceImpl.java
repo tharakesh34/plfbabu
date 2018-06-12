@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
@@ -595,10 +596,12 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			}
 		}
 		//barCode validation
-		if(StringUtils.isBlank(mandate.getBarCodeNumber())){
-			String[] valueParm = new String[1];
-			valueParm[0] = "barCode";
-			return getErrorDetails("90502", valueParm);
+		if (ImplementationConstants.ALLOW_BARCODE) {
+			if (StringUtils.isBlank(mandate.getBarCodeNumber())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "barCode";
+				return getErrorDetails("90502", valueParm);
+			}
 		}
 		List<ErrorDetail> errors = mandateService.doValidations(mandate);
 		if (errors != null && !errors.isEmpty()) {
