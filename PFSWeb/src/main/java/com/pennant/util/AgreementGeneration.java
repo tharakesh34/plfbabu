@@ -53,6 +53,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.WeakHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -84,6 +85,7 @@ import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.RateUtil;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
@@ -221,6 +223,8 @@ public class AgreementGeneration implements Serializable {
 	private DeviationHelper	deviationHelper;
 	@Autowired
 	private QueryDetailService queryDetailService;
+	
+	List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
 
 	public AgreementGeneration() {
 		super();
@@ -1170,7 +1174,7 @@ public class AgreementGeneration implements Serializable {
 						verificationData
 								.setRecommanditionStatus(StringUtils.trimToEmpty(verification.getVerificationStatus()));
 						verificationData.setRemarks(StringUtils.trimToEmpty(verification.getDecisionRemarks()));
-						String finalDecision = (null != Decision.getType(verification.getDecision()))
+						String finalDecision = (null != Decision.getType(verification.getDecision())&&0!=verification.getDecision())
 								? Decision.getType(verification.getDecision()).getValue() : null;
 						verificationData.setFinalDecision(StringUtils.trimToEmpty(finalDecision));
 						verificationData.setAgencyName(StringUtils.trimToEmpty(verification.getAgencyName()));
@@ -1179,6 +1183,9 @@ public class AgreementGeneration implements Serializable {
 						case FI:
 							if (3 == verification.getRequestType()) {
 								break;
+							}
+							if (2 == verification.getRequestType()) {
+								verificationData.setAddressType(StringUtils.trimToEmpty(verification.getReferenceFor()));
 							}
 							verificationData.setApplicantName(StringUtils.trimToEmpty(verification.getCustomerName()));
 							if (null != verification.getFieldInvestigation()) {
@@ -1195,6 +1202,9 @@ public class AgreementGeneration implements Serializable {
 							if (3 == verification.getRequestType()) {
 								break;
 							}
+							if (2 == verification.getRequestType()) {
+								verificationData.setCollateralType(StringUtils.trimToEmpty(verification.getReferenceFor()));
+							}
 							TechnicalVerification technicalVerification = verification.getTechnicalVerification();
 							if (null != technicalVerification) {
 								verificationData.setCollateralType(
@@ -1208,6 +1218,9 @@ public class AgreementGeneration implements Serializable {
 							agreement.getTechnicalVerification().add(verificationData);
 							break;
 						case LV:
+							if (2 == verification.getRequestType()) {
+								verificationData.setDocumentName(StringUtils.trimToEmpty(verification.getReferenceFor()));
+							}
 							LegalVerification legalVerification = verification.getLegalVerification();
 							if (null != legalVerification) {
 								verificationData.setDoneBy(StringUtils.trimToEmpty(legalVerification.getAgentCode())
@@ -1219,6 +1232,12 @@ public class AgreementGeneration implements Serializable {
 							if (3 == verification.getRequestType()) {
 								break;
 							}
+							if (2 == verification.getRequestType()) {
+								verificationData.setDocumentName(StringUtils.trimToEmpty(verification.getReferenceFor()));
+								if(null!=verification.getReinitid()&&verification.getReinitid()>0){
+									verificationData.setFinalDecision("Re-initiate");
+								}
+							}
 							RiskContainmentUnit riskContainmentUnit = verification.getRcuVerification();
 							if (null != riskContainmentUnit) {
 								verificationData.setDoneBy(
@@ -1227,8 +1246,18 @@ public class AgreementGeneration implements Serializable {
 							}
 							if (null != riskContainmentUnit
 									&& CollectionUtils.isNotEmpty(riskContainmentUnit.getRcuDocuments())) {
+								VerificationDetail rcuVerificationData=null;
 								for (RCUDocument rcuDocument : riskContainmentUnit.getRcuDocuments()) {
 									if (null != rcuDocument) {
+										rcuVerificationData=agreement.new VerificationDetail();
+										rcuVerificationData.setInitiationDate(DateUtility.formatToLongDate(verification.getCreatedOn()));
+										rcuVerificationData
+												.setCompletionDate(DateUtility.formatToLongDate(verification.getVerificationDate()));
+										rcuVerificationData.setInitialStatus(StringUtils.trimToEmpty(initialStatus));
+										rcuVerificationData
+												.setRecommanditionStatus(StringUtils.trimToEmpty(verification.getVerificationStatus()));
+										rcuVerificationData.setRemarks(StringUtils.trimToEmpty(verification.getDecisionRemarks()));
+										rcuVerificationData.setAgencyName(StringUtils.trimToEmpty(verification.getAgencyName()));
 										String rcuDocVerficationType = null;
 										if (rcuDocument.getVerificationType() == 0) {
 											rcuDocVerficationType = "RCU Document Verification Not Available";
@@ -1250,13 +1279,19 @@ public class AgreementGeneration implements Serializable {
 												}
 											}
 										}
-										verificationData
+										rcuVerificationData
 												.setVerificationType(StringUtils.trimToEmpty(rcuDocVerficationType));
-										verificationData
+										rcuVerificationData
 												.setDocumentName(StringUtils.trimToEmpty(rcuDocument.getDocName()));
-										verificationData.setDocumentStatus(StringUtils.trimToEmpty(rcuDocStatus));
+										rcuVerificationData.setDocumentStatus(StringUtils.trimToEmpty(rcuDocStatus));
+										if(null!=rcuDocument.getReinitid()&&rcuDocument.getReinitid()>0){
+											rcuVerificationData.setFinalDecision("Re-initiate");
+										}else{
+											rcuVerificationData.setFinalDecision(verificationData.getFinalDecision());
+										}
+										agreement.getRcuVerification().add(rcuVerificationData);
 									}
-									agreement.getRcuVerification().add(verificationData);
+									
 								}
 							} else {
 								agreement.getRcuVerification().add(verificationData);
@@ -1369,6 +1404,10 @@ public class AgreementGeneration implements Serializable {
 						loanDeviation.setDeviationDescription(StringUtils.trimToEmpty(deviations.getDeviationCodeDesc()));
 						loanDeviation.setDeviationCode(StringUtils.trimToEmpty(deviations.getDeviationCodeName()));
 						loanDeviation.setRemarks(StringUtils.trimToEmpty(deviations.getRemarks()));
+						Optional<Property> severityDetail = severities.stream().filter(severity -> severity.getKey().equals(deviations.getSeverity())).findFirst();
+						if(severityDetail.isPresent()){
+							loanDeviation.setSeverity(severityDetail.get().getValue());
+						}
 					}else{
 						loanDeviation.setDeviationType("Auto");
 						JdbcSearchObject<DeviationParam> searchObject = new JdbcSearchObject<DeviationParam>(DeviationParam.class);
@@ -1419,6 +1458,23 @@ public class AgreementGeneration implements Serializable {
 			bankingDetail.setTotDebitAmt(PennantAppUtil.amountFormate(customerBankInfo.getDebitTranAmt(),formatter));
 			bankingDetail.setNoCheqBounce(Integer.toString(customerBankInfo.getOutwardChqBounceNo()));
 			bankingDetail.setAvgEODBalance(PennantAppUtil.amountFormate(customerBankInfo.getEodBalAvg(),formatter));
+			bankingDetail.setTotNoCredTrans(String.valueOf(customerBankInfo.getCreditTranNo()));
+			bankingDetail.setAvgCreditAmt(PennantAppUtil.amountFormate(customerBankInfo.getCreditTranAvg(),formatter));
+			bankingDetail.setTotNoDebitTrans(String.valueOf(customerBankInfo.getDebitTranNo()));
+			bankingDetail.setNoCashDeposit(String.valueOf(customerBankInfo.getCashDepositNo()));
+			bankingDetail.setCashDepositAmt(PennantAppUtil.amountFormate(customerBankInfo.getCashDepositAmt(),formatter));
+			bankingDetail.setNoCashWithDra(String.valueOf(customerBankInfo.getCashWithdrawalNo()));
+			bankingDetail.setCashWithDraAmt(PennantAppUtil.amountFormate(customerBankInfo.getCashWithdrawalAmt(),formatter));
+			bankingDetail.setNoCheqDeposit(String.valueOf(customerBankInfo.getChqDepositNo()));
+			bankingDetail.setAmtCheqDeposit(PennantAppUtil.amountFormate(customerBankInfo.getChqDepositAmt(),formatter));
+			bankingDetail.setNoCheqIssue(String.valueOf(customerBankInfo.getChqIssueNo()));
+			bankingDetail.setAmtCheqIssue(PennantAppUtil.amountFormate(customerBankInfo.getChqIssueAmt(),formatter));
+			bankingDetail.setNoInwardCheq(String.valueOf(customerBankInfo.getInwardChqBounceNo()));
+			bankingDetail.setNoOutwardCheq(String.valueOf(customerBankInfo.getOutwardChqBounceNo()));
+			bankingDetail.setMinEodBalance(PennantAppUtil.amountFormate(customerBankInfo.getEodBalMin(),formatter));
+			bankingDetail.setMaxEodBalance(PennantAppUtil.amountFormate(customerBankInfo.getEodBalMax(),formatter));
+			bankingDetail.setAvgEodBalance(PennantAppUtil.amountFormate(customerBankInfo.getEodBalAvg(),formatter));
+			
 			agreement.getBankingDetails().add(bankingDetail);
 		}
 	}
@@ -1944,7 +2000,7 @@ public class AgreementGeneration implements Serializable {
 						if(CollectionUtils.isEmpty(agreement.getExtendedDetails())){
 							agreement.setExtendedDetails(new ArrayList<>());
 						}
-						
+						collateralSetup.getCollateralStructure().getExtendedFieldHeader();
 						if(CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())){
 							for (ExtendedFieldRender extendedFieldRender : collateralSetup.getExtendedFieldRenderList()) {
 								if(null!=extendedFieldRender&&MapUtils.isNotEmpty(extendedFieldRender.getMapValues())){

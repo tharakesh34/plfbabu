@@ -5566,6 +5566,22 @@ private String custAccount ="";
 		private String totDebitAmt="";
 		private String noCheqBounce="";
 		private String avgEODBalance="";
+		private String totNoCredTrans = "";
+		private String avgCreditAmt = "";
+		private String totNoDebitTrans = "";
+		private String noCashDeposit = "";
+		private String cashDepositAmt = "";
+		private String noCashWithDra = "";
+		private String cashWithDraAmt = "";
+		private String noCheqDeposit="";
+		private String amtCheqDeposit="";
+		private String noCheqIssue="";
+		private String amtCheqIssue="";
+		private String noInwardCheq="";
+		private String noOutwardCheq="";
+		private String minEodBalance="";
+		private String maxEodBalance="";
+		private String avgEodBalance="";
 		
 		public BankingDetail() {
 		}
@@ -5648,6 +5664,134 @@ private String custAccount ="";
 
 		public void setAvgEODBalance(String avgEODBalance) {
 			this.avgEODBalance = avgEODBalance;
+		}
+
+		public String getTotNoCredTrans() {
+			return totNoCredTrans;
+		}
+
+		public void setTotNoCredTrans(String totNoCredTrans) {
+			this.totNoCredTrans = totNoCredTrans;
+		}
+
+		public String getAvgCreditAmt() {
+			return avgCreditAmt;
+		}
+
+		public void setAvgCreditAmt(String avgCreditAmt) {
+			this.avgCreditAmt = avgCreditAmt;
+		}
+
+		public String getTotNoDebitTrans() {
+			return totNoDebitTrans;
+		}
+
+		public void setTotNoDebitTrans(String totNoDebitTrans) {
+			this.totNoDebitTrans = totNoDebitTrans;
+		}
+
+		public String getNoCashDeposit() {
+			return noCashDeposit;
+		}
+
+		public void setNoCashDeposit(String noCashDeposit) {
+			this.noCashDeposit = noCashDeposit;
+		}
+
+		public String getCashDepositAmt() {
+			return cashDepositAmt;
+		}
+
+		public void setCashDepositAmt(String cashDepositAmt) {
+			this.cashDepositAmt = cashDepositAmt;
+		}
+
+		public String getNoCashWithDra() {
+			return noCashWithDra;
+		}
+
+		public void setNoCashWithDra(String noCashWithDra) {
+			this.noCashWithDra = noCashWithDra;
+		}
+
+		public String getCashWithDraAmt() {
+			return cashWithDraAmt;
+		}
+
+		public void setCashWithDraAmt(String cashWithDraAmt) {
+			this.cashWithDraAmt = cashWithDraAmt;
+		}
+
+		public String getNoCheqDeposit() {
+			return noCheqDeposit;
+		}
+
+		public void setNoCheqDeposit(String noCheqDeposit) {
+			this.noCheqDeposit = noCheqDeposit;
+		}
+
+		public String getAmtCheqDeposit() {
+			return amtCheqDeposit;
+		}
+
+		public void setAmtCheqDeposit(String amtCheqDeposit) {
+			this.amtCheqDeposit = amtCheqDeposit;
+		}
+
+		public String getNoCheqIssue() {
+			return noCheqIssue;
+		}
+
+		public void setNoCheqIssue(String noCheqIssue) {
+			this.noCheqIssue = noCheqIssue;
+		}
+
+		public String getAmtCheqIssue() {
+			return amtCheqIssue;
+		}
+
+		public void setAmtCheqIssue(String amtCheqIssue) {
+			this.amtCheqIssue = amtCheqIssue;
+		}
+
+		public String getNoInwardCheq() {
+			return noInwardCheq;
+		}
+
+		public void setNoInwardCheq(String noInwardCheq) {
+			this.noInwardCheq = noInwardCheq;
+		}
+
+		public String getNoOutwardCheq() {
+			return noOutwardCheq;
+		}
+
+		public void setNoOutwardCheq(String noOutwardCheq) {
+			this.noOutwardCheq = noOutwardCheq;
+		}
+
+		public String getMinEodBalance() {
+			return minEodBalance;
+		}
+
+		public void setMinEodBalance(String minEodBalance) {
+			this.minEodBalance = minEodBalance;
+		}
+
+		public String getMaxEodBalance() {
+			return maxEodBalance;
+		}
+
+		public void setMaxEodBalance(String maxEodBalance) {
+			this.maxEodBalance = maxEodBalance;
+		}
+
+		public String getAvgEodBalance() {
+			return avgEodBalance;
+		}
+
+		public void setAvgEodBalance(String avgEodBalance) {
+			this.avgEodBalance = avgEodBalance;
 		}
 	}
 	
@@ -5782,6 +5926,7 @@ private String custAccount ="";
 		private String deviationApprovedBy="";
 		private String remarks="";
 		private String deviationType="";
+		private String severity="";
 		
 		public LoanDeviation() {
 		}
@@ -5832,6 +5977,14 @@ private String custAccount ="";
 
 		public void setDeviationType(String deviationType) {
 			this.deviationType = deviationType;
+		}
+
+		public String getSeverity() {
+			return severity;
+		}
+
+		public void setSeverity(String severity) {
+			this.severity = severity;
 		}
 	}
 	
