@@ -550,8 +550,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		if (liabilityRequest.isWorkflow()){
 			tempLiabilityRequest = getLiabilityRequestDAO().getLiabilityRequestById(liabilityRequest.getId(),liabilityRequest.getFinEvent(), "_Temp");
 		}
-		//LiabilityRequest befLiabilityRequest= getLiabilityRequestDAO().getLiabilityRequestById(liabilityRequest.getId(),liabilityRequest.getFinEvent(), "");
-		LiabilityRequest befLiabilityRequest = null;
+		LiabilityRequest befLiabilityRequest= getLiabilityRequestDAO().getLiabilityRequestById(liabilityRequest.getId(),liabilityRequest.getFinEvent(), "");
 		
 		LiabilityRequest oldLiabilityRequest= liabilityRequest.getBefImage();
 
@@ -570,7 +569,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 			}else{ // with work flow
 				if (liabilityRequest.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befLiabilityRequest !=null || tempLiabilityRequest!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41041", errParm,valueParm), usrLanguage));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befLiabilityRequest ==null || tempLiabilityRequest!=null ){
