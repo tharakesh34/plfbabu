@@ -2245,6 +2245,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 			// validate collateral coOwner details
 			List<CoOwnerDetail> coOwnerDetails = collateralSetup.getCoOwnerDetailList();
+			if (coOwnerDetails != null) {
 			for (CoOwnerDetail coOwnerDetail : coOwnerDetails) {
 
 				// validate co-owner cif
@@ -2280,6 +2281,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
 				}
 			}
+		}
 
 			// validate Extended details
 			int extendedDetailsCount = 0;
