@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -778,8 +777,10 @@ public class ScheduleGenerator {
 									PennantConstants.dateFormat)));
 				} else {
 					schedule = new FinanceScheduleDetail();
-					schedule.setSchDate(calendar.getTime());
-					schedule.setDefSchdDate(calendar.getTime());
+					schedule.setSchDate(DateUtility.getDate(DateUtility.formatUtilDate(calendar.getTime(),
+							PennantConstants.dateFormat)));
+					schedule.setDefSchdDate(DateUtility.getDate(DateUtility.formatUtilDate(calendar.getTime(),
+							PennantConstants.dateFormat)));
 				}
 
 				//SET various schedule flags
