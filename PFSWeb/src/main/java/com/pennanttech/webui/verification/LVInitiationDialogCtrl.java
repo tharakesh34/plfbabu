@@ -479,7 +479,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void fillDocuments(Listbox listbox, List<LVDocument> documents, DocumentType docType, String collateralRef) {
 		List<String> checkedDocuments = new ArrayList<>();
 		Map<Long, String> changedDocuments = new HashMap<>();
-		Map<Long, String> tempChangedDocumentIds = new HashMap<>();
 		List<String> idList = new ArrayList<>();
 		List<String> oldDocumentRefIds;
 
@@ -531,7 +530,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 			}
 
-			//invisible the saved collateral documets
+			//invisible the saved collateral documents
 			if (idList.contains(reference) && !checkedDocuments.contains(reference)
 					&& !changedDocuments.values().contains(reference)) {
 				continue;
@@ -1006,7 +1005,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			LVDocument document = docIdBox.getValue();
 			if (!docIdBox.isChecked() && lvRequiredDocs.contains(document.getDocumentSubId()) && initiation) {
 				if (MessageUtil.YES == MessageUtil
-						.confirm("Required collateral documets are not selected, Do you want to proceed?")) {
+						.confirm("Required collateral documents are not selected, Do you want to proceed?")) {
 					return true;
 				} else {
 					return false;
@@ -1163,7 +1162,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 					} else {
 						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_LVInitiationDialog, auditHeader);
+						ErrorControl.showErrorControl(this.window_LVInitiationDialog, auditHeader);
 						return processCompleted;
 					}
 				}
@@ -1292,7 +1291,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * 
 	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.verification);
 	}
 
