@@ -1287,7 +1287,7 @@ public class AgreementGeneration implements Serializable {
 										if(null!=rcuDocument.getReinitid()&&rcuDocument.getReinitid()>0){
 											rcuVerificationData.setFinalDecision("Re-initiate");
 										}else{
-											rcuVerificationData.setFinalDecision(verificationData.getFinalDecision());
+											rcuVerificationData.setFinalDecision(StringUtils.trimToEmpty(verificationData.getFinalDecision()));
 										}
 										agreement.getRcuVerification().add(rcuVerificationData);
 									}
@@ -1406,7 +1406,7 @@ public class AgreementGeneration implements Serializable {
 						loanDeviation.setRemarks(StringUtils.trimToEmpty(deviations.getRemarks()));
 						Optional<Property> severityDetail = severities.stream().filter(severity -> severity.getKey().equals(deviations.getSeverity())).findFirst();
 						if(severityDetail.isPresent()){
-							loanDeviation.setSeverity(severityDetail.get().getValue());
+							loanDeviation.setSeverity(StringUtils.trimToEmpty(severityDetail.get().getValue()));
 						}
 					}else{
 						loanDeviation.setDeviationType("Auto");
