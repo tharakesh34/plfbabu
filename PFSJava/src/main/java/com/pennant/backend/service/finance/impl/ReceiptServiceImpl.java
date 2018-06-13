@@ -2429,11 +2429,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return auditDetail;
 		} else if(!StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_NEFT)
 				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_RTGS)
-				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_IMPS)){
+				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_IMPS)
+				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_CASH)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Payment mode";
 			valueParm[1] = DisbursementConstants.PAYMENT_TYPE_NEFT+","
-					+DisbursementConstants.PAYMENT_TYPE_RTGS+","+DisbursementConstants.PAYMENT_TYPE_IMPS;
+					+DisbursementConstants.PAYMENT_TYPE_RTGS+","+DisbursementConstants.PAYMENT_TYPE_IMPS+","
+					+DisbursementConstants.PAYMENT_TYPE_CASH;
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90281", "", valueParm)));
 			return auditDetail;
 		}
@@ -2445,11 +2447,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return auditDetail;
 		} else if(StringUtils.equals(finServiceInstruction.getReqType(), "Post")) {
 			FinReceiptDetail receiptDetail = finServiceInstruction.getReceiptDetail();
+			if (!StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_CASH)) {
 			if(StringUtils.isBlank(receiptDetail.getTransactionRef())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Transaction Reference";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 				return auditDetail;
+			}
 			}
 			if(receiptDetail.getFundingAc() <= 0) {
 				String[] valueParm = new String[1];
