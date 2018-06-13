@@ -340,10 +340,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					receiptData.getReceiptHeader().setAllocations(getAllocationDetailDAO().getAllocationsByReceiptID(
 							receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB.getSuffix()));
 
-					// Manual Advice - Bounce Reason
+					//127186 --Changing table type from Temp to Tview to show bounce code also along with ID
 					if(StringUtils.equals(RepayConstants.PAYSTATUS_BOUNCE, receiptData.getReceiptHeader().getReceiptModeStatus())){
 						receiptData.getReceiptHeader().setManualAdvise(getManualAdviseDAO().getManualAdviseByReceiptId(
-								receiptData.getReceiptHeader().getReceiptID(),  TableType.TEMP_TAB.getSuffix()));
+								receiptData.getReceiptHeader().getReceiptID(),  "_TView"));
 					}
 				}
 
