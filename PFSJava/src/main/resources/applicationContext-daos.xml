@@ -11441,5 +11441,5 @@
 	<bean id="masterDefService" class="com.pennant.backend.service.masters.impl.MasterDefServiceImpl" >
 		<property name="masterDefDAO" ref="masterDefDAO" />
 	</bean>
-	
+
 </beans>
