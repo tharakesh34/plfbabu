@@ -5665,6 +5665,9 @@
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
+		<property name="engineExecution" ref="engineExecution" />
+		<property name="postingsDAO" ref="postingsDAO" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -5809,6 +5812,7 @@
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
+		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->

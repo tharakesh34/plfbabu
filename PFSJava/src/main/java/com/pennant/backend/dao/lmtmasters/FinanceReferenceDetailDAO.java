@@ -31,7 +31,7 @@
  ********************************************************************************************
  * 26-11-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 13-06-2018       Siva					 0.2        Stage Accounting Modifications      * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -83,4 +83,6 @@ public interface FinanceReferenceDetailDAO {
 
 	String authorities(String finType, int procedtLimit, long limitid);
 // ### 06-05-2018 - End 
+	
+	List<Long> getRefIdListByRefType(String financeType, String finEvent, String roleCode, int finRefType);
 }

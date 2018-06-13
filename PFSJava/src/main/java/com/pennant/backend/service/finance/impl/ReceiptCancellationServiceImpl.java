@@ -1,3 +1,43 @@
+/**
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *
+ * FileName    		:  ReceiptCancellationServiceImpl.java												*                           
+ *                                                                    
+ * Author      		:  PENNANT TECHONOLOGIES												*
+ *                                                                  
+ * Creation Date    :  26-04-2011															*
+ *                                                                  
+ * Modified Date    :  30-07-2011															*
+ *                                                                  
+ * Description 		:												 						*                                 
+ *                                                                                          
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 26-04-2011       Pennant	                 0.1                                            * 
+
+ * 13-06-2018       Siva					 0.2        Stage Accounting Modifications      * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+ */
 package com.pennant.backend.service.finance.impl;
 
 import java.lang.reflect.InvocationTargetException;
@@ -30,6 +70,7 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinStageAccountingLogDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
@@ -110,6 +151,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private CustomerDAO		customerDAO;
 	private FinFeeReceiptDAO		finFeeReceiptDAO;
 	private LatePayMarkingService latePayMarkingService; 
+	private FinStageAccountingLogDAO	finStageAccountingLogDAO;
 
 	public ReceiptCancellationServiceImpl() {
 		super();
@@ -701,6 +743,25 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		// ============================================
 		//getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
 		getPostingsPreparationUtil().postReversalsByPostRef(receiptHeader.getReceiptID(),postingId);
+		
+		if(receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()){
+			for (FinReceiptDetail detail : receiptHeader.getReceiptDetails()) {
+				if(StringUtils.equals(detail.getPaymentType(), receiptHeader.getReceiptMode()) &&
+						!StringUtils.equals(receiptHeader.getReceiptMode(), RepayConstants.RECEIPTMODE_EXCESS)){
+					String receiptNumber = detail.getPaymentRef();
+					if(StringUtils.isNotBlank(receiptNumber)){
+						List<Long> tranIdList = getFinStageAccountingLogDAO().getTranIdListByReceipt(receiptNumber);
+						if(tranIdList != null && !tranIdList.isEmpty()){
+							for (Long linkedTranID : tranIdList) {
+								getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranID);
+							}
+							getFinStageAccountingLogDAO().deleteByReceiptNo(receiptNumber);
+						}
+					}
+				}
+			}
+		}
+		
 		BigDecimal unRealizeAmz = BigDecimal.ZERO;
 		if (receiptDetails != null && !receiptDetails.isEmpty()) {
 			for (int i = receiptDetails.size() - 1; i >= 0; i--) {
@@ -1475,6 +1536,14 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 	public void setLatePayMarkingService(LatePayMarkingService latePayMarkingService) {
 		this.latePayMarkingService = latePayMarkingService;
+	}
+
+	public FinStageAccountingLogDAO getFinStageAccountingLogDAO() {
+		return finStageAccountingLogDAO;
+	}
+
+	public void setFinStageAccountingLogDAO(FinStageAccountingLogDAO finStageAccountingLogDAO) {
+		this.finStageAccountingLogDAO = finStageAccountingLogDAO;
 	}
 
 }

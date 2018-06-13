@@ -35,7 +35,7 @@
  * 														NOC flag validation functionality 	*
  * 														implemented	                        * 
  *                                                                                          * 
- *                                                                                          * 
+ * 13-06-2018       Siva					 0.3        Stage Accounting Modifications      * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -73,7 +73,6 @@ import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.liability.service.LiabilityRequestService;
 import com.pennant.backend.util.FinanceConstants;
@@ -194,14 +193,9 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 
 		//Finance Stage Accounting Process
 		//=======================================
-		if (financeDetail.getStageAccountingList() != null && financeDetail.getStageAccountingList().size() > 0) {
-
-			List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-			auditHeader = executeStageAccounting(auditHeader, list);
-			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
-				return auditHeader;
-			}
-			list  = null;
+		auditHeader = executeStageAccounting(auditHeader);
+		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
+			return auditHeader;
 		}
 		
 		if (liabilityRequest.isWorkflow()) {
@@ -334,14 +328,9 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		//Finance Stage Accounting Process
 		//=======================================
-		if (financeDetail.getStageAccountingList() != null && financeDetail.getStageAccountingList().size() > 0) {
-
-			List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-			auditHeader = executeStageAccounting(auditHeader, list);
-			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
-				return auditHeader;
-			}
-			list  = null;
+		auditHeader = executeStageAccounting(auditHeader);
+		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
+			return auditHeader;
 		}
 
 		if (liabilityRequest.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {

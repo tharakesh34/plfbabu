@@ -31,7 +31,7 @@
  ********************************************************************************************
  * 31-05-2012       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 13-06-2018       Siva					 0.2        Stage Accounting Modifications      *  
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -73,7 +73,6 @@ import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.util.FinanceConstants;
@@ -265,15 +264,9 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 
 		//Finance Stage Accounting Process
 		//=======================================
-		if (financeSuspHead.getFinanceDetail().getStageAccountingList() != null
-				&& financeSuspHead.getFinanceDetail().getStageAccountingList().size() > 0) {
-
-			List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-			auditHeader = executeStageAccounting(auditHeader, list);
-			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
-				return auditHeader;
-			}
-			list = null;
+		auditHeader = executeStageAccounting(auditHeader);
+		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
+			return auditHeader;
 		}
 
 		if (financeSuspHead.isWorkflow()) {
@@ -415,15 +408,9 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 
 		//Finance Stage Accounting Process
 		//=======================================
-		if (financeSuspHead.getFinanceDetail().getStageAccountingList() != null
-				&& financeSuspHead.getFinanceDetail().getStageAccountingList().size() > 0) {
-
-			List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-			auditHeader = executeStageAccounting(auditHeader, list);
-			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
-				return auditHeader;
-			}
-			list = null;
+		auditHeader = executeStageAccounting(auditHeader);
+		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
+			return auditHeader;
 		}
 
 		if (financeSuspHead.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {

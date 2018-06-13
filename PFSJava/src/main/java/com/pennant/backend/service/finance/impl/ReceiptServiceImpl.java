@@ -1,3 +1,43 @@
+/**
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *
+ * FileName    		:  ReceiptServiceImpl.java												*                           
+ *                                                                    
+ * Author      		:  PENNANT TECHONOLOGIES												*
+ *                                                                  
+ * Creation Date    :  26-04-2011															*
+ *                                                                  
+ * Modified Date    :  30-07-2011															*
+ *                                                                  
+ * Description 		:												 						*                                 
+ *                                                                                          
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 26-04-2011       Pennant	                 0.1                                            * 
+
+ * 13-06-2018       Siva					 0.2        Stage Accounting Modifications      * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+ */
 package com.pennant.backend.service.finance.impl;
 
 import java.lang.reflect.InvocationTargetException;
@@ -67,7 +107,6 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
@@ -423,15 +462,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		//Finance Stage Accounting Process
 		//=======================================
-		if (rceiptData.getFinanceDetail().getStageAccountingList() != null
-				&& rceiptData.getFinanceDetail().getStageAccountingList().size() > 0) {
-
-			List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-			auditHeader = executeStageAccounting(auditHeader, list);
-			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
-				return auditHeader;
-			}
-			list = null;
+		auditHeader = executeStageAccounting(auditHeader);
+		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
+			return auditHeader;
 		}
 
 		FinScheduleData scheduleData = rceiptData.getFinanceDetail().getFinScheduleData();
@@ -915,15 +948,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		//Finance Stage Accounting Process
 		//=======================================
-		if (rceiptData.getFinanceDetail().getStageAccountingList() != null
-				&& rceiptData.getFinanceDetail().getStageAccountingList().size() > 0) {
-
-			List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-			auditHeader = executeStageAccounting(auditHeader, list);
-			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
-				return auditHeader;
-			}
-			list = null;
+		auditHeader = executeStageAccounting(auditHeader);
+		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
+			return auditHeader;
 		}
 
 		//Repayments Postings Details Process Execution

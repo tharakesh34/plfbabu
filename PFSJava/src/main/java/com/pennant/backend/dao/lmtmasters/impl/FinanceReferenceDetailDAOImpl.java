@@ -34,7 +34,7 @@
  * 28-05-2018       Sai Krishna              0.2          bugs #388 Get active notifications* 
  *                                                        only from the process editor.     * 
  *                                                                                          * 
- *                                                                                          * 
+ * 13-06-2018       Siva					 0.3        Stage Accounting Modifications      * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -847,5 +847,36 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 		}
 	}
 	// ### 06-05-2018 - End
+	
+	/**
+	 * Fetch Records Details by Finance Type, Ref Type and Role Code
+	 * @param financeType
+	 * @param roleCode
+	 * @param finRefType
+	 * @return
+	 */
+	@Override
+	public List<Long> getRefIdListByRefType(final String financeType, String finEvent, String roleCode,int finRefType) {
+		logger.debug("Entering");
+		
+		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
+		financeReferenceDetail.setFinType(financeType);
+		financeReferenceDetail.setFinEvent(finEvent);
+		financeReferenceDetail.setFinRefType(finRefType);
+		
+		StringBuilder selectSql = new StringBuilder("Select FinRefId ");
+		selectSql.append(" From LMTFinRefDetail");
+		selectSql.append(" Where FinType =:FinType AND FinEvent=:FinEvent AND FinRefType=:FinRefType ");
+		
+		if(StringUtils.isNotBlank(roleCode)){
+			selectSql.append(" AND MandInputInStage LIKE '%"+roleCode +",%' ");
+		}
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
+		
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, Long.class);
+	}
 
 }

@@ -25,6 +25,8 @@
  ********************************************************************************************
  *16-05-2018 Madhu Babu 0.3******************
  *As per mail from Raju added the validations to proceed with loan approval and disbursement basd on PDD/OTC 
+ *
+  * 13-06-2018       Siva					 0.4        Stage Accounting Modifications      * 
  */
 package com.pennant.backend.service.finance.impl;
 
@@ -1872,14 +1874,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			//Finance Stage Accounting Process
 			//=======================================
-			if (financeDetail.getStageAccountingList() != null && financeDetail.getStageAccountingList().size() > 0) {
-
-				List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-				auditHeader = executeStageAccounting(auditHeader, list);
-				if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
-					return auditHeader;
-				}
-				list = null;
+			auditHeader = executeStageAccounting(auditHeader);
+			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
+				return auditHeader;
 			}
 
 			//Accounting Execution Process on Maintenance

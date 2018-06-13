@@ -31,7 +31,7 @@
  ********************************************************************************************
  * 07-02-2012       PENNANT TECHONOLOGIES	                 0.1                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 13-06-2018       Siva					 0.2        Stage Accounting Modifications      * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -59,5 +59,9 @@ public interface FinStageAccountingLogDAO {
 	void deleteByRefandRole(String finReference, String finEvent, String roleCode);
 	List<Long> getLinkedTranIdList(String finReference, String finEvent);
 	void update(String finReference, String finEvent,boolean processed);
+	int getTranCountByReceiptNo(String receiptNo);
+	void updateByReceiptNo(String receiptNo);
+	List<Long> getTranIdListByReceipt(String receiptNo);
+	void deleteByReceiptNo(String receiptNo);
 	
 }

@@ -31,7 +31,7 @@
  ********************************************************************************************
  * 07-02-2012       PENNANT TECHONOLOGIES	                 0.1                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 13-06-2018       Siva					 0.2        Stage Accounting Modifications      * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -84,6 +84,7 @@ public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountin
 		
 		FinStageAccountingLog stageAccountingLog = new FinStageAccountingLog();
 		stageAccountingLog.setFinReference(finReference);
+		stageAccountingLog.setFinEvent(finEvent);
 		stageAccountingLog.setRoleCode(roleCode);
 		stageAccountingLog.setProcessed(false);
 
@@ -116,6 +117,7 @@ public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountin
 		
 		FinStageAccountingLog stageAccountingLog = new FinStageAccountingLog();
 		stageAccountingLog.setFinReference(finReference);
+		stageAccountingLog.setFinEvent(finEvent);
 		
 		StringBuilder selectSql = new StringBuilder(" SELECT LinkedTranId FROM FinStageAccountingLog");
 		selectSql.append(" WHERE FinReference=:FinReference AND FinEvent= :FinEvent " );
@@ -134,8 +136,8 @@ public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountin
 		
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("Insert Into FinStageAccountingLog");
-		insertSql.append(" (FinReference, FinEvent, RoleCode, LinkedTranId,Processed) ");
-		insertSql.append(" Values(:FinReference,:FinEvent, :RoleCode, :LinkedTranId,:Processed)");
+		insertSql.append(" (FinReference, FinEvent, RoleCode, LinkedTranId,Processed, ReceiptNo) ");
+		insertSql.append(" Values(:FinReference,:FinEvent, :RoleCode, :LinkedTranId,:Processed, :ReceiptNo)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
@@ -149,10 +151,12 @@ public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountin
 		
 		FinStageAccountingLog stageAccountingLog = new FinStageAccountingLog();
 		stageAccountingLog.setFinReference(finReference);
+		stageAccountingLog.setFinEvent(finEvent);
 		stageAccountingLog.setRoleCode(roleCode);
+		stageAccountingLog.setProcessed(false);
 		
 		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinStageAccountingLog");	
-		deleteSql.append(" WHERE FinReference =:FinReference AND FinEvent= :FinEvent AND RoleCode=:RoleCode ");
+		deleteSql.append(" WHERE FinReference =:FinReference AND FinEvent= :FinEvent AND RoleCode=:RoleCode AND Processed =:Processed ");
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
@@ -182,6 +186,85 @@ public class FinStageAccountingLogDAOImpl extends BasisCodeDAO<FinStageAccountin
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Method for fetch Count of Transactions based on ReceiptNo
+	 * @param ReceiptNo
+	 * @return
+	 */
+	@Override
+	public int getTranCountByReceiptNo(String receiptNo) {
+		logger.debug("Entering");
+		
+		FinStageAccountingLog stageAccountingLog = new FinStageAccountingLog();
+		stageAccountingLog.setReceiptNo(receiptNo);
+		
+		StringBuilder selectSql = new StringBuilder(" SELECT Count(LinkedTranId) FROM FinStageAccountingLog ");
+		selectSql.append(" WHERE ReceiptNo=:ReceiptNo " );
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
+		
+		int tranCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		logger.debug("Leaving");
+		return tranCount;
+	}
+	
+	@Override
+	public void updateByReceiptNo(String receiptNo) {
+		FinStageAccountingLog finStageAccountLog = new FinStageAccountingLog();
+		finStageAccountLog.setReceiptNo(receiptNo);
+		
+		StringBuilder updateSql = new StringBuilder("Update FinStageAccountingLog");
+		updateSql.append(" Set Processed='"+1 +"' " );
+		updateSql.append(" Where ReceiptNo =:ReceiptNo ");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStageAccountLog);
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
+	
+	/**
+	 * Method for fetch List of Transactions & Id's for Receipt
+	 * @param ReceiptNo
+	 * @return
+	 */
+	@Override
+	public List<Long> getTranIdListByReceipt(String receiptNo) {
+		logger.debug("Entering");
+		
+		FinStageAccountingLog stageAccountingLog = new FinStageAccountingLog();
+		stageAccountingLog.setReceiptNo(receiptNo);
+		
+		StringBuilder selectSql = new StringBuilder(" SELECT LinkedTranId FROM FinStageAccountingLog");
+		selectSql.append(" WHERE ReceiptNo=:ReceiptNo " );
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
+		
+		List<Long> linkedTranIdList = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, Long.class);
+		logger.debug("Leaving");
+		return linkedTranIdList;
+	}
+	
+
+	@Override
+    public void deleteByReceiptNo(String receiptNo) {
+		logger.debug("Entering");
+		
+		FinStageAccountingLog stageAccountingLog = new FinStageAccountingLog();
+		stageAccountingLog.setReceiptNo(receiptNo);
+		
+		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinStageAccountingLog");	
+		deleteSql.append(" WHERE ReceiptNo=:ReceiptNo ");
+
+		logger.debug("deleteSql: " + deleteSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		logger.debug("Leaving");
+    }
 
 }
 

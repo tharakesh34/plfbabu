@@ -1,3 +1,43 @@
+/**
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *
+ * FileName    		:  GenericFinanceDetailService.java										*                           
+ *                                                                    
+ * Author      		:  PENNANT TECHONOLOGIES												*
+ *                                                                  
+ * Creation Date    :  26-04-2011															*
+ *                                                                  
+ * Modified Date    :  30-07-2011															*
+ *                                                                  
+ * Description 		:												 						*                                 
+ *                                                                                          
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 26-04-2011       Pennant	                 0.1                                            * 
+
+ * 13-06-2018       Siva					 0.2        Stage Accounting Modifications      * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+ */
 package com.pennant.backend.service.finance;
 
 import java.lang.reflect.InvocationTargetException;
@@ -21,7 +61,6 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.util.AEAmounts;
@@ -68,6 +107,7 @@ import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
+import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.policecase.PoliceCaseDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -102,6 +142,7 @@ import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -143,6 +184,7 @@ import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -187,7 +229,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinTypeAccountingDAO			finTypeAccountingDAO;
 	private FinPlanEmiHolidayDAO			finPlanEmiHolidayDAO;
 	private FinFeeDetailDAO					finFeeDetailDAO;
-
+	private FinanceReferenceDetailDAO		financeReferenceDetailDAO;
 
 	// DocumentManagerDAO
 	private DocumentManagerDAO				documentManagerDAO;
@@ -1786,75 +1828,91 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws IllegalAccessException 
 	 * @throws AccountNotFoundException
 	 */
-	protected AuditHeader executeStageAccounting(AuditHeader auditHeader, List<ReturnDataSet> list){
+	protected AuditHeader executeStageAccounting(AuditHeader auditHeader){
 		logger.debug("Entering");
 
 		FinanceDetail financeDetail = null;
-		FinReceiptData receiptData = null;
-
+		Date valueDate = DateUtility.getAppDate();
+		String receiptNumber = null;
 		if (auditHeader.getAuditDetail().getModelData() instanceof FinanceDetail) {
 			financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		} else if (auditHeader.getAuditDetail().getModelData() instanceof LiabilityRequest) {
 			financeDetail = ((LiabilityRequest) auditHeader.getAuditDetail().getModelData()).getFinanceDetail();
 		} else if (auditHeader.getAuditDetail().getModelData() instanceof RepayData) {
 			financeDetail = ((RepayData) auditHeader.getAuditDetail().getModelData()).getFinanceDetail();
-		}  else if (auditHeader.getAuditDetail().getModelData() instanceof FinReceiptData) {
-			receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+		} else if (auditHeader.getAuditDetail().getModelData() instanceof FinReceiptData) {
+			financeDetail = ((FinReceiptData) auditHeader.getAuditDetail().getModelData()).getFinanceDetail();
+
+			// Value Date identification
+			FinReceiptData rceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+			FinReceiptHeader receiptHeader = rceiptData.getReceiptHeader();
+			if(receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()){
+				for (FinReceiptDetail detail : receiptHeader.getReceiptDetails()) {
+					if(StringUtils.equals(detail.getPaymentType(), receiptHeader.getReceiptMode()) &&
+							!StringUtils.equals(receiptHeader.getReceiptMode(), RepayConstants.RECEIPTMODE_EXCESS)){
+						valueDate = detail.getReceivedDate();
+						receiptNumber = detail.getPaymentRef();
+					}
+				}
+			}
 		} else {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+	
+		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		// If Record action is Save then, no need to do any accounting
+		if(StringUtils.equals(finMain.getRoleCode(), finMain.getNextRoleCode()) ||
+				StringUtils.equals(finMain.getRecordStatus(), PennantConstants.RCD_STATUS_RESUBMITTED)){
+			logger.debug("Leaving");
+			return auditHeader;
+		}
+		
+		FinanceProfitDetail pftDetail;
+		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())){
+			pftDetail = new FinanceProfitDetail();
+		}else{
+			pftDetail = getProfitDetailsDAO().getFinProfitDetailsById(finMain.getFinReference());
+		}
 
-		long linkedTranId = Long.MIN_VALUE;
+		List<Long> acSetIdList = null;
+		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
+			acSetIdList = getFinanceReferenceDetailDAO().getRefIdListByRefType(finMain.getPromotionCode(), 
+					finMain.getRcdMaintainSts(), finMain.getRoleCode(), FinanceConstants.PROCEDT_STAGEACC);
+		} else {
+			acSetIdList = getFinanceReferenceDetailDAO().getRefIdListByRefType(finMain.getFinType(), 
+					finMain.getRcdMaintainSts(), finMain.getRoleCode(), FinanceConstants.PROCEDT_STAGEACC);
+		}
+		
+		// If NO Accounting Sets added against stage, no action to be done
+		if(acSetIdList == null || acSetIdList.isEmpty()){
+			logger.debug("Leaving");
+			return auditHeader;
+		}
+		
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		Date curBDay = DateUtility.getAppDate();
+		aeEvent = AEAmounts.procAEAmounts(finMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(),
+				pftDetail, AccountEventConstants.ACCEVENT_STAGE, valueDate,valueDate);
 		
-		// set receipt mode value
-		if(receiptData != null) {
-			FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
-			if(receiptHeader != null) {
-				amountCodes.setReceiptMode(receiptHeader.getReceiptMode());
-			}
-		}
-
-		aeEvent = AEAmounts.procAEAmounts(financeMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(),
-				new FinanceProfitDetail(), AccountEventConstants.ACCEVENT_STAGE, financeMain.getFinStartDate(),
-				financeMain.getFinStartDate());
-
+		aeEvent.getAcSetIDList().addAll(acSetIdList);
 		amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent.setModuleDefiner(financeDetail.getModuleDefiner());
-
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-		Map<String, FeeRule> feeRuleDetailsMap = null;
-
-		List<FinFeeDetail> finFeeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList();
-		if (finFeeDetailList != null) {
-			feeRuleDetailsMap = new HashMap<>();
-			FeeRule feeRule;
-			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-				feeRule = new FeeRule();
-				feeRule.setFeeCode(finFeeDetail.getFeeTypeCode());
-				feeRule.setFeeAmount(finFeeDetail.getActualAmount());
-				feeRule.setWaiverAmount(finFeeDetail.getWaivedAmount());
-				feeRule.setPaidAmount(finFeeDetail.getPaidAmount());
-				feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
-				feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
-				feeRuleDetailsMap.put(feeRule.getFeeCode(), feeRule);
-			}
-		}
+		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
+		aeEvent.setPostDate(DateUtility.getAppDate());
+		
+		HashMap<String, Object>	dataMap = aeEvent.getDataMap();
+		dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);
+		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
+		aeEvent.setDataMap(dataMap);
 
 		// Check Previously done Postings on same Stage with Reference
 		//=======================================
 		List<ReturnDataSet> newStageAcEntries = null;
 		try {
-			financeDetail.getFinScheduleData().getFinanceType().getDeclaredFieldValues(dataMap);
-			dataMap.putAll(feeRuleDetailsMap);
 			aeEvent.setDataMap(dataMap);
 			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
-
 			newStageAcEntries = aeEvent.getReturnDataSet();
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -1866,92 +1924,27 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			return auditHeader;
 		}
 
-		if (!prvStageAccountingCheck(newStageAcEntries, financeMain.getFinReference(),
-				financeDetail.getModuleDefiner(), financeMain.getRoleCode())) {
+		// Check If there is no difference in Postings, if already executed on process of workflow
+		if (!prvStageAccountingCheck(newStageAcEntries, finMain.getFinReference(),
+				finMain.getRcdMaintainSts(), finMain.getRoleCode())) {
 			logger.debug(Labels.getLabel("label_Finance_Recal_StageAccountings"));
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		try {
-
-			aeEvent.setDataMap(dataMap);
-			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
-			list.addAll(aeEvent.getReturnDataSet());
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-			errorDetails.add(new ErrorDetail("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
-					"Accounting Engine Failed to Create Postings:" + e.getMessage(), new String[] {}, new String[] {}));
-			auditHeader.setErrorList(errorDetails);
-		}
-
-		// Method for validating Postings with interface program and return results
-		if (list.get(0).getLinkedTranId() == Long.MIN_VALUE) {
-			linkedTranId = getPostingsDAO().getLinkedTransId();
-		} else {
-			linkedTranId = list.get(0).getLinkedTranId();
-		}
-
-		//Method for Checking for Reverse Calculations Based upon Negative Amounts
-		for (ReturnDataSet returnDataSet : list) {
-
-			returnDataSet.setLinkedTranId(linkedTranId);
-
-			if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
-
-				String tranCode = returnDataSet.getTranCode();
-				String revTranCode = returnDataSet.getRevTranCode();
-				String debitOrCredit = returnDataSet.getDrOrCr();
-
-				returnDataSet.setTranCode(revTranCode);
-				returnDataSet.setRevTranCode(tranCode);
-
-				returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
-
-				if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
-					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
-				} else {
-					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
-				}
-			}
-		}
-
-		if (!ImplementationConstants.INDIAN_IMPLEMENTATION) {
-			//FIXME: 050517 Needs to fill return dataset
-		}
-
-		/*
-		 * list = getPostingsInterfaceService().doFillPostingDetails(list, financeMain.getFinBranch(), linkedTranId,
-		 * "Y");
-		 */
-		if (list != null && list.size() > 0) {
-			ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-			for (int i = 0; i < list.size(); i++) {
-				ReturnDataSet set = list.get(i);
-				set.setLinkedTranId(linkedTranId);
-				set.setPostDate(curBDay);
-				set.getPostStatus();
-				if (!("0000".equals(set.getErrorId()) || StringUtils.isEmpty(set.getErrorId()))) {
-					set.setErrorMsg("Stage Accounting is Failed");
-					errorDetails.add(new ErrorDetail(set.getAccountType(), set.getErrorId(), "E", set.getErrorMsg(),
-							new String[] {}, new String[] {}));
-				}
-			}
-			auditHeader.setErrorList(errorDetails);
-			// save Postings
-			getPostingsDAO().saveBatch(list);
-		}
+		// Prepared Postings execution 
+		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 
 		// Stage Accounting Entry Details Saving
 		//=======================================
 		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().isEmpty()) {
 
 			FinStageAccountingLog stageAccountingLog = new FinStageAccountingLog();
-			stageAccountingLog.setFinReference(financeMain.getFinReference());
-			stageAccountingLog.setFinEvent(financeDetail.getModuleDefiner());
-			stageAccountingLog.setRoleCode(financeMain.getRoleCode());
-			stageAccountingLog.setLinkedTranId(linkedTranId);
+			stageAccountingLog.setFinReference(finMain.getFinReference());
+			stageAccountingLog.setFinEvent(finMain.getRcdMaintainSts());
+			stageAccountingLog.setRoleCode(finMain.getRoleCode());
+			stageAccountingLog.setLinkedTranId(aeEvent.getLinkedTranId());
+			stageAccountingLog.setReceiptNo(receiptNumber);
 			getFinStageAccountingLogDAO().saveStageAccountingLog(stageAccountingLog);
 		}
 
@@ -3123,5 +3116,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setQueryDetailService(QueryDetailService queryDetailService) {
 		this.queryDetailService = queryDetailService;
+	}
+
+	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
+		return financeReferenceDetailDAO;
+	}
+
+	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
 	}
 }
