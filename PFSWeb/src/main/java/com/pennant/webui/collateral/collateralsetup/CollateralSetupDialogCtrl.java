@@ -1474,13 +1474,12 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
-		}
 
-		if (isWorkFlowEnabled()) {
-			this.recordStatus.setValue("");
-			this.userAction.setSelectedIndex(0);
+			if(userAction.getItemCount()>0) {
+				this.recordStatus.setValue("");
+				this.userAction.setSelectedIndex(0);
+			}
 		}
-
 		logger.debug("Leaving");
 	}
 
