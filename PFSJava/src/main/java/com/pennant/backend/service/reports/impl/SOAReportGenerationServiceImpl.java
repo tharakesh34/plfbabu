@@ -553,7 +553,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						if (manualAdvise.getAdviseType() == 1 && manualAdvise.getBounceID() == 0) {
 							
 							if (manualAdvise.getAdviseAmount() != null) {
-								bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(manualAdvise.getAdviseAmount());
+								bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
 							}
 							
 							if (manualAdvise.getPaidAmount() != null) {
@@ -564,7 +564,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						if (manualAdvise.getBounceID() > 0) {
 							
 							if (manualAdvise.getAdviseAmount() != null) {
-								bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(manualAdvise.getAdviseAmount());
+								bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
 							}
 							
 							if (manualAdvise.getPaidAmount() != null) {
