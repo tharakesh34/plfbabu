@@ -140,6 +140,9 @@
 										image="/images/icons/LOVSearch.png" visible="false" />
 									<button id="btnSearchReturnCheque"
 										image="/images/icons/LOVSearch.png" visible="false" />
+									<button id="btnFinanceTabs"
+										image="/images/icons/LOVSearch.png" visible="false" />
+		
 								</hbox>
 							</row>
 							<row id="row_AlertType" visible="false">
