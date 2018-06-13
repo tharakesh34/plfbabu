@@ -8,6 +8,8 @@
 	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
+	<script type="text/javascript" src="/deviceUtils/printerutil.js" />
+
 	<style>
 		div.z-column-cnt { padding: 3px; } div.z-column-cnt,
 		div.z-row-cnt { color: #000000;

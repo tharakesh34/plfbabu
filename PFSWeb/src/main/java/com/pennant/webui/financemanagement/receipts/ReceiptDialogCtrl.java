@@ -31,9 +31,9 @@
  ********************************************************************************************
  * 03-06-2011       Pennant	                 0.1                                         * 
  *                                                                                          * 
+ * 13-06-2018       Siva					 0.2        Receipt auto printing on approval   * 
  *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 13-06-2018       Siva					 0.3        Receipt Print Option Added 			* 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -59,6 +59,7 @@ import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -112,6 +113,8 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.MailUtil;
+import com.pennant.app.util.NumberToEnglishWords;
+import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -128,7 +131,6 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
-import com.pennant.backend.model.finance.EarlySettlementReportData;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -149,12 +151,12 @@ import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
+import com.pennant.backend.model.reports.ReceiptReport;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.accounts.AccountsService;
@@ -184,7 +186,6 @@ import com.pennant.fusioncharts.ChartUtil;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.TemplateEngine;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -200,6 +201,7 @@ import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -3104,6 +3106,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				//Customer Notification for Role Identification
 				if (StringUtils.isBlank(aFinanceMain.getNextTaskId())) {
 					aFinanceMain.setNextRoleCode("");
+					
+					// Auto Printing of Cashier Receipt on Submission from Cashier Stage
+					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !"Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
+						Events.sendEvent("onClick", this.btnPrint, null);
+					}
+					
 				}
 				String msg = PennantApplicationUtil.getSavingStatus(aFinanceMain.getRoleCode(),
 						aFinanceMain.getNextRoleCode(), aFinanceMain.getFinReference(), " Loan ",
@@ -6738,101 +6749,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 
 	/**
-	 * When the print button is clicked.
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 */
-	public void onClick$btnPrint(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-
-		String reportName = "InternalMemorandum";
-		EarlySettlementReportData earlySettlement = new EarlySettlementReportData();
-
-		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		boolean isRetail = false;
-		if (getFinanceType() != null) {
-			String division = getFinanceType().getFinDivision().trim();
-			if (StringUtils.equals(division, FinanceConstants.FIN_DIVISION_RETAIL)) {
-				reportName = FinanceConstants.FIN_DIVISION_RETAIL + "_InternalMemorandum.docx";
-				isRetail = true;
-			}
-			earlySettlement.setDeptFrom(getFinanceType().getLovDescFinDivisionName());
-		}
-
-		if (financeMain != null) {
-			earlySettlement.setAppDate(DateUtility.getAppDate(DateFormat.SHORT_DATE));
-			earlySettlement.setFinReference(financeMain.getFinReference());
-			earlySettlement.setFinType(financeMain.getFinType());
-			earlySettlement.setFinTypeDesc(financeMain.getLovDescFinTypeName());
-			earlySettlement.setCustCIF("CIF " + financeMain.getLovDescCustCIF());
-			earlySettlement.setCustShrtName(financeMain.getLovDescCustShrtName());
-			earlySettlement.setFinStartDate(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
-			earlySettlement.setEarlySettlementDate(DateUtility.formatToLongDate(DateUtility.getAppDate()));
-		}
-
-		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
-
-		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(financeMain.getFinReference());;
-		if (profitDetail != null) {
-			BigDecimal financeAmount = financeMain.getFinAmount().add(financeMain.getFeeChargeAmt() != null ? financeMain.getFeeChargeAmt() : BigDecimal.ZERO)
-					.subtract(financeMain.getDownPayment()).add(financeMain.getInsuranceAmt() != null ? financeMain.getInsuranceAmt() : BigDecimal.ZERO);
-			earlySettlement.setTotalPaidAmount(financeMain.getFinCcy() +" "+PennantApplicationUtil.amountFormate(financeAmount, formatter));
-			earlySettlement.setTotalTerms(String.valueOf(profitDetail.getNOInst()));
-			earlySettlement.setTotalPaidTerms(String.valueOf(profitDetail.getNOPaidInst()));
-			earlySettlement
-			.setTotalUnpaidTerms(String.valueOf(profitDetail.getNOInst() - profitDetail.getNOPaidInst()));
-			earlySettlement.setOutStandingTotal(financeMain.getFinCcy()
-					+ " "
-					+ PennantApplicationUtil.amountFormate(
-							profitDetail.getTotalPriBal().add(profitDetail.getTotalPftBal()), formatter));
-			earlySettlement.setOutStandingPft(financeMain.getFinCcy() + " "
-					+ PennantApplicationUtil.amountFormate(profitDetail.getTotalPftBal(), formatter));
-
-			BigDecimal insAmount = BigDecimal.ZERO;
-			FeeRule feeRule = getFinanceDetailService().getInsFee(financeMain.getFinReference());
-			if (feeRule != null && feeRule.getFeeAmount() != null) {
-				insAmount = feeRule.getFeeAmount().subtract(feeRule.getWaiverAmount())
-						.subtract(feeRule.getPaidAmount());
-			}
-			earlySettlement.setInsuranceFee(financeMain.getFinCcy() + " "
-					+ PennantApplicationUtil.amountFormate(insAmount, formatter));
-
-			int remMonths = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), receiptData.getRepayMain()
-					.getRefundCalStartDate() == null ? financeMain.getMaturityDate() : receiptData.getRepayMain()
-							.getRefundCalStartDate(), true);
-			int totalMonths = DateUtility.getMonthsBetween(financeMain.getMaturityDate(),
-					financeMain.getFinStartDate(), false);
-
-			earlySettlement.setPeriodCoverage(String.valueOf(totalMonths - remMonths));
-		}
-
-		//Word Format
-		if (isRetail) {
-			try {
-
-				TemplateEngine engine = new TemplateEngine(reportName);
-				reportName = earlySettlement.getFinReference() + "_" + "Memorandum.docx";
-				engine.setTemplate("");
-				//engine.loadTemplateWithFontSize(11);
-				engine.mergeFields(earlySettlement);
-				engine.showDocument(this.window_ReceiptDialog, reportName, SaveFormat.DOCX);
-				engine.close();
-				engine = null;
-
-			} catch (Exception e) {
-				logger.error("Exception: ", e);
-			}
-		} else {
-			// PDF Format
-			ReportGenerationUtil.generateReport(reportName, earlySettlement, new ArrayList<Object>(), true, 1,
-					getUserWorkspace().getLoggedInUser().getFullName(), this.window_ReceiptDialog);
-		}
-
-		logger.debug("Leaving");
-	}
-	
-	/**
 	 * onChanging fundingAccount details
 	 * 
 	 * @param event
@@ -6973,6 +6889,67 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 	/** new code to display chart by skipping jsps code end */
+	
+	// Printer integration starts
+
+	public void onClick$btnPrint(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		
+		try {
+			
+			String reportName = "Receipt";
+			String templatePath = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/";
+			String templateName = reportName + PennantConstants.DOC_TYPE_WORD_EXT;
+			TemplateEngine engine = new TemplateEngine(templatePath, templatePath);
+			engine.setTemplate(templateName);
+			engine.loadTemplate();
+			reportName = "Receipt_"+this.finReference.getValue()+"_"+getReceiptHeader().getReceiptID();
+
+			ReceiptReport receipt = new ReceiptReport();
+			receipt.setUserName(getUserWorkspace().getLoggedInUser().getUserName() +" - "+getUserWorkspace().getLoggedInUser().getFullName());
+			receipt.setFinReference(this.finReference.getValue());
+			receipt.setCustName(this.custShrtName.getValue());
+			
+			BigDecimal totalReceiptAmt = getTotalReceiptAmount(false);
+			int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+			receipt.setReceiptAmount(PennantApplicationUtil.amountFormate(totalReceiptAmt, finFormatter));
+			receipt.setReceiptAmountInWords(NumberToEnglishWords.getAmountInText(
+					PennantApplicationUtil.formateAmount(totalReceiptAmt, finFormatter),""));
+			receipt.setAppDate(DateUtility.formatToLongDate(DateUtility.getAppDate()));
+			
+			Date eventFromDate = this.receivedDate.getValue();
+			if(eventFromDate == null){
+				eventFromDate = DateUtility.getAppDate();
+			}
+			receipt.setReceiptDate(DateUtility.formatToLongDate(eventFromDate));
+			receipt.setReceiptNo(this.paymentRef.getValue());
+			receipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel().toString());
+			engine.mergeFields(receipt);
+			
+			boolean isDirectPrint = true;
+			try {
+				if(isDirectPrint){
+					try {
+						byte[] documentByteArray = engine.getDocumentInByteArray(reportName, SaveFormat.PDF);
+						String encodedString = Base64.encodeBase64String(documentByteArray);
+						Clients.evalJavaScript("PrinterUtil.print('window_ReceiptDialog','onPrintSuccess','" + encodedString + "')");
+
+					} catch (Exception e) {
+						logger.error(Labels.getLabel("message.error.printerNotImpl"));
+						engine.showDocument(this.window_ReceiptDialog, reportName, SaveFormat.PDF);
+					}
+				}else{
+					engine.showDocument(this.window_ReceiptDialog, reportName, SaveFormat.PDF);
+				}
+			} catch (Exception e) {
+				logger.error(Labels.getLabel("message.error.agreementNotFound"));
+			}
+			
+		} catch (Exception e) {
+			logger.error(Labels.getLabel("message.error.agreementNotFound"));
+		}
+    	logger.debug(Literal.LEAVING);
+	}
 	
 	// ******************************************************//
 	// ****************** getter / setter *******************//

@@ -31,7 +31,7 @@
  ********************************************************************************************
  *17-09-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 13-06-2018       Siva					 0.4        Receipt Print Option Added 			*
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -252,7 +252,7 @@ public class NumberToEnglishWords {
 			tradThousands = "";
 			break;
 		case 1 :
-			tradThousands = convertThousands(thousands);
+			tradThousands = convertThousands(thousands)+" Thousand ";
 			break;
 		default :
 			tradThousands = convertThousands(thousands)+" Thousand "; 
