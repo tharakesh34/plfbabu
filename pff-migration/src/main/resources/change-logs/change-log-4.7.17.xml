@@ -3147,5 +3147,25 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 			Insert into ERRORDETAILS values ('41041','EN','E','{0} {1}  NOC already issued.','test','Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,3);
 		</sql>
 	</changeSet>
+	<changeSet id="67" author="vijaykumar.l">
+	<sql>
+	delete from STAGETABDETAIL where tabid in( 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
+	insert into STAGETABDETAIL values(1,'Advance Payment',1);
+	insert into STAGETABDETAIL values(2,'Co Applicants ',1);
+	insert into STAGETABDETAIL values(3,'Tax Detail',1);
+	insert into STAGETABDETAIL values(4,'Eligibility',1);
+	insert into STAGETABDETAIL values(5,'Scoring ',1);
+	insert into STAGETABDETAIL values(6,'Agreements',1);
+	insert into STAGETABDETAIL values(7,'CheckList',1);
+	insert into STAGETABDETAIL values(8,'Documents',1);
+	insert into STAGETABDETAIL values(9,'Covenant',1);
+	insert into STAGETABDETAIL values(10,'Mandate',1);
+	insert into STAGETABDETAIL values(11,'Cheque',1);
+	insert into STAGETABDETAIL values(12,'Collaterals',1);
+	insert into STAGETABDETAIL values(13,'VAS',1);
+	insert into STAGETABDETAIL values(14,'Extended Field',1);
+	insert into STAGETABDETAIL values(15,'Query Mangement',1);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
 	
