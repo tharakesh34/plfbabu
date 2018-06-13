@@ -51,6 +51,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -88,6 +89,8 @@ public class ReceiptCancellationListModelItemRenderer implements ListitemRendere
 		lc = new Listcell(header.getFinBranch());
 		lc.setParent(item);
 		lc = new Listcell(header.getCustCIF());
+		lc.setParent(item);
+		lc = new Listcell(DateUtility.formatToLongDate(header.getReceiptDate()));
 		lc.setParent(item);
 		lc = new Listcell(header.getCustShrtName());
 		lc.setParent(item);

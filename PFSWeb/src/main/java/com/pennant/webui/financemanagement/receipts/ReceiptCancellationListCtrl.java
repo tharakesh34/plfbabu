@@ -69,6 +69,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	protected Listheader listheader_ReceiptCancellationFinBranch;
 	protected Listheader listheader_ReceiptCancellationCusomer;
 	protected Listheader listheader_ReceiptCancellationCustName;
+	protected Listheader listheader_ReceiptCancellationReceivedDate;
 
 	protected Button btnNew;
 	protected Button btnSearch;
@@ -163,7 +164,8 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 				sortOperator_ReceiptCancellationFinType, Operators.STRING);
 		registerField("finBranch", listheader_ReceiptCancellationFinBranch, SortOrder.NONE, finBranch, sortOperator_ReceiptCancellationFinBranch,
 				Operators.STRING);
-
+		registerField("receiptDate", listheader_ReceiptCancellationReceivedDate, SortOrder.NONE);
+		
 		// Render the page and display the data.
 		doRenderPage();
 		search();

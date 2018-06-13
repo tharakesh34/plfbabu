@@ -221,6 +221,10 @@
 									label="${c:l('listheader_ReceiptCancellationCusomer.label')}"
 									sort="auto" hflex="min" />
 								<listheader
+									id="listheader_ReceiptCancellationReceivedDate"
+									label="${c:l('listheader_ReceiptCancellationReceivedDate.label')}"
+									sort="auto" hflex="min" />
+								<listheader
 									id="listheader_ReceiptCancellationCustName" visible="false"
 									label="${c:l('listheader_ReceiptCancellationCustName.label')}"
 									sort="auto" hflex="min" />
