@@ -1658,27 +1658,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		//Eligibility Details Tab Adding
-
-		//if (StringUtils.isEmpty(moduleDefiner) || isFinPreApproved) {
-		if(isTabVisible(StageTabConstants.Eligibility)){
+		if (StringUtils.isEmpty(moduleDefiner) || isFinPreApproved) {
 			appendEligibilityDetailTab(onLoad);
 		}
 
 		//Scoring Detail Tab Addition
-		//if (StringUtils.isEmpty(moduleDefiner) || isFinPreApproved) {
-		if(isTabVisible(StageTabConstants.Scoring)){
+		if (StringUtils.isEmpty(moduleDefiner) || isFinPreApproved) {
 			appendFinScoringDetailTab(onLoad);
 		}
 
 		//Agreements Detail Tab Addition
-		if(isTabVisible(StageTabConstants.Agreements)){
 			appendAgreementsDetailTab(onLoad);
-		}
-		//CheckList Details Tab Addition
-		if(isTabVisible(StageTabConstants.CheckList)){
+
+			//CheckList Details Tab Addition
 			appendCheckListDetailTab(aFinanceDetail, onLoad);
-		}
-		// Document Detail Tab Addition
+
+			// Document Detail Tab Addition
 		if(isTabVisible(StageTabConstants.Documents)){
 			appendDocumentDetailTab(onLoad);
 		}

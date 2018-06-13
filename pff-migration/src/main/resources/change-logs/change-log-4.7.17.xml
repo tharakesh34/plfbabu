@@ -3149,15 +3149,15 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 	</changeSet>
 	<changeSet id="67" author="vijaykumar.l">
 	<sql>
-	delete from STAGETABDETAIL where tabid in( 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
+	delete from STAGETABDETAIL;
 	insert into STAGETABDETAIL values(1,'Advance Payment',1);
 	insert into STAGETABDETAIL values(2,'Co Applicants ',1);
 	insert into STAGETABDETAIL values(3,'Tax Detail',1);
 	insert into STAGETABDETAIL values(4,'Documents',1);
 	insert into STAGETABDETAIL values(5,'Covenant',1);
 	insert into STAGETABDETAIL values(6,'Mandate',1);
-	insert into STAGETABDETAIL values(6,'Cheque',1);
-	insert into STAGETABDETAIL values(6,'Collaterals',1);
+	insert into STAGETABDETAIL values(7,'Cheque',1);
+	insert into STAGETABDETAIL values(8,'Collaterals',1);
 	insert into STAGETABDETAIL values(9,'VAS',1);
 	insert into STAGETABDETAIL values(10,'Extended Field',1);
 	insert into STAGETABDETAIL values(11,'Query Mangement',1);
