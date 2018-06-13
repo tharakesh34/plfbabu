@@ -31,7 +31,7 @@
  ********************************************************************************************
  * 10-09-2013       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 13-06-2018       Pennant	                 0.2                                            *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -491,7 +491,14 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 			if (jointAccountDetail.isNewRecord()) {
 				getJountAccountDetailDAO().save(jointAccountDetail, tableType);
 			} else {
-				getJountAccountDetailDAO().update(jointAccountDetail, tableType);
+				// ### 10-05-2018 - Start- Development PSD 127038
+				// Unable to delete co applicant once saved at DDE stage  
+				if(StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, jointAccountDetail.getRecordType())){
+					getJountAccountDetailDAO().delete(jointAccountDetail, tableType);
+				}else{
+					getJountAccountDetailDAO().update(jointAccountDetail, tableType);	
+				}
+				// ### 10-05-2018 - End- Development PSD 127038
 			}
 			String[] fields = PennantJavaUtil.getFieldDetails(jointAccountDetail, jointAccountDetail.getExcludeFields());
 			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], jointAccountDetail.getBefImage(), jointAccountDetail));
