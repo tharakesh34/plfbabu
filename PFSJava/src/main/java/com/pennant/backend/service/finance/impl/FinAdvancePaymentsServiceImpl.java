@@ -333,12 +333,12 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	@Override
 	public List<AuditDetail> validate(List<FinAdvancePayments> finAdvancePayments, long workflowId, String method,
-			String auditTranType, String usrLanguage, FinanceMain financeMain) {
-		return doValidation(finAdvancePayments, workflowId, method, auditTranType, usrLanguage, financeMain);
+			String auditTranType, String usrLanguage, FinanceDetail financeDetail) {
+		return doValidation(finAdvancePayments, workflowId, method, auditTranType, usrLanguage, financeDetail);
 	}
 
 	private List<AuditDetail> doValidation(List<FinAdvancePayments> finAdvancePayments, long workflowId, String method,
-			String auditTranType, String usrLanguage, FinanceMain financeMain) {
+			String auditTranType, String usrLanguage, FinanceDetail financeDetail) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
@@ -346,7 +346,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			List<AuditDetail> advancePayAuditDetails = getAdvancePaymentAuditDetail(finAdvancePayments, auditTranType,
 					method, workflowId);
 			for (AuditDetail auditDetail : advancePayAuditDetails) {
-				validateAdvancePayment(auditDetail, method, usrLanguage, financeMain);
+				validateAdvancePayment(auditDetail, method, usrLanguage, financeDetail);
 			}
 			auditDetails.addAll(advancePayAuditDetails);
 		}
@@ -356,7 +356,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	}
 
 	private AuditDetail validateAdvancePayment(AuditDetail auditDetail, String usrLanguage, String method,
-			FinanceMain financeMain) {
+			FinanceDetail financeDetail) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinAdvancePayments finAdvancePay = (FinAdvancePayments) auditDetail.getModelData();
@@ -427,10 +427,14 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 		//validation related to loanStartDate and first DisbursmentDate should be same.
-		if (DateUtility.compare(financeMain.getFinStartDate(), finAdvancePay.getLlDate()) != 0
-				&& finAdvancePay.getPaymentSeq() == 1) {
-			 ErrorDetail errorDetail = new ErrorDetail("65032", new String[] { "Key"});
-			auditDetail.setErrorDetail(errorDetail);
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		boolean noValidation = isnoValidationUserAction(financeDetail.getUserAction());
+		if (!noValidation && !isDeleteRecord(finAdvancePay) && !finAdvancePay.ispOIssued()) {
+			if (finAdvancePay.getPaymentSeq() == 1 && finAdvancePay.getLlDate() != null
+					&& DateUtility.compare(financeMain.getFinStartDate(), finAdvancePay.getLlDate()) != 0) {
+				ErrorDetail errorDetail = new ErrorDetail("65032", new String[] { "Key" });
+				auditDetail.setErrorDetail(errorDetail);
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -728,7 +732,18 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		}
 		return false;
 	}
-	
+
+	private boolean isnoValidationUserAction(String userAction) {
+		boolean noValidation = false;
+		if (userAction != null) {
+			if (userAction.equalsIgnoreCase("Cancel") || userAction.contains("Reject")
+					|| userAction.contains("Resubmit") || userAction.contains("Decline")) {
+				noValidation = true;
+			}
+		}
+		return noValidation;
+	}
+
 	public PayOrderIssueHeaderDAO getPayOrderIssueHeaderDAO() {
 		return payOrderIssueHeaderDAO;
 	}
