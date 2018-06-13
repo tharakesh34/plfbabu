@@ -178,6 +178,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	protected Button btnNew_TatNotificationLink;
 	protected Listbox listBoxReturnCheques;
 	protected Button btnNew_ReturnChequeLink;
+	protected Button btnNew_FinanceTabs;
+	protected Listbox listboxFinanceTabs;
 	
 	// Tab Details 
 	protected Tab tabFinanceCheckList;
@@ -191,7 +193,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	protected Tab tabDeviation;
 	protected Tab tabCustLimitCheck;	
 	protected Tab tabTatNotification;	
-
+	protected Tab tabFinanceTabs;	
+	
 /*	private transient List<FinanceReferenceDetail> oldVar_CheckList;
 	private transient List<FinanceReferenceDetail> oldVar_Agreement;
 	private transient List<FinanceReferenceDetail> oldVar_Eligibility;
@@ -332,6 +335,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			this.delationDeviation.setHeight((listboxHeight+80) + "px");
 			this.listBoxLimitService.setHeight((listboxHeight+80) + "px");
 			this.listBoxTatNotification.setHeight((listboxHeight+80) + "px");
+			this.listboxFinanceTabs.setHeight((listboxHeight+80) + "px");
+			
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getFinanceReference());
@@ -527,6 +532,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		dofillListbox(aFinanceReference.getLimitCodeDetailList(), this.listBoxLimitService);
 		
 		dofillListbox(aFinanceReference.getTatNotificationList(), this.listBoxTatNotification);
+		
+		dofillListbox(aFinanceReference.getFinanceTabsList(), this.listboxFinanceTabs);
 		
 		logger.debug("Leaving");
 	}
@@ -767,7 +774,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		enableOrDisablelistitems(this.listBoxBlackListRules, false);
 		enableOrDisablelistitems(this.listBoxPoliceRules, false);
 		enableOrDisablelistitems(this.listBoxReturnCheques, false);
-
+		enableOrDisablelistitems(this.listboxFinanceTabs, false);
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -805,6 +813,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			this.tabFinanceDedupe.setVisible(false);
 			this.tabCustLimitCheck.setVisible(false);
 			this.tabTatNotification.setVisible(false);
+			this.tabFinanceTabs.setVisible(false);
 			
 			if(StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_COLLATERAL) ||
 					StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_VAS) ||
@@ -815,6 +824,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		
 		if (StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_PREAPPROVAL)) {
 			this.tabDeviation.setVisible(false);
+			this.tabFinanceTabs.setVisible(false);
 		}
 		if (StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_ADDDISB)) {
 			this.tabCustLimitCheck.setVisible(true);
@@ -1159,6 +1169,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		items.addAll(this.listBoxReturnCheques.getItems());
 		items.addAll(this.listBoxLimitService.getItems());
 		items.addAll(this.listBoxTatNotification.getItems());
+		items.addAll(this.listboxFinanceTabs.getItems());
 		
 		for (int i = 0; i < items.size(); i++) {
 			FinanceReferenceDetail lsFinanceReferenceDetail = (FinanceReferenceDetail) items.get(i).getAttribute("data");
@@ -1557,6 +1568,10 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	
 	public void onClick$btnNew_TatNotificationLink(Event event) throws InterruptedException {
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_TATNOTIFICATION);
+	}
+	
+	public void onClick$btnNew_FinanceTabs(Event event) throws InterruptedException {
+		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_FINANCETABS);
 	}
 	
 	public void onCheckListItemDoubleClicked(ForwardEvent event) throws Exception {

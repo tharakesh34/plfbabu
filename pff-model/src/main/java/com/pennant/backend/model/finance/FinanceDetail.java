@@ -267,6 +267,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean lvInitTab = false;
 	private boolean rcuApprovalTab = false;
 	private boolean rcuInitTab = false;
+	private Map<String, String> showTabDetailMap = new HashMap<>();
 	
 	public FinanceDetail() {
 		
@@ -1030,5 +1031,14 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setRcuInitTab(boolean rcuInitTab) {
 		this.rcuInitTab = rcuInitTab;
 	}
+
+	public Map<String, String> getShowTabDetailMap() {
+		return showTabDetailMap;
+	}
+
+	public void setShowTabDetailMap(Map<String, String> showTabDetailMap) {
+		this.showTabDetailMap = showTabDetailMap;
+	}
+
 	
 }

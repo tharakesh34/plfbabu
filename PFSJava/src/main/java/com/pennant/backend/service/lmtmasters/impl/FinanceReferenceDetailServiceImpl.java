@@ -181,6 +181,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 			financeReference.setReturnChequeList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,finEvent, "","_TRCView"));
 			financeReference.setLimitCodeDetailList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent,"","_ALDView"));
 			financeReference.setTatNotificationList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent,"","_TATView"));
+			financeReference.setFinanceTabsList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent,"","_TFSView"));
 		}
 
 		return financeReference;

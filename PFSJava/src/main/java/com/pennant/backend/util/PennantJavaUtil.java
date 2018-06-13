@@ -128,6 +128,7 @@ import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.applicationmaster.SalesOfficer;
 import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
+import com.pennant.backend.model.applicationmaster.StageTabDetail;
 import com.pennant.backend.model.applicationmaster.SysNotification;
 import com.pennant.backend.model.applicationmaster.TakafulProvider;
 import com.pennant.backend.model.applicationmaster.TargetDetail;
@@ -2280,6 +2281,10 @@ public class PennantJavaUtil {
 		ModuleUtil.register("SecurityUserEmails", new ModuleMapping("SecurityUser", SecurityUser.class, new String[] {
 				"UserOperationRoles_View", "UserOperationRoles_View" }, securityWF, new String[] { "UsrEmail" }, null, 300));
 		
+		ModuleUtil.register("StageTabDetail", new ModuleMapping("StageTabDetail", StageTabDetail.class, new String[] { "StageTabDetail",
+		"StageTabDetail" }, null, new String[] {"TabId","TabDescription"}, new Object[][] { {
+			"Active", "0", 1 } }, 600));
+
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

@@ -118,6 +118,7 @@
 								<tab label="${c:l('label_Deviation.title')}" id="tabDeviation" />
 								<tab label="${c:l('label_CustomerLimitCheck.title')}" id="tabCustLimitCheck" />
 								<tab label="${c:l('label_TatNotification.title')}" id="tabTatNotification" />
+								<tab label="${c:l('label_FinanceTabs.title')}" id="tabFinanceTabs" />
 							</tabs>
 							<tabpanels>
 								<tabpanel>
@@ -510,6 +511,31 @@
 										</listbox>
 									</groupbox>
 								</tabpanel>
+														<tabpanel>
+									<groupbox id="gb_FinanceTabs" sclass="gb-dialog">
+										<div sclass="z-toolbar" style="padding:0">
+											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:0px;" widths="35%,30%,35%">
+												<toolbar align="start" sclass="toolbar-start">
+													<label value="${c:l('label_FinanceTabsList.title')}" style="font-weight:bold; font-size: 11px;" />
+												</toolbar>
+												<toolbar align="center" sclass="toolbar-center" />
+												<toolbar align="end" sclass="toolbar-end">
+													<button id="btnNew_FinanceTabs" label="${c:l('label_New')}" tooltiptext="${c:l('button_FinanceTabs.tooltiptext')}" />
+												</toolbar>
+											</hbox>
+										</div>
+										<listbox id="listboxFinanceTabs" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+											<listhead sizable="true">
+												<listheader sort="auto" hflex="min" visible="false" />
+												<listheader id="listheader_FinanceTabsId" label="${c:l('listheader_FinanceTabsId.label')}" sort="auto" hflex="min"/>
+												<listheader id="listheader_FinanceTabsCode" label="${c:l('listheader_FinanceTabsDesc.label')}" sort="auto" hflex="min" visible="false"/>
+												<listheader id="listheader_FinanceTabsDesc" label="${c:l('listheader_FinanceTabsDesc.label')}" sort="auto" hflex="min" />
+												<listheader id="listheader_FinanceTabsActive" label="${c:l('listheader_FinanceTabsActive.label')}" sort="auto" hflex="min" />
+											</listhead>
+										</listbox>
+									</groupbox>
+								</tabpanel>
+		
 							</tabpanels>
 						</tabbox>
 					</groupbox>

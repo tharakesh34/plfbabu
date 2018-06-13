@@ -1644,6 +1644,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<FinanceReferenceDetail> retScoringGroupList = new ArrayList<FinanceReferenceDetail>(1);
 		List<FinanceReferenceDetail> corpScoringGroupList = new ArrayList<FinanceReferenceDetail>(1);
 		List<FinanceReferenceDetail> checkListdetails = new ArrayList<FinanceReferenceDetail>(1);
+		Map<String,String> showTabMap = new HashMap<>();
+		
 		List<FinanceReferenceDetail> finRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(
 				financeType.getFinType(),
 				StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent, "_FINVIEW");
@@ -1711,13 +1713,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							financeDetail.setRcuApprovalTab(true);
 						} 
 					}
-				}
+				} else if (finrefDetail.getFinRefType() == FinanceConstants.PROCEDT_FINANCETABS) {
+					showTabMap.put(StringUtils.leftPad(String.valueOf(finrefDetail.getFinRefId()), 3, "0"), finrefDetail.getMandInputInStage());
+					continue;
+				}	
 			}
 		}
 
 		//Finance Agreement Details	
 		financeDetail.setAggrementList(aggrementList);
-
+		financeDetail.setShowTabDetailMap(showTabMap);
+		
 		if (isCustExist) {
 			if (financeMain.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
 

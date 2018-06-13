@@ -86,7 +86,8 @@ public class FinanceConstants {
 	public static final int		PROCEDT_LIMIT					= 12;
 	public static final int		PROCEDT_TATNOTIFICATION			= 13;
 	public static final int		PROCEDT_RETURNCHQ				= 14;
-
+	public static final int		PROCEDT_FINANCETABS				= 15;
+	
 	// Process Editor Stage Conditions
 	public static final int		PROCEDT_SHOWINSTAGE				= 1;
 	public static final int		PROCEDT_ALWINPUTSTAGE			= 2;

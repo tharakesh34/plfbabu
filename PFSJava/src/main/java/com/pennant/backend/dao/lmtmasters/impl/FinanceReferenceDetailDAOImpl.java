@@ -224,6 +224,8 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
 		} else if ("_TATView".equals(StringUtils.trimToEmpty(type))) {
 			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
+		} else if ("_TFSView".equals(StringUtils.trimToEmpty(type))) {
+			selectSql.append(" ,lovDescCodelov, lovDescRefDesc , lovDescNamelov ");
 		}
 		
 		selectSql.append(" From LMTFinRefDetail");
