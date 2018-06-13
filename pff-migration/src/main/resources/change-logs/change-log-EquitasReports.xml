@@ -304,4 +304,11 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 	 delete   from secgrouprights where grprightid in (select grprightid from secgrouprights where rightid in (select rightid from secrights where rightname='menuItem_FinanceManagement_CancelDisbursment'));
 	 </sql>
 	 </changeSet>
+	   <changeSet id="15" author="Manoj">
+	 <sql>
+	 	update bmtcountries set nextrolecode = '' where countrycode = '6';
+	 	update smtparameters set sysparmvalue = '6'  where sysparmcode in ('CURR_SYSTEM_COUNTRY','APP_DFT_NATION');
+	 </sql>
+	 </changeSet>
+	 
 	 </databaseChangeLog>
