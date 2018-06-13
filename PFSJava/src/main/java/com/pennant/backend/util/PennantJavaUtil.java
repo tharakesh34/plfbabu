@@ -2089,8 +2089,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("ManualAdvise", new ModuleMapping("ManualAdvise", ManualAdvise.class, new String[] { "ManualAdvise",
 				"ManualAdvise_AView" }, "MANUAL_ADVICE", new String[] {"AdviseType","FinReference","FeeTypeID"},null, 600));
 		
+		// ticket id --> 126950--added category description instead of categoryid
 		ModuleUtil.register("BounceReason", new ModuleMapping("BounceReason", BounceReason.class, new String[] {"BounceReasons", "BounceReasons_AView" }, 
-				masterWF, new String[] { "BounceID" , "BounceCode", "Category", "Reason" }, new Object[][] { { "Active", "0", 1 } }, 600));
+				masterWF, new String[] { "BounceID", "BounceCode", "Lovdesccategory", "Reason" }, new Object[][] { { "Active", "0", 1 } }, 600));
 
 		ModuleUtil.register("ProfitCenter", new ModuleMapping("ProfitCenter", ProfitCenter.class, new String[] {
 				"ProfitCenters", "ProfitCenters_AView" }, masterWF, new String[] { "ProfitCenterCode",

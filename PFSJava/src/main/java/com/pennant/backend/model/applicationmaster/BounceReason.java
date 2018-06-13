@@ -77,6 +77,7 @@ private static final long serialVersionUID = 1L;
 	private String ruleCode;
 	private String ruleCodeDesc;
 	private String returnCode;
+	private String lovdesccategory;
 	private boolean active;
 	@XmlTransient
 	private boolean newRecord=false;
@@ -108,6 +109,7 @@ private static final long serialVersionUID = 1L;
 		excludeFields.add("ruleCode");
 		excludeFields.add("ruleCodeDesc");
 		excludeFields.add("categoryDesc");
+		excludeFields.add("lovDescCategory");
 		return excludeFields;
 	}
 
@@ -277,4 +279,14 @@ private static final long serialVersionUID = 1L;
 	public void setTaxComponent(String taxComponent) {
 		this.taxComponent = taxComponent;
 	}
+
+
+	public String getLovdesccategory() {
+		return lovdesccategory;
+	}
+
+	public void setLovdesccategory(String lovdesccategory) {
+		this.lovdesccategory = lovdesccategory;
+	}
+	
 }

@@ -112,6 +112,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -400,7 +401,8 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		
 		this.bounceCode.setModuleName("BounceReason");
 		this.bounceCode.setMandatoryStyle(true);
-		this.bounceCode.setValueColumn("BounceID");
+		this.bounceCode.setValueColumn("BounceID");	
+		this.bounceCode.setValueType(DataType.LONG);
 		this.bounceCode.setDescColumn("BounceCode");
 		this.bounceCode.setDisplayStyle(2);
 		this.bounceCode.setValidateColumns(new String[] { "BounceID" , "BounceCode", "Category", "Reason" });
