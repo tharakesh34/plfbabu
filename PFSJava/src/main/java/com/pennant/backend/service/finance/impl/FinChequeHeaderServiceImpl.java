@@ -713,7 +713,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 			if (!isListContainsPDC) {
 				String[] parameters = new String[2];
 				parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + chequeHeader.getFinReference();
-				parameters[1] = PennantJavaUtil.getLabel("Label_PDC_Cheque");
+				parameters[1] = PennantJavaUtil.getLabel("label_PDC_Cheque");
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", parameters, null));
 			}
 		}
