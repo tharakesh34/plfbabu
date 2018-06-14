@@ -6494,7 +6494,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				//Mail Alert Notification for Customer/Dealer/Provider...etc
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-					processNotifications(aFinanceDetail, aFinanceMain);
+					//notification should not stop the process. why because tranaction already commited.
+					try {
+						processNotifications(aFinanceDetail, aFinanceMain);
+					} catch (Exception e) {
+						logger.debug(e);
+					}
 				}
 
 				// User Notifications Message/Alert
