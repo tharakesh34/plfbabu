@@ -93,7 +93,7 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	protected Button btnFileUpload;
 	protected Combobox apiType;
 
-	private final String uploadLoaction =PathUtil.getPath(PathUtil.APP_ROOT_PATH);
+	private final String uploadLoaction = "/opt/external";
 	private File file;
 	@Value("${api.authkey}")
 	private String authorization;
