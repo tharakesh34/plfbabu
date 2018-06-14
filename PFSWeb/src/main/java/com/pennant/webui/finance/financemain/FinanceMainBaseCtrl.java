@@ -1061,7 +1061,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.mMAReference);
 		}
 		this.finPurpose.setProperties("LoanPurpose", "LoanPurposeCode", "LoanPurposeDesc", false, 8);
-		this.finBranch.setProperties("UserDivBranch", "UsrID", "UserBranchDesc", true, LengthConstants.LEN_BRANCH);
+		this.finBranch.setProperties("UserDivBranch", "UserBranch", "UserBranchDesc", true, LengthConstants.LEN_BRANCH);
 		whereClause.append("usrID = ");
 		whereClause.append(getUserWorkspace().getLoggedInUser().getUserId());
 		whereClause.append(" AND ");
