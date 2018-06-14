@@ -1498,6 +1498,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		if (initType) {
+			//prepare delete verifications
 			for (Verification verification : this.verification.getVerifications()) {
 				if (!verification.isNewRecord() && isAgencyChanged(verification)) {
 					verification.setNewRecord(true);
@@ -1516,12 +1517,14 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 			}
 
+			//set new Verifications
 			for (Verification verification : this.verification.getVerifications()) {
 				if (verification.isNewRecord()) {
 					newverifications.add(verification);
 				}
 			}
-
+			
+			//group documents for new verifications by agency
 			for (Verification newVrf : newverifications) {
 				for (Verification vrf : this.verification.getVerifications()) {
 					if (!vrf.isInitiated() && !vrf.isNewRecord() && newVrf.getAgency() != null
