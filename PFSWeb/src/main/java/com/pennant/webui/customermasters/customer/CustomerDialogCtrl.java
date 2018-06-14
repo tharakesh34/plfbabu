@@ -2087,6 +2087,18 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.target.setVisible(false);
 			this.target.setMandatoryStyle(false);
 			// this.custRO1.setMandatoryStyle(false);
+		
+			boolean tabVisable = false;
+			String value=null;
+			try {
+				value = SysParamUtil.getValueAsString("CUSTOMER_CORP_FINACNE_TAB_REQ");
+			} catch (Exception e) {
+			}
+
+			if(StringUtils.equals(PennantConstants.YES, value) && ImplementationConstants.ALLOW_CUSTOMER_INCOMES){
+				tabVisable =true;
+			}
+			this.tabfinancial.setVisible(tabVisable);
 		}
 
 		Map<String, String> attributes = PennantApplicationUtil
