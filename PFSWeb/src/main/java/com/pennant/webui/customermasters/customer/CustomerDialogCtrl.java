@@ -2091,7 +2091,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			boolean tabVisable = false;
 			String value=null;
 			try {
-				value = SysParamUtil.getValueAsString("CUSTOMER_CORP_FINACNE_TAB_REQ");
+				value = SysParamUtil.getValueAsString("CUSTOMER_CORP_FINANCE_TAB_REQ");
 			} catch (Exception e) {
 			}
 
