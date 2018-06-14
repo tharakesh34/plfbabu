@@ -48,7 +48,12 @@
 		</dependency>
 		<dependency>
 			<groupId>${pff.groupId}</groupId>
-			<artifactId>${pff.client.artifactId}</artifactId>
+			<artifactId>pff-interface-${client.code}</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${pff.groupId}</groupId>
+			<artifactId>pff-extension-${client.code}</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

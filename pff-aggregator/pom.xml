@@ -9,7 +9,7 @@
 
 	<properties>
 		<pff.groupId>com.pennanttech.pennapps.pff</pff.groupId>
-		<pff.client.artifactId>pff-niyogin</pff.client.artifactId>
+		<client.code>core</client.code>
 		<pff.version>4.7.14-SNAPSHOT</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.8</jdk.version>
@@ -44,8 +44,9 @@
 		<module>../pff-model</module>
 		<module>../pff-core</module>
 		<module>../pff-interface</module>
-		<module>../${pff.client.artifactId}</module>
-		<module>../pff-interface-bajaj</module>
+		<module>../pff-interface-${client.code}</module>
+		<module>../pff-extension</module>
+		<module>../pff-extension-${client.code}</module>
 		<module>../PLFInterface</module>
 		<module>../PFSJava</module>
 		<module>../PFSBatch</module>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -11,9 +12,8 @@
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 		http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
-        <import resource="classpath:pff-interfaces-context.xml"/>
-
-	<bean id="niyoginService" class="com.pennanttech.pff.external.service.NiyoginService"
+        
+   <bean id="niyoginService" class="com.pennanttech.pff.external.service.NiyoginService"
 		abstract="true">
 		<property name="niyoginDAOImpl" ref="niyoginDAOImpl" />
 		<property name="interfaceLoggingDAO" ref="interfaceLoggingDAO" />
@@ -96,15 +96,8 @@
 		<property name="serviceUrl" value="${niyogin.tally.url}" />
 	</bean>		
 	<bean id="mandateProcess" class="com.pennanttech.niyogin.mandate.MandateProcess"  parent="abstractMandateProcess"/>
-	<!-- <bean id="presentmentRequest" class="com.pennanttech.pff.presentment.PresentmentRequest"
-		parent="abstractMandateProcess" /> -->
 	<bean id="presentmentProcess" class="com.pennanttech.pff.presentment.AbstractPresentmentProcess" scope="prototype" parent="abstractInterface" />
-		
-	<bean id="disbursementRequest" class="com.pennanttech.pff.disbursement.DisbursementRequest"
-		parent="abstarctDisbursementRequest" />
-	<bean id="disbursementResponse" class="com.pennanttech.pff.disbursement.DisbursementResponse"
-		parent="abstarctDisbursementResponse" />
-	
-	<bean id="cibilEnquiryProcess" class="com.pennanttech.pff.cibil.CibilEnquiryProcess"
-		parent="abstractCibilEnquiryProcess" />	
+	<bean id="disbursementRequest" class="com.pennanttech.pff.disbursement.DisbursementRequest" parent="abstarctDisbursementRequest" />
+	<bean id="disbursementResponse" class="com.pennanttech.pff.disbursement.DisbursementResponse" parent="abstarctDisbursementResponse" />
+	<bean id="cibilEnquiryProcess" class="com.pennanttech.pff.cibil.CibilEnquiryProcess" parent="abstractCibilEnquiryProcess" />	
 </beans>

@@ -16,7 +16,9 @@
 			classpath:applicationContext-txn.xml,
  			classpath:securityContext.xml,
  			classpath:applicationContext-core-interface.xml,
- 			classpath:client-interfaces-context.xml
+ 			classpath:interfaceContext-core.xml,
+ 			classpath:interfaceContext.xml,
+ 			classpath:extensionContext.xml
 		</param-value>
 	</context-param>
 	<context-param>

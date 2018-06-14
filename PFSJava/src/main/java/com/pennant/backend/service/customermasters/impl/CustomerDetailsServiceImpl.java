@@ -183,6 +183,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.external.Crm;
 import com.rits.cloning.Cloner;
 
@@ -259,12 +260,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CollateralSetupDAO collateralSetupDAO;
 	private VASRecordingDAO vASRecordingDAO;
 	private List<FinanceMain> financeMainList;
+	
 	@Autowired(required = false)
 	private Crm crm;
 	
-/*	@Autowired(required=false)
-	private CustomerServiceExtension<Customer> customerServiceExtension;
-	*/
+	@Autowired(required=false)
+	private PostValidationHook customerPostValidationHook;
+
 	public CustomerDetailsServiceImpl() {
 		super();
 	}
@@ -2910,6 +2912,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		logger.debug("Entering");
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+		
+		doPostHookValidation(auditHeader);		
+		
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -3026,6 +3031,17 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	private void doPostHookValidation(AuditHeader auditHeader) {
+		if (customerPostValidationHook != null) {
+			List<ErrorDetail> errorDetails = customerPostValidationHook.validation(auditHeader);
+
+			if (errorDetails != null) {
+				errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
+				auditHeader.setErrorList(errorDetails);
+			}
+		}
 	}
 
 	/**

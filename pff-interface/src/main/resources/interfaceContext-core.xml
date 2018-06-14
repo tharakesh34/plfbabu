@@ -11,9 +11,7 @@
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 		http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
-
-	<context:component-scan base-package="com.pennanttech.pff" />
-	
+        
 	<bean id="interfaceLoggingDAO" class="com.pennanttech.pff.logging.dao.impl.InterfaceLoggingDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 		<property name="transactionManager" ref="transactionManager" />
@@ -32,6 +30,5 @@
 	<bean id="abstractPresentmentProcess" class="com.pennanttech.pff.external.presentment.AbstractPresentmentRequest" abstract="true" parent="abstractInterface"/>
 	<bean id="abstarctDisbursementRequest" class="com.pennanttech.pff.external.disbursment.AbstarctDisbursementRequest" abstract="true" parent="abstractInterface"/>
 	<bean id="abstarctDisbursementResponse" class="com.pennanttech.pff.external.disbursment.AbstarctDisbursementResponse" abstract="true" parent="abstractInterface"/>
-	
 	<bean id="abstractCibilEnquiryProcess" class="com.pennanttech.pff.external.creditInformation.AbstractCibilEnquiryProcess" abstract="true" parent="abstractInterface"/>
 </beans>

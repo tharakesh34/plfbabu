@@ -19,34 +19,18 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.scheduler.AbstractJobScheduler;
 import com.pennanttech.pennapps.core.scheduler.Job;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.external.AbstractInterface;
-import com.pennanttech.pff.external.MandateProcess;
-import com.pennanttech.pff.external.PresentmentRequest;
 
 public class BajajJobScheduler extends AbstractJobScheduler {
 	private static final Logger logger = Logger.getLogger(BajajJobScheduler.class);
 
 	protected DataSource dataSource;
 	private DataEngineConfig datEngine = null;
-		
+
 	@Autowired
-	protected DataSource		finOneDataSource;
-	
-	@Autowired
-	private MandateProcess mandateProcess;
-	
-	@Autowired
-	private PresentmentRequest presentmentRequest;
-	
-	@Autowired
-	private AbstractInterface abstractInterface;
+	protected DataSource finOneDataSource;
 
 	public BajajJobScheduler() {
 		super();
-
-		abstractInterface = (AbstractInterface)mandateProcess;
-		abstractInterface = (AbstractInterface)presentmentRequest;
-
 	}
 
 	@Override
@@ -59,13 +43,9 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 		posidexCustomerUpdateRespJob();
 		masterExtractJob();
 		customerCrudOpretion();
-		
-		
-		
 
 		logger.debug(Literal.LEAVING);
 	}
-	
 
 	private void masterExtractJob() {
 		logger.debug(Literal.ENTERING);
