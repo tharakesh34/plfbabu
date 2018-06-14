@@ -2790,7 +2790,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			break;
 		case AssetConstants.UNIQUE_ID_QUERY_MGMT:
 			tab.removeForward(Events.ON_SELECT, (Tab) null, selectMethodName);
-			appendQueryMangementTab(true);
+			if(isTabVisible(StageTabConstants.QueryMangement)){
+				appendQueryMangementTab(true);
+			}
 			break;
 		default:
 			break;
@@ -15320,8 +15322,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		//Query Management Tab
-		appendQueryMangementTab(false);
-				
+		if(isTabVisible(StageTabConstants.QueryMangement)){
+			appendQueryMangementTab(false);
+		}		
 		logger.debug("Leaving");
 	}
 

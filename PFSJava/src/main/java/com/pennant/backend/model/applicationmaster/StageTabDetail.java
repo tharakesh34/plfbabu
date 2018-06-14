@@ -7,6 +7,7 @@ package com.pennant.backend.model.applicationmaster;
 public class StageTabDetail{
 	
 	private int tabId;
+	private String tabCode; 
 	private String tabDescription;
 	private	String moduleName;
 	private String lovValue;
@@ -21,6 +22,14 @@ public class StageTabDetail{
 
 	public void setTabId(int tabId) {
 		this.tabId = tabId;
+	}
+
+	public String getTabCode() {
+		return tabCode;
+	}
+
+	public void setTabCode(String tabCode) {
+		this.tabCode = tabCode;
 	}
 
 	public String getTabDescription() {

@@ -1959,6 +1959,9 @@ UNION ALL
 			<column name="TABID" type="bigint">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_stagetabdetail_tabid"/>
 			</column>
+			<column name="TABCODE" type="VARCHAR(8)">
+				<constraints nullable="false"/>
+			</column>
 			<column name="TABDESCRIPTION" type="VARCHAR(50)">
 				<constraints nullable="false"/>
 			</column>
@@ -3150,17 +3153,17 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 	<changeSet id="67" author="vijaykumar.l">
 	<sql>
 	delete from STAGETABDETAIL;
-	insert into STAGETABDETAIL values(1,'Advance Payment',1);
-	insert into STAGETABDETAIL values(2,'Co Applicants ',1);
-	insert into STAGETABDETAIL values(3,'Tax Detail',1);
-	insert into STAGETABDETAIL values(4,'Documents',1);
-	insert into STAGETABDETAIL values(5,'Covenant',1);
-	insert into STAGETABDETAIL values(6,'Mandate',1);
-	insert into STAGETABDETAIL values(7,'Cheque',1);
-	insert into STAGETABDETAIL values(8,'Collaterals',1);
-	insert into STAGETABDETAIL values(9,'VAS',1);
-	insert into STAGETABDETAIL values(10,'Extended Field',1);
-	insert into STAGETABDETAIL values(11,'Query Mangement',1);
+	insert into STAGETABDETAIL values(1,'ADVPAY','Advance Payment',1);
+	insert into STAGETABDETAIL values(2,'COAPP','Co Applicants ',1);
+	insert into STAGETABDETAIL values(3,'TAXDET','Tax Detail',1);
+	insert into STAGETABDETAIL values(4,'DOCUMENT','Documents Details',1);
+	insert into STAGETABDETAIL values(5,'COVENANT','Covenant Details',1);
+	insert into STAGETABDETAIL values(6,'MANDATE','Mandate Details',1);
+	insert into STAGETABDETAIL values(7,'CHEQUE','Cheque Details',1);
+	insert into STAGETABDETAIL values(8,'COLLATER','Collateral Setup',1);
+	insert into STAGETABDETAIL values(9,'VAS','VAS Details',1);
+	insert into STAGETABDETAIL values(10,'EXNTFLDS','Extended Field Details',1);
+	insert into STAGETABDETAIL values(11,'QRYMGMT','Query Mangement Details',1);
 	</sql>
 	</changeSet>
 	

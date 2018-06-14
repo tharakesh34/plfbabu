@@ -2283,7 +2283,7 @@ public class PennantJavaUtil {
 				"UserOperationRoles_View", "UserOperationRoles_View" }, securityWF, new String[] { "UsrEmail" }, null, 300));
 		
 		ModuleUtil.register("StageTabDetail", new ModuleMapping("StageTabDetail", StageTabDetail.class, new String[] { "StageTabDetail",
-		"StageTabDetail" }, null, new String[] {"TabId","TabDescription"}, new Object[][] { {
+		"StageTabDetail" }, null, new String[] {"TabCode","TabDescription"}, new Object[][] { {
 			"Active", "0", 1 } }, 600));
 
 	}
