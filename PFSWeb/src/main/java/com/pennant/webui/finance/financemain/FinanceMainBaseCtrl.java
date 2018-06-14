@@ -16009,6 +16009,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
+			if (lVerificationCtrl != null) {
+				lVerificationCtrl.setFinanceDetail(getFinanceDetail());
+			}
+			
 			logger.debug("Leaving");
 			return getFinanceDetail();
 		}
