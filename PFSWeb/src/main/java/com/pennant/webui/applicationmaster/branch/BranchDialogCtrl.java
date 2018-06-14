@@ -84,7 +84,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.framework.security.core.User;
-import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -786,27 +785,27 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		}
 		if (!this.faxCountryCode.isReadonly()) {
 			this.faxCountryCode.setConstraint(
-					new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_FaxCountryCode.value"), true, 1));
+					new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_FaxCountryCode.value"), false, 1));
 		}
 		if (!this.faxAreaCode.isReadonly()) {
 			this.faxAreaCode.setConstraint(
-					new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_FaxAreaCode.value"), true, 2));
+					new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_FaxAreaCode.value"), false, 2));
 		}
 		if (!this.branchFax.isReadonly()) {
 			this.branchFax.setConstraint(
-					new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_BranchFax.value"), true, 3));
+					new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_BranchFax.value"), false, 3));
 		}
 		if (!this.phoneCountryCode.isReadonly()) {
 			this.phoneCountryCode.setConstraint(
-					new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_phoneCountryCode.value"), true, 1));
+					new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_phoneCountryCode.value"), false, 1));
 		}
 		if (!this.phoneAreaCode.isReadonly()) {
 			this.phoneAreaCode.setConstraint(
-					new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_phoneAreaCode.value"), true, 2));
+					new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_phoneAreaCode.value"), false, 2));
 		}
 		if (!this.branchTel.isReadonly()) {
 			this.branchTel.setConstraint(
-					new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_BranchTel.value"), true, 3));
+					new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_BranchTel.value"), false, 3));
 		}
 		if (!this.branchSwiftBankCode.isReadonly()) {
 			this.branchSwiftBankCode

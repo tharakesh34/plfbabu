@@ -191,8 +191,7 @@
 								<label id="label_BranchDialog_BranchFax"
 									value="${c:l('label_BranchDialog_BranchFax.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px" />
 									<textbox id="faxCountryCode"
 										width="40px" />
 									<label value="-"
@@ -207,8 +206,7 @@
 								<label id="label_BranchDialog_BranchTel"
 									value="${c:l('label_BranchDialog_BranchTel.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px" />
 									<textbox id="phoneCountryCode"
 										width="40px" />
 									<label value="-"
