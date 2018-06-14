@@ -201,7 +201,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		// Set the old verification fields back.
+		// get old Verifications
 		Map<String, Verification> map;
 		if (initType) {
 			map = getOldVerifications(DocumentType.CUSTOMER, TableType.STAGE_TAB);
@@ -209,6 +209,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			map = getOldVerifications(DocumentType.CUSTOMER, TableType.BOTH_TAB);
 		}
 
+		//set delete Verifications
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			Verification item;
 			if (deleteSet.contains(entrySet.getKey())) {
@@ -224,6 +225,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
+		// Set the old verification fields back.
 		for (Entry<String, Verification> entrySet : customerDocuments.entrySet()) {
 			Verification previous = map.get(entrySet.getKey());
 			Verification current = entrySet.getValue();
@@ -232,6 +234,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
+		//get Recording Verifications
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			RCUDocument rcuDocument;
 			if (customerDocuments.get(entrySet.getKey()) == null) {
@@ -246,6 +249,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		}
 
+		//get Re-initiated Verifications through dummy key
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			if (entrySet.getKey().startsWith(String.valueOf(DocumentType.CUSTOMER).concat("dummy$#"))) {
 				RCUDocument document = entrySet.getValue().getRcuDocument();
@@ -290,7 +294,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		// Set the old verification fields back.
+		// get old Verifications
 		Map<String, Verification> map;
 		if (initType) {
 			map = getOldVerifications(documentType, TableType.STAGE_TAB);
@@ -298,6 +302,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			map = getOldVerifications(documentType, TableType.BOTH_TAB);
 		}
 
+		//set delete Verifications
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			Verification item;
 			if (deleteSet.contains(entrySet.getKey())) {
@@ -313,6 +318,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
+		//Set the old verification fields back.
 		for (Entry<String, Verification> entrySet : docMap.entrySet()) {
 			Verification previous = map.get(entrySet.getKey());
 			Verification current = entrySet.getValue();
@@ -321,6 +327,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
+		//get Recording Verifications
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			RCUDocument rcuDocument;
 			if (docMap.get(entrySet.getKey()) == null) {
@@ -332,9 +339,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					docMap.put(entrySet.getKey(), entrySet.getValue());
 				}
 			}
-
 		}
 
+		//get Re-initiated Verifications through dummy key
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			if (entrySet.getKey().startsWith(String.valueOf(documentType).concat("dummy$#"))) {
 				RCUDocument document = entrySet.getValue().getRcuDocument();
@@ -348,7 +355,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 
 					entrySet.getValue().setDocName(docName);
-
+					
+					//set Last Verification Details
 					if (initType) {
 						verificationService.setLastStatus(entrySet.getValue());
 					}
@@ -553,7 +561,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 			} else {
 				if (documentType == DocumentType.COLLATRL) {
-					reference = ver.getReferenceFor();
 					reference = ver.getReference().concat(ver.getReferenceFor());
 				}
 			}
