@@ -527,8 +527,7 @@
 										<listbox id="listboxFinanceTabs" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
 											<listhead sizable="true">
 												<listheader sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_FinanceTabsId" label="${c:l('listheader_FinanceTabsId.label')}" sort="auto" hflex="min"/>
-												<listheader id="listheader_FinanceTabsCode" label="${c:l('listheader_FinanceTabsDesc.label')}" sort="auto" hflex="min" visible="false"/>
+												<listheader id="listheader_FinanceTabsCode" label="${c:l('listheader_FinanceTabsCode.label')}" sort="auto" hflex="min" visible="false"/>
 												<listheader id="listheader_FinanceTabsDesc" label="${c:l('listheader_FinanceTabsDesc.label')}" sort="auto" hflex="min" />
 												<listheader id="listheader_FinanceTabsActive" label="${c:l('listheader_FinanceTabsActive.label')}" sort="auto" hflex="min" />
 											</listhead>

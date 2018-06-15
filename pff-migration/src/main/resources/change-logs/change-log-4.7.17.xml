@@ -1974,7 +1974,7 @@ UNION ALL
 			SELECT     T1.FinRefDetailId, T1.FinType, T2.FinTypeDesc lovDescFinTypeDescName, T1.FinRefType, T1.FinRefId, T3.TabDescription lovDescNamelov, 
 					  T1.IsActive, T1.ShowInStage, T1.MandInputInStage, T1.AllowInputInStage, T1.AllowDeviation, T1.AllowWaiver, T1.AllowPostpone, 
 					  T1.AllowExpire, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
-					  T3.TabId lovDescCodelov, T3.TabDescription lovDescRefDesc,  T1.OverRide,  T1.OverRideValue, T1.FinEvent,T1.AlertType
+					  T3.TabCode lovDescCodelov, T3.TabDescription lovDescRefDesc,  T1.OverRide,  T1.OverRideValue, T1.FinEvent,T1.AlertType
 					  FROM         LMTFinRefDetail_Temp T1 LEFT JOIN
 					  RMTFinanceTypes T2 ON T1.FinType = T2.FinType  INNER JOIN
 					  STAGETABDETAIL T3 ON T1.FinRefId = T3.TabID AND T1.FinRefType = '15'
@@ -1982,7 +1982,7 @@ UNION ALL
   					  SELECT     T1.FinRefDetailId, T1.FinType, T2.FinTypeDesc lovDescFinTypeDescName, T1.FinRefType, T1.FinRefId, T3.TabDescription lovDescNamelov, 
 					  T1.IsActive, T1.ShowInStage, T1.MandInputInStage, T1.AllowInputInStage, T1.AllowDeviation, T1.AllowWaiver, T1.AllowPostpone, 
 					  T1.AllowExpire, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
-					  T3.TabId lovDescCodelov, T3.TabDescription lovDescRefDesc,  T1.OverRide,  T1.OverRideValue, T1.FinEvent,T1.AlertType
+					  T3.TabCode lovDescCodelov, T3.TabDescription lovDescRefDesc,  T1.OverRide,  T1.OverRideValue, T1.FinEvent,T1.AlertType
                       FROM         LMTFinRefDetail T1 LEFT JOIN
 					  RMTFinanceTypes T2 ON T1.FinType = T2.FinType  INNER JOIN
 					  STAGETABDETAIL T3 ON T1.FinRefId = T3.TabID AND T1.FinRefType = '15'
