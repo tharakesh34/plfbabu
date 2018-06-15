@@ -3319,6 +3319,8 @@ public class PennantStaticListUtil {
 		/*schedulCalculationCodes.put(CalculationConstants.RPYCHG_ADDLAST, new ValueLabel(CalculationConstants.RPYCHG_ADDLAST, Labels.getLabel("label_Add_Last")));*/
 		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_ADJTERMS, new ValueLabel(CalculationConstants.RPYCHG_ADJTERMS, Labels.getLabel("label_Adj_Terms")));
 		
+		disbCalculationCodes.putAll(scheduleCalculationCodes);
+		
 		// BPI Treatment
 		bpimethods.put(FinanceConstants.BPI_NO, new ValueLabel(FinanceConstants.BPI_NO, Labels.getLabel("label_NO_BPI")));
 		bpimethods.put(FinanceConstants.BPI_DISBURSMENT, new ValueLabel(FinanceConstants.BPI_DISBURSMENT, Labels.getLabel("label_DISBURSMENT_BPI")));
