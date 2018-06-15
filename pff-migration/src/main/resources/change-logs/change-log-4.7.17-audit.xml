@@ -76,7 +76,7 @@ update adtCustomers set marginDeviation=0;
 	</addColumn>
 </changeSet>
 
-<changeSet id="8" author="Vinay">
+<!-- <changeSet id="8" author="Vinay">
 	<comment> Update Newly added column Id with RowNumbers to preserve null error </comment>
 	<sql> 
 		update AdtFinLiabilityReq T1 set id=(Select cnt from (Select ROW_NUMBER() OVER(ORDER BY FINREFERENCE,FINEVENT)cnt,T2.* FROM AdtFinLiabilityReq T2)T3
@@ -91,5 +91,5 @@ update adtCustomers set marginDeviation=0;
 </changeSet>
 <changeSet id="8_Post" author="Vinay" dbms="oracle">
 	<addNotNullConstraint tableName="AdtFinLiabilityReq" columnName="id"/>
-</changeSet>
+</changeSet> -->
 </databaseChangeLog>

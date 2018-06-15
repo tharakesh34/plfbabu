@@ -2007,7 +2007,7 @@ UNION ALL
  </sql>
 	</changeSet>
 	
-	<!-- <changeSet id="50" author="Durgaprasad G">
+	<changeSet id="50" author="Durgaprasad G">
 			<sql>
 				Delete from secrolegroups Where grpid in (Select grpid from secgroups Where grpcode = 'GROUP_PRESENTMENTDETAILS');
 				Delete from secrolegroups Where Roleid in (Select Roleid from Secroles Where Rolecd in ('ROLE_PRESENTMENTDETAILS','PRESENTMENTBATCH_MAKER','PRESENTMENTBATCH_APPROVER','PRESENTMENT_DETAIL_ENQUIRY')); 
@@ -2109,7 +2109,7 @@ UNION ALL
 				UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);	
 				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
 			</sql>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="51" author="Durgaprasad G">
 			<sql>
@@ -3079,12 +3079,12 @@ UNION ALL
 			</createView>
 </changeSet>
 
-<!-- <changeSet id="59" author="Manoj">
+<changeSet id="59" author="Manoj">
 	<sql>
 		DELETE FROM SMTPARAMETERS where SYSPARMCODE = 'EXT_CRM_INT_ENABLED';
 		INSERT INTO SMTPARAMETERS VALUES ('EXT_CRM_INT_ENABLED', 'CRM Required or Not(Y, N)', 'String', 1, 'Y', 1, 0, NULL, NULL,'CRM Required or Not', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 	</sql>
-</changeSet> -->
+</changeSet>
 <changeSet id="60" author="vijaykumar.l">
 <sql>
 delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Customer_Obligation_Internal';
@@ -3209,15 +3209,15 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
      JOIN rules t2 ON t1.ruleid = t2.ruleid
 		</createView>
 	</changeSet>
-<!-- <changeSet id="59" author="Manoj">
+<changeSet id="59" author="Manoj">
 	<sql>
 		<comment>Adding SMTParameter for finance tab requirement in corp customer</comment>
 		DELETE FROM SMTPARAMETERS where SYSPARMCODE = 'CUSTOMER_CORP_FINANCE_TAB_REQ';
 		INSERT INTO SMTPARAMETERS VALUES ('CUSTOMER_CORP_FINANCE_TAB_REQ', 'FinanceTab Required or Not for Corp Cust(Y, N)', 'String', 1, 'N', 1, 0, NULL, NULL,'FinanceTab Required or Not', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 	</sql>
-</changeSet> -->
+</changeSet>
 
-<changeSet id="60" author="Vinay">
+<!-- <changeSet id="60" author="Vinay">
 	<addColumn tableName="FinLiabilityReq_Temp">
 		<column name="Id" type="bigint"/>
 	</addColumn>
@@ -3266,6 +3266,6 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 	<sql>
 		alter sequence seqfinliabilityreq restart start with (Select max(id) from (Select max(id)+1 id from FinLiabilityReq UNION select max(id)+1 id from FinLiabilityReq_Temp)T));
 	</sql>
-</changeSet>
+</changeSet> -->
 </databaseChangeLog>
 	
