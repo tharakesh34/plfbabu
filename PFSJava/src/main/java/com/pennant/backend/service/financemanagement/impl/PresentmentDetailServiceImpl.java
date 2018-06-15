@@ -61,6 +61,7 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -106,6 +107,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private FinanceMainDAO financeMainDAO;
 	private ChequeDetailDAO chequeDetailDAO;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	
 	@Autowired(required = false)
 	private PresentmentRequest presentmentRequest;
@@ -172,6 +174,14 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
 		this.chequeDetailDAO = chequeDetailDAO;
+	}
+
+	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {
+		return finReceiptHeaderDAO;
+	}
+
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 
 	@Override
@@ -466,6 +476,13 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			finReceiptDetail.setPartnerBankAc(header.getPartnerAcctNumber());
 			finReceiptDetail.setPartnerBankAcType(header.getPartnerAcctType());
 			receiptHeader.getReceiptDetails().add(finReceiptDetail);
+			
+			//Receiptid creation #15-06-2018
+			long receiptId=getFinReceiptHeaderDAO().generatedReceiptID(receiptHeader);
+			receiptHeader.setReceiptID(receiptId);
+			for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+				receiptDetail.setReceiptID(receiptId);
+			}
 
 			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 

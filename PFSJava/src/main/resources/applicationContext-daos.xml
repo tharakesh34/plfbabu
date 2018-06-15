@@ -9904,6 +9904,7 @@
 		<property name="repaymentPostingsUtil" ref="repayPostingUtil" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="chequeDetailDAO" ref="chequeDetailDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 	</bean>
 
 

@@ -310,7 +310,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.accHolderName.setMaxlength(200);
 		this.totAmount.setProperties(false, ccyEditField);
 		this.amount.setProperties(false, ccyEditField);
-		this.amount.setTextBoxWidth(200);
+		this.amount.setTextBoxWidth(150);
 
 		this.totNoOfCheques.setReadonly(true);
 		this.totAmount.setReadonly(true);
@@ -995,15 +995,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			this.chequeType.setConstraint(new StaticListValidator(chequeTypeList, Labels.getLabel("label_ChequeDetailDialog_ChequeType.value")));
 		}
 
-		// Number of cheques
-		if (!this.totNoOfCheques.isReadonly()) {
-			this.totNoOfCheques.setConstraint(new PTNumberValidator(Labels.getLabel("label_ChequeDetailDialog_NoOfCheques.value"), true, false));
-		}
-		// Total Amount
-		if (!this.totAmount.isReadonly()) {
-			this.totAmount.setConstraint(new PTDecimalValidator( Labels.getLabel("label_ChequeDetailDialog_Amount.value"), ccyEditField, true, false));
-		}
-		
 		String chequeType = this.chequeType.getSelectedItem().getValue();
 		
 		//Cheque Type
