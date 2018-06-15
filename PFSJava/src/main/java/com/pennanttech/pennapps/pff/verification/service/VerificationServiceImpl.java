@@ -131,11 +131,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private RiskContainmentUnitDAO riskContainmentUnitDAO;
 
 	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType,
-			String tableType, String auditTranType, boolean isInitTab) {
+			String auditTranType, boolean isInitTab) {
 		logger.debug(Literal.ENTERING);
 
 		List<Long> idList = null;
 		Verification verification = null;
+		WorkflowEngine engine = null;
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		if (verificationType == VerificationType.FI) {
 			verification = financeDetail.getFiVerification();
@@ -157,10 +159,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 		String[] fields = PennantJavaUtil.getFieldDetails(verification, verification.getExcludeFields());
 
-		List<AuditDetail> auditDetails = new ArrayList<>();
-
-		WorkflowEngine engine = new WorkflowEngine(
-				WorkFlowUtil.getWorkflow(verification.getWorkflowId()).getWorkFlowXml());
+		if (verification.getWorkflowId() != 0) {
+			engine = new WorkflowEngine(WorkFlowUtil.getWorkflow(verification.getWorkflowId()).getWorkFlowXml());
+		}
 		int i = 0;
 
 		for (Verification item : verification.getVerifications()) {
@@ -203,7 +204,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					verificationDAO.update(item, TableType.MAIN_TAB);
 				}
 
-				if (engine.compareTo(verification.getTaskId(),
+				if (verification.getWorkflowId() == 0 || engine.compareTo(verification.getTaskId(),
 						verification.getNextTaskId().replace(";", "")) == Flow.SUCCESSOR) {
 					if (!idList.contains(item.getId())) {
 						if (verificationType == VerificationType.FI) {
@@ -514,8 +515,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 		// Set customer documents id's
 		Map<String, CustomerDocument> customerDoumentMap = new HashMap<>();
-		for (CustomerDocument document : customerDocuemnts) {
-			customerDoumentMap.put(document.getCustDocCategory(), document);
+		if (customerDocuemnts != null) {
+			for (CustomerDocument document : customerDocuemnts) {
+				customerDoumentMap.put(document.getCustDocCategory(), document);
+			}
 		}
 
 		for (LVDocument lvDocument : item.getLvDocuments()) {
@@ -530,8 +533,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 		// Set loan documents id's
 		Map<String, DocumentDetails> loanDocumentMap = new HashMap<>();
-		for (DocumentDetails document : loanDocuments) {
-			loanDocumentMap.put(document.getDocCategory(), document);
+		if (loanDocuments != null) {
+			for (DocumentDetails document : loanDocuments) {
+				loanDocumentMap.put(document.getDocCategory(), document);
+			}
 		}
 
 		for (LVDocument lvDocument : item.getLvDocuments()) {
@@ -580,8 +585,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 		// Set customer documents id's
 		Map<String, CustomerDocument> customerDoumentMap = new HashMap<>();
-		for (CustomerDocument document : customerDocuemnts) {
-			customerDoumentMap.put(document.getCustDocCategory(), document);
+		if (customerDocuemnts != null) {
+			for (CustomerDocument document : customerDocuemnts) {
+				customerDoumentMap.put(document.getCustDocCategory(), document);
+			}
 		}
 
 		for (RCUDocument rcuDocument : item.getRcuDocuments()) {
@@ -597,8 +604,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 		// Set loan documents id's
 		Map<String, DocumentDetails> loanDocumentMap = new HashMap<>();
-		for (DocumentDetails document : loanDocuments) {
-			loanDocumentMap.put(document.getDocCategory(), document);
+		if (loanDocuments != null) {
+			for (DocumentDetails document : loanDocuments) {
+				loanDocumentMap.put(document.getDocCategory(), document);
+			}
 		}
 
 		for (RCUDocument rcuDocument : item.getRcuDocuments()) {

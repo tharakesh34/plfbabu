@@ -53,8 +53,8 @@ import com.pennanttech.pff.core.TableType;
 
 public interface VerificationService {
 
-	List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType, String tableType,
-			String auditTranType, boolean isInitTab);
+	List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType, String auditTranType,
+			boolean isInitTab);
 
 	List<Verification> getVerifications(String keyReference, int verificationType);
 

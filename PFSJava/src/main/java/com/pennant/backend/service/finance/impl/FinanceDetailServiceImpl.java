@@ -2415,98 +2415,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.add(getFinAssetEvaluationService().saveOrUpdate(financeDetail.getFinAssetEvaluation(),
 						tableType.getSuffix(), auditTranType));
 			}
-
-			// FI Verification details
-			if (financeDetail.isFiInitTab() || financeDetail.isFiApprovalTab()) {
-				setVerificationWorkflowDetails(financeDetail.getFiVerification(), financeMain);
-			}
 			
-			// Technical Verification details
-			if (financeDetail.isTvInitTab() || financeDetail.isTvApprovalTab()) {
-				setVerificationWorkflowDetails(financeDetail.getTvVerification(), financeMain);
-			}
-
-			// Legal Verification details
-			if (financeDetail.isLvInitTab() || financeDetail.isLvApprovalTab()) {
-				setVerificationWorkflowDetails(financeDetail.getLvVerification(), financeMain);
-			}
-			
-			// RCU Verification details
-			if (financeDetail.isRcuInitTab() || financeDetail.isRcuApprovalTab()) {
-				setVerificationWorkflowDetails(financeDetail.getRcuVerification(), financeMain);
-			}
-						
-			List<AuditDetail> adtVerifications = new ArrayList<>();
-			
-			// save FI Initiation details
-			//=======================================
-			if (financeDetail.isFiInitTab()) {
-				adtVerifications.addAll(
-						verificationService.saveOrUpdate(financeDetail, VerificationType.FI, tableType.getSuffix(), auditTranType, true));
-			}
-
-			// save FI Approval details
-			//=======================================
-			if (financeDetail.isFiApprovalTab()) {
-				adtVerifications.addAll(
-						verificationService.saveOrUpdate(financeDetail, VerificationType.FI, tableType.getSuffix(), auditTranType, false));
-			}
-
-			// save TV Initiation details 
-			//TO-DO 
-			//FIXME - To be uncommented while merging
-			//=======================================
-			if (financeDetail.isTvInitTab()) {
-				adtVerifications.addAll(
-						verificationService.saveOrUpdate(financeDetail, VerificationType.TV, tableType.getSuffix(), auditTranType, true));
-			}
-
-			// save TV Approval details
-			//=======================================
-			if (financeDetail.isTvApprovalTab()) {
-				adtVerifications.addAll(
-						verificationService.saveOrUpdate(financeDetail, VerificationType.TV, tableType.getSuffix(), auditTranType, false));
-			}
-			
-			// save LV Initiation details
-			//=======================================
-			if (financeDetail.isLvInitTab()) {
-				Verification verification = financeDetail.getLvVerification();
-				verification.setVerificationType(VerificationType.LV.getKey());
-				adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.LV,
-						tableType.getSuffix(), auditTranType, true));
-			}
-			
-			// save LV Approval details
-			//=======================================
-			if (financeDetail.isLvApprovalTab()) {
-				Verification verification = financeDetail.getLvVerification();
-				verification.setVerificationType(VerificationType.LV.getKey());
-				adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.LV,
-						tableType.getSuffix(), auditTranType, false));
-			}
-			
-			// save RCU Initiation details
-			//=======================================
-			if (financeDetail.isRcuInitTab()) {
-				adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.RCU,
-						tableType.getSuffix(), auditTranType, true));
-			}
-			
-			// save RCU Approval details
-			//=======================================
-			if (financeDetail.isRcuApprovalTab()) {
-				adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.RCU,
-						tableType.getSuffix(), auditTranType, false));
-			}
-						
-			// preparing audit seqno for same table(adtverifications)
-			int i = 0;
-			for (AuditDetail auditDetail : adtVerifications) {
-				auditDetail.setAuditSeq(++i);
-			}
-
-			auditDetails.addAll(adtVerifications);
+			//Verifications
+			saveOrUpdateVerifications(auditDetails, financeDetail, financeMain, auditTranType);
 		}
 	
 		
@@ -2579,6 +2490,101 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Leaving");
 		return auditHeader;
 		
+	}
+
+	private void saveOrUpdateVerifications(List<AuditDetail> auditDetails, FinanceDetail financeDetail,
+			FinanceMain financeMain, String auditTranType) {
+		// FI Verification details
+		if (financeDetail.isFiInitTab() || financeDetail.isFiApprovalTab()) {
+			setVerificationWorkflowDetails(financeDetail.getFiVerification(), financeMain);
+		}
+
+		// Technical Verification details
+		if (financeDetail.isTvInitTab() || financeDetail.isTvApprovalTab()) {
+			setVerificationWorkflowDetails(financeDetail.getTvVerification(), financeMain);
+		}
+
+		// Legal Verification details
+		if (financeDetail.isLvInitTab() || financeDetail.isLvApprovalTab()) {
+			setVerificationWorkflowDetails(financeDetail.getLvVerification(), financeMain);
+		}
+
+		// RCU Verification details
+		if (financeDetail.isRcuInitTab() || financeDetail.isRcuApprovalTab()) {
+			setVerificationWorkflowDetails(financeDetail.getRcuVerification(), financeMain);
+		}
+
+		List<AuditDetail> adtVerifications = new ArrayList<>();
+
+		// save FI Initiation details
+		//=======================================
+		if (financeDetail.isFiInitTab()) {
+			adtVerifications
+					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.FI, auditTranType, true));
+		}
+
+		// save FI Approval details
+		//=======================================
+		if (financeDetail.isFiApprovalTab()) {
+			adtVerifications
+					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.FI, auditTranType, false));
+		}
+
+		// save TV Initiation details 
+		//TO-DO 
+		//FIXME - To be uncommented while merging
+		//=======================================
+		if (financeDetail.isTvInitTab()) {
+			adtVerifications
+					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.TV, auditTranType, true));
+		}
+
+		// save TV Approval details
+		//=======================================
+		if (financeDetail.isTvApprovalTab()) {
+			adtVerifications
+					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.TV, auditTranType, false));
+		}
+
+		// save LV Initiation details
+		//=======================================
+		if (financeDetail.isLvInitTab()) {
+			Verification verification = financeDetail.getLvVerification();
+			verification.setVerificationType(VerificationType.LV.getKey());
+			adtVerifications
+					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.LV, auditTranType, true));
+		}
+
+		// save LV Approval details
+		//=======================================
+		if (financeDetail.isLvApprovalTab()) {
+			Verification verification = financeDetail.getLvVerification();
+			verification.setVerificationType(VerificationType.LV.getKey());
+			adtVerifications
+					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.LV, auditTranType, false));
+		}
+
+		// save RCU Initiation details
+		//=======================================
+		if (financeDetail.isRcuInitTab()) {
+			adtVerifications
+					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, auditTranType, true));
+		}
+
+		// save RCU Approval details
+		//=======================================
+		if (financeDetail.isRcuApprovalTab()) {
+			adtVerifications.addAll(
+					verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, auditTranType, false));
+		}
+
+		// preparing audit seqno for same table(adtverifications)
+		int i = 0;
+		for (AuditDetail auditDetail : adtVerifications) {
+			auditDetail.setAuditSeq(++i);
+		}
+
+		auditDetails.addAll(adtVerifications);
 	}
 
 	private void setVerificationWorkflowDetails(Verification verification, FinanceMain financeMain) {
@@ -3786,6 +3792,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					getFinAssetEvaluationService().doApprove(financeDetail.getFinAssetEvaluation(), "", tranType);
 				}
 
+				//Verifications
+				saveOrUpdateVerifications(auditDetails, financeDetail, financeMain, tranType);
+				
 				// Advance Payment Details
 				// =======================================
 				if (financeDetail.getAdvancePaymentsList() != null) {
