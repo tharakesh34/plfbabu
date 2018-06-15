@@ -323,9 +323,9 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 			
 			if(isStepPOS){
-				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_STEPPOS, PennantStaticListUtil.getSchCalCodes(),exclRecalTypes);
+				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_STEPPOS, PennantStaticListUtil.getDisbCalCodes(),exclRecalTypes);
 			}else{
-				fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), PennantStaticListUtil.getSchCalCodes(),exclRecalTypes);
+				fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), PennantStaticListUtil.getDisbCalCodes(),exclRecalTypes);
 			}
 			
 			if (StringUtils.equals(getFinScheduleData().getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
@@ -970,9 +970,9 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 			
 			if(isStepPOS){
-				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_STEPPOS, PennantStaticListUtil.getSchCalCodes(),exclRecalTypes);
+				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_STEPPOS, PennantStaticListUtil.getDisbCalCodes(),exclRecalTypes);
 			}else{
-				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(), PennantStaticListUtil.getSchCalCodes(),exclRecalTypes);
+				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(), PennantStaticListUtil.getDisbCalCodes(),exclRecalTypes);
 			}
 
 		}else{
