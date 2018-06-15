@@ -717,27 +717,33 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 	private void hasSingleApprStage(FinanceReferenceDetail aFinanceReferenceDetail) {
 		//Verification Approval Event validations in Miscellaneous Tab
-		if (aFinanceReferenceDetail.getFinRefType() == FinanceConstants.PROCEDT_LIMIT) {
-			if (StringUtils.equals(aFinanceReferenceDetail.getLovDescNamelov(),
-					FinanceConstants.PROCEDT_VERIFICATION_FI_APPR)
-					&& getCheckedValues(listboxmandInputInStage).split(",").length > 1) {
+		String reference = aFinanceReferenceDetail.getLovDescNamelov();
+		int length = getCheckedValues(listboxmandInputInStage).split(",").length;
+		if (aFinanceReferenceDetail.getFinRefType() == FinanceConstants.PROCEDT_LIMIT && length > 1) {
+			String[] message = new String[1];
+
+			switch (reference) {
+			case FinanceConstants.PROCEDT_VERIFICATION_FI_APPR:
+				message[0] = VerificationType.FI.toString();
+				break;
+			case FinanceConstants.PROCEDT_VERIFICATION_TV_APPR:
+				message[0] = VerificationType.TV.toString();
+				break;
+			case FinanceConstants.PROCEDT_VERIFICATION_LV_APPR:
+				message[0] = VerificationType.LV.toString();
+				break;
+			case FinanceConstants.PROCEDT_VERIFICATION_RCU_APPR:
+				message[0] = VerificationType.RCU.toString();
+				break;
+			case FinanceConstants.PROCEDT_SAMPLING_APPR:
+				message[0] = "sampling";
+				break;
+			default:
+				break;
+			}
+			if (StringUtils.isNotEmpty(message[0])) {
 				throw new WrongValueException(this.listboxmandInputInStage,
-						Labels.getLabel("message.error.onlyOneStage", new String[] { VerificationType.FI.toString() }));
-			} else if (StringUtils.equals(aFinanceReferenceDetail.getLovDescNamelov(),
-					FinanceConstants.PROCEDT_VERIFICATION_TV_APPR)
-					&& getCheckedValues(listboxmandInputInStage).split(",").length > 1) {
-				throw new WrongValueException(this.listboxmandInputInStage,
-						Labels.getLabel("message.error.onlyOneStage", new String[] { VerificationType.TV.toString() }));
-			} else if (StringUtils.equals(aFinanceReferenceDetail.getLovDescNamelov(),
-					FinanceConstants.PROCEDT_VERIFICATION_LV_APPR)
-					&& getCheckedValues(listboxmandInputInStage).split(",").length > 1) {
-				throw new WrongValueException(this.listboxmandInputInStage,
-						Labels.getLabel("message.error.onlyOneStage", new String[] { VerificationType.LV.toString() }));
-			} else if (StringUtils.equals(aFinanceReferenceDetail.getLovDescNamelov(),
-					FinanceConstants.PROCEDT_VERIFICATION_RCU_APPR)
-					&& getCheckedValues(listboxmandInputInStage).split(",").length > 1) {
-				throw new WrongValueException(this.listboxmandInputInStage, Labels
-						.getLabel("message.error.onlyOneStage", new String[] { VerificationType.RCU.toString() }));
+						Labels.getLabel("message.error.onlyOneStage", message));
 			}
 		}
 	}

@@ -363,6 +363,12 @@ public class FinanceConstants {
 	public static final String PROCEDT_VERIFICATION_RCU_INIT = "RCUINIT";
 	public static final String PROCEDT_VERIFICATION_RCU_APPR = "RCUAPPR";
 	
+	/**
+	 * Sampling constants
+	 */
+	public static final String PROCEDT_SAMPLING_INIT = "SAMPINIT";
+	public static final String PROCEDT_SAMPLING_APPR = "SAMPAPPR";
+	
 	//Query Management
 	public static final String QUERY_MANAGEMENT = "QUERY_MGMT";
 }

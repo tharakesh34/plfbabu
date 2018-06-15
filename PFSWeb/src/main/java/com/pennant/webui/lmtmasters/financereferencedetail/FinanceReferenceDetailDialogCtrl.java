@@ -934,9 +934,15 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		return true;
 	}
 
-	private Boolean validateStages(String initId,String approvalId,VerificationType vrfType) throws InterruptedException {
+	private Boolean validateStages(String initId, String approvalId, VerificationType vrfType)
+			throws InterruptedException {
 		logger.debug(Literal.ENTERING);
-
+		String type;
+		if (vrfType != null) {
+			type = vrfType.toString();
+		} else {
+			type = "sampling";
+		}
 		// Get the Workflow details.
 		WorkFlowDetails workflow = WorkFlowUtil.getDetailsByType(financeReference.getWorkFlowType());
 		// Workflow Engine
@@ -947,10 +953,12 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		// get the Initiation Stages and Approval Stage
 		for (Listitem initListItem : listBoxLimitService.getItems()) {
 			FinanceReferenceDetail financeReferenceDetail = (FinanceReferenceDetail) initListItem.getAttribute("data");
-			if (StringUtils.equals(financeReferenceDetail.getLovDescNamelov(), initId)) {
-				initStages = financeReferenceDetail.getMandInputInStage().split(",");
-			} else if (StringUtils.equals(financeReferenceDetail.getLovDescNamelov(), approvalId)) {
-				apprStage = financeReferenceDetail.getMandInputInStage().replace(",", "");
+			if (!financeReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+				if (StringUtils.equals(financeReferenceDetail.getLovDescNamelov(), initId)) {
+					initStages = financeReferenceDetail.getMandInputInStage().split(",");
+				} else if (StringUtils.equals(financeReferenceDetail.getLovDescNamelov(), approvalId)) {
+					apprStage = financeReferenceDetail.getMandInputInStage().replace(",", "");
+				}
 			}
 		}
 
@@ -963,13 +971,15 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 
 				// Check whether the Approval Stage is a Successor to the Initiation Stage.
 				if (engine.compareTo(task, nextTask) != Flow.SUCCESSOR) {
-					MessageUtil.showError(vrfType+" Initiation Stages Must be Predecessors to the " +vrfType +" Approval Stage in Miscellaneous Tab.");
+					MessageUtil.showError(type + " Initiation Stages Must be Predecessors to the " + type
+							+ " Approval Stage in Miscellaneous Tab.");
 					tabCustLimitCheck.setSelected(true);
 					return false;
 				}
 			}
 		} else if ((initStages != null && apprStage == null) || (initStages == null && apprStage != null)) {
-			MessageUtil.showError("Either both "+vrfType+" Initiation & "+vrfType+" Approval Stages should be saved or none of them.");
+			MessageUtil.showError("Either both " + type + " Initiation & " + type
+					+ " Approval Stages should be saved or none of them.");
 			tabCustLimitCheck.setSelected(true);
 			return false;
 		}
@@ -1151,6 +1161,10 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		}
 		if (!validateStages(FinanceConstants.PROCEDT_VERIFICATION_RCU_INIT,
 				FinanceConstants.PROCEDT_VERIFICATION_RCU_APPR, VerificationType.RCU)) {
+			return;
+		}
+		if (!validateStages(FinanceConstants.PROCEDT_SAMPLING_INIT,
+				FinanceConstants.PROCEDT_SAMPLING_APPR,null)) {
 			return;
 		}
 		final FinanceReferenceDetail aFinanceReferenceDetail = new FinanceReferenceDetail();
