@@ -70,4 +70,26 @@ update adtCustomers set marginDeviation=0;
 			columnName="Remarks" newDataType="VARCHAR(500)" />
 	</changeSet>
 	
-	</databaseChangeLog>
+<changeSet id="7" author="">
+	<addColumn tableName="AdtFinLiabilityReq">
+		<column name="Id" type="bigint"/>
+	</addColumn>
+</changeSet>
+
+<changeSet id="8" author="Vinay">
+	<comment> Update Newly added column Id with RowNumbers to preserve null error </comment>
+	<sql> 
+		update AdtFinLiabilityReq T1 set id=(Select cnt from (Select ROW_NUMBER() OVER(ORDER BY FINREFERENCE,FINEVENT)cnt,T2.* FROM AdtFinLiabilityReq T2)T3
+												 WHERE t3.auditid=T1.auditid);
+	</sql>
+</changeSet>
+<changeSet id="8_Post" author="Vinay" dbms="postgresql">
+	<addNotNullConstraint tableName="AdtFinLiabilityReq" columnName="id"/>
+</changeSet>
+<changeSet id="8_Post" author="Vinay" dbms="mssql">
+	<addNotNullConstraint tableName="AdtFinLiabilityReq" columnName="id" columnDataType="bigint"/>
+</changeSet>
+<changeSet id="8_Post" author="Vinay" dbms="oracle">
+	<addNotNullConstraint tableName="AdtFinLiabilityReq" columnName="id"/>
+</changeSet>
+</databaseChangeLog>
