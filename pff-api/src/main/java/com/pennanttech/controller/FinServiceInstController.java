@@ -1380,10 +1380,20 @@ public class FinServiceInstController extends SummaryDetailService {
 		if (finReceiptDetail == null) {
 			finReceiptDetail = new FinReceiptDetail();
 			finReceiptDetail.setReceivedDate(DateUtility.getAppDate());
+			if(StringUtils.equals(finServiceInst.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)||
+					StringUtils.equals(finServiceInst.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_DD)){
+				finReceiptDetail.setDepositDate((DateUtility
+						.getDBDate(DateUtility.formatDate(DateUtility.getAppDate(), PennantConstants.DBDateFormat))));
+			}
 			finServiceInst.setReceiptDetail(finReceiptDetail);
 		} else {
 			if (finReceiptDetail.getReceivedDate() == null) {
 				finReceiptDetail.setReceivedDate(DateUtility.getAppDate());
+			}
+			if(StringUtils.equals(finServiceInst.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)||
+					StringUtils.equals(finServiceInst.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_DD)){
+				finReceiptDetail.setDepositDate((DateUtility
+						.getDBDate(DateUtility.formatDate(DateUtility.getAppDate(), PennantConstants.DBDateFormat))));
 			}
 		}
 		finReceiptDetail.setReceivedDate(DateUtility
@@ -1407,6 +1417,21 @@ public class FinServiceInstController extends SummaryDetailService {
 		finReceiptDetail.setReceivedDate(receiDate);
 
 		Date curBussDate = DateUtility.getAppDate();
+		if((StringUtils.equals(finServiceInst.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)||
+				StringUtils.equals(finServiceInst.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_DD))&&
+				StringUtils.equals(finServiceInst.getReqType(), "Post")){
+			if (DateUtility.compare(finReceiptDetail.getValueDate(), financeMain.getFinStartDate()) <= 0
+					|| DateUtility.compare(finReceiptDetail.getValueDate(), curBussDate) > 0) {
+				FinanceDetail response = new FinanceDetail();
+				doEmptyResponseObject(response);
+				String[] valueParm = new String[3];
+				valueParm[0] = "Value Date " + DateUtility.formatToShortDate(finReceiptDetail.getReceivedDate());
+				valueParm[1] = "Loan start Date:" + DateUtility.formatToShortDate(financeMain.getFinStartDate());
+				valueParm[2] = "Application Date:" + DateUtility.formatToShortDate(DateUtility.getAppDate());
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90350", valueParm));
+				return response;
+			}
+		}
 		if (finServiceInst.getReceiptDetail() != null) {
 			if (DateUtility.compare(receiDate, financeMain.getFinStartDate()) <= 0
 					|| DateUtility.compare(receiDate, curBussDate) > 0) {
@@ -1418,7 +1443,8 @@ public class FinServiceInstController extends SummaryDetailService {
 				valueParm[2] = "Application Date:" + DateUtility.formatToShortDate(DateUtility.getAppDate());
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90350", valueParm));
 				return response;
-			}
+			}	
+			
 		}
 
 		if (curBussDate.compareTo(financeMain.getFinStartDate()) == 0) {

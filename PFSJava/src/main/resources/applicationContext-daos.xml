@@ -5668,6 +5668,7 @@
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="bankDetailService" ref="bankDetailService"/>
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />

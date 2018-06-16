@@ -26,9 +26,12 @@ public class FinReceiptDetail implements Entity {
 	private int							payOrder		= 0;
 	private BigDecimal					amount			= BigDecimal.ZERO;
 	private String						favourNumber;
+	@XmlElement
 	private Date						valueDate;
+	@XmlElement
 	private String						bankCode;
 	private String						bankCodeDesc;
+	@XmlElement
 	private String						favourName;
 	private Date						depositDate;
 	private String						depositNo;
@@ -36,6 +39,7 @@ public class FinReceiptDetail implements Entity {
 	private String						paymentRef;
 	@XmlElement
 	private String						transactionRef;
+	@XmlElement
 	private String						chequeAcNo;
 	@XmlElement(name="fundingAccount")
 	private long						fundingAc		= 0;

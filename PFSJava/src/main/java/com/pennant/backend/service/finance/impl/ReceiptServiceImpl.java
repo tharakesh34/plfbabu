@@ -75,6 +75,7 @@ import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -107,6 +108,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
@@ -143,6 +145,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private ReceiptCalculator				receiptCalculator;
 	private OverdraftScheduleDetailDAO		overdraftScheduleDetailDAO;
 	private LatePayMarkingService			latePayMarkingService;
+	private BankDetailService				bankDetailService;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -2457,12 +2460,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		} else if(!StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_NEFT)
 				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_RTGS)
 				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_IMPS)
-				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_CASH)) {
+				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_CASH)
+				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_DD)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Payment mode";
 			valueParm[1] = DisbursementConstants.PAYMENT_TYPE_NEFT+","
 					+DisbursementConstants.PAYMENT_TYPE_RTGS+","+DisbursementConstants.PAYMENT_TYPE_IMPS+","
-					+DisbursementConstants.PAYMENT_TYPE_CASH;
+					+DisbursementConstants.PAYMENT_TYPE_CASH+","+DisbursementConstants.PAYMENT_TYPE_CHEQUE+";"
+					+DisbursementConstants.PAYMENT_TYPE_DD;
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90281", "", valueParm)));
 			return auditDetail;
 		}
@@ -2481,6 +2487,60 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 				return auditDetail;
 			}
+			}
+			if(StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)||
+			StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_DD)){
+				if(StringUtils.isBlank(receiptDetail.getBankCode())){
+					String[] valueParm = new String[1];
+					valueParm[0] = "BankCode";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+					return auditDetail;
+				}else {
+					BankDetail bankDetail = bankDetailService.getBankDetailById(receiptDetail.getBankCode());
+					if (bankDetail == null) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "BankCode";
+						valueParm[1] = receiptDetail.getBankCode();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParm)));
+						return auditDetail;
+					}
+				}
+				if(receiptDetail.getValueDate()==null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "ValueDate";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+					return auditDetail;
+				}
+				if(StringUtils.isBlank(receiptDetail.getFavourName())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "FavourName";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+					return auditDetail;
+				}
+				
+				
+			} else {
+				if(receiptDetail.getValueDate()!=null) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "ValueDate";
+					valueParm[1] = DisbursementConstants.PAYMENT_TYPE_CHEQUE+","+DisbursementConstants.PAYMENT_TYPE_DD;
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("'90298'", "", valueParm)));
+					return auditDetail;
+				}
+				if(StringUtils.isNotBlank(receiptDetail.getFavourName())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "FavourName";
+					valueParm[1] = DisbursementConstants.PAYMENT_TYPE_CHEQUE+","+DisbursementConstants.PAYMENT_TYPE_DD;
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("'90298'", "", valueParm)));
+					return auditDetail;
+				}
+				if(StringUtils.isNotBlank(receiptDetail.getBankCode())){
+					String[] valueParm = new String[2];
+					valueParm[0] = "BankCode";
+					valueParm[1] = DisbursementConstants.PAYMENT_TYPE_CHEQUE+","+DisbursementConstants.PAYMENT_TYPE_DD;
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("'90298'", "", valueParm)));
+					return auditDetail;
+				}
 			}
 			if(receiptDetail.getFundingAc() <= 0) {
 				String[] valueParm = new String[1];
@@ -2701,6 +2761,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 	public void setLatePayMarkingService(LatePayMarkingService latePayMarkingService) {
 		this.latePayMarkingService = latePayMarkingService;
+	}
+	public BankDetailService getBankDetailService() {
+		return bankDetailService;
+	}
+
+	public void setBankDetailService(BankDetailService bankDetailService) {
+		this.bankDetailService = bankDetailService;
 	}
 
 }
