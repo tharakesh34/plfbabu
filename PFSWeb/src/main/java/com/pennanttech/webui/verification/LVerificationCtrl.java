@@ -1210,8 +1210,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		}
 		for (long documentId : requiredCollateralDocs) {
 			if (!collateralDocuments.contains(documentId)) {
-				MessageUtil
-						.showError("No further proceed until Required collateral documets should be initiated/Waived");
+				MessageUtil.showError("Required collateral documents should be initiate/Waive");
 				tab.setSelected(true);
 				return false;
 			}
