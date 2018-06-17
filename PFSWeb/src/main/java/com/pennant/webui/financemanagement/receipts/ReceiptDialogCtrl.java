@@ -10,32 +10,33 @@
  * without the prior written consent of the copyright holder, is a violation of 
  * copyright law.
  */
-
 /**
- *********************************************************************************************
- *                                 FILE HEADER                                               *
- *********************************************************************************************
- *
- * FileName    		:  ReceiptDialogCtrl.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  03-06-2011    
- *                                                                  
- * Modified Date    :  03-06-2011    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ 
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  ReceiptDialogCtrl.java                           					*
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ * Creation Date    :  03-06-2011    														*
+ *                                                                  						*
+ * Modified Date    :  03-06-2011    														*
+ *                                                                  						*
+ * Description 		:																		*	
+ *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                         * 
+ * 03-06-2011       Pennant	                 0.1                                        	* 
  *                                                                                          * 
  * 13-06-2018       Siva					 0.2        Receipt auto printing on approval   * 
  *                                                                                          * 
  * 13-06-2018       Siva					 0.3        Receipt Print Option Added 			* 
  *                                                                                          * 
- *                                                                                          * 
+ * 17-06-2018		Srinivasa Varma			 0.4		PSD 126950                          * 
+ *                                                                                          *
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
@@ -202,6 +203,7 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -559,6 +561,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
+		getUserWorkspace().deAllocateAuthorities(super.pageRightName);
 		getUserWorkspace().allocateAuthorities(super.pageRightName, getRole(), menuItemRightName);
 
 		this.btnReceipt.setVisible(getUserWorkspace().isAllowed("button_ReceiptDialog_btnReceipt"));
@@ -630,6 +633,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.bounceCode.setModuleName("BounceReason");
 		this.bounceCode.setMandatoryStyle(true);
 		this.bounceCode.setValueColumn("BounceID");
+		// ### 10-05-2018 - PSD 126950
+		this.bounceCode.setValueType(DataType.LONG);
 		this.bounceCode.setDescColumn("BounceCode");
 		this.bounceCode.setDisplayStyle(2);
 		this.bounceCode.setValidateColumns(new String[] { "BounceID" , "BounceCode", "Category", "Reason" });
