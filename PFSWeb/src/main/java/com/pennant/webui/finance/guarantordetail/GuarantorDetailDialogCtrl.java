@@ -30,8 +30,8 @@
  ********************************************************************************************
  * 10-09-2013       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-09-2013       Pennant	                 0.2		 PSD 127030 formating Value  		*  
+ *                                                       For Aadhar Number                  * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -2128,12 +2128,15 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	public void getguarantorIdNumber(){
 		logger.debug("Entering");
 		if(this.guarantorIDType.getSelectedIndex()!=0){  
-			if(this.guarantorIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)){
+			
+			// ### 10-05-2018 - Start- Development PSD  127030
+			/*if(this.guarantorIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)){
 				this.guarantorIDNumber.setValue(PennantApplicationUtil.formatEIDNumber(this.guarantorIDNumber.getValue()));
 			}else{
 				this.guarantorIDNumber.setValue(this.guarantorIDNumber.getValue());
-			}
-				
+			}*/
+			this.guarantorIDNumber.setValue(this.guarantorIDNumber.getValue());
+			// ### 10-05-2018 - End- Development PSD  127030
 		}
 		logger.debug("Leaving");
 	}
