@@ -120,6 +120,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	protected ExtendedCombobox dealerProvince; // autowired
 	protected Textbox email;
 	protected Textbox dealerPoBox;
+	protected Space space_dealerPoBox;
 	protected Textbox zipCode;
 	protected Checkbox active;
 	protected ExtendedCombobox emirates;
@@ -136,6 +137,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	protected long accountid;
 	protected Combobox sellerType; // autowired
 	protected Textbox cityName; // autoWired
+	protected Space space_Code;
+	protected Textbox code;
 
 	// not auto wired vars
 	private VehicleDealer vehicleDealer; // overhanded per param
@@ -259,6 +262,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.dealerType.setMaxlength(50);
 		this.sellerType.setMaxlength(50);
 		this.cityName.setMaxlength(50);
+		this.code.setMaxlength(20);
 		this.dealerCountry.setMandatoryStyle(true);
 		this.dealerCountry.setModuleName("Country");
 		this.dealerCountry.setValueColumn("CountryCode");
@@ -285,6 +289,13 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 
 		this.iBANnumber.setMaxlength(23);
 		this.dealerPoBox.setMaxlength(8);
+		if(module.equals("DSA")){
+			this.space_dealerPoBox.setSclass("");
+			this.space_Code.setClass(PennantConstants.mandateSclass);
+		} else {
+			this.space_dealerPoBox.setSclass(PennantConstants.mandateSclass);
+			this.space_Code.setSclass("");
+		}
 		this.zipCode.setMaxlength(8);
 
 		this.emirates.setMandatoryStyle(true);
@@ -513,6 +524,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.dealerAddress3.setValue(aVehicleDealer.getDealerAddress3());
 		this.dealerAddress4.setValue(aVehicleDealer.getDealerAddress4());
 		this.dealerCountry.setValue(aVehicleDealer.getDealerCountry());
+		this.code.setValue(vehicleDealer.getCode());
 
 		this.dealerProvince.setValue(aVehicleDealer.getDealerProvince());
 		this.cityName.setValue(aVehicleDealer.getDealerCity());
@@ -717,6 +729,12 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		}
 
 		try {
+			aVehicleDealer.setCode(this.code.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
 			if (this.sellerType.getSelectedItem().getValue().equals(PennantConstants.List_Select)
 					&& !this.sellerType.isVisible()) {
 				throw new WrongValueException(this.sellerType, Labels.getLabel("FIELD_IS_MAND",
@@ -855,10 +873,12 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.commisionPaid.setConstraint(new PTListValidator(
 					Labels.getLabel("label_VehicleDealerDialog_CommisionPaidAt.value"), commisionPaidList, true));
 		}
-		if (!this.dealerPoBox.isReadonly()) {
+		if (!module.equals("DSA")) {
+			if (!this.dealerPoBox.isReadonly()) {
 			this.dealerPoBox
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_Pobox.value"),
 							PennantRegularExpressions.REGEX_NUMERIC, true));
+			}
 		}
 		if (!this.zipCode.isReadonly()) {
 			this.zipCode.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_ZipCode.value"),
@@ -886,7 +906,12 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.dealerCity.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_DealerCity.value"), null, true));
 		}
-
+		if (module.equals("DSA")) {
+			if (!this.code.isReadonly()) {
+				this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_Code.value"),
+								PennantRegularExpressions.REGEX_SPECIAL_REGX, true));
+			}
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -912,6 +937,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.paymentMode.setConstraint("");
 		this.commisionPaid.setConstraint("");
 		this.commisionCalRule.setConstraint("");
+		this.code.setConstraint("");
 		this.email.setConstraint("");
 		this.emirates.setConstraint("");
 		this.dealerPoBox.setConstraint("");
@@ -1012,7 +1038,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.cityName.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_dealerCity"));
 		this.zipCode.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_ZipCode"));
 		this.active.setDisabled(isReadOnly("VehicleDealerDialog_" + module + "_Active"));
-
+		this.code.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_Code"));
+		// this.code.setReadonly(false);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -1063,6 +1090,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.cityName.setReadonly(true);
 		this.zipCode.setReadonly(true);
 		this.active.setDisabled(true);
+		this.code.setReadonly(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
