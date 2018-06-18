@@ -107,4 +107,9 @@ update adtCustomers set marginDeviation=0;
 		<column name="scriptlet" type="varchar(8000)"/>
 	</addColumn>
 </changeSet>
+<changeSet id="11" author="vijaykumar.l">
+	<addColumn tableName="adtamtvehicledealer">
+		<column name="code" type="varchar(20)"/>
+	</addColumn>
+</changeSet>
 </databaseChangeLog>
