@@ -45,6 +45,7 @@ package com.pennant.webui.customermasters.customer;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -1485,6 +1486,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		try {
 			aCustomer.setCustDOB(this.custDOB.getValue());
+			aCustomer.setCustomerAge(processDateDiff(this.custDOB.getValue(), this.age));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -6271,11 +6273,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private void processDateDiff(Date fromDate, Label displayComp) {
+	private BigDecimal processDateDiff(Date fromDate, Label displayComp) {
+		BigDecimal dateDiff= BigDecimal.ZERO;
+		dateDiff.setScale(2);
 		if (fromDate == null) {
 			displayComp.setValue("");
 			displayComp.setVisible(false);
-			return;
+			return dateDiff;
 		}
 
 		int years = 0;
@@ -6284,15 +6288,20 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			int months = DateUtility.getMonthsBetween(appDate, fromDate);
 			years = months / 12;
 			month = months % 12;
+			dateDiff = new BigDecimal(months % 12); 
+			dateDiff= dateDiff.divide(new BigDecimal(100),2,RoundingMode.HALF_EVEN);
 		}
 		if (years == 0 && month == 0) {
 			displayComp.setVisible(false);
+			dateDiff= BigDecimal.ZERO;
 		} else {
+			dateDiff = dateDiff.add(new BigDecimal(years));
 			String dateDiffValue = (years == 0 ? "" : years + " " + (years == 1 ? "Year" + " " : "Years" + " ")) + month
 					+ " " + (month == 1 ? "Month" : "Months");
 			displayComp.setValue(dateDiffValue);
 			displayComp.setVisible(true);
 		}
+		return dateDiff;
 	}
 
 	public String getCustomerShortName() {

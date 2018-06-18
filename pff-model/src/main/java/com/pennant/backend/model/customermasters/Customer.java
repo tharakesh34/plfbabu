@@ -332,6 +332,8 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private WSReturnStatus returnStatus;
 	@XmlElement
 	private boolean marginDeviation=false;
+	private BigDecimal customerAge;
+	
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -371,6 +373,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("casteDesc");
 		excludeFields.add("religionDesc");
 		excludeFields.add("aadhaarNo");
+		excludeFields.add("customerAge");
 		return excludeFields;
 	}
 
@@ -1913,5 +1916,11 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		this.marginDeviation = marginDeviation;
 	}
 
+	public BigDecimal getCustomerAge() {
+		return customerAge;
+	}
 
+	public void setCustomerAge(BigDecimal customerAge) {
+		this.customerAge = customerAge;
+	}
 }
