@@ -311,4 +311,9 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 	 </sql>
 	 </changeSet>
 	 
+	 <changeSet id="16" author="vijaykumar.l">
+	 <sql>
+	  update smtparameters set sysparmvalue ='Y' where sysparmcode= 'CUSTOMER_CORP_FINANCE_TAB_REQ';
+	 </sql>
+	 </changeSet>
 	 </databaseChangeLog>
