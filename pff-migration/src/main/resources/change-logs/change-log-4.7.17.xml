@@ -3285,6 +3285,19 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 			<column name="CustCin" type="varchar(100)" />
 		</addColumn>
 </changeSet>
+
+<changeSet id="71" author="Manoj">
+	<sql>
+		INSERT INTO SecRights Values ((Select MAX(RightID)+1 From SecRights), 3, 'BlacklistCustomerDialog_CustCtgCode', 'BlacklistCustomerDialog', 1, 1000, NULL, 'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'BLACKLISTCUSTOMER_MAKER'), (SELECT RightID FROM SecRights where RightName = 'BlacklistCustomerDialog_CustCtgCode'), 1, 1, 1000, NULL,'Approved',' ',' ',' ',' ',' ', 0);
+
+		INSERT INTO SecRights Values ((Select MAX(RightID)+1 From SecRights), 3, 'BlacklistCustomerDialog_CustCin', 'BlacklistCustomerDialog', 1, 1000, NULL, 'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'BLACKLISTCUSTOMER_MAKER'), (SELECT RightID FROM SecRights where RightName = 'BlacklistCustomerDialog_CustCin'), 1, 1, 1000, NULL,'Approved',' ',' ',' ',' ',' ', 0);
+
+		INSERT INTO SecRights Values ((Select MAX(RightID)+1 From SecRights), 3, 'BlacklistCustomerDialog_CustAadhaar', 'BlacklistCustomerDialog', 1, 1000, NULL, 'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'BLACKLISTCUSTOMER_MAKER'), (SELECT RightID FROM SecRights where RightName = 'BlacklistCustomerDialog_CustAadhaar'), 1, 1, 1000, NULL,'Approved',' ',' ',' ',' ',' ', 0);
+	</sql>
+</changeSet>
 <changeSet id="72" author="SaiKrishna">
 	<comment>story #413 Allow scriptlet for extended fields</comment>
 	<addColumn tableName="extendedfielddetail">
