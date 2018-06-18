@@ -3303,5 +3303,124 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 		INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'BLACKLISTCUSTOMER_MAKER'), (SELECT RightID FROM SecRights where RightName = 'BlacklistCustomerDialog_CustSName'), 1, 1, 1000, NULL,'Approved',' ',' ',' ',' ',' ', 0);
 	</sql>
 </changeSet>
+<changeSet id="74" author="Saikrishna">
+	<comment>story #413 Allow scriptlet for extended fields</comment>
+	<createView viewName="extendedfielddetail_aview" replaceIfExists="true">
+	 SELECT t1.moduleid,
+	    t1.fieldname,
+	    t2.modulename AS lovdescmodulename,
+	    t2.submodulename AS lovdescsubmodulename,
+	    t1.fieldtype,
+	    t1.fieldlength,
+	    t1.fieldprec,
+	    t1.fieldlabel,
+	    t1.fieldmandatory,
+	    t1.fieldconstraint,
+	    t1.fieldseqorder,
+	    t1.fieldlist,
+	    t1.fielddefaultvalue,
+	    t1.fieldminvalue,
+	    t1.fieldmaxvalue,
+	    t1.fieldunique,
+	    t1.extendedtype,
+	    t1.version,
+	    t1.lastmntby,
+	    t1.lastmnton,
+	    t1.recordstatus,
+	    t1.rolecode,
+	    t1.nextrolecode,
+	    t1.taskid,
+	    t1.nexttaskid,
+	    t1.recordtype,
+	    t1.workflowid,
+	    t1.multiline,
+	    t1.parenttag,
+	    t1.inputelement,
+	    t1.editable,
+	    t1.allowinrule,
+	    t1.scriptlet
+	   FROM extendedfielddetail t1
+	     JOIN extendedfieldheader t2 ON t1.moduleid = t2.moduleid
+	</createView>
+</changeSet>
+<changeSet id="75" author="Saikrishna">
+	<comment>story #413 Allow scriptlet for extended fields</comment>
+	<createView viewName="extendedfielddetail_view" replaceIfExists="true">
+	SELECT t1.moduleid,
+	    t1.fieldname,
+	    t2.modulename AS lovdescmodulename,
+	    t2.submodulename AS lovdescsubmodulename,
+	    t1.fieldtype,
+	    t1.fieldlength,
+	    t1.fieldprec,
+	    t1.fieldlabel,
+	    t1.fieldmandatory,
+	    t1.fieldconstraint,
+	    t1.fieldseqorder,
+	    t1.fieldlist,
+	    t1.fielddefaultvalue,
+	    t1.fieldminvalue,
+	    t1.fieldmaxvalue,
+	    t1.fieldunique,
+	    t1.extendedtype,
+	    t1.version,
+	    t1.lastmntby,
+	    t1.lastmnton,
+	    t1.recordstatus,
+	    t1.rolecode,
+	    t1.nextrolecode,
+	    t1.taskid,
+	    t1.nexttaskid,
+	    t1.recordtype,
+	    t1.workflowid,
+	    t1.multiline,
+	    t1.parenttag,
+	    t1.inputelement,
+	    t1.editable,
+	    t1.allowinrule,
+	    t1.scriptlet
+	   FROM extendedfielddetail_temp t1
+	     JOIN extendedfieldheader_temp t2 ON t1.moduleid = t2.moduleid
+	UNION ALL
+	SELECT t1.moduleid,
+	    t1.fieldname,
+	    t2.modulename AS lovdescmodulename,
+	    t2.submodulename AS lovdescsubmodulename,
+	    t1.fieldtype,
+	    t1.fieldlength,
+	    t1.fieldprec,
+	    t1.fieldlabel,
+	    t1.fieldmandatory,
+	    t1.fieldconstraint,
+	    t1.fieldseqorder,
+	    t1.fieldlist,
+	    t1.fielddefaultvalue,
+	    t1.fieldminvalue,
+	    t1.fieldmaxvalue,
+	    t1.fieldunique,
+	    t1.extendedtype,
+	    t1.version,
+	    t1.lastmntby,
+	    t1.lastmnton,
+	    t1.recordstatus,
+	    t1.rolecode,
+	    t1.nextrolecode,
+	    t1.taskid,
+	    t1.nexttaskid,
+	    t1.recordtype,
+	    t1.workflowid,
+	    t1.multiline,
+	    t1.parenttag,
+	    t1.inputelement,
+	    t1.editable,
+	    t1.allowinrule,
+	    t1.scriptlet
+	   FROM extendedfielddetail t1
+	     JOIN extendedfieldheader t2 ON t1.moduleid = t2.moduleid
+	  WHERE NOT (EXISTS ( SELECT 1
+	           FROM extendedfielddetail_temp
+	          WHERE extendedfielddetail_temp.moduleid = t1.moduleid AND extendedfielddetail_temp.fieldname = t1.fieldname))
+	</createView>
+</changeSet>
 </databaseChangeLog>
 	
