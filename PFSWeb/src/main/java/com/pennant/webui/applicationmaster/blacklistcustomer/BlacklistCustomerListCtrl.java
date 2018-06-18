@@ -136,10 +136,10 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 
 		registerField("custCIF", listheader_CustomerCIF, SortOrder.ASC, customerCIF, sortOperator_customerCIF,
 				Operators.STRING);
-		registerField("custFName", listheader_CustFName, SortOrder.NONE, custFName, sortOperator_custFName,
-				Operators.STRING);
-		registerField("custLName", listheader_CustLName, SortOrder.NONE, custLName, sortOperator_custLName,
-				Operators.STRING);
+	/*	registerField("custFName", listheader_CustFName, SortOrder.NONE, custFName, sortOperator_custFName,
+				Operators.STRING);*/
+		/*registerField("custLName", listheader_CustLName, SortOrder.NONE, custLName, sortOperator_custLName,
+				Operators.STRING);*/
 		registerField("custDOB", listheader_CustDOB, SortOrder.NONE, custDOB, sortOperator_custDOB, Operators.DATE);
 		registerField("custCRCPR", listheader_CustEID, SortOrder.NONE, custEID, sortOperator_custEID, Operators.STRING);
 		registerField("custPassportNo", listheader_Passport, SortOrder.NONE, passport, sortOperator_passport,
@@ -149,6 +149,11 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 				Operators.STRING);
 		registerField("employer", listheader_Employer, SortOrder.NONE);
 		registerField("lovDescEmpName");
+		registerField("custFName");
+		registerField("custLName");
+		registerField("custCompName");
+		registerField("custCtgCode");
+		registerField("custAadhaar");
 
 		SearchFilterControl.renderOperators(this.sortOperator_mobileNum, Operators.STRING);
 

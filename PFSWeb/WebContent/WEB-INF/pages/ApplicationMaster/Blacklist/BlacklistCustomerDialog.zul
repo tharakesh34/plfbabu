@@ -84,12 +84,12 @@
 										width="180px" />
 								</hbox>
 								<label
-									id="label_BlacklistCustomerDialog_CustDOB"
-									value="${c:l('label_BlacklistCustomerDialog_CustDOB.value')}" />
+									id="label_BlacklistCustomerDialog_CustCtgType"
+									value="${c:l('label_BlacklistCustomerDialog_CustCtgType.value')}" />
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<datebox id="custDOB"
+									<combobox id="custCtgType"
 										 width="180px" />
 								</hbox>
 							</row>
@@ -97,8 +97,8 @@
 								<label id="label_BlacklistCustomerDialog_CustFName"
 									value="${c:l('label_BlacklistCustomerDialog_CustFName.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space id = "space_CustFName" spacing="2px"
+									sclass="mandatory"	 />
 									<textbox id="custFName"
 										width="180px" />
 								</hbox>
@@ -106,57 +106,99 @@
 									id="label_BlacklistCustomerDialog_CustLName"
 									value="${c:l('label_BlacklistCustomerDialog_CustLName.value')}" />
 								<hbox>
-									<space spacing="2px"
+									<space  id = "space_CustLName" spacing="2px"
 										sclass="mandatory" />
 									<textbox id="custLName"
 										 width="180px" />
 								</hbox>
 							</row>
+							
+							<row visible="true">
+								<label
+									id="label_BlacklistCustomerDialog_CustSName"
+									value="${c:l('label_BlacklistCustomerDialog_CustSName.value')}" />
+								<hbox>
+									<space id = "space_CustSName" spacing="2px" 
+									sclass="mandatory"  />
+									<textbox id="custSName"
+										width="180px"/>
+								</hbox>
+								<label
+									id="label_BlacklistCustomerDialog_CustDOB"
+									value="${c:l('label_BlacklistCustomerDialog_CustDOB.value')}" />
+								<hbox>
+									<space spacing="2px"
+										 />
+									<datebox id="custDOB"
+										 width="180px" />
+								</hbox>
+							</row>
+							
 							<row visible="true">
 								<label
 									id="label_BlacklistCustomerDialog_CustEID"
 									value="${c:l('label_BlacklistCustomerDialog_CustEID.value')}" />
 								<hbox>
 									<space spacing="2px" 
-									  sclass="mandatory" />
+									  />
 									<textbox id="custEID"
 										width="180px"/>
 								</hbox>
 								<label
-									id="label_BlacklistCustomerDialog_CustPassport"
-									value="${c:l('label_BlacklistCustomerDialog_CustPassport.value')}" />
+									id="label_BlacklistCustomerDialog_CustAadhar"
+									value="${c:l('label_BlacklistCustomerDialog_CustAadhar.value')}" />
 								<hbox>
-									<space spacing="2px" 
-									   sclass="mandatory" />
-									<textbox id="custPassport"
+									<space spacing="2px"/>
+									<textbox id="custAadhar"
 										width="180px" />
 								</hbox>
 							</row>
+							
+							
 							<row visible="true">
+								<label
+									id="label_BlacklistCustomerDialog_CustCin"
+									value="${c:l('label_BlacklistCustomerDialog_CustCin.value')}" />
+								<hbox>
+									<space id = "space_CustCin" spacing="2px"
+										 />
+									<hbox>
+										<textbox id="custCin" width="180px"/>
+									</hbox>
+								</hbox>
+								
+								
 								<label
 									id="label_BlacklistCustomerDialog_CustMobileNum"
 									value="${c:l('label_BlacklistCustomerDialog_CustMobileNum.value')}" />
 								<hbox>
 									<space spacing="2px"
-										sclass="mandatory" />
+										 />
 									<hbox>
 										<textbox id="custMobileNum" width="180px"/>
 									</hbox>
 								</hbox>
+							</row>
+							
+							
+							<row visible="true">
+								
 								<label
 									id="label_BlacklistCustomerDialog_CustNationality"
 									value="${c:l('label_BlacklistCustomerDialog_CustNationality.value')}" />
 								<hbox>
 									<extendedcombobox id="custNationality" />
 								</hbox>
-							</row>
-								<row visible="true">
+							
+								
 								<label
 									id="label_BlacklistCustomerDialog_Employer"
 									value="${c:l('label_BlacklistCustomerDialog_Employer.value')}" />
 								<hbox>
 									<extendedcombobox id="employer" />
 								</hbox>
+								
+								
 							</row>
 							<row>
 								<label

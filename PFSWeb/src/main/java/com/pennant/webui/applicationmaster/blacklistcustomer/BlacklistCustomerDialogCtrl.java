@@ -3,6 +3,7 @@ package com.pennant.webui.applicationmaster.blacklistcustomer;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -13,7 +14,10 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -21,6 +25,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
@@ -29,9 +34,11 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -52,8 +59,11 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	protected Datebox 				custDOB; // autoWired
 	protected Textbox 				custFName; // autoWired
 	protected Textbox 				custLName; // autoWired
+	protected Textbox 				custSName; // autoWired
 	protected Textbox 				custEID; // autoWired
-	protected Textbox 				custPassport; // autoWired
+	protected Textbox 				custAadhar; // autoWired
+	protected Textbox 				custCin; // autoWired
+	//protected Textbox 				custPassport; // autoWired
 	//protected Textbox 				custMobileNum; // autoWired
 	//protected Textbox				phoneCountryCode; // autoWired						
 	//protected Textbox				phoneAreaCode;	// autoWired									
@@ -61,9 +71,17 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	protected ExtendedCombobox		employer; // autoWired
 	protected ExtendedCombobox 		custNationality;
 	protected Checkbox              custIsActive; 
+	protected Combobox              custCtgType; 
+	protected Space	                space_CustSName;
+	protected Space	                space_CustFName;
+	protected Space	                space_CustLName;
+	protected Space	                space_CustCin;
+	protected Label                 label_BlacklistCustomerDialog_CustDOB;
 	
 	private transient boolean validationOn;
-	
+	private boolean isRetailCustomer = false;
+	private final List<ValueLabel> custCtgCodeList = PennantAppUtil.getcustCtgCodeList();
+
 	// not auto wired Var's
 	private BlackListCustomers blacklistCustomer; // overHanded per
 	private transient BlacklistCustomerListCtrl blacklistCustomerListCtrl; // overHanded
@@ -136,6 +154,8 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 				setBlacklistCustomerListCtrl(null);
 			}
 
+			fillComboBox(this.custCtgType, "", custCtgCodeList, "");
+
 			// set Field Properties
 			doSetFieldProperties();
 			doCheckRights();
@@ -159,12 +179,12 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custFName.setMaxlength(50);
 		this.custLName.setMaxlength(50);
 		this.custEID.setMaxlength(20);
-		this.custPassport.setMaxlength(20);
+	//	this.custPassport.setMaxlength(20);
 		this.custMobileNum.setMaxlength(10);
+		this.custAadhar.setMaxlength(14);
 		
 		// Employer ExtendedCombobox
 		this.employer.setInputAllowed(true);
-		this.employer.setMandatoryStyle(true);
 		this.employer.setModuleName("EmployerDetail");
 		this.employer.setValueColumn("EmployerId");
 		this.employer.setDescColumn("EmpName");
@@ -174,7 +194,6 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		// custNationality ExtendedCombobox
 		this.custNationality.setInputAllowed(true);
 		this.custNationality.setMaxlength(2);
-		this.custNationality.setMandatoryStyle(true);
 		this.custNationality.setModuleName("NationalityCode");
 		this.custNationality.setValueColumn("NationalityCode");
 		this.custNationality.setDescColumn("NationalityDesc");
@@ -208,6 +227,55 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 				"button_BlacklistCustomerDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving ");
+	}
+	
+	
+	public void onChange$custCtgType(Event event) {
+		doRemoveValidation();
+		doClearMessage();
+		if (custCtgType.getValue().equals("RETAIL")) {
+			setValuesForRetailCust();
+		} else {
+			setValuesForCorpCust();
+		}
+	}
+
+	private void setValuesForCorpCust() {
+		this.employer.setReadonly(true);
+		this.employer.getButton().setDisabled(true);
+		this.employer.setValue("");
+		this.employer.setDescription("");
+	    this.custSName.setReadonly(isReadOnly("BlacklistCustomerDialog_CustSName"));
+		this.custFName.setValue("");
+		this.space_CustSName.setSclass("mandatory");
+		this.custCin.setReadonly(isReadOnly("BlacklistCustomerDialog_CustCin"));
+		this.custFName.setReadonly(true);
+		this.space_CustFName.setSclass("");
+		this.custLName.setReadonly(true);
+		this.custLName.setValue("");
+		this.space_CustLName.setSclass("");
+		this.custAadhar.setReadonly(true);
+		isRetailCustomer= false;
+		this.space_CustCin.setSclass("mandatory");
+		label_BlacklistCustomerDialog_CustDOB.setValue(Labels.getLabel("label_BlacklistCustomerDialog_CustIncorp.value"));
+	}
+
+	private void setValuesForRetailCust() {
+		this.custSName.setValue("");
+		this.custSName.setReadonly(true);
+		this.space_CustSName.setSclass("");
+		this.custCin.setValue("");
+		this.custCin.setReadonly(true);
+ 		this.employer.setReadonly(isReadOnly("BlacklistCustomerDialog_Employer"));
+		this.employer.getButton().setDisabled(false);
+		this.custFName.setReadonly(isReadOnly("BlacklistCustomerDialog_CustFName"));
+		this.space_CustFName.setSclass("mandatory");
+		this.custLName.setReadonly(isReadOnly("BlacklistCustomerDialog_CustLName"));
+		this.space_CustLName.setSclass("mandatory");
+		this.space_CustCin.setSclass("");
+		this.custAadhar.setReadonly(isReadOnly("BlacklistCustomerDialog_CustAadhaar"));
+		isRetailCustomer= true;
+		label_BlacklistCustomerDialog_CustDOB.setValue(Labels.getLabel("label_BlacklistCustomerDialog_CustDOB.value"));
 	}
 
 	/**
@@ -305,12 +373,23 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custCIF.setValue(aBlackListCustomers.getCustCIF());
 		this.custDOB.setValue(aBlackListCustomers.getCustDOB());
 		this.custFName.setValue(aBlackListCustomers.getCustFName());
+		fillComboBox(this.custCtgType,aBlackListCustomers.getCustCtgCode(),custCtgCodeList,"");
+		
+		if("RETAIL".equals(this.custCtgType.getValue())){
+			setValuesForRetailCust();
+		} else if("CORPORATE".equals(this.custCtgType.getValue())) {
+			setValuesForCorpCust();
+		}
+
 		this.custLName.setValue(aBlackListCustomers.getCustLName());
 		this.custEID.setValue(PennantApplicationUtil.formatEIDNumber(aBlackListCustomers.getCustCRCPR()));
-		this.custPassport.setValue(aBlackListCustomers.getCustPassportNo());
+		//this.custPassport.setValue(aBlackListCustomers.getCustPassportNo());
 		this.custMobileNum.setValue(aBlackListCustomers.getMobileNumber());
 		this.custNationality.setValue(aBlackListCustomers.getCustNationality());
 		this.custNationality.setDescription(aBlackListCustomers.getLovDescNationalityDesc());
+		this.custCin.setValue(aBlackListCustomers.getCustCin());
+		this.custAadhar.setValue(aBlackListCustomers.getCustAadhaar());
+		this.custSName.setValue(aBlackListCustomers.getCustCompName());
 		if (!aBlackListCustomers.isNew()) {
 			this.employer.setValue(String.valueOf(aBlackListCustomers.getEmployer()));
 		}
@@ -353,19 +432,41 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			finBlacklistCust.setCustLName(this.custLName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
-			finBlacklistCust.setCustCRCPR(PennantApplicationUtil.unFormatEIDNumber(this.custEID.getValue()));
+			finBlacklistCust.setCustCompName(this.custSName.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		
+		try {
+			finBlacklistCust.setCustCRCPR((this.custEID.getValue()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			finBlacklistCust.setCustAadhaar((PennantApplicationUtil.unFormatEIDNumber(this.custAadhar.getValue())));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		
+		try {
+			finBlacklistCust.setCustCtgCode((this.custCtgType.getSelectedItem().getValue().toString()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			finBlacklistCust.setCustPassportNo(this.custPassport.getValue());
+			finBlacklistCust.setCustCin(this.custCin.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -387,7 +488,9 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 			wve.add(we);
 		}
 		try {
-			finBlacklistCust.setEmployer(Long.parseLong(this.employer.getValue()));
+			if (StringUtils.isNotEmpty(this.employer.getValue())) {
+				finBlacklistCust.setEmployer(Long.parseLong(this.employer.getValue()));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -420,6 +523,12 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	public void onChange$custEID(Event event){
 		logger.debug("Entering");
 		this.custEID.setValue(PennantApplicationUtil.formatEIDNumber(this.custEID.getValue()));
+		logger.debug("Leaving");
+	}
+	
+	public void onChange$custAadhar(Event event){
+		logger.debug("Entering");
+		this.custAadhar.setValue(PennantApplicationUtil.formatEIDNumber(this.custAadhar.getValue()));
 		logger.debug("Leaving");
 	}
 	/**
@@ -484,48 +593,68 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.custDOB.isReadonly()) {
-			this.custDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_BlacklistCustomerDialog_CustDOB.value"), true, startDate, appStartDate, false));
+			this.custDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_BlacklistCustomerDialog_CustDOB.value"), false, startDate, appStartDate, false));
 		}
-		if (!this.custFName.isReadonly()) {
-			this.custFName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BlacklistCustomerDialog_CustFName.value"),
-					PennantRegularExpressions.REGEX_NAME, true));
+		
+		
+		if (isRetailCustomer) {
+			if (!this.custFName.isReadonly()) {
+				this.custFName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_BlacklistCustomerDialog_CustFName.value"),
+								PennantRegularExpressions.REGEX_NAME, true));
+			}
+			if (!this.custLName.isReadonly()) {
+				this.custLName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_BlacklistCustomerDialog_CustLName.value"),
+								PennantRegularExpressions.REGEX_NAME, true));
+			}
+		} else {
+
+			if (!this.custSName.isReadonly()) {
+				this.custSName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_BlacklistCustomerDialog_CustSName.value"),
+								PennantRegularExpressions.REGEX_NAME, true));
+			}
+
+			if (!this.custCin.isReadonly()) {
+				this.custCin.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_BlacklistCustomerDialog_CustCin.value"),
+								PennantRegularExpressions.REGEX_ALPHANUM, true));
+			}
+
 		}
-		if (!this.custLName.isReadonly()) {
-			this.custLName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BlacklistCustomerDialog_CustLName.value"),
-					PennantRegularExpressions.REGEX_NAME, true));
-		}
+		
 		if (!this.custEID.isReadonly()) {
 			if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 				this.custEID.setConstraint(new PTStringValidator(Labels
 						.getLabel("label_BlacklistCustomerDialog_CustEID.value"),
-						PennantRegularExpressions.REGEX_PASSPORT, true));
+						PennantRegularExpressions.REGEX_PASSPORT, false));
 			}else{
 				this.custEID.setConstraint(new PTStringValidator(Labels
 						.getLabel("label_BlacklistCustomerDialog_CustEID.value"),
-						PennantRegularExpressions.REGEX_PANNUMBER, true));
+						PennantRegularExpressions.REGEX_PANNUMBER, false));
 			}
 			
 		}
-
-		if (!this.custPassport.isReadonly()) {
-			this.custPassport.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BlacklistCustomerDialog_CustPassport.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+		
+		if (!this.custCtgType.isDisabled()) {
+			this.custCtgType.setConstraint(new StaticListValidator(custCtgCodeList, Labels
+					.getLabel("label_BlacklistCustomerDialog_CustCtgType.value")));
 		}
+
+		
 		if (!this.custMobileNum.isReadonly()) {
-			this.custMobileNum.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), true));
+			this.custMobileNum.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), false));
 		}
 		if (!this.custNationality.isReadonly()) {
 			this.custNationality.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_BlacklistCustomerDialog_CustNationality.value"),
-					PennantRegularExpressions.REGEX_ALPHA, true));
+					PennantRegularExpressions.REGEX_ALPHA, false));
 		}
 		if (!this.employer.isReadonly()) {
 			this.employer.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_BlacklistCustomerDialog_Employer.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, true));
+					PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
 		logger.debug("Leaving ");
 	}
@@ -542,10 +671,11 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custFName.setConstraint("");
 		this.custLName.setConstraint("");
 		this.custEID.setConstraint("");
-		this.custPassport.setConstraint("");
 		this.custMobileNum.setConstraint("");
 		this.custNationality.setConstraint("");
 		this.employer.setConstraint("");
+		this.custSName.setConstraint("");
+		this.custCin.setConstraint("");
 		
 		logger.debug("Leaving ");
 	}
@@ -571,10 +701,11 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custFName.setErrorMessage("");
 		this.custLName.setErrorMessage("");
 		this.custEID.setErrorMessage("");
-		this.custPassport.setErrorMessage("");
 		this.custMobileNum.setErrorMessage("");
 		this.custNationality.setErrorMessage("");
 		this.employer.setErrorMessage("");
+		this.custSName.setErrorMessage("");
+		this.custCin.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -643,11 +774,14 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custFName.setReadonly(isReadOnly("BlacklistCustomerDialog_CustFName"));
 		this.custLName.setReadonly(isReadOnly("BlacklistCustomerDialog_CustLName"));
 		this.custEID.setReadonly(isReadOnly("BlacklistCustomerDialog_CustEID"));
-		this.custPassport.setReadonly(isReadOnly("BlacklistCustomerDialog_CustPassport"));
 		this.custMobileNum.setReadonly(isReadOnly("BlacklistCustomerDialog_CustMobileNum"));
 		this.custNationality.setReadonly(isReadOnly("BlacklistCustomerDialog_CustNationality"));
 		this.employer.setReadonly(isReadOnly("BlacklistCustomerDialog_Employer"));
 		this.custIsActive.setDisabled(isReadOnly("BlacklistCustomerDialog_CustIsActive"));
+		this.custSName.setReadonly(isReadOnly("BlacklistCustomerDialog_CustSName"));
+		this.custCin.setReadonly(isReadOnly("BlacklistCustomerDialog_CustEID"));
+		this.custCtgType.setReadonly(isReadOnly("BlacklistCustomerDialog_CustCtgCode"));
+		this.custAadhar.setReadonly(isReadOnly("BlacklistCustomerDialog_CustAadhaar"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -677,7 +811,6 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custFName.setReadonly(true);
 		this.custLName.setReadonly(true);
 		this.custEID.setReadonly(true);
-		this.custPassport.setReadonly(true);
 		this.custMobileNum.setReadonly(true);
 		this.custNationality.setReadonly(true);
 		this.employer.setReadonly(true);
@@ -708,7 +841,6 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custFName.setValue("");
 		this.custLName.setValue("");
 		this.custEID.setText("");
-		this.custPassport.setValue("");
 		this.custMobileNum.setValue("");
 		this.custNationality.setValue("");
 		this.employer.setValue("");

@@ -167,17 +167,22 @@
 							<listheader id="listheader_CustDOB"
 								label="${c:l('listheader_CustDOB.label')}" sort="auto"
 								hflex="min" />
-							<listheader id="listheader_CustFName"
-								label="${c:l('listheader_CustFName.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_CustLName"
+							
+							<!--<listheader id="listheader_CustLName"
 								label="${c:l('listheader_CustLName.label')}" sort="auto"
-								hflex="min" />
+								hflex="min" /> -->
+							<listheader id="listheader_CustLName"
+								label="${c:l('listheader_CustName.label')}" sort="auto"
+								hflex="min" />	
+								
+							 <listheader id="listheader_CustCtgCode"
+								label="${c:l('listheader_CustCtgCode.label')}" sort="auto"
+								hflex="min" />	
 							<listheader id="listheader_CustEID"
 								label="${c:l('listheader_CustCRCPR.label')}" sort="auto"
 								hflex="min" />
 							<listheader id="listheader_Passport"
-								label="${c:l('listheader_CustPassportNo.label')}" sort="auto"
+								label="${c:l('listheader_CustAadhaarNo.label')}" sort="auto"
 								hflex="min" />
 							<listheader id="listheader_Mobile"
 								label="${c:l('listheader_MobileNumber.label')}" sort="auto"

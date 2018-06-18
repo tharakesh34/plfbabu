@@ -15,6 +15,7 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	private String custFName;
 	private String custLName;
 	private String custShrtName;
+	private String custCompName;
 	private Date custDOB;
 	private String custCRCPR;
 	private String custPassportNo;
@@ -34,6 +35,8 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	private String likeCustMName;
 	private String likeCustLName;
 	private boolean custIsActive;	
+	private String custCin;	
+	private String custAadhaar;	
 
 	// For Internal Use
 	private String finReference;
@@ -45,7 +48,6 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
-		excludeFields.add("custCtgCode");
 		excludeFields.add("finReference");
 		excludeFields.add("queryField");
 		excludeFields.add("overridenby");
@@ -112,13 +114,6 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 		this.custLName = custLName;
 	}
 
-	public String getCustShrtName() {
-		return custShrtName;
-	}
-
-	public void setCustShrtName(String custShrtName) {
-		this.custShrtName = custShrtName;
-	}
 
 	public Date getCustDOB() {
 		return custDOB;
@@ -322,5 +317,44 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+
+
+	public String getCustCin() {
+		return custCin;
+	}
+
+	public void setCustCin(String custCin) {
+		this.custCin = custCin;
+	}
+
+
+	public String getCustAadhaar() {
+		return custAadhaar;
+	}
+
+
+	public void setCustAadhaar(String custAadhaar) {
+		this.custAadhaar = custAadhaar;
+	}
+
+
+	public String getCustCompName() {
+		return custCompName;
+	}
+
+
+	public void setCustCompName(String custCompName) {
+		this.custCompName = custCompName;
+	}
+
+	public String getCustShrtName() {
+		return custShrtName;
+	}
+
+
+	public void setCustShrtName(String custShrtName) {
+		this.custShrtName = custShrtName;
 	}
 }

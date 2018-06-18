@@ -100,7 +100,8 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select CustCIF , CustFName , CustLName , ");
 		selectSql.append(" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer, CustIsActive, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
+		selectSql.append(" CustCtgCode, CustCompName, CustAadhaar, CustCin");
 		if(type.contains("_View")) {
 			selectSql.append(" ,lovDescNationalityDesc,lovDescEmpName ");
 		}
@@ -269,7 +270,8 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		updateSql.append(" CustDOB=:CustDOB, CustCRCPR=:CustCRCPR , CustPassportNo=:CustPassportNo , MobileNumber=:MobileNumber , CustNationality=:CustNationality, " );
 		updateSql.append(" Employer=:Employer, CustIsActive = :CustIsActive, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, ");
+		updateSql.append(" CustCtgCode = :CustCtgCode, CustCompName = :CustCompName, CustAadhaar = :CustAadhaar, CustCin = :CustCin");
 		updateSql.append(" WHERE CustCIF=:CustCIF ");
 		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 		
@@ -318,11 +320,11 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		insertSql.append(tableType.getSuffix());
 		insertSql.append("(CustCIF, CustFName, CustLName , CustDOB, CustCRCPR, CustPassportNo ,MobileNumber,CustNationality, ");
 		insertSql.append(" Employer, CustIsActive, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
-		insertSql.append(" RecordType, WorkflowId)");
+		insertSql.append(" RecordType, WorkflowId, CustCtgCode, CustCompName, CustAadhaar, CustCin)");
 		insertSql.append(" Values(");
 		insertSql.append(" :CustCIF , :CustFName , :CustLName, :CustDOB , :CustCRCPR , :CustPassportNo, :MobileNumber, :CustNationality, ");
 		insertSql.append(" :Employer, :CustIsActive, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
-		insertSql.append(" :RecordType, :WorkflowId)");
+		insertSql.append(" :RecordType, :WorkflowId, :CustCtgCode, :CustCompName, :CustAadhaar, :CustCin)");
 
 		logger.trace(Literal.SQL + insertSql.toString());
 
