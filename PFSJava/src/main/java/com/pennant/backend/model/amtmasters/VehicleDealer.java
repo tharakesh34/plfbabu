@@ -90,7 +90,8 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	private LoggedInUser userDetails;
 	private boolean active;
 	private String  zipCode;
-	
+	private String code;
+
 	public VehicleDealer() {
 		super();
 	}
@@ -396,6 +397,13 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		this.zipCode = zipCode;
 	}
 
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
 	public HashMap<String, Object> getDeclaredFieldValues() {
 		HashMap<String, Object> customerMap = new HashMap<String, Object>();
 		
