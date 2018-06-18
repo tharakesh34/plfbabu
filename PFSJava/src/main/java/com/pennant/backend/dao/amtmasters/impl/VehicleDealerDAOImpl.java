@@ -96,7 +96,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
-		selectSql.append("DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,");
+		selectSql.append("DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,");
 		selectSql.append("CalculationRule,PaymentMode,AccountNumber,AccountingSetId,");
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, " );
 		selectSql.append(" NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId,SellerType");
@@ -196,12 +196,12 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append("(DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, " );
 		insertSql.append("DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,");
-		insertSql.append("Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,CalculationRule,PaymentMode,AccountNumber,AccountingSetId,");
+		insertSql.append("Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,CalculationRule,PaymentMode,AccountNumber,AccountingSetId,Code,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,SellerType)");
 		insertSql.append(" Values(:DealerId,:DealerType, :DealerName,:DealerTelephone,:DealerFax,:DealerAddress1,");
 		insertSql.append(" :DealerAddress2,:DealerAddress3,:DealerAddress4,:DealerCountry,:DealerCity,:DealerProvince,");
-		insertSql.append(" :Email,:POBox,:ZipCode,:Active,:Emirates,:CommisionPaidAt,:CalculationRule,:PaymentMode,:AccountNumber,:AccountingSetId,");
+		insertSql.append(" :Email,:POBox,:ZipCode,:Active,:Emirates,:CommisionPaidAt,:CalculationRule,:PaymentMode,:AccountNumber,:AccountingSetId,:Code ,");
 		insertSql.append(" :Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:SellerType)");
 
@@ -237,7 +237,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		updateSql.append("DealerAddress2 = :DealerAddress2,DealerAddress3 = :DealerAddress3,DealerAddress4 = :DealerAddress4,");
 		updateSql.append(" DealerCountry = :DealerCountry,DealerCity = :DealerCity,DealerProvince = :DealerProvince,");
 		updateSql.append(" Email = :Email,POBox = :POBox,ZipCode = :ZipCode,Active = :Active,Emirates = :Emirates,CommisionPaidAt = :CommisionPaidAt,");
-		updateSql.append("CalculationRule = :CalculationRule,PaymentMode = :PaymentMode,AccountNumber = :AccountNumber,AccountingSetId = :AccountingSetId,");
+		updateSql.append("CalculationRule = :CalculationRule,PaymentMode = :PaymentMode,AccountNumber = :AccountNumber,AccountingSetId = :AccountingSetId,Code = :Code,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, " );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
