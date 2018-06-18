@@ -181,7 +181,7 @@
 									value="${c:l('label_VehicleDealerDialog_Pobox.value')}" />
 								<hbox>
 									<space spacing="2px"
-										sclass="mandatory" />
+										sclass="mandatory"  id="space_dealerPoBox"/>
 									<textbox id="dealerPoBox"
 										width="150px" />
 								</hbox>
@@ -202,6 +202,15 @@
 									<space spacing="2px" />
 									<checkbox id="active"
 										checked="false" />
+								</hbox>
+								<label
+									id="label_VehicleDealerDialog_Code"
+									value="${c:l('label_VehicleDealerDialog_Code.value')}" />
+								<hbox>
+									<space id="space_Code" 
+										spacing="2px" />
+									<textbox id="code"
+										visible="true" width="180px" />
 								</hbox>
 							</row>
 							<row visible="false">
