@@ -43,6 +43,9 @@
 package com.pennant.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -54,13 +57,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.WeakHashMap;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -860,7 +866,9 @@ public class AgreementGeneration implements Serializable {
 			}
 			
 			// ----------------Loan Details
-			if(null!=detail.getFinScheduleData() && null!=detail.getFinScheduleData().getFinanceScheduleDetails()&& null!=detail.getFinScheduleData().getFinanceScheduleDetails().get(0)
+			if(null!=detail.getFinScheduleData() && null!=detail.getFinScheduleData().getFinanceScheduleDetails()
+					&& CollectionUtils.isNotEmpty(detail.getFinScheduleData().getFinanceScheduleDetails())
+					&& null!=detail.getFinScheduleData().getFinanceScheduleDetails().get(0)
 					&&null!=detail.getFinScheduleData().getFinanceScheduleDetails().get(0).getCalculatedRate()){
 				agreement.setEffDateFltRate(PennantApplicationUtil.formatRate(
 						detail.getFinScheduleData().getFinanceScheduleDetails().get(0).getCalculatedRate().doubleValue(), 2));
@@ -1119,11 +1127,113 @@ public class AgreementGeneration implements Serializable {
 				agreement.getQueryDetails().add(agreement.new LoanQryDetails());
 			}
 			
+			populateEquitasExtendedDetails(agreement);
+			
+			if(CollectionUtils.isEmpty(agreement.getLoanList())){
+				agreement.setLoanList(new ArrayList<>());
+				agreement.getLoanList().add(agreement.new ExtendedDetail());
+			}
+			
+			if(CollectionUtils.isEmpty(agreement.getCustomerList())){
+				agreement.setCustomerList(new ArrayList<>());
+				agreement.getCustomerList().add(agreement.new ExtendedDetail());
+			}
+			
+			if(CollectionUtils.isEmpty(agreement.getCollateralList())){
+				agreement.setCollateralList(new ArrayList<>());
+				agreement.getCollateralList().add(agreement.new ExtendedDetail());
+			}
+			
+			if(CollectionUtils.isEmpty(agreement.getOtherList())){
+				agreement.setOtherList(new ArrayList<>());
+				agreement.getOtherList().add(agreement.new ExtendedDetail());
+			}
+			
 		} catch (Exception e) {
 			logger.debug(e);
 		}
 		logger.debug("Leaving");
 		return agreement;
+	}
+
+	/**
+	 * Populate the extended details for the equitas
+	 * 
+	 * @param agreement
+	 */
+	private void populateEquitasExtendedDetails(AgreementDetail agreement) {
+		Properties properties = new Properties();
+		StringBuilder stringBuilder=new StringBuilder();
+		stringBuilder.append(File.separator).append("agreements").append(File.separator)
+					.append("equitas_extended_field").append(File.separator).append("equitas_extended_fields.properties");
+		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(stringBuilder.toString());
+
+		try {
+			properties.load(inputStream);
+		} catch (IOException ioException) {
+			logger.debug(ioException.getMessage());
+		}
+		if(!properties.isEmpty()){
+			String equitas_loan = properties.getProperty("equitas_loan");
+			List<ExtendedDetail> loanList=new ArrayList<>();
+			if(StringUtils.isNotBlank(equitas_loan)){
+				String[] loanExtendedFields = equitas_loan.toLowerCase().split(",");
+				if(ArrayUtils.isNotEmpty(loanExtendedFields)){
+					agreement.getExtendedDetails().forEach((extendedDetail)->{
+						if(ArrayUtils.contains(loanExtendedFields, extendedDetail.getKey())){
+							loanList.add(extendedDetail);
+						}
+					});
+				}
+			}
+			
+			agreement.setLoanList(loanList);
+			
+			String equitas_customer = properties.getProperty("equitas_customer");
+			List<ExtendedDetail> customerList=new ArrayList<>();
+			if(StringUtils.isNotBlank(equitas_customer)){
+				String[] loanExtendedFields = equitas_customer.split(",");
+				if(ArrayUtils.isNotEmpty(loanExtendedFields)){
+					agreement.getExtendedDetails().forEach((extendedDetail)->{
+						if(ArrayUtils.contains(loanExtendedFields, extendedDetail.getKey())){
+							customerList.add(extendedDetail);
+						}
+					});
+				}
+			}
+			
+			agreement.setCustomerList(customerList);
+			
+			String equitas_collateral = properties.getProperty("equitas_collateral");
+			List<ExtendedDetail> collateralList=new ArrayList<>();
+			if(StringUtils.isNotBlank(equitas_collateral)){
+				String[] loanExtendedFields = equitas_collateral.toLowerCase().split(",");
+				if(ArrayUtils.isNotEmpty(loanExtendedFields)){
+					agreement.getExtendedDetails().forEach((extendedDetail)->{ArrayUtils.contains(loanExtendedFields, extendedDetail.getKey());
+						if(ArrayUtils.contains(loanExtendedFields, extendedDetail.getKey())){
+							collateralList.add(extendedDetail);
+						}
+					});
+				}
+			}
+			
+			agreement.setCollateralList(collateralList);
+			
+			String equitas_other = properties.getProperty("equitas_other");
+			List<ExtendedDetail> otherList=new ArrayList<>();
+			if(StringUtils.isNotBlank(equitas_other)){
+				String[] loanExtendedFields = equitas_other.toLowerCase().split(",");
+				if(ArrayUtils.isNotEmpty(loanExtendedFields)){
+					agreement.getExtendedDetails().forEach((extendedDetail)->{
+						if(ArrayUtils.contains(loanExtendedFields, extendedDetail.getKey())){
+							otherList.add(extendedDetail);
+						}
+					});
+				}
+			}
+			
+			agreement.setOtherList(otherList);
+		}
 	}
 
 	/**
@@ -1289,6 +1399,7 @@ public class AgreementGeneration implements Serializable {
 										}else{
 											rcuVerificationData.setFinalDecision(StringUtils.trimToEmpty(verificationData.getFinalDecision()));
 										}
+										rcuVerificationData.setDoneBy(verificationData.getDoneBy());
 										agreement.getRcuVerification().add(rcuVerificationData);
 									}
 									
@@ -1339,12 +1450,20 @@ public class AgreementGeneration implements Serializable {
 		Map<String, Object> mapValues = detail.getCustomerDetails().getExtendedFieldRender().getMapValues();
 		for (String key : mapValues.keySet()) {
 			ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
+			if(null!= detail.getCustomerDetails().getExtendedFieldHeader() && CollectionUtils.isNotEmpty(detail.getCustomerDetails().getExtendedFieldHeader().getExtendedFieldDetails())){
+				List<ExtendedFieldDetail> extendedFieldDetails = detail.getCustomerDetails().getExtendedFieldHeader().getExtendedFieldDetails();
+				List<ExtendedFieldDetail> requiredExtendedFields = extendedFieldDetails.stream().filter(efd -> StringUtils.equalsIgnoreCase(key, efd.getFieldName())).collect(Collectors.toList());
+				if(CollectionUtils.isNotEmpty(requiredExtendedFields)){
+					extendedDetail.setFieldLabel(StringUtils.trimToEmpty(requiredExtendedFields.get(0).getFieldLabel()));
+				}
+			}
 			extendedDetail.setKey(StringUtils.trimToEmpty(key));
 			if (null != mapValues.get(key)) {
 				extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
 			} else {
 				extendedDetail.setValue(StringUtils.EMPTY);
 			}
+			extendedDetail.setFieldType("CUSTOMER");
 			agreement.getExtendedDetails().add(extendedDetail);
 		}
 		
@@ -1355,12 +1474,21 @@ public class AgreementGeneration implements Serializable {
 		Map<String, Object> mapValues = detail.getExtendedFieldRender().getMapValues();
 		for (String key : mapValues.keySet()) {
 			ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
+			if(null!= detail.getExtendedFieldHeader() && CollectionUtils.isNotEmpty(detail.getExtendedFieldHeader().getExtendedFieldDetails())){
+				List<ExtendedFieldDetail> extendedFieldDetails = detail.getExtendedFieldHeader().getExtendedFieldDetails();
+				List<ExtendedFieldDetail> requiredExtendedFields = extendedFieldDetails.stream().filter(efd -> StringUtils.equalsIgnoreCase(key, efd.getFieldName())).collect(Collectors.toList());
+				if(CollectionUtils.isNotEmpty(requiredExtendedFields)){
+					extendedDetail.setFieldLabel(StringUtils.trimToEmpty(requiredExtendedFields.get(0).getFieldLabel()));
+				}
+			}
+			
 			extendedDetail.setKey(StringUtils.trimToEmpty(key));
 			if (null != mapValues.get(key)) {
 				extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
 			} else {
 				extendedDetail.setValue(StringUtils.EMPTY);
 			}
+			extendedDetail.setFieldType("LOAN");
 			agreement.getExtendedDetails().add(extendedDetail);
 		}
 		return agreement;
@@ -1535,12 +1663,14 @@ public class AgreementGeneration implements Serializable {
 	}
 
 	private void populateContactDetails(FinanceDetail detail, AgreementDetail agreement) {
-		detail.getCustomerDetails().getCustomerPhoneNumList().forEach((phoneNumber)->{
-			ContactDetail contactDetail=agreement.new ContactDetail();
-			contactDetail.setContactType(StringUtils.trimToEmpty(phoneNumber.getLovDescPhoneTypeCodeName()));
-			contactDetail.setContactValue(StringUtils.trimToEmpty(phoneNumber.getPhoneNumber()));
-			agreement.getContactDetails().add(contactDetail);
-		});
+		if(CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerPhoneNumList())){
+			detail.getCustomerDetails().getCustomerPhoneNumList().forEach((phoneNumber)->{
+				ContactDetail contactDetail=agreement.new ContactDetail();
+				contactDetail.setContactType(StringUtils.trimToEmpty(phoneNumber.getLovDescPhoneTypeCodeName()));
+				contactDetail.setContactValue(StringUtils.trimToEmpty(phoneNumber.getPhoneNumber()));
+				agreement.getContactDetails().add(contactDetail);
+			});
+		}
 	}
 
 	//TODO:: Need more details
@@ -1592,6 +1722,52 @@ public class AgreementGeneration implements Serializable {
 			disbursement.setDisbursementAcct(StringUtils.trimToEmpty(advancePayment.getBeneficiaryAccNo()));
 			disbursement.setIfscCode(StringUtils.trimToEmpty(advancePayment.getiFSC()));
 			disbursement.setPaymentMode(StringUtils.trimToEmpty(advancePayment.getPaymentType()));
+			disbursement.setFavoringName(StringUtils.trimToEmpty(advancePayment.getLiabilityHoldName()));
+			disbursement.setIssueBankName(StringUtils.trimToEmpty(advancePayment.getBankName()));
+			disbursement.setIirReferenceNo(StringUtils.trimToEmpty(advancePayment.getLlReferenceNo()));
+			disbursement.setPaymentModeRef(StringUtils.trimToEmpty(advancePayment.getTransactionRef()));
+			
+			//additional details
+			disbursement.setPaymentId(String.valueOf(advancePayment.getPaymentId()));
+			disbursement.setPaymentSeq(String.valueOf(advancePayment.getPaymentSeq()));
+			disbursement.setDisbSeq(String.valueOf(advancePayment.getDisbSeq()));
+			disbursement.setPaymentDetail(StringUtils.trimToEmpty(advancePayment.getPaymentDetail()));
+			disbursement.setCustContribution(PennantAppUtil.amountFormate(advancePayment.getCustContribution(), formatter));
+			disbursement.setSellerContribution(PennantAppUtil.amountFormate(advancePayment.getSellerContribution(), formatter));
+			disbursement.setRemarks(StringUtils.trimToEmpty(advancePayment.getRemarks()));
+			disbursement.setBankCode(StringUtils.trimToEmpty(advancePayment.getBankCode()));
+			disbursement.setBranchBankCode(StringUtils.trimToEmpty(advancePayment.getBranchBankCode()));
+			disbursement.setBranchCode(StringUtils.trimToEmpty(advancePayment.getBranchCode()));
+			disbursement.setBranchDesc(StringUtils.trimToEmpty(advancePayment.getBranchDesc()));
+			disbursement.setCity(StringUtils.trimToEmpty(advancePayment.getCity()));
+			disbursement.setPayableLoc(StringUtils.trimToEmpty(advancePayment.getPayableLoc()));
+			disbursement.setPrintingLoc(StringUtils.trimToEmpty(advancePayment.getPrintingLoc()));
+			disbursement.setValueDate(DateUtility.formatToLongDate(advancePayment.getValueDate()));
+			disbursement.setBankBranchID(String.valueOf(advancePayment.getBankBranchID()));
+			disbursement.setPhoneCountryCode(StringUtils.trimToEmpty(advancePayment.getPhoneCountryCode()));
+			disbursement.setPhoneAreaCode(StringUtils.trimToEmpty(advancePayment.getPhoneAreaCode()));
+			disbursement.setPhoneNumber(StringUtils.trimToEmpty(advancePayment.getPhoneNumber()));
+			disbursement.setClearingDate(DateUtility.formatToLongDate(advancePayment.getClearingDate()));
+			disbursement.setStatus(StringUtils.trimToEmpty(advancePayment.getStatus()));
+			disbursement.setActive((advancePayment.isActive())?"YES":"NO");
+			disbursement.setInputDate(DateUtility.formatToLongDate(advancePayment.getInputDate()));
+			disbursement.setDisbCCy(StringUtils.trimToEmpty(advancePayment.getDisbCCy()));
+			disbursement.setpOIssued((advancePayment.ispOIssued())?"YES":"NO");
+			disbursement.setLovValue(StringUtils.trimToEmpty(advancePayment.getLovValue()));
+			disbursement.setPartnerBankID(String.valueOf(advancePayment.getPartnerBankID()));
+			disbursement.setPartnerbankCode(StringUtils.trimToEmpty(advancePayment.getPartnerbankCode()));
+			disbursement.setPartnerBankName(StringUtils.trimToEmpty(advancePayment.getPartnerBankName()));
+			disbursement.setFinType(StringUtils.trimToEmpty(advancePayment.getFinType()));
+			disbursement.setCustShrtName(StringUtils.trimToEmpty(advancePayment.getCustShrtName()));
+			disbursement.setLinkedTranId(String.valueOf(advancePayment.getLinkedTranId()));
+			disbursement.setPartnerBankAcType(StringUtils.trimToEmpty(advancePayment.getPartnerBankAcType()));
+			disbursement.setRejectReason(StringUtils.trimToEmpty(advancePayment.getRejectReason()));
+			disbursement.setPartnerBankAc(StringUtils.trimToEmpty(advancePayment.getPartnerBankAc()));
+			disbursement.setAlwFileDownload((advancePayment.isAlwFileDownload())?"YES":"NO");
+			disbursement.setFileNamePrefix(StringUtils.trimToEmpty(advancePayment.getFileNamePrefix()));
+			disbursement.setChannel(StringUtils.trimToEmpty(advancePayment.getChannel()));
+			disbursement.setEntityCode(StringUtils.trimToEmpty(advancePayment.getEntityCode()));
+			
 			agreement.getDisbursements().add(disbursement);
 		});
 	}
@@ -2000,19 +2176,30 @@ public class AgreementGeneration implements Serializable {
 						if(CollectionUtils.isEmpty(agreement.getExtendedDetails())){
 							agreement.setExtendedDetails(new ArrayList<>());
 						}
-						collateralSetup.getCollateralStructure().getExtendedFieldHeader();
+						
 						if(CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())){
 							for (ExtendedFieldRender extendedFieldRender : collateralSetup.getExtendedFieldRenderList()) {
 								if(null!=extendedFieldRender&&MapUtils.isNotEmpty(extendedFieldRender.getMapValues())){
 									Map<String, Object> mapValues = extendedFieldRender.getMapValues();
 									for (String key : mapValues.keySet()) {
 										ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
+										
+										if(null!= collateralSetup.getCollateralStructure() && null!= collateralSetup.getCollateralStructure().getExtendedFieldHeader() 
+												&& CollectionUtils.isNotEmpty(collateralSetup.getCollateralStructure().getExtendedFieldHeader().getExtendedFieldDetails())){
+											List<ExtendedFieldDetail> extendedFieldDetails = collateralSetup.getCollateralStructure().getExtendedFieldHeader().getExtendedFieldDetails();
+											List<ExtendedFieldDetail> requiredExtendedFields = extendedFieldDetails.stream().filter(efd -> StringUtils.equalsIgnoreCase(key, efd.getFieldName())).collect(Collectors.toList());
+											if(CollectionUtils.isNotEmpty(requiredExtendedFields)){
+												extendedDetail.setFieldLabel(StringUtils.trimToEmpty(requiredExtendedFields.get(0).getFieldLabel()));
+											}
+										}
+										
 										extendedDetail.setKey(StringUtils.trimToEmpty(key));
 										if (null != mapValues.get(key)) {
 											extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
 										} else {
 											extendedDetail.setValue(StringUtils.EMPTY);
 										}
+										extendedDetail.setFieldType("COLLATERAL");
 										agreement.getExtendedDetails().add(extendedDetail);
 									}
 								}

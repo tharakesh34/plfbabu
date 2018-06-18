@@ -47,6 +47,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.pennant.backend.model.finance.AgreementDetail.ExtendedDetail;
+
 public class AgreementDetail {
 
 	//=============== Basic Details=============//
@@ -4938,6 +4940,50 @@ private String custAccount ="";
 		private String disbursementAcct ="";
 		private String ifscCode ="";
 		private String paymentMode ="";
+		private String favoringName = "";
+		private String issueBankName = "";
+		private String iirReferenceNo = "";
+		private String paymentModeRef = "";
+		
+		private String paymentId = "";
+		private String paymentSeq = "";
+		private String disbSeq = "";
+		private String paymentDetail = "";
+		private String custContribution = "";
+		private String sellerContribution = "";
+		private String remarks = "";
+		private String bankCode = "";
+		private String branchBankCode = "";
+		private String branchCode = "";
+		private String branchDesc = "";
+		private String city = "";
+		private String payableLoc = "";
+		private String printingLoc = "";
+		private String valueDate = "";
+		private String bankBranchID = "";
+		private String phoneCountryCode = "";
+		private String phoneAreaCode = "";
+		private String phoneNumber = "";
+		private String clearingDate = "";
+		private String status = "";
+		private String active = "";
+		private String inputDate = "";
+		private String disbCCy = "";
+		private String pOIssued = "";
+		private String lovValue = "";
+		private String partnerBankID = "";
+		private String partnerbankCode = "";
+		private String partnerBankName = "";
+		private String finType = "";
+		private String custShrtName = "";
+		private String linkedTranId = "";
+		private String partnerBankAcType = "";
+		private String rejectReason = "";
+		private String partnerBankAc = "";
+		private String alwFileDownload = "";
+		private String fileNamePrefix = "";
+		private String channel = "";
+		private String entityCode = "";
 		
 		public Disbursement() {
 		}
@@ -4996,6 +5042,350 @@ private String custAccount ="";
 
 		public void setPaymentMode(String paymentMode) {
 			this.paymentMode = paymentMode;
+		}
+
+		public String getFavoringName() {
+			return favoringName;
+		}
+
+		public void setFavoringName(String favoringName) {
+			this.favoringName = favoringName;
+		}
+
+		public String getIssueBankName() {
+			return issueBankName;
+		}
+
+		public void setIssueBankName(String issueBankName) {
+			this.issueBankName = issueBankName;
+		}
+
+		public String getIirReferenceNo() {
+			return iirReferenceNo;
+		}
+
+		public void setIirReferenceNo(String iirReferenceNo) {
+			this.iirReferenceNo = iirReferenceNo;
+		}
+
+		public String getPaymentModeRef() {
+			return paymentModeRef;
+		}
+
+		public void setPaymentModeRef(String paymentModeRef) {
+			this.paymentModeRef = paymentModeRef;
+		}
+
+		public String getPaymentId() {
+			return paymentId;
+		}
+
+		public void setPaymentId(String paymentId) {
+			this.paymentId = paymentId;
+		}
+
+		public String getPaymentSeq() {
+			return paymentSeq;
+		}
+
+		public void setPaymentSeq(String paymentSeq) {
+			this.paymentSeq = paymentSeq;
+		}
+
+		public String getDisbSeq() {
+			return disbSeq;
+		}
+
+		public void setDisbSeq(String disbSeq) {
+			this.disbSeq = disbSeq;
+		}
+
+		public String getPaymentDetail() {
+			return paymentDetail;
+		}
+
+		public void setPaymentDetail(String paymentDetail) {
+			this.paymentDetail = paymentDetail;
+		}
+
+		public String getCustContribution() {
+			return custContribution;
+		}
+
+		public void setCustContribution(String custContribution) {
+			this.custContribution = custContribution;
+		}
+
+		public String getSellerContribution() {
+			return sellerContribution;
+		}
+
+		public void setSellerContribution(String sellerContribution) {
+			this.sellerContribution = sellerContribution;
+		}
+
+		public String getRemarks() {
+			return remarks;
+		}
+
+		public void setRemarks(String remarks) {
+			this.remarks = remarks;
+		}
+
+		public String getBankCode() {
+			return bankCode;
+		}
+
+		public void setBankCode(String bankCode) {
+			this.bankCode = bankCode;
+		}
+
+		public String getBranchBankCode() {
+			return branchBankCode;
+		}
+
+		public void setBranchBankCode(String branchBankCode) {
+			this.branchBankCode = branchBankCode;
+		}
+
+		public String getBranchCode() {
+			return branchCode;
+		}
+
+		public void setBranchCode(String branchCode) {
+			this.branchCode = branchCode;
+		}
+
+		public String getBranchDesc() {
+			return branchDesc;
+		}
+
+		public void setBranchDesc(String branchDesc) {
+			this.branchDesc = branchDesc;
+		}
+
+		public String getCity() {
+			return city;
+		}
+
+		public void setCity(String city) {
+			this.city = city;
+		}
+
+		public String getPayableLoc() {
+			return payableLoc;
+		}
+
+		public void setPayableLoc(String payableLoc) {
+			this.payableLoc = payableLoc;
+		}
+
+		public String getPrintingLoc() {
+			return printingLoc;
+		}
+
+		public void setPrintingLoc(String printingLoc) {
+			this.printingLoc = printingLoc;
+		}
+
+		public String getValueDate() {
+			return valueDate;
+		}
+
+		public void setValueDate(String valueDate) {
+			this.valueDate = valueDate;
+		}
+
+		public String getBankBranchID() {
+			return bankBranchID;
+		}
+
+		public void setBankBranchID(String bankBranchID) {
+			this.bankBranchID = bankBranchID;
+		}
+
+		public String getPhoneCountryCode() {
+			return phoneCountryCode;
+		}
+
+		public void setPhoneCountryCode(String phoneCountryCode) {
+			this.phoneCountryCode = phoneCountryCode;
+		}
+
+		public String getPhoneAreaCode() {
+			return phoneAreaCode;
+		}
+
+		public void setPhoneAreaCode(String phoneAreaCode) {
+			this.phoneAreaCode = phoneAreaCode;
+		}
+
+		public String getPhoneNumber() {
+			return phoneNumber;
+		}
+
+		public void setPhoneNumber(String phoneNumber) {
+			this.phoneNumber = phoneNumber;
+		}
+
+		public String getClearingDate() {
+			return clearingDate;
+		}
+
+		public void setClearingDate(String clearingDate) {
+			this.clearingDate = clearingDate;
+		}
+
+		public String getStatus() {
+			return status;
+		}
+
+		public void setStatus(String status) {
+			this.status = status;
+		}
+
+		public String getActive() {
+			return active;
+		}
+
+		public void setActive(String active) {
+			this.active = active;
+		}
+
+		public String getInputDate() {
+			return inputDate;
+		}
+
+		public void setInputDate(String inputDate) {
+			this.inputDate = inputDate;
+		}
+
+		public String getDisbCCy() {
+			return disbCCy;
+		}
+
+		public void setDisbCCy(String disbCCy) {
+			this.disbCCy = disbCCy;
+		}
+
+		public String getpOIssued() {
+			return pOIssued;
+		}
+
+		public void setpOIssued(String pOIssued) {
+			this.pOIssued = pOIssued;
+		}
+
+		public String getLovValue() {
+			return lovValue;
+		}
+
+		public void setLovValue(String lovValue) {
+			this.lovValue = lovValue;
+		}
+
+		public String getPartnerBankID() {
+			return partnerBankID;
+		}
+
+		public void setPartnerBankID(String partnerBankID) {
+			this.partnerBankID = partnerBankID;
+		}
+
+		public String getPartnerbankCode() {
+			return partnerbankCode;
+		}
+
+		public void setPartnerbankCode(String partnerbankCode) {
+			this.partnerbankCode = partnerbankCode;
+		}
+
+		public String getPartnerBankName() {
+			return partnerBankName;
+		}
+
+		public void setPartnerBankName(String partnerBankName) {
+			this.partnerBankName = partnerBankName;
+		}
+
+		public String getFinType() {
+			return finType;
+		}
+
+		public void setFinType(String finType) {
+			this.finType = finType;
+		}
+
+		public String getCustShrtName() {
+			return custShrtName;
+		}
+
+		public void setCustShrtName(String custShrtName) {
+			this.custShrtName = custShrtName;
+		}
+
+		public String getLinkedTranId() {
+			return linkedTranId;
+		}
+
+		public void setLinkedTranId(String linkedTranId) {
+			this.linkedTranId = linkedTranId;
+		}
+
+		public String getPartnerBankAcType() {
+			return partnerBankAcType;
+		}
+
+		public void setPartnerBankAcType(String partnerBankAcType) {
+			this.partnerBankAcType = partnerBankAcType;
+		}
+
+		public String getRejectReason() {
+			return rejectReason;
+		}
+
+		public void setRejectReason(String rejectReason) {
+			this.rejectReason = rejectReason;
+		}
+
+		public String getPartnerBankAc() {
+			return partnerBankAc;
+		}
+
+		public void setPartnerBankAc(String partnerBankAc) {
+			this.partnerBankAc = partnerBankAc;
+		}
+
+		public String getAlwFileDownload() {
+			return alwFileDownload;
+		}
+
+		public void setAlwFileDownload(String alwFileDownload) {
+			this.alwFileDownload = alwFileDownload;
+		}
+
+		public String getFileNamePrefix() {
+			return fileNamePrefix;
+		}
+
+		public void setFileNamePrefix(String fileNamePrefix) {
+			this.fileNamePrefix = fileNamePrefix;
+		}
+
+		public String getChannel() {
+			return channel;
+		}
+
+		public void setChannel(String channel) {
+			this.channel = channel;
+		}
+
+		public String getEntityCode() {
+			return entityCode;
+		}
+
+		public void setEntityCode(String entityCode) {
+			this.entityCode = entityCode;
 		}
 	}
 	
@@ -6048,6 +6438,8 @@ private String custAccount ="";
 	public class ExtendedDetail{
 		private String key="";
 		private String value="";
+		private String fieldType="";
+		private String fieldLabel="";
 		public ExtendedDetail() {
 		}
 		/**
@@ -6072,6 +6464,19 @@ private String custAccount ="";
 		public void setValue(String value) {
 			this.value = value;
 		}
+		public String getFieldType() {
+			return fieldType;
+		}
+		public void setFieldType(String fieldType) {
+			this.fieldType = fieldType;
+		}
+		public String getFieldLabel() {
+			return fieldLabel;
+		}
+		public void setFieldLabel(String fieldLabel) {
+			this.fieldLabel = fieldLabel;
+		}
+		
 	}
 	
 	//Required Fields
@@ -6487,5 +6892,42 @@ private String custAccount ="";
 		public void setStatus(String status) {
 			this.status = status;
 		}
+	}
+	
+	List<ExtendedDetail> loanList;
+	List<ExtendedDetail> customerList;
+	List<ExtendedDetail> collateralList;
+	List<ExtendedDetail> otherList;
+
+	public List<ExtendedDetail> getLoanList() {
+		return loanList;
+	}
+
+	public void setLoanList(List<ExtendedDetail> loanList) {
+		this.loanList = loanList;
+	}
+
+	public List<ExtendedDetail> getCustomerList() {
+		return customerList;
+	}
+
+	public void setCustomerList(List<ExtendedDetail> customerList) {
+		this.customerList = customerList;
+	}
+
+	public List<ExtendedDetail> getCollateralList() {
+		return collateralList;
+	}
+
+	public void setCollateralList(List<ExtendedDetail> collateralList) {
+		this.collateralList = collateralList;
+	}
+
+	public List<ExtendedDetail> getOtherList() {
+		return otherList;
+	}
+
+	public void setOtherList(List<ExtendedDetail> otherList) {
+		this.otherList = otherList;
 	}
 }
