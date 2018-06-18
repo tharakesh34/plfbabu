@@ -750,52 +750,83 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// call the ZUL-file with the parameters packed in a map
 		try {
 			String productType = aFinanceMain.getProductCategory();
-			productType = (productType.substring(0, 1)).toUpperCase() + (productType.substring(1)).toLowerCase();
+			productType = (productType.substring(0, 1)).concat(productType.substring(1));
+			productType = productType.toUpperCase();
 
-			StringBuilder fileLocaation = new StringBuilder("/WEB-INF/pages/Finance/FinanceMain/");
+			StringBuilder zulPath = new StringBuilder("/WEB-INF/pages/Finance/FinanceMain/");
+			boolean zulFound = false;
+
 			if ("QDE".equals(StringUtils.trimToEmpty(this.requestSource))) {
-				fileLocaation.append("QDEFinanceMainDialog.zul");
+				zulPath.append("QDEFinanceMainDialog.zul");
+				zulFound = true;
 			} else if (FinanceConstants.FINSER_EVENT_PREAPPROVAL.equals(this.requestSource)) {
-				fileLocaation.append("FinancePreApprovalDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_IJARAH)) {
-				fileLocaation.append("IjarahFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_FWIJARAH)) {
-				fileLocaation.append("FwdIjarahFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_ISTISNA)) {
-				fileLocaation.append("IstisnaFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_MUDARABA)) {
-				fileLocaation.append("MudarabaFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_MURABAHA)) {
-				fileLocaation.append("MurabahaFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_MUSHARAKA)) {
-				fileLocaation.append("MusharakFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_TAWARRUQ)) {
-				fileLocaation.append("TawarruqFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_SUKUK)) {
-				fileLocaation.append("SukukFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_SUKUKNRM)) {
-				fileLocaation.append("SukuknrmFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_ISTNORM)) {
-				fileLocaation.append("IstnormFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_MUSAWAMA)) {
-				fileLocaation.append("MusawamaFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_CONVENTIONAL)) {
-				fileLocaation.append("ConvFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_QARDHASSAN)) {
-				fileLocaation.append("QardHassanFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_STRUCTMUR)) {
-				fileLocaation.append("StructuredMurabahaFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_WAKALA)) {
-				fileLocaation.append("CorporateWakalaFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_ODFACILITY)) {
-				fileLocaation.append("ODFacilityFinanceMainDialog.zul");
-			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_DISCOUNT)) {
-				fileLocaation.append("DiscountFinanceMainDialog.zul");
-			} else {
-				fileLocaation.append("FinanceMainDialog.zul");
+				zulPath.append("FinancePreApprovalDialog.zul");
+				zulFound = true;
 			}
 
-			Executions.createComponents(fileLocaation.toString(), this.window_FinanceMainList, map);
+			if (zulFound) {
+				Executions.createComponents(zulPath.toString(), this.window_FinanceMainList, map);
+				return;
+			}
+
+			switch (productType) {
+			case FinanceConstants.PRODUCT_IJARAH:
+				zulPath.append("IjarahFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_FWIJARAH:
+				zulPath.append("FwdIjarahFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_ISTISNA:
+				zulPath.append("IstisnaFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_MUDARABA:
+				zulPath.append("MudarabaFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_MURABAHA:
+				zulPath.append("MurabahaFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_MUSHARAKA:
+				zulPath.append("MusharakFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_TAWARRUQ:
+				zulPath.append("TawarruqFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_SUKUK:
+				zulPath.append("SukukFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_SUKUKNRM:
+				zulPath.append("SukuknrmFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_ISTNORM:
+				zulPath.append("IstnormFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_MUSAWAMA:
+				zulPath.append("MusawamaFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_CONVENTIONAL:
+				zulPath.append("ConvFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_QARDHASSAN:
+				zulPath.append("QardHassanFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_STRUCTMUR:
+				zulPath.append("StructuredMurabahaFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_WAKALA:
+				zulPath.append("CorporateWakalaFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_ODFACILITY:
+				zulPath.append("ODFacilityFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_DISCOUNT:
+				zulPath.append("DiscountFinanceMainDialog.zul");
+				break;
+			default:
+				zulPath.append("FinanceMainDialog.zul");
+				break;
+			}
+
+			Executions.createComponents(zulPath.toString(), this.window_FinanceMainList, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
