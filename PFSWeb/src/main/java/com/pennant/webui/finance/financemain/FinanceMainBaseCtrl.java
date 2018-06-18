@@ -11015,6 +11015,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			aFinanceMain.setFinCurrAssetValue(
 					PennantAppUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
+			
+			//Setting Total Disbursements as of Date
+			if(!isReadOnly("FinanceMainDialog_NoScheduleGeneration") && aFinanceMain.getFinCurrAssetValue().compareTo(BigDecimal.ZERO) == 0){
+				BigDecimal utilizedAmt = aFinanceMain.getFinAmount().subtract(aFinanceMain.getDownPayment());
+				aFinanceMain.setFinCurrAssetValue(utilizedAmt);
+			}
 
 		} catch (WrongValueException we) {
 			wve.add(we);
