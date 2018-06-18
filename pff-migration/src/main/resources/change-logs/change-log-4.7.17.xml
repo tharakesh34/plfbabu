@@ -3445,5 +3445,161 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 	        <column name="code"  type="varchar(20)"/>
 	    </addColumn>
 	 </changeSet>
+	  <changeSet id="78" author="vijaykumar.l">
+	<createView viewName="AMTVEHICLEDEALER_AVIEW" replaceIfExists="true">
+ SELECT t1.dealerid,
+    t1.dealertype,
+    t1.dealername,
+    t1.dealertelephone,
+    t1.dealerfax,
+    t1.dealeraddress1,
+    t1.dealeraddress2,
+    t1.dealeraddress3,
+    t1.dealeraddress4,
+    t1.dealercountry,
+    t5.countrydesc AS lovdesccountry,
+    t1.dealerprovince,
+    t4.cpprovincename AS lovdescprovince,
+    t1.dealercity,
+    t3.pccityname AS lovdesccity,
+    t1.email,
+    t1.pobox,
+    t1.zipcode,
+    t1.active,
+    t1.emirates,
+    t1.commisionpaidat,
+    t1.calculationrule,
+    t7.rulecodedesc AS calruledesc,
+    t1.paymentmode,
+    t1.accountnumber,
+    t1.accountingsetid,
+    t8.accountsetcode AS accountingsetcode,
+    t8.accountsetcodename AS accountingsetdesc,
+    t9.cpprovincename AS emiratesdescription,
+    t1.sellertype,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+	t1.code
+   FROM amtvehicledealer t1
+     LEFT JOIN rmtprovincevscity t3 ON t1.dealercountry = t3.pccountry AND t1.dealerprovince = t3.pcprovince AND t1.dealercity = t3.pccity AND t1.dealercity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.dealercountry = t4.cpcountry AND t1.dealerprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.dealercountry = t5.countrycode
+     LEFT JOIN rules t7 ON t1.calculationrule = t7.rulecode AND t7.ruleevent = 'ADDDBS'::citext
+     LEFT JOIN rmtaccountingset t8 ON t1.accountingsetid = t8.accountsetid
+     LEFT JOIN rmtcountryvsprovince t9 ON t1.emirates = t9.cpprovince
+</createView>
+	</changeSet>
+<changeSet id="79" author="vijaykumar.l">
+	<createView viewName="AMTVEHICLEDEALER_VIEW" replaceIfExists="true">
+ SELECT t1.dealerid,
+    t1.dealertype,
+    t1.dealername,
+    t1.dealertelephone,
+    t1.dealerfax,
+    t1.dealeraddress1,
+    t1.dealeraddress2,
+    t1.dealeraddress3,
+    t1.dealeraddress4,
+    t1.dealercountry,
+    t5.countrydesc AS lovdesccountry,
+    t1.dealerprovince,
+    t4.cpprovincename AS lovdescprovince,
+    t1.dealercity,
+    t3.pccityname AS lovdesccity,
+    t1.email,
+    t1.pobox,
+    t1.zipcode,
+    t1.active,
+    t1.emirates,
+    t1.commisionpaidat,
+    t1.calculationrule,
+    t7.rulecodedesc AS calruledesc,
+    t1.paymentmode,
+    t1.accountnumber,
+    t1.accountingsetid,
+    t8.accountsetcode AS accountingsetcode,
+    t8.accountsetcodename AS accountingsetdesc,
+    t9.cpprovincename AS emiratesdescription,
+    t1.sellertype,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+	t1.code
+   FROM amtvehicledealer_temp t1
+     LEFT JOIN rmtprovincevscity t3 ON t1.dealercountry = t3.pccountry AND t1.dealerprovince = t3.pcprovince AND t1.dealercity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.dealercountry = t4.cpcountry AND t1.dealerprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.dealercountry = t5.countrycode
+     LEFT JOIN rules t7 ON t1.calculationrule = t7.rulecode AND t7.ruleevent = 'ADDDBS'::citext
+     LEFT JOIN rmtaccountingset t8 ON t1.accountingsetid = t8.accountsetid
+     LEFT JOIN rmtcountryvsprovince t9 ON t1.emirates = t9.cpprovince
+UNION ALL
+ SELECT t1.dealerid,
+    t1.dealertype,
+    t1.dealername,
+    t1.dealertelephone,
+    t1.dealerfax,
+    t1.dealeraddress1,
+    t1.dealeraddress2,
+    t1.dealeraddress3,
+    t1.dealeraddress4,
+    t1.dealercountry,
+    t5.countrydesc AS lovdesccountry,
+    t1.dealerprovince,
+    t4.cpprovincename AS lovdescprovince,
+    t1.dealercity,
+    t3.pccityname AS lovdesccity,
+    t1.email,
+    t1.pobox,
+    t1.zipcode,
+    t1.active,
+    t1.emirates,
+    t1.commisionpaidat,
+    t1.calculationrule,
+    t7.rulecodedesc AS calruledesc,
+    t1.paymentmode,
+    t1.accountnumber,
+    t1.accountingsetid,
+    t8.accountsetcode AS accountingsetcode,
+    t8.accountsetcodename AS accountingsetdesc,
+    t9.cpprovincename AS emiratesdescription,
+    t1.sellertype,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+	t1.code
+   FROM amtvehicledealer t1
+     LEFT JOIN rmtprovincevscity t3 ON t1.dealercountry = t3.pccountry AND t1.dealerprovince = t3.pcprovince AND t1.dealercity = t3.pccity AND t1.dealercity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.dealercountry = t4.cpcountry AND t1.dealerprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.dealercountry = t5.countrycode
+     LEFT JOIN rules t7 ON t1.calculationrule = t7.rulecode AND t7.ruleevent = 'ADDDBS'::citext
+     LEFT JOIN rmtaccountingset t8 ON t1.accountingsetid = t8.accountsetid
+     LEFT JOIN rmtcountryvsprovince t9 ON t1.emirates = t9.cpprovince
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM amtvehicledealer_temp
+          WHERE amtvehicledealer_temp.dealerid = t1.dealerid))
+</createView>
+	</changeSet>
 </databaseChangeLog>
 	
