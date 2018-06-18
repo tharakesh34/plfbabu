@@ -3435,5 +3435,15 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 	          WHERE extendedfielddetail_temp.moduleid = t1.moduleid AND extendedfielddetail_temp.fieldname = t1.fieldname))
 	</createView>
 </changeSet>
+<changeSet id="76" author="vijaykumar.l">
+		<addColumn tableName="amtvehicledealer">
+	        <column name="code"  type="varchar(20)"/>
+	    </addColumn>
+	</changeSet>
+ <changeSet id="77" author="vijaykumar.l">
+		<addColumn tableName="amtvehicledealer_temp">
+	        <column name="code"  type="varchar(20)"/>
+	    </addColumn>
+	 </changeSet>
 </databaseChangeLog>
 	
