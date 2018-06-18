@@ -101,4 +101,10 @@ update adtCustomers set marginDeviation=0;
 			<column name="CustCin" type="varchar(100)" />
 		</addColumn>
 </changeSet>
+<changeSet id="10" author="SaiKrishna">
+	<comment>story #413 Allow scriptlet for extended fields</comment>
+	<addColumn tableName="adtextendedfielddetail">
+		<column name="scriptlet" type="varchar(8000)"/>
+	</addColumn>
+</changeSet>
 </databaseChangeLog>
