@@ -3267,5 +3267,23 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 		alter sequence seqfinliabilityreq restart start with (Select max(id) from (Select max(id)+1 id from FinLiabilityReq UNION select max(id)+1 id from FinLiabilityReq_Temp)T));
 	</sql>
 </changeSet> -->
+
+<changeSet id="66" author="Manoj">
+	<addColumn tableName="BlackListCustomer_Temp">
+			<column name="CustCtgCode" type="varchar(20)" />
+			<column name="CustCompName" type="varchar(200)" />
+			<column name="CustAadhaar" type="varchar(15)" />
+			<column name="CustCin" type="varchar(100)" />
+		</addColumn>
+</changeSet>
+
+<changeSet id="67" author="Manoj">
+	<addColumn tableName="BlackListCustomer">
+			<column name="CustCtgCode" type="varchar(20)" />
+			<column name="CustCompName" type="varchar(200)" />
+			<column name="CustAadhaar" type="varchar(15)" />
+			<column name="CustCin" type="varchar(100)" />
+		</addColumn>
+</changeSet>
 </databaseChangeLog>
 	
