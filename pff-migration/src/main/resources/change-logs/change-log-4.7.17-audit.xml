@@ -92,4 +92,13 @@ update adtCustomers set marginDeviation=0;
 <changeSet id="8_Post" author="Vinay" dbms="oracle">
 	<addNotNullConstraint tableName="AdtFinLiabilityReq" columnName="id"/>
 </changeSet> -->
+
+<changeSet id="9" author="Manoj">
+	<addColumn tableName="adtblacklistcustomer">
+			<column name="CustCtgCode" type="varchar(20)" />
+			<column name="CustCompName" type="varchar(200)" />
+			<column name="CustAadhaar" type="varchar(15)" />
+			<column name="CustCin" type="varchar(100)" />
+		</addColumn>
+</changeSet>
 </databaseChangeLog>
