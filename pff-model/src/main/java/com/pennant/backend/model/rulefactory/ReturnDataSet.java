@@ -80,7 +80,7 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	private String finRpyFor;
 	private String userBranch;
 	private long oldLinkedTranId = 0;
-	
+	private String entityCode;
 	/**
 	 * Possible values 
 	 * 0- NON EOD posting 
@@ -497,6 +497,14 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 
 	public void setOldLinkedTranId(long oldLinkedTranId) {
 		this.oldLinkedTranId = oldLinkedTranId;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
 	}
 
 	

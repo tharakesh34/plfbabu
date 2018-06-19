@@ -886,11 +886,13 @@ public class TrailBalanceEngine extends DataEngineExport {
 	private void addSummaryRecord() {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder();
-
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("HEADERID", headerId);
+		
 		sql.append(" INSERT INTO TRIAL_BALANCE_REPORT_FILE(DEBITAMOUNT, CREDITAMOUNT) values");
-		sql.append(" ((select sum(debitamount) from TRIAL_BALANCE_REPORT_FILE  where hostaccount is not null) ,(select sum(CREDITAMOUNT) from TRIAL_BALANCE_REPORT_FILE  where hostaccount is not null))");
+		sql.append(" ((select sum(debitamount) from TRIAL_BALANCE_REPORT WHERE HEADERID = :HEADERID) ,(select sum(CREDITAMOUNT) from  TRIAL_BALANCE_REPORT WHERE HEADERID = :HEADERID))");
 		logger.trace(Literal.SQL + sql.toString());
-		parameterJdbcTemplate.update(sql.toString(), new MapSqlParameterSource());
+		parameterJdbcTemplate.update(sql.toString(), paramMap);
 		logger.debug(Literal.LEAVING);
 	}
 	
