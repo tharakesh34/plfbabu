@@ -98,4 +98,6 @@ public interface CustomerDetailsService {
 	
 	CustomerDetails getCustomerAndCustomerDocsById(long id, String type);
 
+	AuditHeader preValidate(AuditHeader auditHeader);
+
 }

@@ -3032,6 +3032,17 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		logger.debug("Leaving");
 		return auditHeader;
 	}
+	
+	// ### 19-06-2018  PSD 127035
+	/**
+	 * To handle service level validations before calling service task
+	 * 
+	 */
+	public AuditHeader preValidate(AuditHeader auditHeader) {
+		 return businessValidation(auditHeader, "Validate");
+	}
+	
+	// ### 19-06-2018 -End
 
 	private void doPostHookValidation(AuditHeader auditHeader) {
 		if (customerPostValidationHook != null) {

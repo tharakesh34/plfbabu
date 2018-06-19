@@ -3249,6 +3249,33 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					return false;
 				}
 			}
+			
+			
+			// ### 19-06-2018 PSD 127035:TO handle service level validations
+			// before calling service Tasks
+			auditHeader = getAuditHeader(aCustomerDetails, PennantConstants.TRAN_WF);
+			auditHeader = customerDetailsService.preValidate(auditHeader);
+			int retValue = PennantConstants.porcessOVERIDE;
+			while (retValue == PennantConstants.porcessOVERIDE) {
+				boolean procesCompleted = false;
+				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					procesCompleted = true;
+				}
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
+				setOverideMap(auditHeader.getOverideMap());
+				if (!procesCompleted) {
+					return false;
+				}
+			}
+			// ### 19-06-2018 - End
+			
 			// Check for service tasks. If one exists perform the task(s)
 			String finishedTasks = "";
 			String serviceTasks = getServiceTasks(taskId, aCustomer, finishedTasks);
