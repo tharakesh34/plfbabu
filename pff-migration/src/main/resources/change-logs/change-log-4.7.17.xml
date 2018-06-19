@@ -3737,7 +3737,6 @@ UNION ALL
 	<changeSet id="82" author="Siva">
 		<createSequence sequenceName="SeqReceiptNumber" startValue="1" maxValue="9223372036854775807" incrementBy="1" cycle="false" />
 	</changeSet>
-	</changeSet>
 	<changeSet id="84" author="manoj">
 		<addColumn tableName="POSTINGS">
 	 		<column name="EntityCode" type="varchar(8)"/>
