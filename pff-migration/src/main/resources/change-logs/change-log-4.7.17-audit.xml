@@ -70,7 +70,7 @@ update adtCustomers set marginDeviation=0;
 			columnName="Remarks" newDataType="VARCHAR(500)" />
 	</changeSet>
 	
-<changeSet id="7" author="">
+<changeSet id="7" author="vinay">
 	<addColumn tableName="AdtFinLiabilityReq">
 		<column name="Id" type="bigint"/>
 	</addColumn>
