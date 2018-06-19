@@ -3214,7 +3214,7 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 	<dropPrimaryKey tableName="FinLiabilityReq_Temp" constraintName="pk_finliabilityreq_temp"/>
 </changeSet>
 
-<changeSet id="62" author="">
+<changeSet id="62" author="Vinay">
 	<addPrimaryKey tableName="FinLiabilityReq" columnNames="Id" constraintName="pk_finliabilityreq"/>
 	<addPrimaryKey tableName="FinLiabilityReq_Temp" columnNames="Id" constraintName="pk_finliabilityreq_temp"/>
 </changeSet>
