@@ -33,7 +33,8 @@
 
  * 13-06-2018       Siva					 0.2        Stage Accounting Modifications      * 
  *                                                                                          * 
- *                                                                                          * 
+ * 19-06-2018       Siva					 0.3        Payable Reserve Amount Not 
+ * 														removing on Maintenance     	 	* 
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
@@ -598,14 +599,26 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					getManualAdviseDAO().savePayableReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
 
 				}else{
-					if(receiptDetail.getAmount().compareTo(payableReserve.getReservedAmt()) != 0){
-						BigDecimal diffInReserve = receiptDetail.getAmount().subtract(payableReserve.getReservedAmt());
-
+					//If Receipt details re-modified in process
+					if(receiptDetail.isDelRecord()){
+						
+						// Delete Reserved Log against Payable Advise ID and Receipt ID
+						getManualAdviseDAO().deletePayableReserve(receiptSeqID, receiptDetail.getPayAgainstID());
+						
 						// Update Reserve Amount in Manual Advise
-						getManualAdviseDAO().updatePayableReserve(receiptDetail.getPayAgainstID(), diffInReserve);
+						getManualAdviseDAO().updatePayableReserve(receiptDetail.getPayAgainstID(), payableReserve.getReservedAmt().negate());
+						
+					}else{
 
-						// Update Payable Reserve Log
-						getManualAdviseDAO().updatePayableReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), diffInReserve);
+						if(receiptDetail.getAmount().compareTo(payableReserve.getReservedAmt()) != 0){
+							BigDecimal diffInReserve = receiptDetail.getAmount().subtract(payableReserve.getReservedAmt());
+
+							// Update Reserve Amount in Manual Advise
+							getManualAdviseDAO().updatePayableReserve(receiptDetail.getPayAgainstID(), diffInReserve);
+
+							// Update Payable Reserve Log
+							getManualAdviseDAO().updatePayableReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), diffInReserve);
+						}
 					}
 				}
 			}

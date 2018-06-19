@@ -31,7 +31,7 @@
  ********************************************************************************************
  * 06-09-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 19-06-2018		Siva			 		 0.2		Auto Receipt Number Generation      * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -168,6 +168,26 @@ public class ReferenceGenerator implements Serializable {
 		} else {
 			return product.concat(branch).concat(sequence);
 		}
+	}
+	
+	/**
+	 * Method for Generating Sequence Receipt Number based Sequence Object
+	 * @param isWIF
+	 * @param finDivision
+	 * @return
+	 */
+	public static String generateNewReceiptNo() {
+		logger.debug("Entering");
+
+		// Get the sequence number.
+		long referenceSeqNumber = nextidviewDAO.getNextId("SeqReceiptNumber");
+		String rcptNo = String.valueOf(referenceSeqNumber);
+		if(rcptNo.length() < 8){
+			rcptNo = StringUtils.leftPad(rcptNo, 8, '0');
+		}
+
+		logger.debug("Leaving");
+		return rcptNo;
 	}
 
 	public static void setNextidviewDAO(NextidviewDAO nextidviewDAO) {

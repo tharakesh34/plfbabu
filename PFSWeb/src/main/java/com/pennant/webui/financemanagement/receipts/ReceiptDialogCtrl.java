@@ -37,7 +37,7 @@
  *                                                                                          * 
  * 17-06-2018		Srinivasa Varma			 0.4		PSD 126950                          * 
  *                                                                                          *
- *                                                                                          * 
+ * 19-06-2018		Siva			 		 0.5		Auto Receipt Number Generation      * 
  *                                                                                          * 
  ********************************************************************************************
  */
@@ -117,6 +117,7 @@ import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
+import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -714,7 +715,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("ReceiptDialog_depositDate"), this.depositDate);
 		readOnlyComponent(isReadOnly("ReceiptDialog_depositNo"), this.depositNo);
 		readOnlyComponent(isReadOnly("ReceiptDialog_chequeAcNo"), this.chequeAcNo);
-		readOnlyComponent(isReadOnly("ReceiptDialog_paymentRef"), this.paymentRef);
+		readOnlyComponent(true, this.paymentRef);//isReadOnly("ReceiptDialog_paymentRef")
 		readOnlyComponent(isReadOnly("ReceiptDialog_transactionRef"), this.transactionRef);
 		readOnlyComponent(isReadOnly("ReceiptDialog_fundingAccount"), this.fundingAccount);
 		readOnlyComponent(isReadOnly("ReceiptDialog_cashReceivedDate"), this.receivedDate);
@@ -779,7 +780,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(isReadOnly("ReceiptDialog_depositDate"), this.depositDate);
 			readOnlyComponent(isReadOnly("ReceiptDialog_depositNo"), this.depositNo);
 			readOnlyComponent(isReadOnly("ReceiptDialog_chequeAcNo"), this.chequeAcNo);
-			readOnlyComponent(isReadOnly("ReceiptDialog_paymentRef"), this.paymentRef);
+			readOnlyComponent(true, this.paymentRef);//isReadOnly("ReceiptDialog_paymentRef")
 			readOnlyComponent(isReadOnly("ReceiptDialog_transactionRef"), this.transactionRef);
 			readOnlyComponent(isReadOnly("ReceiptDialog_fundingAccount"), this.fundingAccount);
 			readOnlyComponent(true, this.receivedDate);
@@ -1708,7 +1709,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.favourName.setValue("");
 			this.depositDate.setValue(null);
 			this.depositNo.setValue("");
-			this.paymentRef.setValue("");
+			//this.paymentRef.setValue("");
 			this.transactionRef.setValue("");
 			this.chequeAcNo.setValue("");
 			this.fundingAccount.setValue("");
@@ -1725,6 +1726,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.receiptAmount.setValue(BigDecimal.ZERO);
 
 		} else{
+			
+			if(StringUtils.isEmpty(this.paymentRef.getValue())){
+				this.paymentRef.setValue(ReferenceGenerator.generateNewReceiptNo());
+			}
 
 			this.gb_ReceiptDetails.setVisible(true);
 			this.caption_receiptDetail.setLabel(this.receiptMode.getSelectedItem().getLabel());
