@@ -1324,10 +1324,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			extendedFieldCtrl.setReadOnly(enqiryModule);
 			// extendedFieldCtrl.setReadOnly(isReadOnly("CustomerDialog_custFirstName"));
 			extendedFieldCtrl.setWindow(this.window_CustomerDialog);
-			// for getting rights in ExtendeFieldGenerator these two fields
-			// required.
+			
+			if (isFinanceProcess) {
+				extendedFieldCtrl.setTabHeight(borderLayoutHeight - 195);
+			} else {
+				extendedFieldCtrl.setTabHeight(borderLayoutHeight - 90);
+			}// for getting rights in ExtendeFieldGenerator these two fields required.
 			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
-			extendedFieldCtrl.setTabHeight(140);
 			extendedFieldCtrl.setUserRole(getRole());
 			
 			extendedFieldCtrl.render();

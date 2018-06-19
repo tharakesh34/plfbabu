@@ -3926,7 +3926,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			extendedFieldCtrl.setCcyFormat(CurrencyUtil.getFormat(aFinanceMain.getFinCcy()));
 			extendedFieldCtrl.setReadOnly(/* isReadOnly("CustomerDialog_custFirstName") */false);
 			extendedFieldCtrl.setWindow(getMainWindow());
-			extendedFieldCtrl.setTabHeight(170);
+			extendedFieldCtrl.setTabHeight(this.borderLayoutHeight - 100);
 			//for getting rights in ExtendeFieldGenerator these two fields required.
 			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
 			extendedFieldCtrl.setUserRole(getRole());

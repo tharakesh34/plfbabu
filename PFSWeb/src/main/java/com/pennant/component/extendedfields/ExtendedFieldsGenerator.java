@@ -173,10 +173,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	public void renderWindow(ExtendedFieldHeader fieldHeader, boolean newRecord) throws ParseException {
 		logger.debug(Literal.ENTERING);
 
-		int height = getDesktopHeight();
-		height = height - tabHeight;
+		if (tabHeight > 0) {
+			this.tabpanel.setHeight(tabHeight + "px");
+		}
 		this.tabpanel.setStyle("overflow:auto;border:none;");
-		this.tabpanel.setHeight(height+"px");
 		
 		List<ExtendedFieldDetail> extendedFieldDetails = null;
 

@@ -579,7 +579,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					extendedFieldCtrl.createEnquiryTab(tabPanel_dialogWindow);
 					extendedFieldCtrl.setCcyFormat(CurrencyUtil.getFormat(getFinanceEnquiry().getFinCcy()));
 					extendedFieldCtrl.setReadOnly(true);
-					extendedFieldCtrl.setTabHeight(200);
+					int rowsHeight = this.grid_BasicDetails.getRows().getVisibleItemCount() * 20;
+					extendedFieldCtrl.setTabHeight(this.borderLayoutHeight-rowsHeight);
 					extendedFieldCtrl.render();
 				}
 			} catch (Exception e) {

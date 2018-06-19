@@ -1894,7 +1894,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			extendedFieldCtrl.setCcyFormat(CurrencyUtil.getFormat(aFinanceMain.getFinCcy()));
 			extendedFieldCtrl.setReadOnly(/* isReadOnly("CustomerDialog_custFirstName") */false);
 			extendedFieldCtrl.setWindow(getMainWindow());
-			extendedFieldCtrl.setTabHeight(170);
+			extendedFieldCtrl.setTabHeight(this.borderLayoutHeight - 100);
 			extendedFieldCtrl.render();
 		} catch (Exception e) {
 			logger.error("Exception", e);
