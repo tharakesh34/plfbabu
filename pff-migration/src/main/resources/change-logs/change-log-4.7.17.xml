@@ -3806,5 +3806,8 @@ FROM    	Employee_Master T1
 WHERE     NOT EXISTS (SELECT 1 FROM Employee_Master_TEMP WHERE EmpId = T1.EmpId)
 </createView>
 	</changeSet>
+<changeSet id="87" author="vijaykumar.l">
+	<createSequence sequenceName="seqEmployee_Master" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999"/>
+</changeSet>
 </databaseChangeLog>
 	
