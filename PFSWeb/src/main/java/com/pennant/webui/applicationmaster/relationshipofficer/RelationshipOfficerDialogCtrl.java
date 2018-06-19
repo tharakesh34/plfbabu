@@ -55,6 +55,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -66,6 +67,7 @@ import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -90,7 +92,10 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	protected Textbox rOfficerDesc; 					// autoWired
 	protected ExtendedCombobox rOfficerDeptCode; 				// autoWired
 	protected Checkbox rOfficerIsActive; 				// autoWired
-
+	protected Textbox grade; // autoWired
+	protected Textbox mobileNO; // autoWired
+	protected ExtendedCombobox genDesignation;
+	protected Datebox dateOfJoin;
 	// not auto wired variables
 	private RelationshipOfficer relationshipOfficer; 						   // overHanded per parameter
 	private transient RelationshipOfficerListCtrl relationshipOfficerListCtrl; // overHanded per parameter
@@ -190,13 +195,18 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		this.rOfficerCode.setMaxlength(8);
 		this.rOfficerDesc.setMaxlength(50);
 		this.rOfficerDeptCode.setMaxlength(8);
-		
+		this.genDesignation.setMaxlength(8);
+		this.grade.setMaxlength(35);
+		this.mobileNO.setMaxlength(20);
 		this.rOfficerDeptCode.setMandatoryStyle(true);
 		this.rOfficerDeptCode.setModuleName("GeneralDepartment");
 		this.rOfficerDeptCode.setValueColumn("GenDepartment");
 		this.rOfficerDeptCode.setDescColumn("GenDeptDesc");
 		this.rOfficerDeptCode.setValidateColumns(new String[]{"GenDepartment"});
-
+		this.genDesignation.setModuleName("GeneralDesignation");
+		this.genDesignation.setValueColumn("GenDesignation");
+		this.genDesignation.setDescColumn("GenDesgDesc");
+		this.genDesignation.setValidateColumns(new String[] { "GenDesignation" });
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -321,11 +331,18 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		this.rOfficerDesc.setValue(aRelationshipOfficer.getROfficerDesc());
 		this.rOfficerDeptCode.setValue(aRelationshipOfficer.getROfficerDeptCode());
 		this.rOfficerIsActive.setChecked(aRelationshipOfficer.isROfficerIsActive());
+		this.dateOfJoin.setValue(aRelationshipOfficer.getDateOfJoin());
+		this.grade.setValue(aRelationshipOfficer.getGrade());
+		this.mobileNO.setValue(aRelationshipOfficer.getMobileNO());
+		this.genDesignation.setValue(aRelationshipOfficer.getGenDesignation());
+
 
 		if (aRelationshipOfficer.isNewRecord()) {
 			this.rOfficerDeptCode.setDescription("");
 		} else {
 			this.rOfficerDeptCode.setDescription(aRelationshipOfficer.getLovDescROfficerDeptCodeName());
+			this.genDesignation.setDescription(aRelationshipOfficer.getGendesgdesc());
+
 		}
 		this.recordStatus.setValue(aRelationshipOfficer.getRecordStatus());
 		
@@ -367,7 +384,26 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		try {
+			aRelationshipOfficer.setGrade(this.grade.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aRelationshipOfficer.setMobileNO(this.mobileNO.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aRelationshipOfficer.setGenDesignation(this.genDesignation.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aRelationshipOfficer.setDateOfJoin(this.dateOfJoin.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 
 		if (wve.size() > 0) {
@@ -446,6 +482,22 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		if (!this.rOfficerDeptCode.isReadonly()) {
 			this.rOfficerDeptCode.setConstraint(new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_ROfficerDeptCode.value"), null, true,true));
 		}
+		if (!this.grade.isReadonly()) {
+			this.grade.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_RelationshipOfficerDialog_Grade.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, false));
+		}
+		if (!this.mobileNO.isReadonly()) {
+			this.mobileNO.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_RelationshipOfficerDialog_MobileNO.value"), PennantRegularExpressions.REGEX_NUMERIC, false));
+		}
+		if (!this.dateOfJoin.isReadonly()) {
+			this.dateOfJoin.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_RelationshipOfficerDialog_DateofJoin.value"), false));
+		}
+		if (!this.genDesignation.isReadonly()) {
+			this.genDesignation.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_RelationshipOfficerDialog_GenDesignation.value"), null, false));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -458,6 +510,12 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		this.rOfficerCode.setConstraint("");
 		this.rOfficerDesc.setConstraint("");
 		this.rOfficerDeptCode.setConstraint("");
+		this.rOfficerDeptCode.setConstraint("");
+		this.grade.setConstraint("");
+		this.dateOfJoin.setConstraint("");
+		this.mobileNO.setConstraint("");
+		this.genDesignation.setConstraint("");
+
 		logger.debug("Leaving");
 	}
 
@@ -534,7 +592,10 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		this.rOfficerDesc.setReadonly(isReadOnly("RelationshipOfficerDialog_rOfficerDesc"));
 		this.rOfficerDeptCode.setReadonly(isReadOnly("RelationshipOfficerDialog_rOfficerDeptCode"));
 		this.rOfficerIsActive.setDisabled(isReadOnly("RelationshipOfficerDialog_rOfficerIsActive"));
-
+		this.dateOfJoin.setReadonly(isReadOnly("RelationshipOfficerDialog_dateOfJoin"));
+		this.grade.setReadonly(isReadOnly("RelationshipOfficerDialog_grade"));
+		this.mobileNO.setReadonly(isReadOnly("RelationshipOfficerDialog_mobileNO"));
+		this.genDesignation.setReadonly(isReadOnly("RelationshipOfficerDialog_genDesignation"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -562,6 +623,10 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		this.rOfficerDesc.setReadonly(true);
 		this.rOfficerDeptCode.setReadonly(true);
 		this.rOfficerIsActive.setDisabled(true);
+		this.dateOfJoin.setReadonly(true);
+		this.grade.setReadonly(true);
+		this.mobileNO.setReadonly(true);
+		this.genDesignation.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
