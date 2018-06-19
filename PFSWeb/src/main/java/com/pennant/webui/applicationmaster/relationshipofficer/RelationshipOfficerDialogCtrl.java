@@ -70,6 +70,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -206,7 +207,8 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		this.genDesignation.setModuleName("GeneralDesignation");
 		this.genDesignation.setValueColumn("GenDesignation");
 		this.genDesignation.setDescColumn("GenDesgDesc");
-		this.genDesignation.setValidateColumns(new String[] { "GenDesignation" });
+		this.genDesignation.setValidateColumns(new String[] {"GenDesignation"});
+		this.dateOfJoin.setFormat(DateFormat.SHORT_DATE.getPattern());
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -592,7 +594,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		this.rOfficerDesc.setReadonly(isReadOnly("RelationshipOfficerDialog_rOfficerDesc"));
 		this.rOfficerDeptCode.setReadonly(isReadOnly("RelationshipOfficerDialog_rOfficerDeptCode"));
 		this.rOfficerIsActive.setDisabled(isReadOnly("RelationshipOfficerDialog_rOfficerIsActive"));
-		this.dateOfJoin.setReadonly(isReadOnly("RelationshipOfficerDialog_dateOfJoin"));
+		this.dateOfJoin.setDisabled(isReadOnly("RelationshipOfficerDialog_dateOfJoin"));
 		this.grade.setReadonly(isReadOnly("RelationshipOfficerDialog_grade"));
 		this.mobileNO.setReadonly(isReadOnly("RelationshipOfficerDialog_mobileNO"));
 		this.genDesignation.setReadonly(isReadOnly("RelationshipOfficerDialog_genDesignation"));
