@@ -43,6 +43,9 @@
 package com.pennant.backend.model.applicationmaster;
 
 import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -59,6 +62,11 @@ public class RelationshipOfficer extends AbstractWorkflowEntity {
 	private String rOfficerDeptCode;
 	private String lovDescROfficerDeptCodeName;
 	private boolean rOfficerIsActive;
+	private String grade;
+	private String mobileNO;
+	private Date   dateOfJoin;
+	private String genDesignation;
+	private String gendesgdesc;
 	private boolean newRecord;
 	private String lovValue;
 	private RelationshipOfficer befImage;
@@ -75,6 +83,12 @@ public class RelationshipOfficer extends AbstractWorkflowEntity {
 	public RelationshipOfficer(String id) {
 		super();
 		this.setId(id);
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("gendesgdesc");
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -122,6 +136,46 @@ public class RelationshipOfficer extends AbstractWorkflowEntity {
 	}
 	public void setROfficerIsActive(boolean rOfficerIsActive) {
 		this.rOfficerIsActive = rOfficerIsActive;
+	}
+
+	public String getGrade() {
+		return grade;
+	}
+
+	public void setGrade(String grade) {
+		this.grade = grade;
+	}
+
+	public String getMobileNO() {
+		return mobileNO;
+	}
+
+	public void setMobileNO(String mobileNO) {
+		this.mobileNO = mobileNO;
+	}
+
+	public Date getDateOfJoin() {
+		return dateOfJoin;
+	}
+
+	public void setDateOfJoin(Date dateOfJoin) {
+		this.dateOfJoin = dateOfJoin;
+	}
+
+	public String getGenDesignation() {
+		return genDesignation;
+	}
+
+	public void setGenDesignation(String genDesignation) {
+		this.genDesignation = genDesignation;
+	}
+
+	public String getGendesgdesc() {
+		return gendesgdesc;
+	}
+
+	public void setGendesgdesc(String gendesgdesc) {
+		this.gendesgdesc = gendesgdesc;
 	}
 	
 	public boolean isNewRecord() {
