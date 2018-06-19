@@ -112,39 +112,4 @@ update adtCustomers set marginDeviation=0;
 		<column name="code" type="varchar(20)"/>
 	</addColumn>
 </changeSet>
-<changeSet id="12" author="vijaykumar.l">
-<createTable tableName="AdtEmployee_Master">
-	<column name="AuditId" type="bigint">
-		<constraints nullable="false" />
-	</column>
-	<column name="AuditDate" type="datetime">
-		<constraints nullable="false" />
-	</column>
-	<column name="AuditSeq" type="int">
-		<constraints nullable="false" />
-	</column>
-	<column name="AuditImage" type="varchar(20)">
-		<constraints nullable="false" />
-	</column>
-	<column name="EmpId" type="bigint"/>
-	<column name="Name" type="varchar"/>
-	<column name="Department" type="varchar"/>
-	<column name="Designation" type="varchar"/>
-	<column name="OtherField" type="varchar"/>
-	<column name="MobileNo" type="varchar"/>
-	<column name="DOJ" type="datetime"/>
-	<column name="version" type="int"/>
-	<column name="lastmntby" type="bigint"/>
-	<column name="lastmnton" type="datetime"/>
-	<column name="recordstatus" type="varchar(50)"/>
-	<column name="rolecode" type="varchar(100)"/>
-	<column name="nextrolecode" type="varchar(200)"/>
-	<column name="taskid" type="varchar(50)"/>
-	<column name="nexttaskid" type="varchar(200)"/>
-	<column name="recordtype" type="varchar(50)"/>
-	<column name="workflowid" type="bigint">
-		<constraints nullable="false"/>
-	</column>
-</createTable>
-</changeSet>
 </databaseChangeLog>
