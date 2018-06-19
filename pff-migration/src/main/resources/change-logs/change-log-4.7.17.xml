@@ -3737,5 +3737,354 @@ UNION ALL
 	<changeSet id="82" author="Siva">
 		<createSequence sequenceName="SeqReceiptNumber" startValue="1" maxValue="9223372036854775807" incrementBy="1" cycle="false" />
 	</changeSet>
+	</changeSet>
+	<changeSet id="84" author="manoj">
+		<addColumn tableName="POSTINGS">
+	 		<column name="EntityCode" type="varchar(8)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="86" author="manoj">
+		<addColumn tableName="POSTINGS_TAXDOWNLOAD">
+	 		<column name="EntityCode" type="varchar(8)"/>
+		</addColumn>
+	</changeSet>
+
+<changeSet id="87" author="Sriram">
+		<sql>
+			Create table TRIAL_BALANCE_HEADER_BKP as select * from TRIAL_BALANCE_HEADER
+		</sql>
+	</changeSet>
+	
+	<changeSet id="88" author="Sriram">
+		<sql>
+			Create table TRIAL_BALANCE_REPORT_BKP as select * from TRIAL_BALANCE_REPORT
+		</sql>
+	</changeSet>
+	
+	<changeSet id="89" author="Sriram">
+		 <dropForeignKeyConstraint baseTableName="TRIAL_BALANCE_REPORT_LAST_RUN" constraintName="FK_TBRLR_HID"/>
+	</changeSet>
+	
+	<changeSet id="90" author="Sriram">
+		<dropForeignKeyConstraint baseTableName="TRIAL_BALANCE_REPORT" constraintName="FK_TBR_HID"/>
+	</changeSet>
+	
+	<changeSet id="91" author="Sriram">
+		<dropIndex tableName="TRIAL_BALANCE_HEADER" indexName="IDX_TBH_DIMENSION"/>
+	</changeSet>
+	
+	<changeSet id="92.1" author="Sriram">
+		<dropView viewName="TRIAL_BALANCE_REPORT_FILE_VIEW"/>
+	</changeSet>
+	
+	<changeSet id="92.2" author="Sriram">
+		<dropView viewName="TRIAL_BALANCE_REPORT_VIEW"/>
+	</changeSet>
+	
+	<changeSet id="92.3" author="Sriram">
+		<dropTable tableName="TRIAL_BALANCE_REPORT_FILE"/>
+	</changeSet>
+	
+	<changeSet id="93" author="Sriram">
+		<dropTable tableName="TRIAL_BALANCE_REPORT_LAST_RUN"/>
+	</changeSet>
+	
+	<changeSet id="94" author="Sriram">
+		<dropTable tableName="TRIAL_BALANCE_REPORT"/>
+	</changeSet>
+	
+	<changeSet id="95" author="Sriram">
+		<dropTable tableName="TRIAL_BALANCE_HEADER"/>
+	</changeSet>
+	
+	<changeSet id="96" author="Sriram">
+		<createTable tableName="TRIAL_BALANCE_HEADER">
+				<column name="ID" type="bigint">
+					<constraints nullable="false" />
+				</column>
+				<column name="SEQNO" type="bigint">
+					<constraints nullable="false" />
+				</column>
+				<column name="DIMENSION" type="varchar(20)">
+					<constraints nullable="false" />
+				</column>
+				<column name="FILENAME" type="varchar(100)"/>
+				<column name="COMPANYNAME" type="varchar(100)">
+					<constraints nullable="false" />
+				</column>
+				<column name="REPORTNAME" type="varchar(100)">
+					<constraints nullable="false" />
+				</column>
+				<column name="STARTDATE" type="datetime">
+					<constraints nullable="false" />
+				</column>
+				<column name="ENDDATE" type="datetime">
+					<constraints nullable="false" />
+				</column>
+				<column name="CURRENCY" type="char(3)">
+					<constraints nullable="false" />
+				</column>
+				<column name="ENTITYCODE" type="varchar(8)">
+				</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="97" author="Sriram">
+		<addPrimaryKey columnNames="ID" constraintName="PK_TBH" tableName="TRIAL_BALANCE_HEADER" />
+	</changeSet>
+	
+	<changeSet id="98" author="Sriram">
+		<createIndex indexName="IDX_TBH_DIMENSION" tableName="TRIAL_BALANCE_HEADER">
+			<column name="DIMENSION" type="varchar(20)"/>
+		</createIndex>
+	</changeSet>
+	
+	
+	<changeSet id="99" author="Sriram">
+		<createTable tableName="TRIAL_BALANCE_REPORT">
+			<column name="HEADERID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ACTYPEGRPID" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="COUNTRY" type="char(2)"/>
+			<column name="PROVINCE" type="varchar(8)"/>
+			<column name="FINTYPE" type="varchar(8)"/>
+			<column name="ACCOUNT" type="varchar(50)"/>
+			<column name="HOSTACCOUNT" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DESCRIPTION" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OPENINGBAL" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OPENINGBALTYPE" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DEBITAMOUNT" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREDITAMOUNT" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CLOSINGBAL" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CLOSINGBALTYPE" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="100" author="Sriram">
+		<createTable tableName="TRIAL_BALANCE_REPORT_LAST_RUN">
+			<column name="HEADERID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ACTYPEGRPID" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="COUNTRY" type="char(2)"/>
+			<column name="PROVINCE" type="varchar(8)"/>
+			<column name="FINTYPE" type="varchar(8)"/>
+			<column name="ACCOUNT" type="varchar(50)"/>
+			<column name="HOSTACCOUNT" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DESCRIPTION" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OPENINGBAL" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OPENINGBALTYPE" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DEBITAMOUNT" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREDITAMOUNT" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CLOSINGBAL" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CLOSINGBALTYPE" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="101" author="Sriram">
+			<addForeignKeyConstraint constraintName="FK_TBR_HID" referencedTableName="TRIAL_BALANCE_HEADER" baseColumnNames="HEADERID" baseTableName="TRIAL_BALANCE_REPORT" referencedColumnNames="ID"/>
+			<addForeignKeyConstraint constraintName="FK_TBRLR_HID" referencedTableName="TRIAL_BALANCE_HEADER" baseColumnNames="HEADERID" baseTableName="TRIAL_BALANCE_REPORT_LAST_RUN" referencedColumnNames="ID"/>
+	</changeSet>
+	
+	<changeSet id="102" author="Sriram">
+		<createTable tableName="TRIAL_BALANCE_REPORT_FILE">
+			<column name="ID" type="bigint" autoIncrement="true" incrementBy="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ACTYPEGRPID" type="varchar(100)" />
+			<column name="COUNTRY" type="varchar(100)" />
+			<column name="PROVINCE" type="varchar(100)" />
+			<column name="FINTYPE" type="varchar(8)"/>
+			<column name="ACCOUNT" type="varchar(50)"/>
+			<column name="HOSTACCOUNT" type="varchar(100)" />
+			<column name="DESCRIPTION" type="varchar(100)" />
+			<column name="OPENINGBAL" type="varchar(100)" />
+			<column name="OPENINGBALTYPE" type="varchar(100)" />
+			<column name="DEBITAMOUNT" type="varchar(100)" />
+			<column name="CREDITAMOUNT" type="varchar(100)" />
+			<column name="CLOSINGBAL" type="varchar(100)" />
+			<column name="CLOSINGBALTYPE" type="varchar(100)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="103" author="Sriram">
+	<sql>
+		update data_engine_config set header = 
+		'Row:{, ${COMPANY_NAME}}Row:{, ${REPORT_NAME}}Row:{, ${TRANSACTION_DURATION}}Row:{Currency: ${CURRENCY}Row:{STATE,PARENT GROUP,PLF LEDGER,SAP GL,DESCRIPTION,OPENING BALANCE,CR/DR,DEBIT AMOUNT,CREDIT AMOUNT,CLOSING BALANCE,CR/DR}'
+		where name = 'TRIAL_BALANCE_EXPORT_STATE';
+		update data_engine_config set fileprefixname = '${ENTITY_CODE}' where name = 'TRIAL_BALANCE_EXPORT_STATE';
+	 	update data_engine_config set fileprefixname = '${ENTITY_CODE}' where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE';
+	  	update data_engine_config set fileprefixname = '${ENTITY_CODE}' where name = 'GL_TRANSACTION_EXPORT';
+		update data_engine_config set fileprefixname = '${ENTITY_CODE}' where name = 'GL_TRANSACTION_SUMMARY_EXPORT';
+		update data_engine_config set header = 'Row:{, ${COMPANY_NAME}}Row:{, ${REPORT_NAME}}Row:{, ${TRANSACTION_DURATION}}Row:{Currency: ${CURRENCY}Row:{PARENT GROUP,PLF LEDGER, SAP GL,DESCRIPTION,OPENING BALANCE,CR/DR,DEBIT AMOUNT,CREDIT AMOUNT,CLOSING BALANCE,CR/DR}' where 
+		name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE';
+        update data_engine_table set name = 'TBR_CONSOLIDATE_FILE_VIEW' where CONFIGID in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE');
+	</sql>
+	</changeSet>
+	
+	<changeSet id="104.1" author="Sriram">
+	<sql>
+	Delete From DATA_ENGINE_CONFIG where Name In ('TRIAL_BALANCE_EXPORT_STATE', 'TRIAL_BALANCE_EXPORT_CONSOLIDATE');
+	
+	Insert into DATA_ENGINE_CONFIG  values ((Select max(ID)+1 from DATA_ENGINE_CONFIG),'TRIAL_BALANCE_EXPORT_STATE', 'SAP GL Trail Balance Report',2,null,null,null,',',0,0, ' ','Row:{, ${COMPANY_NAME}}Row:{, ${REPORT_NAME}}Row:{, ${TRANSACTION_DURATION}}Row:{Currency: ${CURRENCY}Row:{STATE,PARENT GROUP,PLF LEDGER,DESCRIPTION,SAP GL,OPENING BALANCE,CR/DR,DEBIT AMOUNT,CREDIT AMOUNT,CLOSING BALANCE,CR/DR,LOAN TYPE}', ' ','A','/opt/PFF/SAPGL',	'${ENTITY_CODE}','.csv',0,CURRENT_TIMESTAMP,'${START_DATE},_${END_DATE},_${HEADER_ID}',null,'0','MOVE_TO_S3_BUCKET',1,1);
+	Insert into DATA_ENGINE_CONFIG values ((Select max(ID)+1 from DATA_ENGINE_CONFIG),'TRIAL_BALANCE_EXPORT_CONSOLIDATE','Trial balance consolidate report',2,null,null,null,',',0,0, ' ','Row:{, ${COMPANY_NAME}}Row:{, ${REPORT_NAME}}Row:{, ${TRANSACTION_DURATION}}Row:{Currency: ${CURRENCY}Row:{PARENT GROUP,PLF LEDGER,DESCRIPTION,SAP GL,OPENING BALANCE,CR/DR,DEBIT AMOUNT,CREDIT AMOUNT,CLOSING BALANCE,CR/DR,LOAN TYPE}', ' ','A','/opt/PFF/SAPGL','${ENTITY_CODE}','.csv',0,CURRENT_TIMESTAMP,'${START_DATE}, _${END_DATE},_${HEADER_ID}',null,'0','MOVE_TO_S3_BUCKET',1,1);
+	</sql>
+	</changeSet>
+	<changeSet id="104.2" author="Sriram">
+	<sql>
+	Delete from DATA_ENGINE_TABLE Where Id IN (select ID from data_engine_table where configid in (select id from data_engine_config where name In( 'TRIAL_BALANCE_EXPORT_STATE','TRIAL_BALANCE_EXPORT_CONSOLIDATE')));
+	Insert into DATA_ENGINE_TABLE values ((Select max(Id) + 1 from DATA_ENGINE_TABLE),(select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE'),'TRIAL_BALANCE_CONSOLIDATE_VIEW',0,'HEADERID',null,'UPDATE TRIAL_BALANCE_HEADER SET FILENAME = :FILE_NAME WHERE ID = :ID AND DIMENSION = :DIMENSION',null,null,null,null,null,0,0,0);
+	Insert into DATA_ENGINE_TABLE values ((Select max(Id) + 1 from DATA_ENGINE_TABLE),(select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_STATE'),'TRIAL_BALANCE_REPORT_FILE_VIEW',0,'HEADERID',null,'UPDATE TRIAL_BALANCE_HEADER SET FILENAME = :FILE_NAME WHERE ID = :ID AND DIMENSION = :DIMENSION',null,null,null,null,null,0,0,0);	
+	</sql>
+	</changeSet>
+	<changeSet id="104.3" author="Sriram">
+		<sql>
+		delete from data_engine_column where tableid in  (select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE'));
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')),'ACTYPEGRPID',    0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')),'ACCOUNT',    	   0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')),'DESCRIPTION',    0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')),'HOSTACCOUNT',    0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')),'OPENINGBAL',     0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')),'OPENINGBALTYPE', 0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')),'DEBITAMOUNT',    0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')),'CREDITAMOUNT',   0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')),'CLOSINGBAL',     0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')),'CLOSINGBALTYPE', 0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')),'FINTYPE',    0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN)
+		</sql>
+	</changeSet>
+	<changeSet id="105" author="Sriram">
+		<sql>
+	    delete from data_engine_column where tableid in  (select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_STATE'));
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),	 (select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_STATE')),  'STATE',          0,'N',null,null,null,null,'0',null,null,null,null,'0');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),   (select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_STATE')),  'ACTYPEGRPID',    0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),   (select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_STATE')),  'ACCOUNT',        0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),   (select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_STATE')),  'DESCRIPTION',    0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),   (select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_STATE')),  'HOSTACCOUNT',    0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),	 (select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_STATE')),  'OPENINGBAL',     0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),	 (select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_STATE')),  'OPENINGBALTYPE', 0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),	 (select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_STATE')),  'DEBITAMOUNT',    0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),	 (select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_STATE')),  'CREDITAMOUNT',   0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),	 (select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_STATE')),  'CLOSINGBAL',     0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),	 (select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_STATE')),  'CLOSINGBALTYPE', 0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		Insert into data_engine_column  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),   (select id from data_engine_table where configid in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_STATE')),  'PRODUCTFLAG',    0,'N',null,null,null,null,'0',null,null,null,null,'O');
+		UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN)
+		</sql>
+	</changeSet>
+	<changeSet id="106" author="Sriram">
+		<sql>
+		update data_engine_config set fileprefixname = '${ENTITY_CODE}' where name = 'TRIAL_BALANCE_EXPORT_STATE';
+	 	update data_engine_config set fileprefixname = '${ENTITY_CODE}' where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE';
+	  	update data_engine_config set fileprefixname = '${ENTITY_CODE}' where name = 'GL_TRANSACTION_EXPORT';
+		update data_engine_config set fileprefixname = '${ENTITY_CODE}' where name = 'GL_TRANSACTION_SUMMARY_EXPORT';
+		update data_engine_config set header = <![CDATA['Row:{, ${COMPANY_NAME}}Row:{, ${REPORT_NAME}}Row:{, ${TRANSACTION_DURATION}}Row:{Currency: ${CURRENCY}Row:{STATE,PARENT GROUP,PLF LEDGER,DESCRIPTION,SAP GL,OPENING BALANCE,CR/DR,DEBIT AMOUNT,CREDIT AMOUNT,CLOSING BALANCE,CR/DR,LOAN TYPE}']]> where name = 'TRIAL_BALANCE_EXPORT_STATE';
+		update data_engine_config set header = <![CDATA['Row:{, ${COMPANY_NAME}}Row:{, ${REPORT_NAME}}Row:{, ${TRANSACTION_DURATION}}Row:{Currency: ${CURRENCY}Row:{PARENT GROUP,PLF LEDGER,DESCRIPTION,SAP GL,OPENING BALANCE,CR/DR,DEBIT AMOUNT,CREDIT AMOUNT,CLOSING BALANCE,CR/DR,LOAN TYPE}']]> where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE';
+		update data_Engine_table set name = 'TRIAL_BALANCE_CONSOLIDATE_VIEW' where  CONFIGID in (select id from data_engine_config where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE');
+ 		update data_engine_config set filenameformat = null where name in ('GL_TRANSACTION_EXPORT','GL_TRANSACTION_SUMMARY_EXPORT');		
+		</sql>
+	</changeSet>
+	<changeSet id="107" author="Sriram">
+		<createView viewName="TRIAL_BALANCE_REPORT_FILE_VIEW" replaceIfExists="true">
+		SELECT 	ID,COUNTRY,
+		       	PROVINCE,
+           		CPPROVINCENAME AS STATE,
+		   		ACTYPEGRPID,
+           		TBRF.ACCOUNT,
+		   		TBRF.HOSTACCOUNT,
+		   		DESCRIPTION,
+		   		OPENINGBAL,
+		   		OPENINGBALTYPE,
+		   		DEBITAMOUNT,
+		   		CREDITAMOUNT,
+		   		CLOSINGBAL,
+		   		CLOSINGBALTYPE,
+		   		FINTYPE AS PRODUCTFLAG
+		FROM 	TRIAL_BALANCE_REPORT_FILE TBRF LEFT JOIN
+      			RMTCOUNTRYVSPROVINCE RMT ON RMT.CPPROVINCE = TBRF.PROVINCE
+	  		order by  ID
+		</createView>
+	</changeSet>
+	<changeSet id="108" author="Sriram">
+		<createView viewName="TRIAL_BALANCE_REPORT_VIEW" replaceIfExists="true">
+     	SELECT	HEADERID,
+			  	COUNTRY,
+			  	PROVINCE,
+			  	ACTYPEGRPID,
+			  	HOSTACCOUNT,
+			  	DESCRIPTION,
+			  	UDF_CONVERTCURRENCY(OPENINGBAL, TBH.CURRENCY, 'INR') OPENINGBAL,
+			  	OPENINGBALTYPE,
+			  	UDF_CONVERTCURRENCY(DEBITAMOUNT, TBH.CURRENCY, 'INR') DEBITAMOUNT,
+			  	UDF_CONVERTCURRENCY(CREDITAMOUNT, TBH.CURRENCY, 'INR') CREDITAMOUNT,
+			  	UDF_CONVERTCURRENCY(CLOSINGBAL, TBH.CURRENCY, 'INR') CLOSINGBAL,
+			  	CLOSINGBALTYPE,
+			  	ACCOUNT,
+			  	FINTYPE
+	 	FROM 	TRIAL_BALANCE_REPORT_LAST_RUN TBR INNER JOIN
+			   	TRIAL_BALANCE_HEADER TBH ON TBH.ID = TBR.HEADERID
+		</createView>	  
+	</changeSet>
+	<changeSet id="109" author="Sriram">
+		<createView viewName="TRIAL_BALANCE_CONSOLIDATE_VIEW">
+		SELECT ID,
+		   	   ACTYPEGRPID,
+	           TBRF.ACCOUNT,
+			   TBRF.HOSTACCOUNT,
+			   DESCRIPTION,
+			   OPENINGBAL,
+			   OPENINGBALTYPE,
+			   DEBITAMOUNT,
+			   CREDITAMOUNT,
+			   CLOSINGBAL,
+			   CLOSINGBALTYPE,
+			   FINTYPE
+		FROM   TRIAL_BALANCE_REPORT_FILE TBRF LEFT JOIN
+     		   RMTCOUNTRYVSPROVINCE RMT ON RMT.CPPROVINCE = TBRF.PROVINCE
+	  	order by ID;
+		</createView>
+	</changeSet>
+	<changeSet id="110" author="Sriram">
+		<sql>
+		delete from SMTPARAMETERS where SYSPARMCODE = 'PRFT_LOSS_GLCODE';
+		Insert into SMTPARAMETERS values ('PRFT_LOSS_GLCODE','sum of closing balance of income  GLs  minus sum of closing balance of expenses GL','String',1,'PLACCT',50,0,null,null,'PROFIT And LOSS A/C',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
