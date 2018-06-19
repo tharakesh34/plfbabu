@@ -4051,5 +4051,118 @@ UNION ALL
 		Insert into SMTPARAMETERS values ('PRFT_LOSS_GLCODE','sum of closing balance of income  GLs  minus sum of closing balance of expenses GL','String',1,'PLACCT',50,0,null,null,'PROFIT And LOSS A/C',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
+	<changeSet id="111" author="vijaykumar.l">
+		<addColumn tableName="relationshipofficers">
+	         <column name="grade"  type="varchar(35)"/>
+		    <column name="mobileNO"  type="varchar(20)"/>
+			<column name="dateOfJoin"  type="datetime"/>
+		    <column name="genDesignation"  type="varchar(10)"/>
+	    </addColumn>
+	</changeSet>
+   <changeSet id="112" author="vijaykumar.l">
+		<addColumn tableName="relationshipofficers_temp">
+	         <column name="grade"  type="varchar(35)"/>
+		    <column name="mobileNO"  type="varchar(20)"/>
+			<column name="dateOfJoin"  type="datetime"/>
+		    <column name="genDesignation"  type="varchar(10)"/>
+	    </addColumn>
+	</changeSet>
+	<changeSet id="113" author="vijaykumar.l">
+	<createView viewName="relationshipofficers_view" replaceIfExists="true">
+	 SELECT t1.rofficercode,
+    t1.rofficerdesc,
+    t1.rofficerdeptcode,
+    t2.gendeptdesc AS lovdescrofficerdeptcodename,
+    t1.rofficerisactive,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+	t1.gendesignation,
+	t3.gendesgdesc,
+	t1.grade,
+	t1.mobileNO,
+	t1.dateOfJoin
+   FROM relationshipofficers_temp t1
+     LEFT JOIN rmtgendepartments t2 ON t1.rofficerdeptcode = t2.gendepartment
+	 LEFT JOIN RMTGenDesignations t3 ON t1.gendesignation = t3.gendesignation
+UNION ALL
+ SELECT t1.rofficercode,
+    t1.rofficerdesc,
+    t1.rofficerdeptcode,
+    t2.gendeptdesc AS lovdescrofficerdeptcodename,
+    t1.rofficerisactive,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+	t1.gendesignation,
+	t3.gendesgdesc,
+	t1.grade,
+	t1.mobileNO,
+	t1.dateOfJoin
+   FROM relationshipofficers t1
+     LEFT JOIN rmtgendepartments t2 ON t1.rofficerdeptcode = t2.gendepartment
+	 LEFT JOIN RMTGenDesignations t3 ON t1.gendesignation = t3.gendesignation
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM relationshipofficers_temp
+          WHERE relationshipofficers_temp.rofficercode = t1.rofficercode))
+	</createView>
+	</changeSet>
+	<changeSet id="114" author="vijaykumar.l">
+	<createView viewName="relationshipofficers_aview" replaceIfExists="true">
+	 SELECT t1.rofficercode,
+    t1.rofficerdesc,
+    t1.rofficerdeptcode,
+    t2.gendeptdesc AS lovdescrofficerdeptcodename,
+    t1.rofficerisactive,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+	t1.gendesignation,
+	t3.gendesgdesc,
+	t1.grade,
+	t1.mobileNO,
+	t1.dateOfJoin
+   FROM relationshipofficers t1
+     LEFT JOIN rmtgendepartments t2 ON t1.rofficerdeptcode = t2.gendepartment
+	 LEFT JOIN RMTGenDesignations t3 ON t1.gendesignation = t3.gendesignation
+	</createView>
+	</changeSet>
+	<changeSet id="115" author="vijaykumar.l">
+	<sql>
+	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'RelationshipOfficerDialog_genDesignation','RelationshipOfficerDialog',0,1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;		
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'RelationshipOfficerDialog_grade','RelationshipOfficerDialog',0,1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'RelationshipOfficerDialog_dateOfJoin','RelationshipOfficerDialog',0,1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;		
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'RelationshipOfficerDialog_mobileNO','RelationshipOfficerDialog',0,1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='RELATIONSHIPOFFICER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='RelationshipOfficerDialog_genDesignation'), 1,0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='RELATIONSHIPOFFICER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='RelationshipOfficerDialog_grade'), 1,0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='RELATIONSHIPOFFICER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='RelationshipOfficerDialog_dateOfJoin'), 1,0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='RELATIONSHIPOFFICER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='RelationshipOfficerDialog_mobileNO'), 1,0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);		
+	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
+	</sql>
+	</changeSet>
 </databaseChangeLog>
 	
