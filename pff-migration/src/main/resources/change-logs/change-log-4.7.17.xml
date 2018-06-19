@@ -3761,6 +3761,29 @@ UNION ALL
 <changeSet id="82" author="Siva">
 		<createSequence sequenceName="SeqReceiptNumber" startValue="1" maxValue="9223372036854775807" incrementBy="1" cycle="false" />
 	</changeSet>
+	<changeSet id="83" author="vijaykumar.l">
+	<createTable tableName="Employee_Master_Temp">
+	<column name="EmpId" type="bigint"/>
+	<column name="Name" type="varchar"/>
+	<column name="Department" type="varchar"/>
+	<column name="Designation" type="varchar"/>
+	<column name="OtherField" type="varchar"/>
+	<column name="MobileNo" type="varchar"/>
+	<column name="DOJ" type="datetime"/>
+	<column name="version" type="int"/>
+	<column name="lastmntby" type="bigint"/>
+	<column name="lastmnton" type="datetime"/>
+	<column name="recordstatus" type="varchar(50)"/>
+	<column name="rolecode" type="varchar(100)"/>
+	<column name="nextrolecode" type="varchar(200)"/>
+	<column name="taskid" type="varchar(50)"/>
+	<column name="nexttaskid" type="varchar(200)"/>
+	<column name="recordtype" type="varchar(50)"/>
+	<column name="workflowid" type="bigint">
+		<constraints nullable="false"/>
+	</column>
+</createTable>
+</changeSet>
 	
 </databaseChangeLog>
 	
