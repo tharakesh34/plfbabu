@@ -253,7 +253,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			extendedFieldCtrl = new ExtendedFieldCtrl();
 			String productName = getFinanceEnquiry().getLovDescProductCodeName();
-			extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(ExtendedFieldConstants.MODULE_LOAN, productName,null);
+			extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(ExtendedFieldConstants.MODULE_LOAN, productName, enquiryType);
 
 			// Method for recall Enquiries
 			doFillDialogWindow();
