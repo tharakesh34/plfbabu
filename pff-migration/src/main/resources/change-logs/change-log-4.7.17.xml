@@ -3457,7 +3457,7 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
      LEFT JOIN rmtprovincevscity t3 ON t1.dealercountry = t3.pccountry AND t1.dealerprovince = t3.pcprovince AND t1.dealercity = t3.pccity AND t1.dealercity = t3.pccity
      LEFT JOIN rmtcountryvsprovince t4 ON t1.dealercountry = t4.cpcountry AND t1.dealerprovince = t4.cpprovince
      LEFT JOIN bmtcountries t5 ON t1.dealercountry = t5.countrycode
-     LEFT JOIN rules t7 ON t1.calculationrule = t7.rulecode AND t7.ruleevent = 'ADDDBS'::citext
+     LEFT JOIN rules t7 ON t1.calculationrule = t7.rulecode AND t7.ruleevent = 'ADDDBS'
      LEFT JOIN rmtaccountingset t8 ON t1.accountingsetid = t8.accountsetid
      LEFT JOIN rmtcountryvsprovince t9 ON t1.emirates = t9.cpprovince
 </createView>
@@ -3509,7 +3509,7 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
      LEFT JOIN rmtprovincevscity t3 ON t1.dealercountry = t3.pccountry AND t1.dealerprovince = t3.pcprovince AND t1.dealercity = t3.pccity
      LEFT JOIN rmtcountryvsprovince t4 ON t1.dealercountry = t4.cpcountry AND t1.dealerprovince = t4.cpprovince
      LEFT JOIN bmtcountries t5 ON t1.dealercountry = t5.countrycode
-     LEFT JOIN rules t7 ON t1.calculationrule = t7.rulecode AND t7.ruleevent = 'ADDDBS'::citext
+     LEFT JOIN rules t7 ON t1.calculationrule = t7.rulecode AND t7.ruleevent = 'ADDDBS'
      LEFT JOIN rmtaccountingset t8 ON t1.accountingsetid = t8.accountsetid
      LEFT JOIN rmtcountryvsprovince t9 ON t1.emirates = t9.cpprovince
 UNION ALL
@@ -3558,7 +3558,7 @@ UNION ALL
      LEFT JOIN rmtprovincevscity t3 ON t1.dealercountry = t3.pccountry AND t1.dealerprovince = t3.pcprovince AND t1.dealercity = t3.pccity AND t1.dealercity = t3.pccity
      LEFT JOIN rmtcountryvsprovince t4 ON t1.dealercountry = t4.cpcountry AND t1.dealerprovince = t4.cpprovince
      LEFT JOIN bmtcountries t5 ON t1.dealercountry = t5.countrycode
-     LEFT JOIN rules t7 ON t1.calculationrule = t7.rulecode AND t7.ruleevent = 'ADDDBS'::citext
+     LEFT JOIN rules t7 ON t1.calculationrule = t7.rulecode AND t7.ruleevent = 'ADDDBS'
      LEFT JOIN rmtaccountingset t8 ON t1.accountingsetid = t8.accountsetid
      LEFT JOIN rmtcountryvsprovince t9 ON t1.emirates = t9.cpprovince
   WHERE NOT (EXISTS ( SELECT 1
