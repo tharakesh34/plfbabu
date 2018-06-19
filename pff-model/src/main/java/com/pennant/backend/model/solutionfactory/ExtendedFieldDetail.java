@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ExtendedFieldDetail.java                                                   * 	  
+ * FileName    		:  ExtendedFieldDetail.java                                             * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -31,8 +31,8 @@
  ********************************************************************************************
  * 28-12-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-06-2018       Sai Krishna              0.2          story #413 Allow scriptlet for    * 
+ *                                                        extended fields without UI.       * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,12 +40,12 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-
 package com.pennant.backend.model.solutionfactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
@@ -118,6 +118,8 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 	private ExtendedFieldDetail befImage;
 	private LoggedInUser userDetails;
 	private boolean allowInRule=false;
+	@XmlTransient
+	private String scriptlet;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -345,4 +347,11 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 		this.allowInRule = allowInRule;
 	}
 
+	public String getScriptlet() {
+		return scriptlet;
+	}
+
+	public void setScriptlet(String scriptlet) {
+		this.scriptlet = scriptlet;
+	}
 }

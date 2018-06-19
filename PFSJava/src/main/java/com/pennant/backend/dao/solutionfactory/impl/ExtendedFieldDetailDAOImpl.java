@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ExtendedFieldDetailDAOImpl.java                                                   * 	  
+ * FileName    		:  ExtendedFieldDetailDAOImpl.java                                      * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -31,8 +31,8 @@
  ********************************************************************************************
  * 28-12-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-06-2018       Sai Krishna              0.2          story #413 Allow scriptlet for    * 
+ *                                                        extended fields without UI.       * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -68,10 +68,10 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>ExtendedFieldDetail model</b> class.<br>
@@ -950,7 +950,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, " );
 		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,AllowInRule,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, Scriptlet");
 
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" ,lovDescModuleName,lovDescSubModuleName ");

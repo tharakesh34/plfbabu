@@ -1,3 +1,45 @@
+/**
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  ExtendedFieldsGenerator.java                                         * 	  
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ * Creation Date    :  08-05-2016    														*
+ *                                                                  						*
+ * Modified Date    :  19-06-2018    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 08-05-2016       Murthy	                 0.1                                            * 
+ *                                                                                          * 
+ * 19-06-2018       Sai Krishna              0.2          story #413 Allow scriptlet for    * 
+ *                                                        extended fields without UI.       * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+*/
 package com.pennant.component.extendedfields;
 
 import java.math.BigDecimal;
@@ -21,6 +63,8 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Bandbox;
@@ -264,7 +308,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 		row = getRow(columnCount, row, i);
 		Hbox hbox = new Hbox();
-		row.appendChild(getLabel(detail.getFieldLabel()));
+		hbox.setId("adh_" + detail.getFieldName());
+
+		row.appendChild(getLabel(detail));
 		row.appendChild(hbox);
 
 		Component component = getComponent(detail, isReadOnly, hbox, newRecord, parentComponent);
@@ -275,6 +321,45 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			} else if (getUserWorkspace() != null) {
 				editable = getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail));
 			}
+
+			// story #413 Allow scriptlet for extended fields.
+			if (StringUtils.isNotEmpty(detail.getScriptlet())) {
+				String[] scriptlets = detail.getScriptlet().split("^^");
+
+				for (String scriptlet : scriptlets) {
+					String[] props = scriptlet.split(">>");
+					String eventName = StringUtils.trimToEmpty(props[0]);
+					String javaScript = props.length > 1 ? StringUtils.trimToEmpty(props[1]) : null;
+
+					if ("onSelect".equals(eventName) && StringUtils.isEmpty(javaScript)
+							&& component instanceof Combobox) {
+						component.addEventListener("onSelect", new EventListener<Event>() {
+							public void onEvent(Event e) throws Exception {
+								SelectEvent event = (SelectEvent) e;
+
+								if (event.getSelectedItems().isEmpty()) {
+									((Combobox) event.getTarget()).setSelectedIndex(0);
+								}
+							}
+						});
+
+						continue;
+					}
+
+					component.addEventListener(eventName, new EventListener<Event>() {
+						public void onEvent(Event e) throws Exception {
+							if (e.getData() != null) {
+								Thread.sleep(2000);
+							}
+
+							Clients.evalJavaScript(javaScript);
+						}
+					});
+
+					Events.echoEvent(eventName, component, "WAIT");
+				}
+			}
+
 			readOnlyComponent(!editable, component);
 			hbox.appendChild(component);
 		}
@@ -1291,8 +1376,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 *            labelName
 	 * @return Label label
 	 */
-	private Label getLabel(String labelName) {
-		Label label = new Label(labelName);
+	private Label getLabel(ExtendedFieldDetail detail) {
+		Label label = new Label(detail.getFieldLabel());
+		label.setId("adl_" + detail.getFieldName());
+
 		return label;
 	}
 
