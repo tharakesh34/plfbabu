@@ -4025,7 +4025,8 @@ UNION ALL
 			   	TRIAL_BALANCE_HEADER TBH ON TBH.ID = TBR.HEADERID
 		</createView>	  
 	</changeSet>
-	<changeSet id="109" author="Sriram">
+	<changeSet id="109.1" author="Sriram">
+	<comment>Removed semicolon</comment>
 		<createView viewName="TRIAL_BALANCE_CONSOLIDATE_VIEW">
 		SELECT ID,
 		   	   ACTYPEGRPID,
@@ -4041,7 +4042,7 @@ UNION ALL
 			   FINTYPE
 		FROM   TRIAL_BALANCE_REPORT_FILE TBRF LEFT JOIN
      		   RMTCOUNTRYVSPROVINCE RMT ON RMT.CPPROVINCE = TBRF.PROVINCE
-	  	order by ID;
+	  	order by ID
 		</createView>
 	</changeSet>
 	<changeSet id="110" author="Sriram">
