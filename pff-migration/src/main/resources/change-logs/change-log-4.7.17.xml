@@ -3217,7 +3217,7 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 	</sql>
 </changeSet>
 
-<!-- <changeSet id="60" author="Vinay">
+<changeSet id="60" author="Vinay">
 	<addColumn tableName="FinLiabilityReq_Temp">
 		<column name="Id" type="bigint"/>
 	</addColumn>
@@ -3266,7 +3266,7 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 	<sql>
 		alter sequence seqfinliabilityreq restart start with (Select max(id) from (Select max(id)+1 id from FinLiabilityReq UNION select max(id)+1 id from FinLiabilityReq_Temp)T));
 	</sql>
-</changeSet> -->
+</changeSet>
 
 <changeSet id="66" author="Manoj">
 	<addColumn tableName="BlackListCustomer_Temp">
@@ -3658,5 +3658,81 @@ UNION ALL
 	</sql>
 	</changeSet>
 	
+	<changeSet id="Vinay" author="81">
+		<createView viewName="finliabilityreq_view" replaceIfExists="true">
+		 SELECT t1.id,
+			t1.finreference,
+		    t1.initiatedby,
+		    t1.finevent,
+		    t1.inspaidstatus,
+		    t1.insclaimamount,
+		    t1.insclaimreason,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.fintype,
+		    t2.finbranch,
+		    t2.finstartdate,
+		    t2.numberofterms,
+		    t2.maturitydate,
+		    t2.finccy,
+		    t2.finamount,
+		    t2.finassetvalue,
+		    t4.custcif,
+		    t4.custshrtname,
+		    t5.branchdesc,
+		    t6.findivision AS lovdescfindivision
+		   FROM finliabilityreq_temp t1
+		     JOIN financemain t2 ON t1.finreference = t2.finreference
+		     JOIN customers t4 ON t2.custid = t4.custid
+		     JOIN rmtbranches t5 ON t2.finbranch = t5.branchcode
+		     JOIN rmtfinancetypes t6 ON t2.fintype = t6.fintype
+		UNION ALL
+		 SELECT t1.id,
+			t1.finreference,
+		    t1.initiatedby,
+		    t1.finevent,
+		    t1.inspaidstatus,
+		    t1.insclaimamount,
+		    t1.insclaimreason,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.fintype,
+		    t2.finbranch,
+		    t2.finstartdate,
+		    t2.numberofterms,
+		    t2.maturitydate,
+		    t2.finccy,
+		    t2.finamount,
+		    t2.finassetvalue,
+		    t4.custcif,
+		    t4.custshrtname,
+		    t5.branchdesc,
+		    t6.findivision AS lovdescfindivision
+		   FROM finliabilityreq t1
+		     JOIN financemain t2 ON t1.finreference = t2.finreference
+		     JOIN customers t4 ON t2.custid = t4.custid
+		     JOIN rmtbranches t5 ON t2.finbranch = t5.branchcode
+		     JOIN rmtfinancetypes t6 ON t2.fintype = t6.fintype
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM finliabilityreq_temp
+		          WHERE finliabilityreq_temp.id = t1.id))
+		</createView>
+	</changeSet>
 </databaseChangeLog>
 	
