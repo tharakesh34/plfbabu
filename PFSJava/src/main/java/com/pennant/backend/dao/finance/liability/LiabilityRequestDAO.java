@@ -48,9 +48,11 @@ public interface LiabilityRequestDAO {
 
 	LiabilityRequest getLiabilityRequest();
 	LiabilityRequest getNewLiabilityRequest();
-	LiabilityRequest getLiabilityRequestById(String id, String finEvent,String type);
+	LiabilityRequest getLiabilityRequestById(long id, String type);
+	LiabilityRequest getLiabilityRequestByFinReference(String finReference, String type);
 	void update(LiabilityRequest liabilityRequest,String type);
 	void delete(LiabilityRequest liabilityRequest,String type);
 	String save(LiabilityRequest liabilityRequest,String type);
 	String getProceedingWorkflow(String finType, String finEvent);
+	int getFinareferenceCount(String finReference, String type);
 }

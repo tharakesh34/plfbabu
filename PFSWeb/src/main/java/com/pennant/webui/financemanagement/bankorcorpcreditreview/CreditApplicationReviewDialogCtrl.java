@@ -553,7 +553,9 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 			this.currFormatter = currency.getCcyEditField();
 			doSetFieldProperties();
 		}else{
-			this.currencyType.setValue(aCreditReviewDetails.getCurrency());
+			Currency currency = PennantAppUtil.getCurrencyBycode(aCreditReviewDetails.getCurrency());
+			this.currencyType.setValue(currency.getCcyCode());
+			this.currencyType.setDescription(aCreditReviewDetails.getCurrency());
 			this.currFormatter = CurrencyUtil.getFormat(aCreditReviewDetails.getCurrency());
 		}
 

@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.customermasters;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 
@@ -63,5 +64,5 @@ public interface CustomerExtLiabilityDAO {
 	 int getFinStatusCount(String finStatus);
 	 int getVersion(long custID,int liabilitySeq);
 	int getCustomerExtLiabilityByBank(String bankCode, String type);
-	BigDecimal getSumAmtCustomerExtLiabilityById(long custId);
+	BigDecimal getSumAmtCustomerExtLiabilityById(Set<Long> custId);
 }

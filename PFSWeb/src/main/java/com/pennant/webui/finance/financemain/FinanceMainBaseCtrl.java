@@ -182,7 +182,6 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -245,9 +244,7 @@ import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.commitment.CommitmentService;
-import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.service.customermasters.CustomerExtLiabilityService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dda.DDAProcessService;
@@ -834,8 +831,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private InstallmentDueService installmentDueService;
 	private ShortMessageService shortMessageService;
 	private MailTemplateService mailTemplateService;
-	private CustomerBankInfoService customerBankInfoService;
-	private CustomerExtLiabilityService customerExtLiabilityService;
 
 	protected BigDecimal availCommitAmount = BigDecimal.ZERO;
 	protected Commitment commitment;
@@ -2785,7 +2780,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			break;
 		case AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW:
-			logger.debug("TIME MILLI SECONDS ENTERING" + System.currentTimeMillis());
 			appendCreditReviewDetailTab(true);
 			break;
 		case AssetConstants.UNIQUE_ID_QUERY_MGMT:
@@ -3871,27 +3865,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW);
 		}
 		if (onLoadProcess) {
-			CustomerBankInfo customerBankInfo = customerBankInfoService.getSumOfAmtsCustomerBankInfoByCustId(custId);
-			BigDecimal sumOfEMI = customerExtLiabilityService.getSumAmtCustomerExtLiabilityById(custId);
-			map.put("creditTranNo", String.valueOf(customerBankInfo.getCreditTranNo()));
-			map.put("creditTranAmt", customerBankInfo.getCreditTranAmt().toString());
-			map.put("creditTranAvg", customerBankInfo.getCreditTranAvg().toString());
-			map.put("debitTranNo", String.valueOf(customerBankInfo.getDebitTranNo()));
-			map.put("debitTranAmt", customerBankInfo.getDebitTranAmt().toString());
-			map.put("cashDepositNo", String.valueOf(customerBankInfo.getCashDepositNo()));
-			map.put("cashDepositAmt", customerBankInfo.getCashDepositAmt().toString());
-			map.put("cashWithdrawalNo", String.valueOf(customerBankInfo.getCashWithdrawalNo()));
-			map.put("cashWithdrawalAmt", customerBankInfo.getCashWithdrawalAmt().toString());
-			map.put("chqDepositNo", String.valueOf(customerBankInfo.getChqDepositNo()));
-			map.put("chqDepositAmt", customerBankInfo.getChqDepositAmt().toString());
-			map.put("chqIssueN", String.valueOf(customerBankInfo.getChqIssueNo()));
-			map.put("chqIssueAmt", customerBankInfo.getChqIssueAmt().toString());
-			map.put("inwardChqBounceNo", String.valueOf(customerBankInfo.getInwardChqBounceNo()));
-			map.put("outwardChqBounceNo", String.valueOf(customerBankInfo.getOutwardChqBounceNo()));
-			map.put("eodBalAvg", customerBankInfo.getEodBalAvg().toString());
-			map.put("eodBalMax", customerBankInfo.getEodBalMax().toString());
-			map.put("eodBalMin", customerBankInfo.getEodBalMin().toString());
-			map.put("sumOfEMI", sumOfEMI);
 			map.put("facility", "");
 			map.put("custCIF", this.custCIF.getValue());
 			map.put("custID", custId);
@@ -3908,6 +3881,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("finAssetValue", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue());
 			map.put("finAmount", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount());
 			map.put("firstRepay", getFinanceDetail().getFinScheduleData().getFinanceMain().getFirstRepay());
+			map.put("finReference", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
 
 			Executions.createComponents(
 					"/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul",
@@ -17484,14 +17458,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 	
-	public void setCustomerBankInfoService(CustomerBankInfoService customerBankInfoService) {
-		this.customerBankInfoService = customerBankInfoService;
-	}
-
-	public void setCustomerExtLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
-		this.customerExtLiabilityService = customerExtLiabilityService;
-	}
-
 	public List<String> getAssignCollateralRef() {
 		return assignCollateralRef;
 	}

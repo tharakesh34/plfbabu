@@ -59,6 +59,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class LiabilityRequest extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	private long id = Long.MIN_VALUE;
 	private String finReference;
 	private long initiatedBy;
 	private String finEvent;
@@ -91,7 +92,7 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 		setWorkflowId(WorkFlowUtil.getWorkFlowID("LiabilityRequest"));
 	}
 
-	public LiabilityRequest(String id) {
+	public LiabilityRequest(long id) {
 		super();
 		this.setId(id);
 	}
@@ -148,12 +149,12 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 		this.finCcy = finCcy;
 	}
 
-	public String getId() {
-		return finReference;
+	public long getId() {
+		return id;
 	}
 
-	public void setId (String id) {
-		this.finReference = id;
+	public void setId (long id) {
+		this.id = id;
 	}
 
 	public String getFinReference() {
@@ -273,4 +274,5 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 	public void setInsClaimReason(String insClaimReason) {
 		this.insClaimReason = insClaimReason;
 	}
+
 }

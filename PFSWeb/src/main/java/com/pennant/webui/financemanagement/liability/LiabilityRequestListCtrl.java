@@ -245,6 +245,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		registerButton(button_LiabilityRequestList_NewLiabilityRequest, "button_LiabilityRequestList_NewLiabilityRequest", true);
 		registerButton(button_LiabilityRequestList_LiabilityRequestSearch);
 
+		registerField("Id");
 		registerField("FinReference", listheader_FinReference, SortOrder.ASC,finReference,sortOperator_FinReference,
 				Operators.MULTISELECT);
 		registerField("InitiatedBy",initiatedBy, SortOrder.NONE,  sortOperator_InitiatedBy,
@@ -326,9 +327,8 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		Listitem selectedItem = this.listBoxLiabilityRequest.getSelectedItem();
 
 		// Get the selected entity.
-		String id = (String) selectedItem.getAttribute("id");
-		String finEvent = (String) selectedItem.getAttribute("finEvent");
-		LiabilityRequest aLiabilityRequest = liabilityRequestService.getLiabilityRequestById(id, finEvent);
+		long id = (long) selectedItem.getAttribute("id");
+		LiabilityRequest aLiabilityRequest = liabilityRequestService.getLiabilityRequestById(id);
 
 		if (aLiabilityRequest == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

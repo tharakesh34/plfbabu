@@ -54,7 +54,7 @@ public class CreditReviewSummaryData {
 	 * @param noOfYears
 	 * @return Map<String,String>
 	 */
-	public Map<String,String>  setDataMap(long custID, int year, int noOfYears, String custCtgType, boolean required, boolean isEnquiry, Map<String, String> externalDataMap) {
+	public Map<String,String>  setDataMap(long custID, Set<Long> custIds, int year, int noOfYears, String custCtgType, boolean required, boolean isEnquiry, Map<String, String> externalDataMap) {
 		logger.debug("Entering");
 
 		// create a script engine manager
@@ -65,9 +65,40 @@ public class CreditReviewSummaryData {
 		List<FinCreditRevSubCategory>  listOfFinCreditRevSubCategoryRatio = null;
 		dataMap = new HashMap<String,String> ();
 		itemTotCalMap = new HashMap<String,String> ();
+
 		Map<String ,List<FinCreditReviewSummary>> detailedMap;
+		
 		if(isEnquiry){
-		detailedMap = this.creditApplicationReviewService.getListCreditReviewSummaryByCustId(custID, noOfYears+1,year, "");
+			detailedMap = this.creditApplicationReviewService.getListCreditReviewSummaryByCustId(custID, noOfYears+1,year, "");
+			
+			for (Long coAppcustID : custIds) {
+
+				Map<String ,List<FinCreditReviewSummary>>	codetailedMap = this.creditApplicationReviewService.getListCreditReviewSummaryByCustId(coAppcustID,
+						noOfYears + 1, year, "");
+				for (Entry<String, List<FinCreditReviewSummary>> finCreditRevSubCategory : codetailedMap.entrySet()) {
+
+					if (!finCreditRevSubCategory.getValue().isEmpty()) {
+						// co-app data
+						String key = finCreditRevSubCategory.getKey();
+						List<FinCreditReviewSummary> coAppDataList = finCreditRevSubCategory.getValue();
+
+						// customer data
+						List<FinCreditReviewSummary> custDataList = detailedMap.get(key);
+						if (custDataList != null && !custDataList.isEmpty()) {
+
+							for (FinCreditReviewSummary finCreditReviewSummary : custDataList) {
+								// Checking sub category code to add item value
+								FinCreditReviewSummary coAppdate = isFinCredirtExsist(finCreditReviewSummary,
+										coAppDataList);
+								if (coAppdate != null) {
+									finCreditReviewSummary.setItemValue(
+											finCreditReviewSummary.getItemValue().add(coAppdate.getItemValue()));
+								}
+							}
+						}
+					}
+				}
+			}
 		} else {
 			detailedMap = this.creditApplicationReviewService.getListCreditReviewSummaryByCustId(custID, noOfYears+1,year, "_View");
 		}
@@ -299,4 +330,23 @@ public class CreditReviewSummaryData {
 		}
 		return formatedFormula;
 	}
+	
+	
+	/**
+	 * Checking sub-category code for Customer and Co-Applicants list 
+	 * @param finCreditReviewSummary
+	 * @param coAppDataList
+	 * @return finCreditReviewSummary
+	 */
+	private FinCreditReviewSummary isFinCredirtExsist(FinCreditReviewSummary finCreditReviewSummary,
+			List<FinCreditReviewSummary> coAppDataList) {
+		for (FinCreditReviewSummary finCreditReviewSummary2 : coAppDataList) {
+			if (finCreditReviewSummary2.getSubCategoryCode().equals(finCreditReviewSummary.getSubCategoryCode())) {
+				return finCreditReviewSummary2;
+			}
+		}
+		return null;
+	}
+
+
 }

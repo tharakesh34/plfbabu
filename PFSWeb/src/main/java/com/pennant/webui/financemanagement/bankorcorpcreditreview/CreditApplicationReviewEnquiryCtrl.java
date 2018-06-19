@@ -6,8 +6,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -62,12 +65,16 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.JountAccountDetailDAO;
+import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerBankInfo;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
@@ -75,6 +82,8 @@ import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCre
 import com.pennant.backend.model.reports.CreditReviewMainCtgDetails;
 import com.pennant.backend.model.reports.CreditReviewSubCtgDetails;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.service.customermasters.CustomerBankInfoService;
+import com.pennant.backend.service.customermasters.CustomerExtLiabilityService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.impl.CreditReviewSummaryData;
 import com.pennant.backend.util.FacilityConstants;
@@ -143,6 +152,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	protected Row row8;   // autowired
 	
     protected Label             label_CreditApplicationReviewDialog_RecordStatus;
+    protected Groupbox gb_CustDetails;  // autowired
+    protected Listbox listBoxCust;  // autowired
   
 
 	protected Button btnSearchPRCustid; 			
@@ -190,33 +201,26 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	boolean showCurrentYear;
 	int notesEnteredCount;
 	int noOfRecords;
-	private BigDecimal sumOfEMI  = BigDecimal.ZERO;
 	private BigDecimal firstRepay = BigDecimal.ZERO;
 	private BigDecimal finAmount = BigDecimal.ZERO;
 	private BigDecimal finAssetValue = BigDecimal.ZERO;
 	private BigDecimal repayProfitRate = BigDecimal.ZERO;
 	private int	roundingTarget = 0;
 	private int numberOfTerms = 0;
-	private String creditTranNo;
-	private String creditTranAmt;
-	private String creditTranAvg;
-	private String debitTranNo;
-	private String debitTranAmt;
-	private String cashDepositNo;
-	private String cashDepositAmt;
-	private String cashWithdrawalNo;
-	private String cashWithdrawalAmt;
-	private String chqDepositNo;
-	private String chqDepositAmt;
-	private String chqIssue;
-	private String chqIssueAmt;
-	private String inwardChqBounceNo;
-	private String outwardChqBounceNo;
-	private String eodBalAvg;
-	private String eodBalMax;
-	private String eodBalMin;
 	HashMap<String, String> extendedDataMap = new HashMap<String, String>();
 	int finFormatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
+	
+	private CustomerBankInfoService customerBankInfoService;
+	private CustomerExtLiabilityService customerExtLiabilityService;
+	
+	private JountAccountDetailDAO jountAccountDetailDAO;
+	private CreditApplicationReviewDAO creditApplicationReviewDAO;
+	private String finReference;
+	Set<Long> custIds = new HashSet<>();
+	private List<FinCreditReviewDetails> auditYears;
+	private List<JointAccountDetail> coAppIds =  new ArrayList<>();
+	CustomerBankInfo customerBankInfo = null;
+	BigDecimal sumOfEMI = BigDecimal.ZERO;
 	
 	/**
 	 * default constructor.<br>
@@ -250,95 +254,70 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		try{
 
 			if (arguments.containsKey("custCIF") && arguments.containsKey("custID") && arguments.containsKey("custCtgType")) {
+				this.custID.setValue((Long) arguments.get("custID"));
+				
 				showCurrentYear = true;
 				isEnquiry = false;
 				this.custCIF.setValue((String) arguments.get("custCIF"));
-				this.custID.setValue((Long) arguments.get("custID"));
 				this.custCtgCode = (String) arguments.get("custCtgType");
 				this.listOfFinCreditRevCategory = this.creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(this.custCtgCode);
+				this.finReference = (String) arguments.get("finReference");
 				this.maxAuditYear = getCreditApplicationReviewService().getMaxAuditYearByCustomerId(this.custID.longValue(), "_VIEW");
+				
+				//getting co-applicant id's
+				coAppIds = jountAccountDetailDAO.getCustIdsByFinnRef(finReference);
+
+				//Adding co-applicant id's
+				if(coAppIds != null && coAppIds.size() > 0){
+					for (JointAccountDetail jointAccountDetail : coAppIds) {
+						custIds.add(jointAccountDetail.getCustID());
+					}
+					
+					//getting audit years from credit review details 
+					custIds.add(this.custID.getValue());
+					auditYears = creditApplicationReviewDAO.getAuditYearsByCustId(custIds);
+					
+					customerBankInfo = customerBankInfoService.getSumOfAmtsCustomerBankInfoByCustId(custIds);
+					sumOfEMI = customerExtLiabilityService.getSumAmtCustomerExtLiabilityById(custIds);
+					
+					custIds.remove(this.custID.getValue());
+					
+					//Fill Customer details from co-applicants 
+					doFillCustomerDetails(auditYears);
+				}else{
+					customerBankInfo = customerBankInfoService.getSumOfAmtsCustomerBankInfoByCustId(custIds);
+					sumOfEMI = customerExtLiabilityService.getSumAmtCustomerExtLiabilityById(custIds);
+				}
+				
 				this.toYear.setValue(Integer.parseInt(maxAuditYear));
 				year = this.toYear.getValue();
 				if(arguments.containsKey("facility")){
 					isEnquiry = true;
 				}
-				// This data is expected to come from Finance Main Dialog (Mainly Loan Details, banking details and obligations)
-				if(arguments.containsKey("creditTranNo")) {
-					creditTranNo = (String)arguments.get("creditTranNo");
-					extendedDataMap.put("EXT_CREDITTRANNO",creditTranNo);
+				
+				if(customerBankInfo != null){
+					extendedDataMap.put("EXT_CREDITTRANNO",String.valueOf(customerBankInfo.getCreditTranNo()));
+					extendedDataMap.put("EXT_CREDITTRANAMT",customerBankInfo.getCreditTranAmt().toString());
+					extendedDataMap.put("EXT_CREDITTRANAVG",customerBankInfo.getCreditTranAvg().toString());
+					extendedDataMap.put("EXT_DEBITTRANNO",String.valueOf(customerBankInfo.getDebitTranNo()));
+					extendedDataMap.put("EXT_DEBITTRANAMT",customerBankInfo.getDebitTranAmt().toString());
+					extendedDataMap.put("EXT_CASHDEPOSITNO",String.valueOf(customerBankInfo.getCashDepositNo()));
+					extendedDataMap.put("EXT_CASHDEPOSITAMT",customerBankInfo.getCashDepositAmt().toString());
+					extendedDataMap.put("EXT_CASHWITHDRAWALNO",String.valueOf(customerBankInfo.getCashWithdrawalNo()));
+					extendedDataMap.put("EXT_CASHWITHDRAWALAMT",customerBankInfo.getCashWithdrawalAmt().toString());
+					extendedDataMap.put("EXT_CHQDEPOSITNO",String.valueOf(customerBankInfo.getChqDepositNo()));
+					extendedDataMap.put("EXT_CHQDEPOSITAMT",customerBankInfo.getChqDepositAmt().toString());
+					extendedDataMap.put("EXT_CHQISSUENO",String.valueOf(customerBankInfo.getChqIssueNo()));
+					extendedDataMap.put("EXT_CHQISSUEAMT",customerBankInfo.getChqIssueAmt().toString());
+					extendedDataMap.put("EXT_INWARDCHQBOUNCENO",String.valueOf(customerBankInfo.getInwardChqBounceNo()));
+					extendedDataMap.put("EXT_OUTWARDCHQBOUNCENO",String.valueOf(customerBankInfo.getOutwardChqBounceNo()));
+					extendedDataMap.put("EXT_EODBALAVG",customerBankInfo.getEodBalAvg().toString());
+					extendedDataMap.put("EXT_EODBALMAX",customerBankInfo.getEodBalMax().toString());
+					extendedDataMap.put("EXT_EODBALMIN",customerBankInfo.getEodBalMin().toString());
+					
 				}
-				if(arguments.containsKey("creditTranAmt")) {
-					creditTranAmt = (String)arguments.get("creditTranAmt");
-					extendedDataMap.put("EXT_CREDITTRANAMT",unFormat(creditTranAmt == null ? "0" : creditTranAmt));
-				}
-				if(arguments.containsKey("creditTranAvg")) {
-					creditTranAvg = (String)arguments.get("creditTranAvg");
-					extendedDataMap.put("EXT_CREDITTRANAVG",unFormat(creditTranAvg == null ? "0" : creditTranAvg));
-				}
-				if(arguments.containsKey("debitTranNo")) {
-					debitTranNo = (String)arguments.get("debitTranNo");
-					extendedDataMap.put("EXT_DEBITTRANNO",debitTranNo);
-				}
-				if(arguments.containsKey("debitTranAmt")) {
-					debitTranAmt = (String)arguments.get("debitTranAmt");
-					extendedDataMap.put("EXT_DEBITTRANAMT",unFormat(debitTranAmt == null ? "0" : debitTranAmt));
-				}
-				if(arguments.containsKey("cashDepositNo")) {
-					cashDepositNo = (String)arguments.get("cashDepositNo");
-					extendedDataMap.put("EXT_CASHDEPOSITNO",cashDepositNo);
-				}
-				if(arguments.containsKey("cashDepositAmt")) {
-					cashDepositAmt = (String)arguments.get("cashDepositAmt");
-					extendedDataMap.put("EXT_CASHDEPOSITAMT",unFormat(cashDepositAmt == null ? "0" : cashDepositAmt));
-				}
-				if(arguments.containsKey("cashWithdrawalNo")) {
-					cashWithdrawalNo = (String)arguments.get("cashWithdrawalNo");
-					extendedDataMap.put("EXT_CASHWITHDRAWALNO",cashWithdrawalNo);
-				}
-				if(arguments.containsKey("cashWithdrawalAmt")) {
-					cashWithdrawalAmt = (String)arguments.get("cashWithdrawalAmt");
-					extendedDataMap.put("EXT_CASHWITHDRAWALAMT",unFormat(cashWithdrawalAmt == null ? "0" : cashWithdrawalAmt));
-				}
-				if(arguments.containsKey("chqDepositNo")) {
-					chqDepositNo = (String)arguments.get("chqDepositNo");
-					extendedDataMap.put("EXT_CHQDEPOSITNO",chqDepositNo == null ? "0" : chqDepositNo);
-				}
-				if(arguments.containsKey("chqDepositAmt")) {
-					chqDepositAmt = (String)arguments.get("chqDepositAmt");
-					extendedDataMap.put("EXT_CHQDEPOSITAMT",unFormat(chqDepositAmt == null ? "0" : chqDepositAmt));
-				}
-				if(arguments.containsKey("chqIssue")) {
-					chqIssue = (String)arguments.get("chqIssue");
-					extendedDataMap.put("EXT_CHQISSUENO",chqIssue);
-				}
-				if(arguments.containsKey("chqIssueAmt")) {
-					chqIssueAmt = (String)arguments.get("chqIssueAmt");
-					extendedDataMap.put("EXT_CHQISSUEAMT",unFormat(chqIssueAmt == null ? "0" : chqIssueAmt));
-				}
-				if(arguments.containsKey("inwardChqBounceNo")) {
-					inwardChqBounceNo = (String)arguments.get("inwardChqBounceNo");
-					extendedDataMap.put("EXT_INWARDCHQBOUNCENO",inwardChqBounceNo == null ? "0" : inwardChqBounceNo);
-				}
-				if(arguments.containsKey("outwardChqBounceNo")) {
-					outwardChqBounceNo = (String)arguments.get("outwardChqBounceNo");
-					extendedDataMap.put("EXT_OUTWARDCHQBOUNCENO",outwardChqBounceNo == null ? "0" : outwardChqBounceNo);
-				}
-				if(arguments.containsKey("eodBalAvg")) {
-					eodBalAvg = (String)arguments.get("eodBalAvg");
-					extendedDataMap.put("EXT_EODBALAVG",unFormat(eodBalAvg == null ? "0" : eodBalAvg));
-				}
-				if(arguments.containsKey("eodBalMax")) {
-					eodBalMax = (String)arguments.get("eodBalMax");
-					extendedDataMap.put("EXT_EODBALMAX",unFormat(eodBalMax == null ? "0" : eodBalMax));
-				}
-				if(arguments.containsKey("eodBalMin")) {
-					eodBalMin = (String)arguments.get("eodBalMin");
-					extendedDataMap.put("EXT_EODBALMIN",unFormat(eodBalMin == null ? "0" : eodBalMin));
-				}
-				if(arguments.containsKey("sumOfEMI")) {
-					sumOfEMI = (BigDecimal)arguments.get("sumOfEMI");
-					extendedDataMap.put("EXT_OBLIGATION",unFormat(sumOfEMI == null ? "0" : sumOfEMI.toString()));
-				}
+				
+				extendedDataMap.put("EXT_OBLIGATION",unFormat(sumOfEMI == null ? "0" : sumOfEMI.toString()));
 				if(arguments.containsKey("numberOfTerms")) {
 					numberOfTerms = (int)arguments.get("numberOfTerms");
 					extendedDataMap.put("EXT_NUMBEROFTERMS",String.valueOf(numberOfTerms));
@@ -686,7 +665,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		if(listOfFinCreditReviewDetails != null && listOfFinCreditReviewDetails.size() > 0
 				&& noOfRecords == proRecordCount){
 			//Mail Alert Notification for User
-			getMailUtil().sendMail(NotificationConstants.MAIL_MODULE_CREDIT, listOfFinCreditReviewDetails.get(0),this);
+			mailUtil.sendMail(NotificationConstants.MAIL_MODULE_CREDIT, listOfFinCreditReviewDetails.get(0),this);
 			
 			FinCreditReviewDetails creditReviewDetails = listOfFinCreditReviewDetails.get(0);
 			String msg = getSavingStatus(creditReviewDetails.getRoleCode(), creditReviewDetails.getNextRoleCode(), creditReviewDetails.getCustomerId(),
@@ -925,9 +904,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		logger.debug("Entering");
 		
 		if(isEnquiry){
-		this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), this.toYear.getValue(), noOfYears, this.custCtgCode, true, isEnquiry, extendedDataMap);
+			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), custIds, this.toYear.getValue(), noOfYears, this.custCtgCode, true, isEnquiry, extendedDataMap);
 		} else if(maxAuditYear != null){
-			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), Integer.parseInt(maxAuditYear), noOfYears, this.custCtgCode, true, isEnquiry, null);
+			custIds.add(custID.longValue());
+			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), custIds, Integer.parseInt(maxAuditYear), noOfYears, this.custCtgCode, true, isEnquiry, null);
 		}
 		if(this.dataMap.containsKey("lovDescCcyEditField")){
 			currFormatter = Integer.parseInt(this.dataMap.get("lovDescCcyEditField"));
@@ -1470,6 +1450,55 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	}
 
 	/**
+	 * To fill Customer Details if Co-applicants is available
+	 * @param coAppIds
+	 */
+	public void doFillCustomerDetails(List<FinCreditReviewDetails> coAppIds) {
+		logger.debug("Entering");
+		
+		Map<String, List<String>> map = new LinkedHashMap<>();
+
+		//Separate Customer CIF wise audit years 
+		for (FinCreditReviewDetails finCreditReviewDetails : coAppIds) {
+			List<String> list = new ArrayList<>();
+			if (map.containsKey(finCreditReviewDetails.getLovDescCustCIF())) {
+				list.addAll(map.get(finCreditReviewDetails.getLovDescCustCIF()));
+				if (!list.contains(finCreditReviewDetails.getAuditYear())) {
+					list.add(finCreditReviewDetails.getAuditYear());
+					map.put(finCreditReviewDetails.getLovDescCustCIF(), list);
+				}
+			} else {
+				list.add(finCreditReviewDetails.getAuditYear());
+				map.put(finCreditReviewDetails.getLovDescCustCIF(), list);
+			}
+		}
+
+		this.listBoxCust.getItems().clear();
+		for (String custCIF : map.keySet()) {
+			Listitem item = new Listitem();
+			Listcell lc;
+			lc = new Listcell(custCIF);
+			lc.setParent(item);
+			String year = "";
+			for (String str : map.get(custCIF)) {
+				// Filtering un-used audit years
+				if ((Integer.valueOf(maxAuditYear) - 2 <= Integer.valueOf(str))) {
+					if (StringUtils.isNotBlank(year)) {
+						year = year + ", " + str;
+					} else {
+						year = str;
+					}
+				}
+			}
+			lc = new Listcell(year);
+			lc.setParent(item);
+			this.listBoxCust.appendChild(item);
+		}
+
+		logger.debug("Leaving");
+	}
+	
+	/**
 	 * To set the customer id from Customer filter
 	 * @param nCustomer
 	 * @throws InterruptedException
@@ -1711,17 +1740,28 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		}
  	}
 	
-	public FinCreditReviewDetails getFinCreditReviewDetails() {
-		return finCreditReviewDetails;
-	}
 	public void setFinCreditReviewDetails(FinCreditReviewDetails finCreditReviewDetails) {
 		this.finCreditReviewDetails = finCreditReviewDetails;
 	}
 	
-	public MailUtil getMailUtil() {
-		return mailUtil;
-	}
 	public void setMailUtil(MailUtil mailUtil) {
 		this.mailUtil = mailUtil;
 	}
+
+	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
+		this.jountAccountDetailDAO = jountAccountDetailDAO;
+	}
+
+	public void setCreditApplicationReviewDAO(CreditApplicationReviewDAO creditApplicationReviewDAO) {
+		this.creditApplicationReviewDAO = creditApplicationReviewDAO;
+	}
+
+	public void setCustomerBankInfoService(CustomerBankInfoService customerBankInfoService) {
+		this.customerBankInfoService = customerBankInfoService;
+	}
+
+	public void setCustomerExtLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
+		this.customerExtLiabilityService = customerExtLiabilityService;
+	}
+	
 }

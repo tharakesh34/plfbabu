@@ -1835,8 +1835,6 @@
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="pdfParserCaller" ref="pdfParserCaller" />
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
-		<property name="customerBankInfoService" ref="customerBankInfoService" />
-		<property name="customerExtLiabilityService" ref="customerExtLiabilityService" />
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		
 	</bean>
@@ -3476,6 +3474,10 @@
 		<property name="creditApplicationReviewService" ref="creditApplicationReviewService" />
 		<property name="creditReviewSummaryData" ref="creditReviewSummaryData" />
 		<property name="mailUtil" ref="mailUtil" />
+		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="creditApplicationReviewDAO" ref="creditApplicationReviewDAO" />
+		<property name="customerBankInfoService" ref="customerBankInfoService" />
+		<property name="customerExtLiabilityService" ref="customerExtLiabilityService" />
 	</bean>
 
 	<!--============ Customer Summary Details ============== -->

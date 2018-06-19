@@ -60,7 +60,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.liability.LiabilityRequestDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
+import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -72,7 +72,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
  * 
  */
 
-public class LiabilityRequestDAOImpl extends BasisCodeDAO<LiabilityRequest> implements LiabilityRequestDAO {
+public class LiabilityRequestDAOImpl extends BasisNextidDaoImpl<LiabilityRequest> implements LiabilityRequestDAO {
 
 	public LiabilityRequestDAOImpl() {
 	    super();
@@ -125,21 +125,57 @@ public class LiabilityRequestDAOImpl extends BasisCodeDAO<LiabilityRequest> impl
 	 * @return LiabilityRequest
 	 */
 	@Override
-	public LiabilityRequest getLiabilityRequestById(final String id, String finEvent, String type) {
+	public LiabilityRequest getLiabilityRequestById(final long id, String type) {
 		logger.debug("Entering");
 		LiabilityRequest liabilityRequest = getLiabilityRequest();
 		
 		liabilityRequest.setId(id);
-		liabilityRequest.setFinEvent(finEvent); 
 		
-		StringBuilder selectSql = new StringBuilder("Select FinReference, InitiatedBy, FinEvent,InsPaidStatus,InsClaimAmount,InsClaimReason, ");
+		StringBuilder selectSql = new StringBuilder("Select Id, FinReference, InitiatedBy, FinEvent,InsPaidStatus,InsClaimAmount,InsClaimReason, ");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append("  FinType, CustCIF, FinBranch, FinStartDate, NumberOfTerms, MaturityDate, FinCcy, FinAmount, CustShrtName , BranchDesc, ");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From FinLiabilityReq");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference AND FinEvent=:FinEvent ");
+		selectSql.append(" Where Id =:Id");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liabilityRequest);
+		RowMapper<LiabilityRequest> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LiabilityRequest.class);
+		
+		try{
+			liabilityRequest = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			liabilityRequest = null;
+		}
+		logger.debug("Leaving");
+		return liabilityRequest;
+	}
+	
+	/**
+	 * Fetch the Record  LiabilityRequest details by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return LiabilityRequest
+	 */
+	@Override
+	public LiabilityRequest getLiabilityRequestByFinReference(String finReference, String type) {
+		logger.debug("Entering");
+		LiabilityRequest liabilityRequest = getLiabilityRequest();
+		liabilityRequest.setFinReference(finReference);
+		
+		StringBuilder selectSql = new StringBuilder("Select Id, FinReference, InitiatedBy, FinEvent,InsPaidStatus,InsClaimAmount,InsClaimReason, ");
+		if(StringUtils.trimToEmpty(type).contains("View")){
+			selectSql.append("  FinType, CustCIF, FinBranch, FinStartDate, NumberOfTerms, MaturityDate, FinCcy, FinAmount, CustShrtName , BranchDesc, ");
+		}
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" From FinLiabilityReq");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liabilityRequest);
@@ -183,7 +219,7 @@ public class LiabilityRequestDAOImpl extends BasisCodeDAO<LiabilityRequest> impl
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From FinLiabilityReq");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference");
+		deleteSql.append(" Where Id =:Id");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liabilityRequest);
@@ -217,17 +253,22 @@ public class LiabilityRequestDAOImpl extends BasisCodeDAO<LiabilityRequest> impl
 		
 		StringBuilder insertSql =new StringBuilder("Insert Into FinLiabilityReq");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, FinEvent,InsPaidStatus,InsClaimAmount,InsClaimReason, InitiatedBy, Version , LastMntBy, LastMntOn, RecordStatus");
+		insertSql.append(" (Id, FinReference, FinEvent,InsPaidStatus,InsClaimAmount,InsClaimReason, InitiatedBy, Version , LastMntBy, LastMntOn, RecordStatus");
 		insertSql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:FinReference,  :FinEvent,:InsPaidStatus,:InsClaimAmount,:InsClaimReason, :InitiatedBy, :Version , :LastMntBy, :LastMntOn, :RecordStatus");
+		insertSql.append(" Values(:Id, :FinReference,  :FinEvent,:InsPaidStatus,:InsClaimAmount,:InsClaimReason, :InitiatedBy, :Version , :LastMntBy, :LastMntOn, :RecordStatus");
 		insertSql.append(", :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		
+		// Get the identity sequence number.
+		if (liabilityRequest.getId() <= 0) {
+			liabilityRequest.setId(getNextidviewDAO().getNextId("SeqFinLiabilityReq"));
+		}
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liabilityRequest);
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
-		return liabilityRequest.getId();
+		return String.valueOf(liabilityRequest.getId());
 	}
 	
 	/**
@@ -251,7 +292,7 @@ public class LiabilityRequestDAOImpl extends BasisCodeDAO<LiabilityRequest> impl
 		updateSql.append(StringUtils.trimToEmpty(type)); 
 		updateSql.append(" Set InsPaidStatus=:InsPaidStatus,InsClaimAmount=:InsClaimAmount,InsClaimReason=:InsClaimReason,InitiatedBy = :InitiatedBy");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where FinReference =:FinReference AND FinEvent=:FinEvent " );
+		updateSql.append(" Where Id =:Id" );
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		
@@ -293,5 +334,22 @@ public class LiabilityRequestDAOImpl extends BasisCodeDAO<LiabilityRequest> impl
 		}
 		logger.debug("Leaving");
 		return proceedWorkflowType;
+	}
+	
+	@Override
+	public int getFinareferenceCount(String finReference, String type) {
+		LiabilityRequest liabilityRequest = new LiabilityRequest();
+		liabilityRequest.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From FinLiabilityReq");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liabilityRequest);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 }

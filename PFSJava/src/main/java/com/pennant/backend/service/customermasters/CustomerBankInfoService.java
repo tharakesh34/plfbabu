@@ -1,6 +1,7 @@
 package com.pennant.backend.service.customermasters;
 
 import java.util.List;
+import java.util.Set;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -19,5 +20,5 @@ public interface CustomerBankInfoService {
 
 	AuditDetail doValidations(CustomerBankInfo customerBankInfo);
 	
-	CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(long custId);
+	CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(Set<Long> custId);
 }

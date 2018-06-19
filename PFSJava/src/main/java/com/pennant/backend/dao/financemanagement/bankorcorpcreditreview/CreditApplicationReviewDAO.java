@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.financemanagement.bankorcorpcreditreview;
 
 import java.util.List;
+import java.util.Set;
 
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
@@ -28,4 +29,5 @@ public interface CreditApplicationReviewDAO {
 	FinCreditReviewDetails getCreditReviewDetailsByCustIdAndYear(final long customerId, String auditYear, String type);
 	String getMaxAuditYearByCustomerId(long customerId, String type);
 	List<FinCreditReviewDetails> getFinCreditRevDetailsByCustomerId(final long customerId, String type);
+	List<FinCreditReviewDetails> getAuditYearsByCustId(Set<Long> custId);
 }

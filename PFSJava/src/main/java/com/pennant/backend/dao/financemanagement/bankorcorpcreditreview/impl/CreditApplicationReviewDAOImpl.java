@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -10,6 +11,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -546,4 +548,31 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
+	
+	
+	@Override
+	public List<FinCreditReviewDetails> getAuditYearsByCustId(Set<Long> custId) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CustomerId", custId);
+
+		StringBuilder selectSql = new StringBuilder("Select ");
+		selectSql.append(" LovDescCustCIF, CustomerId, AuditYear");
+		selectSql.append(" From finCreditReviewDetails_AView");
+		selectSql.append(" Where CustomerId in (:CustomerId)");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditReviewDetails.class);
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		}
+		return null;
+
+	}
+
 }

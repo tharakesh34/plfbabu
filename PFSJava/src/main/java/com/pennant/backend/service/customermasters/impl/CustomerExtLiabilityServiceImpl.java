@@ -2,6 +2,7 @@ package com.pennant.backend.service.customermasters.impl;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -31,7 +32,7 @@ public class CustomerExtLiabilityServiceImpl implements CustomerExtLiabilityServ
 	}
 	
 	@Override
-	public BigDecimal getSumAmtCustomerExtLiabilityById(long custId) {
+	public BigDecimal getSumAmtCustomerExtLiabilityById(Set<Long> custId) {
 		return getCustomerExtLiabilityDAO().getSumAmtCustomerExtLiabilityById(custId);
 	}
 

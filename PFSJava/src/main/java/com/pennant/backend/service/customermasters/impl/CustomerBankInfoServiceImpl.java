@@ -1,6 +1,7 @@
 package com.pennant.backend.service.customermasters.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -57,7 +58,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	}
 	
 	@Override
-	public CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(long custId) {
+	public CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(Set<Long> custId) {
 		return getCustomerBankInfoDAO().getSumOfAmtsCustomerBankInfoByCustId(custId);
 	}
 

@@ -93,7 +93,6 @@ public class LiabilityRequestListModelItemRenderer implements ListitemRenderer<L
 		lc = new Listcell(PennantJavaUtil.getLabel(liabilityRequest.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("id", liabilityRequest.getId());
-		item.setAttribute("finEvent", liabilityRequest.getFinEvent());
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onLiabilityRequestItemDoubleClicked");
 	}
 }

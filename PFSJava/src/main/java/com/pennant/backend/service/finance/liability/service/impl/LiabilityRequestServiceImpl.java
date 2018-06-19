@@ -272,8 +272,8 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	 */
 
 	@Override
-	public LiabilityRequest getLiabilityRequestById(String id, String finEvent) {
-		return getLiabilityRequestDAO().getLiabilityRequestById(id, finEvent,"_View");
+	public LiabilityRequest getLiabilityRequestById(long id) {
+		return getLiabilityRequestDAO().getLiabilityRequestById(id,"_View");
 	}
 	/**
 	 * getApprovedLiabilityRequestById fetch the details by using LiabilityRequestDAO's getLiabilityRequestById method .
@@ -282,8 +282,8 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	 * @return LiabilityRequest
 	 */
 
-	public LiabilityRequest getApprovedLiabilityRequestById(String id, String finEvent) {
-		return getLiabilityRequestDAO().getLiabilityRequestById(id,finEvent,"_AView");
+	public LiabilityRequest getApprovedLiabilityRequestById(long id) {
+		return getLiabilityRequestDAO().getLiabilityRequestById(id,"_AView");
 	}
 	
 	@Override
@@ -537,16 +537,16 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 
 		LiabilityRequest tempLiabilityRequest= null;
 		if (liabilityRequest.isWorkflow()){
-			tempLiabilityRequest = getLiabilityRequestDAO().getLiabilityRequestById(liabilityRequest.getId(),liabilityRequest.getFinEvent(), "_Temp");
+			tempLiabilityRequest = getLiabilityRequestDAO().getLiabilityRequestById(liabilityRequest.getId(), "_Temp");
 		}
-		LiabilityRequest befLiabilityRequest= getLiabilityRequestDAO().getLiabilityRequestById(liabilityRequest.getId(),liabilityRequest.getFinEvent(), "");
+		LiabilityRequest befLiabilityRequest= getLiabilityRequestDAO().getLiabilityRequestById(liabilityRequest.getId(), "");
 		
 		LiabilityRequest oldLiabilityRequest= liabilityRequest.getBefImage();
 
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
-		valueParm[0]=liabilityRequest.getId();
+		valueParm[0]=liabilityRequest.getFinReference();
 		errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
 
 		if (liabilityRequest.isNew()){ // for New record or new record into work flow
@@ -556,7 +556,13 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
-				if (liabilityRequest.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
+				
+				// NOC Issuance checking
+				int count = getLiabilityRequestDAO().getFinareferenceCount(liabilityRequest.getFinReference(), "_View");
+				
+				if(count > 0){
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41041", errParm,valueParm), usrLanguage));
+				}else if (liabilityRequest.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befLiabilityRequest !=null || tempLiabilityRequest!=null ){ // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41041", errParm,valueParm), usrLanguage));
 					}

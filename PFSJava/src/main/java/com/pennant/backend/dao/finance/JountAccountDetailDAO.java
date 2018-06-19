@@ -48,4 +48,5 @@ public interface JountAccountDetailDAO {
 	JointAccountDetail getJountAccountDetailByRef(String finReference, String custCIF, String type);
 	List<FinanceExposure> getPrimaryExposureList(List<String> listCIF);
 	List<FinanceExposure> getSecondaryExposureList(List<String> listCIF);
+	List<JointAccountDetail> getCustIdsByFinnRef(String finReference);
 }

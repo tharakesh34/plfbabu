@@ -7,269 +7,304 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
-	<window id="window_CreditApplicationReviewDialog"
-		border="normal"
-		width="100%" height="100%" sizable="true"
-		apply="${creditApplicationReviewEnquiryCtrl}">
-		
-		<borderlayout id="borderlayout_CreditApplicationReview">
-        <north>
-		<div sclass="z-toolbar" style="padding:0" id="div_CmdBtntoolbar">
-			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+		<window id="window_CreditApplicationReviewDialog"
+			border="normal" width="100%" height="100%" sizable="true"
+			apply="${creditApplicationReviewEnquiryCtrl}">
 
-				<!-- COMMON BUTTONS -->
-				<toolbar align="start"
-					 sclass="toolbar-start">
-					<button id="btnSave" label="${c:l('label_Save')}"
-						 tooltiptext="${c:l('btnSave.tooltiptext')}"
-						autodisable="btnSave,btnSearch,btnPrint,btnHelp,btnClose,btnNotes" sclass="z-toolbarbutton" />
-					<button id="btnPrint" 
-						label="${c:l('label_Print')}"
-						tooltiptext="${c:l('btnPrint.tooltiptext')}" visible="false"
-						autodisable="btnSave,btnSearch,btnPrint,btnHelp,btnClose,btnNotes" sclass="z-toolbarbutton" />
-					<button id="btnNotes"  visible="false"
-						tooltiptext="${c:l('btnNotes.tooltiptext')}"  label="${c:l('btnNotes.label')}"
-						autodisable="btnSave,btnSearch,btnPrint,btnHelp,btnClose,btnNotes" sclass="z-toolbarbutton" />
-				</toolbar>
+			<borderlayout id="borderlayout_CreditApplicationReview">
+				<north>
+					<div sclass="z-toolbar" style="padding:0"
+						id="div_CmdBtntoolbar">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%">
 
-				<!-- SEARCH AREA -->
-				<toolbar align="center"
-					 sclass="toolbar-center">
-					 <label
-					 	value="${c:l('window_CreditApplicationReviewDialog.title')}"
-					 	sclass="label-heading" />
-				</toolbar>
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								sclass="toolbar-start">
+								<button id="btnSave"
+									label="${c:l('label_Save')}"
+									tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnSave,btnSearch,btnPrint,btnHelp,btnClose,btnNotes"
+									sclass="z-toolbarbutton" />
+								<button id="btnPrint"
+									label="${c:l('label_Print')}"
+									tooltiptext="${c:l('btnPrint.tooltiptext')}" visible="false"
+									autodisable="btnSave,btnSearch,btnPrint,btnHelp,btnClose,btnNotes"
+									sclass="z-toolbarbutton" />
+								<button id="btnNotes" visible="false"
+									tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									label="${c:l('btnNotes.label')}"
+									autodisable="btnSave,btnSearch,btnPrint,btnHelp,btnClose,btnNotes"
+									sclass="z-toolbarbutton" />
+							</toolbar>
 
-				<!-- CRUD BUTTONS -->
-				<toolbar align="end"
-					 sclass="toolbar-end">
-					<button id="btnHelp" visible="false" 
-						label = "${c:l('label_Help')}"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}"
-						autodisable="btnSave,btnSearch,btnPrint,btnHelp,btnClose,btnNotes" sclass="z-toolbarbutton" />
-					<button id="btnClose" 
-						label = "${c:l('label_Close')}"
-						tooltiptext="${c:l('btnClose.tooltiptext')}"
-						autodisable="btnSave,btnSearch,btnPrint,btnHelp,btnClose,btnNotes" sclass="z-toolbarbutton" />
-				</toolbar>
-			</hbox>
-		</div>
-		</north>
-			<center border="none" autoscroll="true">
-				<div id="divDel">
-					<groupbox id="gb_basicDetails" closable="false">
-						<caption
-							label="Credit Application/Review-Bank Spread Sheet" />
-						<grid id="creditApplicationReviewGrid"
-							sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px"
-							width="100%">
-							<columns>
-								<column width="15%" />
-								<column width="35%" />
-								<column width="15%" />
-								<column width="35%" />
-							</columns>
-							<rows>
-								<row id="row1">
-									<label
-										id="label_CreditApplicationReviewDialog_CustID"
-										value="${c:l('label_CreditApplicationReviewDialog_CustId.value')}" />
-									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<longbox id="custID"
-											width="150px" maxlength="26" visible="false" />
-										<textbox id="custCIF"
-											width="150px" maxlength="150" style="overflow: hidden;" />
-										<button id="btnSearchPRCustid"
-											image="/images/icons/LOVSearch.png"  />
-										<label id="custShrtName"
-											width="150px" />
-									</hbox>
-									<label
-										id="label_CreditApplicationReviewDialog_NoOfYearsToDisplay"
-										value="${c:l('label_CreditApplicationReviewDialog_NoOfYearsToDisplay.value')}" />
-									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<intbox id="toYear" visible="false"
-											maxlength="4" />
-										<textbox id="auditedYear" visible="false"
-											maxlength="4" />
-									</hbox>
-								</row>
-								<row id="row2">
-									<label
-										id="label_CreditApplicationReviewDialog_Auditors"
-										value="${c:l('label_CreditApplicationReviewDialog_Auditors.value')}" />
-									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<textbox id="auditors" />
-									</hbox>
-									<label
-										id="label_CreditApplicationReviewDialog_ConsolOrUnConsol"
-										value="${c:l('label_CreditApplicationReviewDialog_ConsolOrUnConsol.value')}" />
-									<hbox>
-										<radiogroup
-											id="conSolOrUnConsol">
-											<radio label="Consolidated"
-												id="conSolidated" selected="true" value="Consolidated" />
-											<radio id="unConsolidated"
-												label="Un Consolidated" value="UnConsolidated" />
-										</radiogroup>
-									</hbox>
-								</row>
-								<row id="row3">
-									<label
-										id="label_CreditApplicationReviewDialog_Location"
-										value="${c:l('label_CreditApplicationReviewDialog_Location.value')}" />
-									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<textbox id="location" />
-									</hbox>
-									<label
-										id="label_CreditApplicationReviewDialog_AuditedDate"
-										value="${c:l('label_CreditApplicationReviewDialog_AuditedDate.value')}" />
-									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<datebox id="auditedDate" constraint="no future:"/>
-									</hbox>
-								</row>
-								<row id="row4">
-									<label
-										id="label_CreditApplicationReviewDialog_AuditType"
-										value="${c:l('label_CreditApplicationReviewDialog_AuditType.value')}" />
-									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<combobox id="auditType" />
-									</hbox>
-									<label
-										id="label_CreditRevSelectCategory_QualifiedUnQualified"
-										value="${c:l('label_CreditRevSelectCategory_QualifiedUnQualified.value')}" />
-									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" visible="false" />
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label
+									value="${c:l('window_CreditApplicationReviewDialog.title')}"
+									sclass="label-heading" />
+							</toolbar>
+
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" visible="false"
+									label="${c:l('label_Help')}"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnSave,btnSearch,btnPrint,btnHelp,btnClose,btnNotes"
+									sclass="z-toolbarbutton" />
+								<button id="btnClose"
+									label="${c:l('label_Close')}"
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnSave,btnSearch,btnPrint,btnHelp,btnClose,btnNotes"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none" autoscroll="true">
+					<div id="divDel">
+						<groupbox id="gb_basicDetails"
+							closable="false">
+							<caption
+								label="Credit Application/Review-Bank Spread Sheet" />
+							<grid id="creditApplicationReviewGrid"
+								sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="border:0px" width="100%">
+								<columns>
+									<column width="15%" />
+									<column width="35%" />
+									<column width="15%" />
+									<column width="35%" />
+								</columns>
+								<rows>
+									<row id="row1">
+										<label
+											id="label_CreditApplicationReviewDialog_CustID"
+											value="${c:l('label_CreditApplicationReviewDialog_CustId.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<longbox id="custID"
+												width="150px" maxlength="26" visible="false" />
+											<textbox id="custCIF"
+												width="150px" maxlength="150" style="overflow: hidden;" />
+											<button
+												id="btnSearchPRCustid" image="/images/icons/LOVSearch.png" />
+											<label id="custShrtName"
+												width="150px" />
+										</hbox>
+										<label
+											id="label_CreditApplicationReviewDialog_NoOfYearsToDisplay"
+											value="${c:l('label_CreditApplicationReviewDialog_NoOfYearsToDisplay.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<intbox id="toYear"
+												visible="false" maxlength="4" />
+											<textbox id="auditedYear"
+												visible="false" maxlength="4" />
+										</hbox>
+									</row>
+									<row id="row2">
+										<label
+											id="label_CreditApplicationReviewDialog_Auditors"
+											value="${c:l('label_CreditApplicationReviewDialog_Auditors.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<textbox id="auditors" />
+										</hbox>
+										<label
+											id="label_CreditApplicationReviewDialog_ConsolOrUnConsol"
+											value="${c:l('label_CreditApplicationReviewDialog_ConsolOrUnConsol.value')}" />
 										<hbox>
 											<radiogroup
-												id="qualifiedUnQualified">
-												<radio label="Qualified"
-													id="qualRadio" selected="true" value="Qual" />
-												<radio id="unQualRadio"
-													label="UnQualified" value="UnQual" />
+												id="conSolOrUnConsol">
+												<radio
+													label="Consolidated" id="conSolidated" selected="true"
+													value="Consolidated" />
+												<radio
+													id="unConsolidated" label="Un Consolidated"
+													value="UnConsolidated" />
 											</radiogroup>
 										</hbox>
-									</hbox>
-								</row>
-								<row id="row5">
-									<label
-										id="label_CreditApplicationReviewDialog_BankName"
-										value="${c:l('label_CreditApplicationReviewDialog_BankName.value')}" />
-									<hbox>
-										<space spacing="2px"
-											id="space_BankName" sclass="mandatory" />
-										<textbox id="bankName" />
-									</hbox>
-									<label
-										id="label_CreditApplicationReviewDialog_auditPeriod"
-										value="${c:l('label_CreditApplicationReviewDialog_auditPeriod.value')}" />
-									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<combobox id="auditPeriod" />
-									</hbox>
-								</row>
-								<row id="row6">
-									<label
-										id="label_CreditApplicationReviewDialog_NoOfShares"
-										value="${c:l('label_CreditApplicationReviewDialog_NoOfShares.value')}" />
-									<hbox>
-										<space spacing="2px"  />
-										<longbox id="noOfShares" />
-									</hbox>
-									<label
-										id="label_CreditApplicationReviewDialog_MarketPrice"
-										value="${c:l('label_CreditApplicationReviewDialog_MarketPrice.value')}" />
-									<currencyBox id="marketPrice" />
-								</row>
-								<row id="row7">
-									<label
-										id="label_CreditApplicationReviewDialog_FinCcy"
-										value="${c:l('labelCreditApplicationReviewDialog_FinCcy.value')}" />
-									<hbox>
-										<extendedcombobox
-											id="currencyType" />
-									</hbox>
-									<label
-										id="label_CreditApplicationReviewDialog_ConversionRate"
-										value="${c:l('label_CreditApplicationReviewDialog_ConversionRate.value')}" />
-									<hbox>
-									<space spacing="2px" sclass="mandatory"  />
-										<decimalbox id="conversionRate" />
-									</hbox>
-								</row>
-								<row id="row8">
-									<label
-										id="label_CreditApplicationReviewDialog_AssetLiabilitiesDiff"
-										value="${c:l('label_CreditApplicationReviewDialog_AssetLiabilitiesDiff.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<decimalbox id="totLibAsstDiff"
-											disabled="true" sclass="decimalToString" tabindex="-1" />
-									</hbox>
-								</row>
-							</rows>
-						</grid>
+									</row>
+									<row id="row3">
+										<label
+											id="label_CreditApplicationReviewDialog_Location"
+											value="${c:l('label_CreditApplicationReviewDialog_Location.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<textbox id="location" />
+										</hbox>
+										<label
+											id="label_CreditApplicationReviewDialog_AuditedDate"
+											value="${c:l('label_CreditApplicationReviewDialog_AuditedDate.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<datebox id="auditedDate"
+												constraint="no future:" />
+										</hbox>
+									</row>
+									<row id="row4">
+										<label
+											id="label_CreditApplicationReviewDialog_AuditType"
+											value="${c:l('label_CreditApplicationReviewDialog_AuditType.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<combobox id="auditType" />
+										</hbox>
+										<label
+											id="label_CreditRevSelectCategory_QualifiedUnQualified"
+											value="${c:l('label_CreditRevSelectCategory_QualifiedUnQualified.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" visible="false" />
+											<hbox>
+												<radiogroup
+													id="qualifiedUnQualified">
+													<radio
+														label="Qualified" id="qualRadio" selected="true"
+														value="Qual" />
+													<radio
+														id="unQualRadio" label="UnQualified" value="UnQual" />
+												</radiogroup>
+											</hbox>
+										</hbox>
+									</row>
+									<row id="row5">
+										<label
+											id="label_CreditApplicationReviewDialog_BankName"
+											value="${c:l('label_CreditApplicationReviewDialog_BankName.value')}" />
+										<hbox>
+											<space spacing="2px"
+												id="space_BankName" sclass="mandatory" />
+											<textbox id="bankName" />
+										</hbox>
+										<label
+											id="label_CreditApplicationReviewDialog_auditPeriod"
+											value="${c:l('label_CreditApplicationReviewDialog_auditPeriod.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<combobox id="auditPeriod" />
+										</hbox>
+									</row>
+									<row id="row6">
+										<label
+											id="label_CreditApplicationReviewDialog_NoOfShares"
+											value="${c:l('label_CreditApplicationReviewDialog_NoOfShares.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<longbox id="noOfShares" />
+										</hbox>
+										<label
+											id="label_CreditApplicationReviewDialog_MarketPrice"
+											value="${c:l('label_CreditApplicationReviewDialog_MarketPrice.value')}" />
+										<currencyBox id="marketPrice" />
+									</row>
+									<row id="row7">
+										<label
+											id="label_CreditApplicationReviewDialog_FinCcy"
+											value="${c:l('labelCreditApplicationReviewDialog_FinCcy.value')}" />
+										<hbox>
+											<extendedcombobox
+												id="currencyType" />
+										</hbox>
+										<label
+											id="label_CreditApplicationReviewDialog_ConversionRate"
+											value="${c:l('label_CreditApplicationReviewDialog_ConversionRate.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<decimalbox
+												id="conversionRate" />
+										</hbox>
+									</row>
+									<row id="row8">
+										<label
+											id="label_CreditApplicationReviewDialog_AssetLiabilitiesDiff"
+											value="${c:l('label_CreditApplicationReviewDialog_AssetLiabilitiesDiff.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="totLibAsstDiff" disabled="true" sclass="decimalToString"
+												tabindex="-1" />
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox id="gb_CustDetails">
+							<listbox id="listBoxCust"
+								emptyMessage="${c:l('listbox.emptyMessage')}"
+								tooltiptext="${c:l('listbox.tooltiptext')}" width="30%"
+								height="40%" multiple="false" sizedByContent="true"
+								span="true">
+								<listhead sizable="true">
+									<listheader id="listheader_CustCIF"
+										label="${c:l('listheader_CustCIF.label')}" sort="auto"
+										hflex="min" />
+									<listheader id="listheader_Years1"
+										label="${c:l('listheader_Year1.label')}" sort="auto"
+										hflex="min" />
+								</listhead>
+							</listbox>
+						</groupbox>
+						<groupbox id="gb_CreditReviwDetails">
+							<div sclass="z-toolbar" style="padding:0"
+								id="div_SearchBtntoolbar">
+								<hbox pack="stretch"
+									sclass="hboxRemoveWhiteStrips" width="100%">
+
+									<!-- COMMON BUTTONS -->
+									<toolbar align="start"
+										style="float:left; border-style: none;">
+									</toolbar>
+
+									<!-- SEARCH AREA -->
+									<toolbar align="center"
+										style="float:center; border-style: none;">
+										<button id="btnSearch"
+											label="Search" image="/images/icons/LOVSearch.png"
+											tooltiptext="${c:l('btnSearch.label')}" />
+									</toolbar>
+
+									<!-- CRUD BUTTONS -->
+									<toolbar align="end"
+										style="float:right; border-style: none;">
+									</toolbar>
+								</hbox>
+							</div>
+							<tabbox width="99%"
+								id="tabBoxIndexCenter">
+								<tabs id="tabsIndexCenter"></tabs>
+								<tabpanels
+									id="tabpanelsBoxIndexCenter">
+								</tabpanels>
+							</tabbox>
+						</groupbox>
+					</div>
+				</center>
+				<south sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%"
+						height="100%">
+						<caption label="${c:l('Action')}" />
+						<hbox width="75%">
+							<radiogroup id="userAction" name="action" />
+							<label
+								id="label_CreditApplicationReviewDialog_RecordStatus"
+								value="${c:l('label_South_RecordStatus.value')}"
+								sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
 					</groupbox>
-					<groupbox id="gb_CreditReviwDetails">
-						<div sclass="z-toolbar" style="padding:0" id="div_SearchBtntoolbar">
-							<hbox pack="stretch"
-								sclass="hboxRemoveWhiteStrips" width="100%">
-
-								<!-- COMMON BUTTONS -->
-								<toolbar align="start"
-									style="float:left; border-style: none;">
-								</toolbar>
-
-								<!-- SEARCH AREA -->
-								<toolbar align="center"
-									style="float:center; border-style: none;">
-									<button id="btnSearch"
-										label="Search" image="/images/icons/LOVSearch.png"
-										 tooltiptext="${c:l('btnSearch.label')}"/>
-								</toolbar>
-
-								<!-- CRUD BUTTONS -->
-								<toolbar align="end" style="float:right; border-style: none;">
-								</toolbar>
-							</hbox>
-						</div>
-						<tabbox width="99%" id="tabBoxIndexCenter">
-							<tabs id="tabsIndexCenter"></tabs>
-							<tabpanels id="tabpanelsBoxIndexCenter">
-							</tabpanels>
-						</tabbox>
-					</groupbox>
-				</div>
-			</center>
-			<south sclass="south-dialog">
-				<groupbox id="groupboxWf" width="99%" height="100%">
-					<caption label="${c:l('Action')}" />
-					<hbox width="75%">
-						<radiogroup id="userAction" name="action" />
-						<label
-							id="label_CreditApplicationReviewDialog_RecordStatus"
-							value="${c:l('label_South_RecordStatus.value')}"
-							sclass="label-status" />
-						<label id="recordStatus" />
-					</hbox>
-				</groupbox>
-			</south>
-		</borderlayout>
+				</south>
+			</borderlayout>
+		</window>
 	</window>
-  </window>
 </zk>

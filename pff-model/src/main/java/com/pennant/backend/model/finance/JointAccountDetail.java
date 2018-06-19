@@ -87,7 +87,8 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	private List<FinanceEnquiry> custFinanceExposureList;
 	
 	private long custID;
-
+	private String auditYear;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -117,6 +118,7 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("customerIncomeList");
 		excludeFields.add("customerExtLiabilityList");
 		excludeFields.add("custFinanceExposureList");
+		excludeFields.add("auditYear");
 		
 		return excludeFields;
 	}
@@ -347,5 +349,13 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 
 	public void setCustFinanceExposureList(List<FinanceEnquiry> custFinanceExposureList) {
 		this.custFinanceExposureList = custFinanceExposureList;
+	}
+
+	public String getAuditYear() {
+		return auditYear;
+	}
+
+	public void setAuditYear(String auditYear) {
+		this.auditYear = auditYear;
 	}	
 }

@@ -6113,7 +6113,7 @@
 
 	<bean id="liabilityRequestDAO"
 		class="com.pennant.backend.dao.finance.liability.impl.LiabilityRequestDAOImpl"
-		parent="basisCodeDAO">
+		parent="basisNextidDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
@@ -6152,6 +6152,7 @@
 		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
+		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 
 	</bean>
 

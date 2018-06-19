@@ -648,5 +648,34 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 			logger.debug("Leaving");
 			return jountAccountDetail;
 		}
-	
+
+	 
+	 @Override
+	 public List<JointAccountDetail> getCustIdsByFinnRef(String finReference) {
+		 logger.debug("Entering");
+
+		 MapSqlParameterSource source = new MapSqlParameterSource();
+		 source.addValue("FinReference", finReference);
+		 source.addValue("CustCtgCode", "RETAIL");
+		 source.addValue("IncludeIncome", true);
+
+		 StringBuilder selectSql = new StringBuilder("Select ");
+		 selectSql.append(" C.CustID, C.CustCIF");
+		 selectSql.append(" From FinJointAccountDetails_View F");	
+		 selectSql.append(" Inner Join Customers C on C.CustCIF =  F.CustCIF");	
+		 selectSql.append(" Left Join FinCreditReviewDetails FCRD on FCRD.CustomerId = C.CustId");	
+		 selectSql.append(" Where F.FinReference =:FinReference and C.CustCtgCode !=:CustCtgCode and IncludeIncome =:IncludeIncome");
+
+		 logger.debug("selectSql: " + selectSql.toString());
+		 RowMapper<JointAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JointAccountDetail.class);
+
+		 logger.debug("Leaving");
+		 try {
+			 return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		 } catch (Exception e) {
+			 logger.error("Exception: ", e);
+		 }
+		 return null;
+	 }
+
 }
