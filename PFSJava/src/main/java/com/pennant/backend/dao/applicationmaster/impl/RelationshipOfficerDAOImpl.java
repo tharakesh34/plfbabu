@@ -94,9 +94,9 @@ public class RelationshipOfficerDAOImpl extends BasisCodeDAO<RelationshipOfficer
 		relationshipOfficer.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT ROfficerCode, ROfficerDesc, ROfficerDeptCode, ROfficerIsActive,");
+		selectSql.append("SELECT ROfficerCode, ROfficerDesc, ROfficerDeptCode, ROfficerIsActive,Grade,MobileNO,DateOfJoin,GenDesignation,");
 		if(type.contains("View")){
-			selectSql.append("lovDescROfficerDeptCodeName,");
+			selectSql.append("lovDescROfficerDeptCodeName,Gendesgdesc,");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
@@ -161,10 +161,10 @@ public class RelationshipOfficerDAOImpl extends BasisCodeDAO<RelationshipOfficer
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into RelationshipOfficers");
 		sql.append(tableType.getSuffix());
-		sql.append(" (ROfficerCode, ROfficerDesc, ROfficerDeptCode, ROfficerIsActive,");
+		sql.append(" (ROfficerCode, ROfficerDesc, ROfficerDeptCode, ROfficerIsActive,Grade, MobileNO, DateOfJoin, GenDesignation,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
-		sql.append(" Values(:ROfficerCode, :ROfficerDesc, :ROfficerDeptCode, :ROfficerIsActive,");
+		sql.append(" Values(:ROfficerCode, :ROfficerDesc, :ROfficerDeptCode, :ROfficerIsActive, :Grade, :MobileNO, :DateOfJoin, :GenDesignation,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId)");
 
@@ -189,7 +189,7 @@ public class RelationshipOfficerDAOImpl extends BasisCodeDAO<RelationshipOfficer
 		StringBuilder sql = new StringBuilder("update RelationshipOfficers");
 		sql.append(tableType.getSuffix());
 		sql.append(" Set ROfficerDesc = :ROfficerDesc,");
-		sql.append(" ROfficerDeptCode = :ROfficerDeptCode, ROfficerIsActive = :ROfficerIsActive,");
+		sql.append(" ROfficerDeptCode = :ROfficerDeptCode, ROfficerIsActive = :ROfficerIsActive,Grade = :Grade,MobileNO = :MobileNO,DateOfJoin = :DateOfJoin,GenDesignation = :GenDesignation,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
