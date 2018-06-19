@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.pennanttech.pennapps.pff</groupId>
+		<artifactId>pff-aggregator</artifactId>
+		<version>4.7.14-SNAPSHOT</version>
+		<relativePath>../pff-aggregator/pom.xml</relativePath>
+	</parent>
+
+	<groupId>${pff.groupId}</groupId>
+	<artifactId>pff-extension</artifactId>
+	<version>${pff.version}</version>
+	<packaging>jar</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.pennanttech.pennapps.pff</groupId>
+			<artifactId>pff-model</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.pennanttech.pennapps.pff</groupId>
+			<artifactId>pff-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>
