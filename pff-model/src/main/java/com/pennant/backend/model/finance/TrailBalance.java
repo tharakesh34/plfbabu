@@ -32,6 +32,8 @@ public class TrailBalance implements Serializable {
 	private String countryCode;
 	private String stateCode;
 	private String entity;
+	private String account;
+	private String finType;
 
 	public long getHeaderId() {
 		return headerId;
@@ -239,6 +241,22 @@ public class TrailBalance implements Serializable {
 
 	public void setSeqNo(long seqNo) {
 		this.seqNo = seqNo;
+	}
+
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
 	}
 
 }

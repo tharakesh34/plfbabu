@@ -39,7 +39,7 @@
 						</columns>
 						<rows>
 							<row>
-								<label value="${c:l('label_GLFileList_Dimention.value')}" />
+								<label value="${c:l('label_GLFileList_Dimension.value')}" />
 								<hbox spacing="2px">
 									<space spacing="2px" sclass="mandatory"/>
 									<combobox id="dimention" width="200px" readonly="true" />
@@ -51,10 +51,16 @@
 								</hbox>
 							</row>
 							
+							<row>
+								<label id="label_EntityCode"
+									value="${c:l('label_MandateDialog_EntityCode.value')}" />
+								<extendedcombobox id="entityCode" />
+							</row>
+
 						</rows>
 					</grid>
 					<listbox id="listBoxFileDownload" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
-						height="100%" multiple="false" sizedByContent="true" span="true">
+						height="100%" multiple="false" sizedByContent="true" span="true" fixedLayout="true">
 						<listhead sizable="true">
 							<listheader label="${c:l('listheader_DisbursementFileDownloadName.label')}"  hflex="min" />
 							<listheader label="${c:l('listheader_FileName.label')}" hflex="min" />
@@ -65,9 +71,9 @@
 					</listbox>
 				</div>
 			</center>
-			<south border="none">
+			<!-- <south border="none">
 				<paging id="pagingFileDownloadList" />
-			</south>
+			</south> -->
 		</borderlayout>
 	</window>
 </window>

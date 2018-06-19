@@ -403,6 +403,9 @@ public class DateUtil {
 	public static int getYear(java.util.Date date) {
 		return date == null ? -1 : convert(date).get(Calendar.YEAR);
 	}
+	public static int getDate(java.util.Date date) {
+		return date == null ? -1 : convert(date).get(Calendar.DATE);
+	}
 
 	private static GregorianCalendar convert(Date date) {
 		if (date == null) {

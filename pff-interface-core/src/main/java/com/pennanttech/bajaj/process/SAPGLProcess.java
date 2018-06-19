@@ -34,14 +34,18 @@ public class SAPGLProcess extends DataEngineExport {
 	private Date startDate;
 	private Date endDate;
 	private Date appDate;
+	private String entityCode = null;
+	private String entityDescription = null;
 
 	public SAPGLProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, userId, App.DATABASE.name(), true, valueDate, SAP_GL_STATUS);
 		this.appDate = appDate;
 	}
 
-	public void extractReport() throws Exception {
-
+	public void extractReport(String[] entityDetails) throws Exception {
+		this.entityCode = entityDetails[0];
+		this.entityDescription = entityDetails[1];
+		
 		try {
 			generate();
 			exportSummaryReport();
@@ -92,28 +96,30 @@ public class SAPGLProcess extends DataEngineExport {
 	}
 
 	private Date getCurrentTrialBalanceStartDate() throws Exception {
-		String query = "SELECT STARTDATE from TRIAL_BALANCE_HEADER WHERE ID = (select MAX(ID) from TRIAL_BALANCE_HEADER WHERE DIMENSION = ?) AND DIMENSION = ?";
-		return jdbcTemplate.queryForObject(query, new Object[]{"STATE", "STATE"}, Date.class);
+		String query = "SELECT STARTDATE from TRIAL_BALANCE_HEADER WHERE ID = (select MAX(ID) from TRIAL_BALANCE_HEADER WHERE DIMENSION = ?) AND DIMENSION = ? AND ENTITYCODE = ?";
+		return jdbcTemplate.queryForObject(query, new Object[]{"STATE", "STATE", entityCode}, Date.class);
 	}
 
 	private Map<String, TrailBalance> getTransactions() throws Exception {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT :ENTITYCODE ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
-		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, SUM(POSTAMOUNT) POSTAMOUNT, P.DRORCR  FROM POSTINGS P");
+		sql.append(" SELECT  ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
+		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, SUM(POSTAMOUNT) POSTAMOUNT, P.DRORCR,AM.FINTYPE  FROM POSTINGS P");
 		sql.append(" INNER JOIN RMTBRANCHES B ON B.BRANCHCODE = P.POSTBRANCH");
 		sql.append(" INNER JOIN RMTCOUNTRYVSPROVINCE S ON S.CPPROVINCE = B.BRANCHPROVINCE");
 		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = P.ACCOUNT");
 		sql.append(" LEFT JOIN PROFITCENTERS PC ON PC.PROFITCENTERID = AM.PROFITCENTERID");
 		sql.append(" LEFT JOIN COSTCENTERS CC ON CC.COSTCENTERID = AM.COSTCENTERID");
-		sql.append(" WHERE POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
-		sql.append(" GROUP BY :ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
-		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, P.DRORCR ORDER BY S.BUSINESSAREA");
+		sql.append(" WHERE POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE AND ENTITYCODE = :ENTITYCODE");
+		sql.append(" GROUP BY ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
+		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, P.DRORCR, AM.FINTYPE ORDER BY S.BUSINESSAREA");
+		
+		
 		
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MONTH_STARTDATE", startDate);
 		paramMap.addValue("MONTH_ENDDATE", endDate);
-		paramMap.addValue("ENTITYCODE", "01");
+		paramMap.addValue("ENTITYCODE", entityCode);
 
 		return parameterJdbcTemplate.query(sql.toString(), paramMap,
 				new ResultSetExtractor<Map<String, TrailBalance>>() {
@@ -343,8 +349,10 @@ public class SAPGLProcess extends DataEngineExport {
 					Map<String, Object> filterMap = new HashMap<>();
 					Map<String, Object> parameterMap = new HashMap<>();
 					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, appDate);
-					parameterMap.put("ENTITY", rs.getString("ENTITY"));
-					filterMap.put("ENTITY", rs.getString("ENTITY"));
+					//parameterMap.put("ENTITY", entityCode);
+					//filterMap.put("ENTITY", entityCode);
+					
+					parameterMap.put("ENTITY_CODE", entityCode + "_CF_SAP_GL_REPORT_HDR_PA");
 					
 					export.setParameterMap(parameterMap);
 					export.setFilterMap(filterMap);
@@ -370,8 +378,11 @@ public class SAPGLProcess extends DataEngineExport {
 					Map<String, Object> parameterMap = new HashMap<>();
 					SAP_GL_STATUS.setName("GL_TRANSACTION_EXPORT");
 					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, appDate);
-					parameterMap.put("ENTITY", rs.getString("ENTITY"));
-					filterMap.put("ENTITY", rs.getString("ENTITY"));
+					//parameterMap.put("ENTITY", entityCode);
+					filterMap.put("ENTITY", entityCode);
+					
+					parameterMap.put("ENTITY_CODE", entityCode + "_CF_SAP_GL_REPORT_LINE_PA");
+
 					
 					export.setParameterMap(parameterMap);
 					export.setFilterMap(filterMap);
