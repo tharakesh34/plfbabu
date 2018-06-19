@@ -107,7 +107,41 @@
 										checked="false" />
 								</hbox>
 							</row>
-
+							<row visible="true">
+							<label
+									id="label_RelationshipOfficerDialog_Grade"
+									value="${c:l('label_RelationshipOfficerDialog_Grade.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="grade"
+										maxlength="35" width="160px" />
+								</hbox>
+							</row>
+							<row visible="true">
+							<label
+									id="label_RelationshipOfficerDialog_MobileNO"
+									value="${c:l('label_RelationshipOfficerDialog_MobileNO.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="mobileNO"
+										maxlength="20" width="130px" />
+								</hbox>
+							</row>
+							<row visible="true">
+							<label
+								id="label_RelationshipOfficerDialog_DateofJoin"
+						        value="${c:l('label_RelationshipOfficerDialog_DateofJoin.value')}" />
+							<hbox>
+								<space spacing="2px" />
+								<datebox id="dateOfJoin" width="155px" />
+							</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_RelationshipOfficerDialog_GenDesignation"
+									value="${c:l('label_RelationshipOfficerDialog_GenDesignation.value')}" />
+										<extendedcombobox id = "genDesignation" />
+							</row>
 						</rows>
 					</grid>
 				</groupbox>
