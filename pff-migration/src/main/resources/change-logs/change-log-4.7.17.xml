@@ -3225,11 +3225,11 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 		<column name="Id" type="bigint"/>
 	</addColumn>
 </changeSet>
-<changeSet id="60_Post" author="Vinay">
+<changeSet id="60_Post.1" author="Vinay">
 	<comment> Update Newly added column Id with RowNumbers to preserve null error </comment>
 	<sql>
-		update FinLiabilityReq set id=( Select ROW_NUMBER() OVER(ORDER BY FINREFERENCE,FINEVENT) FROM FinLiabilityReq);
-		update FinLiabilityReq_Temp set id=( Select ROW_NUMBER() OVER(ORDER BY FINREFERENCE,FINEVENT) FROM FinLiabilityReq_Temp);
+		update plf.FinLiabilityReq T1 set id=( Select ROW_NUMBER() OVER(ORDER BY FINREFERENCE,FINEVENT) FROM FinLiabilityReq T2 where t1.finreference = t2.finreference);
+		update plf.FinLiabilityReq_Temp T1 set id=( Select ROW_NUMBER() OVER(ORDER BY FINREFERENCE,FINEVENT) FROM FinLiabilityReq_Temp T2 where t1.finreference = t2.finreference);
 	</sql>
 </changeSet>
 <changeSet id="60.1_Post" author="Vinay" dbms="postgresql">
@@ -3734,56 +3734,5 @@ UNION ALL
 		          WHERE finliabilityreq_temp.id = t1.id))
 		</createView>
 	</changeSet>
-	
-	<changeSet id="81" author="vijaykumar.l">
-	<createTable tableName="Employee_Master">
-	<column name="EmpId" type="bigint"/>
-	<column name="Name" type="varchar"/>
-	<column name="Department" type="varchar"/>
-	<column name="Designation" type="varchar"/>
-	<column name="OtherField" type="varchar"/>
-	<column name="MobileNo" type="varchar"/>
-	<column name="DOJ" type="datetime"/>
-	<column name="version" type="int"/>
-	<column name="lastmntby" type="bigint"/>
-	<column name="lastmnton" type="datetime"/>
-	<column name="recordstatus" type="varchar(50)"/>
-	<column name="rolecode" type="varchar(100)"/>
-	<column name="nextrolecode" type="varchar(200)"/>
-	<column name="taskid" type="varchar(50)"/>
-	<column name="nexttaskid" type="varchar(200)"/>
-	<column name="recordtype" type="varchar(50)"/>
-	<column name="workflowid" type="bigint">
-		<constraints nullable="false"/>
-	</column>
-</createTable>
-</changeSet>
-<changeSet id="82" author="Siva">
-		<createSequence sequenceName="SeqReceiptNumber" startValue="1" maxValue="9223372036854775807" incrementBy="1" cycle="false" />
-	</changeSet>
-	<changeSet id="83" author="vijaykumar.l">
-	<createTable tableName="Employee_Master_Temp">
-	<column name="EmpId" type="bigint"/>
-	<column name="Name" type="varchar"/>
-	<column name="Department" type="varchar"/>
-	<column name="Designation" type="varchar"/>
-	<column name="OtherField" type="varchar"/>
-	<column name="MobileNo" type="varchar"/>
-	<column name="DOJ" type="datetime"/>
-	<column name="version" type="int"/>
-	<column name="lastmntby" type="bigint"/>
-	<column name="lastmnton" type="datetime"/>
-	<column name="recordstatus" type="varchar(50)"/>
-	<column name="rolecode" type="varchar(100)"/>
-	<column name="nextrolecode" type="varchar(200)"/>
-	<column name="taskid" type="varchar(50)"/>
-	<column name="nexttaskid" type="varchar(200)"/>
-	<column name="recordtype" type="varchar(50)"/>
-	<column name="workflowid" type="bigint">
-		<constraints nullable="false"/>
-	</column>
-</createTable>
-</changeSet>
-	
 </databaseChangeLog>
 	
