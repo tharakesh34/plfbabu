@@ -88,9 +88,6 @@ private static final long serialVersionUID = 1L;
 	@XmlTransient
 	private  LoggedInUser userDetails;
 	
-	private boolean taxApplicable;
-	private String	taxComponent;
-	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -263,23 +260,6 @@ private static final long serialVersionUID = 1L;
 	public void setCategoryDesc(String categoryDesc) {
 		this.categoryDesc = categoryDesc;
 	}
-
-	public boolean isTaxApplicable() {
-		return taxApplicable;
-	}
-
-	public void setTaxApplicable(boolean taxApplicable) {
-		this.taxApplicable = taxApplicable;
-	}
-
-	public String getTaxComponent() {
-		return taxComponent;
-	}
-
-	public void setTaxComponent(String taxComponent) {
-		this.taxComponent = taxComponent;
-	}
-
 
 	public String getLovdesccategory() {
 		return lovdesccategory;

@@ -56,9 +56,6 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Hbox;
-import org.zkoss.zul.Label;
-import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -105,13 +102,6 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
     protected ExtendedCombobox 		ruleID; 
     protected Textbox 		returnCode; 
     protected Checkbox 		active; 
-    
-    protected Checkbox		taxApplicable;
-	protected Label			label_TaxComponent;
-	protected Hbox			hlayout_TaxComponent;
-	protected Space			space_TaxComponent;
-	protected Combobox		taxComponent;
-    
 	private BounceReason bounceReason; // overhanded per param
 
 	private transient BounceReasonListCtrl bounceReasonListCtrl; // overhanded per param
@@ -120,7 +110,6 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 	private List<Property> listReasonType = PennantStaticListUtil.getReasonType();
 	private List<Property> listCategory = PennantStaticListUtil.getCategoryType();
 	private List<ValueLabel> listAction=PennantStaticListUtil.getAction();
-	private List<ValueLabel> listTaxComponent = PennantStaticListUtil.getFeeTaxTypes();
 
 	/**
 	 * default constructor.<br>
@@ -316,25 +305,6 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		doShowNotes(this.bounceReason);
 		logger.debug(Literal.LEAVING);
 	}
-	
-	/*
-	 * Method for Tax Applicable
-	 */
-	public void onCheck$taxApplicable(Event event) {
-		logger.debug("Entering");
-		
-		this.taxComponent.setErrorMessage("");
-		this.taxComponent.setConstraint("");
-		fillComboBox(this.taxComponent, null, listTaxComponent, "");
-		
-		if (this.taxApplicable.isChecked()) {
-			this.label_TaxComponent.setVisible(true);
-			this.hlayout_TaxComponent.setVisible(true);
-		} else {
-			this.label_TaxComponent.setVisible(false);
-			this.hlayout_TaxComponent.setVisible(false);
-		}
-	}
 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
@@ -384,17 +354,6 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 				this.active.setChecked(true);
 				this.active.setDisabled(true);
 			}
-			
-			if (aBounceReason.isTaxApplicable()) {
-				this.label_TaxComponent.setVisible(true);
-				this.hlayout_TaxComponent.setVisible(true);
-			} else {
-				this.label_TaxComponent.setVisible(false);
-				this.hlayout_TaxComponent.setVisible(false);
-			}
-			this.taxApplicable.setChecked(aBounceReason.isTaxApplicable());
-			fillComboBox(this.taxComponent, String.valueOf(aBounceReason.getTaxComponent()), listTaxComponent, "");
-			
 			this.recordStatus.setValue(aBounceReason.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
@@ -491,20 +450,6 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
-		// Tax Applicable
-		try {
-			aBounceReason.setTaxApplicable(this.taxApplicable.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		// Tax Inclusive/Exclusive Type
-		try {
-			String taxComponentType = getComboboxValue(this.taxComponent);
-			aBounceReason.setTaxComponent(taxComponentType);
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
 		
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -585,10 +530,6 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		if (!this.returnCode.isReadonly()){
 			this.returnCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_ReturnCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
 		}
-		//Tax Component
-		if (!this.taxComponent.isDisabled() && this.label_TaxComponent.isVisible()) {
-			this.taxComponent.setConstraint(new StaticListValidator(listTaxComponent, Labels.getLabel("label_BounceReasonDialog_TaxComponent.value")));
-		}
 	
 		logger.debug(Literal.LEAVING);
 	}
@@ -606,7 +547,6 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		this.action.setConstraint("");
 		this.ruleID.setConstraint("");
 		this.returnCode.setConstraint("");
-		this.taxComponent.setConstraint("");
 	
 	logger.debug(Literal.LEAVING);
 	}
@@ -649,8 +589,9 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-		this.taxComponent.setErrorMessage("");
-		logger.debug(Literal.LEAVING);
+		
+	
+	logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -703,7 +644,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 	 */
 	private void doEdit() {
 		logger.debug(Literal.LEAVING);
-
+		
 		if (this.bounceReason.isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			readOnlyComponent(false, this.bounceCode);
@@ -713,82 +654,78 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			readOnlyComponent(true, this.bounceCode);
 			readOnlyComponent(true, this.returnCode);
 		}
-
-		readOnlyComponent(isReadOnly("BounceReasonDialog_ReasonType"), this.reasonType);
-		readOnlyComponent(isReadOnly("BounceReasonDialog_Category"), this.category);
-		readOnlyComponent(isReadOnly("BounceReasonDialog_Reason"), this.reason);
-		readOnlyComponent(isReadOnly("BounceReasonDialog_Action"), this.action);
-		readOnlyComponent(isReadOnly("BounceReasonDialog_FeeID"), this.ruleID);
-		readOnlyComponent(isReadOnly("BounceReasonDialog_Active"), this.active);
-		readOnlyComponent(isReadOnly("BounceReasonDialog_TaxApplicable"), this.taxApplicable);
-		readOnlyComponent(isReadOnly("BounceReasonDialog_TaxComponent"), this.taxComponent);
-
-		if (isWorkFlowEnabled()) {
-			for (int i = 0; i < userAction.getItemCount(); i++) {
-				userAction.getItemAtIndex(i).setDisabled(false);
-			}
-			if (this.bounceReason.isNewRecord()) {
-				this.btnCtrl.setBtnStatus_Edit();
-				btnCancel.setVisible(false);
+	
+			readOnlyComponent(isReadOnly("BounceReasonDialog_ReasonType"), this.reasonType);
+			readOnlyComponent(isReadOnly("BounceReasonDialog_Category"), this.category);
+			readOnlyComponent(isReadOnly("BounceReasonDialog_Reason"), this.reason);
+			readOnlyComponent(isReadOnly("BounceReasonDialog_Action"), this.action);
+			readOnlyComponent(isReadOnly("BounceReasonDialog_FeeID"), this.ruleID);
+			readOnlyComponent(isReadOnly("BounceReasonDialog_Active"), this.active);
+			
+			if (isWorkFlowEnabled()) {
+				for (int i = 0; i < userAction.getItemCount(); i++) {
+					userAction.getItemAtIndex(i).setDisabled(false);
+				}
+				if (this.bounceReason.isNewRecord()) {
+					this.btnCtrl.setBtnStatus_Edit();
+					btnCancel.setVisible(false);
+				} else {
+					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+				}
 			} else {
-				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+				this.btnCtrl.setBtnStatus_Edit();
 			}
-		} else {
-			this.btnCtrl.setBtnStatus_Edit();
-		}
 
+			
 		logger.debug(Literal.LEAVING);
 	}	
 			
-	/**
-	 * Set the components to ReadOnly. <br>
-	 */
-	public void doReadOnly() {
-		logger.debug(Literal.LEAVING);
+		/**
+		 * Set the components to ReadOnly. <br>
+		 */
+		public void doReadOnly() {
+			logger.debug(Literal.LEAVING);
+			
+	
+			readOnlyComponent(true, this.bounceCode);
+			readOnlyComponent(true, this.reasonType);
+			readOnlyComponent(true, this.category);
+			readOnlyComponent(true, this.reason);
+			readOnlyComponent(true, this.action);
+			readOnlyComponent(true, this.ruleID);
+			readOnlyComponent(true, this.returnCode);
+			readOnlyComponent(true, this.active);
 
-		readOnlyComponent(true, this.bounceCode);
-		readOnlyComponent(true, this.reasonType);
-		readOnlyComponent(true, this.category);
-		readOnlyComponent(true, this.reason);
-		readOnlyComponent(true, this.action);
-		readOnlyComponent(true, this.ruleID);
-		readOnlyComponent(true, this.returnCode);
-		readOnlyComponent(true, this.active);
-		readOnlyComponent(true, this.taxApplicable);
-		readOnlyComponent(true, this.taxComponent);
-
-		if (isWorkFlowEnabled()) {
-			for (int i = 0; i < userAction.getItemCount(); i++) {
-				userAction.getItemAtIndex(i).setDisabled(true);
+			if (isWorkFlowEnabled()) {
+				for (int i = 0; i < userAction.getItemCount(); i++) {
+					userAction.getItemAtIndex(i).setDisabled(true);
+				}
+				this.recordStatus.setValue("");
+				this.userAction.setSelectedIndex(0);
+	
 			}
-			this.recordStatus.setValue("");
-			this.userAction.setSelectedIndex(0);
 
+			logger.debug(Literal.LEAVING);
 		}
 
-		logger.debug(Literal.LEAVING);
-	}
 		
-	/**
-	 * Clears the components values. <br>
-	 */
-	public void doClear() {
-		logger.debug("Entering");
-		
-		this.bounceCode.setValue("");
-		this.reasonType.setSelectedIndex(0);
-		this.category.setSelectedIndex(0);
-		this.reason.setValue("");
-		this.action.setSelectedIndex(0);
-		this.ruleID.setValue("");
-		this.ruleID.setDescription("");
-		this.returnCode.setValue("");
-		this.active.setChecked(false);
-		this.taxApplicable.setChecked(false);
-		this.taxComponent.setSelectedIndex(0);
+		/**
+		 * Clears the components values. <br>
+		 */
+		public void doClear() {
+			logger.debug("Entering");
+				this.bounceCode.setValue("");
+			 	this.reasonType.setSelectedIndex(0);
+			 	this.category.setSelectedIndex(0);
+				this.reason.setValue("");
+			 	this.action.setSelectedIndex(0);
+			  	this.ruleID.setValue("");
+			  	this.ruleID.setDescription("");
+			  	this.returnCode.setValue("");
+				this.active.setChecked(false);
 
-		logger.debug("Leaving");
-	}
+			logger.debug("Leaving");
+		}
 
 		/**
 		 * Saves the components to table. <br>

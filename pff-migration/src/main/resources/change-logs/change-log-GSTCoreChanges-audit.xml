@@ -76,4 +76,10 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet author="Kesav" id="10">
+		<comment> deleted columns </comment>
+		<dropColumn tableName="AdtBounceReasons" columnName="TaxApplicable"/>
+		<dropColumn tableName="AdtBounceReasons" columnName="TaxComponent"/>
+	</changeSet>
+	
 </databaseChangeLog>

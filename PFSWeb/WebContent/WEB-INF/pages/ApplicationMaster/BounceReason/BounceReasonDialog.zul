@@ -124,25 +124,7 @@
 									value="${c:l('label_BounceReasonDialog_RuleID.value')}" />
 								<extendedcombobox id="ruleID" />
 							</row>
-							<row id="row3" visible="false">
-									<label id="label_TaxApplicable"
-										value="${c:l('label_BounceReasonDialog_TaxApplicable.value')}" />
-									<hbox id="hlayout_TaxApplicable">
-										<space id="space_TaxApplicable"
-											spacing="2px" />
-										<checkbox id="taxApplicable" />
-									</hbox>
-									<label id="label_TaxComponent"
-										value="${c:l('label_BounceReasonDialog_TaxComponent.value')}"
-										visible="true" />
-									<hbox id="hlayout_TaxComponent" visible="true">
-										<space id="space_TaxComponent" spacing="2px"
-											sclass="mandatory" />
-										<combobox id="taxComponent"
-											width="140px" />
-									</hbox>
-								</row>
-							<row id="row">
+							<row id="row3">
 								<label id="label_ReturnCode"
 									value="${c:l('label_BounceReasonDialog_ReturnCode.value')}" />
 								<hbox>
