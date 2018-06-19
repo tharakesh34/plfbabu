@@ -3193,8 +3193,8 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 <changeSet id="60_Post.1" author="Vinay">
 	<comment> Update Newly added column Id with RowNumbers to preserve null error </comment>
 	<sql>
-		update plf.FinLiabilityReq T1 set id=( Select Cnt from (Select Finreference,ROW_NUMBER() OVER() cnt FROM plf.FinLiabilityReq)T WHERE T.FINREFERENCE=T1.FINREFERENCE);
-		update plf.FinLiabilityReq_Temp T1 set id=( Select Cnt from (Select Finreference,ROW_NUMBER() OVER() cnt FROM plf.FinLiabilityReq_Temp)T WHERE T.FINREFERENCE=T1.FINREFERENCE)
+		update FinLiabilityReq T1 set id=( Select Cnt from (Select Finreference,ROW_NUMBER() OVER() cnt FROM FinLiabilityReq)T WHERE T.FINREFERENCE=T1.FINREFERENCE);
+		update FinLiabilityReq_Temp T1 set id=( Select Cnt from (Select Finreference,ROW_NUMBER() OVER() cnt FROM FinLiabilityReq_Temp)T WHERE T.FINREFERENCE=T1.FINREFERENCE)
 	</sql>
 </changeSet>
 <changeSet id="60.1_Post" author="Vinay" dbms="postgresql">
