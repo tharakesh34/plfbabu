@@ -3734,5 +3734,77 @@ UNION ALL
 		          WHERE finliabilityreq_temp.id = t1.id))
 		</createView>
 	</changeSet>
+	<changeSet id="82" author="vijaykumar.l">
+	<createTable tableName="Employee_Master">
+	<column name="EmpId" type="bigint"/>
+	<column name="Name" type="varchar"/>
+	<column name="Department" type="varchar"/>
+	<column name="Designation" type="varchar"/>
+	<column name="OtherField" type="varchar"/>
+	<column name="MobileNo" type="varchar"/>
+	<column name="DOJ" type="datetime"/>
+	<column name="version" type="int"/>
+	<column name="lastmntby" type="bigint"/>
+	<column name="lastmnton" type="datetime"/>
+	<column name="recordstatus" type="varchar(50)"/>
+	<column name="rolecode" type="varchar(100)"/>
+	<column name="nextrolecode" type="varchar(200)"/>
+	<column name="taskid" type="varchar(50)"/>
+	<column name="nexttaskid" type="varchar(200)"/>
+	<column name="recordtype" type="varchar(50)"/>
+	<column name="workflowid" type="bigint">
+		<constraints nullable="false"/>
+	</column>
+</createTable>
+</changeSet>
+<changeSet id="83" author="Siva">
+		<createSequence sequenceName="SeqReceiptNumber" startValue="1" maxValue="9223372036854775807" incrementBy="1" cycle="false" />
+	</changeSet>
+<changeSet id="84" author="vijaykumar.l">
+	<createTable tableName="Employee_Master_Temp">
+	<column name="EmpId" type="bigint"/>
+	<column name="Name" type="varchar"/>
+	<column name="Department" type="varchar"/>
+	<column name="Designation" type="varchar"/>
+	<column name="OtherField" type="varchar"/>
+	<column name="MobileNo" type="varchar"/>
+	<column name="DOJ" type="datetime"/>
+	<column name="version" type="int"/>
+	<column name="lastmntby" type="bigint"/>
+	<column name="lastmnton" type="datetime"/>
+	<column name="recordstatus" type="varchar(50)"/>
+	<column name="rolecode" type="varchar(100)"/>
+	<column name="nextrolecode" type="varchar(200)"/>
+	<column name="taskid" type="varchar(50)"/>
+	<column name="nexttaskid" type="varchar(200)"/>
+	<column name="recordtype" type="varchar(50)"/>
+	<column name="workflowid" type="bigint">
+		<constraints nullable="false"/>
+	</column>
+</createTable>
+</changeSet>
+	
+<changeSet id="85" author="vijaykumar.l">
+	<createView viewName="Employee_Master_AView" replaceIfExists="true">
+
+SELECT		T1.EmpId, T1.Name, T1.Department, T1.Designation, T1.OtherField, T1.MobileNo, T1.DOJ		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Employee_Master T1 
+</createView>
+	</changeSet>
+	
+<changeSet id="86" author="vijaykumar.l">
+	<createView viewName="Employee_Master_View" replaceIfExists="true">
+SELECT		T1.EmpId, T1.Name, T1.Department, T1.Designation, T1.OtherField, T1.MobileNo, T1.DOJ		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Employee_Master_Temp T1 
+UNION ALL
+
+SELECT		T1.EmpId, T1.Name, T1.Department, T1.Designation, T1.OtherField, T1.MobileNo, T1.DOJ		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Employee_Master T1 
+WHERE     NOT EXISTS (SELECT 1 FROM Employee_Master_TEMP WHERE EmpId = T1.EmpId)
+</createView>
+	</changeSet>
 </databaseChangeLog>
 	
