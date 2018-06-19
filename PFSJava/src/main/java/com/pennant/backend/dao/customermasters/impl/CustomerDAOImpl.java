@@ -139,7 +139,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		customer = getCustomer(createNew, customer);
 		customer.setNewRecord(true);
 
-		PFSParameter parameter = SysParamUtil.getSystemParameterObject("CURR_SYSTEM_COUNTRY");
+		PFSParameter parameter = SysParamUtil.getSystemParameterObject("APP_DFT_NATION");
 		if (customer.getCustCOB() == null) {
 			customer.setCustCOB(parameter.getSysParmValue().trim());
 		}
@@ -172,9 +172,6 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 			customer.setCustRiskCountry(parameter.getSysParmValue().trim());
 		}
 
-		if (customer.getCustNationality() == null) {
-			customer.setCustNationality(parameter.getSysParmValue().trim());
-		}
 
 		if (customer.getLovDescCustParentCountryName() == null) {
 			customer.setLovDescCustParentCountryName(parameter.getSysParmDescription());
@@ -183,10 +180,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		if (customer.getLovDescCustRiskCountryName() == null) {
 			customer.setLovDescCustRiskCountryName(parameter.getSysParmDescription());
 		}
-
-		if (customer.getLovDescCustNationalityName() == null) {
-			customer.setLovDescCustNationalityName(parameter.getSysParmDescription());
-		}
+		
 
 		parameter = SysParamUtil.getSystemParameterObject("CURR_SYSTEM_COUNTRY");
 
@@ -196,6 +190,14 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 
 		if (customer.getLovDescCustResdCountryName() == null) {
 			customer.setLovDescCustResdCountryName(parameter.getSysParmDescription());
+		}
+		
+		if (customer.getCustNationality() == null) {
+			customer.setCustNationality(parameter.getSysParmValue().trim());
+		}
+		
+		if (customer.getLovDescCustNationalityName() == null) {
+			customer.setLovDescCustNationalityName(parameter.getSysParmDescription());
 		}
 		customer.setCustGroupID(0);
 
