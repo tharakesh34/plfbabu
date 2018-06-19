@@ -3174,41 +3174,6 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 	</sql>
 	</changeSet>
 	
-	<changeSet id="69" author="Manoj">
-		<comment>Added LovDescCategory to show category type in extended combobox</comment>
-		<createView viewName="bouncereasons_aview" replaceIfExists="true">
-			SELECT t1.bounceid,
-    t1.bouncecode,
-    t1.reasontype,
-    t1.category,
-        CASE
-            WHEN t1.category::character varying(20)::text = '1'::text THEN 'Technical'::character varying
-            WHEN t1.category::character varying(20)::text = '2'::text THEN 'Non Technical'::character varying
-            ELSE t1.category::character varying(20)
-        END AS lovdesccategory,
-    t1.reason,
-    t1.action,
-    t1.ruleid,
-    t1.returncode,
-    t1.active,
-    t1.version,
-    t1.lastmntby,
-    t1.lastmnton,
-    t1.recordstatus,
-    t1.rolecode,
-    t1.nextrolecode,
-    t1.taskid,
-    t1.nexttaskid,
-    t1.recordtype,
-    t1.workflowid,
-    t2.rulecode,
-    t2.rulecodedesc,
-    t1.taxcomponent,
-    t1.taxapplicable
-   FROM bouncereasons t1
-     JOIN rules t2 ON t1.ruleid = t2.ruleid
-		</createView>
-	</changeSet>
 <changeSet id="70" author="Manoj">
 	<sql>
 		<comment>Adding SMTParameter for finance tab requirement in corp customer</comment>
