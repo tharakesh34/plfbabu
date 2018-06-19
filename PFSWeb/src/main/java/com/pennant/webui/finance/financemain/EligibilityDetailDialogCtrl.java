@@ -484,6 +484,11 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 				}
 				getFinanceDetail().setCustomerEligibilityCheck(aFinanceDetail.getCustomerEligibilityCheck());
 			}
+			
+			if(StringUtils.contains("FOIRAMT,BTOUTSTD,EBOEU,IIRMAX,LCRMAXEL,LIVSTCK,LOANAMT,LTVAMOUN",financeEligibilityDetail.getLovDescElgRuleCode())){
+				getFinanceDetail().getCustomerEligibilityCheck().addExtendedField("RULE_"+financeEligibilityDetail.getLovDescElgRuleCode(),financeEligibilityDetail.getRuleResult());
+			}
+
 		}
 
 		deviationExecutionCtrl.fillDeviationListbox(elgDeviations, getUserRole(), DeviationConstants.TY_ELIGIBILITY);
