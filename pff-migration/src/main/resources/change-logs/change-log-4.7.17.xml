@@ -4164,5 +4164,10 @@ UNION ALL
 	UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
 	</sql>
 	</changeSet>
+	<changeSet id="115.1" author="Sriram">
+	<sql>
+	Update data_engine_config Set FIELDNAMES = Null,TRAILER = Null, POSTEVENT = Null where name IN('TRIAL_BALANCE_EXPORT_CONSOLIDATE', 'TRIAL_BALANCE_EXPORT_STATE'); 
+	</sql>
+	</changeSet>
 </databaseChangeLog>
 	
