@@ -57,6 +57,7 @@ import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -859,6 +860,12 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			financeDetail.setExtendedFieldRender(exdFieldRender);
 		}
+
+		//set's the default chequeHeader to the financeDetail if chequeCapture is required.
+		if (finType.isChequeCaptureReq()) {
+			doSetDefaultChequeHeader(financeDetail);
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -1588,6 +1595,35 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method for set the default data to the ChequeHeader.
+	 * 
+	 * @param financeDetail
+	 */
+	private void doSetDefaultChequeHeader(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+		if (financeDetail.getChequeHeader() == null) {
+			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+			ChequeHeader ChequeHeader = new ChequeHeader();
+			ChequeHeader.setNewRecord(true);
+			ChequeHeader.setFinReference(financeMain.getFinReference());
+			ChequeHeader.setActive(true);
+			ChequeHeader.setTotalAmount(BigDecimal.ZERO);
+			ChequeHeader.setLastMntBy(financeMain.getLastMntBy());
+			ChequeHeader.setLastMntOn(financeMain.getLastMntOn());
+			ChequeHeader.setRecordStatus(financeMain.getRecordStatus());
+			ChequeHeader.setRecordType(financeMain.getRecordType());
+			ChequeHeader.setRoleCode(financeMain.getRoleCode());
+			ChequeHeader.setNextRoleCode(financeMain.getNextRoleCode());
+			ChequeHeader.setTaskId(financeMain.getTaskId());
+			ChequeHeader.setNextTaskId(financeMain.getNextTaskId());
+			ChequeHeader.setVersion(financeMain.getVersion());
+			ChequeHeader.setWorkflowId(financeMain.getWorkflowId());
+			financeDetail.setChequeHeader(ChequeHeader);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
