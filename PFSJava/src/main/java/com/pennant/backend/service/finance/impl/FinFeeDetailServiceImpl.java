@@ -756,7 +756,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		List<AuditDetail> finFeeAuditDetails = new ArrayList<AuditDetail>();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		List<FinFeeReceipt> finFeeReceipts = finScheduleData.getFinFeeReceipts();
-
+		AuditDetail detail = new AuditDetail();
 		if (finFeeReceipts != null) {
 			finFeeAuditDetails = getFinFeeReceiptAuditDetail(finFeeReceipts, auditTranType, method, workflowId);
 			
@@ -795,8 +795,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 							String[] valueParm = new String[1];
 							valueParm[0] = feeTypeDesc;
 							errParm[0] = valueParm[0];
-							auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
+							detail.setErrorDetail(ErrorUtil.getErrorDetail(
 									new ErrorDetail(PennantConstants.KEY_FIELD, "65019", errParm, valueParm), usrLanguage));
+							auditDetails.add(detail);
 							break;
 						} else if (finFeeDetail.getPaidAmount().compareTo(totalPaidAmount) != 0) {
 							String[] errParm = new String[2];
@@ -804,8 +805,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 							valueParm[0] = feeTypeDesc;
 							errParm[0] = ":" + valueParm[0];
 							errParm[1] = ":" + valueParm[0];
-							auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
+							detail.setErrorDetail(ErrorUtil.getErrorDetail(
 									new ErrorDetail(PennantConstants.KEY_FIELD, "65018", errParm, valueParm), usrLanguage));
+							auditDetails.add(detail);
 							break;
 						}
 					}
