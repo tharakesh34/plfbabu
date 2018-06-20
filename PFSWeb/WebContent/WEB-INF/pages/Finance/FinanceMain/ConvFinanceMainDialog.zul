@@ -520,6 +520,14 @@
 													<extendedcombobox
 														id="dmaCode" />
 												</row>
+												<row
+													id="row_employeeName">
+													<label
+														id="label_FinanceMainDialog_EmployeeName"
+														value="${c:l('label_FinanceMainDialog_EmployeeName.value')}" />
+													<extendedcombobox
+														id="employeeName" />
+												</row>
 												<row id="row_salesDept">
 													<label
 														id="label_FinanceMainDialog_FinPurpose"
