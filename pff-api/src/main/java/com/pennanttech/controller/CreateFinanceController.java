@@ -1615,10 +1615,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			ChequeHeader.setLastMntOn(financeMain.getLastMntOn());
 			ChequeHeader.setRecordStatus(financeMain.getRecordStatus());
 			ChequeHeader.setRecordType(financeMain.getRecordType());
-			ChequeHeader.setRoleCode(financeMain.getRoleCode());
-			ChequeHeader.setNextRoleCode(financeMain.getNextRoleCode());
-			ChequeHeader.setTaskId(financeMain.getTaskId());
-			ChequeHeader.setNextTaskId(financeMain.getNextTaskId());
+			ChequeHeader.setRoleCode(financeMain.getRoleCode());			
 			ChequeHeader.setVersion(financeMain.getVersion());
 			ChequeHeader.setWorkflowId(financeMain.getWorkflowId());
 			financeDetail.setChequeHeader(ChequeHeader);
