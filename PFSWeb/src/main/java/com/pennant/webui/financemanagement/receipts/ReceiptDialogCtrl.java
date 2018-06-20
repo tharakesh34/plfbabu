@@ -6936,7 +6936,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			receipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel().toString());
 			engine.mergeFields(receipt);
 			
-			boolean isDirectPrint = true;
+			boolean isDirectPrint = false;
 			try {
 				if(isDirectPrint){
 					try {
