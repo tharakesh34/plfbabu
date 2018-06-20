@@ -3712,18 +3712,6 @@ UNION ALL
 	 		<column name="EntityCode" type="varchar(8)"/>
 		</addColumn>
 	</changeSet>
-
-<changeSet id="87" author="Sriram">
-		<sql>
-			Create table TRIAL_BALANCE_HEADER_BKP as select * from TRIAL_BALANCE_HEADER
-		</sql>
-	</changeSet>
-	
-	<changeSet id="88" author="Sriram">
-		<sql>
-			Create table TRIAL_BALANCE_REPORT_BKP as select * from TRIAL_BALANCE_REPORT
-		</sql>
-	</changeSet>
 	
 	<changeSet id="89" author="Sriram">
 		 <dropForeignKeyConstraint baseTableName="TRIAL_BALANCE_REPORT_LAST_RUN" constraintName="FK_TBRLR_HID"/>
