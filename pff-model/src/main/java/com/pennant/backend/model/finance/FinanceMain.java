@@ -81,7 +81,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"maturityDate", "finRepayPftOnFrq", "rpyMinRate", "rpyMaxRate", "rpyAdvPftRate", "rpyAdvBaseRate",
 		"rpyAdvMargin", "supplementRent", "increasedCost", "rolloverFrq", "nextRolloverDate", "finContractDate",
 		"finPurpose", "finLimitRef", "finCommitmentRef", "repayAccountId", "depreciationFrq", "dsaCode",
-		"accountsOfficer", "salesDepartment", "dmaCode", "referralId", "quickDisb", "unPlanEMIHLockPeriod",
+		"accountsOfficer", "salesDepartment", "dmaCode", "referralId", "employeeName", "quickDisb", "unPlanEMIHLockPeriod",
 		"unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays", "alwBPI", "bpiTreatment", "planEMIHAlw",
 		"planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz","firstDisbDate","lastDisbDate","stage","status"})
 @XmlRootElement(name = "financeDetail")
@@ -602,6 +602,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String referralId;
 	private String referralIdDesc;
 	@XmlElement
+	private String employeeName;
+	private String employeeNameDesc;
+	@XmlElement
 	private boolean quickDisb;
 	private String  wifReference;
 	
@@ -794,6 +797,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("marketValue");
 		excludeFields.add("guidedValue");
 		excludeFields.add("totalExposure");
+		excludeFields.add("employeeNameDesc");
 		
 		return excludeFields;
 	}
@@ -3691,6 +3695,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setTotalExposure(BigDecimal totalExposure) {
 		this.totalExposure = totalExposure;
+	}
+
+	public String getEmployeeName() {
+		return employeeName;
+	}
+
+	public void setEmployeeName(String employeeName) {
+		this.employeeName = employeeName;
+	}
+
+	public String getEmployeeNameDesc() {
+		return employeeNameDesc;
+	}
+
+	public void setEmployeeNameDesc(String employeeNameDesc) {
+		this.employeeNameDesc = employeeNameDesc;
 	}
 
 }
