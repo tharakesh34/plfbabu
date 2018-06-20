@@ -584,7 +584,7 @@ public class RepaymentProcessUtil {
 						aeEvent.setValueDate(valueDate);
 						aeEvent.setPostRefId(receiptHeader.getReceiptID());
 						aeEvent.setPostingId(financeMain.getPostingId());
-						
+						aeEvent.setEntityCode(financeMain.getLovDescEntityCode());
 						amountCodes.setFinType(financeMain.getFinType());
 						amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 						amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());

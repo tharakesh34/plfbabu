@@ -52,6 +52,8 @@ public class AEEvent {
 	private int						transOrder = 0;
 	
 	private boolean					uAmzExists = false;
+	
+	private String                  entityCode;
 
 	public AEEvent() {
 
@@ -355,6 +357,14 @@ public class AEEvent {
 
 	public void setPostingId(long postingId) {
 		this.postingId = postingId;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
 	}
 
 

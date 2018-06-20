@@ -70,6 +70,7 @@ import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
+import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
@@ -106,7 +107,7 @@ public class AccountEngineExecution implements Serializable {
 	private CollateralSetupDAO			collateralSetupDAO;
 	private PostingsDAO					postingsDAO;
 	private AccountProcessUtil			accountProcessUtil;
-
+	private DivisionDetailDAO           divisionDetailDAO;
 	//Default Constructor
 	public AccountEngineExecution() {
 		super();
@@ -509,7 +510,7 @@ public class AccountEngineExecution implements Serializable {
 	private List<ReturnDataSet> prepareAccountingSetResults(AEEvent aeEvent) {
 		logger.debug("Entering");
 		logger.trace("FIN REFERENCE: " + aeEvent.getFinReference());
-		
+		logger.trace("Entity Code" + aeEvent.getEntityCode());
 		String zeroPostingFlag = SysParamUtil.getValueAsString("ALLOW_ZERO_POSTINGS");
 		HashMap<String, Object> dataMap = aeEvent.getDataMap();
 		List<Long> acSetIDList = aeEvent.getAcSetIDList();
@@ -657,7 +658,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setAmountType(transactionEntry.getChargeType());
 			returnDataSet.setUserBranch(aeEvent.getPostingUserBranch());
 			returnDataSet.setPostBranch(aeEvent.getBranch());
-
+			returnDataSet.setEntityCode(aeEvent.getEntityCode());
 			//Set Account Number
 			IAccounts acc = (IAccounts) accountsMap.get(String.valueOf(transactionEntry.getTransOrder()));
 			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), transactionEntry, aeEvent.getCcy(), dataMap);
@@ -1094,6 +1095,14 @@ public class AccountEngineExecution implements Serializable {
 
 	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
 		this.accountProcessUtil = accountProcessUtil;
+	}
+
+	public DivisionDetailDAO getDivisionDetailDAO() {
+		return divisionDetailDAO;
+	}
+
+	public void setDivisionDetailDAO(DivisionDetailDAO divisionDetailDAO) {
+		this.divisionDetailDAO = divisionDetailDAO;
 	}
 
 }

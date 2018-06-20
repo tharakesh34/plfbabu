@@ -267,6 +267,29 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		 return recordCount > 0 ? true : false;
 	}
 	
+	@Override
+	public String getEntityCodeByDivision(String finDivision, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("DivisionCode", finDivision);
+
+		StringBuffer selectSql = new StringBuffer();
+		selectSql.append("SELECT EntityCode FROM SMTDIVISIONDETAIL");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" WHERE DivisionCode= :DivisionCode");
+
+		logger.debug("insertSql: " + selectSql.toString());
+		String entityCode = null;
+		try {
+			entityCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+		}
+		logger.debug("Leaving");
+
+		return entityCode;
+	}
 	/**
 	 * To Set  dataSource
 	 * @param dataSource

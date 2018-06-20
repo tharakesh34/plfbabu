@@ -6491,6 +6491,7 @@
 		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
+		<property name="divisionDetailDAO" ref="divisionDetailDAO"/>
 	</bean>
 
 	<!--============ Rule Execution Util ============== -->
@@ -6511,6 +6512,7 @@
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
+		<property name="divisionDetailDAO" ref="divisionDetailDAO"/>
 	</bean>
 
 	<!--============ AEAmounts Util ============== -->

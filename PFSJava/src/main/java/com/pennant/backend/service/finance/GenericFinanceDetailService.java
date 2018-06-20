@@ -1578,7 +1578,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}*/
 						
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
-
+		aeEvent.setEntityCode(financeMain.getLovDescEntityCode());	
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		HashMap<String, Object>	dataMap = aeEvent.getDataMap();
 		dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);

@@ -41,6 +41,7 @@ import com.pennant.backend.dao.finance.FinContributorDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
+import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentMovement;
 import com.pennant.backend.model.others.JVPosting;
@@ -83,6 +84,7 @@ public class PostingsPreparationUtil implements Serializable {
 	//private FinanceCancellationProcess	financeCancellationProcess;
 	private FinanceTypeDAO				financeTypeDAO;
 	private FinTypeAccountingDAO		finTypeAccountingDAO;
+	private DivisionDetailDAO           divisionDetailDAO;
 
 	public PostingsPreparationUtil() {
 		super();
@@ -617,7 +619,7 @@ public class PostingsPreparationUtil implements Serializable {
 			returnDataSet.setAmountType("D");
 			returnDataSet.setUserBranch(jVPosting.getUserDetails().getBranchCode());
 			returnDataSet.setCustAppDate(DateUtility.getAppDate());
-			
+			returnDataSet.setEntityCode(getDivisionDetailDAO().getEntityCodeByDivision(jVPosting.getPostingDivision(), ""));
 			String ref = returnDataSet.getFinReference() + "/" + returnDataSet.getFinEvent()+ "/";
 			returnDataSet.setPostingId(ref);
 
@@ -959,6 +961,14 @@ public class PostingsPreparationUtil implements Serializable {
 
 	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
 		this.finTypeAccountingDAO = finTypeAccountingDAO;
+	}
+
+	public DivisionDetailDAO getDivisionDetailDAO() {
+		return divisionDetailDAO;
+	}
+
+	public void setDivisionDetailDAO(DivisionDetailDAO divisionDetailDAO) {
+		this.divisionDetailDAO = divisionDetailDAO;
 	}
 
 }

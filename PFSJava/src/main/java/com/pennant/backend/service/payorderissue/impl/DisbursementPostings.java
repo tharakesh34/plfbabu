@@ -111,6 +111,7 @@ public class DisbursementPostings {
 										aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
 					}
 					aeEvent.setLinkedTranId(0);
+					aeEvent.setEntityCode(finMain.getLovDescEntityCode());
 					aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
 
 					datasetList = aeEvent.getReturnDataSet();
@@ -169,6 +170,7 @@ public class DisbursementPostings {
 					aeEvent.setCustID(finMain.getCustID());
 					aeEvent.setValueDate(finAdvancePayments.getLlDate());
 					aeEvent.setPostingUserBranch(usrBranch);
+					aeEvent.setEntityCode(finMain.getLovDescEntityCode());
 					// Prepare posting for new added
 					boolean posted=true;
 					dataMap = amountCodes.getDeclaredFieldValues();

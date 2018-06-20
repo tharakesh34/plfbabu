@@ -124,7 +124,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
 			aeEvent.setValueDate(dateValueDate);
 			aeEvent.setPostDate(postDate);
-
+			aeEvent.setEntityCode(financeMain.getLovDescEntityCode());
 			amountCodes.setPartnerBankAc(rpyQueueHeader.getPartnerBankAc());
 			amountCodes.setPartnerBankAcType(rpyQueueHeader.getPartnerBankAcType());
 			amountCodes.setFinType(financeMain.getFinType());

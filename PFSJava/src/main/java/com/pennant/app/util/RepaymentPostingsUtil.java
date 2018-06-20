@@ -632,7 +632,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		amountCodes.setPartnerBankAc(rpyQueueHeader.getPartnerBankAc());
 		amountCodes.setPartnerBankAcType(rpyQueueHeader.getPartnerBankAcType());
 		aeEvent.setPostDate(postDate);
-		
+		aeEvent.setEntityCode(financeMain.getLovDescEntityCode());
 		if(overdueEvent != null){
 			aeEvent.setLinkedTranId(overdueEvent.getLinkedTranId());
 			aeEvent.setTransOrder(overdueEvent.getTransOrder());
