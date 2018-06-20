@@ -4181,7 +4181,8 @@ UNION ALL
 	</sql>
 	</changeSet>
 	
-	<changeSet id="118" author="vijaykumar.l">
+	<changeSet id="118.1" author="vijaykumar.l">
+	<comment> added one employee name </comment>
 		<createView viewName="financemain_view" replaceIfExists="true">
 			SELECT t1.finreference,
 		    t1.investmentref,
@@ -4683,8 +4684,10 @@ UNION ALL
 		  WHERE NOT (EXISTS ( SELECT 1 AS expr1
 		           FROM financemain_temp
 		          WHERE financemain_temp.finreference = t1.finreference))
-		</createView>
-
+			</createView>
+	</changeSet>
+	<changeSet id="118.2" author="vijaykumar.l">
+	<comment> added one employee name </comment>
 		<createView viewName="financemain_tview" replaceIfExists="true">
 			 	SELECT t1.finreference,
 			    t1.investmentref,
@@ -4925,7 +4928,9 @@ UNION ALL
 			     LEFT JOIN smtdivisiondetail t11 ON t2.findivision = t11.divisioncode
 			     LEFT JOIN relationshipofficers t12 ON t1.employeeName = t12.rofficercode
 		</createView>
-
+	</changeSet>
+<changeSet id="118.3" author="vijaykumar.l">
+<comment> added one employee name </comment>
 		<createView viewName="financemain_aview" replaceIfExists="true">
 			SELECT t1.finreference,
 		    t1.numberofterms,
