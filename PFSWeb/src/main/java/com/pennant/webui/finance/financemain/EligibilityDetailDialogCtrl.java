@@ -448,7 +448,22 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		
 		
 		List<FinanceDeviations> elgDeviations=new ArrayList<FinanceDeviations>();
-				
+		List<FinanceEligibilityDetail> elgRuleList1= new ArrayList<>();
+		List<FinanceEligibilityDetail> elgRuleList2= new ArrayList<>();
+		
+		for (FinanceEligibilityDetail financeEligibilityDetail : elgRuleList) {
+			
+			if(StringUtils.contains("MAXELIGI,MXELGASL,MXEADFL,MXELMGHF",financeEligibilityDetail.getLovDescElgRuleCode())){
+				elgRuleList2.add(financeEligibilityDetail);
+			}else{
+				elgRuleList1.add(financeEligibilityDetail);
+			}
+			
+		}
+		
+		elgRuleList=elgRuleList1;
+		elgRuleList.addAll(elgRuleList2);
+		
 		for (FinanceEligibilityDetail financeEligibilityDetail : elgRuleList) {
 			if(financeEligibilityDetail.isExecute()){
 				if(!isSave){
