@@ -2322,4 +2322,24 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
+	<changeSet id="110" author="Kesav">
+		<comment>feeTypeDesc column added for GST changes</comment>
+		<createView viewName="manualadvisemovements_tview" replaceIfExists="true">
+			SELECT 		t1.movementid,
+						t1.adviseid,
+						t1.movementdate,
+						t1.movementamount,
+						t1.paidamount,
+						t1.waivedamount,
+						t1.status,
+						t1.receiptid,
+						t1.receiptseqid,
+						t3.feetypecode, COALESCE(t3.taxapplicable, 0) AS taxapplicable,
+						t3.taxcomponent, t1.PaidCgst, t1.PaidSgst, t1.PaidIgst, t1.PaidUgst, t3.feeTypeDesc
+			FROM 		manualadvisemovements_temp t1
+			JOIN 		manualadvise t2 ON t1.adviseid = t2.adviseid
+			LEFT JOIN 	feetypes t3 ON t2.feetypeid = t3.feetypeid		
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
