@@ -432,8 +432,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		if (!noValidation && !isDeleteRecord(finAdvancePay) && !finAdvancePay.ispOIssued()) {
 			if (finAdvancePay.getPaymentSeq() == 1 && finAdvancePay.getLlDate() != null
 					&& DateUtility.compare(financeMain.getFinStartDate(), finAdvancePay.getLlDate()) != 0) {
-				ErrorDetail errorDetail = new ErrorDetail("65032", new String[] { "Key" });
-				auditDetail.setErrorDetail(errorDetail);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "65032", errParm, valueParm), usrLanguage));
 			}
 		}
 
