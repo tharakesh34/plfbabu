@@ -112,7 +112,8 @@ update adtCustomers set marginDeviation=0;
 		<column name="code" type="varchar(20)"/>
 	</addColumn>
 </changeSet>
-<changeSet id="12" author="vijaykumar.l">
+<changeSet id="12.1" author="vijaykumar.l">
+<comment> version changed already 12 exists </comment>
 		<addColumn tableName="adtrelationshipofficers">
 	         <column name="grade"  type="varchar(35)"/>
 		    <column name="mobileNO"  type="varchar(20)"/>
