@@ -120,4 +120,10 @@ update adtCustomers set marginDeviation=0;
 		    <column name="genDesignation"  type="varchar(10)"/>
 	    </addColumn>
 	</changeSet>
+	
+    <changeSet id="13" author="Vijaykumar.L">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="employeeName" defaultValue="" type="VARCHAR(8)" />
+		</addColumn>
+	 </changeSet>
 </databaseChangeLog>
