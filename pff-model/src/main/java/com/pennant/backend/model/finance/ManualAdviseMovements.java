@@ -10,7 +10,7 @@ public class ManualAdviseMovements {
 	private long receiptID = Long.MIN_VALUE;
 	private long receiptSeqID = Long.MIN_VALUE;
 	private String feeTypeCode;
-	private String feeTypeDesc;	//Added for SOA
+	private String feeTypeDesc;	//Used in SOA and GST Invoice
 	private Date movementDate;
 	private BigDecimal movementAmount = BigDecimal.ZERO;
 	private BigDecimal paidAmount = BigDecimal.ZERO;

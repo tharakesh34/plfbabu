@@ -467,7 +467,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		boolean taxApplicable = (boolean) this.feeTypeID.getAttribute("TaxApplicable");
 		String taxComp = (String) this.feeTypeID.getAttribute("TaxComponent");
 		
-		if (taxApplicable && StringUtils.equals(getComboboxValue(this.adviseType), String.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE))) {
+		if (taxApplicable) {
 			
 			this.gb_GSTDetails.setVisible(true);
 			FinanceDetail  financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinReference(), "", false);

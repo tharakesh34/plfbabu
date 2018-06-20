@@ -2377,6 +2377,7 @@ public class ReceiptCalculator implements Serializable {
 								movement.setPaidAmount(BigDecimal.ZERO);
 								movement.setWaivedAmount(waivedNow);
 								movement.setFeeTypeCode(adv.getFeeTypeCode());
+								movement.setFeeTypeDesc(adv.getFeeTypeDesc());
 								advMovements.add(movement);
 							}
 						}

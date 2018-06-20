@@ -6596,6 +6596,13 @@
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
+		
+		<!-- GST Invoice Changes -->
+		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<!--============ Finance Repayment Details ============== -->

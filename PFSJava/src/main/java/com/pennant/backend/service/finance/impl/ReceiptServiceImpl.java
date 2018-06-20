@@ -1019,7 +1019,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Postings Process
 		List<Object> returnList = getRepayProcessUtil().doProcessReceipts(financeMain, schdList, 
-				profitDetail, receiptHeader, scheduleData.getFinFeeDetailList(), scheduleData,valueDate,DateUtility.getAppDate());
+				profitDetail, receiptHeader, scheduleData.getFinFeeDetailList(), scheduleData,valueDate,DateUtility.getAppDate(), rceiptData.getFinanceDetail());
 		schdList = (List<FinanceScheduleDetail>) returnList.get(0);
 		
 		// Preparing Total Principal Amount
