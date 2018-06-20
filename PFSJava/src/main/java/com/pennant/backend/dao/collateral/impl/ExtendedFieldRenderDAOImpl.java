@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 	private static Logger	logger	= Logger.getLogger(ExtendedFieldRenderDAOImpl.class);
@@ -464,5 +465,27 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		
 		logger.debug("Leaving");
 		return renderMap;
+	}
+
+	@Override
+	public String getCategory(String reference) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+		try {
+			sql = new StringBuilder(" Select FinCategory from FinanceMain Where FinReference = :Reference ");
+			source = new MapSqlParameterSource();
+			source.addValue("Reference", reference);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+
+		return null;
 	}
 }
