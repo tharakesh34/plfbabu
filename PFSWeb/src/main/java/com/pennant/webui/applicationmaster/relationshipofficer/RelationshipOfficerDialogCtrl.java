@@ -486,7 +486,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		}
 		if (!this.grade.isReadonly()) {
 			this.grade.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_RelationshipOfficerDialog_Grade.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, false));
+					Labels.getLabel("label_RelationshipOfficerDialog_Grade.value"), PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL, false));
 		}
 		if (!this.mobileNO.isReadonly()) {
 			this.mobileNO.setConstraint(new PTStringValidator(
