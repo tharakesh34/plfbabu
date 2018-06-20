@@ -5188,7 +5188,7 @@ UNION ALL
 	</changeSet>
  <changeSet id="122" author="vijaykumar.l">
 	<addColumn tableName="FINSTAGEACCOUNTINGLOG">
-		<column name="ReceiptNo" type="Varchar2(16)"/>
+		<column name="ReceiptNo" type="Varchar(16)"/>
 	</addColumn>
  </changeSet>
 </databaseChangeLog>
