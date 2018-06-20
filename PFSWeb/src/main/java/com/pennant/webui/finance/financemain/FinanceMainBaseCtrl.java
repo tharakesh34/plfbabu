@@ -380,6 +380,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	//protected Row											row_salesDept;
 	protected Row row_ReferralId;
 	protected ExtendedCombobox accountsOfficer;
+	protected Row row_employeeName;
+	protected ExtendedCombobox employeeName;
 	protected ExtendedCombobox dsaCode;
 	protected Hbox hbox_tdsApplicable;
 	protected Checkbox tDSApplicable;
@@ -959,6 +961,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.applicationNo.setMaxlength(LengthConstants.LEN_REF);
 		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
 				LengthConstants.LEN_MASTER_CODE);
+		if (this.row_employeeName != null && this.row_employeeName.isVisible()) {
+			this.employeeName.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
+					LengthConstants.LEN_MASTER_CODE);
+		}
+		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
+				LengthConstants.LEN_MASTER_CODE);
 		this.dmaCode.setProperties("DMA", "DealerName", "DealerCity", false, LengthConstants.LEN_MASTER_CODE);
 		this.dmaCode.getTextbox().setMaxlength(50);
 		this.salesDepartment.setProperties("GeneralDepartment", "GenDepartment", "GenDeptDesc", false,
@@ -999,7 +1007,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		this.finLimitRef.setProperties("CustomerLimit", "LimitRef", "LimitDesc", false, 20);
-
 		// set CustomerReference as Filter for finLimitRef 
 		Filter finLimitFilter[] = new Filter[3];
 		finLimitFilter[0] = new Filter("ProductCode", financeType.getFinType(), Filter.OP_EQUAL);
@@ -1268,6 +1275,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.equals(FinanceConstants.FIN_DIVISION_CORPORATE, this.finDivision)) {
 			this.row_accountsOfficer.setVisible(false);
 			this.row_ReferralId.setVisible(false);
+			if (this.row_employeeName != null) {
+			this.row_employeeName.setVisible(false);
+			}
 			label_FinanceMainDialog_SalesDepartment.setVisible(false);
 			this.salesDepartment.setVisible(false);
 		}
@@ -3144,6 +3154,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (aFinanceMain.getReferralId() != null) {
 			this.referralId.setValue(aFinanceMain.getReferralId());
 			this.referralId.setDescription(aFinanceMain.getReferralIdDesc());
+		}
+		if (this.row_employeeName != null && this.row_employeeName.isVisible()) {
+			this.employeeName.setValue(aFinanceMain.getEmployeeName());
+			this.employeeName.setDescription(aFinanceMain.getEmployeeNameDesc());
 		}
 
 		if (aFinanceMain.getSalesDepartment() != null) {
@@ -9984,7 +9998,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		if (this.row_employeeName != null && this.row_employeeName.isVisible()) {
+			try {
+				aFinanceMain.setEmployeeName(this.employeeName.getValue());
+				aFinanceMain.setEmployeeNameDesc(this.employeeName.getDescription());
 
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
 		try {
 			aFinanceMain.setSalesDepartment(this.salesDepartment.getValue());
 			aFinanceMain.setSalesDepartmentDesc(this.salesDepartment.getDescription());
@@ -13020,6 +13042,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_applicationNo"), this.applicationNo);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_referralId"), this.referralId);
+		if (this.row_employeeName != null && this.row_employeeName.isVisible()) {
+			readOnlyComponent(isReadOnly("FinanceMainDialog_employeeName"), this.employeeName);
+		}
 		readOnlyComponent(isReadOnly("FinanceMainDialog_dmaCode"), this.dmaCode);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_salesDepartment"), this.salesDepartment);
 
@@ -13694,6 +13719,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.securityDeposit.setReadonly(true);
 		this.dsaCode.setReadonly(true);
 		this.tDSApplicable.setDisabled(true);
+		if (this.row_employeeName != null && this.row_employeeName.isVisible()) {
+		this.employeeName.setReadonly(true);
+		}
 		this.referralId.setReadonly(true);
 		this.dmaCode.setReadonly(true);
 		this.salesDepartment.setReadonly(true);
