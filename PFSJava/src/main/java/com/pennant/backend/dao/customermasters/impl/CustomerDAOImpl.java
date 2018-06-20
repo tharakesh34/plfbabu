@@ -182,8 +182,6 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		}
 		
 
-		parameter = SysParamUtil.getSystemParameterObject("CURR_SYSTEM_COUNTRY");
-
 		if (customer.getCustResdCountry() == null) {
 			customer.setCustResdCountry(parameter.getSysParmValue().trim());
 		}
@@ -191,6 +189,8 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		if (customer.getLovDescCustResdCountryName() == null) {
 			customer.setLovDescCustResdCountryName(parameter.getSysParmDescription());
 		}
+
+		parameter = SysParamUtil.getSystemParameterObject("CURR_SYSTEM_COUNTRY");
 		
 		if (customer.getCustNationality() == null) {
 			customer.setCustNationality(parameter.getSysParmValue().trim());
