@@ -37,6 +37,7 @@ import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -45,6 +46,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 
 public class ExtendedFieldDetailsService {
 
@@ -57,7 +59,22 @@ public class ExtendedFieldDetailsService {
 	private ExtendedFieldDetailsValidation	extendedFieldDetailsValidation;
 	private AuditHeaderDAO					auditHeaderDAO;
 
+	
+	public List<Map<String, Object>> getExtendedFildValueMap(String reference) {
+		logger.debug("Entering");
 
+		String finCategory = extendedFieldRenderDAO.getCategory(reference);
+		if (finCategory == null) {
+			return null;
+		}
+		String tableName = getTableName(ExtendedFieldConstants.MODULE_LOAN, finCategory, FinanceConstants.FINSER_EVENT_ORG);
+
+		if (tableName == null) {
+			return null;
+		}
+		return extendedFieldRenderDAO.getExtendedFieldMap(reference, tableName, TableType.MAIN_TAB.getSuffix());
+	}
+	
 	public List<AuditDetail> setExtendedFieldsAuditData(List<ExtendedFieldRender> details, String tranType, String method) {
 		logger.debug("Entering");
 		
