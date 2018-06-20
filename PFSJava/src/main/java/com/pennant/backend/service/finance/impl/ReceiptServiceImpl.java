@@ -2537,21 +2537,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					String[] valueParm = new String[2];
 					valueParm[0] = "ValueDate";
 					valueParm[1] = DisbursementConstants.PAYMENT_TYPE_CHEQUE+","+DisbursementConstants.PAYMENT_TYPE_DD;
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("'90298'", "", valueParm)));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90298", "", valueParm)));
 					return auditDetail;
 				}
 				if(StringUtils.isNotBlank(receiptDetail.getFavourName())) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "FavourName";
 					valueParm[1] = DisbursementConstants.PAYMENT_TYPE_CHEQUE+","+DisbursementConstants.PAYMENT_TYPE_DD;
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("'90298'", "", valueParm)));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90298", "", valueParm)));
 					return auditDetail;
 				}
 				if(StringUtils.isNotBlank(receiptDetail.getBankCode())){
 					String[] valueParm = new String[2];
 					valueParm[0] = "BankCode";
 					valueParm[1] = DisbursementConstants.PAYMENT_TYPE_CHEQUE+","+DisbursementConstants.PAYMENT_TYPE_DD;
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("'90298'", "", valueParm)));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90298", "", valueParm)));
 					return auditDetail;
 				}
 			}
@@ -2626,7 +2626,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			// validate Partial Settlement Amount
-			if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)){
+			/*if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)){
 				BigDecimal totOutstandingAmt = getFinanceScheduleDetailDAO().getTotalRepayAmount(finServiceInstruction.getFinReference());
 				totOutstandingAmt = totOutstandingAmt == null ? BigDecimal.ZERO : totOutstandingAmt;
 				if (finServiceInstruction.getAmount().compareTo(totOutstandingAmt) >= 0) {
@@ -2634,7 +2634,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					valueParm[0] = String.valueOf(totOutstandingAmt);
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91127", "", valueParm)));
 				}
-			}
+			}*/
 		} else {
 			// validate recalType
 			if (StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
