@@ -3167,12 +3167,6 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 	</sql>
 	</changeSet>
 	
-	<changeSet id="68" author="Manoj">
-	<sql>
-	<comment>Recreatig view with new column</comment>
-		Drop view bouncereasons_aview;
-	</sql>
-	</changeSet>
 	
 <changeSet id="70" author="Manoj">
 	<sql>
