@@ -316,4 +316,32 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 	  update smtparameters set sysparmvalue ='Y' where sysparmcode= 'CUSTOMER_CORP_FINANCE_TAB_REQ';
 	 </sql>
 	 </changeSet>
+	  <changeSet id="17" author="vijaykumar.l">
+		<createTable tableName="PSLCategory">
+			<column name="Code" type="VARCHAR(8)">
+			</column>
+			<column name="Description" type="VARCHAR(35)">
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="18" author="vijaykumar.l">
+		<createTable tableName="PSLWeakerSection ">
+			<column name="Code" type="VARCHAR(8)">
+			</column>
+			<column name="Description" type="VARCHAR(35)">
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="19" author="vijaykumar.l">
+		<createTable tableName="PSLPurpose">
+			<column name="CategoryCode" type="VARCHAR(8)">
+			</column>
+			<column name="SubCategoryCode" type="VARCHAR(8)">
+			</column>
+			<column name="PurposeCode" type="VARCHAR(8)">
+			</column>
+			<column name="PurposeDescription" type="VARCHAR(35)">
+			</column>
+		</createTable>
+	</changeSet>
 	 </databaseChangeLog>
