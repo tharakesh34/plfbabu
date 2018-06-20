@@ -5186,15 +5186,10 @@ UNION ALL
 		     LEFT JOIN relationshipofficers t37 ON t1.employeeName = t37.rofficercode
 		</createView>
 	</changeSet>
-	<changeSet id="119.1" author="siva">
-		<addColumn tableName="FINSTAGEACCOUNTINGLOG" >
-			<column name="receiptID" type="bigint" defaultValue="0"/>
-		</addColumn>
-	</changeSet>
-	<changeSet id="120.2" author="siva">
-	<sql>
-		Update FINSTAGEACCOUNTINGLOG set receiptID=0 where receiptID is null;
-	</sql>
-	</changeSet>
+ <changeSet id="122" author="vijaykumar.l">
+	<addColumn tableName="FINSTAGEACCOUNTINGLOG">
+		<column name="ReceiptNo" type="Varchar2(16)"/>
+	</addColumn>
+ </changeSet>
 </databaseChangeLog>
 	
