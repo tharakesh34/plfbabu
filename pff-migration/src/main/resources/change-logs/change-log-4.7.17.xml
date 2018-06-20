@@ -3410,7 +3410,7 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 	        <column name="code"  type="varchar(20)"/>
 	    </addColumn>
 	 </changeSet>
-	  <changeSet id="78" author="vijaykumar.l">
+	  <changeSet id="78.1" author="vijaykumar.l">
 	<createView viewName="AMTVEHICLEDEALER_AVIEW" replaceIfExists="true">
  SELECT t1.dealerid,
     t1.dealertype,
@@ -3462,7 +3462,7 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
      LEFT JOIN rmtcountryvsprovince t9 ON t1.emirates = t9.cpprovince
 </createView>
 	</changeSet>
-<changeSet id="79" author="vijaykumar.l">
+<changeSet id="79.1" author="vijaykumar.l">
 	<createView viewName="AMTVEHICLEDEALER_VIEW" replaceIfExists="true">
  SELECT t1.dealerid,
     t1.dealertype,
@@ -4013,9 +4013,9 @@ UNION ALL
 			   	TRIAL_BALANCE_HEADER TBH ON TBH.ID = TBR.HEADERID
 		</createView>	  
 	</changeSet>
-	<changeSet id="109.1" author="Sriram">
+	<changeSet id="109.2" author="Sriram">
 	<comment>Removed semicolon</comment>
-		<createView viewName="TRIAL_BALANCE_CONSOLIDATE_VIEW">
+		<createView viewName="TRIAL_BALANCE_CONSOLIDATE_VIEW" replaceIfExists="true">
 		SELECT ID,
 		   	   ACTYPEGRPID,
 	           TBRF.ACCOUNT,
