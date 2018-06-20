@@ -5185,5 +5185,11 @@ UNION ALL
 		<column name="ReceiptNo" type="Varchar(16)"/>
 	</addColumn>
  </changeSet>
+ 
+ <changeSet id="123" author="vijaykumar.l">
+ 	<sql>
+ 		Update amtvehicledealer set code =dealerid where dealertype='DSA';
+ 	</sql>
+ </changeSet>
 </databaseChangeLog>
 	
