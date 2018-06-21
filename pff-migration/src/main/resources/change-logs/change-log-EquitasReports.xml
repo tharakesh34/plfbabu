@@ -387,4 +387,31 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 	 </sql>
 	 
 	 </changeSet>
+	 <changeSet id="22" author="Srinivas Varma">
+	 	<createTable tableName="PSLCategory">
+	 		<column name="Code" type="varchar(8)"/>
+	 		<column name="Description" type="varchar(200)"/>
+	 	</createTable>
+	 </changeSet>
+	 <changeSet id="23" author="Srinivas Varma">
+	 	<createTable tableName="PSLWeakerSection">
+	 		<column name="Code" type="varchar(8)"/>
+	 		<column name="Description" type="varchar(200)"/>
+	 	</createTable>
+	 </changeSet>
+	  <changeSet id="24" author="Srinivas Varma">
+	 	<createTable tableName="PSLPurpose">
+	 		<column name="CategoryCode" type="varchar(8)"/>
+	 		<column name="SubCategoryCode" type="varchar(8)"/>
+	 		<column name="Code" type="varchar(8)"/>
+	 		<column name="SubCategoryCode" type="varchar(200)"/>
+	 	</createTable>
+	 </changeSet>
+	  <changeSet id="25" author="Srinivas Varma">
+	 	<createTable tableName="PSLEndUse">
+	 		<column name="PurposeCode" type="varchar(8)"/>
+	 		<column name="Code" type="varchar(8)"/>
+	 		<column name="Description" type="varchar(200)"/>
+	 	</createTable>
+	 </changeSet>
 </databaseChangeLog>
