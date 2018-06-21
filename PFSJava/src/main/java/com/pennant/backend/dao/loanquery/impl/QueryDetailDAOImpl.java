@@ -87,11 +87,11 @@ public class QueryDetailDAOImpl extends BasisNextidDaoImpl<QueryDetail> implemen
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, finReference, categoryId, qryNotes, assignedRole, notifyTo, ");
 		sql.append(" status, Coalesce(raisedBy,0) raisedBy, raisedOn, responsNotes, Coalesce(responseBy,0) responseBy, responseOn, ");
-		sql.append(" closerNotes, Coalesce(closerBy,0) closerBy, closerOn,");		
+		sql.append(" closerNotes, Coalesce(closerBy,0) closerBy, closerOn, Version");		
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			//sql.append(" code, description,usrLogin " );
-			sql.append(" categorycode, categoryDescription,usrLogin, " );
+			sql.append(" ,categorycode, categoryDescription,usrLogin, " );
 			sql.append(" responseUser, closerUser " );
 		}
 		sql.append(" From QUERYDETAIL");
@@ -157,9 +157,9 @@ public class QueryDetailDAOImpl extends BasisNextidDaoImpl<QueryDetail> implemen
 		// Prepare the SQL.
 		StringBuilder	sql =new StringBuilder("update QUERYDETAIL" );
 		//sql.append(tableType.getSuffix());
-		sql.append("  set status = :status, responsNotes = :responsNotes, ");
+		sql.append("  set status = :status, qryNotes = :qryNotes, responsNotes = :responsNotes, ");
 		sql.append(" responseBy = :responseBy, responseOn = :responseOn, closerNotes = :closerNotes, ");
-		sql.append(" closerBy = :closerBy, closerOn = :closerOn ");
+		sql.append(" closerBy = :closerBy, closerOn = :closerOn, Version = :Version ");
 		sql.append(" where id = :id ");
 	
 		// Execute the SQL, binding the arguments.

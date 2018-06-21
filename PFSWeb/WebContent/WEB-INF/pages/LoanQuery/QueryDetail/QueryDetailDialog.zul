@@ -80,11 +80,8 @@
 								<row id="row0">
 									<label id="label_FinReference"
 										value="${c:l('label_QueryDetailDialog_FinReference.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="finReference"
-											readonly="true" />
-									</hbox>
+									<extendedcombobox id="finReference"
+										readonly="true" />
 								</row>
 							</rows>
 						</grid>
@@ -183,8 +180,11 @@
 														<space
 															spacing="2px" />
 														<textbox
-															id="qryNotes" maxlength="2000" width="300px" rows="5"
+															id="qryNotes" width="300px" rows="5"
 															cols="40" readonly="true" />
+														<textbox
+															id="qryNotesMnt" width="200px" rows="5"
+															cols="40" visible="false" readonly="true"/>
 													</hbox>
 
 												</row>
@@ -197,8 +197,11 @@
 														<space
 															spacing="2px" />
 														<textbox
-															id="responsNotes" maxlength="2000" width="300px" rows="5"
+															id="responsNotes" width="300px" rows="5"
 															cols="40" />
+														<textbox
+															id="responsNotesMnt" width="200px" rows="5"
+															cols="40" visible="false" readonly="true"/>
 													</hbox>
 												</row>
 												<row id="row6"
@@ -231,7 +234,7 @@
 														<space
 															spacing="2px" />
 														<textbox
-															id="closerNotes" maxlength="2000" width="300px" rows="5"
+															id="closerNotes" width="300px" rows="5"
 															cols="40" />
 													</hbox>
 												</row>
@@ -318,7 +321,7 @@
 														<space
 															spacing="4px" />
 														<textbox
-															id="docRemarks" maxlength="50" rows="5" cols="40"
+															id="docRemarks" rows="5" cols="40"
 															width="250px" />
 													</hbox>
 												</row>
@@ -352,7 +355,7 @@
 												<listheader
 													id="listheader_RadioButton"
 													label="${c:l('label_QueryDetailDialog_RadioButton.value')}"
-													sort="auto" hflex="min" visible="false"/>
+													sort="auto" hflex="min" visible="false" />
 												<listheader
 													id="listheader_FinReference"
 													label="${c:l('label_QueryDetailDialog_UploadedBy.value')}"

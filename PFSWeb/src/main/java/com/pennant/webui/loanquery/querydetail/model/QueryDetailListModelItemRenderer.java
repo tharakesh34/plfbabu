@@ -74,13 +74,15 @@ public class QueryDetailListModelItemRenderer implements ListitemRenderer<QueryD
 		lc.setParent(item);
 	    lc = new Listcell(String.valueOf(queryDetail.getId()));
 		lc.setParent(item);
-	  	lc = new Listcell(String.valueOf(queryDetail.getRaisedBy())+" - "+queryDetail.getUsrLogin());
+	  	lc = new Listcell(String.valueOf(queryDetail.getRaisedBy() +" - "+queryDetail.getUsrLogin()));
 		lc.setParent(item);
-	  	lc = new Listcell(DateUtility.formatDate(queryDetail.getRaisedOn(),"dd/MM/yyy"));
+	  	lc = new Listcell(DateUtility.formatDate(queryDetail.getRaisedOn(),"dd/MM/yyy HH:mm:ss.SSS"));
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(queryDetail.getCategoryCode()+" - "+queryDetail.getCategoryDescription()));
 		lc.setParent(item);
 		lc = new Listcell(queryDetail.getQryNotes());
+		lc.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
+		lc.setTooltiptext(queryDetail.getQryNotes());
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(queryDetail.getStatus()));
 		lc.setParent(item);

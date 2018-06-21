@@ -60,16 +60,13 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.service.loanquery.QueryDetailService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.loanquery.querydetail.model.QueryDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -103,6 +100,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	
 	private transient QueryDetailService queryDetailService;
 	private FinanceMain financeMain = null;
+	private String roleCode;
 
 	/**
 	 * default constructor.<br>
@@ -144,6 +142,10 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		
 		if(arguments.containsKey("financeMain")){
 			this.financeMain = (FinanceMain) arguments.get("financeMain");
+		}
+		
+		if (arguments.containsKey("roleCode")) {
+			this.roleCode = (String) arguments.get("roleCode");
 		}
 		
 		if (arguments.containsKey("finHeaderList")) {
@@ -270,6 +272,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		arg.put("queryDetail", querydetail);
 		arg.put("finQueryDetailListCtrl", this);
 		arg.put("financeMain", financeMain);
+		arg.put("roleCode", roleCode);
 		
 		try {
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailNewDialog.zul", null, arg);

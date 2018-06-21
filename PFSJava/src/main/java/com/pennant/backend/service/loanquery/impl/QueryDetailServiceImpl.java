@@ -155,12 +155,13 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 		// Documents
 		if (queryDetail.getDocumentDetailsList() != null && !queryDetail.getDocumentDetailsList().isEmpty()) {
 			for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
-				if (documentDetails.getDocRefId() <= 0) {
+				documentDetails.setReferenceId(String.valueOf(queryDetail.getId()));
+				if (documentDetails.isNew() && documentDetails.getDocRefId() <= 0) {
 					DocumentManager documentManager = new DocumentManager();
 					documentManager.setDocImage(documentDetails.getDocImage());
 					documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
+					documentDetailsDAO.save(documentDetails, tableType.getSuffix());
 				}
-				documentDetailsDAO.save(documentDetails, tableType.getSuffix());
 			}
 		}
 
@@ -214,7 +215,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 		// LV Document Details
 		QueryDetail queryDetail = getQueryDetailDAO().getQueryDetail(id,"_View");
 		if(queryDetail != null){
-			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(queryDetail.getFinReference(),FinanceConstants.QUERY_MANAGEMENT, "_View");
+			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(String.valueOf(queryDetail.getId()),FinanceConstants.QUERY_MANAGEMENT, "_View");
 			queryDetail.setDocumentDetailsList(documentList);
 		}
 		return queryDetail;

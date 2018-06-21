@@ -43,6 +43,7 @@
 
 package com.pennant.webui.loanquery.querydetail;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -51,16 +52,20 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.service.loanquery.QueryDetailService;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.loanquery.querydetail.model.QueryDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -82,14 +87,11 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	protected Listbox listBoxQueryDetail;
 
 	// List headers
-	protected Listheader listheader_Id;
 	protected Listheader listheader_FinReference;
-	protected Listheader listheader_CategoryId;
 	protected Listheader listheader_Status;
-	protected Listheader listheader_QryNotes;
 	protected Listheader listheader_RaisedBy;
 	protected Listheader listheader_RaisedOn;
-	protected Listheader listheader_Description;
+	protected Listheader listheader_QryCtg;
 	protected Listheader listheader_UsrLogin;
 	// checkRights
 	protected Button button_QueryDetailList_NewQueryDetail;
@@ -99,25 +101,24 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	protected Textbox id; // autowired
 	protected Textbox finReference; // autowired
 	protected Textbox categoryId; // autowired
-	protected Textbox status; // autowired
+	protected Combobox status; // autowired
 	protected Textbox qryNotes; // autowired
 	protected Textbox usrLogin; // autowired
-	protected Textbox raisedBy; // autowired
+	protected Longbox raisedBy; // autowired
 	protected Datebox raisedOn; // autowired
-	protected Textbox description; // autowired
+	protected Textbox queryCtg; // autowired
 	
 	protected Listbox sortOperator_Id;
 	protected Listbox sortOperator_FinReference;
-	protected Listbox sortOperator_CategoryId;
 	protected Listbox sortOperator_Status;
-	protected Listbox sortOperator_QryNotes;
 	protected Listbox sortOperator_UsrLogin;
 	protected Listbox sortOperator_RaisedBy;
 	protected Listbox sortOperator_RaisedOn;
-	protected Listbox sortOperator_Description;
+	protected Listbox sortOperator_QueryCtg;
 	
 	private transient QueryDetailService queryDetailService;
-
+	private final List<ValueLabel> queryModuleStatusList = PennantStaticListUtil.getQueryModuleStatusList();
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -152,16 +153,17 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		//registerButton(button_QueryDetailList_NewQueryDetail, "button_QueryDetailList_NewQueryDetail", true);
 		this.button_QueryDetailList_NewQueryDetail.setVisible(false);
 
-		registerField("id", listheader_Id, SortOrder.NONE, id, sortOperator_Id, Operators.STRING);
+		registerField("id");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference, Operators.STRING);
 		registerField("categoryId");
 		registerField("qryNotes");		
+		registerField("raisedBy",listheader_RaisedBy,SortOrder.NONE,raisedBy,sortOperator_RaisedBy,Operators.SIMPLE_NUMARIC);		
 		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
-		registerField("Coalesce(raisedBy,0) raisedBy");		
 		registerField("raisedOn", listheader_RaisedOn, SortOrder.NONE, raisedOn, sortOperator_RaisedOn, Operators.DATE);		
-		registerField("categoryCode");	
+		registerField("categoryCode",listheader_QryCtg,SortOrder.NONE,queryCtg,sortOperator_QueryCtg, Operators.STRING);	
 		registerField("categoryDescription");	
 		registerField("usrLogin");	
+		fillComboBox(this.status, "", queryModuleStatusList, "");
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -331,60 +333,4 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		this.queryDetailService = queryDetailService;
 	}
 	
-	/**
-	 * When user clicks on "fromWorkFlow"
-	 * 
-	 * @param event
-	 */
-	public void onClick$btnSearchQueryId(Event event) {
-		logger.debug("Entering " + event.toString());
-
-		setSearchValue(sortOperator_Id, this.id, "id");
-
-		logger.debug("Leaving " + event.toString());
-	}
-	
-	public void onClick$btnSearchFinReference(Event event) {
-		logger.debug("Entering " + event.toString());
-
-		setSearchValue(sortOperator_Id, this.id, "finReference");
-
-		logger.debug("Leaving " + event.toString());
-	}
-	
-
-	public void onClick$btnSearchDescription(Event event) {
-		logger.debug("Entering " + event.toString());
-
-		setSearchValue(sortOperator_Id, this.id, "code");
-
-		logger.debug("Leaving " + event.toString());
-	}
-	
-
-	public void onClick$btnSearchstatus(Event event) {
-		logger.debug("Entering " + event.toString());
-
-		setSearchValue(sortOperator_Id, this.id, "status");
-
-		logger.debug("Leaving " + event.toString());
-	}
-	
-
-	public void onClick$btnRaisedBy(Event event) {
-		logger.debug("Entering " + event.toString());
-
-		setSearchValue(sortOperator_Id, this.id, "raisedBy");
-
-		logger.debug("Leaving " + event.toString());
-	}
-
-	public void onClick$btnRaisedOn(Event event) {
-		logger.debug("Entering " + event.toString());
-
-		setSearchValue(sortOperator_Id, this.id, "raisedOn");
-
-		logger.debug("Leaving " + event.toString());
-	}
-
 }

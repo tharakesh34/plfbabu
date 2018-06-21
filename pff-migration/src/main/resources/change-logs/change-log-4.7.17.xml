@@ -1969,7 +1969,7 @@ UNION ALL
 		</createTable>
 	</changeSet>
 	
-	<!-- <changeSet id="47" author="Vinay">
+	<changeSet id="47" author="Vinay">
 		<createView viewName="LMTFINREFDETAIL_TFSVIEW" replaceIfExists="true">
 			SELECT     T1.FinRefDetailId, T1.FinType, T2.FinTypeDesc lovDescFinTypeDescName, T1.FinRefType, T1.FinRefId, T3.TabCode lovDescNamelov, 
 					  T1.IsActive, T1.ShowInStage, T1.MandInputInStage, T1.AllowInputInStage, T1.AllowDeviation, T1.AllowWaiver, T1.AllowPostpone, 
@@ -1991,7 +1991,7 @@ UNION ALL
 					  FROM          LMTFinRefDetail_Temp
 					  WHERE      (FinRefDetailId = T1.FinRefDetailId AND T1.FinRefType = '15')))
 		</createView>
-	</changeSet> -->
+	</changeSet>
 	<changeSet id="49" author="Vijaykumar.l">
 	<sql>
 	Delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'Total_Co_Applicants_Income';
@@ -5318,5 +5318,49 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="127" author="Vinay">
+		<createView viewName="querydetail_view" replaceIfExists="true">
+			SELECT t1.finreference,
+			    t1.id,
+			    s1.usrlogin,
+			    t1.raisedon,
+			    b1.description,
+			    t1.qrynotes,
+			    t1.status,
+			    t1.raisedby,
+			    b1.code AS categorycode,
+			    b1.description AS categorydescription,
+			    t1.categoryid,
+			    t1.assignedrole,
+			    t1.notifyto,
+			    t1.responsnotes,
+			    t1.responseby,
+			    s2.usrlogin AS responseuser,
+			    t1.responseon,
+			    t1.closernotes,
+			    t1.closerby,
+			    s3.usrlogin AS closeruser,
+			    t1.closeron,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			   FROM querydetail t1
+			     JOIN bmtquerycategories b1 ON t1.categoryid = b1.id
+			     JOIN secusers s1 ON t1.raisedby = s1.usrid
+			     LEFT JOIN secusers s2 ON t1.responseby = s2.usrid
+			     LEFT JOIN secusers s3 ON t1.closerby = s3.usrid
+		</createView>
+	</changeSet>
+	
+	<changeSet id="128" author="Vinay">
+		<modifyDataType tableName="querydetail" columnName="closernotes" newDataType="VARCHAR(2000)"/>
+	</changeSet>
 </databaseChangeLog>
 	
