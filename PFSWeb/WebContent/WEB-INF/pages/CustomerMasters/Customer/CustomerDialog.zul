@@ -1044,6 +1044,10 @@
 												label="${c:l('listheader_Nationality.label')}" sort="false"
 												hflex="min" />
 											<listheader
+												id="listheader_Director"
+												label="${c:l('listheader_Director.label')}" sort="auto"
+												hflex="min" />
+											<listheader
 												id="listheader_CustDirector_RecordStatus"
 												label="${c:l('listheader_RecordStatus.label')}" sort="false"
 												hflex="min" />

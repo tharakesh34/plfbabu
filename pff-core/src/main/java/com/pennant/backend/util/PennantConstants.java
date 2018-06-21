@@ -241,6 +241,7 @@ public class PennantConstants {
 	public static final String DOC_TYPE_MSG = "MSG";
 	public static final String DOC_TYPE_DOC = "DOC";
 	public static final String DOC_TYPE_DOCX = "DOCX";
+	public static final String DOC_TYPE_EXCEL = "EXCEL";
 	
 	public static final String DOC_TYPE_CODE_PHOTO = "CUSTPHOTO";
 	

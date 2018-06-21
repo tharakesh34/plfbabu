@@ -1243,6 +1243,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				docType = PennantConstants.DOC_TYPE_WORD;
 			} else if (media.getName().endsWith(".msg")) {
 				docType = PennantConstants.DOC_TYPE_MSG;
+			} else if (media.getName().endsWith(".xls") || media.getName().endsWith(".xlsx")) {
+				docType = PennantConstants.DOC_TYPE_EXCEL;
 			} else {
 				isSupported = false;
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
@@ -1256,7 +1258,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 				} else if (docType.equals(PennantConstants.DOC_TYPE_IMAGE)) {
 					this.finDocumentPdfView.setContent(media);
-				}else if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)) {
+				}else if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)  || 
+						docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
 					this.docDiv.getChildren().clear();
 					Html ageementLink = new Html();
 					ageementLink.setStyle("padding:10px;");
@@ -1270,7 +1273,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					this.docDiv.appendChild(ageementLink);
 				}
 
-				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)) {
+				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG) ||
+						docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
 					this.docDiv.setVisible(true);
 					this.finDocumentPdfView.setVisible(false);
 				}else{
@@ -1308,6 +1312,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		if(docType.equals(PennantConstants.DOC_TYPE_WORD)){
 			Filedownload.save(ddaImageData, "application/msword", this.documnetName.getValue());
 		}else if(docType.equals(PennantConstants.DOC_TYPE_MSG)){
+			Filedownload.save(ddaImageData, "application/octet-stream", this.documnetName.getValue());
+		}else if(docType.equals(PennantConstants.DOC_TYPE_EXCEL)){
 			Filedownload.save(ddaImageData, "application/octet-stream", this.documnetName.getValue());
 		}
 	}

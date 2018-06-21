@@ -35,5 +35,14 @@
 			alter table SeqJVPostingEntry  drop constraint seqjvpostingentry_pkey;
 		</sql>
 	</changeSet> 
+	
+	<changeSet id="2" author="Vinay">
+		<sql>
+			delete from ERRORDETAILS where code='CE0001';
+			delete from ERRORDETAILS where code='CE0002';
+			Insert into ERRORDETAILS values ('CE0001','EN','E','E-mail Details Must contain atleast one E-Mail with Very High priority!!!',null,'Approved',null,null,null,null,null,0,null,1000,0);
+			Insert into ERRORDETAILS values ('CE0002','EN','E','Director Details Must contain atleast two directors!!!',null,'Approved',null,null,null,null,null,0,null,1000,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
