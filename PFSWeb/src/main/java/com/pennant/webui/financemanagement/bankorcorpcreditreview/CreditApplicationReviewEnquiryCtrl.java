@@ -266,28 +266,23 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				
 				//getting co-applicant id's
 				coAppIds = jountAccountDetailDAO.getCustIdsByFinnRef(finReference);
-
+				custIds.add(this.custID.getValue());
+				
 				//Adding co-applicant id's
-				if(coAppIds != null && coAppIds.size() > 0){
+				if (coAppIds != null && coAppIds.size() > 0) {
 					for (JointAccountDetail jointAccountDetail : coAppIds) {
 						custIds.add(jointAccountDetail.getCustID());
 					}
-					
-					//getting audit years from credit review details 
-					custIds.add(this.custID.getValue());
-					auditYears = creditApplicationReviewDAO.getAuditYearsByCustId(custIds);
-					
-					customerBankInfo = customerBankInfoService.getSumOfAmtsCustomerBankInfoByCustId(custIds);
-					sumOfEMI = customerExtLiabilityService.getSumAmtCustomerExtLiabilityById(custIds);
-					
-					custIds.remove(this.custID.getValue());
-					
-					//Fill Customer details from co-applicants 
-					doFillCustomerDetails(auditYears);
-				}else{
-					customerBankInfo = customerBankInfoService.getSumOfAmtsCustomerBankInfoByCustId(custIds);
-					sumOfEMI = customerExtLiabilityService.getSumAmtCustomerExtLiabilityById(custIds);
 				}
+				
+				//getting audit years from credit review details 
+				auditYears = creditApplicationReviewDAO.getAuditYearsByCustId(custIds);
+				customerBankInfo = customerBankInfoService.getSumOfAmtsCustomerBankInfoByCustId(custIds);
+				sumOfEMI = customerExtLiabilityService.getSumAmtCustomerExtLiabilityById(custIds);
+				custIds.remove(this.custID.getValue());
+				
+				//Fill Customer details from co-applicants 
+				doFillCustomerDetails(auditYears);
 				
 				this.toYear.setValue(Integer.parseInt(maxAuditYear));
 				year = this.toYear.getValue();

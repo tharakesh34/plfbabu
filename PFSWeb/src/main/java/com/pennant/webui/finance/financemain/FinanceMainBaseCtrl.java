@@ -1722,7 +1722,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		appendStageAccountingDetailsTab(onLoad);
 
 		//Credit Review Tab
-		if (StringUtils.equals(isCreditRevTabReq, PennantConstants.YES)) {
+		if (StringUtils.equals(isCreditRevTabReq, PennantConstants.YES) && 
+				!StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, financeDetail.getCustomerDetails().getCustomer().getCustCtgCode())) {
 			appendCreditReviewDetailTab(false);
 		}
 
@@ -15329,7 +15330,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Credit Review Details
 		if (StringUtils.equals(isCreditRevTabReq, PennantConstants.YES)) {
-			if (customer.getCustID() != 0) {
+			if (customer.getCustID() != 0 && 
+					!StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, financeDetail.getCustomerDetails().getCustomer().getCustCtgCode())) {
 				appendCreditReviewDetailTab(false);
 			}
 		}
