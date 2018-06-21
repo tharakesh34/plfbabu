@@ -3966,7 +3966,7 @@ UNION ALL
  		update data_engine_config set filenameformat = null where name in ('GL_TRANSACTION_EXPORT','GL_TRANSACTION_SUMMARY_EXPORT');		
 		</sql>
 	</changeSet>
-	<changeSet id="107" author="Sriram">
+	<changeSet id="107.1" author="Sriram" dbms="oracle">
 		<createView viewName="TRIAL_BALANCE_REPORT_FILE_VIEW" replaceIfExists="true">
 		SELECT 	ID,COUNTRY,
 		       	PROVINCE,
@@ -3985,6 +3985,47 @@ UNION ALL
 		FROM 	TRIAL_BALANCE_REPORT_FILE TBRF LEFT JOIN
       			RMTCOUNTRYVSPROVINCE RMT ON RMT.CPPROVINCE = TBRF.PROVINCE
 	  		order by  ID
+		</createView>
+	</changeSet>
+	<changeSet id="107.2" author="Sriram" dbms="postgresql">
+		<createView viewName="TRIAL_BALANCE_REPORT_FILE_VIEW" replaceIfExists="true">
+		SELECT 	ID,COUNTRY,
+		       	PROVINCE,
+           		CPPROVINCENAME AS STATE,
+		   		ACTYPEGRPID,
+           		TBRF.ACCOUNT,
+		   		TBRF.HOSTACCOUNT,
+		   		DESCRIPTION,
+		   		OPENINGBAL,
+		   		OPENINGBALTYPE,
+		   		DEBITAMOUNT,
+		   		CREDITAMOUNT,
+		   		CLOSINGBAL,
+		   		CLOSINGBALTYPE,
+		   		FINTYPE AS PRODUCTFLAG
+		FROM 	TRIAL_BALANCE_REPORT_FILE TBRF LEFT JOIN
+      			RMTCOUNTRYVSPROVINCE RMT ON RMT.CPPROVINCE = TBRF.PROVINCE
+	  		order by  ID
+		</createView>
+	</changeSet>
+	<changeSet id="107.3" author="Sriram" dbms="mssql">
+		<createView viewName="TRIAL_BALANCE_REPORT_FILE_VIEW" replaceIfExists="true">
+		SELECT 	ID,COUNTRY,
+		       	PROVINCE,
+           		CPPROVINCENAME AS STATE,
+		   		ACTYPEGRPID,
+           		TBRF.ACCOUNT,
+		   		TBRF.HOSTACCOUNT,
+		   		DESCRIPTION,
+		   		OPENINGBAL,
+		   		OPENINGBALTYPE,
+		   		DEBITAMOUNT,
+		   		CREDITAMOUNT,
+		   		CLOSINGBAL,
+		   		CLOSINGBALTYPE,
+		   		FINTYPE AS PRODUCTFLAG
+		FROM 	TRIAL_BALANCE_REPORT_FILE TBRF LEFT JOIN
+      			RMTCOUNTRYVSPROVINCE RMT ON RMT.CPPROVINCE = TBRF.PROVINCE
 		</createView>
 	</changeSet>
 	<changeSet id="108" author="Sriram">
@@ -4007,7 +4048,7 @@ UNION ALL
 			   	TRIAL_BALANCE_HEADER TBH ON TBH.ID = TBR.HEADERID
 		</createView>	  
 	</changeSet>
-	<changeSet id="109.2" author="Sriram">
+	<changeSet id="109.2" author="Sriram" dbms="oracle">
 	<comment>Removed semicolon</comment>
 		<createView viewName="TRIAL_BALANCE_CONSOLIDATE_VIEW" replaceIfExists="true">
 		SELECT ID,
@@ -4025,6 +4066,45 @@ UNION ALL
 		FROM   TRIAL_BALANCE_REPORT_FILE TBRF LEFT JOIN
      		   RMTCOUNTRYVSPROVINCE RMT ON RMT.CPPROVINCE = TBRF.PROVINCE
 	  	order by ID
+		</createView>
+	</changeSet>
+	<changeSet id="109.3" author="Sriram" dbms="postgresql">
+	<comment>Removed semicolon</comment>
+		<createView viewName="TRIAL_BALANCE_CONSOLIDATE_VIEW" replaceIfExists="true">
+		SELECT ID,
+		   	   ACTYPEGRPID,
+	           TBRF.ACCOUNT,
+			   TBRF.HOSTACCOUNT,
+			   DESCRIPTION,
+			   OPENINGBAL,
+			   OPENINGBALTYPE,
+			   DEBITAMOUNT,
+			   CREDITAMOUNT,
+			   CLOSINGBAL,
+			   CLOSINGBALTYPE,
+			   FINTYPE
+		FROM   TRIAL_BALANCE_REPORT_FILE TBRF LEFT JOIN
+     		   RMTCOUNTRYVSPROVINCE RMT ON RMT.CPPROVINCE = TBRF.PROVINCE
+	  	order by ID
+		</createView>
+	</changeSet>
+	<changeSet id="109.4" author="Sriram" dbms="mssql">
+	<comment>Removed semicolon</comment>
+		<createView viewName="TRIAL_BALANCE_CONSOLIDATE_VIEW" replaceIfExists="true">
+		SELECT ID,
+		   	   ACTYPEGRPID,
+	           TBRF.ACCOUNT,
+			   TBRF.HOSTACCOUNT,
+			   DESCRIPTION,
+			   OPENINGBAL,
+			   OPENINGBALTYPE,
+			   DEBITAMOUNT,
+			   CREDITAMOUNT,
+			   CLOSINGBAL,
+			   CLOSINGBALTYPE,
+			   FINTYPE
+		FROM   TRIAL_BALANCE_REPORT_FILE TBRF LEFT JOIN
+     		   RMTCOUNTRYVSPROVINCE RMT ON RMT.CPPROVINCE = TBRF.PROVINCE
 		</createView>
 	</changeSet>
 	<changeSet id="110" author="Sriram">
