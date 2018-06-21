@@ -381,4 +381,10 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 		   ('ELGRULE','ELGRULE','RULE_LTVAMOUN', 'Maximum Loan Amount based on LTV','decimal',18,'1','1','','static,calvalue','');
 	 </sql>
 	</changeSet>
+	<changeSet id="21" author="SRINIVAS VARMA">
+	 <sql>
+		 insert into errordetails values('CE001','EN','E','Not Allowed to Create Customer age below {0}',null,'Approved',null,null,null,null,null,0,'2018-04-17 22:41:18.90172',1000,1)
+	 </sql>
+	 
+	 </changeSet>
 </databaseChangeLog>
