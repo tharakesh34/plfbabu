@@ -48,6 +48,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listgroupfoot;
@@ -131,6 +132,12 @@ public class DirectorDetailListModelItemRenderer implements ListitemRenderer<Dir
 			}else{
 			lc = new Listcell(directorDetail.getNationality());
 			}
+			lc.setParent(item);
+			lc = new Listcell();
+			final Checkbox director = new Checkbox();
+			director.setDisabled(true);
+			director.setChecked(directorDetail.isDirector());
+			lc.appendChild(director);
 			lc.setParent(item);
 			lc = new Listcell(directorDetail.getRecordStatus());
 			lc.setParent(item);
