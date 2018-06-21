@@ -3260,13 +3260,13 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 <changeSet id="72" author="SaiKrishna">
 	<comment>story #413 Allow scriptlet for extended fields</comment>
 	<addColumn tableName="extendedfielddetail">
-		<column name="scriptlet" type="varchar(8000)"/>
+		<column name="scriptlet" type="varchar(4000)"/>
 	</addColumn>
 </changeSet>
 <changeSet id="73" author="SaiKrishna">
 	<comment>story #413 Allow scriptlet for extended fields</comment>
 	<addColumn tableName="extendedfielddetail_temp">
-		<column name="scriptlet" type="varchar(8000)"/>
+		<column name="scriptlet" type="varchar(4000)"/>
 	</addColumn>
 </changeSet>
 <changeSet id="72" author="Manoj">
