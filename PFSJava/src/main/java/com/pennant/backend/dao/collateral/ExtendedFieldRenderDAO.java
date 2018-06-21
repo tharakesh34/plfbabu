@@ -32,4 +32,6 @@ public interface ExtendedFieldRenderDAO {
 	List<Map<String, Object>> getExtendedFieldMap(long id, String tableName, String type);
 
 	List<Map<String, Object>> getExtendedFieldMapByVerificationId(long verificationId, String tableName);
+
+	String getCategory(String reference);
 }
