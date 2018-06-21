@@ -430,6 +430,7 @@ public class PennantJavaUtil {
 	private final static String WF_VERIFICATION_LV="VERIFICATION_LV";
 	private final static String WF_VERIFICATION_RCU="VERIFICATION_RCU";
 	private final static String PRESENTMENT_BATCH="PRESENTMENTBATCH";
+	private final static String GST_WF="GSTDETAILS";
 
 	public static String getLabel(String label) {
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
@@ -2136,7 +2137,7 @@ public class PennantJavaUtil {
 		"PaymentInstructions_AView" }, masterWF, new String[] {"PaymentType","PaymentAmount","BankCode","PaymentCCy"},null, 600));
 		
 		ModuleUtil.register("TaxDetail", new ModuleMapping("TaxDetail", TaxDetail.class, new String[] { "TAXDETAIL",
-		"TAXDETAIL_AView" }, masterWF, new String[] {"PCCity","PCCityName","CountryCode","CountryDesc","EntityCode","EntityDesc","CPProvince","CPProvinceName","ZipCode"},null, 600));
+		"TAXDETAIL_AView" }, GST_WF, new String[] {"PCCity","PCCityName","CountryCode","CountryDesc","EntityCode","EntityDesc","CPProvince","CPProvinceName","ZipCode"},null, 600));
 		
 		ModuleUtil.register("FileBatchStatus", new ModuleMapping("FileBatchStatus", FileBatchStatus.class, new String[] { "FileBatchStatus",
 		"FileBatchStatus_AView" }, null, new String[] {"Id","FileName"},null, 600));
