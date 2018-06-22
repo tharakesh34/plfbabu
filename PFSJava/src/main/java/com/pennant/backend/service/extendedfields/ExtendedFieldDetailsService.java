@@ -59,6 +59,79 @@ public class ExtendedFieldDetailsService {
 	private ExtendedFieldDetailsValidation	extendedFieldDetailsValidation;
 	private AuditHeaderDAO					auditHeaderDAO;
 
+	public List<Map<String, ExtendedFieldData>> getExtendedFildValueLableMap(String tableName, String reference, String tableType) {
+		logger.debug("Entering");
+
+		ExtendedFieldHeader fieldHeader = getExtendedFieldHeader(tableName);
+
+		if (fieldHeader == null) {
+			return null;
+		}
+
+		List<ExtendedFieldDetail> fieldDetailsList = fieldHeader.getExtendedFieldDetails();
+		if (fieldDetailsList != null && !fieldDetailsList.isEmpty()) {
+			return null;
+		}
+
+		List<Map<String, Object>> fiildValueMap = extendedFieldRenderDAO.getExtendedFieldMap(reference, tableName, tableType);
+
+		List<Map<String, ExtendedFieldData>> resultList = new ArrayList<>();
+
+		if (fiildValueMap != null && !fiildValueMap.isEmpty()) {
+			for (Map<String, Object> map : fiildValueMap) {
+				resultList.add(getResultMap(fieldDetailsList, map));
+			}
+		}
+		logger.debug("Leaving");
+		return resultList;
+	}
+
+	private Map<String, ExtendedFieldData> getResultMap(List<ExtendedFieldDetail> fieldDetailsList, Map<String, Object> map) {
+		Map<String, ExtendedFieldData> resultMap = new HashMap<>();
+		ExtendedFieldData extendedFieldData = null;
+
+		for (ExtendedFieldDetail detail : fieldDetailsList) {
+			if (map.containsKey(detail.getFieldName())) {
+				extendedFieldData = new ExtendedFieldData();
+				extendedFieldData.setFieldValue(map.get(detail.getFieldName()));
+				extendedFieldData.setFieldName(detail.getFieldName());
+				extendedFieldData.setFieldType(detail.getFieldType());
+				extendedFieldData.setFieldLabel(detail.getFieldLabel());
+				resultMap.put(detail.getFieldName(), extendedFieldData);
+			}
+		}
+		return resultMap;
+	}
+
+	private ExtendedFieldHeader getExtendedFieldHeader(String tableName) {
+
+		String[] strings = StringUtils.split(tableName, "_");
+		boolean isLoan = false;
+		String moduleName = null;
+		String subModuleName = null;
+		String eventCode = null;
+		int extendedType = ExtendedFieldConstants.EXTENDEDTYPE_EXTENDEDFIELD;
+
+		if (strings.length >= 3) {
+			moduleName = strings[0];
+			if (ExtendedFieldConstants.MODULE_LOAN.equalsIgnoreCase(moduleName)) {
+				isLoan = true;
+			}
+			if (ExtendedFieldConstants.MODULE_VERIFICATION.equalsIgnoreCase(moduleName)) {
+				extendedType = ExtendedFieldConstants.EXTENDEDTYPE_TECHVALUATION;
+			}
+			subModuleName = strings[1];
+			if (isLoan) {
+				eventCode = strings[2];
+			}
+		}
+
+		ExtendedFieldHeader extFldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(moduleName, subModuleName, eventCode, "_AView");
+		if (extFldHeader != null) {
+			extFldHeader.setExtendedFieldDetails(extendedFieldDetailDAO .getExtendedFieldDetailById(extFldHeader.getModuleId(), extendedType, "_AView"));
+		}
+		return extFldHeader;
+	}
 	
 	public List<Map<String, Object>> getExtendedFildValueMap(String reference) {
 		logger.debug("Entering");
