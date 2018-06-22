@@ -3086,7 +3086,7 @@ public class ScheduleCalculator {
 			if (finMain.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
 				BigDecimal tdsAmount = (curSchd.getProfitSchd().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
 						RoundingMode.HALF_DOWN);
-				CalculationUtil.roundAmount(tdsAmount, tdsRoundMode, tdsRoundingTarget);
+				tdsAmount = CalculationUtil.roundAmount(tdsAmount, tdsRoundMode, tdsRoundingTarget);
 				curSchd.setTDSAmount(tdsAmount);
 			}
 
