@@ -3222,8 +3222,14 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 	</sql>
 </changeSet>
 <changeSet id="65" author="Vinay" dbms="oracle">
-	<sql>
-		alter sequence seqfinliabilityreq restart start with (Select max(id) from (Select max(id)+1 id from FinLiabilityReq UNION select max(id)+1 id from FinLiabilityReq_Temp)T));
+	<sql splitStatements="false">
+		declare st varchar2(200);
+ 				nu integer;
+		begin
+		   Select Coalesce(max(id),0) into nu from (Select max(id)+1 id from FinLiabilityReq UNION select max(id)+1 id from FinLiabilityReq_Temp)T;
+		   st:= 'ALTER SEQUENCE seqfinliabilityreq RESTART START WITH ' ||nu ;
+		      execute immediate st;
+		end;
 	</sql>
 </changeSet>
 
