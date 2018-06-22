@@ -30,7 +30,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="1" author="Siva">
+	<!-- <changeSet id="1" author="Siva">
 		<sql>
 			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_CGST_P','Bounce charge CGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
 			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_SGST_P','Bounce charge SGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
@@ -3222,14 +3222,8 @@ values ('CLRULE','CLRULE','custEmpType','Customer Employee Type','nvarchar',8,'0
 	</sql>
 </changeSet>
 <changeSet id="65" author="Vinay" dbms="oracle">
-	<sql splitStatements="false">
-		declare st varchar2(200);
- 				nu integer;
-		begin
-		   Select Coalesce(max(id),0) into nu from (Select max(id)+1 id from FinLiabilityReq UNION select max(id)+1 id from FinLiabilityReq_Temp)T;
-		   st:= 'ALTER SEQUENCE seqfinliabilityreq RESTART START WITH ' ||nu ;
-		      execute immediate st;
-		end;
+	<sql>
+		alter sequence seqfinliabilityreq restart start with (Select max(id) from (Select max(id)+1 id from FinLiabilityReq UNION select max(id)+1 id from FinLiabilityReq_Temp)T));
 	</sql>
 </changeSet>
 
@@ -5376,6 +5370,22 @@ UNION ALL
 	<changeSet id="130" author="Vinay">
 		<createSequence sequenceName="SeqQUERYDETAIL" startValue="1" incrementBy="1"/>
 	</changeSet>
-	
+	 -->
+	<changeSet id="131" author="Vinay">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_FinanceManagement_FinanceTaxDetailUpload','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_VIEW') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetailUpload'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetailUpload'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetailUpload'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LAP_SSO') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetailUpload'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	

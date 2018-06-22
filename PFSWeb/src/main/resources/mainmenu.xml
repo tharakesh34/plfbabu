@@ -740,7 +740,7 @@
 		<menu id="menu_Category_ExternalUplaods" rightName="menuCat_SystemMaster">
 			<menuItem id="menu_Item_FinanceTaxDetailUpload"
 				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinTaxUploadDetailList.zul"
-				rightName="menuItem_FinanceManagement_FinanceTaxDetail" />
+				rightName="menuItem_FinanceManagement_FinanceTaxDetailUpload" />
 			<menuItem id="menu_Item_PostingDownloads"
 				zulNavigation="/WEB-INF/pages/InterfaceBajaj/PostingsDownloadCtrl.zul"
 				rightName="menuItem_SystemMaster_AddressType" />
