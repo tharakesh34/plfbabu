@@ -5362,5 +5362,14 @@ UNION ALL
 	<changeSet id="128" author="Vinay">
 		<modifyDataType tableName="querydetail" columnName="closernotes" newDataType="VARCHAR(2000)"/>
 	</changeSet>
+	
+	<changeSet id="129" author="Vinay">
+		<dropTable tableName="SeqQUERYDETAIL"/>
+	</changeSet>
+	
+	<changeSet id="130" author="Vinay">
+		<createSequence sequenceName="SeqQUERYDETAIL" startValue="1" incrementBy="1"/>
+	</changeSet>
+	
 </databaseChangeLog>
 	
