@@ -103,7 +103,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 */
 	@Override
 	public ExtendedFieldDetail getExtendedFieldDetailById(final long id,String name,  int extendedType, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
 		extendedFieldDetail.setId(id);
@@ -135,7 +135,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 			logger.warn("Exception: ", e);
 			extendedFieldDetail = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return extendedFieldDetail;
 	}
 
@@ -169,7 +169,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 */
 	@Override
 	public void delete(ExtendedFieldDetail extendedFieldDetail,String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 
 		StringBuilder deleteSql = new StringBuilder("Delete From ExtendedFieldDetail");
@@ -186,14 +186,14 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		}catch(DataAccessException e){
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Deletion of Extended Detail List of ExtendedDetail 
 	 */
 	public void deleteByExtendedFields(final long id,String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
 		extendedFieldDetail.setId(id);
 
@@ -205,7 +205,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -223,7 +223,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 */
 	@Override
 	public long save(ExtendedFieldDetail extendedFieldDetail,String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder insertSql =new StringBuilder("Insert Into ExtendedFieldDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -248,7 +248,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 			logger.debug("Exception: ", e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return extendedFieldDetail.getId();
 	}
 
@@ -266,7 +266,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 */
 	@Override
 	public void update(ExtendedFieldDetail extendedFieldDetail,String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		int recordCount = 0;
 		StringBuilder	updateSql =new StringBuilder("Update ExtendedFieldDetail");
@@ -295,12 +295,12 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public List<ExtendedFieldDetail> getExtendedFieldDetailById(long id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
 
 		extendedFieldDetail.setId(id);
@@ -333,7 +333,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 */
 	@Override
 	public List<ExtendedFieldDetail> getExtendedFieldDetailBySubModule(String subModule, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
 		extendedFieldDetail.setLovDescSubModuleName(subModule);
@@ -360,7 +360,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 	@Override
 	public List<ExtendedFieldDetail> getExtendedFieldNameById(long id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
 		extendedFieldDetail.setId(id);
@@ -386,7 +386,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 */
 	@Override
 	public void alter(ExtendedFieldDetail fieldDetail, String type, boolean drop, boolean recreate, boolean isAudit) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		//fieldDetail.setLovDescErroDesc(null);
 		StringBuilder syntax = new StringBuilder();
@@ -456,9 +456,11 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 			
 			if (!ExtendedFieldConstants.FIELDTYPE_BOOLEAN.equals(fieldDetail.getFieldType())
 					&& PennantConstants.RECORD_TYPE_UPD.equals(fieldDetail.getRecordType())
-					&& App.DATABASE == Database.POSTGRES) {
-				sql.append(" TYPE ");
-			}
+					&& App.DATABASE == Database.POSTGRES
+					&& (!ExtendedFieldConstants.FIELDTYPE_BASERATE.equals(fieldDetail.getFieldType())
+							&& !ExtendedFieldConstants.FIELDTYPE_PHONE.equals(fieldDetail.getFieldType()))) {
+				 sql.append(" TYPE ");
+			 }
 			
 			sql.append(getDatatype(fieldDetail));
 			logger.debug("SQL: " + sql.toString());
@@ -480,7 +482,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private String getDatatype(ExtendedFieldDetail fieldDetail) {
@@ -601,13 +603,25 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				datatype.append(fieldDetail.getFieldName()); 
 				datatype.append("_MR number(13,9) ) "); 
 			} else if (App.DATABASE == Database.POSTGRES) {
-				datatype.append("_BR varchar(8) , "); 
+				datatype.append("_BR  "); 
+				if (!ExtendedFieldConstants.FIELDTYPE_BOOLEAN.equals(fieldDetail.getFieldType())
+						&& PennantConstants.RECORD_TYPE_UPD.equals(fieldDetail.getRecordType())){
+					datatype.append("TYPE varchar(8) , "); 
+					datatype.append(" alter "); 
+					datatype.append(fieldDetail.getFieldName()+"_SR "); 
+					datatype.append("TYPE varchar(8) , "); 
+					datatype.append(" alter "); 
+					datatype.append(fieldDetail.getFieldName()+"_MR "); 
+					datatype.append("TYPE decimal(13,9) ");
+				}else{
+				datatype.append("varchar(8)  "); 
 				datatype.append(" add "); 
 				datatype.append(fieldDetail.getFieldName()); 
 				datatype.append("_SR varchar(8) , "); 
 				datatype.append(" add "); 
 				datatype.append(fieldDetail.getFieldName()); 
-				datatype.append("_MR decimal(13,9) ");  
+				datatype.append("_MR decimal(13,9) ");
+				}
 			} else {
 				datatype.append("_BR varchar(8) , "); 
 				datatype.append(fieldDetail.getFieldName()); 
@@ -631,13 +645,25 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				datatype.append(fieldDetail.getFieldName()); 
 				datatype.append("_SC varchar2(8) ) "); 
 			} else if (App.DATABASE == Database.POSTGRES) {
-				datatype.append("_CC varchar(4) , "); 
-				datatype.append(" add "); 
-				datatype.append(fieldDetail.getFieldName()); 
-				datatype.append("_AC varchar(4) , "); 
-				datatype.append(" add ");
-				datatype.append(fieldDetail.getFieldName()); 
-				datatype.append("_SC varchar(8) "); 
+				datatype.append("_CC "); 
+				if (!ExtendedFieldConstants.FIELDTYPE_BOOLEAN.equals(fieldDetail.getFieldType())
+						&& PennantConstants.RECORD_TYPE_UPD.equals(fieldDetail.getRecordType())) {
+					datatype.append("TYPE varchar(4) , ");
+					datatype.append(" alter "); 
+					datatype.append(fieldDetail.getFieldName()+"_AC "); 
+					datatype.append("TYPE varchar(4) , "); 
+					datatype.append(" alter ");
+					datatype.append(fieldDetail.getFieldName()+"_SC "); 
+					datatype.append("TYPE varchar(8) "); 
+				} else {
+					datatype.append("varchar(4) , ");
+					datatype.append(" add ");
+					datatype.append(fieldDetail.getFieldName());
+					datatype.append("_AC varchar(4) , ");
+					datatype.append(" add ");
+					datatype.append(fieldDetail.getFieldName());
+					datatype.append("_SC varchar(8) ");
+				}
 			} else {
 				datatype.append("_CC varchar(4) , "); 
 				datatype.append(fieldDetail.getFieldName()); 
@@ -652,7 +678,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 	@Override
 	public void saveAdditional(final String id, HashMap<String, Object> mappedValues, String type, String tableName) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder insertSql = new StringBuilder(" INSERT INTO "+tableName);
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -677,13 +703,13 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		insertSql.append(" (".concat(columnames).concat(") values (").concat(columnValues).concat(")"));
 		logger.debug("insertSql: " + insertSql.toString());
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), mappedValues);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 	
 	@Override
 	public void saveAdditional(String primaryKeyColumn, final Serializable id, HashMap<String, Object> mappedValues, String type, String tableName) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder(" INSERT INTO "+tableName);
 		sql.append(StringUtils.trimToEmpty(type));
@@ -708,7 +734,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		sql.append(" (").append(columnames).append(") values (").append(columnValues).append(")");
 		logger.debug("insertSql: " + sql.toString());
 		this.namedParameterJdbcTemplate.update(sql.toString(), mappedValues);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 	
@@ -717,7 +743,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 */
 	@Override
 	public Map<String, Object> retrive(String tableName,String id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Map<String, Object> map = new HashMap<String, Object>();
 		StringBuilder selectSql = new StringBuilder("Select * from "+tableName);
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -741,7 +767,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return map;
 	}
 
@@ -750,7 +776,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 */
 	@Override
 	public Map<String, Object> retrive(String tableName, String primaryKeyColumn, Serializable id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		Map<String, Object> map = new HashMap<String, Object>();
 
@@ -783,7 +809,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return map;
 	}
 
@@ -792,7 +818,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 */
 	@Override
 	public boolean isExist(String tableName,String id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder selectSql = new StringBuilder("Select FinReference from "+tableName);
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -813,7 +839,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 */
 	@Override
 	public boolean isExist(String tableName, String primaryKeyColumn,  Serializable id,  String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		
@@ -839,7 +865,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 	@Override
 	public void updateAdditional(HashMap<String, ?> mappedValues,final String id, String type,String tableName) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder insertSql = new StringBuilder(" UPDATE "+tableName);
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -858,12 +884,12 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		logger.debug("insertSql: " + insertSql.toString());
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), mappedValues);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	@Override
 	public void updateAdditional(String primaryKeyColumn, final Serializable id, HashMap<String, Object> mappedValues, String type, String tableName) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		StringBuilder insertSql = new StringBuilder(" UPDATE "+tableName);
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -882,7 +908,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), mappedValues);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -898,30 +924,30 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 * 
 	 */
 	public void deleteAdditional(final String id,String tableName,String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		StringBuilder deleteSql = new StringBuilder("Delete From "+tableName);
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" where FinReference ='" + id +"'");
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		this.namedParameterJdbcTemplate.getJdbcOperations().update(deleteSql.toString());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	public void deleteAdditional(String primaryKeyColumn, final Serializable id, String type, String tableName) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		StringBuilder deleteSql = new StringBuilder("Delete From "+tableName);
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" where "+primaryKeyColumn+" ='" + id +"'");
 		
 		logger.debug("deleteSql: " + deleteSql.toString());
 		this.namedParameterJdbcTemplate.getJdbcOperations().update(deleteSql.toString());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void revertColumn(ExtendedFieldDetail efd) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Delete From ExtendedFieldDetail_Temp");
@@ -933,13 +959,13 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	@Override
 	public List<ExtendedFieldDetail> getExtendedFieldDetailById(long id, int extendedType, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
 
 		extendedFieldDetail.setId(id);
@@ -964,7 +990,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
 		RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				ExtendedFieldDetail.class);
-
+		logger.debug(Literal.LEAVING);
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 
