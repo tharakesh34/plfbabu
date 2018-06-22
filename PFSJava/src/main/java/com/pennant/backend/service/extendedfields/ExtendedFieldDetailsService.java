@@ -85,6 +85,33 @@ public class ExtendedFieldDetailsService {
 		logger.debug("Leaving");
 		return resultList;
 	}
+	
+	public List<ExtendedFieldData> getExtendedFildValueLableList(String tableName, String reference, String tableType) {
+		logger.debug("Entering");
+		
+		ExtendedFieldHeader fieldHeader = getExtendedFieldHeader(tableName);
+		
+		if (fieldHeader == null) {
+			return null;
+		}
+		
+		List<ExtendedFieldDetail> fieldDetailsList = fieldHeader.getExtendedFieldDetails();
+		if (fieldDetailsList != null && !fieldDetailsList.isEmpty()) {
+			return null;
+		}
+		
+		List<Map<String, Object>> fiildValueMap = extendedFieldRenderDAO.getExtendedFieldMap(reference, tableName, tableType);
+		
+		List<ExtendedFieldData> resultList = new ArrayList<>();
+		
+		if (fiildValueMap != null && !fiildValueMap.isEmpty()) {
+			for (Map<String, Object> map : fiildValueMap) {
+				resultList.add(getExtendedFieldData(fieldDetailsList, map));
+			}
+		}
+		logger.debug("Leaving");
+		return resultList;
+	}
 
 	private Map<String, ExtendedFieldData> getResultMap(List<ExtendedFieldDetail> fieldDetailsList, Map<String, Object> map) {
 		Map<String, ExtendedFieldData> resultMap = new HashMap<>();
@@ -101,6 +128,21 @@ public class ExtendedFieldDetailsService {
 			}
 		}
 		return resultMap;
+	}
+	
+	private ExtendedFieldData getExtendedFieldData(List<ExtendedFieldDetail> fieldDetailsList, Map<String, Object> map) {
+		ExtendedFieldData extendedFieldData = null;
+		
+		for (ExtendedFieldDetail detail : fieldDetailsList) {
+			if (map.containsKey(detail.getFieldName())) {
+				extendedFieldData = new ExtendedFieldData();
+				extendedFieldData.setFieldValue(map.get(detail.getFieldName()));
+				extendedFieldData.setFieldName(detail.getFieldName());
+				extendedFieldData.setFieldType(detail.getFieldType());
+				extendedFieldData.setFieldLabel(detail.getFieldLabel());
+			}
+		}
+		return extendedFieldData;
 	}
 
 	private ExtendedFieldHeader getExtendedFieldHeader(String tableName) {
