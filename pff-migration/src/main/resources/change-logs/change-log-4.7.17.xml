@@ -30,7 +30,7 @@
 		</sql>
 	</changeSet>
 	
-	<!-- <changeSet id="1" author="Siva">
+	<changeSet id="1" author="Siva">
 		<sql>
 			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_CGST_P','Bounce charge CGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
 			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_SGST_P','Bounce charge SGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
@@ -5370,7 +5370,7 @@ UNION ALL
 	<changeSet id="130" author="Vinay">
 		<createSequence sequenceName="SeqQUERYDETAIL" startValue="1" incrementBy="1"/>
 	</changeSet>
-	 -->
+	
 	<changeSet id="131" author="Vinay">
 		<sql>
 			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
