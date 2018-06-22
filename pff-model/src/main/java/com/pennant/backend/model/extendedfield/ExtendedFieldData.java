@@ -20,9 +20,12 @@ public class ExtendedFieldData implements Serializable {
 
 	@XmlElement
 	private String fieldName;
-	
+
 	@XmlElement
 	private Object fieldValue;
+
+	private String fieldLabel;
+	private String fieldType;
 
 	public ExtendedFieldData() {
 
@@ -42,5 +45,21 @@ public class ExtendedFieldData implements Serializable {
 
 	public void setFieldValue(Object fieldValue) {
 		this.fieldValue = fieldValue;
+	}
+
+	public String getFieldLabel() {
+		return fieldLabel;
+	}
+
+	public void setFieldLabel(String fieldLabel) {
+		this.fieldLabel = fieldLabel;
+	}
+
+	public String getFieldType() {
+		return fieldType;
+	}
+
+	public void setFieldType(String fieldType) {
+		this.fieldType = fieldType;
 	}
 }
