@@ -607,7 +607,10 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 						new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm1, valueParm1), usrLanguage));
 			}*/
 		}
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		List<ErrorDetail> errorDetails =ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage);
+		if(errorDetails!=null){
+			auditDetail.setErrorDetails(errorDetails );
+		}
 
 		if (StringUtils.trimToEmpty(method).equals("doApprove") || !mandate.isWorkflow()) {
 			auditDetail.setBefImage(befMandate);
