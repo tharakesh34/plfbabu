@@ -1485,7 +1485,7 @@ public class PennantJavaUtil {
 				null, 300));
 		
 		ModuleUtil.register("FinanceTaxDetail", new ModuleMapping("FinanceTaxDetail", FinanceTaxDetail.class, new String[] { "FinTaxDetail",
-				"FinTaxDetail_AView" }, finMaintainWF, new String[] {"FinReference","ApplicableFor","TaxExempted","TaxNumber","City","PinCode"},null, 600));
+				"FinTaxDetail_AView" }, GST_WF, new String[] {"FinReference","ApplicableFor","TaxExempted","TaxNumber","City","PinCode"},null, 600));
 		
 		ModuleUtil.register("FinTaxUploadHeader", new ModuleMapping("FinTaxUploadHeader", FinTaxUploadHeader.class, new String[] { "FinTaxUploadHeader",
 		"FinTaxUploadHeader_AView" }, gstFileUplod, new String[] {"batchReference","taxCode"},null, 300));
@@ -2137,7 +2137,7 @@ public class PennantJavaUtil {
 		"PaymentInstructions_AView" }, masterWF, new String[] {"PaymentType","PaymentAmount","BankCode","PaymentCCy"},null, 600));
 		
 		ModuleUtil.register("TaxDetail", new ModuleMapping("TaxDetail", TaxDetail.class, new String[] { "TAXDETAIL",
-		"TAXDETAIL_AView" }, GST_WF, new String[] {"PCCity","PCCityName","CountryCode","CountryDesc","EntityCode","EntityDesc","CPProvince","CPProvinceName","ZipCode"},null, 600));
+		"TAXDETAIL_AView" }, masterWF, new String[] {"PCCity","PCCityName","CountryCode","CountryDesc","EntityCode","EntityDesc","CPProvince","CPProvinceName","ZipCode"},null, 600));
 		
 		ModuleUtil.register("FileBatchStatus", new ModuleMapping("FileBatchStatus", FileBatchStatus.class, new String[] { "FileBatchStatus",
 		"FileBatchStatus_AView" }, null, new String[] {"Id","FileName"},null, 600));
