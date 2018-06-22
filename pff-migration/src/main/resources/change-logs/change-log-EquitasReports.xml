@@ -472,4 +472,90 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 			</column>
 	 	</createTable>
 	 </changeSet>
+	 
+	 <changeSet id="28" author="Manoj">
+	 	<createView viewName="PslDetails_view" replaceIfExists="true">
+	 		SELECT 
+		 		t1.FinReference,
+			    t1.WeakerSection,
+			    t1.LandHolding,
+			    t1.LandArea,
+			    t1.Sector,
+			    t1.Amount,
+			    t1.SubCategory,
+			    t1.Purpose,
+			    t1.EndUse,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+  			 FROM PslDetails_Temp t1
+		     LEFT JOIN PSLWeakerSection t2 ON t2.Code = t1.WeakerSection
+		     LEFT JOIN PSLPurpose t3 ON t3.Code = t1.Purpose
+			 LEFT JOIN PSLEndUse t4 ON t4.Code = t1.EndUse
+		UNION ALL
+		SELECT 
+			t1.FinReference,
+		    t1.WeakerSection,
+		    t1.LandHolding,
+		    t1.LandArea,
+		    t1.Sector,
+		    t1.Amount,
+		    t1.SubCategory,
+		    t1.Purpose,
+		    t1.EndUse,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid
+		   FROM PslDetails t1
+		    LEFT JOIN PSLWeakerSection t2 ON t2.Code = t1.WeakerSection
+		     LEFT JOIN PSLPurpose t3 ON t3.Code = t1.Purpose
+			 LEFT JOIN PSLEndUse t4 ON t4.Code = t1.EndUse
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM PslDetails_Temp
+		          WHERE PslDetails_Temp.FinReference = t1.FinReference))
+	 	</createView>
+	 </changeSet> 
+	 
+	 <changeSet id="29" author="Manoj">
+	 	<createView viewName="PslDetails_Aview" replaceIfExists="true">
+	 		 SELECT t1.FinReference,
+    		t1.WeakerSection,
+		    t1.LandHolding,
+		    t1.LandArea,
+		    t1.Sector,
+		    t1.Amount,
+		    t1.SubCategory,
+		    t1.Purpose,
+		    t1.EndUse,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid
+  			 FROM PslDetails t1
+    		 LEFT JOIN PSLWeakerSection t2 ON t2.Code = t1.WeakerSection
+     		LEFT JOIN PSLPurpose t3 ON t3.Code = t1.Purpose
+	 		LEFT JOIN PSLEndUse t4 ON t4.Code = t1.EndUse
+	 	</createView>
+	 </changeSet>
+	 
 </databaseChangeLog>
