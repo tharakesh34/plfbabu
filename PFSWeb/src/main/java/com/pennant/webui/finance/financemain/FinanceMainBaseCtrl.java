@@ -15062,7 +15062,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		
 		detail.getCustomerEligibilityCheck().getExtendedValue("COLLATERAL_TYPES");		
 		detail.getCustomerEligibilityCheck().addExtendedField("maturityAge", maturityAge);
-		detail.getCustomerEligibilityCheck().setCurrentAssetValue(financeMain.getFinCurrAssetValue());
+		detail.getCustomerEligibilityCheck().setCurrentAssetValue(this.finAssetValue.getActualValue());
 		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Margin", customer.isMarginDeviation());
 		detail.getCustomerEligibilityCheck().addExtendedField("CUSTOMER_MARGIN_DEVIATION",customer.isMarginDeviation());	
 		
