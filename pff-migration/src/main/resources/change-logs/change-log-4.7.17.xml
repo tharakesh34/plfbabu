@@ -6541,5 +6541,13 @@ UNION ALL
 			<column name="createdon" type="datetime" />
 		</createTable>
 	</changeSet>
+
+	<changeSet id="135" author="Ganesh.p">
+		<comment> Change the error message of Disbursment date mismatch </comment>
+		<sql>
+			Update Errordetails SET Message = 'Scheduled Disbursement date and Disbursement date should be same.' where code = '65032';
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 	

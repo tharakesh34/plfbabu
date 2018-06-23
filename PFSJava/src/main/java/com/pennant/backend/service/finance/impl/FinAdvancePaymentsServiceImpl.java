@@ -426,14 +426,17 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				}
 			}
 		}
-		//validation related to loanStartDate and first DisbursmentDate should be same.
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		//validation related to Scheduled Disbursement date And Disbursement date should be same.
 		boolean noValidation = isnoValidationUserAction(financeDetail.getUserAction());
 		if (!noValidation && !isDeleteRecord(finAdvancePay) && !finAdvancePay.ispOIssued()) {
-			if (finAdvancePay.getPaymentSeq() == 1 && finAdvancePay.getLlDate() != null
-					&& DateUtility.compare(financeMain.getFinStartDate(), finAdvancePay.getLlDate()) != 0) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "65032", errParm, valueParm), usrLanguage));
+			List<FinanceDisbursement> finDisbursementDetails = financeDetail.getFinScheduleData().getDisbursementDetails();
+			for (FinanceDisbursement finDisbursmentDetail : finDisbursementDetails) {
+				if (finAdvancePay.getDisbSeq() == finDisbursmentDetail.getDisbSeq() && finAdvancePay.getLlDate() != null
+						&& DateUtility.compare(finDisbursmentDetail.getDisbDate(), finAdvancePay.getLlDate()) != 0) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "65032", errParm, valueParm), usrLanguage));
+				}
 			}
 		}
 
