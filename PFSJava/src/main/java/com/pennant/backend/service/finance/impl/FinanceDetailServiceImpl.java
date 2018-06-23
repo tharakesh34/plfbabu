@@ -1,32 +1,42 @@
-/**
- * Copyright 2011 - Pennant Technologies
- * 
- * This file is part of Pennant Java Application Framework and related Products. All
- * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
- * Technologies.
- * 
- * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
- * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
- * violation of copyright law.
- */
-
-/**
- ******************************************************************************************** 
- * FILE HEADER *
- ******************************************************************************************** 
- * * FileName : FinanceDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 15-11-2011 * *
- * Modified Date : 15-11-2011 * * Description : * *
- ******************************************************************************************** 
- * Date Author Version Comments *
- ******************************************************************************************** 
- * 15-11-2011 Pennant 0.1 * * * * * * * * *
- * 08-05-2018 Vinay   0.2  As per mail from Raju ,subject : Daily status call : 19 April  
- * 						   added validations in Disbursement and Covenant types
- ********************************************************************************************
- *16-05-2018 Madhu Babu 0.3******************
- *As per mail from Raju added the validations to proceed with loan approval and disbursement basd on PDD/OTC 
- *
-  * 13-06-2018       Siva					 0.4        Stage Accounting Modifications      * 
+/********************************************************************************************************************
+ * Copyright 2011 - Pennant Technologies																			*
+ * 																													*
+ * This file is part of Pennant Java Application Framework and related Products. All								*			
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant	*
+ * Technologies.																									*
+ * 																													*
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the	*
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a	*
+ * violation of copyright law.																						*
+ ******************************************************************************************************************** 
+ * FILE HEADER 																										*	
+ ******************************************************************************************************************** 
+ * * FileName : FinanceDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 15-11-2011     *
+ * Modified Date : 15-11-2011 * * Description : * *																	*	
+ ******************************************************************************************************************** 
+ * Date Author Version Comments 																					*
+ ********************************************************************************************************************
+ * 15-11-2011 Pennant 0.1 																							*
+ * 08-05-2018 Vinay   0.2  As per mail from Raju ,subject : Daily status call : 19 April							*			
+ * 						   added validations in Disbursement and Covenant types										*
+ ********************************************************************************************************************
+ *16-05-2018 Madhu Babu 0.3******************																		*
+ *As per mail from Raju added the validations to proceed with loan approval and disbursement basd on PDD/OTC 		*
+ *																													*
+ * 13-06-2018       Siva					 0.4        Stage Accounting Modifications      						* 
+ * 																													*
+ * 22-06-2018       Srinivas Varma		 	0.5        Post Hook Validation Implementation							*
+ *																													*
+ *																													* 
+ *																													*
+ *																													*
+ *																													*
+ *																													*
+ *																													*
+ *																													*
+ *																													*
+ *																													*
+ ********************************************************************************************************************
  */
 package com.pennant.backend.service.finance.impl;
 
@@ -230,6 +240,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
@@ -317,7 +328,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private DeviationHelper deviationHelper;
 	@Autowired
 	private AuthorizationLimitService authorizationLimitService;
-		
+	@Autowired(required=false)
+	private PostValidationHook financeDetailPostValidationHook;
+	
 	public FinanceDetailServiceImpl() {
 		super();
 	}
@@ -5554,7 +5567,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method, isWIF);
-
+		doPostHookValidation(auditHeader);
+		
 		String auditTranType = auditHeader.getAuditTranType();
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -6003,6 +6017,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Leaving");
 		return auditHeader;
 	}
+
+// ### 22-06-2018 -End
+
+		private void doPostHookValidation(AuditHeader auditHeader) {
+			if (financeDetailPostValidationHook != null) {
+				List<ErrorDetail> errorDetails = financeDetailPostValidationHook.validation(auditHeader);
+
+				if (errorDetails != null) {
+					errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
+					auditHeader.setErrorList(errorDetails);
+				}
+			}
+		}
+// ### 22-06-2018 -End
+		
+	
 /*
  * validates to allow for disbursements in case of Otc or PDD
  * 

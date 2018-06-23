@@ -624,5 +624,26 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
+	<!-- SnapShotConfiguration -->
+	<bean id="snapShotConfigurationDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotConfigurationDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="snapShotConditionsDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotConditionsDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<!-- SnapShotColumn -->
+	<bean id="snapShotColumnDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotColumnDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	
+	<bean name="snapShotService" class="com.pennant.eod.SnapShotService">
+       <property name="snapShotConfigurationDAO" ref="snapShotConfigurationDAO" />
+       <property name="snapShotConditionsDAO" ref="snapShotConditionsDAO" />
+       <property name="snapShotColumnDAO" ref="snapShotColumnDAO" />
+	   <property name="snapShotDataSource" ref="snapShotDatasource" />
+   </bean>
+	
 	
 </beans>
