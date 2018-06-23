@@ -557,5 +557,14 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 	 		LEFT JOIN PSLEndUse t4 ON t4.Code = t1.EndUse
 	 	</createView>
 	 </changeSet>
+
+	<changeSet id="30" author="Amarnath.t">
+		<sql>
+			INSERT INTO DATA_ENGINE_CONFIG VALUES ((Select max(id)+1 from
+			Data_engine_config),'DMS_ADD_DOC_JOB', 'DMS Document Calling Job', 0,
+			NULL, NULL, NULL, null , 0, 0, null, NULL, NULL, '', null, '', null,
+			0, NULL, null, '0 0/5 * * * ?', 0, NULL, 1, 1);
+		</sql>
+	</changeSet>
 	 
 </databaseChangeLog>

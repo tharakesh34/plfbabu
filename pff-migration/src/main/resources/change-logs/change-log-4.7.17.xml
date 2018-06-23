@@ -6411,5 +6411,49 @@ UNION ALL
 			workflowdetails);
 		</sql>
 	</changeSet>
+	<changeSet id="156" author="Amarnath.t">
+		<createTable tableName="dmsdocprocess">
+			<column name="id" type="int" defaultValue="0">
+				<constraints primaryKey="true" primaryKeyName="pk_dmsidentification" />
+			</column>
+			<column name="finreference" type="varchar(100)" />
+			<column name="docmodule" type="varchar(100)" />
+			<column name="docrefid" type="bigint" defaultValue="0" />
+			<column name="state" type="varchar(100)" />
+			<column name="status" type="varchar(100)" />
+			<column name="referenceid" type="varchar(100)" />
+			<column name="retryCount" type="int" defaultValue="0" />
+			<column name="customerCif" type="varchar(100)" />
+			<column name="docid" type="bigint" defaultValue="0" />
+			<column name="docCategory" type="varchar(100)" />
+			<column name="docDesc" type="varchar(100)" />
+			<column name="docExt" type="varchar(100)" />
+			<column name="lastMntOn" type="datetime" />
+			<column name="createdOn" type="datetime" />
+		</createTable>
+	</changeSet>
+	<changeSet id="157" author="Amarnath.t">
+		<createSequence sequenceName="seqdmsidentification" />
+	</changeSet>
+	<changeSet id="158" author="Amarnath.t">
+		<createTable tableName="dmsdocprocesslog">
+			<column name="id" type="integer" />
+			<column name="finreference" type="varchar(100)" />
+			<column name="docmodule" type="varchar(100)" />
+			<column name="docrefid" type="bigint" />
+			<column name="state" type="varchar(100)" />
+			<column name="status" type="varchar(100)" />
+			<column name="referenceid" type="varchar(100)" />
+			<column name="retrycount" type="integer" />
+			<column name="customercif" type="varchar(100)" />
+			<column name="docid" type="bigint" />
+			<column name="doccategory" type="varchar(100)" />
+			<column name="errorDesc" type="varchar(4000)" />
+			<column name="docDesc" type="varchar(100)" />
+			<column name="docExt" type="varchar(100)" />
+			<column name="lastmnton" type="datetime" />
+			<column name="createdon" type="datetime" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
 	
