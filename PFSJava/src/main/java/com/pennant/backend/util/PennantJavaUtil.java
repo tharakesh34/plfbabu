@@ -431,6 +431,13 @@ public class PennantJavaUtil {
 	private final static String WF_VERIFICATION_RCU="VERIFICATION_RCU";
 	private final static String PRESENTMENT_BATCH="PRESENTMENTBATCH";
 	private final static String GST_WF="GSTDETAILS";
+	private final static String costCenters_WF="COSTCENTERS";
+	private final static String profitCenters_WF="PROFITCENTERS";
+	private final static String transactionCodes_WF="TRANSACTIONCODES";
+	private final static String acnTypeGrps_WF="ACNTYPEGRPS";
+	private final static String acnTypes_WF="ACNTYPES";
+	private final static String acntingSet_WF="ACNTINGSET";
+	private final static String hostGLMapping_WF="HOSTGLMAPPING";
 
 	public static String getLabel(String label) {
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
@@ -641,7 +648,7 @@ public class PennantJavaUtil {
 				new String[] { "BMTAggrementDef", "BMTAggrementDef_AView" }, masterWF, new String[] {"AggCode",
 						"AggName" }, null, 450));
 		ModuleUtil.register("AccountTypeGroup", new ModuleMapping("AccountTypeGroup", AccountTypeGroup.class,
-				new String[] { "AccountTypeGroup", "AccountTypeGroup_AView" }, masterWF, new String[] {
+				new String[] { "AccountTypeGroup", "AccountTypeGroup_AView" }, acnTypeGrps_WF, new String[] {
 						"GroupCode", "GroupDescription" },
 				new Object[][] { { "GroupIsActive", "0",
 						1} }, 400));
@@ -756,7 +763,7 @@ public class PennantJavaUtil {
 				new String[][] { { "SRType", "1", "MSR00" } }, 350));
 
 		ModuleUtil.register("TransactionCode", new ModuleMapping("TransactionCode", TransactionCode.class,
-				new String[] { "BMTTransactionCode", "BMTTransactionCode_AView" }, masterWF, new String[] { "TranCode",
+				new String[] { "BMTTransactionCode", "BMTTransactionCode_AView" }, transactionCodes_WF, new String[] { "TranCode",
 						"TranDesc" }, new Object[][] { { "TranIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("CommodityBrokerDetail", new ModuleMapping("CommodityBrokerDetail",
@@ -953,7 +960,7 @@ public class PennantJavaUtil {
 		/************* Rules Factory *************/
 
 		ModuleUtil.register("AccountingSet", new ModuleMapping("AccountingSet", AccountingSet.class, new String[] {
-				"RMTAccountingSet", "RMTAccountingSet_AView" }, masterWF, new String[] { "EventCode", "AccountSetCode",
+				"RMTAccountingSet", "RMTAccountingSet_AView" }, acntingSet_WF, new String[] { "EventCode", "AccountSetCode",
 				"AccountSetCodeName" }, null, 600));
 
 		ModuleUtil.register("TransactionEntry", new ModuleMapping("TransactionEntry", TransactionEntry.class,
@@ -1011,7 +1018,7 @@ public class PennantJavaUtil {
 		/************* Solution Factory *************/
 
 		ModuleUtil.register("AccountType", new ModuleMapping("AccountType", AccountType.class, new String[] {
-				"RMTAccountTypes", "RMTAccountTypes_AView" }, masterWF, new String[] { "AcType", "AcTypeDesc" }, new Object[][] { { "AcTypeIsActive", "0", 1 } },
+				"RMTAccountTypes", "RMTAccountTypes_AView" }, acnTypes_WF, new String[] { "AcType", "AcTypeDesc" }, new Object[][] { { "AcTypeIsActive", "0", 1 } },
 				400));
 
 		ModuleUtil.register("AssetType", new ModuleMapping("AssetType", AssetType.class, new String[] {
@@ -2095,11 +2102,11 @@ public class PennantJavaUtil {
 				masterWF, new String[] { "BounceID", "BounceCode", "Lovdesccategory", "Reason" }, new Object[][] { { "Active", "0", 1 } }, 600));
 
 		ModuleUtil.register("ProfitCenter", new ModuleMapping("ProfitCenter", ProfitCenter.class, new String[] {
-				"ProfitCenters", "ProfitCenters_AView" }, masterWF, new String[] { "ProfitCenterCode",
+				"ProfitCenters", "ProfitCenters_AView" }, profitCenters_WF, new String[] { "ProfitCenterCode",
 				"ProfitCenterDesc" }, new Object[][] { { "Active", "0", 1 } }, 400));
 
 		ModuleUtil.register("CostCenter", new ModuleMapping("CostCenter", CostCenter.class, new String[] {
-				"CostCenters", "CostCenters_AView" }, masterWF, new String[] { "CostCenterCode", "CostCenterDesc" }, new Object[][] { { "Active", "0", 1 } }, 400));
+				"CostCenters", "CostCenters_AView" }, costCenters_WF, new String[] { "CostCenterCode", "CostCenterDesc" }, new Object[][] { { "Active", "0", 1 } }, 400));
 		/*PresentmentDetail*/
 		ModuleUtil.register("PresentmentDetail", new ModuleMapping("PresentmentDetail", PresentmentDetail.class, new String[] { "PresentmentDetails",
 				"PresentmentDetails_AView" }, null, new String[] {"FinReference","SchDate","SchSeq","MandateID","ExcludeReason"},null, 600));
@@ -2112,7 +2119,7 @@ public class PennantJavaUtil {
 		"presentmentexcludehdr_view" }, masterWF, new String[] {"Id","Reference"},null, 600));
 		
 		ModuleUtil.register("AccountMapping", new ModuleMapping("AccountMapping", AccountMapping.class, new String[] { "AccountMapping",
-				"AccountMapping_AView" }, masterWF, new String[] {"Account","HostAccount"},null, 600));
+				"AccountMapping_AView" }, hostGLMapping_WF, new String[] {"Account","HostAccount"},null, 600));
 		
 		ModuleUtil.register("FinTypePartner", new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
 				new String[] { "FinTypePartnerBanks","FinTypePartnerBanks_AView" }, masterWF,
