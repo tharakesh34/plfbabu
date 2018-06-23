@@ -238,6 +238,7 @@ import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -5591,6 +5592,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditHeader = getAuditDetails(auditHeader, method);
 		}
 
+		//Additional validations for CovanentTypes
+		//=======================================
+		List<ErrorDetail> errorDetails = covValidations(auditHeader);
+		if (errorDetails != null) {
+			errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
+			auditHeader.setErrorList(errorDetails);
+		}
+
 		// Finance Insurance  Details
 		//=======================================
 		if (financeDetail.getFinScheduleData().getFinInsuranceList() != null
@@ -9608,6 +9617,52 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			reasonHeader.setLogTime(financeMain.getLastMntOn());
 			this.reasonDetailDAO.save(reasonHeader);
 		}
+	}
+	
+	private List<ErrorDetail> covValidations(AuditHeader auditHeader) {
+		List<ErrorDetail> errorDetails = new ArrayList<>();
+		
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		
+		String workflowType = PennantApplicationUtil.getWorkFlowType(financeMain.getWorkflowId());
+		WorkFlowDetails workflow = WorkFlowUtil.getDetailsByType(workflowType);
+		WorkflowEngine workflowEngine = new WorkflowEngine(workflow.getWorkFlowXml());
+
+		List<DocumentDetails> documentList = financeDetail.getDocumentDetailsList();
+		
+		// Get the open covenant roles.
+		List<String> covenantRoles = new ArrayList<>();
+
+		if (financeDetail.getCovenantTypeList() != null && financeDetail.getCovenantTypeList().size() > 0) {
+			for (FinCovenantType finCovenantType : financeDetail.getCovenantTypeList()) {
+				// Check whether the covenant received or not.
+				if (!isCovenantReceived(documentList, finCovenantType)) {
+					covenantRoles.add(finCovenantType.getMandRole());
+				}
+			}
+		}
+		
+		// Check whether any covenant role is prior to next role code.
+		for (String role : covenantRoles) {
+			if (workflowEngine.compareRoles(role, financeMain.getNextRoleCode()) == Flow.SUCCESSOR) {
+				errorDetails.add(new ErrorDetail("CV001"));
+				break;
+			}
+		}
+	
+		return errorDetails;
+	}
+	
+	private boolean isCovenantReceived(List<DocumentDetails> documents, FinCovenantType covenant) {
+		for (DocumentDetails document : documents) {
+			if (StringUtils.equals(covenant.getCovenantType(), document.getDocCategory())
+					&& !StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, document.getRecordType())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 	
 	@Override

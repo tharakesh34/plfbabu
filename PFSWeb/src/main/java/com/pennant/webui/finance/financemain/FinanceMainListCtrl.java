@@ -341,8 +341,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.listheader_FinAmount.setSortAscending(new FieldComparator("FinAmount", true));
 		this.listheader_FinAmount.setSortDescending(new FieldComparator("FinAmount", false));
 
-		this.listheader_FinancingAmount.setSortAscending(new FieldComparator("FinAmount", true));
-		this.listheader_FinancingAmount.setSortDescending(new FieldComparator("FinAmount", false));
+		this.listheader_FinancingAmount.setSortAscending(new FieldComparator("FinAssetValue", true));
+		this.listheader_FinancingAmount.setSortDescending(new FieldComparator("FinAssetValue", false));
 
 		this.listheader_InitiateDate.setSortAscending(new FieldComparator("InitiateDate", true));
 		this.listheader_InitiateDate.setSortDescending(new FieldComparator("InitiateDate", false));
@@ -366,6 +366,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		// Field Declarations for Fetching List Data
 		this.searchObj.addField("FinReference");
+		this.searchObj.addField("FinAssetValue");
 		this.searchObj.addField("FinType");
 		this.searchObj.addField("LovDescFinTypeName");
 		this.searchObj.addField("FinCcy");

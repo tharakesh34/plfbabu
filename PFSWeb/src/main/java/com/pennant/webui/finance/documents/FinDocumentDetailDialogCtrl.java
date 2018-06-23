@@ -436,6 +436,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
 			}else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_WORD) || getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_MSG)) {
 				amedia = new AMedia(docName, "docx", "application/pdf", data);
+			}else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_EXCEL)) {
+				amedia = new AMedia(docName, "xlsx", "application/pdf", data);
 			}
 			Filedownload.save(amedia);
 		}
@@ -492,7 +494,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 //				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", data);
 //			}else
 				
-			if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_WORD) || aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_MSG)) {
+			if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_WORD) || aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_MSG) ||
+					aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_EXCEL)) {
 				this.docDiv.getChildren().clear();
 				Html ageementLink = new Html();
 				ageementLink.setStyle("padding:10px;");
