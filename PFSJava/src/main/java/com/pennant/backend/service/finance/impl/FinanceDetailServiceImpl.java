@@ -210,6 +210,7 @@ import com.pennant.backend.service.configuration.impl.VasRecordingValidation;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.service.dms.DMSIdentificationService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.CustomServiceTask;
 import com.pennant.backend.service.finance.FinChequeHeaderService;
@@ -328,9 +329,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private DeviationHelper deviationHelper;
 	@Autowired
 	private AuthorizationLimitService authorizationLimitService;
+	@Autowired
+	private DMSIdentificationService dmsIdentificationService;
+		
 	@Autowired(required=false)
 	private PostValidationHook financeDetailPostValidationHook;
-	
+
 	public FinanceDetailServiceImpl() {
 		super();
 	}
@@ -4356,7 +4360,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			break;
 		case PennantConstants.WF_CIBIL:
 				creditInformation.getCreditEnquiryDetails(auditHeader, false);
-			break;	
+			break;
+			
+		case PennantConstants.method_doDms:
+			if(null!=dmsIdentificationService){
+				dmsIdentificationService.identifyExternalDocument(auditHeader);
+			}
+			break;
 		case PennantConstants.method_doCheckDeviations:
 			List<FinanceDeviations> list =new ArrayList<>();
 			List<FinanceDeviations> autoDeviations = financeDetail.getFinanceDeviations();

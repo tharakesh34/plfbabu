@@ -1035,6 +1035,17 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				}
 				LegalVerification legalVerification = legalVerificationDAO.getLegalVerification(verificationId,
 						"_View");
+				// LV Document Details
+				if(null!=legalVerification){
+					List<DocumentDetails> lvDocumentList = documentDetailsDAO.getDocumentDetailsByRef(
+							String.valueOf(legalVerification.getVerificationId()), VerificationType.LV.getCode(), "", "_View");
+					if (legalVerification.getDocuments() != null && !legalVerification.getDocuments().isEmpty()) {
+						legalVerification.getDocuments().addAll(lvDocumentList);
+					} else {
+						legalVerification.setDocuments(lvDocumentList);
+					}
+				}
+				
 				verification.setLegalVerification(legalVerification);
 
 				break;

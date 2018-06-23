@@ -11453,5 +11453,9 @@
 	<bean id="masterDefService" class="com.pennant.backend.service.masters.impl.MasterDefServiceImpl" >
 		<property name="masterDefDAO" ref="masterDefDAO" />
 	</bean>
+	
+	<!-- DMS DAO Configurations and Service -->
+	<bean name="dmsIdentificationService" class="com.pennant.backend.service.dms.impl.DMSIdentificationServiceImpl">
+	</bean>
 
 </beans>
