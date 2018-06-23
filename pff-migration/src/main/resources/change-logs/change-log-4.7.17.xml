@@ -6549,5 +6549,12 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+		<changeSet id="136" author="Ganesh.p">
+		<comment> Created new error for either one doc is req between two </comment>
+		<sql>
+			INSERT INTO ErrorDetails VALUES('41104','EN','E','Either {0} document or {1} document is mandatory.','','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 	
