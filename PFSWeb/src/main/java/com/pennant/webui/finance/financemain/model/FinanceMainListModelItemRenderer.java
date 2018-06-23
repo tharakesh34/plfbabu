@@ -111,12 +111,17 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 		lc = new Listcell(String.valueOf(financeMain.getCalTerms()));
 		lc.setParent(item);
 		lc.setStyle("text-align:right;");
-		lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinCurrAssetValue(), format));
+		lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount(), format));
 		lc.setParent(item);
 		lc.setStyle("text-align:right;");
 		BigDecimal finAmount = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
-		lc = new Listcell(PennantAppUtil.amountFormate(finAmount, format));
-		lc.setParent(item);
+		if(finAmount == BigDecimal.ZERO){
+			lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount(), format));
+			lc.setParent(item);
+		}else{
+			lc = new Listcell(PennantAppUtil.amountFormate(finAmount, format));
+			lc.setParent(item);
+		}
 		lc.setStyle("text-align:right;");
 		lc = new Listcell(DateUtility.formatDate(financeMain.getInitiateDate(),DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);

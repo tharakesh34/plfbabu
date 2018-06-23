@@ -359,6 +359,8 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 				docType = PennantConstants.DOC_TYPE_WORD;
 			} else if (media.getName().endsWith(".msg")) {
 				docType = PennantConstants.DOC_TYPE_MSG;
+			} else if (media.getName().endsWith(".xls") || media.getName().endsWith(".xlsx")) {
+				docType = PennantConstants.DOC_TYPE_EXCEL;
 			} else {
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 				return;

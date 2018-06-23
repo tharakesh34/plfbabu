@@ -240,7 +240,7 @@
 								label="${c:l('listheader_NumberOfTerms.label')}" sort="auto"
 								hflex="min" visible="false" />
 							<listheader id="listheader_FinAmount"
-								visible="false" label="${c:l('listheader_FinAmount.label')}"
+								label="${c:l('listheader_FinAmount.label')}"
 								sort="auto" hflex="min" align="right" />
 							<listheader id="listheader_FinancingAmount"
 								label="${c:l('listheader_FinancingAmount.label')}" sort="false"
