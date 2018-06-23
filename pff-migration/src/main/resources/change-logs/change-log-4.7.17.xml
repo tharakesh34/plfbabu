@@ -30,7 +30,7 @@
 		</sql>
 	</changeSet>
 	
-	<!-- <changeSet id="1" author="Siva">
+	<changeSet id="1" author="Siva">
 		<sql>
 			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_CGST_P','Bounce charge CGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
 			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_SGST_P','Bounce charge SGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
@@ -5434,7 +5434,7 @@ UNION ALL
 			workflowdetails);
 		</sql>
 	</changeSet>
-	 -->
+	
 	<changeSet id="135" author="Vinay">
 		<sql>
 			update workflowdetails set WorkFlowActive='0' where
@@ -6411,6 +6411,93 @@ UNION ALL
 			workflowdetails);
 		</sql>
 	</changeSet>
+<<<<<<< .mine
+	
+	<changeSet id="156" author="Vinay">
+		<sql>
+			delete from SECROLES where rolecd='GSTINMAPPING_MAKER';
+			delete from SECROLES where rolecd='GSTINMAPPING_APPROVER';
+			delete from SECROLES where rolecd='FEETYPE_MAKER';
+			delete from SECROLES where rolecd='FEETYPE_APPROVER';
+			delete from SECROLES where rolecd='COSTCENTERS_MAKER';
+			delete from SECROLES where rolecd='COSTCENTERS_APPROVER';
+			delete from SECROLES where rolecd='PROFITCENTERS_MAKER';
+			delete from SECROLES where rolecd='PROFITCENTERS_APPROVER';
+			delete from SECROLES where rolecd='TRANSACTIONCODES_MAKER';
+			delete from SECROLES where rolecd='TRANSACTIONCODES_APPROVER';
+			delete from SECROLES where rolecd='ACNTYPES_MAKER';
+			delete from SECROLES where rolecd='ACNTYPES_APPROVER';
+			delete from SECROLES where rolecd='ACNTYPEGRPS_MAKER';
+			delete from SECROLES where rolecd='ACNTYPEGRPS_APPROVER';
+			delete from SECROLES where rolecd='HOSTGLMAPPING_MAKER';
+			delete from SECROLES where rolecd='HOSTGLMAPPING_APPROVER';
+			delete from SECROLES where rolecd='ACNTINGSET_MAKER';
+			delete from SECROLES where rolecd='ACNTINGSET_APPROVER';
+			
+			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+			
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'GSTINMAPPING_MAKER', 'GSTINMAPPING_MAKER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'GSTINMAPPING_APPROVER', 'GSTINMAPPING_APPROVER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'FEETYPE_MAKER', 'FEETYPE_MAKER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'FEETYPE_APPROVER', 'FEETYPE_APPROVER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'COSTCENTERS_MAKER', 'COSTCENTERS_MAKER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'COSTCENTERS_APPROVER', 'COSTCENTERS_APPROVER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'PROFITCENTERS_MAKER', 'PROFITCENTERS_MAKER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'PROFITCENTERS_APPROVER', 'PROFITCENTERS_APPROVER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'TRANSACTIONCODES_MAKER', 'TRANSACTIONCODES_MAKER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'TRANSACTIONCODES_APPROVER', 'TRANSACTIONCODES_APPROVER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'ACNTYPES_MAKER', 'ACNTYPES_MAKER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'ACNTYPES_APPROVER', 'ACNTYPES_APPROVER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'ACNTYPEGRPS_MAKER', 'ACNTYPEGRPS_MAKER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'ACNTYPEGRPS_APPROVER', 'ACNTYPEGRPS_APPROVER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'HOSTGLMAPPING_MAKER', 'HOSTGLMAPPING_MAKER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'HOSTGLMAPPING_APPROVER', 'HOSTGLMAPPING_APPROVER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'ACNTINGSET_MAKER', 'ACNTINGSET_MAKER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'ACNTINGSET_APPROVER', 'ACNTINGSET_APPROVER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			
+			
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='COSTCENTER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='COSTCENTERS_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='COSTCENTER_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='COSTCENTERS_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='PROFITCENTER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='PROFITCENTERS_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='PROFITCENTER_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='PROFITCENTERS_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='TRANSACTIONCODE_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='TRANSACTIONCODES_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='TRANSACTIONCODE_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='TRANSACTIONCODES_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='AccountType_Maker'), (Select  RoleID  From SecRoles Where RoleCd='ACNTYPES_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='AccountType_Approver'), (Select  RoleID  From SecRoles Where RoleCd='ACNTYPES_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='AccountTypeGroup_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='ACNTYPEGRPS_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='AccountTypeGroup_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='ACNTYPEGRPS_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='ACCOUNTMAPPING_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='HOSTGLMAPPING_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='ACCOUNTMAPPING_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='HOSTGLMAPPING_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='ACCOUNTINGSET_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='ACNTINGSET_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='ACCOUNTINGSET_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='ACNTINGSET_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='MDTGRP'), (Select  RoleID  From SecRoles Where RoleCd='ACNTYPES_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='COSTCENTERS_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='COSTCENTERS_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='PROFITCENTERS_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='PROFITCENTERS_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='TRANSACTIONCODES_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='TRANSACTIONCODES_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='ACNTYPES_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='ACNTYPES_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='ACNTYPEGRPS_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='ACNTYPEGRPS_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='HOSTGLMAPPING_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='HOSTGLMAPPING_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='ACNTINGSET_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='ACNTINGSET_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+						
+		</sql>
+	</changeSet>
+
 	<changeSet id="156" author="Amarnath.t">
 		<createTable tableName="dmsdocprocess">
 			<column name="id" type="int" defaultValue="0">
