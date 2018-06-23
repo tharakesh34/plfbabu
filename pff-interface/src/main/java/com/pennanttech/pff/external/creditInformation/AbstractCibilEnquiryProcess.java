@@ -92,6 +92,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	private final String responseSize = "1";
 	@Autowired(required = false)
 	private InterfaceLoggingDAO interfaceLoggingDAO;
+	private BigDecimal cibilDefaultLoanAmt = BigDecimal.valueOf(999999999);
 
 	@Autowired(required = false)
 	private CreditInterfaceDAO creditInterfaceDao;
@@ -530,7 +531,14 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 			builder.append("00");
 		}
 
-		builder.append(StringUtils.leftPad(String.valueOf(financeMain.getFinAmount()), 9, "0"));
+		int currencyEditField = (int) getSMTParameter("APP_DFT_CURR_EDIT_FIELD", Integer.class);
+		
+		BigDecimal finAmount = financeMain.getFinAssetValue();
+		finAmount = formateAmount(finAmount, currencyEditField);
+		if (finAmount.compareTo(cibilDefaultLoanAmt) > 0) {
+			finAmount = cibilDefaultLoanAmt;
+		}
+		builder.append(StringUtils.leftPad(String.valueOf(finAmount), 9, "0"));
 		builder.append(StringUtils.rightPad("", 03, ""));
 		builder.append(CBIL_ENQUIRY_SCORE_TYPE);
 		builder.append(InterfaceConstants.Output_Format);
@@ -540,6 +548,16 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 		logger.debug(Literal.LEAVING);
 
+	}
+	
+	
+	public static BigDecimal formateAmount(BigDecimal amount, int dec) {
+		BigDecimal bigDecimal = BigDecimal.ZERO;
+
+		if (amount != null) {
+			bigDecimal = amount.divide(new BigDecimal(Math.pow(10, dec)));
+		}
+		return bigDecimal;
 	}
 
 	/**
