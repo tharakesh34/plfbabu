@@ -5473,25 +5473,25 @@ UNION ALL
     <sequenceFlow id="sid-CB1DEE00-A9A1-4162-BD4A-CC3D4B6E7CC1" sourceRef="startEvent1" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <userTask id="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" name="Approver" activiti:actor="COSTCENTERS_APPROVER" activiti:assignmentLevel="Role Queue"/>
     <sequenceFlow id="sid-F8AD09C4-9AD3-4E9F-9432-0B753ACDBFF3" name="Submit" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Submitted']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01"/>
     <sequenceFlow id="sid-E75E07AC-22E7-4F1C-B6E9-733C5C1A3E22" sourceRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" targetRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <sequenceFlow id="sid-90A1D39E-E70D-4EB1-BB50-DF5F8F43359D" name="Resubmit" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Resubmitted']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression>
     </sequenceFlow>
     <serviceTask id="sid-22D15E29-D37A-4505-A48C-7A329DF13429" name="Complete Process" activiti:operation="doApprove" activiti:rerunnable="true"/>
     <sequenceFlow id="sid-79F17746-BC9F-45F8-A31F-CA3969C76736" name="Approve" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Approved']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression>
     </sequenceFlow>
     <endEvent id="sid-5FF3A069-112E-49C0-9A73-07B73600334B" name="Approved"/>
     <sequenceFlow id="sid-5AABA17A-E718-463D-95FA-7B0E9E938247" sourceRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" targetRef="sid-5FF3A069-112E-49C0-9A73-07B73600334B" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <serviceTask id="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" name="Cancel Process" activiti:operation="doReject" activiti:rerunnable="true"/>
     <sequenceFlow id="sid-4A389521-29A1-4967-8A99-23A3D1BA8CDE" name="Reject" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Rejected']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-751124CB-1CC1-40AF-B5DB-360706ED6035" name="Cancel" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Cancelled']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression>
     </sequenceFlow>
     <endEvent id="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" name="Rejected"/>
     <sequenceFlow id="sid-9E25CBF1-5C3D-444E-B619-F8DF70F8710B" sourceRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" targetRef="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
@@ -5612,25 +5612,25 @@ UNION ALL
     <sequenceFlow id="sid-CB1DEE00-A9A1-4162-BD4A-CC3D4B6E7CC1" sourceRef="startEvent1" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <userTask id="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" name="Approver" activiti:actor="PROFITCENTERS_APPROVER" activiti:assignmentLevel="Role Queue"/>
     <sequenceFlow id="sid-F8AD09C4-9AD3-4E9F-9432-0B753ACDBFF3" name="Submit" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Submitted']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01"/>
     <sequenceFlow id="sid-E75E07AC-22E7-4F1C-B6E9-733C5C1A3E22" sourceRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" targetRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <sequenceFlow id="sid-90A1D39E-E70D-4EB1-BB50-DF5F8F43359D" name="Resubmit" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Resubmitted']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression>
     </sequenceFlow>
     <serviceTask id="sid-22D15E29-D37A-4505-A48C-7A329DF13429" name="Complete Process" activiti:operation="doApprove" activiti:rerunnable="true"/>
     <sequenceFlow id="sid-79F17746-BC9F-45F8-A31F-CA3969C76736" name="Approve" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Approved']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression>
     </sequenceFlow>
     <endEvent id="sid-5FF3A069-112E-49C0-9A73-07B73600334B" name="Approved"/>
     <sequenceFlow id="sid-5AABA17A-E718-463D-95FA-7B0E9E938247" sourceRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" targetRef="sid-5FF3A069-112E-49C0-9A73-07B73600334B" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <serviceTask id="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" name="Cancel Process" activiti:operation="doReject" activiti:rerunnable="true"/>
     <sequenceFlow id="sid-4A389521-29A1-4967-8A99-23A3D1BA8CDE" name="Reject" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Rejected']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-751124CB-1CC1-40AF-B5DB-360706ED6035" name="Cancel" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Cancelled']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression>
     </sequenceFlow>
     <endEvent id="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" name="Rejected"/>
     <sequenceFlow id="sid-9E25CBF1-5C3D-444E-B619-F8DF70F8710B" sourceRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" targetRef="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
@@ -5751,25 +5751,25 @@ UNION ALL
     <sequenceFlow id="sid-CB1DEE00-A9A1-4162-BD4A-CC3D4B6E7CC1" sourceRef="startEvent1" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <userTask id="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" name="Approver" activiti:actor="TRANSACTIONCODES_APPROVER" activiti:assignmentLevel="Role Queue"/>
     <sequenceFlow id="sid-F8AD09C4-9AD3-4E9F-9432-0B753ACDBFF3" name="Submit" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Submitted']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01"/>
     <sequenceFlow id="sid-E75E07AC-22E7-4F1C-B6E9-733C5C1A3E22" sourceRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" targetRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <sequenceFlow id="sid-90A1D39E-E70D-4EB1-BB50-DF5F8F43359D" name="Resubmit" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Resubmitted']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression>
     </sequenceFlow>
     <serviceTask id="sid-22D15E29-D37A-4505-A48C-7A329DF13429" name="Complete Process" activiti:operation="doApprove" activiti:rerunnable="true"/>
     <sequenceFlow id="sid-79F17746-BC9F-45F8-A31F-CA3969C76736" name="Approve" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Approved']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression>
     </sequenceFlow>
     <endEvent id="sid-5FF3A069-112E-49C0-9A73-07B73600334B" name="Approved"/>
     <sequenceFlow id="sid-5AABA17A-E718-463D-95FA-7B0E9E938247" sourceRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" targetRef="sid-5FF3A069-112E-49C0-9A73-07B73600334B" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <serviceTask id="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" name="Cancel Process" activiti:operation="doReject" activiti:rerunnable="true"/>
     <sequenceFlow id="sid-4A389521-29A1-4967-8A99-23A3D1BA8CDE" name="Reject" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Rejected']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-751124CB-1CC1-40AF-B5DB-360706ED6035" name="Cancel" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Cancelled']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression>
     </sequenceFlow>
     <endEvent id="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" name="Rejected"/>
     <sequenceFlow id="sid-9E25CBF1-5C3D-444E-B619-F8DF70F8710B" sourceRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" targetRef="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
@@ -5890,25 +5890,25 @@ UNION ALL
     <sequenceFlow id="sid-CB1DEE00-A9A1-4162-BD4A-CC3D4B6E7CC1" sourceRef="startEvent1" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <userTask id="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" name="Approver" activiti:actor="ACNTYPEGRPS_APPROVER" activiti:assignmentLevel="Role Queue"/>
     <sequenceFlow id="sid-F8AD09C4-9AD3-4E9F-9432-0B753ACDBFF3" name="Submit" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Submitted']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01"/>
     <sequenceFlow id="sid-E75E07AC-22E7-4F1C-B6E9-733C5C1A3E22" sourceRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" targetRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <sequenceFlow id="sid-90A1D39E-E70D-4EB1-BB50-DF5F8F43359D" name="Resubmit" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Resubmitted']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression>
     </sequenceFlow>
     <serviceTask id="sid-22D15E29-D37A-4505-A48C-7A329DF13429" name="Complete Process" activiti:operation="doApprove" activiti:rerunnable="true"/>
     <sequenceFlow id="sid-79F17746-BC9F-45F8-A31F-CA3969C76736" name="Approve" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Approved']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression>
     </sequenceFlow>
     <endEvent id="sid-5FF3A069-112E-49C0-9A73-07B73600334B" name="Approved"/>
     <sequenceFlow id="sid-5AABA17A-E718-463D-95FA-7B0E9E938247" sourceRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" targetRef="sid-5FF3A069-112E-49C0-9A73-07B73600334B" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <serviceTask id="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" name="Cancel Process" activiti:operation="doReject" activiti:rerunnable="true"/>
     <sequenceFlow id="sid-4A389521-29A1-4967-8A99-23A3D1BA8CDE" name="Reject" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Rejected']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-751124CB-1CC1-40AF-B5DB-360706ED6035" name="Cancel" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Cancelled']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression>
     </sequenceFlow>
     <endEvent id="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" name="Rejected"/>
     <sequenceFlow id="sid-9E25CBF1-5C3D-444E-B619-F8DF70F8710B" sourceRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" targetRef="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
@@ -6029,25 +6029,25 @@ UNION ALL
     <sequenceFlow id="sid-CB1DEE00-A9A1-4162-BD4A-CC3D4B6E7CC1" sourceRef="startEvent1" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <userTask id="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" name="Approver" activiti:actor="ACNTYPES_APPROVER" activiti:assignmentLevel="Role Queue"/>
     <sequenceFlow id="sid-F8AD09C4-9AD3-4E9F-9432-0B753ACDBFF3" name="Submit" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Submitted']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01"/>
     <sequenceFlow id="sid-E75E07AC-22E7-4F1C-B6E9-733C5C1A3E22" sourceRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" targetRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <sequenceFlow id="sid-90A1D39E-E70D-4EB1-BB50-DF5F8F43359D" name="Resubmit" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Resubmitted']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression>
     </sequenceFlow>
     <serviceTask id="sid-22D15E29-D37A-4505-A48C-7A329DF13429" name="Complete Process" activiti:operation="doApprove" activiti:rerunnable="true"/>
     <sequenceFlow id="sid-79F17746-BC9F-45F8-A31F-CA3969C76736" name="Approve" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Approved']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression>
     </sequenceFlow>
     <endEvent id="sid-5FF3A069-112E-49C0-9A73-07B73600334B" name="Approved"/>
     <sequenceFlow id="sid-5AABA17A-E718-463D-95FA-7B0E9E938247" sourceRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" targetRef="sid-5FF3A069-112E-49C0-9A73-07B73600334B" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <serviceTask id="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" name="Cancel Process" activiti:operation="doReject" activiti:rerunnable="true"/>
     <sequenceFlow id="sid-4A389521-29A1-4967-8A99-23A3D1BA8CDE" name="Reject" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Rejected']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-751124CB-1CC1-40AF-B5DB-360706ED6035" name="Cancel" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Cancelled']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression>
     </sequenceFlow>
     <endEvent id="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" name="Rejected"/>
     <sequenceFlow id="sid-9E25CBF1-5C3D-444E-B619-F8DF70F8710B" sourceRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" targetRef="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
@@ -6170,25 +6170,25 @@ UNION ALL
     <sequenceFlow id="sid-CB1DEE00-A9A1-4162-BD4A-CC3D4B6E7CC1" sourceRef="startEvent1" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <userTask id="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" name="Approver" activiti:actor="ACNTINGSET_APPROVER" activiti:assignmentLevel="Role Queue"/>
     <sequenceFlow id="sid-F8AD09C4-9AD3-4E9F-9432-0B753ACDBFF3" name="Submit" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Submitted']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01"/>
     <sequenceFlow id="sid-E75E07AC-22E7-4F1C-B6E9-733C5C1A3E22" sourceRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" targetRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <sequenceFlow id="sid-90A1D39E-E70D-4EB1-BB50-DF5F8F43359D" name="Resubmit" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Resubmitted']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression>
     </sequenceFlow>
     <serviceTask id="sid-22D15E29-D37A-4505-A48C-7A329DF13429" name="Complete Process" activiti:operation="doApprove" activiti:rerunnable="true"/>
     <sequenceFlow id="sid-79F17746-BC9F-45F8-A31F-CA3969C76736" name="Approve" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Approved']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression>
     </sequenceFlow>
     <endEvent id="sid-5FF3A069-112E-49C0-9A73-07B73600334B" name="Approved"/>
     <sequenceFlow id="sid-5AABA17A-E718-463D-95FA-7B0E9E938247" sourceRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" targetRef="sid-5FF3A069-112E-49C0-9A73-07B73600334B" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <serviceTask id="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" name="Cancel Process" activiti:operation="doReject" activiti:rerunnable="true"/>
     <sequenceFlow id="sid-4A389521-29A1-4967-8A99-23A3D1BA8CDE" name="Reject" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Rejected']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-751124CB-1CC1-40AF-B5DB-360706ED6035" name="Cancel" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Cancelled']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression>
     </sequenceFlow>
     <endEvent id="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" name="Rejected"/>
     <sequenceFlow id="sid-9E25CBF1-5C3D-444E-B619-F8DF70F8710B" sourceRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" targetRef="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
@@ -6311,25 +6311,25 @@ UNION ALL
     <sequenceFlow id="sid-CB1DEE00-A9A1-4162-BD4A-CC3D4B6E7CC1" sourceRef="startEvent1" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <userTask id="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" name="Approver" activiti:actor="HOSTGLMAPPING_APPROVER" activiti:assignmentLevel="Role Queue"/>
     <sequenceFlow id="sid-F8AD09C4-9AD3-4E9F-9432-0B753ACDBFF3" name="Submit" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Submitted']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01"/>
     <sequenceFlow id="sid-E75E07AC-22E7-4F1C-B6E9-733C5C1A3E22" sourceRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" targetRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <sequenceFlow id="sid-90A1D39E-E70D-4EB1-BB50-DF5F8F43359D" name="Resubmit" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Resubmitted']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression>
     </sequenceFlow>
     <serviceTask id="sid-22D15E29-D37A-4505-A48C-7A329DF13429" name="Complete Process" activiti:operation="doApprove" activiti:rerunnable="true"/>
     <sequenceFlow id="sid-79F17746-BC9F-45F8-A31F-CA3969C76736" name="Approve" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Approved']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression>
     </sequenceFlow>
     <endEvent id="sid-5FF3A069-112E-49C0-9A73-07B73600334B" name="Approved"/>
     <sequenceFlow id="sid-5AABA17A-E718-463D-95FA-7B0E9E938247" sourceRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" targetRef="sid-5FF3A069-112E-49C0-9A73-07B73600334B" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
     <serviceTask id="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" name="Cancel Process" activiti:operation="doReject" activiti:rerunnable="true"/>
     <sequenceFlow id="sid-4A389521-29A1-4967-8A99-23A3D1BA8CDE" name="Reject" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Rejected']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-751124CB-1CC1-40AF-B5DB-360706ED6035" name="Cancel" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true" captureReasons="false">
-      <conditionExpression xsi:type="tFormalExpression"><![vo.recordStatus == 'Cancelled']></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression>
     </sequenceFlow>
     <endEvent id="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" name="Rejected"/>
     <sequenceFlow id="sid-9E25CBF1-5C3D-444E-B619-F8DF70F8710B" sourceRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" targetRef="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
@@ -6411,7 +6411,6 @@ UNION ALL
 			workflowdetails);
 		</sql>
 	</changeSet>
-<<<<<<< .mine
 	
 	<changeSet id="156" author="Vinay">
 		<sql>
