@@ -1394,7 +1394,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			doReadOnly();
 		} else {
 			if (this.collateralSetup.isNewRecord()) {
-				this.collateralRef.setReadonly(false);
+				this.collateralRef.setReadonly(isReadOnly("CollateralSetupDialog_CollateralRef"));
 				this.collateralCcy.setReadonly(isReadOnly("CollateralSetupDialog_CollateralCcy"));
 			} else {
 				this.collateralRef.setReadonly(true);
