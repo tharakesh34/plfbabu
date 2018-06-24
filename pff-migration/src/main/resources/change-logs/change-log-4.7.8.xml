@@ -384,4 +384,12 @@ SELECT    T1.ProductCode, T1.PostingAgainst, T1.PrimaryLinkRef, T1.VasReference,
 		  update plf.data_engine_config set postEvent = null where name = 'MANDATES_EXPORT';
 		 </sql>
 		</changeSet>
+	 
+	<changeSet id="11" author="Durgaprasad G">
+		<sql>
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CollateralSetupDialog_CollateralRef','CollateralSetupDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='COLLATERALSETUP_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CollateralSetupDialog_CollateralRef'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		</sql>
+	</changeSet>
+		
 </databaseChangeLog>
