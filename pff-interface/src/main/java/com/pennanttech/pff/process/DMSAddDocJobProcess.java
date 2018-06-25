@@ -19,7 +19,7 @@ public class DMSAddDocJobProcess {
 	private static final int retryCount = Integer.valueOf(App.getProperty("dms.document.retrycount"));
 	@Autowired
 	private DMSIdentificationDAO identificationDAO;
-	@Autowired
+	@Autowired(required=false)
 	private AbstractDMSIntegrationService abstractDMSIntegrationService;
 	
 	public void process() {
