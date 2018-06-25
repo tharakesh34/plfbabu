@@ -658,4 +658,17 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 	 		LEFT JOIN PSLEndUse t4 ON t4.Code = t1.EndUse
 	 	</createView>
 	 </changeSet>
+	 <changeSet id="34" author="Manoj">
+	 	<addColumn tableName="PslDetail_Temp">
+			<column name="LoanPurpose" type="varchar(8)"></column>
+			<column name="EligibleAmount" type="decimal(18,0)"></column>
+		</addColumn>
+	 </changeSet>
+	 
+	 <changeSet id="35" author="Manoj">
+	 	<addColumn tableName="PslDetail">
+			<column name="LoanPurpose" type="varchar(8)"></column>
+			<column name="EligibleAmount" type="decimal(18,0)"></column>
+		</addColumn>
+	 </changeSet>
 </databaseChangeLog>
