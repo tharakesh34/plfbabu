@@ -6590,6 +6590,72 @@ UNION ALL
 						
 		</sql>
 	</changeSet>
-	
+	<changeSet id="160" author="Manoj">
+		<comment> custctgcode,custcin,custaadhaar,custcompname added </comment>
+		<createView viewName="blacklistcustomer_view" replaceIfExists="true">
+			 SELECT t1.custcif,
+			    t1.custfname,
+			    t1.custlname,
+			    t1.custdob,
+			    t1.custcrcpr,
+			    t1.mobilenumber,
+			    t1.custnationality,
+			    t1.custpassportno,
+			    t1.employer,
+			    t1.custisactive,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.nationalitydesc AS lovdescnationalitydesc,
+			    t3.empname AS lovdescempname,
+			    t1.custctgcode,
+			    t1.custcin,
+			    t1.custaadhaar,
+			    t1.custcompname
+			   FROM blacklistcustomer_temp t1
+			     LEFT JOIN bmtnationalitycodes t2 ON t2.nationalitycode = t1.custnationality
+			     LEFT JOIN employerdetail t3 ON t3.employerid = t1.employer
+			UNION ALL
+			 SELECT t1.custcif,
+			    t1.custfname,
+			    t1.custlname,
+			    t1.custdob,
+			    t1.custcrcpr,
+			    t1.mobilenumber,
+			    t1.custnationality,
+			    t1.custpassportno,
+			    t1.employer,
+			    t1.custisactive,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.nationalitydesc AS lovdescnationalitydesc,
+			    t3.empname AS lovdescempname,
+			    t1.custctgcode,
+			    t1.custcin,
+			    t1.custaadhaar,
+			    t1.custcompname
+			   FROM blacklistcustomer t1
+			     LEFT JOIN bmtnationalitycodes t2 ON t2.nationalitycode = t1.custnationality
+			     LEFT JOIN employerdetail t3 ON t3.employerid = t1.employer
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM blacklistcustomer_temp
+			          WHERE blacklistcustomer_temp.custcif = t1.custcif))
+		</createView>
+	</changeSet>
 </databaseChangeLog>
 	
