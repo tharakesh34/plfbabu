@@ -109,4 +109,18 @@
 	 <changeSet id="3" author="Manoj">
 		<renameTable newTableName="AdtPSLDetail" oldTableName="AdtPSLDetails"/>
 	</changeSet>
+	
+	<changeSet id="4" author="Manoj">
+		
+		<addColumn tableName="AdtPSLDetail">
+			<column name="LoanPurpose" type="varchar(8)"></column>
+			<column name="EligibleAmount" type="decimal(18,0)"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="5" author="Manoj">
+		<addColumn tableName="AdtLoanPurposes">
+			<column name="EligibleAmount" type="decimal(18,0)"></column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
