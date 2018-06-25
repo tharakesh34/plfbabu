@@ -237,6 +237,7 @@ import com.pennant.backend.model.finance.FinanceRepayPriority;
 import com.pennant.backend.model.finance.FinanceScoreDetail;
 import com.pennant.backend.model.finance.FinanceScoreHeader;
 import com.pennant.backend.model.finance.FinanceSuspHead;
+import com.pennant.backend.model.finance.GSTInvoiceTxn;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.IndicativeTermDetail;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
@@ -2293,6 +2294,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("StageTabDetail", new ModuleMapping("StageTabDetail", StageTabDetail.class, new String[] { "StageTabDetail",
 		"StageTabDetail" }, null, new String[] {"TabCode","TabDescription"}, new Object[][] { {
 			"Active", "0", 1 } }, 600));
+		
+		ModuleUtil.register("GSTInvoiceReport", new ModuleMapping("GSTInvoiceReport", GSTInvoiceTxn.class, new String[] { "GST_Invoice_Txn",
+		"GST_Invoice_Txn" }, null, new String[] {"InvoiceNo","LoanAccountNo"}, null, 600));
 
 	}
 

@@ -1796,6 +1796,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					GSTInvoiceTxnDetails details = new GSTInvoiceTxnDetails();
 					details.setFeeCode(feeDetail.getFeeTypeCode());
 					details.setFeeDescription(feeDetail.getFeeTypeDesc());
+					details.setFeeAmount(feeDetail.getActualAmountOriginal());	//Fee Amount with out GST
 					details.setCGST_RATE(feeDetail.getCgst());
 					details.setIGST_RATE(feeDetail.getIgst());
 					details.setSGST_RATE(feeDetail.getSgst());

@@ -2342,4 +2342,31 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
+	<changeSet author="Kesav" id="111">
+		<comment> FeeAmount column added in GST_Invoice_Txn_Details</comment>
+		<addColumn tableName="GST_Invoice_Txn_Details">
+			<column name="FeeAmount" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="112">
+		<sql>
+			update reportfilterfields set mandatory=1 where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport') and fieldid=1;
+			update reportfilterfields set mandatory=1 where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport') and fieldid=2;
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="113">
+		<sql>
+			update GST_Invoice_Txn_Details set FeeAmount = 0 where FeeAmount is null;
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="114">
+		<sql>
+			update reportfilterfields set fieldtype='LOVSEARCH',modulename='GSTInvoiceReport',lovhiddenfieldmethod='getInvoiceNo',
+			lovtextfieldmethod='getLoanAccountNo',fieldlength=0 where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport') and fieldid=3;
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

@@ -128,8 +128,8 @@ public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> impl
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into GST_Invoice_Txn_Details");
-		sql.append("(InvoiceNo, FeeCode, FeeDescription, CGST_RATE, CGST_AMT, SGST_RATE, SGST_AMT, IGST_RATE, IGST_AMT, UGST_RATE, UGST_AMT)");
-		sql.append("values (:InvoiceNo, :FeeCode, :FeeDescription, :CGST_RATE, :CGST_AMT, :SGST_RATE, :SGST_AMT, :IGST_RATE, :IGST_AMT, :UGST_RATE, :UGST_AMT)");
+		sql.append("(InvoiceNo, FeeCode, FeeDescription, CGST_RATE, CGST_AMT, SGST_RATE, SGST_AMT, IGST_RATE, IGST_AMT, UGST_RATE, UGST_AMT, FeeAmount)");
+		sql.append("values (:InvoiceNo, :FeeCode, :FeeDescription, :CGST_RATE, :CGST_AMT, :SGST_RATE, :SGST_AMT, :IGST_RATE, :IGST_AMT, :UGST_RATE, :UGST_AMT, :FeeAmount)");
 
 		// Execute the SQL, binding the arguments
 		logger.trace(Literal.SQL + sql.toString());

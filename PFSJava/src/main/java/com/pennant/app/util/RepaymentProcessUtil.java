@@ -974,6 +974,7 @@ public class RepaymentProcessUtil {
 						GSTInvoiceTxnDetails details = new GSTInvoiceTxnDetails();
 						details.setFeeCode(feeDetail.getFeeTypeCode());
 						details.setFeeDescription(feeDetail.getFeeTypeDesc());
+						details.setFeeAmount(feeDetail.getActualAmountOriginal());	//Fee Amount with out GST
 						details.setCGST_RATE(feeDetail.getCgst());
 						details.setIGST_RATE(feeDetail.getIgst());
 						details.setSGST_RATE(feeDetail.getSgst());
@@ -999,7 +1000,8 @@ public class RepaymentProcessUtil {
 					if (movement != null) {
 						GSTInvoiceTxnDetails details = new GSTInvoiceTxnDetails();
 						details.setFeeCode(movement.getFeeTypeCode());
-						details.setFeeDescription(movement.getFeeTypeDesc());	//TODO Need to FIX this as null now
+						details.setFeeDescription(movement.getFeeTypeDesc());
+						details.setFeeAmount(movement.getMovementAmount());	//Fee Amount with out GST
 						details.setCGST_RATE(cgstPerc);
 						details.setSGST_RATE(sgstPerc);
 						details.setIGST_RATE(igstPerc);
@@ -1128,7 +1130,7 @@ public class RepaymentProcessUtil {
 		// Accounting Entry Execution
 		getPostingsPreparationUtil().postAccounting(aeEvent);
 		
-		//TODO prepare GST Invoice Report
+		// preparing GST Invoice Report
 		if (CollectionUtils.isNotEmpty(movements) && financeDetail != null) {
 			List<ManualAdviseMovements> manualAdviseMovementsList = new ArrayList<ManualAdviseMovements>();
 			for (ManualAdviseMovements movement: movements) {

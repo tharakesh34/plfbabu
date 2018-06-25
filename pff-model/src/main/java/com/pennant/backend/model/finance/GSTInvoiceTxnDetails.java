@@ -48,6 +48,7 @@ public class GSTInvoiceTxnDetails {
 	
 	private String feeCode;
 	private String feeDescription;
+	private BigDecimal feeAmount = BigDecimal.ZERO;
 	private BigDecimal CGST_RATE = BigDecimal.ZERO;
 	private BigDecimal CGST_AMT = BigDecimal.ZERO;
 	private BigDecimal IGST_RATE = BigDecimal.ZERO;
@@ -148,6 +149,14 @@ public class GSTInvoiceTxnDetails {
 
 	public void setSGST_AMT(BigDecimal sGST_AMT) {
 		SGST_AMT = sGST_AMT;
+	}
+
+	public BigDecimal getFeeAmount() {
+		return feeAmount;
+	}
+
+	public void setFeeAmount(BigDecimal feeAmount) {
+		this.feeAmount = feeAmount;
 	}
 
 }
