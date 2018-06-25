@@ -671,4 +671,186 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 			<column name="EligibleAmount" type="decimal(18,0)"></column>
 		</addColumn>
 	 </changeSet>
+	 
+	 <changeSet id="36" author="Manoj">
+	 	<createView viewName="PslDetail_view" replaceIfExists="true">
+	 		SELECT 
+		 		t1.FinReference,
+                t1.categoryCode,
+			    t1.WeakerSection,
+			    t1.LandHolding,
+			    t1.LandArea,
+			    t1.Sector,
+			    t1.Amount,
+			    t1.SubCategory,
+			    t1.Purpose,
+			    t1.EndUse,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+                t2.description as WeakerSectionName,
+                t3.description as PurposeName,
+                t4.description as EnduseName,
+                 t1.EligibleAmount,
+                t1.loanpurpose,
+                t5.loanpurposeDesc as loanPurposeName
+  			 FROM PslDetail_Temp t1
+		     LEFT JOIN PSLWeakerSection t2 ON t2.Code = t1.WeakerSection
+		     LEFT JOIN PSLPurpose t3 ON t3.Code = t1.Purpose
+			 LEFT JOIN PSLEndUse t4 ON t4.Code = t1.EndUse
+             LEFT JOIN LoanPurposes t5 ON t5.loanPurposeCode = t1.loanPurpose
+		UNION ALL
+		SELECT 
+			t1.FinReference,
+            t1.categoryCode,
+		    t1.WeakerSection,
+		    t1.LandHolding,
+		    t1.LandArea,
+		    t1.Sector,
+		    t1.Amount,
+		    t1.SubCategory,
+		    t1.Purpose,
+		    t1.EndUse,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+             t2.description as WeakerSectionName,
+                t3.description as PurposeName,
+                t4.description as EnduseName,
+                t1.EligibleAmount,
+                t1.loanpurpose,
+                t5.loanpurposeDesc as loanPurposeName
+		   FROM PslDetail t1
+		    LEFT JOIN PSLWeakerSection t2 ON t2.Code = t1.WeakerSection
+		     LEFT JOIN PSLPurpose t3 ON t3.Code = t1.Purpose
+			 LEFT JOIN PSLEndUse t4 ON t4.Code = t1.EndUse
+             LEFT JOIN LoanPurposes t5 ON t5.loanPurposeCode = t1.loanPurpose
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM PslDetail_Temp
+		          WHERE PslDetail_Temp.FinReference = t1.FinReference))
+	 	</createView>
+	 </changeSet>
+	 
+	 
+	  <changeSet id="37" author="Manoj">
+	 	<createView viewName="PslDetail_Aview" replaceIfExists="true">
+	 		 SELECT t1.FinReference,
+	 		 t1.categoryCode,
+    		t1.WeakerSection,
+		    t1.LandHolding,
+		    t1.LandArea,
+		    t1.Sector,
+		    t1.Amount,
+		    t1.SubCategory,
+		    t1.Purpose,
+		    t1.EndUse,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		     t2.description as WeakerSectionName,
+                t3.description as PurposeName,
+                t4.description as EnduseName,
+                t1.EligibleAmount,
+                t1.loanpurpose,
+                t5.loanpurposeDesc as loanPurposeName
+  			 FROM PslDetail t1
+    		 LEFT JOIN PSLWeakerSection t2 ON t2.Code = t1.WeakerSection
+     		LEFT JOIN PSLPurpose t3 ON t3.Code = t1.Purpose
+	 		LEFT JOIN PSLEndUse t4 ON t4.Code = t1.EndUse
+	 	   LEFT JOIN LoanPurposes t5 ON t5.loanPurposeCode = t1.loanPurpose
+	 		
+	 	</createView>
+	 </changeSet>
+	 
+	 
+	  <changeSet id="38" author="Manoj">
+	 	<addColumn tableName="LoanPurposes_Temp">
+			<column name="EligibleAmount" type="decimal(18,0)"></column>
+		</addColumn>
+	 </changeSet>
+	 
+	  <changeSet id="39" author="Manoj">
+	 	<addColumn tableName="LoanPurposes">
+			<column name="EligibleAmount" type="decimal(18,0)"></column>
+		</addColumn>
+	 </changeSet>
+	 
+	 <changeSet id="40" author="Manoj">
+	 	<createView viewName="loanpurposes_aview" replaceIfExists="true">
+	 		 SELECT t1.loanpurposecode,
+		    t1.loanpurposedesc,
+		    t1.loanpurposeisactive,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid
+   FROM loanpurposes t1
+	 	</createView>
+	 </changeSet>
+	 
+	  <changeSet id="41" author="Manoj">
+	 	<createView viewName="loanpurposes_view" replaceIfExists="true">
+	 		  SELECT t1.loanpurposecode,
+			    t1.loanpurposedesc,
+			    t1.loanpurposeisactive,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t1.eligibleamount
+			   FROM loanpurposes_temp t1
+			UNION ALL
+			 SELECT t1.loanpurposecode,
+			    t1.loanpurposedesc,
+			    t1.loanpurposeisactive,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t1.eligibleamount
+			   FROM loanpurposes t1
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM loanpurposes_temp
+			          WHERE loanpurposes_temp.loanpurposecode = t1.loanpurposecode))
+	 	</createView>
+	 </changeSet>
 </databaseChangeLog>
