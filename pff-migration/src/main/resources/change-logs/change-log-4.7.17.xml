@@ -6411,7 +6411,67 @@ UNION ALL
 			workflowdetails);
 		</sql>
 	</changeSet>
-	<changeSet id="156_Pre" author="Jayant">
+
+	<changeSet id="156" author="Amarnath.t">
+		<createTable tableName="dmsdocprocess">
+			<column name="id" type="int" defaultValue="0">
+				<constraints primaryKey="true" primaryKeyName="pk_dmsidentification" />
+			</column>
+			<column name="finreference" type="varchar(100)" />
+			<column name="docmodule" type="varchar(100)" />
+			<column name="docrefid" type="bigint" defaultValue="0" />
+			<column name="state" type="varchar(100)" />
+			<column name="status" type="varchar(100)" />
+			<column name="referenceid" type="varchar(100)" />
+			<column name="retryCount" type="int" defaultValue="0" />
+			<column name="customerCif" type="varchar(100)" />
+			<column name="docid" type="bigint" defaultValue="0" />
+			<column name="docCategory" type="varchar(100)" />
+			<column name="docDesc" type="varchar(100)" />
+			<column name="docExt" type="varchar(100)" />
+			<column name="lastMntOn" type="datetime" />
+			<column name="createdOn" type="datetime" />
+		</createTable>
+	</changeSet>
+	<changeSet id="157" author="Amarnath.t">
+		<createSequence sequenceName="seqdmsidentification" />
+	</changeSet>
+	<changeSet id="158" author="Amarnath.t">
+		<createTable tableName="dmsdocprocesslog">
+			<column name="id" type="integer" />
+			<column name="finreference" type="varchar(100)" />
+			<column name="docmodule" type="varchar(100)" />
+			<column name="docrefid" type="bigint" />
+			<column name="state" type="varchar(100)" />
+			<column name="status" type="varchar(100)" />
+			<column name="referenceid" type="varchar(100)" />
+			<column name="retrycount" type="integer" />
+			<column name="customercif" type="varchar(100)" />
+			<column name="docid" type="bigint" />
+			<column name="doccategory" type="varchar(100)" />
+			<column name="errorDesc" type="varchar(4000)" />
+			<column name="docDesc" type="varchar(100)" />
+			<column name="docExt" type="varchar(100)" />
+			<column name="lastmnton" type="datetime" />
+			<column name="createdon" type="datetime" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="135" author="Ganesh.p">
+		<comment> Change the error message of Disbursment date mismatch </comment>
+		<sql>
+			Update Errordetails SET Message = 'Scheduled Disbursement date and Disbursement date should be same.' where code = '65032';
+		</sql>
+	</changeSet>
+	
+		<changeSet id="136" author="Ganesh.p">
+		<comment> Created new error for either one doc is req between two </comment>
+		<sql>
+			INSERT INTO ErrorDetails VALUES('41104','EN','E','Either {0} document or {1} document is mandatory.','','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="159" author="Jayant">
 		<sql>
 			delete from SECOPERATIONROLES WHERE ROLEID IN (SELECT ROLEID FROM SECROLES where rolecd='GSTINMAPPING_MAKER');
 			delete from SECOPERATIONROLES WHERE ROLEID IN (SELECT ROLEID FROM SECROLES where rolecd='GSTINMAPPING_APPROVER');
@@ -6450,10 +6510,7 @@ UNION ALL
 			delete from SECROLEGROUPS WHERE ROLEID IN (SELECT ROLEID FROM SECROLES where rolecd='HOSTGLMAPPING_APPROVER');
 			delete from SECROLEGROUPS WHERE ROLEID IN (SELECT ROLEID FROM SECROLES where rolecd='ACNTINGSET_MAKER');
 			delete from SECROLEGROUPS WHERE ROLEID IN (SELECT ROLEID FROM SECROLES where rolecd='ACNTINGSET_APPROVER');
-		</sql>
-	</changeSet>
-	<changeSet id="156" author="Vinay">
-		<sql>
+
 			delete from SECROLES where rolecd='GSTINMAPPING_MAKER';
 			delete from SECROLES where rolecd='GSTINMAPPING_APPROVER';
 			delete from SECROLES where rolecd='FEETYPE_MAKER';
@@ -6512,9 +6569,6 @@ UNION ALL
 			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='ACCOUNTINGSET_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='ACNTINGSET_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
 			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='ACCOUNTINGSET_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='ACNTINGSET_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
 			
-			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='MDTGRP'), (Select  RoleID  From SecRoles Where RoleCd='ACNTYPES_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
-			
-			
 			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='COSTCENTERS_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
 			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='COSTCENTERS_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
 			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='PROFITCENTERS_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
@@ -6534,65 +6588,6 @@ UNION ALL
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 			UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
 						
-		</sql>
-	</changeSet>
-
-	<changeSet id="156" author="Amarnath.t">
-		<createTable tableName="dmsdocprocess">
-			<column name="id" type="int" defaultValue="0">
-				<constraints primaryKey="true" primaryKeyName="pk_dmsidentification" />
-			</column>
-			<column name="finreference" type="varchar(100)" />
-			<column name="docmodule" type="varchar(100)" />
-			<column name="docrefid" type="bigint" defaultValue="0" />
-			<column name="state" type="varchar(100)" />
-			<column name="status" type="varchar(100)" />
-			<column name="referenceid" type="varchar(100)" />
-			<column name="retryCount" type="int" defaultValue="0" />
-			<column name="customerCif" type="varchar(100)" />
-			<column name="docid" type="bigint" defaultValue="0" />
-			<column name="docCategory" type="varchar(100)" />
-			<column name="docDesc" type="varchar(100)" />
-			<column name="docExt" type="varchar(100)" />
-			<column name="lastMntOn" type="datetime" />
-			<column name="createdOn" type="datetime" />
-		</createTable>
-	</changeSet>
-	<changeSet id="157" author="Amarnath.t">
-		<createSequence sequenceName="seqdmsidentification" />
-	</changeSet>
-	<changeSet id="158" author="Amarnath.t">
-		<createTable tableName="dmsdocprocesslog">
-			<column name="id" type="integer" />
-			<column name="finreference" type="varchar(100)" />
-			<column name="docmodule" type="varchar(100)" />
-			<column name="docrefid" type="bigint" />
-			<column name="state" type="varchar(100)" />
-			<column name="status" type="varchar(100)" />
-			<column name="referenceid" type="varchar(100)" />
-			<column name="retrycount" type="integer" />
-			<column name="customercif" type="varchar(100)" />
-			<column name="docid" type="bigint" />
-			<column name="doccategory" type="varchar(100)" />
-			<column name="errorDesc" type="varchar(4000)" />
-			<column name="docDesc" type="varchar(100)" />
-			<column name="docExt" type="varchar(100)" />
-			<column name="lastmnton" type="datetime" />
-			<column name="createdon" type="datetime" />
-		</createTable>
-	</changeSet>
-
-	<changeSet id="135" author="Ganesh.p">
-		<comment> Change the error message of Disbursment date mismatch </comment>
-		<sql>
-			Update Errordetails SET Message = 'Scheduled Disbursement date and Disbursement date should be same.' where code = '65032';
-		</sql>
-	</changeSet>
-	
-		<changeSet id="136" author="Ganesh.p">
-		<comment> Created new error for either one doc is req between two </comment>
-		<sql>
-			INSERT INTO ErrorDetails VALUES('41104','EN','E','Either {0} document or {1} document is mandatory.','','Approved','','','','','',0,current_timestamp,1000,0);
 		</sql>
 	</changeSet>
 	
