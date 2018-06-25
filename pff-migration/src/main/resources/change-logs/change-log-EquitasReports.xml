@@ -566,5 +566,96 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 			0, NULL, null, '0 0/5 * * * ?', 0, NULL, 1, 1);
 		</sql>
 	</changeSet>
+	<changeSet id="31" author="Manoj">
+		<renameTable newTableName="PSLDetail_Temp" oldTableName="PSLDetails_Temp"/>
+		<renameTable newTableName="PSLDetail" oldTableName="PSLDetails"/>
+		<renameView oldViewName="PslDetails_view" newViewName="PslDetail_view"/>
+		<renameView oldViewName="PslDetails_aview" newViewName="PslDetail_aview"/>
+	</changeSet>
+	<changeSet id="32" author="Manoj">
+		<comment> Rename table PSLDetails to PSLDetail </comment>
+	 	<createView viewName="PslDetail_view" replaceIfExists="true">
+	 		SELECT 
+		 		t1.FinReference,
+			    t1.WeakerSection,
+			    t1.LandHolding,
+			    t1.LandArea,
+			    t1.Sector,
+			    t1.Amount,
+			    t1.SubCategory,
+			    t1.Purpose,
+			    t1.EndUse,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+  			 FROM PslDetail_Temp t1
+		     LEFT JOIN PSLWeakerSection t2 ON t2.Code = t1.WeakerSection
+		     LEFT JOIN PSLPurpose t3 ON t3.Code = t1.Purpose
+			 LEFT JOIN PSLEndUse t4 ON t4.Code = t1.EndUse
+		UNION ALL
+		SELECT 
+			t1.FinReference,
+		    t1.WeakerSection,
+		    t1.LandHolding,
+		    t1.LandArea,
+		    t1.Sector,
+		    t1.Amount,
+		    t1.SubCategory,
+		    t1.Purpose,
+		    t1.EndUse,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid
+		   FROM PslDetail t1
+		    LEFT JOIN PSLWeakerSection t2 ON t2.Code = t1.WeakerSection
+		     LEFT JOIN PSLPurpose t3 ON t3.Code = t1.Purpose
+			 LEFT JOIN PSLEndUse t4 ON t4.Code = t1.EndUse
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM PslDetail_Temp
+		          WHERE PslDetail_Temp.FinReference = t1.FinReference))
+	 	</createView>
+	 </changeSet> 
 	 
+	 <changeSet id="33" author="Manoj">
+	 <comment> Rename table PSLDetails to PSLDetail </comment>
+	 	<createView viewName="PslDetail_Aview" replaceIfExists="true">
+	 		 SELECT t1.FinReference,
+    		t1.WeakerSection,
+		    t1.LandHolding,
+		    t1.LandArea,
+		    t1.Sector,
+		    t1.Amount,
+		    t1.SubCategory,
+		    t1.Purpose,
+		    t1.EndUse,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid
+  			 FROM PslDetail t1
+    		 LEFT JOIN PSLWeakerSection t2 ON t2.Code = t1.WeakerSection
+     		LEFT JOIN PSLPurpose t3 ON t3.Code = t1.Purpose
+	 		LEFT JOIN PSLEndUse t4 ON t4.Code = t1.EndUse
+	 	</createView>
+	 </changeSet>
 </databaseChangeLog>

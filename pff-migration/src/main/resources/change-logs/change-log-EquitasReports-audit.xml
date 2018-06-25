@@ -106,4 +106,7 @@
 			</column>
 	 	</createTable>
 	 </changeSet>
+	 <changeSet id="3" author="Manoj">
+		<renameTable newTableName="AdtPSLDetail" oldTableName="AdtPSLDetails"/>
+	</changeSet>
 </databaseChangeLog>
