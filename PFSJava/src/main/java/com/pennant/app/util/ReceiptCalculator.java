@@ -41,7 +41,10 @@
  * 13-06-2018       Siva					 0.4        Partial Settlement Amount 
  * 														Double Entry                        * 
  * 
- * 13-06-2018       Siva					 0.5        Early Settlement balance Amount 
+ * 26-06-2018       Siva					 0.5        Early Settlement balance Amount 
+ * 														not closing fully(127641)           * 
+ * 
+ * 26-06-2018       Siva					 0.6        Early Settlement balance Amount 
  * 														not closing fully(127641)           * 
  *                                                                                          * 
  *                                                                                          * 
@@ -940,6 +943,8 @@ public class ReceiptCalculator implements Serializable {
 		BigDecimal totInsPaidNow = BigDecimal.ZERO;
 		BigDecimal totPenaltyPaidNow = BigDecimal.ZERO;
 		List<RepayScheduleDetail> pastdueRpySchdList = new ArrayList<>();
+		BigDecimal totalReceiptAmt = BigDecimal.ZERO;
+		BigDecimal actualReceiptAmt = BigDecimal.ZERO;
 
 		// Start Receipt Details Rendering Process using allocation Details
 		for (int i = 0; i < receiptDetailList.size(); i++) {
@@ -951,8 +956,15 @@ public class ReceiptCalculator implements Serializable {
 				continue;
 			}
 
-			BigDecimal totalReceiptAmt = receiptDetail.getAmount();
-			BigDecimal actualReceiptAmt = receiptDetail.getAmount();
+			boolean isSchdPaid = true;
+			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+				totalReceiptAmt = totalReceiptAmt.add(receiptDetail.getAmount());
+				actualReceiptAmt = actualReceiptAmt.add(receiptDetail.getAmount());
+			}else{
+				totalReceiptAmt = receiptDetail.getAmount();
+				actualReceiptAmt = receiptDetail.getAmount();
+				isSchdPaid = false;
+			}
 			if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 				if (eventFeeBal.compareTo(BigDecimal.ZERO) > 0) {
 					if (eventFeeBal.compareTo(totalReceiptAmt) > 0) {
@@ -979,7 +991,6 @@ public class ReceiptCalculator implements Serializable {
 				// totalReceiptAmt = totalReceiptAmt.add(totalWaivedAmt);
 			}
 
-			boolean isSchdPaid = false;
 			List<RepayScheduleDetail> partialRpySchdList = new ArrayList<>();
 			String repayHierarchy = scheduleData.getFinanceType().getRpyHierarchy();
 			// ###_0.2 

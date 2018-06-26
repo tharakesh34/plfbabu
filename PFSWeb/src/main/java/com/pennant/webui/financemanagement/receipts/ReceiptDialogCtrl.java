@@ -4113,7 +4113,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if(paidBal.compareTo(BigDecimal.ZERO) < 0){
 					paidBal = BigDecimal.ZERO;
 				}
-				this.custPaid.setValue(PennantApplicationUtil.formateAmount(totCustPaid.subtract(totExAutoPaid), formatter));
+				this.custPaid.setValue(PennantApplicationUtil.formateAmount(paidBal, formatter));
 			}else{
 				this.custPaid.setValue(PennantApplicationUtil.formateAmount(totCustPaid, formatter));
 			}
