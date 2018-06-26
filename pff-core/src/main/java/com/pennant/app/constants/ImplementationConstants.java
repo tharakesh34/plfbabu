@@ -124,4 +124,5 @@ public class ImplementationConstants {
 	public static final boolean	ALLOW_PAID_FEE_SCHEDULE_METHOD	= false;	//Fee Schedule Methods for Paid by customer and Waved by Bank.
 	public static final boolean	GROUP_BATCH_BY_BANK				= true;	
 	public static final boolean	ALLOW_BARCODE					= false;	
+	public static final boolean	CIBIL_BUTTON_REQ				= false;	
 }

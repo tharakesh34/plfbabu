@@ -175,6 +175,9 @@ public class CustomerDetails implements java.io.Serializable {
 	@XmlElement
 	private boolean dedupReq;
 
+	private boolean  cibilExecuted=false;
+	private boolean  cibilALreadyRun=false;
+	
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
 	}
@@ -567,5 +570,21 @@ public class CustomerDetails implements java.io.Serializable {
 
 	public void setCustomerDocument(CustomerDocument customerDocument) {
 		this.customerDocument = customerDocument;
+	}
+
+	public boolean isCibilALreadyRun() {
+		return cibilALreadyRun;
+	}
+
+	public void setCibilALreadyRun(boolean cibilALreadyRun) {
+		this.cibilALreadyRun = cibilALreadyRun;
+	}
+
+	public boolean isCibilExecuted() {
+		return cibilExecuted;
+	}
+
+	public void setCibilExecuted(boolean cibilExecuted) {
+		this.cibilExecuted = cibilExecuted;
 	}
 }

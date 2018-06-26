@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -503,6 +504,89 @@ public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}
+
+	
+	
+	@Override
+	public void saveExtendedDetails(Map<String, Object> mappedValues, String type, String tableName) {
+		logger.debug(Literal.ENTERING);
+		
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus txStatus = null;
+
+		// begin transaction
+		txStatus = transactionManager.getTransaction(txDef);
+		try {
+		StringBuilder insertSql = new StringBuilder(" INSERT INTO ");
+		insertSql.append(tableName);
+		insertSql.append(StringUtils.trimToEmpty(type));
+
+		List<String> list = new ArrayList<String>(mappedValues.keySet());
+		String columnames = "";
+		String columnValues = "";
+		for (int i = 0; i < list.size(); i++) {
+			if (i < list.size() - 1) {
+				columnames = columnames.concat(list.get(i)).concat(" , ");
+				columnValues = columnValues.concat(":").concat(list.get(i)).concat(" , ");
+			} else {
+				columnames = columnames.concat(list.get(i));
+				columnValues = columnValues.concat(":").concat(list.get(i));
+			}
+		}
+		insertSql.append(" (" + columnames + ") values (" + columnValues + ")");
+		logger.debug("insertSql: " + insertSql.toString());
+		
+			this.namedParameterJdbcTemplate.update(insertSql.toString(), mappedValues);
+			transactionManager.commit(txStatus);
+		} catch(Exception e) {
+			logger.error("Exception", e);
+			transactionManager.rollback(txStatus);
+			throw e;
+		}
+		logger.debug("Leaving");
+
+	}
+	
+	@Override
+	public void updateExtendedDetails(String reference, int seqNo, Map<String, Object> mappedValues, String type, String tableName) {
+		logger.debug("Entering");
+		
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus txStatus = null;
+
+		// begin transaction
+		txStatus = transactionManager.getTransaction(txDef);
+		try {
+		StringBuilder updateSql = new StringBuilder(" UPDATE ");
+		updateSql.append(tableName);
+		updateSql.append(StringUtils.trimToEmpty(type));
+		List<String> list = new ArrayList<String>(mappedValues.keySet());
+		StringBuilder query = new StringBuilder();
+
+		for (int i = 0; i < list.size(); i++) {
+			if (i == 0) {
+				query.append(" set ").append(list.get(i)).append("=:").append(list.get(i));
+			} else {
+				query.append(",").append(list.get(i)).append("=:").append(list.get(i));
+			}
+		}
+		updateSql.append(query);
+		updateSql.append(" where Reference ='").append(reference).append("' AND SeqNo = '").append(seqNo).append("'");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		
+			this.namedParameterJdbcTemplate.update(updateSql.toString(), mappedValues);
+			transactionManager.commit(txStatus);
+		} catch(Exception e) {
+			logger.error("Exception", e);
+			transactionManager.rollback(txStatus);
+			throw e;		}
+		logger.debug("Leaving");
+	}
+
+
 
 }
 

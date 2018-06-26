@@ -29,7 +29,10 @@ public interface CreditInterfaceDAO {
 	public List<ServiceTaskDetail> getServiceTaskDetails(String module, String reference, String serviceTaskName);
 	
 	City getCityDetails(final String pCCountry, String pCProvince, String pCCity, String type);
-	
-	
+
+	void saveExtendedDetails(Map<String, Object> appplicationdata, String type, String tableName);
+
+	void updateExtendedDetails(String custCIF, int seqNo, Map<String, Object> appplicationdata, String type, String tableName);
+
 	
 }

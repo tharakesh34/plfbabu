@@ -2096,6 +2096,258 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		caption.setParent(groupbox);
 		return groupbox;
 	}
+	
+	
+	/**
+	 * Method to setting the values 
+	 * 
+	 * @param extendedFieldDetailList
+	 * @param fieldValueMap
+	 */
+	public void setValues(List<ExtendedFieldDetail> extendedFieldDetailList, Map<String, Object> fieldValueMap) {
+		logger.debug(Literal.ENTERING);
+
+		if (extendedFieldDetailList == null) {
+			return;
+		}
+		if (fieldValueMap == null) {
+			return;
+		}
+
+		for (ExtendedFieldDetail detail : extendedFieldDetailList) {
+
+			if (!detail.isInputElement()) {
+				continue;
+			}
+
+			Object value = fieldValueMap.get(detail.getFieldName());
+			if (value == null) {
+				continue;
+			}
+			String stringVal = String.valueOf(value);
+			
+			String id = getComponentId(detail.getFieldName());
+
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())) {
+				id = "ad_".concat(detail.getFieldName().concat("_CC"));
+			}
+
+			Component component = tabpanel.getFellowIfAny(id);
+
+			if (component != null) {
+				if (component instanceof CurrencyBox) {
+					CurrencyBox currencyBox = (CurrencyBox) component;
+					currencyBox.setConstraint("");
+					currencyBox.setErrorMessage("");
+					currencyBox.setValue(new BigDecimal(stringVal));
+				} else if (component instanceof Decimalbox) {
+					Decimalbox decimalbox = (Decimalbox) component;
+					decimalbox.setConstraint("");
+					decimalbox.setErrorMessage("");
+					decimalbox.setValue(new BigDecimal(stringVal));
+				} else if (component instanceof Intbox) {
+					Intbox intbox = (Intbox) component;
+					intbox.setConstraint("");
+					intbox.setErrorMessage("");
+					intbox.setValue(Integer.parseInt(stringVal));
+				} else if (component instanceof Longbox) {
+					Longbox longbox = (Longbox) component;
+					longbox.setConstraint("");
+					longbox.setErrorMessage("");
+					longbox.setValue(Long.parseLong(stringVal));
+				} else if (component instanceof AccountSelectionBox) {
+					AccountSelectionBox accSelectionBox = (AccountSelectionBox) component;
+					accSelectionBox.setConstraint("");
+					accSelectionBox.setErrorMessage("");
+					accSelectionBox.setValue(stringVal);
+				} else if (component instanceof FrequencyBox) {
+					FrequencyBox frqBox = (FrequencyBox) component;
+					frqBox.setValue(stringVal);
+				} else if (component instanceof RateBox) {
+					//FIXME
+					RateBox rateBox = (RateBox) component;
+					if (fieldValueMap.containsKey(detail.getFieldName().concat("_BR"))
+							&& fieldValueMap.get(detail.getFieldName().concat("_BR")) != null
+							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_BR")).toString())) {
+						rateBox.setBaseValue(fieldValueMap.get(detail.getFieldName().concat("_BR")).toString());
+					}
+					if (fieldValueMap.containsKey(detail.getFieldName().concat("_SR"))
+							&& fieldValueMap.get(detail.getFieldName().concat("_SR")) != null
+							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_SR")).toString())) {
+						rateBox.setSpecialValue(fieldValueMap.get(detail.getFieldName().concat("_SR")).toString());
+					}
+					if (fieldValueMap.containsKey(detail.getFieldName().concat("_MR"))
+							&& fieldValueMap.get(detail.getFieldName().concat("_MR")) != null
+							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_MR")).toString())) {
+						rateBox.setMarginValue(new BigDecimal(fieldValueMap.get(detail.getFieldName().concat("_MR")).toString()));
+					}
+				} else if (component instanceof Timebox) {
+					Timebox timebox = (Timebox) component;
+					timebox.setConstraint("");
+					timebox.setErrorMessage("");
+					if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+						timebox.setValue((Date) fieldValueMap.get(detail.getFieldName()));
+					} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+						if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSTIME, detail.getFieldDefaultValue())) {
+							timebox.setValue(DateUtility.getTimestamp(new Date()));
+						}
+					}
+				} else if (component instanceof Datebox) {
+					Datebox datebox = (Datebox) component;
+					datebox.setConstraint("");
+					datebox.setErrorMessage("");
+					if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+						datebox.setValue((Date) fieldValueMap.get(detail.getFieldName()));
+					} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+						if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, detail.getFieldType().trim())) {
+							if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_APPDATE, detail.getFieldDefaultValue())) {
+								datebox.setValue(DateUtility.getAppDate());
+							} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
+									detail.getFieldDefaultValue())) {
+								datebox.setValue(DateUtility.getSysDate());
+							}
+
+						} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME, detail.getFieldType().trim())) {
+							if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_APPDATE, detail.getFieldDefaultValue())) {
+								datebox.setText(DateUtility.getAppDate(DateFormat.SHORT_DATE_TIME));
+							} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
+									detail.getFieldDefaultValue())) {
+								datebox.setText(DateUtility.getSysDate(DateFormat.SHORT_DATE_TIME));
+							}
+						}
+					}
+				} else if (component instanceof ExtendedCombobox) {
+					ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
+					extendedCombobox.setConstraint("");
+					extendedCombobox.setErrorMessage("");
+					
+					// Module Parameters Identification from Module Mapping
+					ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(detail.getFieldList());
+					String[] lovefields = moduleMapping.getLovFields();
+					if (lovefields.length >= 2) {
+						extendedCombobox.setProperties(detail.getFieldList(), lovefields[0], lovefields[1],
+								detail.isFieldMandatory(), detail.getFieldLength(), 150);
+					}
+					//Data Setting
+					if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+						extendedCombobox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
+					}
+				} else if (component instanceof Combobox) {
+					Combobox combobox = (Combobox) component;
+					combobox.setConstraint("");
+					combobox.setErrorMessage("");
+
+					String[] staticList = detail.getFieldList().split(",");
+					combobox.getChildren().clear();
+					Comboitem comboitem = new Comboitem();
+					comboitem.setValue(PennantConstants.List_Select);
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					combobox.appendChild(comboitem);
+					combobox.setSelectedItem(comboitem);
+					combobox.setReadonly(true);
+					for (int j = 0; j < staticList.length; j++) {
+						if (fieldValueMap.containsKey(detail.getFieldName())
+								&& fieldValueMap.get(detail.getFieldName()) != null && StringUtils
+										.equals(fieldValueMap.get(detail.getFieldName()).toString(), staticList[j])) {
+							combobox.setSelectedItem(comboitem);
+						}
+					}
+				} else if (component instanceof Bandbox) {
+					Bandbox bandbox = (Bandbox) component;
+					Listbox listBox = new Listbox();
+					bandbox.setConstraint("");
+					bandbox.setErrorMessage("");
+					String[] staticList = null;
+					staticList = detail.getFieldList().split(",");
+					int maxFieldLength = 0;
+					for (int j = 0; j < staticList.length; j++) {
+
+						Listitem listItem = new Listitem();
+						Listcell listCell = new Listcell();
+						Checkbox checkBox = new Checkbox();
+						checkBox.addEventListener("onCheck", new onMultiSelectionItemSelected());
+						checkBox.setValue(staticList[j]);
+
+						Label label = new Label(staticList[j]);
+						label.setStyle("padding-left:5px");
+						listCell.setValue(staticList[j]);
+						listCell.appendChild(checkBox);
+						listCell.appendChild(label);
+						listItem.appendChild(listCell);
+						listBox.appendChild(listItem);
+
+						if (maxFieldLength < staticList[j].length()) {
+							maxFieldLength = staticList[j].length();
+						}
+
+						if (fieldValueMap.containsKey(detail.getFieldName())
+								&& fieldValueMap.get(detail.getFieldName()) != null && StringUtils
+										.contains(fieldValueMap.get(detail.getFieldName()).toString(), staticList[j])) {
+							checkBox.setChecked(true);
+							bandbox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
+						}
+					}
+				} else if (component instanceof Radiogroup) {
+					Radiogroup radiogroup = (Radiogroup) component;
+					String[] radiofields = detail.getFieldList().split(",");
+					for (int j = 0; j < radiofields.length; j++) {
+						Radio radio = new Radio();
+						radio.setLabel(radiofields[j]);
+						radio.setValue(radiofields[j]);
+
+						radio.setDisabled(isReadOnly);
+
+						// Data Setting
+						if (fieldValueMap.containsKey(detail.getFieldName())
+								&& fieldValueMap.get(detail.getFieldName()) != null
+								&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())
+								&& StringUtils.trimToEmpty(fieldValueMap.get(detail.getFieldName()).toString())
+										.equals(radiofields[j])) {
+							radio.setChecked(true);
+						} else {
+							radio.setChecked(false);
+						}
+						radiogroup.appendChild(radio);
+					}
+				} else if (component instanceof Checkbox) {
+					Checkbox checkbox = (Checkbox) component;
+					if (fieldValueMap.containsKey(detail.getFieldName())
+							&& fieldValueMap.get(detail.getFieldName()) != null
+							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+						// checkbox.setChecked((boolean) fieldValueMap.get(detail.getFieldName()));
+						if (App.DATABASE == Database.POSTGRES) {
+							checkbox.setChecked(
+									fieldValueMap.get(detail.getFieldName()).toString().equals("true") ? true : false);
+						} else {
+							checkbox.setChecked(
+									Integer.parseInt(fieldValueMap.get(detail.getFieldName()).toString()) == 1 ? true
+											: false);
+						}
+					}
+				} else if (component instanceof Textbox) {
+					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())) {
+						Textbox countryCode = (Textbox) component;
+						Textbox areCode = (Textbox) tabpanel.getFellowIfAny(id.replace("_CC", "_AC"));
+						Textbox subCode = (Textbox) tabpanel.getFellowIfAny(id.replace("_CC", "_SC"));
+					} else {
+						Textbox textbox = (Textbox) component;
+						textbox.setConstraint("");
+						textbox.setErrorMessage("");
+						if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+								&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+							textbox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
+						} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+							textbox.setValue(detail.getFieldDefaultValue());
+						}
+					}
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
 
 	/**
 	 * Method for create Tabpanel based on the Extended field details.
@@ -2330,5 +2582,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	public void setUserRole(String userRole) {
 		this.userRole = userRole;
 	}
+
+	
 
 }

@@ -850,4 +850,8 @@ public class ExtendedFieldCtrl {
 	public void setUserRole(String userRole) {
 		this.userRole = userRole;
 	}
+
+	public void setValues(Map<String, Object> fieldValueMap) {
+		this.generator.setValues(extendedFieldHeader.getExtendedFieldDetails(), fieldValueMap);
+	}
 }

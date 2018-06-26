@@ -183,6 +183,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
+import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
 import com.pennanttech.pff.external.FinnovService;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
@@ -469,6 +470,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	@Autowired(required = false)
 	private Crm				crm;
 	
+	
+	@Autowired(required = false)
+	private CreditInformation creditInformation;
+	protected Button btn_GenerateCibil;
 	/**
 	 * default constructor.<br>
 	 */
@@ -1970,6 +1975,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			doWriteBeanToComponents(aCustomerDetails);
 			doResetFeeVariables();
+			doCheckCibil();
 			doSetCategoryProperties();
 			doCheckEnquiry();
 
@@ -2023,6 +2029,24 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
+	
+	private void doCheckCibil() {
+		
+		if (ImplementationConstants.CIBIL_BUTTON_REQ) {
+			if (getCustomerDetails().getCustomer().isNewRecord() || (getFinancedetail()!=null && getFinancedetail().isNewRecord())) {
+				this.btn_GenerateCibil.setVisible(false);
+			}else{
+				if (isRetailCustomer) {
+					this.btn_GenerateCibil.setVisible(true);
+				}
+			}
+		}else{
+			this.btn_GenerateCibil.setVisible(false);
+		}
+	}
+		
+
+	
 	private void doSetCategoryProperties() {
 		logger.debug("Entering");
 		if (isRetailCustomer) {
@@ -2806,6 +2830,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.additionalIncome.setReadonly(isReadOnly("CustomerDialog_additionalIncome"));
 			this.noOfDependents.setReadonly(isReadOnly("CustomerDialog_noOfDependents"));
 			this.custMaritalSts.setDisabled(isReadOnly("CustomerDialog_custMaritalSts"));
+			
+			if (isRetailCustomer) {
+				readOnlyComponent(!isReadOnly("CustomerDialog_btn_GenerateCibil"), this.btn_GenerateCibil);
+			}
 
 			if (!isFinanceProcess && isWorkFlowEnabled()) {
 				for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -2900,6 +2928,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		readOnlyComponent(true, this.caste);
 		readOnlyComponent(true, this.religion);
 		readOnlyComponent(true, this.subCategory);
+		readOnlyComponent(true, this.btn_GenerateCibil);
 
 		if (!isFinanceProcess) {
 			if (isWorkFlowEnabled()) {
@@ -2920,6 +2949,56 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
+	}
+	
+	
+	public void onClick$btn_GenerateCibil(Event event) throws Exception {
+		onCibilButtonClick();
+		
+	}
+
+	private void onCibilButtonClick() throws ParseException, Exception {
+		doWriteComponentsToBean(customerDetails, null);
+		
+		if (!validateAddressDetails(this.tabkYCDetails)) {
+			return;
+		}
+		if (!validatePhoneDetails(this.tabkYCDetails)) {
+			return;
+		}
+		if (!validateEmailDetails(this.tabkYCDetails)) {
+			return;
+		}
+		if (!validateCustomerDocuments(this.tabkYCDetails)) {
+			return;
+		}
+
+		customerDetails.setCibilExecuted(true);
+		FinanceMain main = null;
+		if(getFinancedetail()!=null && getFinancedetail().getFinScheduleData()!=null){
+			main = getFinancedetail().getFinScheduleData().getFinanceMain();
+		}
+		
+		customerDetails = creditInformation.procesCreditEnquiry(customerDetails,main,false);
+		
+		if (customerDetails.isCibilExecuted()) {
+			// show confirmation
+			// if yes then re-reun with override
+			if (customerDetails.isCibilALreadyRun()) {
+				final String msg = Labels.getLabel("Cibil.Already_Processed") + "\n\n --> "
+						+ Labels.getLabel("label_CustomerDialog_CustCIF.value") + " : "
+						+ customerDetails.getCustomer().getCustCIF();
+				if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+					customerDetails = creditInformation.procesCreditEnquiry(customerDetails,main, true);
+					extendedFieldCtrl.setValues(customerDetails.getExtendedFieldRender().getMapValues());
+				}
+			}else{
+				extendedFieldCtrl.setValues(customerDetails.getExtendedFieldRender().getMapValues());
+			}
+		}else{
+			MessageUtil.showError(Labels.getLabel("Cibil_Error"));
+		}
+	
 	}
 
 	/**
@@ -3561,6 +3640,28 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				String msg = Labels.getLabel("CustomerEmail_High_Priority");
 				MessageUtil.showError(msg);
 			}
+		}
+
+		logger.debug("Leaving");
+		return isMandAddExist;
+	}
+	
+	
+	private boolean validateCustomerDocuments(Tab tab) {
+		logger.debug("Entering");
+		boolean isMandAddExist = false;
+		if (!this.customerDocumentDetailList.isEmpty()) {
+			isMandAddExist = true;
+		}
+
+		if (!isMandAddExist) {
+			this.tabkYCDetails.setSelected(true);
+			if (tab != null) {
+				tab.setSelected(true);
+			}
+			this.tabkYCDetails.setSelected(true);
+			String msg = Labels.getLabel("CustomerDocuments_Required");
+			MessageUtil.showError(msg);
 		}
 
 		logger.debug("Leaving");
@@ -6009,8 +6110,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		String result = null;
 		String response = null;
-		if (getCustomerDetails().getExtendedFieldRender().getMapValues().get("jsonresponse") != null) {
-			response = (String) getCustomerDetails().getExtendedFieldRender().getMapValues().get("jsonresponse");
+		if (getCustomerDetails().getExtendedFieldRender().getMapValues().get("JsonResponse") != null) {
+			response = (String) getCustomerDetails().getExtendedFieldRender().getMapValues().get("JsonResponse");
 		}
 		JSONObject json = null;
 
