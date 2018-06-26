@@ -2369,4 +2369,12 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet author="Kesav" id="115">
+		<sql>
+			 update reportfilterfields set lovtextfieldmethod='getInvoiceNo', fielddbname='T.invoiceno' 
+			 where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport') and fieldid='3';
+		</sql>
+	</changeSet>
+
+	
 </databaseChangeLog>
