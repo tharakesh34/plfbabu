@@ -685,7 +685,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//Manual Advise
 		String manualAdvFeeType = "- Payable"; //12
 		String manualAdvPrentmentNotIn = "FeeDesc or Bounce - Due "; //10
-		String manualAdvPrentmentIn = "Bounce - Due for Installment: "; //11
+		String manualAdvPrentmentIn = ""; // 11
 
 		//Receipt Header
 		String receiptHeaderEventExcess = "Payment Recieved vide ";
@@ -951,7 +951,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			for (ManualAdvise manualAdvise : manualAdviseList) {
 				manualAdvFeeType = "- Payable"; //12
 				manualAdvPrentmentNotIn = "FeeDesc or Bounce - Due "; //10
-				manualAdvPrentmentIn = "Bounce - Due for Installment: "; //11
+				manualAdvPrentmentIn = " "; // 11
 				 
 				if ((manualAdvise.getFeeTypeID() != 0 && manualAdvise.getFeeTypeID() != Long.MIN_VALUE)
 						&& StringUtils.isNotBlank(manualAdvise.getFeeTypeDesc()) && manualAdvise.getAdviseType() == 2
@@ -1006,7 +1006,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 									for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
 										
 										if (DateUtility.compare(presentmentDetail.getSchDate(), finSchdDetail.getSchDate()) == 0) {
-											
+											manualAdvPrentmentIn = "Bounce Created for " + "'"
+													+ presentmentDetail.getBounceReason() + "'" + " on Installment:";
 											soaTransactionReport = new SOATransactionReport();
 											if (finSchdDetail.getInstNumber() > 0) {
 												manualAdvPrentmentIn= manualAdvPrentmentIn.concat(String.valueOf(finSchdDetail.getInstNumber()));
