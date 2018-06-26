@@ -1600,7 +1600,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		
 		//GST Invoice Preparation
 		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG) && gstInvoiceTxnService !=null) {
-			gstInvoicePreparation(aeEvent, financeDetail);
+			gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail);
 		}
 
 		//Disbursement Instruction Posting
@@ -1645,7 +1645,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @param aeEvent
 	 * @param financeDetail
 	 */
-	public void gstInvoicePreparation(AEEvent aeEvent, FinanceDetail financeDetail) {
+	public void gstInvoicePreparation(long transactionId, FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 		
 		GSTInvoiceTxn gstInvoiceTxn = new GSTInvoiceTxn();
@@ -1657,7 +1657,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		} else {
 			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 			FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
-			gstInvoiceTxn.setTransactionID(aeEvent.getLinkedTranId());
+			gstInvoiceTxn.setTransactionID(transactionId);
 			List<GSTInvoiceTxnDetails> gstInvoiceTxnDetails = new ArrayList<GSTInvoiceTxnDetails>();
 
 			gstInvoiceTxn.setInvoice_Status("I");
