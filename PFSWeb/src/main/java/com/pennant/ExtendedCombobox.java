@@ -287,6 +287,8 @@ public class ExtendedCombobox extends Hbox {
 						doWrite();
 					}
 				}
+
+				Events.sendEvent(Events.ON_CHANGE, textbox, null);
 			}
 
 			logger.debug("Leaving");

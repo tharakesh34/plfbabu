@@ -64,7 +64,6 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Bandbox;
@@ -159,8 +158,13 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private String				userRole;
 	private int					columnCount;
 	private String				defaultComponentWidth	= "250px";
-	public ExtendedFieldsGenerator() {
+	
+	// Constants for scriptlets.
+	private static final String SCRIPTLET_DELIMITER = "^^";
+	private static final String SCRIPT_DELIMITER = ">>";
 
+	public ExtendedFieldsGenerator() {
+		super();
 	}
 
 	/**
@@ -324,29 +328,53 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 			// story #413 Allow scriptlet for extended fields.
 			if (StringUtils.isNotEmpty(detail.getScriptlet())) {
-				String[] scriptlets = detail.getScriptlet().split("^^");
+				String[] scriptlets = detail.getScriptlet().split(SCRIPTLET_DELIMITER);
 
 				for (String scriptlet : scriptlets) {
-					String[] props = scriptlet.split(">>");
+					String[] props = scriptlet.split(SCRIPT_DELIMITER);
 					String eventName = StringUtils.trimToEmpty(props[0]);
-					String javaScript = props.length > 1 ? StringUtils.trimToEmpty(props[1]) : null;
+					String javaScript = StringUtils.trimToEmpty(props[1]);
 
-					if ("onSelect".equals(eventName) && StringUtils.isEmpty(javaScript)
-							&& component instanceof Combobox) {
-						component.addEventListener("onSelect", new EventListener<Event>() {
-							public void onEvent(Event e) throws Exception {
-								SelectEvent event = (SelectEvent) e;
+					// Add the default event handlers.
+					if ("default;".equals(javaScript)) {
+						if (Events.ON_CHANGE.equals(eventName)
+								&& ExtendedFieldConstants.FIELDTYPE_AMOUNT.equals(detail.getFieldType())) {
+							component.addEventListener(eventName, new EventListener<Event>() {
+								public void onEvent(Event e) throws Exception {
+									String data = "0";
 
-								if (event.getSelectedItems().isEmpty()) {
-									((Combobox) event.getTarget()).setSelectedIndex(0);
+									if (e.getData() != null) {
+										data = e.getData().toString();
+									}
+
+									((CurrencyBox) e.getTarget()).setValue(data);
 								}
-							}
-						});
+							});
+						}
 
 						continue;
 					}
 
-					component.addEventListener(eventName, new EventListener<Event>() {
+					// Add an event listener to specified event name for the component.
+					Component target;
+
+					switch (detail.getFieldType()) {
+					case ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO:
+						target = component.getChildren().get(0);
+						break;
+					case ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO:
+						target = component.getChildren().get(1).getChildren().get(0);
+						component.getChildren().get(1).getChildren().get(0).setId(component.getId().concat("_ctb"));
+						break;
+					case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
+						target = component.getChildren().get(1); // Input element.
+						break;
+					default:
+						target = component;
+						break;
+					}
+
+					target.addEventListener(eventName, new EventListener<Event>() {
 						public void onEvent(Event e) throws Exception {
 							if (e.getData() != null) {
 								Thread.sleep(2000);
@@ -355,8 +383,6 @@ public class ExtendedFieldsGenerator extends AbstractController {
 							Clients.evalJavaScript(javaScript);
 						}
 					});
-
-					Events.echoEvent(eventName, component, "WAIT");
 				}
 			}
 
@@ -1134,6 +1160,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 			if (dataObject instanceof String) {
 				textbox.setValue(dataObject.toString());
+				Events.sendEvent(Events.ON_CHANGE, textbox, null);
 			} else {
 				HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
 				if (details != null) {
@@ -1150,6 +1177,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						}
 					}
 					textbox.setValue(tempValue);
+					Events.sendEvent(Events.ON_CHANGE, textbox, null);
 				}
 			}
 		}
@@ -1617,6 +1645,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		} else {
 			currencyBox.setValue(BigDecimal.ZERO);
 		}
+
+		currencyBox.getChildren().get(3).setId(currencyBox.getId().concat("_cdb"));
+
 		return currencyBox;
 	}
 
