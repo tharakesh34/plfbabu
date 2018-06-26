@@ -279,7 +279,7 @@ public class PresentmentDetailExtractService {
 		String finReference = presentmentDetail.getFinReference();
 		
 		// Cheque Status
-		if (!PennantConstants.CHEQUESTATUS_NEW.equals(presentmentDetail.getMandateStatus()) && !PennantConstants.CHEQUESTATUS_BOUNCE.equals(presentmentDetail.getMandateStatus())) {
+		if (!PennantConstants.CHEQUESTATUS_NEW.equals(presentmentDetail.getMandateStatus())) {
 			if (PennantConstants.CHEQUESTATUS_PRESENT.equals(presentmentDetail.getMandateStatus())) {
 				presentmentDetail.setExcludeReason(RepayConstants.CHEQUESTATUS_PRESENT);
 			}
@@ -288,6 +288,9 @@ public class PresentmentDetailExtractService {
 			}
 			if (PennantConstants.CHEQUESTATUS_REALISED.equals(presentmentDetail.getMandateStatus())) {
 				presentmentDetail.setExcludeReason(RepayConstants.CHEQUESTATUS_REALISED);
+			}
+			if (PennantConstants.CHEQUESTATUS_BOUNCE.equals(presentmentDetail.getMandateStatus())) {
+				presentmentDetail.setExcludeReason(RepayConstants.CHEQUESTATUS_BOUNCE);
 			}
 			return;
 		}

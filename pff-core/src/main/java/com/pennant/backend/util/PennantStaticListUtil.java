@@ -2302,8 +2302,8 @@ public class PennantStaticListUtil {
 			presentmentExclusionList.add(new ValueLabel("6", Labels.getLabel("label_Represent_Manual_Exclude")));
 			presentmentExclusionList.add(new ValueLabel("7", Labels.getLabel("label_Represent_Manual_Reject")));
 			presentmentExclusionList.add(new ValueLabel("8", Labels.getLabel("label_Represent_Cheque_Present")));
-			presentmentExclusionList.add(new ValueLabel("9", Labels.getLabel("label_Represent_Cheque_Release")));
-			presentmentExclusionList.add(new ValueLabel("10", Labels.getLabel("label_Represent_Cheque_Bounce")));
+			presentmentExclusionList.add(new ValueLabel("9", Labels.getLabel("label_Represent_Cheque_Bounce")));
+			presentmentExclusionList.add(new ValueLabel("10", Labels.getLabel("label_Represent_Cheque_Release")));
 			presentmentExclusionList.add(new ValueLabel("11", Labels.getLabel("label_Represent_Cheque_Realized")));
 		}
 		return presentmentExclusionList;
