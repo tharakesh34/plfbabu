@@ -811,6 +811,20 @@ public class RepaymentPostingsUtil implements Serializable {
 				BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
 				amountCodes.setLastSchTds((amountCodes.getLastSchPftPaid().multiply(tdsPerc)).divide(BigDecimal.valueOf(100),0,RoundingMode.HALF_DOWN));
 			
+				// Splitting TDS amount into Accrued and Unaccrued Paid basis
+				if(amountCodes.getAccruedPaid().compareTo(BigDecimal.ZERO) > 0){
+					
+					BigDecimal accrueTds = (amountCodes.getAccruedPaid().multiply(tdsPerc)).divide(BigDecimal.valueOf(100),0,RoundingMode.HALF_DOWN);
+					BigDecimal unaccrueTds = amountCodes.getLastSchTds().subtract(accrueTds);
+					
+					amountCodes.setAccruedTds(accrueTds);
+					amountCodes.setUnAccruedTds(unaccrueTds);
+					
+				}else{
+					amountCodes.setAccruedTds(BigDecimal.ZERO);
+					amountCodes.setUnAccruedTds(amountCodes.getLastSchTds());
+				}
+				
 				// TDS Due
 				amountCodes.setDueTds((amountCodes.getPftDuePaid().multiply(tdsPerc)).divide(BigDecimal.valueOf(100),0,RoundingMode.HALF_DOWN));
 			}else{

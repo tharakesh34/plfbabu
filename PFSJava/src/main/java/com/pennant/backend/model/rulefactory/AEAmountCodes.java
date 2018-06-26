@@ -116,7 +116,9 @@ public class AEAmountCodes {
 	private BigDecimal	unAccrueWaived		= BigDecimal.ZERO;
 	private BigDecimal	futurePriWaived		= BigDecimal.ZERO;
 	private BigDecimal	dueTds				= BigDecimal.ZERO;
-	private BigDecimal	lastSchTds		= BigDecimal.ZERO;
+	private BigDecimal	lastSchTds			= BigDecimal.ZERO;
+	private BigDecimal	accruedTds			= BigDecimal.ZERO;
+	private BigDecimal	unAccruedTds		= BigDecimal.ZERO;
 
 	//For Disbursement Instructions used in SUBHEAD
 	private String		partnerBankAcType;
@@ -1046,6 +1048,22 @@ public class AEAmountCodes {
 
 	public void setuAmz(BigDecimal uAmz) {
 		this.uAmz = uAmz;
+	}
+
+	public BigDecimal getAccruedTds() {
+		return accruedTds;
+	}
+
+	public void setAccruedTds(BigDecimal accruedTds) {
+		this.accruedTds = accruedTds;
+	}
+
+	public BigDecimal getUnAccruedTds() {
+		return unAccruedTds;
+	}
+
+	public void setUnAccruedTds(BigDecimal unAccruedTds) {
+		this.unAccruedTds = unAccruedTds;
 	}
 	
 }
