@@ -862,7 +862,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		//set's the default chequeHeader to the financeDetail if chequeCapture is required.
-		if (finType.isChequeCaptureReq()) {
+		if (!stp && finType.isChequeCaptureReq()) {
 			doSetDefaultChequeHeader(financeDetail);
 		}
 
