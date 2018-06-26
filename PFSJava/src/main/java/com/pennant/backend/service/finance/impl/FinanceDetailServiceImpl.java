@@ -6057,29 +6057,32 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
  * 
  */
 	private List<AuditDetail> validateDisbursements(FinanceDetail financeDetail, List<AuditDetail> auditDetails) {
-		boolean isOtc = false;
-		boolean isOverdue = false;
+		boolean isDocExist = false;
 		String[] valueParm = new String[1];
 		FinanceMain financemain = financeDetail.getFinScheduleData().getFinanceMain();
 		if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())
 				&& financemain.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
-			// validate the covenant against the disbursements
-			for (FinCovenantType covenanttype : financeDetail.getCovenantTypeList()) {
-				isOtc = covenanttype.isAlwOtc();
-				isOverdue = DateUtility.compare(covenanttype.getReceivableDate(), DateUtility.getAppDate()) < 0;
-				if((isOverdue || isOtc)){
-					break;
+			for (FinCovenantType covenantType : financeDetail.getCovenantTypeList()) {
+				// validate the covenants against the document details
+				List<DocumentDetails> docList = getDocumentDetailsDAO()
+						.getDocumentDetailsByRef(covenantType.getFinReference(), FinanceConstants.MODULE_NAME, "");
+				if (docList != null && docList.size() > 0) {
+					for (DocumentDetails documentDetails : docList) {
+						if (documentDetails.getDocCategory().equals(covenantType.getCovenantType())) {
+							isDocExist = true;
+						}
+					}
 				}
-			}
-			if (isOverdue || isOtc) {
-				List<FinAdvancePayments> advpayments = financeDetail.getAdvancePaymentsList();
-				for (FinAdvancePayments finAdvancePayments : advpayments) {
+				for (FinAdvancePayments finAdvancePayments : financeDetail.getAdvancePaymentsList()) {
 					if (finAdvancePayments.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-						valueParm[0] = finAdvancePayments.getPaymentType();
-						AuditDetail detail = new AuditDetail();
-						detail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41103", valueParm)));
-						auditDetails.add(detail);
 
+						if (!isDocExist && covenantType.isAlwOtc()) {
+							valueParm[0] = finAdvancePayments.getPaymentType();
+							AuditDetail detail = new AuditDetail();
+							detail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41103", valueParm)));
+							auditDetails.add(detail);
+							break;
+						}
 					}
 				}
 			}
