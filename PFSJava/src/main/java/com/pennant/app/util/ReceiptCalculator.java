@@ -40,6 +40,9 @@
  *                                                                                          * 
  * 13-06-2018       Siva					 0.4        Partial Settlement Amount 
  * 														Double Entry                        * 
+ * 
+ * 13-06-2018       Siva					 0.5        Early Settlement balance Amount 
+ * 														not closing fully(127641)           * 
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
@@ -344,7 +347,7 @@ public class ReceiptCalculator implements Serializable {
 					}
 					
 					int roundRequired = SysParamUtil.getValueAsInt(SMTParameterConstants.ROUND_LASTSCHD);
-					if (roundRequired == 1) {
+					if (roundRequired == 1 && prvSchd != null) {
 						BigDecimal lastEMI = CalculationUtil.roundAmount(prvSchd.getClosingBalance().add(remPft),roundingMode, roundingTarget);
 						remPft = lastEMI.subtract(prvSchd.getClosingBalance());
 						if (remPft.compareTo(BigDecimal.ZERO) < 0) {
@@ -383,7 +386,8 @@ public class ReceiptCalculator implements Serializable {
 						BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), valueDate,
 								curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 						accruedPft = accruedPft.add(prvSchd.getProfitFraction()).add(prvSchd.getProfitBalance()).subtract(prvSchd.getCpzAmount());
-						accruedPft = CalculationUtil.roundAmount(accruedPft, roundingMode,roundingTarget);
+						accruedPft = CalculationUtil.roundAmount(accruedPft, finScheduleData.getFinanceMain().getCalRoundingMode(),
+								finScheduleData.getFinanceMain().getRoundingTarget());
 						if (accruedPft.compareTo(BigDecimal.ZERO) < 0) {
 							accruedPft = BigDecimal.ZERO;
 						}
@@ -392,21 +396,20 @@ public class ReceiptCalculator implements Serializable {
 						int roundRequired = SysParamUtil.getValueAsInt(SMTParameterConstants.ROUND_LASTSCHD);
 						if (roundRequired == 1) {
 							BigDecimal lastTermEMI = CalculationUtil.roundAmount(accruedPft.add(prvSchd.getClosingBalance()),
-									roundingMode, roundingTarget);
-							BigDecimal roundingPftDiff = lastTermEMI.subtract(prvSchd.getClosingBalance())
-									.subtract(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount())).subtract(accruedPft);
+									finScheduleData.getFinanceMain().getCalRoundingMode(), finScheduleData.getFinanceMain().getRoundingTarget());
+							BigDecimal roundingPftDiff = lastTermEMI.subtract(prvSchd.getClosingBalance()).subtract(accruedPft);
 							accruedPft = accruedPft.add(roundingPftDiff);
 						}
 
 						pftAccruedTillNow = pftAccruedTillNow.add(accruedPft);
-						
 						priBalance = priBalance.add(prvSchd.getClosingBalance());
 						repayMain.setEarlyPayAmount(prvSchd.getClosingBalance());
 						
 						if(finScheduleData.getFinanceMain().isTDSApplicable()){
-							BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount()))).divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-							/*actualPft = CalculationUtil.roundAmount(actualPft, roundingMode, roundingTarget);*/
-							tdsAccruedTillNow = tdsAccruedTillNow.add(accruedPft.add(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount())).subtract(actualPft));
+							BigDecimal actualPft = accruedPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+							/*actualPft = CalculationUtil.roundAmount(actualPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
+									finScheduleData.getFinanceMain().getRoundingTarget());*/
+							tdsAccruedTillNow = tdsAccruedTillNow.add(accruedPft.subtract(actualPft));
 						}
 					}
 
