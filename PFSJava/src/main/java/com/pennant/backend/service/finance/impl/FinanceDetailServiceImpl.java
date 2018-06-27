@@ -241,9 +241,9 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
+import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
@@ -1680,10 +1680,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		finRefDetails = financeReferenceDetailDAO.getFinanceProcessEditorDetails(finType, event, "_FINVIEW");				
 		if (CollectionUtils.isNotEmpty(finRefDetails)) {
 			for (FinanceReferenceDetail finrefDetail : finRefDetails) {
+				
 				String reference = finrefDetail.getLovDescRefDesc();
 				int finRefType = finrefDetail.getFinRefType();
 				String showInStage = StringUtils.trimToEmpty(finrefDetail.getShowInStage());
 				String mandInputInStage = StringUtils.trimToEmpty(finrefDetail.getMandInputInStage());
+				String allowInputInStage = StringUtils.trimToEmpty(finrefDetail.getAllowInputInStage());
+				String ruleReturnType = StringUtils.trimToEmpty(finrefDetail.getLovDescRuleReturnType());
 
 				if ((!finrefDetail.isIsActive()) || StringUtils.isEmpty(reference)) {
 					continue;
@@ -1701,8 +1704,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					}
 					break;
 				case FinanceConstants.PROCEDT_ELIGIBILITY:
-					if (StringUtils.isNotEmpty(finrefDetail.getLovDescRuleReturnType())
-							&& mandInputInStage.contains(tempNextRoleCode)) {
+					if (StringUtils.isNotEmpty(ruleReturnType) && allowInputInStage.contains(tempNextRoleCode)) {
 						eligibilityList.add(finrefDetail);
 					}
 					break;
