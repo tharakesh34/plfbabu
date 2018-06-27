@@ -84,6 +84,7 @@ import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -275,6 +276,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
         this.custEmpName.setMandatoryStyle(true);
 		this.custEmpName.setModuleName("EmployerDetail");
 		this.custEmpName.setValueColumn("EmployerId");
+		this.custEmpName.setValueType(DataType.LONG);
 		this.custEmpName.setDescColumn("EmpName");
 		this.custEmpName.setValidateColumns(new String[] { "EmpName" });
 		
@@ -297,7 +299,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		this.custEmpDept.setValidateColumns(new String[] { "GenDepartment" });	
 		
 		this.custEmpType.setInputAllowed(false);
-		this.custEmpType.setDisplayStyle(3);
+		// this.custEmpType.setDisplayStyle(3);
         this.custEmpType.setMandatoryStyle(true);
 		this.custEmpType.setModuleName("EmploymentType");
 		this.custEmpType.setValueColumn("EmpType");
