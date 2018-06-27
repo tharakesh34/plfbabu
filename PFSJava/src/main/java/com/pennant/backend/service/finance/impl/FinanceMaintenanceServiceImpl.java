@@ -1881,10 +1881,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				for (VehicleDealer dealer : vehicleDealerList) {
 					if (dealer.getDealerId() == dmaCode) {
 						financeMain.setDmaName(dealer.getDealerName());
-						financeMain.setDmaCodeDesc(dealer.getDealerCity());
+						financeMain.setDmaCodeDesc(dealer.getCode());
 					} else if (dealer.getDealerId() == dsaCode) {
 						financeMain.setDsaName(dealer.getDealerName());
-						financeMain.setDsaCodeDesc(dealer.getDealerCity());
+						financeMain.setDsaCodeDesc(dealer.getCode());
 					}
 				}
 			}
