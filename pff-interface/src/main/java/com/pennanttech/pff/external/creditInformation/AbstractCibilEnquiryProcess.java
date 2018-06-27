@@ -239,7 +239,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 			}
 		} catch (Exception e) {
-			logger.debug(e);
+			logger.error(Literal.EXCEPTION, e);
 			customerDetails.setCibilExecuted(false);
 		}
 
@@ -641,10 +641,13 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 		int currencyEditField = (int) getSMTParameter("APP_DFT_CURR_EDIT_FIELD", Integer.class);
 
-		BigDecimal finAmount = financeMain.getFinAssetValue();
-		finAmount = formateAmount(finAmount, currencyEditField);
-		if (finAmount.compareTo(cibilDefaultLoanAmt) > 0) {
-			finAmount = cibilDefaultLoanAmt;
+		BigDecimal finAmount = BigDecimal.ONE;
+		if (financeMain != null) {
+			finAmount = financeMain.getFinAssetValue();
+			finAmount = formateAmount(finAmount, currencyEditField);
+			if (finAmount.compareTo(cibilDefaultLoanAmt) > 0) {
+				finAmount = cibilDefaultLoanAmt;
+			}
 		}
 		builder.append(StringUtils.leftPad(String.valueOf(finAmount), 9, "0"));
 		builder.append(StringUtils.rightPad("", 03, ""));
@@ -715,14 +718,14 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 		for (CustomerDocument document : documents) {
 
-			if (++i > 8) {
-				break;
-			}
-
 			String code = document.getCustDocCategory();
 
 			if (!cibilIdTypesForRequest.containsKey(code)) {
 				continue;
+			}
+			
+			if (++i > 8) {
+				break;
 			}
 
 			writeValue(builder, InterfaceConstants.Identification_Segment, "I0" + i, "03");
