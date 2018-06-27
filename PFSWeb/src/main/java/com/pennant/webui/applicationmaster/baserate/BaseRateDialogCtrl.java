@@ -348,6 +348,10 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 			this.bRTypeIsActive.setChecked(true);
 			this.bRTypeIsActive.setDisabled(true);
 		}
+		
+		if(DateUtility.compare(aBaseRate.getBREffDate(), DateUtility.getAppDate()) < 0){
+			this.bRRate.setDisabled(true);
+		}
 
 		if (aBaseRate.isNewRecord()) {
 			this.bRType.setDescription("");
