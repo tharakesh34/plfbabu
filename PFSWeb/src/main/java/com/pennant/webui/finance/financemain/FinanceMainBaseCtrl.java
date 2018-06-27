@@ -1794,15 +1794,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param tabID
 	 * @return
 	 */
-	private boolean isTabVisible(long tabID) {
+	private boolean isTabVisible(long tabID){
 		String strTabId = StringUtils.leftPad(String.valueOf(tabID), 3, "0");
-		boolean showTab = false;
-		String roles = "";
+		boolean showTab = true;
+		String roles="";
 
-		if (getFinanceDetail().getShowTabDetailMap().containsKey(strTabId)) {
-			roles = getFinanceDetail().getShowTabDetailMap().get(strTabId);
-			if (StringUtils.contains(roles, getRole() + ",")) {
-				showTab = true;
+		if(getFinanceDetail().getShowTabDetailMap().containsKey(strTabId)){
+			roles= getFinanceDetail().getShowTabDetailMap().get(strTabId);
+			if(!StringUtils.contains(roles, getRole()+",")){
+				showTab = false;
 			}
 		}
 		return showTab;
