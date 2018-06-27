@@ -66,6 +66,23 @@ public class ExtendedFieldDetailsService {
 	@Autowired
 	protected SamplingDAO samplingDAO;
 
+	public Object getLoanOrgExtendedValue(String reference, String key) {
+		Object value = null;
+		List<Map<String, Object>> list = getLoanOrgExtendedFilds(reference);
+
+		if (CollectionUtils.isEmpty(list)) {
+			return value;
+		}
+
+		for (Map<String, Object> map : list) {
+			if (map.containsKey(key)) {
+				value = map.get(key);
+				break;
+			}
+		}
+
+		return value;
+	}
 
 	public List<Map<String, ExtendedFieldData>> getExtendedFildValueLableMap(String tableName, String reference, String tableType) {
 		logger.debug("Entering");
