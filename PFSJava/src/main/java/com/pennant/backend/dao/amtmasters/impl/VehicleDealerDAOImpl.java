@@ -334,7 +334,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 	@Override
 	public List<VehicleDealer> getVehicleDealerById(List<Long> dealerIds) {
 		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder("Select DealerName, DealerCity, DealerId From AMTVehicleDealer ");
+		StringBuilder sql = new StringBuilder("Select DealerName, DealerCity, DealerId,Code From AMTVehicleDealer ");
 		sql.append(" WHERE DealerId IN(:dealerIds) ");
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("dealerIds", dealerIds);
