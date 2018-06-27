@@ -124,6 +124,7 @@ import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -327,6 +328,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.fundingAccount.setMandatoryStyle(true);
 		this.fundingAccount.setValueColumn("PartnerBankID");
 		this.fundingAccount.setDescColumn("PartnerBankCode");
+		this.fundingAccount.setValueType(DataType.LONG);
 		this.fundingAccount.setDisplayStyle(2);
 		this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
 		
