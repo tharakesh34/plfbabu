@@ -6094,6 +6094,7 @@
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="chequeHeaderDAO" ref="chequeHeaderDAO" />
+		<property name="vehicleDealerService" ref="vehicleDealerService" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />

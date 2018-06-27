@@ -168,6 +168,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -774,18 +775,20 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.accountsOfficer.setValueColumn("DealerName");
 		this.accountsOfficer.setDescColumn("DealerCity");
 		this.accountsOfficer.setValidateColumns(new String[] { "DealerName" });
-		
+		this.accountsOfficer.getTextbox().setMaxlength(50);
 
 		this.dsaCode.setMaxlength(8);
-		this.dsaCode.setMandatoryStyle(true);
-		this.dsaCode.setModuleName("RelationshipOfficer");
-		this.dsaCode.setValueColumn("ROfficerCode");
-		this.dsaCode.setDescColumn("ROfficerDesc");
-		this.dsaCode.setValidateColumns(new String[] { "ROfficerCode" });
+		this.dsaCode.setMandatoryStyle(false);
+		this.dsaCode.setModuleName("DSA");
+		this.dsaCode.setValueColumn("DealerName");
+		this.dsaCode.setDescColumn("DealerCity");
+		this.dsaCode.setValidateColumns(new String[] { "DealerName" });
+		this.dsaCode.getTextbox().setMaxlength(50);
 
 		this.applicationNo.setMaxlength(LengthConstants.LEN_REF);
 		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
-		this.dmaCode.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
+		this.dmaCode.setProperties("DMA", "DealerName", "DealerCity", false, LengthConstants.LEN_MASTER_CODE);
+		this.dmaCode.getTextbox().setMaxlength(50);
 		this.salesDepartment.setProperties("GeneralDepartment", "GenDepartment", "GenDeptDesc", false, 8);
 
 		// Finance Basic Details Tab ---> 2. Grace Period Details
@@ -2034,19 +2037,20 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			this.finLimitRef.setMandatoryStyle(false);
 		}
-
-		if (this.finDivision.equals(FinanceConstants.FIN_DIVISION_RETAIL)) {
-			this.row_accountsOfficer.setVisible(true);
-		} else {
-			this.row_accountsOfficer.setVisible(false);
-		}
-
+		
 		this.accountsOfficer.setValue(StringUtils.trimToEmpty(aFinanceMain.getLovDescAccountsOfficer()));
 		this.accountsOfficer.setDescription(StringUtils.trimToEmpty(aFinanceMain.getLovDescSourceCity()));
 		this.accountsOfficer.setAttribute("DealerId", aFinanceMain.getAccountsOfficer());
 
-		this.dsaCode.setValue(aFinanceMain.getDsaCode());
-		this.dsaCode.setDescription(aFinanceMain.getDsaCodeDesc());
+		if (!aFinanceMain.isNewRecord()) {
+			this.dsaCode.setValue(StringUtils.trimToEmpty((aFinanceMain.getDsaName())),
+					StringUtils.trimToEmpty(aFinanceMain.getDsaCodeDesc()));
+			if (aFinanceMain.getDsaCode() != null) {
+				this.dsaCode.setAttribute("DSAdealerID", aFinanceMain.getDsaCode());
+			} else {
+				this.dsaCode.setAttribute("DSAdealerID", null);
+			}
+		}
 
 		if (financeType.isFinDepreciationReq()) {
 			this.depreciationFrq.setVisible(true);
@@ -2137,9 +2141,15 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			this.referralId.setValue(aFinanceMain.getReferralId());
 			this.referralId.setDescription(aFinanceMain.getReferralIdDesc());
 		}
-		if (aFinanceMain.getDmaCode() != null) {
-			this.dmaCode.setValue(aFinanceMain.getDmaCode());
-			this.dmaCode.setDescription(aFinanceMain.getDmaCodeDesc());
+
+		if (!aFinanceMain.isNewRecord()) {
+			this.dmaCode.setValue(StringUtils.trimToEmpty((aFinanceMain.getDmaName())),
+					StringUtils.trimToEmpty(aFinanceMain.getDmaCodeDesc()));
+			if (aFinanceMain.getDsaCode() != null) {
+				this.dmaCode.setAttribute("DMAdealerID", aFinanceMain.getDmaCode());
+			} else {
+				this.dmaCode.setAttribute("DMAdealerID", null);
+			}
 		}
 
 		if (aFinanceMain.getSalesDepartment() != null) {
@@ -4375,8 +4385,14 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		try {
-			aFinanceMain.setDsaCode(this.dsaCode.getValidatedValue());
+			aFinanceMain.setDsaName(this.dsaCode.getValue());
 			aFinanceMain.setDsaCodeDesc(this.dsaCode.getDescription());
+			Object object = this.dsaCode.getAttribute("DSAdealerID");
+			if (object != null) {
+				aFinanceMain.setDsaCode(object.toString());
+			} else {
+				aFinanceMain.setDsaCode(null);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4412,8 +4428,14 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		try {
-			aFinanceMain.setDmaCode(this.dmaCode.getValue());
+			aFinanceMain.setDmaName(this.dmaCode.getValue());
 			aFinanceMain.setDmaCodeDesc(this.dmaCode.getDescription());
+			Object object = this.dmaCode.getAttribute("DMAdealerID");
+			if (object != null) {
+				aFinanceMain.setDmaCode(object.toString());
+			} else {
+				aFinanceMain.setDmaCode(null);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -7577,6 +7599,38 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void resetScheduleTerms(FinScheduleData scheduleData) {
 		getFinanceDetail().setFinScheduleData(scheduleData);
+	}
+
+	public void onFulfill$dsaCode(Event event) {
+		logger.debug(Literal.ENTERING);
+		Object dataObject = dsaCode.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.dsaCode.setValue("");
+			this.dsaCode.setDescription("");
+			this.dsaCode.setAttribute("DSAdealerID", null);
+		} else {
+			VehicleDealer details = (VehicleDealer) dataObject;
+			if (details != null) {
+				this.dsaCode.setAttribute("DSAdealerID", details.getId());
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFulfill$dmaCode(Event event) {
+		logger.debug(Literal.ENTERING);
+		Object dataObject = dmaCode.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.dmaCode.setValue("");
+			this.dmaCode.setDescription("");
+			this.dmaCode.setAttribute("DMAdealerID", null);
+		} else {
+			VehicleDealer details = (VehicleDealer) dataObject;
+			if (details != null) {
+				this.dmaCode.setAttribute("DMAdealerID", details.getId());
+			}
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public FinanceDetail getFinanceDetail() {

@@ -67,6 +67,7 @@ import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -88,6 +89,7 @@ import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
@@ -101,6 +103,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -120,6 +123,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ChequeHeaderDAO chequeHeaderDAO;
+	private VehicleDealerService			vehicleDealerService;
 
 	public FinanceMaintenanceServiceImpl() {
 		super();
@@ -144,6 +148,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		scheduleData.setFinanceMain(getFinanceMainDAO().getFinanceMainById(finReference, type, false));
 		scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(scheduleData.getFinanceMain().getFinType(),
 				"_AView"));
+
+		setDasAndDmaData(financeDetail.getFinScheduleData().getFinanceMain());
 
 		//Finance Schedule Details
 		scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type,
@@ -1851,6 +1857,41 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 	}
 
+	/**
+	 * Method for setting the DMA and DSA data to the financeMain.
+	 * 
+	 * @param financeMain
+	 */
+	private void setDasAndDmaData(FinanceMain financeMain) {
+		logger.debug(Literal.ENTERING);
+		List<Long> dealerIds = new ArrayList<Long>();
+		long dsaCode = 0;
+		long dmaCode = 0;
+		if (StringUtils.isNotBlank(financeMain.getDsaCode()) && StringUtils.isNumeric(financeMain.getDsaCode())) {
+			dsaCode = Long.valueOf(financeMain.getDsaCode());
+			dealerIds.add(dsaCode);
+		}
+		if (StringUtils.isNotBlank(financeMain.getDmaCode()) && StringUtils.isNumeric(financeMain.getDmaCode())) {
+			dmaCode = Long.valueOf(financeMain.getDmaCode());
+			dealerIds.add(dmaCode);
+		}
+		if (dealerIds.size() > 0) {
+			List<VehicleDealer> vehicleDealerList = vehicleDealerService.getVehicleDealerById(dealerIds);
+			if (vehicleDealerList != null && !vehicleDealerList.isEmpty()) {
+				for (VehicleDealer dealer : vehicleDealerList) {
+					if (dealer.getDealerId() == dmaCode) {
+						financeMain.setDmaName(dealer.getDealerName());
+						financeMain.setDmaCodeDesc(dealer.getDealerCity());
+					} else if (dealer.getDealerId() == dsaCode) {
+						financeMain.setDsaName(dealer.getDealerName());
+						financeMain.setDsaCodeDesc(dealer.getDealerCity());
+					}
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1946,6 +1987,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
 		this.chequeHeaderDAO = chequeHeaderDAO;
+	}
+
+	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
+		this.vehicleDealerService = vehicleDealerService;
 	}
 
 }
