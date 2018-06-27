@@ -2832,7 +2832,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.custMaritalSts.setDisabled(isReadOnly("CustomerDialog_custMaritalSts"));
 			
 			if (isRetailCustomer) {
-				readOnlyComponent(!isReadOnly("CustomerDialog_btn_GenerateCibil"), this.btn_GenerateCibil);
+				readOnlyComponent(isReadOnly("CustomerDialog_btn_GenerateCibil"), this.btn_GenerateCibil);
 			}
 
 			if (!isFinanceProcess && isWorkFlowEnabled()) {
