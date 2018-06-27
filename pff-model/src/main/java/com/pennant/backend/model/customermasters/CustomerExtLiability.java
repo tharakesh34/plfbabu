@@ -21,7 +21,7 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	@XmlElement(name = "liabilitySeq")
 	private int seqNo;
 	private long custId;
-	private String custCif;;
+	private String custCif;
 	private String custShrtName;
 	@XmlElement
 	private String finType;

@@ -46,8 +46,8 @@
 
 
 
-		<field name="customerExtLiability">
-		<valid />
+		<field name="externalLiability">
+			<valid />
 		</field>
 	</bean>
 </constraint-mappings>

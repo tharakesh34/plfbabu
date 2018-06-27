@@ -1667,7 +1667,7 @@ public class CustomerDetailsController {
 		this.customerChequeInfoDAO = customerChequeInfoDAO;
 	}
 	
-	public void setExternalLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
+	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
 		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
 	}
 	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {

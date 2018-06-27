@@ -9,7 +9,7 @@
 	<bean class="com.pennant.backend.model.customermasters.CustomerExtLiability">
 
 
-		<field name="liabilitySeq">
+		<field name="seqNo">
 			<constraint annotation="javax.validation.constraints.Min">
 				<message>liabilitySeq should be Positive</message>
 				<groups>
@@ -48,7 +48,7 @@
 		</field>
 
 
-		<field name="bankName">
+		<field name="loanBank">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>BankName is Mandatory</message>
 				<groups>
@@ -87,7 +87,7 @@
 		</field>
 
 
-		<field name="outStandingBal">
+		<field name="outstandingBalance">
 			<constraint annotation="javax.validation.constraints.Min">
 				<message>OutStandingBal should be Positive</message>
 				<groups>
