@@ -5,65 +5,61 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-@XmlType(propOrder = { "liabilitySeq", "finType", "bankName", "instalmentAmount", "outStandingBal", "originalAmount",
+@XmlType(propOrder = { "seqNo", "finType", "loanBankName", "instalmentAmount", "outstandingBalance", "originalAmount",
 		"finDate", "finStatus" })
-@XmlAccessorType(XmlAccessType.NONE)
 public class CustomerExtLiability extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private long custID = Long.MIN_VALUE;
-	@XmlElement
-	private int liabilitySeq;
-	@XmlElement
-	private Date finDate;
+	private long id;
+	private long linkId;
+	@XmlElement(name = "liabilitySeq")
+	private int seqNo;
+	private long custId;
+	private String custCif;;
+	private String custShrtName;
 	@XmlElement
 	private String finType;
 	@XmlElement
-	private String bankName;
-	private String lovDescBankName;
-	private String lovDescFinType;
+	private Date finDate;
+	@XmlElement(name = "bankName")
+	private String loanBank;
+	private BigDecimal rateOfInterest;
+	private int tenure;
 	@XmlElement
-	private BigDecimal originalAmount = BigDecimal.ZERO;
+	private BigDecimal instalmentAmount;
+	@XmlElement(name = "outStandingBal")
+	private BigDecimal outstandingBalance;
 	@XmlElement
-	private BigDecimal instalmentAmount = BigDecimal.ZERO;
-	@XmlElement
-	private BigDecimal outStandingBal = BigDecimal.ZERO;
+	private BigDecimal originalAmount;
+	private int balanceTenure;
+	private int bounceInstalments;
+	private BigDecimal principalOutstanding;
+	private BigDecimal overdueAmount;
 	@XmlElement
 	private String finStatus;
-	private String lovDescFinStatus;
+	private boolean foir;
+	private int source;
+	private int checkedBy;
+	private String securityDetails;
+	private String loanPurpose;
+	private String repayBank;
+	private String loanBankName;
+	private String finTypeDesc;
+	private String custStatusDesc;
+	private String repayBankName;
 
 	private boolean newRecord = false;
-	private String lovValue;
 	private CustomerExtLiability befImage;
 	private LoggedInUser userDetails;
-	private String lovDescCustRecordType;
-	private String lovDescCustCIF;
-	private String lovDescCustShrtName;
 	private String sourceId;
-
-	// As per Profectus documnet below fields added
-	private BigDecimal roi = BigDecimal.ZERO;
-	private int tenure = 0;
-	private int tenureBal = 0;
-	private int bounceNo = 0;
-	private BigDecimal pos = BigDecimal.ZERO;
-	private BigDecimal overdue = BigDecimal.ZERO;
-	private boolean emiCnsdrForFOIR = false;
-	private String source;
-	private String checkedBy;
-	private String securityDetail;
-	private String endUseOfFunds;
-	private String repayFrom;
-	private String loanpurposedesc;
-	private String lovdescrepayfrom;
+	private String inputSource;
+	private int custType = 1;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -80,46 +76,59 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("custId");
+		excludeFields.add("custCif");
+		excludeFields.add("custShrtName");
+		excludeFields.add("liabilityLinkId");
+		excludeFields.add("loanBankName");
+		excludeFields.add("finTypeDesc");
+		excludeFields.add("custStatusDesc");
+		excludeFields.add("repayBankName");
+		excludeFields.add("liabilitySeq");
 		excludeFields.add("sourceId");
-		excludeFields.add("lovdescrepayfrom");
-		excludeFields.add("loanpurposedesc");
+		excludeFields.add("inputSource");
+		excludeFields.add("custType");
 		return excludeFields;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
 	public long getId() {
-		return custID;
+		return id;
 	}
 
 	public void setId(long id) {
-		this.custID = id;
+		this.id = id;
 	}
 
-	public long getCustID() {
-		return custID;
+	public long getLinkId() {
+		return linkId;
 	}
 
-	public void setCustID(long custID) {
-		this.custID = custID;
+	public void setLinkId(long linkId) {
+		this.linkId = linkId;
 	}
 
-	public int getLiabilitySeq() {
-		return liabilitySeq;
+	public long getCustId() {
+		return custId;
 	}
 
-	public void setLiabilitySeq(int liabilitySeq) {
-		this.liabilitySeq = liabilitySeq;
+	public void setCustId(long custId) {
+		this.custId = custId;
 	}
 
-	public Date getFinDate() {
-		return finDate;
+	public String getCustCif() {
+		return custCif;
 	}
 
-	public void setFinDate(Date finDate) {
-		this.finDate = finDate;
+	public void setCustCif(String custCif) {
+		this.custCif = custCif;
+	}
+
+	public String getCustShrtName() {
+		return custShrtName;
+	}
+
+	public void setCustShrtName(String custShrtName) {
+		this.custShrtName = custShrtName;
 	}
 
 	public String getFinType() {
@@ -130,146 +139,28 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 		this.finType = finType;
 	}
 
-	public String getBankName() {
-		return bankName;
+	public Date getFinDate() {
+		return finDate;
 	}
 
-	public void setBankName(String bankName) {
-		this.bankName = bankName;
+	public void setFinDate(Date finDate) {
+		this.finDate = finDate;
 	}
 
-	public String getLovDescBankName() {
-		return lovDescBankName;
+	public String getLoanBank() {
+		return loanBank;
 	}
 
-	public void setLovDescBankName(String lovDescBankName) {
-		this.lovDescBankName = lovDescBankName;
+	public void setLoanBank(String loanBank) {
+		this.loanBank = loanBank;
 	}
 
-	public String getLovDescFinType() {
-		return lovDescFinType;
+	public BigDecimal getRateOfInterest() {
+		return rateOfInterest;
 	}
 
-	public void setLovDescFinType(String lovDescFinType) {
-		this.lovDescFinType = lovDescFinType;
-	}
-
-	public BigDecimal getOriginalAmount() {
-		return originalAmount;
-	}
-
-	public void setOriginalAmount(BigDecimal originalAmount) {
-		this.originalAmount = originalAmount;
-	}
-
-	public BigDecimal getInstalmentAmount() {
-		return instalmentAmount;
-	}
-
-	public void setInstalmentAmount(BigDecimal instalmentAmount) {
-		this.instalmentAmount = instalmentAmount;
-	}
-
-	public BigDecimal getOutStandingBal() {
-		return outStandingBal;
-	}
-
-	public void setOutStandingBal(BigDecimal outStandingBal) {
-		this.outStandingBal = outStandingBal;
-	}
-
-	public String getFinStatus() {
-		return finStatus;
-	}
-
-	public void setFinStatus(String finStatus) {
-		this.finStatus = finStatus;
-	}
-
-	public String getLovDescFinStatus() {
-		return lovDescFinStatus;
-	}
-
-	public void setLovDescFinStatus(String lovDescFinStatus) {
-		this.lovDescFinStatus = lovDescFinStatus;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
-	public String getLovValue() {
-		return lovValue;
-	}
-
-	public void setLovValue(String lovValue) {
-		this.lovValue = lovValue;
-	}
-
-	public CustomerExtLiability getBefImage() {
-		return this.befImage;
-	}
-
-	public void setBefImage(CustomerExtLiability beforeImage) {
-		this.befImage = beforeImage;
-	}
-
-	public LoggedInUser getUserDetails() {
-		return userDetails;
-	}
-
-	public void setUserDetails(LoggedInUser userDetails) {
-		this.userDetails = userDetails;
-	}
-
-	public String getLovDescCustRecordType() {
-		return lovDescCustRecordType;
-	}
-
-	public void setLovDescCustRecordType(String lovDescCustRecordType) {
-		this.lovDescCustRecordType = lovDescCustRecordType;
-	}
-
-	public String getLovDescCustCIF() {
-		return lovDescCustCIF;
-	}
-
-	public void setLovDescCustCIF(String lovDescCustCIF) {
-		this.lovDescCustCIF = lovDescCustCIF;
-	}
-
-	public String getLovDescCustShrtName() {
-		return lovDescCustShrtName;
-	}
-
-	public void setLovDescCustShrtName(String lovDescCustShrtName) {
-		this.lovDescCustShrtName = lovDescCustShrtName;
-	}
-
-	public void setLoginDetails(LoggedInUser userDetails) {
-		setLastMntBy(userDetails.getUserId());
-		this.userDetails = userDetails;
-
-	}
-
-	public String getSourceId() {
-		return sourceId;
-	}
-
-	public void setSourceId(String sourceId) {
-		this.sourceId = sourceId;
-	}
-
-	public BigDecimal getRoi() {
-		return roi;
-	}
-
-	public void setRoi(BigDecimal roi) {
-		this.roi = roi;
+	public void setRateOfInterest(BigDecimal rateOfInterest) {
+		this.rateOfInterest = rateOfInterest;
 	}
 
 	public int getTenure() {
@@ -280,100 +171,208 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 		this.tenure = tenure;
 	}
 
-	public int getTenureBal() {
-		return tenureBal;
+	public BigDecimal getInstalmentAmount() {
+		return instalmentAmount;
 	}
 
-	public void setTenureBal(int tenureBal) {
-		this.tenureBal = tenureBal;
+	public void setInstalmentAmount(BigDecimal instalmentAmount) {
+		this.instalmentAmount = instalmentAmount;
 	}
 
-	public int getBounceNo() {
-		return bounceNo;
+	public BigDecimal getOutstandingBalance() {
+		return outstandingBalance;
 	}
 
-	public void setBounceNo(int bounceNo) {
-		this.bounceNo = bounceNo;
+	public void setOutstandingBalance(BigDecimal outstandingBalance) {
+		this.outstandingBalance = outstandingBalance;
 	}
 
-	public BigDecimal getPos() {
-		return pos;
+	public int getBalanceTenure() {
+		return balanceTenure;
 	}
 
-	public void setPos(BigDecimal pos) {
-		this.pos = pos;
+	public void setBalanceTenure(int balanceTenure) {
+		this.balanceTenure = balanceTenure;
 	}
 
-	public BigDecimal getOverdue() {
-		return overdue;
+	public int getBounceInstalments() {
+		return bounceInstalments;
 	}
 
-	public void setOverdue(BigDecimal overdue) {
-		this.overdue = overdue;
+	public void setBounceInstalments(int bounceInstalments) {
+		this.bounceInstalments = bounceInstalments;
 	}
 
-	public String getSource() {
+	public BigDecimal getPrincipalOutstanding() {
+		return principalOutstanding;
+	}
+
+	public void setPrincipalOutstanding(BigDecimal principalOutstanding) {
+		this.principalOutstanding = principalOutstanding;
+	}
+
+	public BigDecimal getOverdueAmount() {
+		return overdueAmount;
+	}
+
+	public void setOverdueAmount(BigDecimal overdueAmount) {
+		this.overdueAmount = overdueAmount;
+	}
+
+	public String getFinStatus() {
+		return finStatus;
+	}
+
+	public void setFinStatus(String finStatus) {
+		this.finStatus = finStatus;
+	}
+
+	public boolean isFoir() {
+		return foir;
+	}
+
+	public void setFoir(boolean foir) {
+		this.foir = foir;
+	}
+
+	public int getSource() {
 		return source;
 	}
 
-	public void setSource(String source) {
+	public void setSource(int source) {
 		this.source = source;
 	}
 
-	public String getCheckedBy() {
+	public int getCheckedBy() {
 		return checkedBy;
 	}
 
-	public void setCheckedBy(String checkedBy) {
+	public void setCheckedBy(int checkedBy) {
 		this.checkedBy = checkedBy;
 	}
 
-	public String getSecurityDetail() {
-		return securityDetail;
+	public String getSecurityDetails() {
+		return securityDetails;
 	}
 
-	public void setSecurityDetail(String securityDetail) {
-		this.securityDetail = securityDetail;
+	public void setSecurityDetails(String securityDetails) {
+		this.securityDetails = securityDetails;
 	}
 
-	public String getEndUseOfFunds() {
-		return endUseOfFunds;
+	public String getLoanPurpose() {
+		return loanPurpose;
 	}
 
-	public void setEndUseOfFunds(String endUseOfFunds) {
-		this.endUseOfFunds = endUseOfFunds;
+	public void setLoanPurpose(String loanPurpose) {
+		this.loanPurpose = loanPurpose;
 	}
 
-	public String getRepayFrom() {
-		return repayFrom;
+	public String getRepayBank() {
+		return repayBank;
 	}
 
-	public void setRepayFrom(String repayFrom) {
-		this.repayFrom = repayFrom;
+	public void setRepayBank(String repayBank) {
+		this.repayBank = repayBank;
 	}
 
-	public String getLovdescrepayfrom() {
-		return lovdescrepayfrom;
+	public String getLoanBankName() {
+		return loanBankName;
 	}
 
-	public void setLovdescrepayfrom(String lovdescrepayfrom) {
-		this.lovdescrepayfrom = lovdescrepayfrom;
+	public void setLoanBankName(String loanBankName) {
+		this.loanBankName = loanBankName;
 	}
 
-	public String getLoanpurposedesc() {
-		return loanpurposedesc;
+	public String getFinTypeDesc() {
+		return finTypeDesc;
 	}
 
-	public void setLoanpurposedesc(String loanpurposedesc) {
-		this.loanpurposedesc = loanpurposedesc;
+	public void setFinTypeDesc(String finTypeDesc) {
+		this.finTypeDesc = finTypeDesc;
 	}
 
-	public boolean isEmiCnsdrForFOIR() {
-		return emiCnsdrForFOIR;
+	public String getCustStatusDesc() {
+		return custStatusDesc;
 	}
 
-	public void setEmiCnsdrForFOIR(boolean emiCnsdrForFOIR) {
-		this.emiCnsdrForFOIR = emiCnsdrForFOIR;
+	public void setCustStatusDesc(String custStatusDesc) {
+		this.custStatusDesc = custStatusDesc;
 	}
 
+	public String getRepayBankName() {
+		return repayBankName;
+	}
+
+	public void setRepayBankName(String repayBankName) {
+		this.repayBankName = repayBankName;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+
+	public CustomerExtLiability getBefImage() {
+		return befImage;
+	}
+
+	public void setBefImage(CustomerExtLiability befImage) {
+		this.befImage = befImage;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public BigDecimal getOriginalAmount() {
+		return originalAmount;
+	}
+
+	public void setOriginalAmount(BigDecimal originalAmount) {
+		this.originalAmount = originalAmount;
+	}
+
+	public int getSeqNo() {
+		return seqNo;
+	}
+
+	public void setSeqNo(int seqNo) {
+		this.seqNo = seqNo;
+	}
+
+	public String getInputSource() {
+		return inputSource;
+	}
+
+	public void setInputSource(String inputSource) {
+		this.inputSource = inputSource;
+	}
+	
+	public int getCustType() {
+		return custType;
+	}
+
+	public void setCustType(int custType) {
+		this.custType = custType;
+	}
+
+	public void setLoginDetails(LoggedInUser userDetails){
+		setLastMntBy(userDetails.getUserId());
+		this.userDetails=userDetails;
+	}
 }

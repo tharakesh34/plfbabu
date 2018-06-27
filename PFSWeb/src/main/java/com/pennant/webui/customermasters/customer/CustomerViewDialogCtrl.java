@@ -1422,14 +1422,14 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		final Listitem item = this.listBoxCustomerExternalLiability.getSelectedItem();
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
-			final CustomerExtLiability custExtLiability = (CustomerExtLiability) item.getAttribute("data");
-			if (isDeleteRecord(custExtLiability.getRecordType())) {
+			final CustomerExtLiability externalLiability = (CustomerExtLiability) item.getAttribute("data");
+			if (isDeleteRecord(externalLiability.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
-				custExtLiability.setLovDescCustCIF(this.custCIF.getValue());
-				custExtLiability.setLovDescCustShrtName(this.custShrtName.getValue());
-				map.put("customerExtLiability", custExtLiability);
+				externalLiability.setCustCif(this.custCIF.getValue());
+				externalLiability.setCustShrtName(this.custShrtName.getValue());
+				map.put("externalLiability", externalLiability);
 				map.put("finFormatter", ccyFormatter);
 				map.put("customerViewDialogCtrl", this);
 				map.put("isFinanceProcess", isFinanceProcess);
@@ -1536,7 +1536,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			for (CustomerIncome customerIncome : incomes) {
 				String category = StringUtils.trimToEmpty(customerIncome.getCategory());
 				if (customerIncome.getIncomeExpense().equals(PennantConstants.INCOME)) {
-					totIncome = totIncome.add(customerIncome.getCustIncome());
+					totIncome = totIncome.add(customerIncome.getIncome());
 					if (incomeMap.containsKey(category)) {
 						incomeMap.get(category).add(customerIncome);
 					} else {
@@ -1545,7 +1545,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						incomeMap.put(category, list);
 					}
 				} else {
-					totExpense = totExpense.add(customerIncome.getCustIncome());
+					totExpense = totExpense.add(customerIncome.getIncome());
 					if (expenseMap.containsKey(category)) {
 						expenseMap.get(category).add(customerIncome);
 					} else {
@@ -1572,7 +1572,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (list != null && list.size() > 0) {
 					group = new Listgroup();
 					group.setHeight("50px");
-					cell = new Listcell(list.get(0).getIncomeExpense() + "-" + list.get(0).getLovDescCategoryName());
+					cell = new Listcell(list.get(0).getIncomeExpense() + "-" + list.get(0).getCategoryDesc());
 					cell.setStyle("font-size: 15px;");
 					cell.setParent(group);
 					this.listBoxCustomerIncome.appendChild(group);
@@ -1582,11 +1582,11 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						item.setHeight("50px");
 						cell = new Listcell("");
 						cell.setParent(item);
-						cell = new Listcell(customerIncome.getLovDescCustIncomeTypeName());
+						cell = new Listcell(customerIncome.getIncomeTypeDesc());
 						cell.setStyle("font-size:15px");
 						cell.setParent(item);
-						total = total.add(customerIncome.getCustIncome());
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getCustIncome(), ccyFormatter));
+						total = total.add(customerIncome.getIncome());
+						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), ccyFormatter));
 						cell.setStyle("text-align:right; font-size: 15px;");
 						cell.setParent(item);
 						cell = new Listcell();
@@ -1646,7 +1646,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (list != null) {
 					group = new Listgroup();
 					group.setHeight("50px");
-					cell = new Listcell(list.get(0).getIncomeExpense() + "-" + list.get(0).getLovDescCategoryName());
+					cell = new Listcell(list.get(0).getIncomeExpense() + "-" + list.get(0).getCategoryDesc());
 					cell.setParent(group);
 					this.listBoxCustomerIncome.appendChild(group);
 					BigDecimal total = BigDecimal.ZERO;
@@ -1655,11 +1655,11 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						item.setHeight("50px");
 						cell = new Listcell("");
 						cell.setParent(item);
-						cell = new Listcell(customerIncome.getLovDescCustIncomeTypeName());
+						cell = new Listcell(customerIncome.getIncomeTypeDesc());
 						cell.setStyle("font-size:15px;");
 						cell.setParent(item);
-						total = total.add(customerIncome.getCustIncome());
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getCustIncome(), ccyFormatter));
+						total = total.add(customerIncome.getIncome());
+						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), ccyFormatter));
 						cell.setStyle("text-align:right; font-size:15px;");
 						cell.setParent(item);
 						cell = new Listcell();
@@ -2133,10 +2133,10 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					lc.setStyle("font-size: 15px");
 				}
 				lc.setParent(item);
-				lc = new Listcell(custExtLiability.getLovDescFinType());
+				lc = new Listcell(custExtLiability.getFinTypeDesc());
 				lc.setStyle("font-size: 15px");
 				lc.setParent(item);
-				lc = new Listcell(custExtLiability.getLovDescBankName());
+				lc = new Listcell(custExtLiability.getLoanBankName());
 				lc.setStyle("font-size: 15px");
 				lc.setParent(item);
 				originalAmount = originalAmount.add(custExtLiability.getOriginalAmount() == null ? BigDecimal.ZERO
@@ -2149,12 +2149,12 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc = new Listcell(PennantAppUtil.amountFormate(custExtLiability.getInstalmentAmount(), ccyFormatter));
 				lc.setStyle("font-size: 15px; text-align:left;");
 				lc.setParent(item);
-				outStandingBal = outStandingBal.add(custExtLiability.getOutStandingBal() == null ? BigDecimal.ZERO
-						: custExtLiability.getOutStandingBal());
-				lc = new Listcell(PennantAppUtil.amountFormate(custExtLiability.getOutStandingBal(), ccyFormatter));
+				outStandingBal = outStandingBal.add(custExtLiability.getOutstandingBalance() == null ? BigDecimal.ZERO
+						: custExtLiability.getOutstandingBalance());
+				lc = new Listcell(PennantAppUtil.amountFormate(custExtLiability.getOutstandingBalance(), ccyFormatter));
 				lc.setStyle("font-size: 15px; text-align:left;");
 				lc.setParent(item);
-				lc = new Listcell(custExtLiability.getLovDescFinStatus());
+				lc = new Listcell(custExtLiability.getCustStatusDesc());
 				lc.setStyle("font-size: 15px");
 				lc.setParent(item);
 				lc = new Listcell(custExtLiability.getRecordStatus());

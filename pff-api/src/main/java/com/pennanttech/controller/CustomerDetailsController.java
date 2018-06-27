@@ -46,6 +46,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
@@ -658,11 +659,11 @@ public class CustomerDetailsController {
 		// user language
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		customerIncome.setUserDetails(userDetails);
-		customerIncome.setCustID(prvCustomer.getCustID());
+		customerIncome.setCustId(prvCustomer.getCustID());
 		customerIncome.setMargin(new BigDecimal(0));
 		customerIncome.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		customerIncome.setSourceId(APIConstants.FINSOURCE_ID_API);
-		customerIncome.setLovDescCustCIF(cif);
+		customerIncome.setCustCif(cif);
 		customerIncome.setNewRecord(true);
 		customerIncome.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		customerIncome.setLastMntBy(userDetails.getUserId());
@@ -703,8 +704,8 @@ public class CustomerDetailsController {
 		// user language
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		customerIncome.setUserDetails(userDetails);
-		customerIncome.setCustID(prvCustomer.getCustID());
-		customerIncome.setLovDescCustCIF(cif);
+		customerIncome.setCustId(prvCustomer.getCustID());
+		customerIncome.setCustCif(cif);
 		customerIncome.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 		customerIncome.setNewRecord(false);
 		customerIncome.setSourceId(APIConstants.FINSOURCE_ID_API);
@@ -1150,46 +1151,50 @@ public class CustomerDetailsController {
 	/**
 	 * Method for create Customer ExtLiability in PLF system.
 	 * 
-	 * @param customerExtLiability
+	 * @param liability
 	 * 
 	 */
 
-	public CustomerExtLiabilityDetail addCustomerExternalLiability(CustomerExtLiability customerExtLiability, String cif) {
-
-		logger.debug("Entering");
+	public CustomerExtLiabilityDetail addCustomerExternalLiability(CustomerExtLiability liability, String cif) {
+		logger.debug(Literal.ENTERING);
 		CustomerExtLiabilityDetail response = null;
-		try{
-		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		Customer customer = customerDetailsService.getCustomerByCIF(cif);
-		customerExtLiability.setCustID(customer.getCustID());
-		customerExtLiability.setLovDescCustCIF(cif);
-		customerExtLiability.setNewRecord(true);
-		customerExtLiability.setVersion(1);
-		customerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		customerExtLiability.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerExtLiability.setSourceId(APIConstants.FINSOURCE_ID_API);
-		customerExtLiability.setLastMntBy(userDetails.getUserId());
-		customerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
-		AuditHeader auditHeader = validation.extLiabilityValidation(
-				getAuditHeader(customerExtLiability, PennantConstants.TRAN_WF), "doApprove");
-		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+		
+		try {
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			Customer customer = customerDetailsService.getCustomerByCIF(cif);
+			
+			
+			liability.setCustId(customer.getCustID());
+			liability.setCustCif(cif);
+			liability.setNewRecord(true);
+			liability.setVersion(1);
+			liability.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			liability.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			liability.setSourceId(APIConstants.FINSOURCE_ID_API);
+			liability.setLastMntBy(userDetails.getUserId());
+			liability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			
+			CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
+			
+			AuditHeader auditHeader = validation.extLiabilityValidation(getAuditHeader(liability, PennantConstants.TRAN_WF), "doApprove");
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = new CustomerExtLiabilityDetail();
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				// get the header details from the request
+				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+						.get(APIHeader.API_HEADER_KEY);
+				// set the headerDetails to AuditHeader
+				auditHeader.setApiHeader(reqHeaderDetails);
+				auditHeader = customerExtLiabilityService.doApprove(auditHeader);
 				response = new CustomerExtLiabilityDetail();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-						errorDetail.getError()));
+				CustomerExtLiability tempLiability = (CustomerExtLiability) auditHeader.getAuditDetail().getModelData();
+				response.setLiabilitySeq(tempLiability.getSeqNo());
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			}
-		} else {
-			//get the header details from the request
-			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-			//set the headerDetails to AuditHeader
-			auditHeader.setApiHeader(reqHeaderDetails);
-			auditHeader=customerExtLiabilityService.doApprove(auditHeader);
-			response = new CustomerExtLiabilityDetail();
-			CustomerExtLiability custExtLiability = (CustomerExtLiability) auditHeader.getAuditDetail().getModelData();
-			response.setLiabilitySeq(custExtLiability.getLiabilitySeq());
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-		}
 		}catch(Exception e){
 			logger.error("Exception: ", e);
 			APIErrorHandlerService.logUnhandledException(e);
@@ -1205,30 +1210,30 @@ public class CustomerDetailsController {
 
 	/**
 	 * Method for update CustomerExternalLiability in PLF system.
-	 * @param customerExtLiability
+	 * @param liability
 	 */
 
-	public WSReturnStatus updateCustomerExternalLiability(CustomerExtLiability customerExtLiability, String cif) {
+	public WSReturnStatus updateCustomerExternalLiability(CustomerExtLiability liability, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response = null;
 		try{
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 		// user language
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		customerExtLiability.setUserDetails(userDetails);
-		customerExtLiability.setCustID(prvCustomer.getCustID());
-		customerExtLiability.setLovDescCustCIF(cif);
-		customerExtLiability.setRecordType(PennantConstants.RCD_UPD);
-		customerExtLiability.setNewRecord(false);
-		customerExtLiability.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerExtLiability.setSourceId(APIConstants.FINSOURCE_ID_API);
-		customerExtLiability.setLastMntBy(userDetails.getUserId());
-		customerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		customerExtLiability.setVersion((customerExtLiabilityService.getVersion(customerExtLiability.getCustID(),
-				customerExtLiability.getLiabilitySeq())) + 1);
+		liability.setUserDetails(userDetails);
+		liability.setCustId(prvCustomer.getCustID());
+		liability.setCustCif(cif);
+		liability.setRecordType(PennantConstants.RCD_UPD);
+		liability.setNewRecord(false);
+		liability.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		liability.setSourceId(APIConstants.FINSOURCE_ID_API);
+		liability.setLastMntBy(userDetails.getUserId());
+		liability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			liability
+					.setVersion((customerExtLiabilityService.getVersion(liability.getCustId(), liability.getSeqNo())) + 1);
 		CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
 		AuditHeader auditHeader = validation.extLiabilityValidation(
-				getAuditHeader(customerExtLiability, PennantConstants.TRAN_WF), "doApprove");
+				getAuditHeader(liability, PennantConstants.TRAN_WF), "doApprove");
 		response = new WSReturnStatus();
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
@@ -1253,41 +1258,41 @@ public class CustomerDetailsController {
 	
 	/**
 	 * delete the CustomerExternalLiability.
-	 * @param customerExtLiability
+	 * @param liability
 	 * @return WSReturnStatus
 	 * 
 	 */
-	public WSReturnStatus deleteCustomerExternalLiability(CustomerExtLiability customerExtLiability) {
+	public WSReturnStatus deleteCustomerExternalLiability(CustomerExtLiability liability) {
 		logger.debug("Entering");
 		WSReturnStatus response = null;
-		try{
-		CustomerExtLiability curCustomerExtLiability = customerExtLiabilityService.getCustomerExtLiabilityById(customerExtLiability.getCustID(),
-				customerExtLiability.getLiabilitySeq());
+		try {
+			CustomerExtLiability curliability = customerExtLiabilityService.getLiability(liability);
 
-		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		curCustomerExtLiability.setUserDetails(userDetails);
-		curCustomerExtLiability.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		curCustomerExtLiability.setSourceId(APIConstants.FINSOURCE_ID_API);
-		curCustomerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-		curCustomerExtLiability.setNewRecord(false);
-		CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
-		AuditHeader auditHeader = validation.extLiabilityValidation(
-				getAuditHeader(curCustomerExtLiability, PennantConstants.TRAN_WF), "doApprove");
-		response = new WSReturnStatus();
-		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			curliability.setUserDetails(userDetails);
+			curliability.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			curliability.setSourceId(APIConstants.FINSOURCE_ID_API);
+			curliability.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			curliability.setNewRecord(false);
+			CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
+			AuditHeader auditHeader = validation
+					.extLiabilityValidation(getAuditHeader(curliability, PennantConstants.TRAN_WF), "doApprove");
+			response = new WSReturnStatus();
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				// get the header details from the request
+				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+						.get(APIHeader.API_HEADER_KEY);
+				// set the headerDetails to AuditHeader
+				auditHeader.setApiHeader(reqHeaderDetails);
+				customerExtLiabilityService.doApprove(auditHeader);
+				response = APIErrorHandlerService.getSuccessStatus();
 			}
-		} else {
-			//get the header details from the request
-			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-			//set the headerDetails to AuditHeader
-			auditHeader.setApiHeader(reqHeaderDetails);
-			customerExtLiabilityService.doApprove(auditHeader);			
-			response = APIErrorHandlerService.getSuccessStatus();
-		}
-		}catch(Exception e){
-			logger.error("Exception:"+e);
+		} catch (Exception e) {
+			logger.error("Exception:" + e);
 			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
@@ -1302,11 +1307,13 @@ public class CustomerDetailsController {
 	 * @return
 	 */
 	public CustomerDetails getCustomerExternalLiabilities(String cif) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		CustomerDetails response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		try {
-			List<CustomerExtLiability> customerExtLiabilityList = customerExtLiabilityService.getExtLiabilityByCustomer(customer.getCustID());
+			CustomerExtLiability temp = new CustomerExtLiability();
+			temp.setCustId(customer.getCustID());
+			List<CustomerExtLiability> customerExtLiabilityList = customerExtLiabilityService.getLiabilities(temp);
 			if (customerExtLiabilityList != null && !customerExtLiabilityList.isEmpty()) {
 				response = new CustomerDetails();
 				response.setCustCIF(cif);
@@ -1321,14 +1328,14 @@ public class CustomerDetailsController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new CustomerDetails();
 			response.setCustomer(null);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 	
@@ -1588,8 +1595,8 @@ public class CustomerDetailsController {
 	 */
 	private AuditHeader getAuditHeader(CustomerIncome aCustomerIncome, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerIncome.getBefImage(), aCustomerIncome);
-		return new AuditHeader(String.valueOf(aCustomerIncome.getCustID()),
-				String.valueOf(aCustomerIncome.getCustID()), null, null, auditDetail,
+		return new AuditHeader(String.valueOf(aCustomerIncome.getCustId()),
+				String.valueOf(aCustomerIncome.getCustId()), null, null, auditDetail,
 				aCustomerIncome.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 	/**
@@ -1608,15 +1615,15 @@ public class CustomerDetailsController {
 	/**
 	 * Get Audit Header Details
 	 * 
-	 * @param aCustomerExtLiability
+	 * @param liability
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(CustomerExtLiability aCustomerExtLiability, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerExtLiability.getBefImage(), aCustomerExtLiability);
-		return new AuditHeader(String.valueOf(aCustomerExtLiability.getCustID()),
-				String.valueOf(aCustomerExtLiability.getCustID()), null, null, auditDetail,
-				aCustomerExtLiability.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+	private AuditHeader getAuditHeader(CustomerExtLiability liability, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, liability.getBefImage(), liability);
+		return new AuditHeader(String.valueOf(liability.getCustId()),
+				String.valueOf(liability.getCustId()), null, null, auditDetail,
+				liability.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 	/**
 	 * Get Audit Header Details
@@ -1660,7 +1667,7 @@ public class CustomerDetailsController {
 		this.customerChequeInfoDAO = customerChequeInfoDAO;
 	}
 	
-	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
+	public void setExternalLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
 		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
 	}
 	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
@@ -1679,11 +1686,7 @@ public class CustomerDetailsController {
 		this.customerChequeInfoService = customerChequeInfoService;
 	}
 
-	public CustomerExtLiabilityService getCustomerExtLiabilityService() {
-		return customerExtLiabilityService;
-	}
-
-	public void setCustomerExtLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
+	public void setExternalLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
 		this.customerExtLiabilityService = customerExtLiabilityService;
 	}
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {

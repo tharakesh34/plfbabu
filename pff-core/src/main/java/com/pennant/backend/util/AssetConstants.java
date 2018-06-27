@@ -91,6 +91,7 @@ public class AssetConstants {
 	public static final String 	UNIQUE_ID_LVAPPROVAL 		= "LVAPPROVAL";
 	public static final String 	UNIQUE_ID_RCUINITIATION 	= "RCUINIT";
 	public static final String 	UNIQUE_ID_RCUAPPROVAL 		= "RCUAPPROVAL";
+	public static final String 	UNIQUE_ID_SAMPLINGAPPROVAL 	= "SAMPLINGAPPROVAL";
 	public static final String 	UNIQUE_ID_QUERY_MGMT 		= "QUERYMGMT";
 
 	public static final int 	DEFAULT_ITEMNO 			= 1;

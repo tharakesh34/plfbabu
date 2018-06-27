@@ -9,19 +9,18 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = { "cif", "customerExtLiability", "liabilitySeq", "returnStatus" })
+@XmlType(propOrder = { "cif", "externalLiability", "liabilitySeq", "returnStatus" })
 public class CustomerExtLiabilityDetail {
 
-	
 	@XmlElement
 	private String cif;
 
 	@XmlElement(name = "customerExtLiability")
-	private  CustomerExtLiability  customerExtLiability;
+	private CustomerExtLiability externalLiability;
 
 	@XmlElement
 	private int liabilitySeq;
-	
+
 	@XmlElement
 	private WSReturnStatus returnStatus;
 
@@ -41,12 +40,12 @@ public class CustomerExtLiabilityDetail {
 		this.returnStatus = returnStatus;
 	}
 
-	public CustomerExtLiability getCustomerExtLiability() {
-		return customerExtLiability;
+	public CustomerExtLiability getExternalLiability() {
+		return externalLiability;
 	}
 
-	public void setCustomerExtLiability(CustomerExtLiability customerExtLiability) {
-		this.customerExtLiability = customerExtLiability;
+	public void setExternalLiability(CustomerExtLiability externalLiability) {
+		this.externalLiability = externalLiability;
 	}
 
 	public int getLiabilitySeq() {

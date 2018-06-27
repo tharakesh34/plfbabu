@@ -9,13 +9,14 @@ import com.pennant.backend.model.ValueLabel;
 
 public enum DocumentCategories {
 
-	CUSTOMER("CUSTOMER", Labels.getLabel("label_Customer_Documents")),
-	FINANCE("FINANCE",Labels.getLabel("label_Finance_Documents")),
-	COLLATERAL("COLLATERAL", Labels.getLabel("label_Collateral_Documents")),
-	VERIFICATION_TV("VERIFICATION_TV", Labels.getLabel("label_Technical_Verification")),
-	VERIFICATION_RCU("VERIFICATION_RCU", Labels.getLabel("label_RCU_Verification")),
-	VERIFICATION_FI("VERIFICATION_FI", Labels.getLabel("label_FieldInvestigation_Documents")),
-	VERIFICATION_LV("VERIFICATION_LV", Labels.getLabel("label_LegalVerification_Documents"));
+	CUSTOMER("CUSTOMER", Labels.getLabel("label_documents_category_customer")),
+	FINANCE("FINANCE",Labels.getLabel("label_documents_category_loan")),
+	COLLATERAL("COLLATERAL", Labels.getLabel("label_documents_category_collateral")),
+	VERIFICATION_TV("VERIFICATION_TV", Labels.getLabel("label_documents_category_tv")),
+	VERIFICATION_RCU("VERIFICATION_RCU", Labels.getLabel("label_documents_category_rcu")),
+	VERIFICATION_FI("VERIFICATION_FI", Labels.getLabel("label_documents_category_fi")),
+	VERIFICATION_LV("VERIFICATION_LV", Labels.getLabel("label_documents_category_lv")),
+	SAMPLING("SAMPLING", Labels.getLabel("label_documents_category_sampling"));
 
 	private final String key;
 	private final String value;

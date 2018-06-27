@@ -676,6 +676,17 @@
 													<extendedcombobox 
 															id="eligibilityMethod" width="200px" />
 												</row>
+												<row id="samplingRequiredRow">
+													<label
+														id="label_FinanceMainDialog_SamplingRequired"
+														value="${c:l('label_FinanceMainDialog_SamplingRequired.value')}" />
+													<hbox>
+														<space
+															spacing="2px" id="spaceSamplingRequired"/>
+														<checkbox
+															id="samplingRequired" checked="false"/>
+													</hbox>
+												</row>
 											</rows>
 										</grid>
 									</groupbox>

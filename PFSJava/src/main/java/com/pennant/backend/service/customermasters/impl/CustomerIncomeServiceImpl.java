@@ -51,6 +51,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -66,6 +67,7 @@ import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.service.customermasters.validation.CustomerIncomeValidation;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 
 /**
  * Service implementation for methods that depends on <b>CustomerIncome</b>.<br>
@@ -76,7 +78,9 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	private static Logger logger = Logger.getLogger(CustomerIncomeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;	
-	private CustomerIncomeDAO customerIncomeDAO;	
+	private CustomerIncomeDAO customerIncomeDAO;
+	@Autowired
+	private IncomeDetailDAO incomeDetailDAO;	
 	private CustomerIncomeValidation customerIncomeValidation;
 	private CustomerDAO customerDAO;
 	private IncomeTypeDAO incomeTypeDAO;
@@ -130,23 +134,24 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		logger.debug("Leaving");
 		if (!auditHeader.isNextProcess()){
-			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		String tableType="";
 		CustomerIncome customerIncome = (CustomerIncome) auditHeader.getAuditDetail().getModelData();
-
+		
 		if (customerIncome.isWorkflow()) {
 			tableType="_Temp";
 		}
-
-		if (customerIncome.isNew()) {	
-			getCustomerIncomeDAO().save(customerIncome,tableType);
+		
+		if (customerIncome.isNew()) {
+			customerIncomeDAO.setLinkId(customerIncome);
+			incomeDetailDAO.save(customerIncome, tableType);
 			auditHeader.getAuditDetail().setModelData(customerIncome);
 		}else{
-			getCustomerIncomeDAO().update(customerIncome,tableType);
+			incomeDetailDAO.update(customerIncome, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);	
@@ -174,7 +179,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 		}
 
 		CustomerIncome customerIncome = (CustomerIncome) auditHeader.getAuditDetail().getModelData();
-		getCustomerIncomeDAO().delete(customerIncome,"");		
+		incomeDetailDAO.delete(customerIncome.getId(),"");		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -189,7 +194,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	 */
 	@Override
 	public CustomerIncome 	getCustomerIncomeById(CustomerIncome customerIncome){
-		return getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_View");
+		return getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_View" ,"customer");
 	}
 	
 /*	@Override
@@ -207,7 +212,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	 * @return CustomerIncome
 	 */
 	public CustomerIncome getApprovedCustomerIncomeById(CustomerIncome customerIncome) {
-		return getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_AView");
+		return getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_AView", "customer");
 	}
 
 	/**
@@ -245,7 +250,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 
 		if (customerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType=PennantConstants.TRAN_DEL;
-			getCustomerIncomeDAO().delete(customerIncome,"");				
+			incomeDetailDAO.delete(customerIncome.getId(),"");				
 		} else {
 			customerIncome.setRoleCode("");
 			customerIncome.setNextRoleCode("");
@@ -256,16 +261,17 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 			if (customerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {	
 				tranType=PennantConstants.TRAN_ADD;
 				customerIncome.setRecordType("");
-				getCustomerIncomeDAO().save(customerIncome,"");
+				customerIncomeDAO.setLinkId(customerIncome);
+				incomeDetailDAO.save(customerIncome,"");
 			} else {
 				tranType=PennantConstants.TRAN_UPD;
 				customerIncome.setRecordType("");
-				getCustomerIncomeDAO().update(customerIncome,"");
+				incomeDetailDAO.update(customerIncome,"");
 			}
 		}
 
 		if(!StringUtils.equals(customerIncome.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
-		getCustomerIncomeDAO().delete(customerIncome,"_Temp");
+		incomeDetailDAO.delete(customerIncome.getId(),"_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		}
@@ -300,7 +306,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 
 		CustomerIncome customerIncome= (CustomerIncome) auditHeader.getAuditDetail().getModelData();			
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getCustomerIncomeDAO().delete(customerIncome,"_Temp");
+		incomeDetailDAO.delete(customerIncome.getId(),"_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -327,7 +333,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	
 	@Override
     public Map<String, BigDecimal> getCustomerIncomeByCustomer(long custID, boolean isWIF) {
-	    List<CustomerIncome> list = getCustomerIncomeDAO().getCustomerIncomeByCustomer(custID, isWIF, "_AView");
+	    List<CustomerIncome> list = getCustomerIncomeDAO().getCustomerIncomeByCustomer(custID, "_AView");
 	    Map<String, BigDecimal> map = null;
 	    if(list != null && list.size() > 0){
 	    	map = new HashMap<String, BigDecimal>(list.size());
@@ -336,14 +342,14 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	    		if(PennantConstants.EXPENSE.equals(customerIncome.getIncomeExpense())){
 	    			key = "E_";
 	    		}
-	    		key = key+customerIncome.getCategory()+"_"+customerIncome.getCustIncomeType();
+	    		key = key+customerIncome.getCategory()+"_"+customerIncome.getIncomeType();
 
 	    		if(customerIncome.isJointCust()){
 	    			key = key+"_S";
 	    		}else{
 	    			key = key+"_P";
 	    		}
-	    		map.put(key, customerIncome.getCustIncome());
+	    		map.put(key, customerIncome.getIncome());
             }
 	    }
 		return map;
@@ -351,7 +357,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	
 	@Override
     public List<CustomerIncome> getCustomerIncomes(long custID, boolean isWIF) {
-	    return getCustomerIncomeDAO().getCustomerIncomeByCustomer(custID, isWIF, "_AView");
+	    return getCustomerIncomeDAO().getCustomerIncomeByCustomer(custID, "_AView");
     }
 
 	@Override
@@ -363,15 +369,15 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 					customerIncome.getIncomeExpense()));
 			auditDetail.setErrorDetail(validateMasterCode("BMTIncomeTypes", "Category", customerIncome.getCategory()));
 			auditDetail.setErrorDetail(validateMasterCode("BMTIncomeTypes", "IncomeTypeCode",
-					customerIncome.getCustIncomeType()));
+					customerIncome.getIncomeType()));
 			auditDetail.setErrorDetail(validateMasterCode("BMTIncomeCategory", "IncomeCategory",
 					customerIncome.getCategory()));
-			IncomeType incomeType = getIncomeTypeDAO().getIncomeTypeById(customerIncome.getCustIncomeType(),
+			IncomeType incomeType = getIncomeTypeDAO().getIncomeTypeById(customerIncome.getIncomeType(),
 					customerIncome.getIncomeExpense(), customerIncome.getCategory(), "_AView");
 			if (incomeType == null) {
 				ErrorDetail errorDetail = new ErrorDetail();
 				String[] valueParm = new String[2];
-				valueParm[0] = customerIncome.getLovDescCustCIF();
+				valueParm[0] = customerIncome.getCustCif();
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90113", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 			}
@@ -409,7 +415,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	public int getVersion(CustomerIncome customerIncome) {
 		return getCustomerIncomeDAO().getVersion(customerIncome);
 	}
-
+	
 	public CustomerDAO getCustomerDAO() {
 		return customerDAO;
 	}

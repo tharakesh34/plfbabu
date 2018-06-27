@@ -74,7 +74,7 @@ public class CustomerIncomeListModelItemRenderer implements ListitemRenderer<Cus
 	public void render(Listitem item, CustomerIncome customerIncome, int count) throws Exception {
 
 		if (item instanceof Listgroup) {
-			item.appendChild(new Listcell(String.valueOf(customerIncome.getLovDescCustCIF())));
+			item.appendChild(new Listcell(String.valueOf(customerIncome.getCustCif())));
 		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
 			cell.setSpan(8);
@@ -82,16 +82,16 @@ public class CustomerIncomeListModelItemRenderer implements ListitemRenderer<Cus
 		} else {
 
 			Listcell lc;
-			lc = new Listcell(customerIncome.getLovDescCustCIF() );
+			lc = new Listcell(customerIncome.getCustCif() );
 			lc.setParent(item);
-			lc = new Listcell(customerIncome.getCustIncomeType() + "-"+ customerIncome.getLovDescCustIncomeTypeName());
+			lc = new Listcell(customerIncome.getIncomeType() + "-"+ customerIncome.getIncomeTypeDesc());
 			lc.setParent(item);
 			lc = new Listcell();
 			Checkbox cb = new Checkbox();
 			cb.setChecked(customerIncome.isJointCust());
 			cb.setParent(lc);
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(customerIncome.getCustIncome(), CurrencyUtil.getFormat(customerIncome.getToCcy())));
+			lc = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), CurrencyUtil.getFormat(customerIncome.getToCcy())));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			lc = new Listcell(customerIncome.getRecordStatus());

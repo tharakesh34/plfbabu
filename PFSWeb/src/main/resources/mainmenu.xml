@@ -562,6 +562,12 @@
 			zulNavigation="/WEB-INF/pages/Verification/RiskContainmentUnit/RiskContainmentUnitList.zul" 
 		    rightName="menuItem_Verification_RiskContainmentUnit" /> 	
 	</menu>
+	
+	<!-- Sampling -->
+	<menu id="menu_Category_Sampling">
+		<menuItem id="menu_Item_Sampling"
+			zulNavigation="/WEB-INF/pages/Sampling/SamplingList.zul"/>
+	</menu>
 
 	<!-- Loan Management -->
 	<menu id="menu_Category_FinanceManagement">

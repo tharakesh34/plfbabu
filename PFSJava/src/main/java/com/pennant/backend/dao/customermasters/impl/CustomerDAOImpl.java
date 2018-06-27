@@ -694,7 +694,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 
 		BigDecimal custRepayOther = BigDecimal.ZERO;
 		CustomerIncome detail = new CustomerIncome();
-		detail.setCustID(custID);
+		detail.setCustId(custID);
 
 		StringBuilder selectSql = new StringBuilder(" SELECT CustRepayOther " );
 		selectSql.append(" FROM  CustOthExpense_View ");
@@ -721,11 +721,11 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 
 		BigDecimal custRepayBank = BigDecimal.ZERO;
 		CustomerIncome detail = new CustomerIncome();
-		detail.setCustID(custID);
+		detail.setCustId(custID);
 
 		StringBuilder selectSql = new StringBuilder("Select CustId,TotalRepayAmt,MaturityDate,FinStartDate,FinCcy,");
 		selectSql.append("'"+SysParamUtil.getAppCurrency()+"'"+" toCcy");
-		selectSql.append(" FROM FinanceMain WHERE FinIsActive = 1 and CustID=:CustID");
+		selectSql.append(" FROM FinanceMain WHERE FinIsActive = 1 and CustID=:CustId");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);

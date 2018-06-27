@@ -55,14 +55,14 @@ public class CustomerIncomeListItemRenderer implements ListitemRenderer<Customer
 		lc.setParent(item);
 		if(income.getRecordType().equals(PennantConstants.RCD_ADD) || income.getRecordType().equals(PennantConstants.RCD_UPD)){
 			
-			lc = new Listcell(income.getLovDescCustIncomeTypeName());
+			lc = new Listcell(income.getIncomeTypeDesc());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(income.getCustIncome(),format));
+			lc = new Listcell(PennantAppUtil.amountFormate(income.getIncome(),format));
 			lc.setParent(item);
 		}else{
-			lc = new Listcell(income.getCustIncomeType());
+			lc = new Listcell(income.getIncomeType());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(income.getCustIncome(),format));
+			lc = new Listcell(PennantAppUtil.amountFormate(income.getIncome(),format));
 			lc.setParent(item);
 		}
 		lc = new Listcell(income.getRecordStatus());

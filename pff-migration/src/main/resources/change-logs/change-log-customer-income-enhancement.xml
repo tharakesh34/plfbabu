@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="murthy.y" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="murthy.y" dbms="postgresql">
+		<createSequence sequenceName="SeqIncomeDetails"
+			startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+		<createSequence sequenceName="SeqIncomeLink"
+			startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+	<changeSet id="1.1" author="murthy.y" dbms="oracle">
+		<createSequence sequenceName="SeqIncomeDetails"
+			startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+		<createSequence sequenceName="SeqIncomeLink"
+			startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+	<changeSet id="1.2" author="murthy.y" dbms="mssql">
+		<createTable tableName="SeqIncomeDetails">
+			<column name="SeqNo" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="Value" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="SeqIncomeLink">
+			<column name="SeqNo" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="Value" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="2.0" author="murthy.y">
+		<createTable tableName="income_details_temp">
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="linkid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeExpense" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="category" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="income" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="margin" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="auxiliary1" type="varchar(10)" />
+			<column name="auxiliary2" type="varchar(10)" />
+			<column name="auxiliary3" type="varchar(10)" />
+			<column name="auxiliary4" type="varchar(10)" />
+			<column name="auxiliary5" type="varchar(10)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="2.1" author="murthy.y">
+		<createTable tableName="income_details">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints nullable="false"/>
+			</column>
+			<column name="linkId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeExpense" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="category" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="income" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="margin" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="auxiliary1" type="varchar(10)" />
+			<column name="auxiliary2" type="varchar(10)" />
+			<column name="auxiliary3" type="varchar(10)" />
+			<column name="auxiliary4" type="varchar(10)" />
+			<column name="auxiliary5" type="varchar(10)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="3.0" author="murthy.y">
+		<createTable tableName="link_cust_incomes">
+			<column name="custId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="linkId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="4.0" author="murthy.y">
+		<addPrimaryKey tableName="income_details_temp" columnNames="id" constraintName="pk_income_details_temp_id" />
+		<addPrimaryKey tableName="income_details" columnNames="id" constraintName="pk_income_details_id" />
+		<addPrimaryKey tableName="link_cust_incomes" columnNames="custid" constraintName="pk_customer_incomes_custid" />
+
+		<addForeignKeyConstraint constraintName="fk_link_cust_incomes_custid" referencedTableName="customers" baseColumnNames="custId" baseTableName="link_cust_incomes" referencedColumnNames="custId" />
+
+		<addUniqueConstraint tableName="income_details_temp" columnNames="linkid, incomeType, incomeExpense, category" constraintName="uk_income_detl_t_li_it_ie_c" />
+		<addUniqueConstraint tableName="income_details" columnNames="linkid, incomeType, incomeExpense, category" constraintName="uk_income_detl_li_it_ie_c" />
+		<addUniqueConstraint tableName="link_cust_incomes" columnNames="custId, linkid" />
+
+		<createIndex tableName="income_details_temp" indexName="ix_income_details_t_linkid">
+			<column name="linkid"></column>
+		</createIndex>
+		<createIndex tableName="income_details" indexName="ix_income_details_linkid">
+			<column name="linkid"></column>
+		</createIndex>
+
+		<createIndex tableName="link_cust_incomes" indexName="ix_cust_incomes_custid">
+			<column name="custId"></column>
+		</createIndex>
+		<createIndex tableName="link_cust_incomes" indexName="ix_cust_incomes_linkid">
+			<column name="linkid"></column>
+		</createIndex>
+	</changeSet>
+	<changeSet id="6" author="murthy.y" dbms="postgresql">
+		<modifyDataType tableName="income_details_temp"
+			columnName="incomeType" newDataType="citext" />
+		<modifyDataType tableName="income_details_temp"
+			columnName="incomeExpense" newDataType="citext" />
+		<modifyDataType tableName="income_details_temp"
+			columnName="category" newDataType="citext" />
+		<modifyDataType tableName="income_details" columnName="incomeType"
+			newDataType="citext" />
+		<modifyDataType tableName="income_details" columnName="incomeExpense"
+			newDataType="citext" />
+		<modifyDataType tableName="income_details" columnName="category"
+			newDataType="citext" />
+	</changeSet>
+	<changeSet id="7" author="murthy.y">
+		<createView viewName="income_details_aview"
+			replaceIfExists="true">
+			select id.id, id.linkid,id.incometype, it.incometypedesc, 
+			id.income, id.version, id.lastmntby, id.lastmnton, id.recordstatus, id.rolecode, id.nextrolecode, id.taskid, id.nexttaskid, id.recordtype, id.workflowid, 
+			id.incomeexpense, id.margin, id.category, ic.categorydesc
+			from income_details id
+			inner join bmtincometypes it on it.incometypecode=id.incometype and it.incomeexpense=id.incomeexpense and it.category=id.category 
+			inner join bmtincomecategory ic on ic.incomecategory = id.category;
+		</createView>
+		<createView viewName="income_details_view" replaceIfExists="true">
+			select id.id, id.linkid,id.incometype, it.incometypedesc, 
+			id.income, id.version, id.lastmntby, id.lastmnton, id.recordstatus, id.rolecode, id.nextrolecode, id.taskid, id.nexttaskid, id.recordtype, id.workflowid, 
+			id.incomeexpense, id.margin, id.category, ic.categorydesc
+			from income_details_temp id
+			inner join bmtincometypes it on it.incometypecode=id.incometype and it.incomeexpense=id.incomeexpense and it.category=id.category 
+			inner join bmtincomecategory ic on ic.incomecategory = id.category
+			union all
+			select id.id, id.linkid,id.incometype, it.incometypedesc, 
+			id.income, id.version, id.lastmntby, id.lastmnton, id.recordstatus, id.rolecode, id.nextrolecode, id.taskid, id.nexttaskid, id.recordtype, id.workflowid, 
+			id.incomeexpense, id.margin, id.category, ic.categorydesc
+			from income_details id
+			inner join bmtincometypes it on it.incometypecode=id.incometype and it.incomeexpense=id.incomeexpense and it.category=id.category 
+			inner join bmtincomecategory ic on ic.incomecategory = id.category
+			where (not exists (select 1 from  
+			income_details_temp where id =id.id));
+		</createView>
+		<createView viewName="customer_income_details_aview"
+			replaceIfExists="true">
+			 select id.*, ci.custid, cu.custcif, cu.custshrtname, cu.custbaseccy toccy
+			 from income_details_aview id 
+			 inner join link_cust_incomes ci on ci.linkid = id.linkid
+			 inner join customers cu on cu.custid = ci.custid
+		</createView>
+		<createView viewName="customer_income_details_view"
+			replaceIfExists="true">
+			 select id.*, ci.custid, cu.custcif, cu.custshrtname, cu.custbaseccy toccy
+			 from income_details_view id 
+			 inner join link_cust_incomes ci on ci.linkid = id.linkid
+			 inner join customers cu on cu.custid = ci.custid
+			 union all
+			 select id.*, ci.custid, cu.custcif, cu.custshrtname, cu.custbaseccy toccy
+			 from income_details_aview id 
+			 inner join link_cust_incomes ci on ci.linkid = id.linkid
+			 inner join customers cu on cu.custid = ci.custid
+			 where (not exists (select 1 from income_details_view where linkid = id.linkid ));
+		</createView>
+	</changeSet>
+</databaseChangeLog>

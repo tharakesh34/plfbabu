@@ -653,11 +653,11 @@ public class AgreementGeneration implements Serializable {
 							externalLiabilityDetail.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 						}
 						externalLiabilityDetail.setEmiAmt(PennantAppUtil.amountFormate(extLiability.getInstalmentAmount(), formatter));
-						externalLiabilityDetail.setFinInstName(StringUtils.trimToEmpty(extLiability.getLovDescBankName()));
+						externalLiabilityDetail.setFinInstName(StringUtils.trimToEmpty(extLiability.getLoanBank()));
 						externalLiabilityDetail.setAmt(PennantAppUtil.amountFormate(extLiability.getOriginalAmount(), formatter));
-						externalLiabilityDetail.setOutStandingAmt(PennantAppUtil.amountFormate(extLiability.getOutStandingBal(), formatter));
+						externalLiabilityDetail.setOutStandingAmt(PennantAppUtil.amountFormate(extLiability.getOutstandingBalance(), formatter));
 						externalLiabilityDetail.setLoanDate(DateUtility.formatToLongDate(extLiability.getFinDate()));
-						externalLiabilityDetail.setStatus(StringUtils.trimToEmpty(extLiability.getLovDescFinStatus()));
+						externalLiabilityDetail.setStatus(StringUtils.trimToEmpty(extLiability.getCustStatusDesc()));
 						agreement.getExternalLiabilityDetails().add(externalLiabilityDetail);
 					}
 				}
@@ -775,11 +775,11 @@ public class AgreementGeneration implements Serializable {
 									externalLiabilityDetail.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 								}
 								externalLiabilityDetail.setEmiAmt(PennantAppUtil.amountFormate(extLiability.getInstalmentAmount(), formatter));
-								externalLiabilityDetail.setFinInstName(StringUtils.trimToEmpty(extLiability.getLovDescBankName()));
-								externalLiabilityDetail.setOutStandingAmt(PennantAppUtil.amountFormate(extLiability.getOutStandingBal(), formatter));
+								externalLiabilityDetail.setFinInstName(StringUtils.trimToEmpty(extLiability.getLoanBank()));
+								externalLiabilityDetail.setOutStandingAmt(PennantAppUtil.amountFormate(extLiability.getOutstandingBalance(), formatter));
 								externalLiabilityDetail.setLoanDate(DateUtility.formatToLongDate(extLiability.getFinDate()));
 								externalLiabilityDetail.setAmt(PennantAppUtil.amountFormate(extLiability.getOriginalAmount(), formatter));
-								externalLiabilityDetail.setStatus(StringUtils.trimToEmpty(extLiability.getLovDescFinStatus()));
+								externalLiabilityDetail.setStatus(StringUtils.trimToEmpty(extLiability.getCustStatusDesc()));
 								agreement.getExternalLiabilityDetails().add(externalLiabilityDetail);
 							}
 						}
@@ -1612,20 +1612,20 @@ public class AgreementGeneration implements Serializable {
 				if(null!=customerIncome){
 					if(customerIncome.getIncomeExpense().equalsIgnoreCase("INCOME")){
 						AppIncDetail appIncDetail = agreement.new AppIncDetail();
-						appIncDetail.setCustCIF(StringUtils.trimToEmpty(customerIncome.getLovDescCustCIF()));
+						appIncDetail.setCustCIF(StringUtils.trimToEmpty(customerIncome.getCustCif()));
 						appIncDetail.setApplicantType(StringUtils.trimToEmpty(applicantType));
-						appIncDetail.setCustName(StringUtils.trimToEmpty(customerIncome.getLovDescCustShrtName()));
-						appIncDetail.setIncomeCategory(StringUtils.trimToEmpty(customerIncome.getLovDescCategoryName()));
-						appIncDetail.setIncomeType(StringUtils.trimToEmpty(customerIncome.getLovDescCustIncomeTypeName()));
-						appIncDetail.setAmt(PennantAppUtil.amountFormate(customerIncome.getCustIncome(), formatter));
+						appIncDetail.setCustName(StringUtils.trimToEmpty(customerIncome.getCustShrtName()));
+						appIncDetail.setIncomeCategory(StringUtils.trimToEmpty(customerIncome.getCategoryDesc()));
+						appIncDetail.setIncomeType(StringUtils.trimToEmpty(customerIncome.getIncomeTypeDesc()));
+						appIncDetail.setAmt(PennantAppUtil.amountFormate(customerIncome.getIncome(), formatter));
 						agreement.getAppIncDetails().add(appIncDetail);
 					}else if(customerIncome.getIncomeExpense().equalsIgnoreCase("EXPENSE")){
 						AppExpDetail appExpDetail = agreement.new AppExpDetail();
-						appExpDetail.setCustName(StringUtils.trimToEmpty(customerIncome.getLovDescCustShrtName()));
+						appExpDetail.setCustName(StringUtils.trimToEmpty(customerIncome.getCustShrtName()));
 						appExpDetail.setApplicantType(StringUtils.trimToEmpty(applicantType));
-						appExpDetail.setExpenseCategory(StringUtils.trimToEmpty(customerIncome.getLovDescCategoryName()));
-						appExpDetail.setExpenseType(StringUtils.trimToEmpty(customerIncome.getLovDescCustIncomeTypeName()));
-						appExpDetail.setAmt(PennantAppUtil.amountFormate(customerIncome.getCustIncome(), formatter));
+						appExpDetail.setExpenseCategory(StringUtils.trimToEmpty(customerIncome.getCategoryDesc()));
+						appExpDetail.setExpenseType(StringUtils.trimToEmpty(customerIncome.getIncomeTypeDesc()));
+						appExpDetail.setAmt(PennantAppUtil.amountFormate(customerIncome.getIncome(), formatter));
 						agreement.getAppExpDetails().add(appExpDetail);
 					}
 					

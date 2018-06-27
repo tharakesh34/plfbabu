@@ -395,10 +395,10 @@ public class CustomerController {
 				}
 				
 					if (StringUtils.equals(PennantConstants.INCOME, curCustomerIncome.getIncomeExpense())) {
-						custTotIncomeExp = custTotIncomeExp.add(curCustomerIncome.getCustIncome());
+						custTotIncomeExp = custTotIncomeExp.add(curCustomerIncome.getIncome());
 					}
 				 else if (StringUtils.equals(PennantConstants.EXPENSE, curCustomerIncome.getIncomeExpense())) {
-						custTotIncomeExp = custTotIncomeExp.add(curCustomerIncome.getCustIncome());
+						custTotIncomeExp = custTotIncomeExp.add(curCustomerIncome.getIncome());
 					}
 				
 			}
@@ -512,7 +512,7 @@ public class CustomerController {
 							.getCustomerExtLiabilityList();
 					if (prvCustomerExtLiabilityList != null) {
 						for (CustomerExtLiability prvCustomerExtLiability : prvCustomerExtLiabilityList) {
-							if (curCustomerExtLiability.getLiabilitySeq() == prvCustomerExtLiability.getLiabilitySeq()) {
+							if (curCustomerExtLiability.getSeqNo() == prvCustomerExtLiability.getSeqNo()) {
 								curCustomerExtLiability.setNewRecord(false);
 								curCustomerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 								curCustomerExtLiability.setVersion(prvCustomerExtLiability.getVersion() + 1);

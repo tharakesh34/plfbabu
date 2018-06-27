@@ -15,14 +15,18 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
+import com.pennanttech.pennapps.pff.sampling.dao.SamplingDAO;
 
 public class CustomerIncomeValidation {
 
 	private CustomerIncomeDAO customerIncomeDAO;
 	private CustomerDetails customerDetails;
+	protected SamplingDAO samplingDAO;
 
 	public CustomerIncomeValidation(CustomerIncomeDAO customerIncomeDAO) {
 		this.customerIncomeDAO = customerIncomeDAO;
+		samplingDAO = (SamplingDAO) SpringBeanUtil.getBean("samplingDAO");
 	}
 
 	/**
@@ -35,7 +39,7 @@ public class CustomerIncomeValidation {
 	public AuditHeader incomeValidation(AuditHeader auditHeader, String method){
 		customerDetails = new CustomerDetails();
 		customerDetails.setCustomer(new Customer());
-		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), 0, method, auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		return auditHeader;
@@ -47,7 +51,7 @@ public class CustomerIncomeValidation {
 		if(auditDetails!=null && !auditDetails.isEmpty()){
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < auditDetails.size(); i++) {
-				AuditDetail auditDetail =   validate(auditDetails.get(i), method, usrLanguage);
+				AuditDetail auditDetail =   validate(auditDetails.get(i), 0,  method, usrLanguage);
 				details.add(auditDetail); 		
 				if(!(auditDetail.getErrorDetails() != null && auditDetail.getErrorDetails().isEmpty())){
 					break;
@@ -58,31 +62,48 @@ public class CustomerIncomeValidation {
 		return new ArrayList<AuditDetail>();
 	}
 
+	
+	public List<AuditDetail> incomeListValidation(List<AuditDetail> auditDetails, long samplingId, String method, String usrLanguage) {
+		if (auditDetails != null && auditDetails.size() > 0) {
+			List<AuditDetail> details = new ArrayList<AuditDetail>();
+			for (int i = 0; i < auditDetails.size(); i++) {
+				AuditDetail auditDetail = validate(auditDetails.get(i), samplingId, method, usrLanguage);
+				details.add(auditDetail);
+			}
+			return details;
+		}
+		return new ArrayList<AuditDetail>();
+	}
 
-	private AuditDetail validate(AuditDetail auditDetail, String method,String  usrLanguage){
-
+	private AuditDetail validate(AuditDetail auditDetail, long samplingId, String method,String  usrLanguage){
 		CustomerIncome customerIncome= (CustomerIncome) auditDetail.getModelData();
+		if ("sampling".equals(customerIncome.getInputSource())) {
+			customerIncome.setLinkId(samplingDAO.getIncomeLinkId(samplingId, customerIncome.getCustId()));
+		} else {
+			customerIncomeDAO.setLinkId(customerIncome);
+		}
+		
 		CustomerIncome tempCustomerIncome= null;
 		if (customerIncome.isWorkflow()){
-			tempCustomerIncome = getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_Temp");
+			tempCustomerIncome = getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_Temp" ,customerIncome.getInputSource());
 		}
 
-		CustomerIncome befCustomerIncome= getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"");
+		CustomerIncome befCustomerIncome= getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"",customerIncome.getInputSource());
 		
 		CustomerIncome oldCustomerIncome= customerIncome.getBefImage();
 
 		String[] valueParm = new String[3];
 		String[] errParm = new String[3];
 
-		valueParm[0] = StringUtils.trimToEmpty(customerIncome.getLovDescCustCIF());
-		valueParm[1] = customerIncome.getCustIncomeType();
+		valueParm[0] = StringUtils.trimToEmpty(customerIncome.getCustCif());
+		valueParm[1] = customerIncome.getIncomeType();
 		valueParm[2] = String.valueOf(customerIncome.isJointCust());
 
 		errParm[0] = PennantJavaUtil.getLabel("IncomeDetails") +" , " + PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0]+ " and ";
 		errParm[1] = PennantJavaUtil.getLabel("label_CustIncomeType") + ":"+valueParm[1];
 		errParm[2] = PennantJavaUtil.getLabel("label_JointCust") + ":"+valueParm[1];
 
-		if(!customerDetails.getCustomer().isJointCust() && customerIncome.isJointCust()){
+		if(customerDetails !=null && !customerDetails.getCustomer().isJointCust() && customerIncome.isJointCust()){
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,  "41016", errParm, valueParm), usrLanguage));
 			return auditDetail;
 		}

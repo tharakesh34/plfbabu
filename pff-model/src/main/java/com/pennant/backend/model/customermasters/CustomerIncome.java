@@ -62,53 +62,45 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 
-@XmlType(propOrder = {"incomeExpense", "category", "custIncomeType", "custIncome"})
+@XmlType(propOrder = { "incomeExpense", "category", "incomeType", "income" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerIncome extends AbstractWorkflowEntity {
-
 	private static final long serialVersionUID = -1276183069308329161L;
 
-	private long custID =Long.MIN_VALUE;
-	@XmlElement
-	private String custIncomeType;
+	private long id;
+	private long linkId;
+	private long custId = Long.MIN_VALUE;
+	private String custCif;
+	private String custShrtName;
+	@XmlElement(name = "custIncomeType")
+	private String incomeType;
+	private String incomeTypeDesc;
 	@XmlElement
 	private String incomeExpense;
 	@XmlElement
 	private String category;
-	private String lovDescCategoryName;
+	private String categoryDesc;
+	@XmlElement(name = "custIncome")
+	private BigDecimal income;
 	@XmlElement
 	private BigDecimal margin;
-	
-	private String lovDescCustIncomeTypeName;
-	@XmlElement
-	private BigDecimal custIncome;
-	
-	public BigDecimal getCalculatedAmount() {
-		if(margin==null || custIncome==null){
-			return BigDecimal.ZERO;
-		}else{
-			return custIncome.multiply(margin.divide(new BigDecimal(100),RoundingMode.HALF_UP)).divide(new BigDecimal(100),RoundingMode.HALF_UP);	
-		}
-	}
 
-	private boolean jointCust = false;
 	private boolean newRecord;
 	private String lovValue;
 	private CustomerIncome befImage;
 	private LoggedInUser userDetails;
-	private String lovDescCustCIF;
-	private String lovDescCustShrtName;
+
 	private String sourceId;
 	private BigDecimal totalRepayAmt;
 	private Date maturityDate;
 	private Date finStartDate;
 	private String finCcy;
 	private String toCcy;
-	private boolean marginDeviation=false;
+	private boolean marginDeviation = false;
+	private String inputSource;
 	
-	public boolean isNew() {
-		return isNewRecord();
-	}
+	private boolean jointCust = false;
+	private int custType;
 
 	public CustomerIncome() {
 		super();
@@ -121,6 +113,11 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("custCif");
+		excludeFields.add("custShrtName");
+		excludeFields.add("incomeTypeDesc");
+		excludeFields.add("categoryDesc");
+		
 		excludeFields.add("sourceId");
 		excludeFields.add("totalRepayAmt");
 		excludeFields.add("maturityDate");
@@ -128,66 +125,122 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 		excludeFields.add("finCcy");
 		excludeFields.add("toCcy");
 		excludeFields.add("marginDeviation");
+		excludeFields.add("custId");
+		excludeFields.add("custCif");
+		excludeFields.add("custShrtName");
+		excludeFields.add("jointCust");
+		excludeFields.add("incomeTypeDesc");
+		excludeFields.add("categoryDesc");
+		excludeFields.add("incomeTypeDesc");
+		excludeFields.add("inputSource");
+		excludeFields.add("custType");
 		return excludeFields;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
 	public long getId() {
-		return custID;
-	}
-	public void setId (long id) {
-		this.custID = id;
+		return id;
 	}
 
-	public long getCustID() {
-		return custID;
-	}
-	public void setCustID(long custID) {
-		this.custID = custID;
+	public void setId(long id) {
+		this.id = id;
 	}
 
-	public String getLovDescCustCIF() {
-		return lovDescCustCIF;
+	public boolean isNew() {
+		return isNewRecord();
 	}
-	public void setLovDescCustCIF(String lovDescCustCIF) {
-		this.lovDescCustCIF = lovDescCustCIF;
-	}
-
-	public String getCustIncomeType() {
-		return custIncomeType;
-	}
-	public void setCustIncomeType(String custIncomeType) {
-		this.custIncomeType = custIncomeType;
-	}
-	public String getLovDescCustIncomeTypeName() {
-		return this.lovDescCustIncomeTypeName;
-	}
-	public void setLovDescCustIncomeTypeName(String lovDescCustIncomeTypeName) {
-		this.lovDescCustIncomeTypeName = lovDescCustIncomeTypeName;
+	
+	public long getLinkId() {
+		return linkId;
 	}
 
-	public BigDecimal getCustIncome() {
-		return custIncome;
-	}
-	public void setCustIncome(BigDecimal custIncome) {
-		this.custIncome = custIncome;
+	public void setLinkId(long linkId) {
+		this.linkId = linkId;
 	}
 
+	public long getCustId() {
+		return custId;
+	}
 
-	public boolean isJointCust() {
-    	return jointCust;
-    }
+	public void setCustId(long custId) {
+		this.custId = custId;
+	}
 
-	public void setJointCust(boolean jointCust) {
-    	this.jointCust = jointCust;
-    }
+	public String getCustCif() {
+		return custCif;
+	}
+
+	public void setCustCif(String custCif) {
+		this.custCif = custCif;
+	}
+
+	public String getCustShrtName() {
+		return custShrtName;
+	}
+
+	public void setCustShrtName(String custShrtName) {
+		this.custShrtName = custShrtName;
+	}
+
+	public String getIncomeType() {
+		return incomeType;
+	}
+
+	public void setIncomeType(String incomeType) {
+		this.incomeType = incomeType;
+	}
+
+	public String getIncomeTypeDesc() {
+		return incomeTypeDesc;
+	}
+
+	public void setIncomeTypeDesc(String incomeTypeDesc) {
+		this.incomeTypeDesc = incomeTypeDesc;
+	}
+
+	public String getIncomeExpense() {
+		return incomeExpense;
+	}
+
+	public void setIncomeExpense(String incomeExpense) {
+		this.incomeExpense = incomeExpense;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public String getCategoryDesc() {
+		return categoryDesc;
+	}
+
+	public void setCategoryDesc(String categoryDesc) {
+		this.categoryDesc = categoryDesc;
+	}
+	
+	public BigDecimal getIncome() {
+		return income;
+	}
+
+	public void setIncome(BigDecimal income) {
+		this.income = income;
+	}
+
+	public BigDecimal getMargin() {
+		return margin;
+	}
+
+	public void setMargin(BigDecimal margin) {
+		this.margin = margin;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -195,67 +248,26 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public CustomerIncome getBefImage(){
-		return this.befImage;
-	}	
-	public void setBefImage(CustomerIncome beforeImage){
-		this.befImage=beforeImage;
+	public CustomerIncome getBefImage() {
+		return befImage;
+	}
+
+	public void setBefImage(CustomerIncome befImage) {
+		this.befImage = befImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-
-	public String getLovDescCustShrtName() {
-		return lovDescCustShrtName;
-	}
-	public void setLovDescCustShrtName(String lovDescCustShrtName) {
-		this.lovDescCustShrtName = lovDescCustShrtName;
-	}
-
-	public void setLoginDetails(LoggedInUser userDetails){
-		setLastMntBy(userDetails.getUserId());
-		this.userDetails=userDetails;
-	}
-
-	public void setMargin(BigDecimal margin) {
-	    this.margin = margin;
-    }
-
-	public BigDecimal getMargin() {
-	    return margin;
-    }
-
-	public void setIncomeExpense(String incomeExpense) {
-	    this.incomeExpense = incomeExpense;
-    }
-
-	public String getIncomeExpense() {
-	    return incomeExpense;
-    }
-
-	public void setCategory(String category) {
-	    this.category = category;
-    }
-
-	public String getCategory() {
-	    return category;
-    }
-
-	public void setLovDescCategoryName(String lovDescCategoryName) {
-	    this.lovDescCategoryName = lovDescCategoryName;
-    }
-
-	public String getLovDescCategoryName() {
-	    return lovDescCategoryName;
-    }
 
 	public String getSourceId() {
 		return sourceId;
@@ -312,4 +324,43 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 	public void setMarginDeviation(boolean marginDeviation) {
 		this.marginDeviation = marginDeviation;
 	}
+
+	public boolean isJointCust() {
+		return jointCust;
+	}
+
+	public void setJointCust(boolean jointCust) {
+		this.jointCust = jointCust;
+	}
+	
+	public int getCustType() {
+		return custType;
+	}
+
+	public void setCustType(int custType) {
+		this.custType = custType;
+	}
+
+	public String getInputSource() {
+		return inputSource;
+	}
+
+	public void setInputSource(String inputSource) {
+		this.inputSource = inputSource;
+	}
+
+	public void setLoginDetails(LoggedInUser userDetails){
+		setLastMntBy(userDetails.getUserId());
+		this.userDetails=userDetails;
+	}
+
+	public BigDecimal getCalculatedAmount() {
+		if (margin == null || income == null) {
+			return BigDecimal.ZERO;
+		} else {
+			return income.multiply(margin.divide(new BigDecimal(100), RoundingMode.HALF_UP)).divide(new BigDecimal(100),
+					RoundingMode.HALF_UP);
+		}
+	}
+
 }

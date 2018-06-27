@@ -2785,22 +2785,22 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				if (incAmountMap.containsKey(type + primaryInc.getCategory().trim() + "_"
-						+ primaryInc.getCustIncomeType().trim() + "_P")) {
+						+ primaryInc.getIncomeType().trim() + "_P")) {
 					BigDecimal incAmount = incAmountMap.get(type + primaryInc.getCategory().trim() + "_"
-							+ primaryInc.getCustIncomeType().trim() + "_P");
+							+ primaryInc.getIncomeType().trim() + "_P");
 					if (incAmount.compareTo(BigDecimal.ZERO) >= 0) {
-						primaryInc.setCustIncome(incAmount);
+						primaryInc.setIncome(incAmount);
 						incomeList.add(primaryInc);
 					}
 				}
 
 				if (this.custIsJointCust.isChecked()) {
 					if (incAmountMap.containsKey(type + jointInc.getCategory().trim() + "_"
-							+ jointInc.getCustIncomeType().trim() + "_S")) {
+							+ jointInc.getIncomeType().trim() + "_S")) {
 						BigDecimal incAmount = incAmountMap.get(type + jointInc.getCategory().trim() + "_"
-								+ jointInc.getCustIncomeType().trim() + "_S");
+								+ jointInc.getIncomeType().trim() + "_S");
 						if (incAmount.compareTo(BigDecimal.ZERO) >= 0) {
-							jointInc.setCustIncome(incAmount);
+							jointInc.setIncome(incAmount);
 							jointInc.setJointCust(true);
 							incomeList.add(jointInc);
 						}
@@ -7319,20 +7319,20 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				List<CustomerIncome> list = incomeMap.get(category);
 
 				if (list != null && list.size() > 0) {
-					group = new Listgroup(list.get(0).getLovDescCategoryName());
+					group = new Listgroup(list.get(0).getCategoryDesc());
 					listBoxIncomeDetails.appendChild(group);
 
 					for (CustomerIncome customerIncome : list) {
 
 						item = new Listitem();
-						cell = new Listcell(customerIncome.getLovDescCustIncomeTypeName());
+						cell = new Listcell(customerIncome.getIncomeTypeDesc());
 						cell.setParent(item);
 
 						BigDecimal income1 = BigDecimal.ZERO;
 						if (incAmountMap.containsKey("I_" + category.trim() + "_"
-								+ customerIncome.getCustIncomeType().trim() + "_P")) {
+								+ customerIncome.getIncomeType().trim() + "_P")) {
 							income1 = incAmountMap.get("I_" + category.trim() + "_"
-									+ customerIncome.getCustIncomeType().trim() + "_P");
+									+ customerIncome.getIncomeType().trim() + "_P");
 							custTotalIncome = custTotalIncome.add(income1);
 							totPriInc = totPriInc.add(income1);
 						}
@@ -7341,17 +7341,17 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						priInc.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 						priInc.setWidth("120px");
 						priInc.addForward("onChange", window_RetailWIFFinanceMainDialog, "onChangeIncomeAmount", null);
-						priInc.setId("I_" + category.trim() + "_" + customerIncome.getCustIncomeType().trim() + "_P");
-						incAmountMap.put("I_" + category.trim() + "_" + customerIncome.getCustIncomeType().trim()
+						priInc.setId("I_" + category.trim() + "_" + customerIncome.getIncomeType().trim() + "_P");
+						incAmountMap.put("I_" + category.trim() + "_" + customerIncome.getIncomeType().trim()
 								+ "_P", income1);
 						cell.appendChild(priInc);
 						cell.setParent(item);
 
 						BigDecimal income2 = BigDecimal.ZERO;
 						if (incAmountMap.containsKey("I_" + category.trim() + "_"
-								+ customerIncome.getCustIncomeType().trim() + "_S")) {
+								+ customerIncome.getIncomeType().trim() + "_S")) {
 							income2 = incAmountMap.get("I_" + category.trim() + "_"
-									+ customerIncome.getCustIncomeType().trim() + "_S");
+									+ customerIncome.getIncomeType().trim() + "_S");
 							custTotalIncome = custTotalIncome.add(income2);
 							totSecInc = totSecInc.add(income2);
 						}
@@ -7359,9 +7359,9 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						Decimalbox secInc = new Decimalbox(PennantAppUtil.formateAmount(income2, ccyFormatter));
 						secInc.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 						secInc.setWidth("120px");
-						secInc.setId("I_" + category.trim() + "_" + customerIncome.getCustIncomeType().trim() + "_S");
+						secInc.setId("I_" + category.trim() + "_" + customerIncome.getIncomeType().trim() + "_S");
 						secInc.addForward("onChange", window_RetailWIFFinanceMainDialog, "onChangeIncomeAmount", null);
-						incAmountMap.put("I_" + category.trim() + "_" + customerIncome.getCustIncomeType().trim()
+						incAmountMap.put("I_" + category.trim() + "_" + customerIncome.getIncomeType().trim()
 								+ "_S", income2);
 						cell.appendChild(secInc);
 						cell.setParent(item);
@@ -7402,21 +7402,21 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			for (String category : expenseMap.keySet()) {
 				List<CustomerIncome> list = expenseMap.get(category);
 				if (list != null) {
-					group = new Listgroup(list.get(0).getLovDescCategoryName());
+					group = new Listgroup(list.get(0).getCategoryDesc());
 					listBoxExpenseDetails.appendChild(group);
 
 					for (CustomerIncome customerIncome : list) {
 
 						item = new Listitem();
-						cell = new Listcell(customerIncome.getLovDescCustIncomeTypeName());
+						cell = new Listcell(customerIncome.getIncomeTypeDesc());
 						cell.setParent(item);
 
 						BigDecimal income1 = BigDecimal.ZERO;
 						boolean isBankFinInstInc = false;
 						if (incAmountMap.containsKey("E_" + category.trim() + "_"
-								+ customerIncome.getCustIncomeType().trim() + "_P")) {
+								+ customerIncome.getIncomeType().trim() + "_P")) {
 							income1 = incAmountMap.get("E_" + category.trim() + "_"
-									+ customerIncome.getCustIncomeType().trim() + "_P");
+									+ customerIncome.getIncomeType().trim() + "_P");
 							custTotalExpense = custTotalExpense.add(income1);
 							totPriExp = totPriExp.add(income1);
 
@@ -7430,7 +7430,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 
 						if (customerIncome.getCategory().equals(PennantConstants.INCCATTYPE_COMMIT)) {
-							if (PennantConstants.FININSTA.equals(customerIncome.getCustIncomeType().trim())) {
+							if (PennantConstants.FININSTA.equals(customerIncome.getIncomeType().trim())) {
 								isBankFinInstInc = true;
 							}
 						}
@@ -7439,8 +7439,8 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						priInc.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 						priInc.setWidth("120px");
 						priInc.addForward("onChange", window_RetailWIFFinanceMainDialog, "onChangeIncomeAmount", null);
-						priInc.setId("E_" + category.trim() + "_" + customerIncome.getCustIncomeType().trim() + "_P");
-						incAmountMap.put("E_" + category.trim() + "_" + customerIncome.getCustIncomeType().trim()
+						priInc.setId("E_" + category.trim() + "_" + customerIncome.getIncomeType().trim() + "_P");
+						incAmountMap.put("E_" + category.trim() + "_" + customerIncome.getIncomeType().trim()
 								+ "_P", income1);
 
 						if (isBankFinInstInc) {
@@ -7451,9 +7451,9 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 						BigDecimal income2 = BigDecimal.ZERO;
 						if (incAmountMap.containsKey("E_" + category.trim() + "_"
-								+ customerIncome.getCustIncomeType().trim() + "_S")) {
+								+ customerIncome.getIncomeType().trim() + "_S")) {
 							income2 = incAmountMap.get("E_" + category.trim() + "_"
-									+ customerIncome.getCustIncomeType().trim() + "_S");
+									+ customerIncome.getIncomeType().trim() + "_S");
 							custTotalExpense = custTotalExpense.add(income2);
 							totSecExp = totSecExp.add(income2);
 
@@ -7469,9 +7469,9 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						Decimalbox secInc = new Decimalbox(PennantAppUtil.formateAmount(income2, ccyFormatter));
 						secInc.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 						secInc.setWidth("120px");
-						secInc.setId("E_" + category.trim() + "_" + customerIncome.getCustIncomeType().trim() + "_S");
+						secInc.setId("E_" + category.trim() + "_" + customerIncome.getIncomeType().trim() + "_S");
 						secInc.addForward("onChange", window_RetailWIFFinanceMainDialog, "onChangeIncomeAmount", null);
-						incAmountMap.put("E_" + category.trim() + "_" + customerIncome.getCustIncomeType().trim()
+						incAmountMap.put("E_" + category.trim() + "_" + customerIncome.getIncomeType().trim()
 								+ "_S", income2);
 						cell.appendChild(secInc);
 						cell.setParent(item);

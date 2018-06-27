@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -34,6 +35,30 @@ public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected Label label_CollateralBasicDetails_colCcy;
 	protected Label label_CollateralBasicDetails_colType;
 	protected Label label_CollateralBasicDetails_colLoc;
+	 	
+	protected Label label_LoanNo;
+	protected Label label_LoanType;
+	protected Label label_Branch;
+	protected Label label_LoanAmtReq;
+	protected Label label_Tenure;
+	protected Label label_SamplingDate;
+	protected Label label_ROI;
+	
+	protected Label loanNo;
+	protected Label loanType;
+	protected Label branch;
+	protected Label loanAmtReq;
+	protected Label tenure;
+	protected Label samplingDate;
+	protected Label roi;
+    
+	protected Row row_CollateralDetails;
+	protected Row row_ProfitDays;
+	protected Row row_CollateralType;
+	protected Row row_FinType;
+	protected Row row_FinBranch;
+	protected Row row_LoanTenure;
+	protected Row row_ROI;
 	
 	private Object parentCtrl = null;
 	private String moduleName = "";
@@ -69,16 +94,22 @@ public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 	
 	public void doWriteBeanToComponents(ArrayList<Object> finHeaderList) {
 		logger.debug("Entering");
-
+		if (!StringUtils.equals(getModuleName(), CollateralConstants.SAMPLING_MODULE)){
+		
 		this.colBasic_depositerCif.setValue(String.valueOf(finHeaderList.get(0)));
 		this.colBasic_colRef.setValue(String.valueOf(finHeaderList.get(1)));
 		this.colBasic_depositerName.setValue(String.valueOf(finHeaderList.get(2)));
 		this.colBasic_colCcy.setValue(String.valueOf(finHeaderList.get(3)));
 		this.colBasic_colType.setValue(String.valueOf(finHeaderList.get(4)));
 		this.colBasic_colLoc.setValue(String.valueOf(finHeaderList.get(5)));
-
+		}
 		if (StringUtils.equals(getModuleName(), CommitmentConstants.MODULE_NAME)) {
 
+			this.row_FinType.setVisible(false);
+			this.row_FinBranch.setVisible(false);
+			this.row_LoanTenure.setVisible(false);
+			this.row_ROI.setVisible(false);
+			
 			this.label_CollateralBasicDetails_depositerCif.setValue(Labels.getLabel("label_CommitmentDialog_CustCIF.value"));
 			this.label_CollateralBasicDetails_colRef.setValue(Labels.getLabel("label_CommitmentDialog_CmtReference.value"));
 			this.label_CollateralBasicDetails_depositerName.setValue(Labels.getLabel("label_CommitmentDialog_CmtCcy.value"));
@@ -92,6 +123,11 @@ public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		} else if (StringUtils.equals(moduleName, CollateralConstants.MODULE_NAME)){
 			
+			this.row_FinType.setVisible(false);
+			this.row_FinBranch.setVisible(false);
+			this.row_LoanTenure.setVisible(false);
+			this.row_ROI.setVisible(false);
+			
 			this.label_CollateralBasicDetails_depositerCif.setValue(Labels.getLabel("label_CollateralSetupDialog_DepositorCif.value"));
 			this.label_CollateralBasicDetails_colRef.setValue(Labels.getLabel("label_CollateralSetupDialog_CollateralRef.value"));
 			this.label_CollateralBasicDetails_depositerName.setValue(Labels.getLabel("label_CollateralSetupDialog_DepositorName.value"));
@@ -100,13 +136,40 @@ public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.label_CollateralBasicDetails_colLoc.setValue(Labels.getLabel("label_CollateralSetupDialog_CollateralLoc.value"));
 			
 		} else if (StringUtils.equals(moduleName, VASConsatnts.MODULE_NAME)){
+			
+			this.row_FinType.setVisible(false);
+			this.row_FinBranch.setVisible(false);
+			this.row_LoanTenure.setVisible(false);
+			this.row_ROI.setVisible(false);
+			
 			this.label_CollateralBasicDetails_depositerCif.setValue(Labels.getLabel("label_VASRecordingDialog_ProductType.value"));
 			this.label_CollateralBasicDetails_colRef.setValue(Labels.getLabel("label_VASRecordingDialog_ProductCode.value"));
 			this.label_CollateralBasicDetails_depositerName.setValue(Labels.getLabel("label_VASRecordingList_VasReference.value"));
 			this.label_CollateralBasicDetails_colCcy.setValue(Labels.getLabel("label_VASRecordingList_PrimaryLinkRef.value"));
 			this.label_CollateralBasicDetails_colType.setValue(Labels.getLabel("label_VASConfigurationDialog_VASType.value"));
 			this.label_CollateralBasicDetails_colLoc.setValue(Labels.getLabel("label_VASConfigurationDialog_VASCategory.value"));
-		}  
+			
+		} else if (StringUtils.equals(moduleName, CollateralConstants.SAMPLING_MODULE)) {
+			this.row_CollateralDetails.setVisible(false);
+			this.row_ProfitDays.setVisible(false);
+			this.row_CollateralType.setVisible(false);
+			
+			this.label_LoanNo.setValue(Labels.getLabel("label_SamplingDialog_LoanNo.value"));
+			this.label_LoanType.setValue(Labels.getLabel("label_SamplingDialog_LoanType.value"));
+			this.label_Branch.setValue(Labels.getLabel("label_SamplingDialog_Branch.value"));
+			this.label_LoanAmtReq.setValue(Labels.getLabel("label_SamplingDialog_LoanAmtReq.value"));
+			this.label_Tenure.setValue(Labels.getLabel("label_SamplingDialog_Tenure.value"));
+			this.label_SamplingDate.setValue(Labels.getLabel("label_SamplingDialog_samplingDate.value"));
+			this.label_ROI.setValue(Labels.getLabel("label_SamplingDialog_ROI.value"));
+			
+			this.loanNo.setValue(String.valueOf(finHeaderList.get(0)));
+			this.loanType.setValue(String.valueOf(finHeaderList.get(1)));
+			this.branch.setValue(String.valueOf(finHeaderList.get(2)));
+			this.loanAmtReq.setValue(String.valueOf(finHeaderList.get(3)));
+			this.tenure.setValue(String.valueOf(finHeaderList.get(4)));
+			this.samplingDate.setValue(String.valueOf(finHeaderList.get(5)));
+			this.roi.setValue(String.valueOf(finHeaderList.get(6)));
+		}
 
 		logger.debug("Leaving");
 	}

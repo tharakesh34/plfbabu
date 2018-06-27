@@ -13,13 +13,13 @@
 			<grid sclass="GridLayoutNoBorder" fixedLayout="true"
 				style="border:0px">
 				<columns>
-					<column width="220px" />
-					<column />
-					<column width="220px" />
-					<column />
+					<column width="15%" />
+					<column width="35%"/>
+					<column width="15%" />
+					<column width="35%"/>
 				</columns>
 				<rows>
-					<row height="24px">
+					<row id="row_CollateralDetails" height="24px">
 						<label
 							id="label_CollateralBasicDetails_depositerCif" />
 						<label id="colBasic_depositerCif"
@@ -37,7 +37,7 @@
 						<label id="colBasic_colCcy"
 							style="font-weight:bold;" />
 					</row>
-					<row height="24px">
+					<row id="row_CollateralType" height="24px">
 						<label
 							id="label_CollateralBasicDetails_colType" />
 						<label id="colBasic_colType"
@@ -45,6 +45,36 @@
 						<label id="label_CollateralBasicDetails_colLoc" />
 						<label id="colBasic_colLoc"
 							style="font-weight:bold;" />
+					</row>
+					
+					<row id="row_FinType" height="24px">
+						<label id="label_LoanNo"/>
+						<label id="loanNo" style="font-weight:bold;" />
+						
+						<label id="label_LoanType" />
+						<label id="loanType" style="font-weight:bold;" />
+						<!-- <label id="finDesc"
+								style="margin-left:10px;display:inline-block;padding-top:3px;" /> -->
+					</row>
+					<row id="row_FinBranch" height="24px">
+						<label id="label_Branch" />
+						<label id="branch" style="font-weight:bold;" />
+						<!-- <label id="branchDesc"
+							style="margin-left:10px;display:inline-block;padding-top:3px;" /> -->
+
+						<label id="label_LoanAmtReq" />
+						<label id="loanAmtReq" style="font-weight:bold;" />
+					</row>
+					<row id="row_LoanTenure" height="24px">
+						<label id="label_Tenure" />
+						<label id="tenure" style="font-weight:bold;"/>
+
+						<label id="label_SamplingDate" />
+						<label id="samplingDate" style="font-weight:bold;" />
+					</row>
+					<row id="row_ROI" height="24px">
+						<label id="label_ROI" />
+						<label id="roi" style="font-weight:bold;" />
 					</row>
 				</rows>
 			</grid>

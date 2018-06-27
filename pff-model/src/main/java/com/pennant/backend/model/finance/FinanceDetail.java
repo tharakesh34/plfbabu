@@ -82,6 +82,7 @@ import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 
 @XmlType(propOrder = { "finReference", "stp", "processStage", "finScheduleData", "foreClosureDetails",
@@ -268,6 +269,13 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean rcuApprovalTab = false;
 	private boolean rcuInitTab = false;
 	private Map<String, String> showTabDetailMap = new HashMap<>();
+	
+	/**
+	 * Sampling variables
+	 */
+	private boolean samplingInitiator;
+	private boolean samplingApprover;
+	private Sampling sampling;
 	
 	public FinanceDetail() {
 		
@@ -1040,5 +1048,27 @@ public class FinanceDetail implements java.io.Serializable {
 		this.showTabDetailMap = showTabDetailMap;
 	}
 
-	
+	public boolean isSamplingInitiator() {
+		return samplingInitiator;
+	}
+
+	public void setSamplingInitiator(boolean samplingInitiator) {
+		this.samplingInitiator = samplingInitiator;
+	}
+
+	public boolean isSamplingApprover() {
+		return samplingApprover;
+	}
+
+	public void setSamplingApprover(boolean samplingApprover) {
+		this.samplingApprover = samplingApprover;
+	}
+
+	public Sampling getSampling() {
+		return sampling;
+	}
+
+	public void setSampling(Sampling sampling) {
+		this.sampling = sampling;
+	}
 }

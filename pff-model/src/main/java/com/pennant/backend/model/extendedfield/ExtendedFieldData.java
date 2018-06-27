@@ -27,8 +27,11 @@ public class ExtendedFieldData implements Serializable {
 	private String fieldLabel;
 	private String fieldType;
 
-	public ExtendedFieldData() {
+	private int fieldSeqOrder;
+	private int fieldPrec;
 
+	public ExtendedFieldData() {
+		super();
 	}
 
 	public String getFieldName() {
@@ -61,5 +64,21 @@ public class ExtendedFieldData implements Serializable {
 
 	public void setFieldType(String fieldType) {
 		this.fieldType = fieldType;
+	}
+
+	public int getFieldSeqOrder() {
+		return fieldSeqOrder;
+	}
+
+	public void setFieldSeqOrder(int fieldSeqOrder) {
+		this.fieldSeqOrder = fieldSeqOrder;
+	}
+
+	public int getFieldPrec() {
+		return fieldPrec;
+	}
+
+	public void setFieldPrec(int fieldPrec) {
+		this.fieldPrec = fieldPrec;
 	}
 }

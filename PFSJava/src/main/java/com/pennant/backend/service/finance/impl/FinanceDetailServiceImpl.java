@@ -84,7 +84,6 @@ import com.pennant.backend.dao.TATDetailDAO;
 import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.dao.UserActivityLogDAO;
 import com.pennant.backend.dao.applicationmaster.FinIRRDetailsDAO;
-import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
@@ -243,13 +242,15 @@ import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
+import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
+import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
-import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
+import com.pennanttech.pff.service.sampling.SamplingService;
 import com.rits.cloning.Cloner;
 
 /**
@@ -323,16 +324,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Autowired
 	private VerificationService verificationService;
 	@Autowired
-	private FieldInvestigationService fieldInvestigationService;
-	@Autowired
-	private CollateralSetupDAO collateralSetupDAO;
-	@Autowired
 	private DeviationHelper deviationHelper;
 	@Autowired
 	private AuthorizationLimitService authorizationLimitService;
 	@Autowired
 	private DMSIdentificationService dmsIdentificationService;
-		
+	@Autowired
+	private SamplingService samplingService;
+	@Autowired
+	private FinSamplingService finSamplingService;
+
 	@Autowired(required=false)
 	private PostValidationHook financeDetailPostValidationHook;
 
@@ -595,6 +596,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		//Cheque Header and Cheque Details getting
 		financeDetail.setChequeHeader(finChequeHeaderService.getChequeHeaderByRef(finReference));
+		
+		//financeMain.setSamplingRequired(samplingService.isExist(finReference));
+		financeDetail.setSampling(samplingService.getSampling(financeDetail.getFinScheduleData().getFinReference(), "_aview"));
 				
 		logger.debug("Leaving");
 		return financeDetail;
@@ -1642,7 +1646,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public FinanceDetail getFinanceReferenceDetails(FinanceDetail financeDetail, String nextRoleCode,
 			String screenCode, String eventCode, String procEdtEvent, boolean extFieldsReq) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<Long> accSetIdList = new ArrayList<Long>();
 		boolean isCustExist = true;
@@ -1657,87 +1661,80 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			ctgType = financeDetail.getCustomerDetails().getCustomer().getCustCtgCode();
 		}
 
-		List<FinanceReferenceDetail> aggrementList = new ArrayList<FinanceReferenceDetail>(1);
-		List<FinanceReferenceDetail> eligibilityList = new ArrayList<FinanceReferenceDetail>(1);
-		List<FinanceReferenceDetail> retScoringGroupList = new ArrayList<FinanceReferenceDetail>(1);
-		List<FinanceReferenceDetail> corpScoringGroupList = new ArrayList<FinanceReferenceDetail>(1);
-		List<FinanceReferenceDetail> checkListdetails = new ArrayList<FinanceReferenceDetail>(1);
+		List<FinanceReferenceDetail> aggrementList = new ArrayList<>(1);
+		List<FinanceReferenceDetail> eligibilityList = new ArrayList<>(1);
+		List<FinanceReferenceDetail> retScoringGroupList = new ArrayList<>(1);
+		List<FinanceReferenceDetail> corpScoringGroupList = new ArrayList<>(1);
+		List<FinanceReferenceDetail> checkListdetails = new ArrayList<>(1);
+		List<FinanceReferenceDetail> finRefDetails;
 		Map<String,String> showTabMap = new HashMap<>();
 		
-		List<FinanceReferenceDetail> finRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(
-				financeType.getFinType(),
-				StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent, "_FINVIEW");
-
-		if (finRefDetails != null && !finRefDetails.isEmpty()) {
+		String event = procEdtEvent;
+		String tempNextRoleCode =  nextRoleCode.concat(",");
+		String finType = financeType.getFinType();
+		
+		if(StringUtils.isEmpty(event)) {
+			event = FinanceConstants.FINSER_EVENT_ORG;
+		} 
+		
+		finRefDetails = financeReferenceDetailDAO.getFinanceProcessEditorDetails(finType, event, "_FINVIEW");				
+		if (CollectionUtils.isNotEmpty(finRefDetails)) {
 			for (FinanceReferenceDetail finrefDetail : finRefDetails) {
-				if ((!finrefDetail.isIsActive()) || StringUtils.isEmpty(finrefDetail.getLovDescRefDesc())) {
+				String reference = finrefDetail.getLovDescRefDesc();
+				int finRefType = finrefDetail.getFinRefType();
+				String showInStage = StringUtils.trimToEmpty(finrefDetail.getShowInStage());
+				String mandInputInStage = StringUtils.trimToEmpty(finrefDetail.getMandInputInStage());
+
+				if ((!finrefDetail.isIsActive()) || StringUtils.isEmpty(reference)) {
 					continue;
 				}
-				if (finrefDetail.getFinRefType() == FinanceConstants.PROCEDT_CHECKLIST) {
-					if (StringUtils.trimToEmpty(finrefDetail.getShowInStage()).contains((nextRoleCode + ","))) {
+
+				switch (finRefType) {
+				case FinanceConstants.PROCEDT_CHECKLIST:
+					if (showInStage.contains(tempNextRoleCode)) {
 						checkListdetails.add(finrefDetail);
-						continue;
 					}
-				} else if (finrefDetail.getFinRefType() == FinanceConstants.PROCEDT_AGREEMENT) {
-					if (StringUtils.trimToEmpty(finrefDetail.getMandInputInStage()).contains((nextRoleCode + ","))) {
+					break;
+				case FinanceConstants.PROCEDT_AGREEMENT:
+					if (mandInputInStage.contains((tempNextRoleCode))) {
 						aggrementList.add(finrefDetail);
-						continue;
 					}
-				} else if (finrefDetail.getFinRefType() == FinanceConstants.PROCEDT_ELIGIBILITY) {
+					break;
+				case FinanceConstants.PROCEDT_ELIGIBILITY:
 					if (StringUtils.isNotEmpty(finrefDetail.getLovDescRuleReturnType())
-							&& StringUtils.trimToEmpty(finrefDetail.getAllowInputInStage()).contains(
-									(nextRoleCode + ","))) {
+							&& mandInputInStage.contains(tempNextRoleCode)) {
 						eligibilityList.add(finrefDetail);
-						continue;
 					}
-				} else if (finrefDetail.getFinRefType() == FinanceConstants.PROCEDT_RTLSCORE) {
-					if (StringUtils.trimToEmpty(finrefDetail.getMandInputInStage()).contains((nextRoleCode + ","))) {
+					break;
+				case FinanceConstants.PROCEDT_RTLSCORE:
+					if (mandInputInStage.contains(tempNextRoleCode)) {
 						retScoringGroupList.add(finrefDetail);
-						continue;
 					}
-				} else if (finrefDetail.getFinRefType() == FinanceConstants.PROCEDT_CORPSCORE) {
-					if (StringUtils.trimToEmpty(finrefDetail.getMandInputInStage()).contains((nextRoleCode + ","))) {
+					break;
+				case FinanceConstants.PROCEDT_CORPSCORE:
+					if (mandInputInStage.contains(tempNextRoleCode)) {
 						corpScoringGroupList.add(finrefDetail);
 						continue;
 					}
-				} else if (finrefDetail.getFinRefType() == FinanceConstants.PROCEDT_STAGEACC) {
+					break;
+				case FinanceConstants.PROCEDT_STAGEACC:
 					accSetIdList.add(finrefDetail.getFinRefId());
-					continue;
-				} else if (finrefDetail.getFinRefType() == FinanceConstants.PROCEDT_LIMIT ) {
-					if (StringUtils.trimToEmpty(finrefDetail.getMandInputInStage()).contains(nextRoleCode + ",")) {
-						if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
-								FinanceConstants.PROCEDT_VERIFICATION_FI_INIT)) {
-							financeDetail.setFiInitTab(true);
-						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
-								FinanceConstants.PROCEDT_VERIFICATION_FI_APPR)) {
-							financeDetail.setFiApprovalTab(true);
-						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
-								FinanceConstants.PROCEDT_VERIFICATION_TV_INIT)) {
-							financeDetail.setTvInitTab(true);
-						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
-								FinanceConstants.PROCEDT_VERIFICATION_TV_APPR)) {
-							financeDetail.setTvApprovalTab(true);
-						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
-								FinanceConstants.PROCEDT_VERIFICATION_LV_INIT)) {
-							financeDetail.setLvInitTab(true);
-						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
-								FinanceConstants.PROCEDT_VERIFICATION_LV_APPR)) {
-							financeDetail.setLvApprovalTab(true);
-						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
-								FinanceConstants.PROCEDT_VERIFICATION_RCU_INIT)) {
-							financeDetail.setRcuInitTab(true);
-						} else if (StringUtils.equals(finrefDetail.getLovDescRefDesc(),
-								FinanceConstants.PROCEDT_VERIFICATION_RCU_APPR)) {
-							financeDetail.setRcuApprovalTab(true);
-						} 
+					break;
+				case FinanceConstants.PROCEDT_LIMIT:
+					if (mandInputInStage.contains(tempNextRoleCode)) {
+						setMiscellaneousTabs(financeDetail, reference);
 					}
-				} else if (finrefDetail.getFinRefType() == FinanceConstants.PROCEDT_FINANCETABS) {
-					showTabMap.put(StringUtils.leftPad(String.valueOf(finrefDetail.getFinRefId()), 3, "0"), finrefDetail.getMandInputInStage());
-					continue;
-				}	
+					break;
+				case FinanceConstants.PROCEDT_FINANCETABS:
+					showTabMap.put(StringUtils.leftPad(String.valueOf(finrefDetail.getFinRefId()), 3, "0"),
+							mandInputInStage);
+					break;
+				default:
+					break;
+				}
 			}
 		}
-
+		
 		//Finance Agreement Details	
 		financeDetail.setAggrementList(aggrementList);
 		financeDetail.setShowTabDetailMap(showTabMap);
@@ -1826,10 +1823,48 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				 */
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
+	private void setMiscellaneousTabs(FinanceDetail financeDetail, String reference) {
+		switch (reference) {
+		case FinanceConstants.PROCEDT_VERIFICATION_FI_INIT:
+			financeDetail.setFiInitTab(true);
+			break;
+		case FinanceConstants.PROCEDT_VERIFICATION_FI_APPR:
+			financeDetail.setFiApprovalTab(true);
+			break;
+		case FinanceConstants.PROCEDT_VERIFICATION_TV_INIT:
+			financeDetail.setTvInitTab(true);
+			break;
+		case FinanceConstants.PROCEDT_VERIFICATION_TV_APPR:
+			financeDetail.setTvApprovalTab(true);
+			break;
+		case FinanceConstants.PROCEDT_VERIFICATION_LV_INIT:
+			financeDetail.setLvInitTab(true);
+			break;
+		case FinanceConstants.PROCEDT_VERIFICATION_LV_APPR:
+			financeDetail.setLvApprovalTab(true);
+			break;
+		case FinanceConstants.PROCEDT_VERIFICATION_RCU_INIT:
+			financeDetail.setRcuInitTab(true);
+			break;
+		case FinanceConstants.PROCEDT_VERIFICATION_RCU_APPR:
+			financeDetail.setRcuApprovalTab(true);
+			break;
+		case FinanceConstants.PROCEDT_SAMPLING_INIT:
+			financeDetail.setSamplingInitiator(true);
+			break;
+		case FinanceConstants.PROCEDT_SAMPLING_APPR:
+			financeDetail.setSamplingApprover(true);
+			break;
+
+		default:
+			break;
+		}
+	}
+	
 	/**
 	 * Method for testing Finance Reference is Already Exist or not
 	 */
@@ -1930,7 +1965,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				if (customer.getCustomerIncomeList() != null && !customer.getCustomerIncomeList().isEmpty()) {
 					for (CustomerIncome income : customer.getCustomerIncomeList()) {
-						income.setCustID(custId);
+						income.setCustId(custId);
 					}
 					getCustomerIncomeDAO().saveBatch(customer.getCustomerIncomeList(), "", true);
 				}
@@ -2436,9 +2471,21 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			
 			//Verifications
 			saveOrUpdateVerifications(auditDetails, financeDetail, financeMain, auditTranType);
+			
+			/**
+			 * save sampling details
+			 */
+
+			if (financeMain.isSamplingRequired() && !financeDetail.isActionSave()) {
+				Sampling sampling = new Sampling();
+				sampling.setKeyReference(financeMain.getFinReference());
+				sampling.setLastMntBy(financeMain.getLastMntBy());
+				sampling.setCreatedBy(financeMain.getLastMntBy());
+				samplingService.save(sampling);
+			}
+						
 		}
 	
-		
 
 		// Finance Fee Details
 		//=======================================
@@ -2594,6 +2641,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (financeDetail.isRcuApprovalTab()) {
 			adtVerifications.addAll(
 					verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, auditTranType, false));
+		}
+		
+		// Update Sampling details
+		//=======================================
+		if (financeDetail.isSamplingApprover() && financeDetail.getSampling() != null) {
+			adtVerifications.add(finSamplingService.saveOrUpdate(financeDetail, auditTranType));
 		}
 
 		// preparing audit seqno for same table(adtverifications)
@@ -7934,16 +7987,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		for (IncomeType incomeType : incomeTypeList) {
 			CustomerIncome income = new CustomerIncome();
 			income.setIncomeExpense(incomeType.getIncomeExpense().trim());
-			income.setCustIncomeType(incomeType.getIncomeTypeCode().trim());
+			income.setIncomeType(incomeType.getIncomeTypeCode().trim());
 			income.setJointCust(false);
 			income.setMargin(BigDecimal.ZERO);
 			income.setCategory(incomeType.getCategory().trim());
-			income.setCustIncome(BigDecimal.ZERO);
+			income.setIncome(BigDecimal.ZERO);
 			income.setVersion(1);
 			income.setRecordType(PennantConstants.RCD_ADD);
 			income.setWorkflowId(0);
-			income.setLovDescCategoryName(incomeType.getLovDescCategoryName().trim());
-			income.setLovDescCustIncomeTypeName(incomeType.getIncomeTypeDesc().trim());
+			income.setCategoryDesc(incomeType.getLovDescCategoryName().trim());
+			income.setIncomeTypeDesc(incomeType.getIncomeTypeDesc().trim());
 
 			customerIncomes.add(income);
 		}

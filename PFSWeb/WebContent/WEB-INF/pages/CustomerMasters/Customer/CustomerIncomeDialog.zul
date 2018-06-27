@@ -6,38 +6,38 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
 	<window id="window_CustomerIncomeDialog" border="normal"
-		apply="${customerIncomeDlgCtrl}" width="800px" height="228px"
+		apply="${customerIncomeDialogCtrl}" width="100%" height="100%"
 		sizable="false">
 		<borderlayout id="borderlayoutCustomerIncome">
 			<north>
-				<div sclass="z-toolbar" style="padding:0">
+				<div sclass="z-toolbar">
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-						width="100%">
+						width="100%" widths="35%,30%,35%">
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-
-							<button id="btnNew"
+							<button id="btnNew" 
 								tooltiptext="${c:l('btnNew.tooltiptext')}"
-								sclass="z-toolbarbutton" />
-							<!-- label="${c:l('btnNew.label')}"	 -->
-							<button id="btnEdit"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnEdit" 
 								tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								sclass="z-toolbarbutton" />
-							<button id="btnDelete"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnDelete" 
 								tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								sclass="z-toolbarbutton" />
-							<button id="btnSave"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnSave" 
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
-								sclass="z-toolbarbutton" />
-							<button id="btnCancel"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnCancel" 
 								tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								sclass="z-toolbarbutton" />
-							<button id="btnNotes"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnNotes" 
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-								sclass="z-toolbarbutton" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						</toolbar>
+
 						<!-- SEARCH AREA -->
 						<toolbar align="center"
 							sclass="toolbar-center">
@@ -48,74 +48,78 @@
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" visible="false"
+							<button id="btnHelp" visible="false" 
 								label="${c:l('label_Help')}"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}"
-								sclass="z-toolbarbutton" />
-							<button id="btnClose"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnClose" 
 								tooltiptext="${c:l('btnClose.tooltiptext')}"
-								sclass="z-toolbarbutton" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						</toolbar>
 					</hbox>
 				</div>
 			</north>
 
 			<center border="none" autoscroll="true">
-
-				<groupbox id="gb_basicDetails" mold="3d">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
-						style="border:0px">
+				<groupbox id="gb_basicDetails" sclass="gb-dialog">
+					<grid sclass="GridLayoutNoBorder"
+						fixedLayout="true">
 						<columns>
-							<column width="150px" />
+							<column width="170px" />
 							<column />
 						</columns>
 						<rows>
-							<row visible="false">
+						<row>
 								<label
-									id="label_CustomerIncomeDialog_CustID"
-									value="${c:l('label_CustomerIncomeDialog_CustID.value')}" />
+									id="label_CustomerIncomeDialog_CustCIF"
+									value="${c:l('label_CustomerIncomeDialog_CustIncomeCIF.value')}" />
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<longbox id="custID" width="100px"
-										readonly="true">
-									</longbox>
-									<textbox id="custShrtName"
-										width="150px" readonly="true">
-									</textbox>
+									<longbox id="custID" width="150px"
+										maxlength="26" visible="false" />
+									<textbox id="custCIF" width="150px"
+										maxlength="50" style="overflow: hidden;" />
 
+									<button id="btnSearchPRCustid"
+										image="/images/icons/LOVSearch.png"  />
+									<label id="custShrtName"
+										width="150px" />
 								</hbox>
 							</row>
-
-							<row visible="true">
+							<row>
 								<label
 									id="label_CustomerIncomeDialog_CustIncomeType"
 									value="${c:l('label_CustomerIncomeDialog_CustIncomeType.value')}" />
+									<extendedcombobox id="custIncomeType"/>
+							</row>
+							<row>
+								<label
+									value="${c:l('label_CustomerIncomeDialog_Margin.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="custIncomeType"
-										width="100px" visible="false">
-									</textbox>
-									<textbox
-										id="lovDescCustIncomeTypeName" width="250px" readonly="true" />
-									<button id="btnSearchCustIncomeType"
-										image="/images/icons/LOVSearch.png">
-									</button>
+									<space spacing="2px" />
+									<decimalbox id="margin"
+										maxlength="6" width="200px" />
 								</hbox>
 							</row>
-							<row visible="true">
+							<row>
 								<label
 									id="label_CustomerIncomeDialog_CustIncome"
 									value="${c:l('label_CustomerIncomeDialog_CustIncome.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<decimalbox id="custIncome"
-										width="162px" maxlength="25" />
+									<currencyBox id="custIncome" />
 								</hbox>
 							</row>
-							<row visible="true">
+							<row id = "row_isJoint">
+								<label
+									id="label_CustomerIncomeDialog_IsJoint"
+									value="${c:l('label_CustomerIncomeDialog_IsJoint.value')}" />
+								<hbox>
+									<space spacing="2px"/>
+									<checkbox id="jointCust" />
+								</hbox>
+							</row>
+							<row visible="false">
 								<label
 									id="label_CustomerIncomeDialog_CustIncomeCountry"
 									value="${c:l('label_CustomerIncomeDialog_CustIncomeCountry.value')}" />
@@ -126,31 +130,30 @@
 										width="18px" visible="false" readonly="true" />
 									<textbox
 										id="lovDescCustIncomeCountryName" width="250px"
-										readonly="true">
-									</textbox>
+										readonly="true" />
 									<button
 										id="btnSearchCustIncomeCountry"
-										image="/images/icons/LOVSearch.png">
-									</button>
+										image="/images/icons/LOVSearch.png"  />
 								</hbox>
 							</row>
+							
 						</rows>
 					</grid>
 				</groupbox>
-
 			</center>
-			<south sclass="south-dialog">
+			<south id="south" sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">
 					<caption label="${c:l('Action')}" />
 					<hbox width="75%">
 						<radiogroup id="userAction" name="action" />
 						<label
-							id="label_CustomerRatingDialog_RecordStatus"
+							id="label_CustomerIncomeDialog_RecordStatus"
 							value="${c:l('label_South_RecordStatus.value')}"
 							sclass="label-status" />
 						<label id="recordStatus" />
 					</hbox>
 				</groupbox>
+
 			</south>
 		</borderlayout>
 	</window>

@@ -17,7 +17,7 @@ public class CustomerIncomeComparator implements Comparator<Object>, Serializabl
 	public int compare(Object o1, Object o2) { 
 		CustomerIncome data = (CustomerIncome) o1; 
 		CustomerIncome data2 = (CustomerIncome) o2; 
-		return String.valueOf(data.getCustID()).compareTo(String.valueOf(data2.getCustID())); 
+		return String.valueOf(data.getCustId()).compareTo(String.valueOf(data2.getCustId())); 
 
 	}
 }

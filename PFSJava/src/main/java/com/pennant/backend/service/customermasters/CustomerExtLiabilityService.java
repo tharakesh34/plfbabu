@@ -8,14 +8,16 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 
 public interface CustomerExtLiabilityService {
-	List<CustomerExtLiability> getExtLiabilityByCustomer(long custId);
-
-	CustomerExtLiability getCustomerExtLiabilityById(long custId, int liabilitySeq);
 
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	int getVersion(long custId, int liabilitySeq);
-	
-	BigDecimal getSumAmtCustomerExtLiabilityById(Set<Long> custId);
 
+	CustomerExtLiability getLiability(CustomerExtLiability liability);
+
+	List<CustomerExtLiability> getLiabilities(CustomerExtLiability liability);
+
+	BigDecimal getExternalLiabilitySum(long custId);
+
+	BigDecimal getSumAmtCustomerExtLiabilityById(Set<Long> custId);
 }

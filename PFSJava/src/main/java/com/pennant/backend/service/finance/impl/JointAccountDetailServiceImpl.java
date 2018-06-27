@@ -51,6 +51,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.ErrorUtil;
@@ -58,7 +59,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
-import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -75,6 +75,7 @@ import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 
 /**
  * Service implementation for methods that depends on <b>JountAccountDetail</b>.<br>
@@ -87,7 +88,8 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	private JountAccountDetailDAO jountAccountDetailDAO;
 	private ExtendedFieldRenderDAO				extendedFieldRenderDAO;
 	private CustomerIncomeDAO customerIncomeDAO;
-	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
+	@Autowired
+	private ExternalLiabilityDAO externalLiabilityDAO;
 	private CustomerDAO customerDAO;
 	
 	public JointAccountDetailServiceImpl() {
@@ -130,15 +132,6 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 
 	public void setCustomerIncomeDAO(CustomerIncomeDAO customerIncomeDAO) {
 		this.customerIncomeDAO = customerIncomeDAO;
-	}
-
-	
-	private CustomerExtLiabilityDAO getCustomerExtLiabilityDAO() {
-		return customerExtLiabilityDAO;
-	}
-
-	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
-		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
 	}
 
 	private CustomerDAO getCustomerDAO() {
@@ -946,12 +939,13 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	
 	@Override
 	public List<CustomerIncome> getJointAccountIncomeList(long custID){
-		return getCustomerIncomeDAO().getCustomerIncomeByCustomer(custID,false,"");
+		return getCustomerIncomeDAO().getCustomerIncomeByCustomer(custID, "_aview");
 	} 
 	
 	@Override
-	public List<CustomerExtLiability>  getJointExtLiabilityByCustomer(long custID){
-		return getCustomerExtLiabilityDAO().getExtLiabilityByCustomer(custID,"");
+	public List<CustomerExtLiability>  getJointExtLiabilityByCustomer(long custId){
+		CustomerExtLiability liability = new CustomerExtLiability();
+		return externalLiabilityDAO.getLiabilities(liability.getCustId(), "");
 	} 
 
 	@Override

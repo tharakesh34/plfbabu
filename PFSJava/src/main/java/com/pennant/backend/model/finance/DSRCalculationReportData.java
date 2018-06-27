@@ -611,38 +611,38 @@ public class DSRCalculationReportData implements Serializable{
 			for (CustomerIncome income : incomes) {
 				
 				Income inc = new Income(format);
-				if(incMap.containsKey("I_"+income.getCategory()+"_"+income.getCustIncomeType())){
-					inc = incMap.get("I_"+income.getCategory()+"_"+income.getCustIncomeType());
+				if(incMap.containsKey("I_"+income.getCategory()+"_"+income.getIncomeType())){
+					inc = incMap.get("I_"+income.getCategory()+"_"+income.getIncomeType());
 					if(!income.isJointCust()){
-						inc.setIncAmount(PennantApplicationUtil.amountFormate(income.getCustIncome(), format));
+						inc.setIncAmount(PennantApplicationUtil.amountFormate(income.getIncome(), format));
 					}else{
-						inc.setJointIncAmount(PennantApplicationUtil.amountFormate(income.getCustIncome(), format));
+						inc.setJointIncAmount(PennantApplicationUtil.amountFormate(income.getIncome(), format));
 					}
-				}else if(expMap.containsKey("E_"+income.getCategory()+"_"+income.getCustIncomeType())){
-					inc = expMap.get("E_"+income.getCategory()+"_"+income.getCustIncomeType());
+				}else if(expMap.containsKey("E_"+income.getCategory()+"_"+income.getIncomeType())){
+					inc = expMap.get("E_"+income.getCategory()+"_"+income.getIncomeType());
 					if(!income.isJointCust()){
-						inc.setIncAmount(PennantApplicationUtil.amountFormate(income.getCustIncome(), format));
+						inc.setIncAmount(PennantApplicationUtil.amountFormate(income.getIncome(), format));
 					}else{
-						inc.setJointIncAmount(PennantApplicationUtil.amountFormate(income.getCustIncome(), format));
+						inc.setJointIncAmount(PennantApplicationUtil.amountFormate(income.getIncome(), format));
 					}
 				}else{
-					inc.setCategory(income.getLovDescCategoryName().trim());
-					inc.setIncomeType(income.getLovDescCustIncomeTypeName());
+					inc.setCategory(income.getCategoryDesc().trim());
+					inc.setIncomeType(income.getIncomeTypeDesc());
 					if(!income.isJointCust()){
-						inc.setIncAmount(PennantApplicationUtil.amountFormate(income.getCustIncome(), format));
+						inc.setIncAmount(PennantApplicationUtil.amountFormate(income.getIncome(), format));
 					}else{
-						inc.setJointIncAmount(PennantApplicationUtil.amountFormate(income.getCustIncome(), format));
+						inc.setJointIncAmount(PennantApplicationUtil.amountFormate(income.getIncome(), format));
 					}
 					
 					if(income.getIncomeExpense().equals(PennantConstants.INCOME)){
-						incMap.put("I_"+income.getCategory()+"_"+income.getCustIncomeType(), inc);
+						incMap.put("I_"+income.getCategory()+"_"+income.getIncomeType(), inc);
 					}else{
-						expMap.put("E_"+income.getCategory()+"_"+income.getCustIncomeType(), inc);
+						expMap.put("E_"+income.getCategory()+"_"+income.getIncomeType(), inc);
 					}
 				}
 				
 				if(income.getIncomeExpense().equals(PennantConstants.INCOME)){
-					totalInc = totalInc.add(income.getCustIncome());
+					totalInc = totalInc.add(income.getIncome());
 				}
             }
 		}

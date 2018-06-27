@@ -42,9 +42,8 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -53,26 +52,22 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.customermasters.CustomerIncome;
-import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.dao.customer.income.IncomeDetailDAOImpl;
 
 /**
  * DAO methods implementation for the <b>CustomerIncome model</b> class.<br>
  * 
  */
-public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implements CustomerIncomeDAO {
+public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implements CustomerIncomeDAO {
 	private static Logger logger = Logger.getLogger(CustomerIncomeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public CustomerIncomeDAOImpl() {
 		super();
@@ -87,35 +82,71 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 	 *            (String) ""/_Temp/_View
 	 * @return CustomerIncome
 	 */
-	public CustomerIncome getCustomerIncomeById(CustomerIncome customerIncome, String type) {
-		logger.debug("Entering");
- 	 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustID,  CustIncome, CustIncomeType, IncomeExpense, Category, Margin, JointCust,");
-		if(type.contains("View")){
-			selectSql.append(" lovDescCustIncomeTypeName, lovDescCategoryName, " );
-			selectSql.append(" lovDescCustCIF, lovDescCustShrtName,ToCcy, ");
+	public CustomerIncome getCustomerIncomeById(CustomerIncome customerIncome, String type, String inputSource) {
+		logger.debug(Literal.ENTERING);
+
+		type = StringUtils.trimToEmpty(type).toLowerCase();
+
+		String view = null;
+		String table = null;
+		if (inputSource.equals("sampling")) {
+			view = "sampling_income_details";
+			table = "link_sampling_incomes";
+		} else {
+			view = "customer_income_details";
+			table = "link_cust_incomes";
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM  CustomerIncomes");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID AND CustIncomeType = :custIncomeType ");
-		selectSql.append(" AND IncomeExpense = :IncomeExpense AND Category=:Category AND JointCust = :JointCust");
-		logger.debug("selectSql: " + selectSql.toString());
+		
+		if (type.equals("_temp")) {
+			view = view.concat("_view");
+		} else {
+			view = view.concat("_aview");
+		}
+
+		StringBuilder query = new StringBuilder();
+		if (type.contains("view")) {
+			query.append(" select custid, income, incometype, incomeExpense, category, margin,");
+			query.append(" incometypedesc, categorydesc, ");
+			query.append(" custcif, custshrtname, toccy, ");
+			query.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
+			query.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+			query.append(" from ");
+			query.append(view);
+			query.append(" Where linkid =:linkId and custid = :custId and incometype = :incomeType ");
+			query.append(" and incomeExpense = :incomeExpense and category=:category");
+		} else {
+			query.append(
+					" select cu.custid, incd.income, incd.incometype, incd.incomeExpense, incd.category, incd.margin,");
+			query.append(" it.incometypedesc, ic.categorydesc, ");
+			query.append(" cu.custcif, cu.custshrtname, cu.custbaseccy toccy, ");
+			query.append(
+					" incd.Version, incd.LastMntOn, incd.LastMntBy, incd.RecordStatus, incd.RoleCode, incd.NextRoleCode,");
+			query.append(" incd.TaskId, incd.NextTaskId, incd.RecordType, incd.WorkflowId");
+			query.append(" from ");
+			query.append(view).append(" incd");
+			query.append(" inner join ").append(table).append(" cin");
+			query.append(" on cin.linkid = incd.linkid");
+			query.append(" inner join bmtincometypes it on it.incometypecode=incd.incometype");
+			query.append(" and it.incomeexpense=incd.incomeexpense and it.category=incd.category");
+			query.append(" inner join customers cu on cin.custid = cu.custid");
+			query.append(" inner join bmtincomecategory ic on ic.incomecategory = incd.category");
+			query.append(" Where incd.linkid =:linkId and cu.custid = :custId and incd.incometype = :incomeType ");
+			query.append(" and incd.incomeExpense = :incomeExpense and incd.category=:category");
+
+		}
+
+		logger.trace(Literal.SQL + query.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIncome);
-		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerIncome.class);
+		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
 		try {
-			customerIncome = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);
+			customerIncome = this.jdbcTemplate.queryForObject(query.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Literal.EXCEPTION, e);
 			customerIncome = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerIncome;
 	}
 
@@ -129,114 +160,33 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 	 * @return CustomerIncome
 	 */
 	@Override
-	public List<CustomerIncome> getCustomerIncomeByCustomer(final long id, boolean isWIF, String type) {
-		logger.debug("Entering");
-		
-		CustomerIncome customerIncome = new CustomerIncome();
-		customerIncome.setId(id);
+	public List<CustomerIncome> getCustomerIncomeByCustomer(final long id, String type) {
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustID,  CustIncome, CustIncomeType,IncomeExpense,Category,Margin, JointCust,");
-		if(type.contains("View")){
-			selectSql.append(" lovDescCustIncomeTypeName,lovDescCategoryName, " );
-			if(!isWIF){
-				selectSql.append(" lovDescCustCIF, lovDescCustShrtName,ToCcy, ");
-			}
-		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		if(isWIF){
-			selectSql.append(" FROM  WIFCustomerIncomes");
-		}else{
-			selectSql.append(" FROM  CustomerIncomes");
-		}
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID =:CustID ");
+		StringBuilder sql = new StringBuilder();
+		sql.append("select * from customer_income_details").append(type);
+		sql.append(" where custid = :custid");
 
-		logger.debug("selectSql: "+ selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIncome);
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("custid", id);
+
+		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
-		
-		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
-	}
-	
-	/*@Override
-	public BigDecimal getTotalIncomeByCustomer(long custId) {
-		logger.debug("Entering");
-		
-		CustomerIncome customerIncome = new CustomerIncome();
-		customerIncome.setCustID(custId);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT SUM(CustIncome)  FROM  CustomerIncomes_AView Where custID = :custID ");
-
-		logger.debug("selectSql: "+ selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIncome);
-		logger.debug("Leaving");
-		BigDecimal totalIncome = BigDecimal.ZERO;
+		logger.debug(Literal.LEAVING);
 		try {
-			totalIncome = new BigDecimal(this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),beanParameters, BigDecimal.class).toString());
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
-			totalIncome = BigDecimal.ZERO;
+			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 		}
-		return totalIncome;
-	}
-*/
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+
+		return new ArrayList<>();
+
 	}
 
 	/**
-	 * This method Deletes the Record from the CustomerIncomes or
-	 * CustomerIncomes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Customer Incomes by key
-	 * CustID
+	 * This method Deletes the Records from the CustomerIncomes or CustomerIncomes_Temp if records Existed in table.
 	 * 
-	 * @param Customer
-	 *            Incomes (customerIncome)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public void delete(CustomerIncome customerIncome, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append(" Delete From CustomerIncomes");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where CustID =:CustID AND CustIncomeType =:CustIncomeType " );
-		deleteSql.append(" AND IncomeExpense =:IncomeExpense  AND Category =:Category AND JointCust = :JointCust");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIncome);
-
-		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
-
-			if (recordCount <= 0) {
-				throw new ConcurrencyException();
-			}
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method Deletes the Records from the CustomerIncomes or
-	 * CustomerIncomes_Temp if records Existed in table.
-	 * 
-	 * @param customerId (long)
+	 * @param customerId
+	 *            (long)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return void
@@ -244,67 +194,59 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 	 * 
 	 */
 	public void deleteByCustomer(final long customerId, String type, boolean isWIF) {
-		logger.debug("Entering");
-		
+		logger.debug(Literal.ENTERING);
+
 		CustomerIncome customerIncome = new CustomerIncome();
-		customerIncome.setId(customerId);		
-		
-		StringBuilder deleteSql = new StringBuilder();
-		if(!isWIF){
-			deleteSql.append(" Delete From CustomerIncomes");
-			deleteSql.append(StringUtils.trimToEmpty(type));
-		}else{
-			deleteSql.append(" Delete From WIFCustomerIncomes");
+		customerIncome.setId(customerId);
+
+		StringBuilder query = new StringBuilder();
+		if (!isWIF) {
+			query.append("delete from customer_incomes");
+			query.append(StringUtils.trimToEmpty(type));
+		} else {
+			query.append("delete from WIFCustomerIncomes");
 		}
-		deleteSql.append(" Where CustID =:CustID ");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		query.append(" where custid =:custId ");
+
+		logger.debug(Literal.SQL + query.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIncome);
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(query.toString(), beanParameters);
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * This method insert new Records into CustomerIncomes or
-	 * CustomerIncomes_Temp.
-	 * 
-	 * save Customer Incomes
-	 * 
-	 * @param Customer
-	 *            Incomes (customerIncome)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
-	@Override
-	public long save(CustomerIncome customerIncome, String type) {
-		logger.debug("Entering");
-
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" Insert Into CustomerIncomes");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustID, CustIncomeType, CustIncome, IncomeExpense, Category,Margin, JointCust, " );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustID, :CustIncomeType, :CustIncome, :IncomeExpense,:Category,:Margin, :JointCust, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
-		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
-		logger.debug("insertSql: "+ insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIncome);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-		return customerIncome.getId();
-	}
 	
+	@Override
+	public void setLinkId(CustomerIncome customerIncome) {
+		logger.debug(Literal.ENTERING);
+
+		long linkId = customerIncome.getLinkId();
+
+		if (linkId > 0) {
+			return;
+		}
+
+		linkId = getLinkId(customerIncome.getCustId());
+
+		if (linkId > 0) {
+			customerIncome.setLinkId(linkId);
+			return;
+		}
+
+		linkId = getNextValue(IncomeDetailDAOImpl.SEQUENCE_LINK);
+		StringBuilder sql = new StringBuilder();
+		sql.append("insert into link_cust_incomes values(:custid, :linkid)");
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("custid", customerIncome.getCustId());
+		source.addValue("linkid", linkId);
+
+		this.jdbcTemplate.update(sql.toString(), source);
+	}
+
 	/**
-	 * This method insert new Records into CustomerIncomes or
-	 * CustomerIncomes_Temp.
+	 * This method insert new Records into CustomerIncomes or CustomerIncomes_Temp.
 	 * 
 	 * save Customer Incomes
 	 * 
@@ -318,70 +260,30 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 	 */
 	@Override
 	public void saveBatch(List<CustomerIncome> customerIncome, String type, boolean isWIF) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder insertSql = new StringBuilder();
-		if(!isWIF){
-			insertSql.append(" Insert Into CustomerIncomes");
-			insertSql.append(StringUtils.trimToEmpty(type));
-		}else{
-			insertSql.append(" Insert Into WIFCustomerIncomes");
+		StringBuilder query = new StringBuilder();
+		if (!isWIF) {
+			query.append(" Insert Into CustomerIncomes");
+			query.append(StringUtils.trimToEmpty(type));
+		} else {
+			query.append(" Insert Into WIFCustomerIncomes");
 		}
-		
-		insertSql.append(" (CustID, CustIncomeType, CustIncome, IncomeExpense, Category,Margin, JointCust, " );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustID, :CustIncomeType, :CustIncome, :IncomeExpense,:Category,:Margin, :JointCust, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
-		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		query.append(" (CustID, CustIncomeType, CustIncome, IncomeExpense, Category,Margin, JointCust, ");
+		query.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		query.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		query.append(" Values(:CustID, :CustIncomeType, :CustIncome, :IncomeExpense,:Category,:Margin, :JointCust, ");
+		query.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
+		query.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		logger.trace(Literal.SQL + query.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(customerIncome.toArray());
-		logger.debug("Leaving");
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		logger.debug(Literal.LEAVING);
+		this.jdbcTemplate.batchUpdate(query.toString(), beanParameters);
 	}
 
-	/**
-	 * This method updates the Record CustomerIncomes or CustomerIncomes_Temp.
-	 * if Record not updated then throws DataAccessException with error 41004.
-	 * update Customer Incomes by key CustID and Version
-	 * 
-	 * @param Customer
-	 *            Incomes (customerIncome)
-	 * @param type,
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public void update(CustomerIncome customerIncome, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder("Update CustomerIncomes");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustIncome = :CustIncome,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,Margin =:Margin," );
-		updateSql.append(" WorkflowId = :WorkflowId ");
-		updateSql.append(" Where CustID =:CustID AND CustIncomeType =:CustIncomeType " );
-		updateSql.append(" AND IncomeExpense =:IncomeExpense AND Category =:Category AND JointCust = :JointCust");
-		if (!type.endsWith("_Temp")) {
-			updateSql.append(" AND Version= :Version-1");
-		}
-
-		logger.debug("updateSql: "+ updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIncome);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug("Leaving");
-	}
-
+	
 	/**
 	 * Fetch current version of the record.
 	 * 
@@ -390,32 +292,50 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 	 */
 	@Override
 	public int getVersion(CustomerIncome customerIncome) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CustID", customerIncome.getCustID());
-		source.addValue("IncomeExpense", customerIncome.getIncomeExpense());
-		source.addValue("CustIncomeType", customerIncome.getCustIncomeType());
-		source.addValue("JointCust", customerIncome.isJointCust());
-		source.addValue("Category", customerIncome.getCategory());
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select version from customer_incomes_aview");
+		sql.append(" where custid= :custId and incomeExpense= :incomeExpense");
+		sql.append(" and incomeType= :incomeType and category =:category");
 
-		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("SELECT Version FROM CustomerIncomes");
-		selectSql.append(" WHERE ");
-		selectSql.append("CustID= :CustID AND IncomeExpense= :IncomeExpense AND CustIncomeType= :CustIncomeType AND Category =:Category AND JointCust= :JointCust");
-
-		logger.debug("insertSql: " + selectSql.toString());
+		
 		int recordCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("custId", customerIncome.getCustId());
+		source.addValue("incomeExpense", customerIncome.getIncomeExpense());
+		source.addValue("incomeType", customerIncome.getIncomeType());
+		source.addValue("jointCust", customerIncome.isJointCust());
+		source.addValue("category", customerIncome.getCategory());
+		
+		logger.trace(Literal.SQL + sql.toString());
+		
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error(dae);
 			recordCount = 0;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return recordCount;
 	}
 
+	private long getLinkId(long custId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select coalesce(max(linkid), 0) from link_cust_incomes where custid=:custid");
 
+		long linkid = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("custid", custId);
+		try {
+			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (DataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return linkid;
+	}
+	
 }

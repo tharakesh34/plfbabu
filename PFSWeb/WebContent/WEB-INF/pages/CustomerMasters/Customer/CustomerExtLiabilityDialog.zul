@@ -68,6 +68,17 @@
 							<column />
 						</columns>
 						<rows>
+						<row id="row_custType" visible="false">
+								<label
+									id="label_CustomerIncomeDialog_CustType"
+									value="${c:l('label_CustomerIncomeDialog_CustType.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="custType"
+										width="155px" readonly="true" />
+								</hbox>
+							</row>
 							<row>
 								<label
 									id="label_CustomerExtLiabilityDialog_CustID"

@@ -690,8 +690,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				this.groupboxWf.setVisible(false);
 				this.window_CustomerAddresDialog.doModal() ;
 			}else{
-				this.window_CustomerAddresDialog.setWidth("100%");
-				this.window_CustomerAddresDialog.setHeight("100%");
+				this.window_CustomerAddresDialog.setWidth("80%");
+				this.window_CustomerAddresDialog.setHeight("80%");
 				setDialog(DialogType.EMBEDDED);
 			}
 			
@@ -722,6 +722,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			this.custCareOfAddr.setReadonly(true);
 			this.custSubDist.setReadonly(true);
 			this.custDistrict.setReadonly(true);
+			this.btnSearchPRCustid.setVisible(false);
 
 		}
 		

@@ -25,7 +25,7 @@
 				<element name="max">8</element>
 			</constraint>
 		</field>
-		<field name="custIncome">
+		<field name="income">
 			<constraint annotation="javax.validation.constraints.Min">
 				<message>custIncome should be Positive</message>
 				<groups>
@@ -44,7 +44,7 @@
 			</constraint>
 		</field>
 
-		<field name="custIncomeType">
+		<field name="incomeType">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>custIncomeType is Mandatory</message>
 				<groups>

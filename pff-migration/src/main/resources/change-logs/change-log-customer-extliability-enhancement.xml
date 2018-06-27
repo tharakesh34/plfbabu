@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="murthy.y" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="murthy.y" dbms="postgresql">
+		<createSequence sequenceName="SeqExternalLiabilities"
+			startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+		<createSequence sequenceName="SeqExternalLiabilitiLink"
+			startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+	<changeSet id="1.1" author="murthy.y" dbms="oracle">
+		<createSequence sequenceName="SeqExternalLiabilities"
+			startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+		<createSequence sequenceName="SeqExternalLiabilitiLink"
+			startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+	<changeSet id="1.2" author="murthy.y" dbms="mssql">
+		<createTable tableName="SeqExternalLiabilities">
+			<column name="SeqNo" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="Value" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="SeqExternalLiabilitiLink">
+			<column name="SeqNo" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="Value" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="2.0" author="murthy.y">
+		<createTable tableName="external_liabilities_temp">
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="linkId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqNo" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="finType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="finDate" type="datetime" />
+			<column name="loanBank" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="rateOfInterest" type="number(13,9)" />
+			<column name="tenure" type="integer">
+				<constraints nullable="false" />
+			</column>
+			<column name="originalAmount" type="number(18,0)" />
+			<column name="instalmentAmount" type="number(18,0)" />
+			<column name="outstandingBalance" type="number(18,0)" />
+			<column name="balanceTenure" type="integer">
+				<constraints nullable="false" />
+			</column>
+			<column name="bounceInstalments" type="integer">
+				<constraints nullable="false" />
+			</column>
+			<column name="principalOutStanding" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="overDueAmount" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="finStatus" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="foir" type="smallint" remarks="fixed obligation to income ratio">
+				<constraints nullable="false" />
+			</column>
+			<column name="source" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="checkedBy" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="securityDetails" type="varchar(50)" />
+			<column name="loanpurpose" type="varchar(8)" />
+			<column name="repayBank" type="varchar(8)" />
+			<column name="auxiliary1" type="varchar(50)" />
+			<column name="auxiliary2" type="varchar(50)" />
+			<column name="auxiliary3" type="varchar(50)" />
+			<column name="auxiliary4" type="varchar(50)" />
+			<column name="auxiliary5" type="varchar(50)" />
+
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="2.1" author="murthy.y">
+		<createTable tableName="external_liabilities">
+			<column name="id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="linkId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqNo" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="finType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="finDate" type="datetime" />
+			<column name="loanBank" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="rateOfInterest" type="number(13,9)" />
+			<column name="tenure" type="integer">
+				<constraints nullable="false" />
+			</column>
+			<column name="originalAmount" type="number(18,0)" />
+			<column name="instalmentAmount" type="number(18,0)" />
+			<column name="outstandingBalance" type="number(18,0)" />
+			<column name="balanceTenure" type="integer">
+				<constraints nullable="false" />
+			</column>
+			<column name="bounceInstalments" type="integer">
+				<constraints nullable="false" />
+			</column>
+			<column name="principalOutStanding" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="overDueAmount" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="finStatus" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="foir" type="smallint" remarks="fixed obligation to income ratio">
+				<constraints nullable="false" />
+			</column>
+			<column name="source" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="checkedBy" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="securityDetails" type="varchar(50)" />
+			<column name="loanpurpose" type="varchar(8)" />
+			<column name="repayBank" type="varchar(8)" />
+			<column name="auxiliary1" type="varchar(50)" />
+			<column name="auxiliary2" type="varchar(50)" />
+			<column name="auxiliary3" type="varchar(50)" />
+			<column name="auxiliary4" type="varchar(50)" />
+			<column name="auxiliary5" type="varchar(50)" />
+
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="3.0" author="murthy.y">
+		<createTable tableName="link_cust_liabilities">
+			<column name="custId" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="linkId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="4.0" author="murthy.y">
+		<addPrimaryKey tableName="external_liabilities_temp" columnNames="id" constraintName="pk_external_liabilit_t_id" />
+		<addPrimaryKey tableName="external_liabilities" columnNames="id" constraintName="pk_external_liabilit_id" />
+		<addPrimaryKey tableName="link_cust_liabilities" columnNames="custid, linkid" constraintName="pk_cust_liabilit_cid_linkid" />
+
+		<addForeignKeyConstraint constraintName="fk_cust_ext_liabilit_custid" referencedTableName="customers" baseColumnNames="custId" baseTableName="link_cust_liabilities" referencedColumnNames="custId" />
+
+		<addUniqueConstraint tableName="external_liabilities_temp" columnNames="linkId, seqno" constraintName="uk_external_liabilit_t_lid_seq" />
+		<addUniqueConstraint tableName="external_liabilities" columnNames="linkId, seqno" constraintName="uk_external_liabilit_li_seq" />
+		<addUniqueConstraint tableName="link_cust_liabilities" columnNames="custId, linkid" constraintName="uk_external_liabilit_cid_lid"/>
+
+		<createIndex tableName="external_liabilities_temp" indexName="ix_ext_liabilit_temp_t_linkid">
+			<column name="linkid"></column>
+		</createIndex>
+		<createIndex tableName="external_liabilities" indexName="ix_ext_liabilit_temp_linkid">
+			<column name="linkid"></column>
+		</createIndex>
+		<createIndex tableName="link_cust_liabilities" indexName="ix_cust_ext_liabilit_custid">
+			<column name="custid"></column>
+		</createIndex>
+		<createIndex tableName="link_cust_liabilities" indexName="ix_cust_ext_liabilit_linkid">
+			<column name="linkid"></column>
+		</createIndex>
+	</changeSet>
+	<changeSet id="5.0" author="murthy.y" dbms="postgresql">
+		<modifyDataType tableName="external_liabilities_temp"
+			columnName="finType" newDataType="citext" />
+		<modifyDataType tableName="external_liabilities"
+			columnName="finType" newDataType="citext" />
+
+		<modifyDataType tableName="external_liabilities_temp"
+			columnName="loanBank" newDataType="citext" />
+		<modifyDataType tableName="external_liabilities"
+			columnName="loanBank" newDataType="citext" />
+		<modifyDataType tableName="external_liabilities_temp"
+			columnName="finStatus" newDataType="citext" />
+		<modifyDataType tableName="external_liabilities"
+			columnName="finStatus" newDataType="citext" />
+	</changeSet>
+	<changeSet id="6.0" author="murthy.y">
+		<createView viewName="external_liabilities_aview"
+			replaceIfExists="true">
+			select el.id, el.linkid, el.seqno ,el.fintype ,el.findate ,el.loanbank ,el.rateOfInterest
+			,el.tenure ,el.originalamount ,el.instalmentamount ,el.outstandingbalance ,el.balancetenure ,el.bounceinstalments ,el.principaloutstanding
+			,el.overdueamount ,el.finstatus ,el.foir ,el.source ,el.checkedby ,el.securitydetails ,el.loanpurpose ,el.repaybank
+			,el.version ,el.lastmntby ,el.lastmnton ,el.recordstatus ,el.rolecode ,el.nextrolecode ,el.taskid ,el.nexttaskid ,el.recordtype ,el.workflowid
+			,lb.bankname loanbankname ,ft.fintypedesc ,cs.custstsdescription ,lb.bankname repayfrombankname ,lp.loanpurposedesc
+			from external_liabilities el
+			inner join bmtbankdetail lb on lb.bankcode=el.loanbank
+			inner join otherbankfinancetype ft on ft.fintype = el.fintype
+			inner join loanpurposes lp on lp.loanpurposecode=el.loanpurpose
+			inner join bmtbankdetail rb on rb.bankcode=el.repaybank
+			left join  bmtcuststatuscodes cs on cs.custstscode = el.finstatus;
+		</createView>
+		<createView viewName="external_liabilities_view"
+			replaceIfExists="true">
+			select el.id, el.linkid, el.seqno ,el.fintype ,el.findate ,el.loanbank ,el.rateOfInterest
+			,el.tenure ,el.originalamount ,el.instalmentamount ,el.outstandingbalance ,el.balancetenure ,el.bounceinstalments ,el.principaloutstanding
+			,el.overdueamount ,el.finstatus ,el.foir ,el.source ,el.checkedby ,el.securitydetails ,el.loanpurpose ,el.repaybank
+			,el.version ,el.lastmntby ,el.lastmnton ,el.recordstatus ,el.rolecode ,el.nextrolecode ,el.taskid ,el.nexttaskid ,el.recordtype ,el.workflowid
+			,lb.bankname loanbankname ,ft.fintypedesc ,cs.custstsdescription ,lb.bankname repayfrombankname ,lp.loanpurposedesc
+			from external_liabilities_temp el
+			inner join bmtbankdetail lb on lb.bankcode=el.loanbank
+			inner join otherbankfinancetype ft on ft.fintype = el.fintype
+			inner join loanpurposes lp on lp.loanpurposecode=el.loanpurpose
+			inner join bmtbankdetail rb on rb.bankcode=el.repaybank
+			left join  bmtcuststatuscodes cs on cs.custstscode = el.finstatus
+			union all
+			select el.id, el.linkid, el.seqno ,el.fintype ,el.findate ,el.loanbank ,el.rateOfInterest
+			,el.tenure ,el.originalamount ,el.instalmentamount ,el.outstandingbalance ,el.balancetenure ,el.bounceinstalments ,el.principaloutstanding
+			,el.overdueamount ,el.finstatus ,el.foir ,el.source ,el.checkedby ,el.securitydetails ,el.loanpurpose ,el.repaybank
+			,el.version ,el.lastmntby ,el.lastmnton ,el.recordstatus ,el.rolecode ,el.nextrolecode ,el.taskid ,el.nexttaskid ,el.recordtype ,el.workflowid
+			,lb.bankname loanbankname ,ft.fintypedesc ,cs.custstsdescription ,lb.bankname repayfrombankname ,lp.loanpurposedesc
+			from external_liabilities el
+			inner join bmtbankdetail lb on lb.bankcode=el.loanbank
+			inner join otherbankfinancetype ft on ft.fintype = el.fintype
+			inner join loanpurposes lp on lp.loanpurposecode=el.loanpurpose
+			inner join bmtbankdetail rb on rb.bankcode=el.repaybank
+			left join  bmtcuststatuscodes cs on cs.custstscode = el.finstatus
+			where (not exists (select 1 from  
+						external_liabilities_temp where id =el.id));	
+		</createView>
+		<createView viewName="customer_ext_liabilities_aview"
+			replaceIfExists="true">
+			 select el.*, cl.custid, cu.custcif, cu.custshrtname
+			 from external_liabilities_aview el 
+			 inner join link_cust_liabilities cl on cl.linkid = el.linkid
+			 inner join customers cu on cu.custid = cl.custid
+		</createView>
+		<createView viewName="customer_ext_liabilities_view"
+			replaceIfExists="true">
+			 select el.*, cu.custid, cu.custcif, cu.custshrtname
+			 from external_liabilities_view el 
+			 inner join link_cust_liabilities cl on cl.linkid = el.linkid
+			 inner join customers cu on cu.custid = cl.custid
+			 union all
+			 select el.*, cu.custid, cu.custcif, cu.custshrtname
+			 from external_liabilities_aview el 
+			 inner join link_cust_liabilities cl on cl.linkid = el.linkid
+			 inner join customers cu on cu.custid = cl.custid
+			 where (not exists (select 1 from external_liabilities_view where linkid = el.linkid ));
+		</createView>
+	</changeSet>
+</databaseChangeLog>

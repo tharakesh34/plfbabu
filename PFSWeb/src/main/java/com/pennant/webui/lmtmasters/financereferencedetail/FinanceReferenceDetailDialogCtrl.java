@@ -933,6 +933,33 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		
 		return true;
 	}
+	
+	/**
+	 * This Method checks TV and Sampling Tabs are assigned to same loan Type or not. <br>
+	 * if assigned display error message.
+	 * 
+	 */
+	private boolean validateSamplingAndTV() {
+
+		List<String> tabs = new ArrayList<>();
+
+		// get the tabs
+		for (Listitem initListItem : listBoxLimitService.getItems()) {
+			FinanceReferenceDetail financeReferenceDetail = (FinanceReferenceDetail) initListItem.getAttribute("data");
+			if (!financeReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+				tabs.add(financeReferenceDetail.getLovDescNamelov());
+			}
+		}
+
+		if (tabs.contains(FinanceConstants.PROCEDT_VERIFICATION_TV_INIT)
+				&& tabs.contains(FinanceConstants.PROCEDT_SAMPLING_INIT)) {
+			MessageUtil.showError("Either Technical or Sampling verification is allowed.");
+			tabCustLimitCheck.setSelected(true);
+			return true;
+		}
+
+		return false;
+	}
 
 	private Boolean validateStages(String initId, String approvalId, VerificationType vrfType)
 			throws InterruptedException {
@@ -1167,6 +1194,10 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 				FinanceConstants.PROCEDT_SAMPLING_APPR,null)) {
 			return;
 		}
+		if (validateSamplingAndTV()) {
+			return;
+		}
+		
 		final FinanceReferenceDetail aFinanceReferenceDetail = new FinanceReferenceDetail();
 		List<Listitem> items = new ArrayList<Listitem>();
 		items.addAll(this.listBoxFinanceCheckList.getItems());

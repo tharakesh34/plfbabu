@@ -73,9 +73,9 @@ import freemarker.template.Template;
 
 public class RuleExecutionUtil implements Serializable {
 	private static final long serialVersionUID = -7634160175219913960L;
-	private Logger logger = Logger.getLogger(RuleExecutionUtil.class);
+	private static final Logger logger = Logger.getLogger(RuleExecutionUtil.class);
 
-	ScriptEngine scriptEngine;
+	private transient ScriptEngine scriptEngine;
 
 	/**
 	 * default constructor.<br>

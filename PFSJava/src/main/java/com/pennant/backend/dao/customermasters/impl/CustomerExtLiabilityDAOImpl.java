@@ -1,53 +1,9 @@
-/**
- * Copyright 2011 - Pennant Technologies
- * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
- * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
- */
-
-/**
- ********************************************************************************************
- *                                 FILE HEADER                                              *
- ********************************************************************************************
- *																							*
- * FileName    		:  CustomerExtLiabilityDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  06-05-2011    														*
- *                                                                  						*
- * Modified Date    :  06-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
- ********************************************************************************************
- * Date             Author                   Version      Comments                          *
- ********************************************************************************************
- * 06-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- ********************************************************************************************
- */
 package com.pennant.backend.dao.customermasters.impl;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Set;
 
-import javax.sql.DataSource;
-
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -55,427 +11,299 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
-import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.dao.customer.income.IncomeDetailDAOImpl;
 
-/**
- * DAO methods implementation for the <b>CustomerExtLiability model</b> class.<br>
- * 
- */
-public class CustomerExtLiabilityDAOImpl extends BasisCodeDAO<CustomerExtLiability> implements CustomerExtLiabilityDAO {
-
+public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> implements CustomerExtLiabilityDAO {
 	private static Logger logger = Logger.getLogger(CustomerExtLiabilityDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-	public CustomerExtLiabilityDAOImpl() {
-		super();
-	}
 	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
-	/**
-	 * Fetch the Record  Customer EMails details by key field
-	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return CustomerExtLiability
-	 */
 	@Override
-	public CustomerExtLiability getCustomerExtLiabilityById(final long id, int liabilitySeq,String type) {
-		logger.debug("Entering");
-		CustomerExtLiability customerExtLiability = new CustomerExtLiability();
-		customerExtLiability.setId(id);
-		customerExtLiability.setLiabilitySeq(liabilitySeq);
-		StringBuilder selectSql = new StringBuilder();	
-		selectSql.append(" SELECT CustID, LiabilitySeq, FinDate, FinType, BankName,  ");
-		selectSql.append(" OriginalAmount, InstalmentAmount, OutStandingBal, FinStatus, ");
-		selectSql.append(" Roi,Tenure,TenureBal,BounceNo,Pos,Overdue,EmiCnsdrForFOIR, ");
-		selectSql.append(" Source,CheckedBy,SecurityDetail,EndUseOfFunds,RepayFrom , ");
-		if(type.contains("View")){
-			selectSql.append(" lovDescBankName,lovDescFinType,lovDescFinStatus,loanpurposedesc,lovdescrepayfrom,");
+	public CustomerExtLiability getLiability(CustomerExtLiability liability, String type, String inputSource) {
+		logger.debug(Literal.ENTERING);
+
+		type = StringUtils.trimToEmpty(type).toLowerCase();
+
+		String view = null;
+		String table = null;
+		if (inputSource.equals("sampling")) {
+			view = "sampling_liabilities";
+			table = "link_sampling_liabilities";
+		} else {
+			view = "customer_ext_liabilities";
+			table = "link_cust_liabilities";
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" FROM  CustomerExtLiability");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID AND LiabilitySeq = :LiabilitySeq");
-		
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerExtLiability);
-		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerExtLiability.class);
 
-		try{
-			customerExtLiability = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerExtLiability = null;
+		if (type.equals("_temp")) {
+			view = view.concat("_view");
+		} else {
+			view = view.concat("_aview");
 		}
-		logger.debug("Leaving");
-		return customerExtLiability;
-	}
 
-	/**
-	 * Method to return the customer email based on given customer id
-	 * */
-	@Override
-	public List<CustomerExtLiability> getExtLiabilityByCustomer(final long id,String type) {
-		logger.debug("Entering");
-		CustomerExtLiability customerExtLiability = new CustomerExtLiability();
-		customerExtLiability.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder();	
-		selectSql.append(" SELECT CustID, LiabilitySeq, FinDate, FinType, BankName,  ");
-		selectSql.append(" OriginalAmount, InstalmentAmount, OutStandingBal, FinStatus, ");
-		selectSql.append(" Roi,Tenure,TenureBal,BounceNo,Pos,Overdue,EmiCnsdrForFOIR, ");
-		selectSql.append(" Source,CheckedBy,SecurityDetail,EndUseOfFunds,RepayFrom , ");
-		if(type.contains("View")){
-			selectSql.append(" lovDescBankName,lovDescFinType,lovDescFinStatus,loanpurposedesc,lovdescrepayfrom,");
+		StringBuilder sql = new StringBuilder();
+		if (type.contains("view")) {
+			sql.append(" select id, linkId, seqno, custid, cu.custcif, cu.custshrtname,");
+			sql.append(" fintype, el.fintypedesc, findate, loanbank, loanbankname,");
+			sql.append(" rateofinterest, tenure, originalamount, instalmentamount,");
+			sql.append(" outstandingbalance, balancetenure, bounceinstalments, principaloutstanding,");
+			sql.append(" overdueamount, finstatus, el.custstsdescription,");
+			sql.append(" foir, source, checkedby, securitydetails, loanpurpose, el.loanpurposedesc,");
+			sql.append(" repaybank, repayfrombankname,");
+			sql.append(" version, lastMntOn, lastMntBy, recordStatus, roleCode, nextRoleCode,");
+			sql.append(" taskId, nextTaskId, recordType, workflowId");
+			sql.append(" from ");
+			sql.append(view);
+			sql.append(" where linkid =:linkId and custId = :custId and seqno = :seqno");
+		} else {
+			sql.append(" select id, el.linkId, seqno, cel.custid, cu.custcif, cu.custshrtname,");
+			sql.append(" el.fintype, el.fintypedesc, findate, loanbank, lb.bankname loanbankname,");
+			sql.append(" rateofinterest, tenure, originalamount, instalmentamount,");
+			sql.append(" outstandingbalance, balancetenure, bounceinstalments, principaloutstanding,");
+			sql.append(" overdueamount, finstatus, el.custstsdescription,");
+			sql.append(" foir, source, checkedby, securitydetails, loanpurpose, el.loanpurposedesc,");
+			sql.append(" repaybank, rb.bankname repayfrombankname,");
+			sql.append(" el.version, el.lastMntOn, el.lastMntBy, el.recordStatus, el.roleCode, el.nextRoleCode,");
+			sql.append(" el.taskId, el.nextTaskId, el.recordType, el.workflowId");
+			sql.append(" from ");
+			sql.append(view).append(" el");
+			sql.append(" inner join ").append(table).append(" cel on cel.linkid = el.linkid");
+
+			sql.append(" inner join customers cu on cu.custid = cel.custid");
+			sql.append(" inner join bmtbankdetail lb on lb.bankcode = el.loanbank");
+			sql.append(" inner join otherbankfinancetype ft on ft.fintype = el.fintype");
+			sql.append(" inner join loanpurposes lp on lp.loanpurposecode = el.loanpurpose");
+			sql.append(" inner join bmtbankdetail rb on rb.bankcode = el.repaybank");
+			sql.append(" left join bmtcuststatuscodes cs on cs.custstscode = el.finstatus");
+			sql.append(" where el.linkid =:linkId and cel.custId = :custId and seqno = :seqNo");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" FROM  CustomerExtLiability");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID");
-		
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerExtLiability);
-		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerExtLiability.class);
-		
-		List <CustomerExtLiability> custExtLiabilities = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
-		logger.debug("Leaving");
-		return custExtLiabilities;
-	}	
-	
-	
-	/**
-	 * This method Deletes the Record from the CustomerExtLiability or CustomerExtLiability_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Customer EMails by key CustID
-	 * 
-	 * @param Customer EMails (customerExtLiability)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public void delete(CustomerExtLiability customerExtLiability,String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		StringBuilder deleteSql = new StringBuilder(" Delete From CustomerExtLiability");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where CustID =:CustID AND LiabilitySeq = :LiabilitySeq");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerExtLiability);
 
-		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if (recordCount <= 0) {
-				throw new ConcurrencyException();
-			}
-		}catch(DataAccessException e){
-			throw new DependencyFoundException(e);
-		}
-		logger.debug("Leaving");
-	}
+		logger.trace(Literal.SQL + sql.toString());
 
-	/**
-	 * This method Deletes the Record from the CustomerExtLiability or CustomerExtLiability_Temp for the Customer.
-	 * 
-	 * @param Customer EMails (customerExtLiability)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	public void deleteByCustomer(long custID,String type) {
-		logger.debug("Entering");
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liability);
+		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerExtLiability.class);
 
-		CustomerExtLiability customerExtLiability = new CustomerExtLiability();
-		customerExtLiability.setCustID(custID);
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append(" Delete From CustomerExtLiability");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where CustID =:CustID");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerExtLiability);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method insert new Records into CustomerExtLiability or CustomerExtLiability_Temp.
-	 *
-	 * save Customer EMails 
-	 * 
-	 * @param Customer EMails (customerExtLiability)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public long save(CustomerExtLiability customerExtLiability,String type) {
-		logger.debug("Entering");
-
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" Insert Into CustomerExtLiability");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustID, LiabilitySeq, FinDate, FinType, BankName, OriginalAmount, InstalmentAmount, OutStandingBal, FinStatus," );
-		insertSql.append(" Roi,Tenure,TenureBal,BounceNo,Pos,Overdue,EmiCnsdrForFOIR, ");
-		insertSql.append(" Source,CheckedBy,SecurityDetail,EndUseOfFunds,RepayFrom , ");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustID, :LiabilitySeq, :FinDate, :FinType, :BankName, :OriginalAmount, :InstalmentAmount, :OutStandingBal, :FinStatus,");
-		insertSql.append(" :Roi,:Tenure,:TenureBal,:BounceNo,:Pos,:Overdue,:EmiCnsdrForFOIR, ");
-		insertSql.append(" :Source,:CheckedBy,:SecurityDetail,:EndUseOfFunds,:RepayFrom , ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
-		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerExtLiability);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-		return customerExtLiability.getId();
-	}
-
-	/**
-	 * This method updates the Record CustomerExtLiability or CustomerExtLiability_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Customer EMails by key CustID and Version
-	 * 
-	 * @param Customer EMails (customerExtLiability)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public void update(CustomerExtLiability customerExtLiability,String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		
-		StringBuilder updateSql = new StringBuilder();
-		updateSql.append(" Update CustomerExtLiability");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinDate = :FinDate, FinType = :FinType, BankName = :BankName, OriginalAmount = :OriginalAmount,");
-		updateSql.append(" InstalmentAmount = :InstalmentAmount, OutStandingBal = :OutStandingBal, FinStatus = :FinStatus,");
-		updateSql.append(" Roi = :Roi,Tenure = :Tenure,TenureBal = :TenureBal,BounceNo = :BounceNo,Pos = :Pos,");
-		updateSql.append("Overdue = :Overdue,EmiCnsdrForFOIR = :EmiCnsdrForFOIR, Source = :Source,");
-		updateSql.append("CheckedBy = :CheckedBy,SecurityDetail = :SecurityDetail,EndUseOfFunds = :EndUseOfFunds,RepayFrom = :RepayFrom , ");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
-		updateSql.append(" Where CustID =:CustID AND LiabilitySeq = :LiabilitySeq ");
-		if (!type.endsWith("_Temp")){
-			updateSql.append("AND Version= :Version-1");
-		}
-		
-		logger.debug("updateSql: "+ updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerExtLiability);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug("Leaving");
-	}
-	
-
-	/**
-	 * Method for get total number of records from BMTBankDetail master table.<br>
-	 * 
-	 * @param bankCode
-	 * 
-	 * @return Integer
-	 */
-	@Override
-	public int getBankNameCount(String bankCode) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("BankCode", bankCode);
-
-		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("SELECT COUNT(*) FROM BMTBankDetail");
-		selectSql.append(" WHERE ");
-		selectSql.append("BankCode= :BankCode");
-
-		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public boolean isBankExists(String loanBank) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select count(*) from bmtbankdetail where bankcode= :bankcode");
+		logger.trace(Literal.SQL + sql.toString());
+
+		int recordCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("bankcode", loanBank);
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
 			recordCount = 0;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
-		return recordCount;
+		return recordCount > 0 ? true : false;
+
 	}
 
-	/**
-	 * Method for get total number of records from OtherBankFinanceType master table.<br>
-	 * 
-	 * @param finType
-	 * 
-	 * @return Integer
-	 */
 	@Override
-	public int getFinTypeCount(String finType) {
-		logger.debug("Entering");
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinType", finType);
-		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("SELECT COUNT(*) FROM OtherBankFinanceType");
-		selectSql.append(" WHERE ");
-		selectSql.append("FinType= :FinType");
-		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
-		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
+	public boolean isFinTypeExists(String finType) {
+		logger.debug(Literal.ENTERING);
 
-		return recordCount;
-	}
-	
-	/**
-	 * Method for get total number of records from BMTCustStatusCodes master table.<br>
-	 * 
-	 * @param finStatus
-	 * 
-	 * @return Integer
-	 */
-	@Override
-	public int getFinStatusCount(String finStatus) {
-		logger.debug("Entering");
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CustStsCode", finStatus);
-		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("SELECT COUNT(*) FROM BMTCustStatusCodes");
-		selectSql.append(" WHERE ");
-		selectSql.append("CustStsCode= :CustStsCode");
-		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
-		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
-
-		return recordCount;
-	}
-
-	/**
-	 * Fetch current version of the record.
-	 * 
-	 * @param id
-	 * @param typeCode
-	 * @return Integer
-	 */
-	@Override
-	public int getVersion(long id, int liabilitySeq) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CustId", id);
-		source.addValue("LiabilitySeq", liabilitySeq);
-
-		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("SELECT Version FROM CustomerExtLiability");
-
-		selectSql.append(" WHERE CustId = :CustId AND LiabilitySeq = :LiabilitySeq");
-
-		logger.debug("insertSql: " + selectSql.toString());
+		StringBuilder sql = new StringBuilder();
+		sql.append("select count(*) from otherbankfinancetype where finType= :finType");
+		logger.trace(Literal.SQL + sql.toString());
 
 		int recordCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("finType", finType);
+
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.error(dae);
 			recordCount = 0;
 		}
-		logger.debug("Leaving");
-		return recordCount;
+		logger.debug(Literal.LEAVING);
+
+		return recordCount > 0 ? true : false;
+
 	}
+
 	@Override
-	public int getCustomerExtLiabilityByBank(String bankCode, String type) {
-		CustomerExtLiability customerExtLiability = new CustomerExtLiability();
-		customerExtLiability.setBankName(bankCode);
+	public boolean isFinStatuExists(String finStatus) {
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
-		selectSql.append(" From CustomerExtLiability");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BankName =:BankName");
+		StringBuilder sql = new StringBuilder();
+		sql.append("select count(*) from bmtcuststatuscodes where finStatus= :finStatus");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerExtLiability);
-
-		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-	}
-	
-	/**
-	 * Fetch the Record  Customer Total sum amounts details by key field
-	 * 
-	 * @param custId (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return CustomerExtLiability
-	 */
-	@Override
-	public BigDecimal getSumAmtCustomerExtLiabilityById(Set<Long> custId) {
-		logger.debug("Entering");
-		
+		int recordCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CustID", custId);
-		//source.addValue("EMICnsdrForFOIR", true);
+		source.addValue("finStatus", finStatus);
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			recordCount = 0;
+		}
+		logger.debug(Literal.LEAVING);
+
+		return recordCount > 0 ? true : false;
+
+	}
+
+
+	@Override
+	public int getCustomerExtLiabilityByBank(String loanBank, String type) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select count(*) from external_liabilities");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" where loanBank =:loanBank");
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("loanBank", loanBank);
+
+		return this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Integer.class);
+	}
+
+
+	@Override
+	public int getVersion(long custId, int liabilitySeq) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select version from customer_ext_liabilities cel");
+		sql.append(" inner join external_liabilities el on el.linkid = cel.linkid");
+		sql.append(" where custid = :custid and seqno = :seqno");
+		logger.trace(Literal.SQL + sql.toString());
+
+		int recordCount = 0;
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("custid", custId);
+		mapSqlParameterSource.addValue("seqno", liabilitySeq);
 		
-		StringBuilder selectSql = new StringBuilder();	
-		selectSql.append("select coalesce(sum(InstalmentAmount),0) as InstalmentAmount ");
-		selectSql.append(" FROM  CustomerExtLiability");
-		selectSql.append(" Where CustID in (:CustID) AND EMICnsdrForFOIR = 1");
-		
-		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			recordCount = 0;
+		}
+		logger.debug(Literal.LEAVING);
+		return recordCount;
+
+	}
+
+	@Override
+	public BigDecimal getExternalLiabilitySum(long custId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select coalesce(sum(instalmentamount), 0)");
+		sql.append(" from external_liabilities el");
+		sql.append(" inner join external_liabilities el on el.linkid = cel.linkid");
+		sql.append(" Where custid = :custid and foir = :foir");
+		logger.trace(Literal.SQL + sql.toString());
+
 		BigDecimal emiSum = BigDecimal.ZERO;
-		try{
-			emiSum = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
-		}catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("custid", custId);
+		parameterSource.addValue("foir", 1);
+
+		try {
+			emiSum = this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
 			return emiSum;
 		}
-		logger.debug("Leaving");
+		
+		logger.debug(Literal.LEAVING);
 		return emiSum;
+	}
+
+	@Override
+	public BigDecimal getSumAmtCustomerExtLiabilityById(Set<Long> custids) {
+		logger.debug(Literal.ENTERING);
+		
+		if (CollectionUtils.isEmpty(custids)) {
+			return BigDecimal.ZERO;
+		}
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select coalesce(sum(instalmentamount), 0)");
+		sql.append(" from customer_ext_liabilities_aview");
+		sql.append(" Where custid in (:custid) and foir = :foir");
+
+		logger.trace(Literal.SQL + sql.toString());
+		BigDecimal emiSum = BigDecimal.ZERO;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("custid", custids);
+		source.addValue("foir", 1);
+		
+		try {
+			emiSum = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+			return emiSum;
+		}
+		logger.debug(Literal.LEAVING);
+		return emiSum;
+	}
+
+	@Override
+	public void setLinkId(CustomerExtLiability liability) {
+		logger.debug(Literal.ENTERING);
+
+		long linkId = liability.getLinkId();
+
+		if (linkId > 0) {
+			return;
+		}
+
+		linkId = getLinkId(liability.getCustId());
+
+		if (linkId > 0) {
+			liability.setLinkId(linkId);
+			return;
+		}
+
+		linkId = getNextValue(IncomeDetailDAOImpl.SEQUENCE_LINK);
+		StringBuilder sql = new StringBuilder();
+		sql.append("insert into link_cust_liabilities values(:custid, :linkid)");
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("custid", liability.getCustId());
+		source.addValue("linkid", linkId);
+
+		this.jdbcTemplate.update(sql.toString(), source);
+	}
+	
+	private long getLinkId(long custId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select coalesce(max(linkid), 0) from link_cust_liabilities where custid=:custid");
+
+		long linkid = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("custid", custId);
+		try {
+			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (DataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return linkid;
 	}
 }

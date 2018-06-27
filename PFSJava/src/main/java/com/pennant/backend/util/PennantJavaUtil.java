@@ -388,6 +388,7 @@ import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.core.util.ClassUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.document.DocumentCategory;
+import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
@@ -910,7 +911,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil
 				.register("CustomerIncome", new ModuleMapping("CustomerIncome", CustomerIncome.class, new String[] {
-						"CustomerIncomes", "CustomerIncomes_AView" }, null, new String[] { "CustID", "CustIncome" },
+						"income_details", "income_details_aview" }, null, new String[] { "custId", "income" },
 						null, 300));
 
 		ModuleUtil.register("CustomerIdentity", new ModuleMapping("CustomerIdentity", CustomerIdentity.class,
@@ -934,8 +935,8 @@ public class PennantJavaUtil {
 						"chequeSeq" }, null, 300));
 
 		ModuleUtil.register("CustomerExtLiability", new ModuleMapping("CustomerExtLiability",
-				CustomerExtLiability.class, new String[] { "CustomerExtLiability", "CustomerExtLiability_AView" },
-				null, new String[] { "CustID", "liabilitySeq" }, null, 300));
+				CustomerExtLiability.class, new String[] { "external_liabilities", "external_liabilities_aview" },
+				null, new String[] { "CustId", "liabilitySeq" }, null, 300));
 
 		ModuleUtil.register("CustomerEmploymentDetail", new ModuleMapping("CustomerEmploymentDetail",
 				CustomerEmploymentDetail.class, new String[] { "CustomerEmpDetails", "CustomerEmpDetails_AView" },
@@ -2294,10 +2295,13 @@ public class PennantJavaUtil {
 		ModuleUtil.register("StageTabDetail", new ModuleMapping("StageTabDetail", StageTabDetail.class, new String[] { "StageTabDetail",
 		"StageTabDetail" }, null, new String[] {"TabCode","TabDescription"}, new Object[][] { {
 			"Active", "0", 1 } }, 600));
-		
+					
 		ModuleUtil.register("GSTInvoiceReport", new ModuleMapping("GSTInvoiceReport", GSTInvoiceTxn.class, new String[] { "GST_Invoice_Txn",
 		"GST_Invoice_Txn" }, null, new String[] {"InvoiceNo","LoanAccountNo"}, null, 600));
 
+		// Sampling
+		ModuleUtil.register("Sampling", new ModuleMapping("Sampling", Sampling.class,
+				new String[] { "Sampling", "Sampling_view" }, masterWF, null, null, 600));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

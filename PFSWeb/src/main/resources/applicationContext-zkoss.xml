@@ -5332,4 +5332,11 @@
 	parent="basisCtrl" scope="prototype">
 </bean>
 
+<!--============ Sampling ============== -->
+	<bean id="samplingListCtrl" class="com.pennant.webui.sampling.SamplingListCtrl" parent="basisListCtrl" scope="prototype"/>
+	
+	<bean id="samplingDialogCtrl" class="com.pennant.webui.sampling.SamplingDialogCtrl" parent="basisCtrl" scope="prototype"/>
+
+  <bean id="samplingExtFieldCaptureDialogCtrl" class="com.pennant.webui.sampling.SamplingExtFieldCaptureDialogCtrl" parent="basisCtrl" scope="prototype"/>
+
 </beans>

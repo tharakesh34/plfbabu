@@ -429,10 +429,6 @@ public class BankDetailServiceImpl extends
 		this.customerBankInfoDAO = customerBankInfoDAO;
 	}
 
-	public CustomerExtLiabilityDAO getCustomerExtLiabilityDAO() {
-		return customerExtLiabilityDAO;
-	}
-
 	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
 		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
 	}

@@ -3025,11 +3025,7 @@
 
 	<!--============ Customer Income Details ============== -->
 
-	<bean id="customerIncomeDAO"
-		class="com.pennant.backend.dao.customermasters.impl.CustomerIncomeDAOImpl"
-		parent="basisCodeDAO">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="customerIncomeDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerIncomeDAOImpl" parent="sequenceDao"/>
 
 	<bean id="customerIncomeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -3249,12 +3245,7 @@
 
 	<!--============ Customer external Liability Details ============== -->
 
-	<bean id="customerExtLiabilityDAO"
-		class="com.pennant.backend.dao.customermasters.impl.CustomerExtLiabilityDAOImpl"
-		parent="basisCodeDAO">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-
+	<bean id="customerExtLiabilityDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerExtLiabilityDAOImpl" parent="sequenceDao"/>
 
 	<!-- ====================================================== -->
 	<!-- Rule Factory Details Configuration -->
@@ -4250,7 +4241,6 @@
 		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="customerIncomeDAO" ref="customerIncomeDAO" />
-		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
@@ -6902,7 +6892,6 @@
 		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="customerIncomeDAO" ref="customerIncomeDAO" />
-		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
@@ -9270,11 +9259,7 @@
 		</property>
 	</bean>
 
-	<bean name="customerExtLiabilityServiceTarget"
-		class="com.pennant.backend.service.customermasters.impl.CustomerExtLiabilityServiceImpl">
-		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-	</bean>
+	<bean name="customerExtLiabilityServiceTarget" class="com.pennant.backend.service.customermasters.impl.CustomerExtLiabilityServiceImpl"/>
 
 	<bean name="feeDetailService" class="com.pennant.backend.service.fees.FeeDetailService">
 		<property name="financeDetailService" ref="financeDetailService" />
@@ -11455,7 +11440,59 @@
 	</bean>
 	
 	<!-- DMS DAO Configurations and Service -->
-	<bean name="dmsIdentificationService" class="com.pennant.backend.service.dms.impl.DMSIdentificationServiceImpl">
+	<bean name="dmsIdentificationService" class="com.pennant.backend.service.dms.impl.DMSIdentificationServiceImpl"/>
+	
+	<!-- Sampling -->
+	<bean id="samplingDAO" class="com.pennanttech.pennapps.pff.sampling.dao.SamplingDAOImpl" parent="sequenceDao" />
+	
+	<bean id="samplingService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="samplingServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="getCollateralLinkId*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
 	</bean>
+	
+	<bean id="samplingServiceTarget" class="com.pennanttech.pff.service.sampling.SamplingServiceImpl"/>
+	
+	<bean id="incomeDetailDAO" class="com.pennanttech.pff.dao.customer.income.IncomeDetailDAOImpl" parent="sequenceDao"/>
+	<bean id="externalLiabilityDAO" class="com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl" parent="sequenceDao"/>
+	
+	<!-- FinSampling Tab in Loan Queue -->
+	<bean id="finSamplingDAO"
+		class="com.pennanttech.pennapps.pff.finsampling.dao.FinSamplingDAOImpl"
+		parent="sequenceDao" />
 
+	<bean id="finSamplingService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="finSamplingServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="finSamplingServiceTarget"
+		class="com.pennanttech.pennapps.pff.finsampling.service.FinSamplingServiceImpl" />
 </beans>

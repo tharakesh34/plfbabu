@@ -295,7 +295,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 		Map<String, List<CustomerIncome>> expenseMap = new HashMap<String, List<CustomerIncome>>();
 		for (CustomerIncome customerIncome : incomes) {
 			if (customerIncome.getIncomeExpense().equals(PennantConstants.INCOME)) {
-				totIncome = totIncome.add(customerIncome.getCustIncome());
+				totIncome = totIncome.add(customerIncome.getIncome());
 				if (incomeMap.containsKey(customerIncome.getCategory())) {
 					incomeMap.get(customerIncome.getCategory()).add(customerIncome);
 				} else {
@@ -304,7 +304,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 					incomeMap.put(customerIncome.getCategory(), list);
 				}
 			} else {
-				totExpense = totExpense.add(customerIncome.getCustIncome());
+				totExpense = totExpense.add(customerIncome.getIncome());
 				if (expenseMap.containsKey(customerIncome.getCategory())) {
 					expenseMap.get(customerIncome.getCategory()).add(customerIncome);
 				} else {
@@ -327,7 +327,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 				List<CustomerIncome> list = incomeMap.get(category);
 				if (list != null && list.size() > 0) {
 					group = new Listgroup();
-					cell = new Listcell(list.get(0).getIncomeExpense() + "-" + list.get(0).getLovDescCategoryName());
+					cell = new Listcell(list.get(0).getIncomeExpense() + "-" + list.get(0).getCategoryDesc());
 					cell.setParent(group);
 					this.listBoxCustomerIncome.appendChild(group);
 					BigDecimal total = BigDecimal.ZERO;
@@ -335,10 +335,10 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 						item = new Listitem();
 						cell = new Listcell("");
 						cell.setParent(item);
-						cell = new Listcell(customerIncome.getLovDescCustIncomeTypeName());
+						cell = new Listcell(customerIncome.getIncomeTypeDesc());
 						cell.setParent(item);
-						total = total.add(customerIncome.getCustIncome());
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getCustIncome(), CurrencyUtil.getFormat(customerIncome.getToCcy())));
+						total = total.add(customerIncome.getIncome());
+						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), CurrencyUtil.getFormat(customerIncome.getToCcy())));
 						cell.setStyle("text-align:right;");
 						cell.setParent(item);
 						item.setAttribute("data", customerIncome);
@@ -370,7 +370,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 				List<CustomerIncome> list = expenseMap.get(category);
 				if (list != null) {
 					group = new Listgroup();
-					cell = new Listcell(list.get(0).getIncomeExpense() + "-" + list.get(0).getLovDescCategoryName());
+					cell = new Listcell(list.get(0).getIncomeExpense() + "-" + list.get(0).getCategoryDesc());
 					cell.setParent(group);
 					this.listBoxCustomerIncome.appendChild(group);
 					BigDecimal total = BigDecimal.ZERO;
@@ -378,10 +378,10 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 						item = new Listitem();
 						cell = new Listcell("");
 						cell.setParent(item);
-						cell = new Listcell(customerIncome.getLovDescCustIncomeTypeName());
+						cell = new Listcell(customerIncome.getIncomeTypeDesc());
 						cell.setParent(item);
-						total = total.add(customerIncome.getCustIncome());
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getCustIncome(), CurrencyUtil.getFormat(customerIncome.getToCcy())));
+						total = total.add(customerIncome.getIncome());
+						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), CurrencyUtil.getFormat(customerIncome.getToCcy())));
 						cell.setStyle("text-align:right;");
 						cell.setParent(item);
 						item.setAttribute("data", customerIncome);

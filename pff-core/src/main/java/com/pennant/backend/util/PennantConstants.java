@@ -764,4 +764,6 @@ public class PennantConstants {
 	public static final String				CHEQUE_AC_TYPE_SA						= "10";
 	public static final String				CHEQUE_AC_TYPE_CC						= "12";
 	
+	// Sampling Fields
+	public static final String SAMPLING_RESUBMIT_REASON = "SAMPLINGRR";
 }

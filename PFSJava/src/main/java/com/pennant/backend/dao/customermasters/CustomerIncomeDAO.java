@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -50,14 +51,17 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
  * 
  */
 public interface CustomerIncomeDAO {
-	 CustomerIncome getCustomerIncomeById(CustomerIncome customerIncome, String type);
-	 List<CustomerIncome> getCustomerIncomeByCustomer(final long id,boolean isWIF, String type);
-	 void update(CustomerIncome customerIncome,String type);
-	 void delete(CustomerIncome customerIncome,String type);
-	 long save(CustomerIncome customerIncome,String type);
-	 void deleteByCustomer(final long id,String type, boolean isWIF);
-	 /*BigDecimal getTotalIncomeByCustomer(long custId);*/
-	 void saveBatch(List<CustomerIncome> customerIncome, String type, boolean isWIF);
-	 int getVersion(CustomerIncome customerIncome);
+	CustomerIncome getCustomerIncomeById(CustomerIncome customerIncome, String type, String inputSource);
+
+	List<CustomerIncome> getCustomerIncomeByCustomer(final long id, String type);
+
+	void deleteByCustomer(final long id, String type, boolean isWIF);
+
+	/* BigDecimal getTotalIncomeByCustomer(long custId); */
+	void saveBatch(List<CustomerIncome> customerIncome, String type, boolean isWIF);
+
+	int getVersion(CustomerIncome customerIncome);
+
+	void setLinkId(CustomerIncome customerIncome);
 	
 }

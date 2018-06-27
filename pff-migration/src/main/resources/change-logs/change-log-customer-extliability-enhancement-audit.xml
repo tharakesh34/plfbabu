@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="murthy.y" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="murthy.y">
+		<createTable tableName="adtExternal_liabilities">
+			<column name="auditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="auditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="auditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="auditImage" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="linkId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqNo" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="finType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="finDate" type="datetime" />
+			<column name="loanBank" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="rateOfInterest" type="number(13,9)" />
+			<column name="tenure" type="integer">
+				<constraints nullable="false" />
+			</column>
+			<column name="originalAmount" type="number(18,0)" />
+			<column name="instalmentAmount" type="number(18,0)" />
+			<column name="outstandingBalance" type="number(18,0)" />
+			<column name="balanceTenure" type="integer">
+				<constraints nullable="false" />
+			</column>
+			<column name="bounceInstalments" type="integer">
+				<constraints nullable="false" />
+			</column>
+			<column name="principalOutStanding" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="overDueAmount" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="finStatus" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="foir" type="smallint" remarks="fixed obligation to income ratio">
+				<constraints nullable="false" />
+			</column>
+			<column name="source" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="checkedBy" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="securityDetails" type="varchar(50)" />
+			<column name="loanpurpose" type="varchar(8)" />
+			<column name="repayBank" type="varchar(8)" />
+			<column name="auxiliary1" type="varchar(50)" />
+			<column name="auxiliary2" type="varchar(50)" />
+			<column name="auxiliary3" type="varchar(50)" />
+			<column name="auxiliary4" type="varchar(50)" />
+			<column name="auxiliary5" type="varchar(50)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="1.1" author="murthy.y">
+		<addPrimaryKey tableName="adtExternal_liabilities"
+			columnNames="auditId, auditDate, auditSeq, auditImage"
+			constraintName="pk_adtExternal_liabilities" />
+	</changeSet>
+</databaseChangeLog>

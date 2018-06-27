@@ -211,7 +211,7 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> {
 			}
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " AND AcademicID='" + customerIncome.getCustID() + "' AND version="
+			String whereCond = " AND AcademicID='" + customerIncome.getCustId() + "' AND version="
 					+ customerIncome.getVersion() + " ";
 
 			if (doCheckAuthority(customerIncome, whereCond)) {

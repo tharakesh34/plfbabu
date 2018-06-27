@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	<changeSet id="1" author="murthy.y">
+		<createTable tableName="adtsampling">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="keyReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="createdBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="createdOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="tenure" type="int" />
+			<column name="interestRate" type="number(13,9)" />
+			<column name="foirEligibility" type="number(18,0)" />
+			<column name="emi" type="number(18,0)" />
+			<column name="loanEligibility" type="number(18,0)" />
+			<column name="irrEligibility" type="number(18,0)" />
+			<column name="totalIncome" type="number(18,0)" />
+			<column name="totalLiability" type="number(18,0)" />
+			<column name="remarks" type="varchar(500)" />
+			<column name="samplingOn" type="datetime" />
+			<column name="decision" type="int" />
+			<column name="recommendedAmount" type="number(18,0)" />
+			<column name="decisionOn" type="datetime" />
+			<column name="reSubmitReason" type="bigint" />
+			<column name="auxiliary1" type="varchar(50)" />
+			<column name="auxiliary2" type="varchar(50)" />
+			<column name="auxiliary3" type="varchar(50)" />
+			<column name="auxiliary4" type="varchar(50)" />
+			<column name="auxiliary5" type="varchar(50)" />
+
+			<column name="version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="lastMntBy" type="bigint" />
+			<column name="lastMntOn" type="datetime" />
+			<column name="recordStatus" type="varchar(50)" />
+			<column name="roleCode" type="varchar(100)" />
+			<column name="nextRoleCode" type="varchar(200)" />
+			<column name="taskId" type="varchar(50)" />
+			<column name="nextTaskId" type="varchar(200)" />
+			<column name="recordType" type="varchar(50)" />
+			<column name="workflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="1.1" author="murthy.y">
+		<addPrimaryKey tableName="adtsampling"
+			columnNames="auditId, AuditDate, auditSeq, auditImage"
+			constraintName="pk_adtsampling" />
+	</changeSet>
+	<changeSet id="2" author="murthy.y">
+		<addColumn tableName="adtfinancemain">
+			<column name="samplingRequired" type="smallint" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="3" author="murthy.y">
+		<createTable tableName="adtsampling_remarks">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="samplingId" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="fieldName" type="varchar(60)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="remarks" type="varchar(500)"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="3.1" author="murthy.y">
+		<addPrimaryKey tableName="adtsampling_remarks"
+			columnNames="auditId, AuditDate, auditSeq, auditImage"
+			constraintName="pk_adtsampling_remarks" />
+	</changeSet>
+</databaseChangeLog>

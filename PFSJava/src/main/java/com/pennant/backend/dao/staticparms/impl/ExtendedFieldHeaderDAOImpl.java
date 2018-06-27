@@ -128,8 +128,8 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		MapSqlParameterSource source = null;
 
 		source = new MapSqlParameterSource();
-		source.addValue("ModuleName", moduleName);
-		source.addValue("SubModuleName", subModuleName);
+		source.addValue("ModuleName", moduleName.toUpperCase());
+		source.addValue("SubModuleName", subModuleName.toUpperCase());
 		 
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,");
 		selectSql.append(" SubModuleName,Event, TabHeading, NumberOfColumns, ");
@@ -149,7 +149,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		try {
 			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
 			logger.warn("Exception :", e);
 		}
 		logger.debug("Leaving");
@@ -162,7 +162,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(final String moduleName, String subModuleName,
 			String type) {
 		logger.debug("Entering");
-
+		
 		MapSqlParameterSource source = null;
 
 		source = new MapSqlParameterSource();

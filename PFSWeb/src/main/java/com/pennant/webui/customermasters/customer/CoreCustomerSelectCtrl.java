@@ -570,7 +570,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (customerDetails.getCustomerIncomeList() != null
 						&& !customerDetails.getCustomerIncomeList().isEmpty()) {
 					for (CustomerIncome income : customerDetails.getCustomerIncomeList()) {
-						income.setLovDescCustCIF(customerDetails.getCustomer().getCustCIF());
+						income.setCustCif(customerDetails.getCustomer().getCustCIF());
 					}
 				}
 			}

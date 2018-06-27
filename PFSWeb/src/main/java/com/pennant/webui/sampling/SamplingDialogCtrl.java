@@ -1,0 +1,1696 @@
+package com.pennant.webui.sampling;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.HtmlBasedComponent;
+import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.A;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
+import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Window;
+
+import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.CustomerIncome;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.service.customermasters.CustomerAddresService;
+import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.component.extendedfields.ExtendedFieldCtrl;
+import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
+import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
+import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
+import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.sampling.model.Sampling;
+import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.service.sampling.SamplingService;
+
+public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(SamplingDialogCtrl.class);
+
+	
+	protected Window window_SamplingDialog;
+
+	protected Tab samplingDetailsTab;
+	protected Listbox listBoxCustomerDetails;
+	protected Listbox listBoxCustomerIncomeDetails;
+	protected Listbox listBoxObligations;
+	protected Listbox listBoxCollaterals;
+
+	protected Button btnNew_CustomerIncome;
+	protected Button btnNew_Obligation;
+
+	protected Textbox loanNo;
+	protected Textbox loanType;
+	protected Label finDesc;
+	protected Textbox branch;
+	protected Label branchDesc;
+	protected Decimalbox loanAmtReq;
+	protected Intbox tenure;
+	protected Datebox samplingDate;
+	protected Decimalbox roi;
+
+	protected Intbox loanTenure;
+	protected Decimalbox interestRate;
+	protected Decimalbox foirEligiblity;
+	protected Decimalbox finAmtReq;
+	protected Decimalbox emiPerLakh;
+	protected Decimalbox iirEligibility;
+	protected Decimalbox loanEligibility;
+
+	protected Tabbox tabBoxIndexCenter;
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
+	protected String selectMethodName = "onSelectTab";
+
+	private int ccyFormatter = 0;
+
+	private List<CustomerIncome> incomeList = new ArrayList<>();
+	private List<CustomerExtLiability> customerExtLiabilityDetailList = new ArrayList<>();
+
+	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
+	private transient FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl;
+	private Sampling sampling;
+	private transient SamplingListCtrl samplingListCtrl;
+	private transient CustomerDialogCtrl CustomerDialogCtrl;
+
+	@Autowired
+	private transient SamplingService samplingService;
+	@Autowired
+	private transient CustomerAddresService customerAddresService;
+
+	private Map<String, ExtendedFieldRender> extFieldRenderList;
+	private ExtendedFieldCtrl extendedFieldCtrl = null;
+	private Set<String> primaryCustomer = new HashSet<>();
+	private Set<String> coApplicantCustomers = new HashSet<>();
+			
+	private boolean fromLoanOrg;
+
+
+	public SamplingDialogCtrl() {
+		super();
+	}
+
+	@Override
+	protected void doSetProperties() {
+		super.pageRightName = "SamplingDialog";
+	}
+
+	/**
+	 * 
+	 * The framework calls this event handler when an application requests that the window to be created.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 * @throws Exception
+	 */
+	public void onCreate$window_SamplingDialog(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		// Set the page level components.
+		setPageComponents(window_SamplingDialog);
+
+		try {
+			// Get the required arguments.
+			this.sampling = (Sampling) arguments.get("sampling");
+
+			if (arguments.get("samplingListCtrl") != null) {
+				this.samplingListCtrl = (SamplingListCtrl) arguments.get("samplingListCtrl");
+			}
+
+			if (arguments.get("LOAN_ORG") != null) {
+				fromLoanOrg = true;
+				enqiryModule =true;
+			}
+			
+			if (this.sampling == null) {
+				throw new Exception(Labels.getLabel("error.unhandled"));
+			}
+
+			ccyFormatter = CurrencyUtil.getFormat(sampling.getFinccy());
+
+			// Store the before image.
+			Sampling aSampling = new Sampling();
+			BeanUtils.copyProperties(this.sampling, aSampling);
+			this.sampling.setBefImage(aSampling);
+
+			// Render the page and display the data.
+			doLoadWorkFlow(this.sampling.isWorkflow(), this.sampling.getWorkflowId(), this.sampling.getNextTaskId());
+
+			if (isWorkFlowEnabled() && !enqiryModule) {
+				this.userAction = setListRecordStatus(this.userAction);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
+			}
+
+			doSetFieldProperties();
+			doCheckRights();
+			doShowDialog(this.sampling);
+		} catch (Exception e) {
+			closeDialog();
+			MessageUtil.showError(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Set the properties of the fields, like maxLength.<br>
+	 */
+	private void doSetFieldProperties() {
+		logger.debug(Literal.ENTERING);
+
+		this.loanTenure.setMaxlength(3);
+		setStatusDetails();
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Set Visible for components by checking if there's a right for it.
+	 */
+	private void doCheckRights() {
+		logger.debug(Literal.ENTERING);
+
+		/*
+		 * this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNew"));
+		 * this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnEdit"));
+		 * this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnDelete"));
+		 * this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnSave"));
+		 * this.btnNew_CustomerIncome.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNew"));
+		 * this.btnNew_Obligation.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNew"));
+		 */
+		this.btnCancel.setVisible(false);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Displays the dialog page.
+	 * 
+	 * @param sampling
+	 *            The entity that need to be render.
+	 */
+	public void doShowDialog(Sampling sampling) {
+		logger.debug(Literal.LEAVING);
+
+		if (sampling.isNew()) {
+			this.btnCtrl.setInitNew();
+			doEdit();
+			// setFocus
+		} else {
+
+			if (isWorkFlowEnabled()) {
+				if (StringUtils.isNotBlank(sampling.getRecordType())) {
+					this.btnNotes.setVisible(true);
+				}
+				// setFocus
+				doEdit();
+			} else {
+				this.btnCtrl.setInitEdit();
+				doReadOnly();
+				btnCancel.setVisible(false);
+			}
+		}
+
+		if (enqiryModule) {
+			this.btnCtrl.setBtnStatus_Enquiry();
+			this.btnNotes.setVisible(false);
+			this.south.setVisible(false);
+			this.btnNew_CustomerIncome.setVisible(false);
+			this.btnNew_Obligation.setVisible(false);
+		}
+
+		doWriteBeanToComponents(sampling);
+		if (!fromLoanOrg) {
+			setDialog(DialogType.EMBEDDED);
+		} else {
+			window_SamplingDialog.setHeight("75%");
+			setDialog(DialogType.MODAL);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Set the components for edit mode. <br>
+	 */
+	private void doEdit() {
+		logger.debug(Literal.ENTERING);
+
+		if (this.sampling.isNewRecord()) {
+			this.btnCancel.setVisible(false);
+		} else {
+			this.btnCancel.setVisible(true);
+		}
+
+		/*
+		 * readOnlyComponent(isReadOnly("SamplingDialog_LoanTenure"), this.loanTenure);
+		 * readOnlyComponent(isReadOnly("SamplingDialog_interestRate"), this.interestRate);
+		 */
+
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (this.sampling.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
+			} else {
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+			}
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void doWriteBeanToComponents(Sampling sampling) {
+		logger.debug(Literal.ENTERING);
+
+		doFillCustomers(sampling.getCustomers());
+		doFillCollaterals(sampling.getCollSetupList());
+		doFillCustomerIncome(sampling.getCustomerIncomeList());
+		doFillCustomerExtLiabilityDetails(sampling.getCustomerExtLiabilityList());
+		doFillExtendedFileds(sampling.getExtFieldRenderList());
+
+		this.loanNo.setValue(sampling.getKeyReference());
+		this.loanType.setValue(sampling.getFinType());
+		this.finDesc.setValue(sampling.getFinTypeDesc());
+		this.branch.setValue(sampling.getBranchCode());
+		this.branchDesc.setValue(sampling.getBranchDesc());
+		this.loanAmtReq.setValue(sampling.getLoanAmountRequested());
+		this.tenure.setValue(sampling.getNumberOfTerms());
+		this.samplingDate.setValue(sampling.getCreatedOn());
+		if ("F".equals(sampling.getFinGrcRateType())) {
+			this.roi.setValue(sampling.getRepaySpecialRate());
+		} else {
+			this.roi.setValue(sampling.getRepayProfitRate());
+		}
+		this.finAmtReq.setValue(sampling.getLoanAmountRequested());
+		this.loanTenure.setValue(sampling.getTenure());
+		this.interestRate.setValue(sampling.getInterestRate());
+		
+		calculateEligibility(false);
+
+		this.recordStatus.setValue(sampling.getRecordStatus());
+
+		appendDocumentDetailTab();
+
+		appendCustomerDetailTab();
+
+		// appendCoApplicantDetailTab();
+
+		// appendCollateralDetailTab();
+
+		// appendQueryModuleTab();
+
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	private void doFillCollaterals(List<CollateralSetup> collSetupList) {
+		logger.debug(Literal.ENTERING);
+
+		if (CollectionUtils.isNotEmpty(collSetupList)) {
+
+			for (CollateralSetup collateralSetup : collSetupList) {
+				Listitem item = new Listitem();
+
+				Listcell lc;
+
+				lc = new Listcell(collateralSetup.getDepositorCif());
+				lc.setParent(item);
+
+				lc = new Listcell(collateralSetup.getCollateralRef());
+				lc.setParent(item);
+
+				lc = new Listcell(collateralSetup.getCollateralCcy());
+				lc.setParent(item);
+
+				lc = new Listcell(collateralSetup.getCollateralType());
+				lc.setParent(item);
+				item.setAttribute("data", collateralSetup);
+				ComponentsCtrl.applyForward(item, "onDoubleClick=onCollateralItemDoubleClicked");
+
+				this.listBoxCollaterals.appendChild(item);
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	private void doFillCustomers(List<Customer> customers) {
+		if (CollectionUtils.isNotEmpty(customers)) {
+			for (Customer customer : customers) {
+				Listitem item = new Listitem();
+
+				Listcell lc;
+
+				lc = new Listcell(customer.getCustCIF());
+				lc.setParent(item);
+
+				lc = new Listcell(customer.getCustShrtName());
+				lc.setParent(item);
+
+				if (customer.getCustTypeCode().equals("1")) {
+					lc = new Listcell("primary");
+					lc.setParent(item);
+				} else {
+					lc = new Listcell("Co-Applicant");
+					lc.setParent(item);
+				}
+
+				lc = new Listcell();
+				A addrLink = new A();
+				addrLink.setLabel("view");
+				addrLink.addForward("onClick", self, "onClickViewAddress", customer);
+				addrLink.setStyle("text-decoration:underline;");
+				lc.appendChild(addrLink);
+				lc.setParent(item);
+
+				lc = new Listcell(customer.getPhoneNumber());
+				lc.setParent(item);
+				
+				if(Integer.valueOf(customer.getCustTypeCode()) == 1){
+					primaryCustomer.add(customer.getCustCIF());
+				}else{
+					coApplicantCustomers.add(customer.getCustCIF());
+				}
+				this.listBoxCustomerDetails.appendChild(item);
+			}
+
+		}
+	}
+
+	public void onClickViewAddress(ForwardEvent event) {
+		Customer customer = (Customer) event.getData();
+		CustomerAddres address;
+		try {
+			final HashMap<String, Object> map = new HashMap<String, Object>();
+			address = customerAddresService.getCustomerAddresById(customer.getCustID(), customer.getCustAddlVar1());
+			address.setLovDescCustCIF(sampling.getCustCif());
+			address.setLovDescCustShrtName(sampling.getCustShrtName());
+			map.put("customerAddres", address);
+			map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
+			Window window = (Window) Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresDialog.zul", null,
+					map);
+			window.setMode(Window.MODAL);
+			
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+	}
+
+	public void onChange$loanTenure(Event event) {
+		logger.debug(Literal.ENTERING);
+		calculateEligibility(true);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onChange$interestRate(Event event) {
+		logger.debug(Literal.ENTERING);
+		calculateEligibility(true);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void calculateEligibility(boolean onChange) {
+		final Sampling aSampling = new Sampling();
+		BeanUtils.copyProperties(this.sampling, aSampling);
+
+		if (onChange) {
+			doSetValidation();
+			doWriteComponentsToBean(aSampling);
+		}
+		
+		aSampling.setTenure(this.loanTenure.getValue());
+		aSampling.setInterestRate(this.interestRate.getValue());
+		
+		this.samplingService.calculateEligilibity(aSampling);
+		
+		this.foirEligiblity.setValue(aSampling.getFoirEligibility());
+		this.emiPerLakh.setValue(aSampling.getEmi());
+		this.iirEligibility.setValue(aSampling.getIrrEligibility());
+		
+		BigDecimal loanEligibilityAmount = BigDecimal.ZERO;
+		BigDecimal requestedAmount = aSampling.getLoanAmountRequested();
+
+		if (aSampling.getFoirEligibility().compareTo(aSampling.getIrrEligibility()) == -1) {
+			loanEligibilityAmount = aSampling.getFoirEligibility();
+		}
+
+		if (requestedAmount.compareTo(loanEligibilityAmount) == -1) {
+			loanEligibilityAmount = requestedAmount;
+		}
+
+		this.loanEligibility.setValue(loanEligibilityAmount);
+	}
+
+	public void onCustomerIncomeItemDoubleClicked(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		final Listitem item = this.listBoxCustomerIncomeDetails.getSelectedItem();
+		
+		if (item != null) {
+			final CustomerIncome customerIncome = (CustomerIncome) item.getAttribute("data");
+			if (isDeleteRecord(customerIncome.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("customerIncome", customerIncome);
+				map.put("samplingDialogCtrl", this);
+				map.put("coApplicants", coApplicantCustomers);
+				map.put("ccyFormatter", ccyFormatter);
+				map.put("roleCode", getRole());
+				try {
+					Executions.createComponents(
+							"/WEB-INF/pages/CustomerMasters/CustomerIncome/CustomerIncomeDialog.zul", null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onCustomerExtLiabilityItemDoubleClicked(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxObligations.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final CustomerExtLiability externalLiability = (CustomerExtLiability) item.getAttribute("data");
+			if (isDeleteRecord(externalLiability.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				externalLiability.setCustCif(externalLiability.getCustCif());
+				externalLiability.setCustShrtName(externalLiability.getCustShrtName());
+				map.put("externalLiability", externalLiability);
+				map.put("finFormatter", ccyFormatter);
+				map.put("samplingDialogCtrl", this);
+				map.put("coApplicants", coApplicantCustomers);
+				map.put("isFinanceProcess", false);
+				map.put("roleCode", getRole());
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents(
+							"/WEB-INF/pages/CustomerMasters/Customer/CustomerExtLiabilityDialog.zul", null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Set the components to ReadOnly. <br>
+	 */
+	public void doReadOnly() {
+		logger.debug(Literal.ENTERING);
+
+		this.loanTenure.setReadonly(true);
+		this.interestRate.setReadonly(true);
+		this.foirEligiblity.setReadonly(true);
+		this.finAmtReq.setReadonly(true);
+		this.emiPerLakh.setReadonly(true);
+		this.iirEligibility.setReadonly(true);
+		this.loanEligibility.setReadonly(true);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Remove the Validation by setting empty constraints.
+	 */
+	private void doRemoveValidation() {
+		logger.debug(Literal.ENTERING);
+
+		this.loanTenure.setConstraint("");
+		this.interestRate.setConstraint("");
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Sets the Validation by setting the accordingly constraints to the fields.
+	 */
+	private void doSetValidation() {
+		logger.debug(Literal.ENTERING);
+
+		if (this.loanTenure.intValue() <= 0) {
+			throw new WrongValueException(this.loanTenure, Labels.getLabel("AMOUNT_NOT_NEGATIVE",
+					new String[] { Labels.getLabel("label_SamplingDialog_LoanTenure.value") }));
+		}
+
+		if (!this.interestRate.isReadonly()) {
+			this.interestRate.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_SamplingDialog_InterestRate.value"), 9, true, false, 0, 9999));
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Writes the components values to the bean.<br>
+	 * 
+	 * @param verification
+	 */
+	public void doWriteComponentsToBean(Sampling sampling) {
+		logger.debug(Literal.LEAVING);
+
+		ArrayList<WrongValueException> wve = new ArrayList<>();
+
+		try {
+			sampling.setTenure(this.loanTenure.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			sampling.setInterestRate(this.interestRate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			sampling.setLoanEligibility(this.loanEligibility.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			sampling.setFoirEligibility(this.foirEligiblity.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			sampling.setIrrEligibility(this.iirEligibility.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			sampling.setEmi(this.emiPerLakh.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		sampling.setCustomerIncomeList(this.incomeList);
+		sampling.setCustomerExtLiabilityList(this.customerExtLiabilityDetailList);
+		sampling.setExtFieldRenderList(getExtFieldRenderList());
+
+		doRemoveValidation();
+
+		showErrorDetails(wve, this.samplingDetailsTab);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method to show error details if occurred
+	 * 
+	 **/
+	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
+		logger.debug(Literal.ENTERING);
+
+		doRemoveValidation();
+
+		if (wve.size() > 0) {
+			logger.debug("Throwing occured Errors By using WrongValueException");
+			tab.setSelected(true);
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+				if (i == 0) {
+					Component comp = wvea[i].getComponent();
+					if (comp instanceof HtmlBasedComponent) {
+						Clients.scrollIntoView(comp);
+					}
+				}
+				logger.debug(wvea[i]);
+			}
+			throw new WrongValuesException(wvea);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public HashMap<String, Object> getDefaultArguments() {
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("roleCode", getRole());
+		map.put("financeMainDialogCtrl", this);
+		map.put("finHeaderList", getHeaderBasicDetails());
+		map.put("isNotFinanceProcess", true);
+		map.put("moduleName", CollateralConstants.SAMPLING_MODULE);
+		return map;
+	}
+	
+	private ArrayList<Object> getHeaderBasicDetails() {
+		ArrayList<Object> arrayList = new ArrayList<Object>();
+		
+	    arrayList.add(0, this.sampling.getKeyReference()); 
+	    arrayList.add(1, this.sampling.getFinType()); 
+		arrayList.add(2, this.sampling.getBranchCode());
+		arrayList.add(3, this.sampling.getLoanAmountRequested()); 
+		arrayList.add(4, this.sampling.getNumberOfTerms());
+		arrayList.add(5, this.sampling.getCreatedOn());
+		if ("F".equals(sampling.getFinGrcRateType())) {
+			arrayList.add(6, this.sampling.getRepaySpecialRate());
+		} else {
+			arrayList.add(6, this.sampling.getRepayProfitRate());
+		}
+		return arrayList;
+	}
+	
+	public int getLiabilitySeq() {
+		int idNumber = 0;
+		if (getCustomerExtLiabilityDetailList() != null && !getCustomerExtLiabilityDetailList().isEmpty()) {
+			for (CustomerExtLiability customerExtLiability : getCustomerExtLiabilityDetailList()) {
+				int tempId = customerExtLiability.getSeqNo();
+				if (tempId > idNumber) {
+					idNumber = tempId;
+				}
+			}
+		}
+		return idNumber + 1;
+	}
+
+	// New Button Event Customer Income List
+	public void onClick$btnNew_CustomerIncome(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		CustomerIncome income = new CustomerIncome();
+		income.setNewRecord(true);
+		income.setWorkflowId(0);
+		income.setCustId(this.sampling.getCustId());
+		income.setCustCif(this.sampling.getCustCif());
+		income.setCustShrtName(this.sampling.getCustShrtName());
+		
+		final Map<String, Object> map = new HashMap<>();
+		map.put("customerIncome", income);
+		map.put("samplingDialogCtrl", this);
+		map.put("newRecord", "true");
+		map.put("finReference", sampling.getKeyReference());
+		map.put("coApplicants", coApplicantCustomers);
+		map.put("ccyFormatter", ccyFormatter);
+		map.put("roleCode", getRole());
+		try {
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerIncome/CustomerIncomeDialog.zul", null,
+					map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	// New Button Event For Obligation
+	public void onClick$btnNew_Obligation(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		CustomerExtLiability laibility = new CustomerExtLiability();
+		laibility.setNewRecord(true);
+		laibility.setWorkflowId(0);
+		laibility.setCustId(this.sampling.getCustId());
+		laibility.setCustCif(this.sampling.getCustCif());
+		laibility.setCustShrtName(this.sampling.getCustShrtName());
+		laibility.setSeqNo(getLiabilitySeq());
+		final HashMap<String, Object> map = new HashMap<>();
+		map.put("externalLiability", laibility);
+		map.put("finFormatter", ccyFormatter);
+		map.put("samplingDialogCtrl", this);
+		map.put("coApplicants", coApplicantCustomers);
+		map.put("newRecord", "true");
+		map.put("roleCode", getRole());
+		try {
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerExtLiabilityDialog.zul", null,
+					map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for Rendering Document Details Data in Sampling
+	 */
+	protected void appendDocumentDetailTab() {
+		logger.debug(Literal.ENTERING);
+		createTab("DOCUMENTDETAIL", true);
+		final HashMap<String, Object> map = getDefaultArguments();
+		map.put("documentDetails", getSampling().getDocuments());
+		map.put("module", DocumentCategories.SAMPLING.getKey());
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
+				getTabpanel("DOCUMENTDETAIL"), map);
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	/**
+	 * Method for Rendering Customer Details Data in Sampling
+	 */
+	protected void appendCustomerDetailTab() {
+		logger.debug(Literal.ENTERING);
+		createTab("CUSTOMERDETAIL", true);
+		final HashMap<String, Object> map = getDefaultArguments();
+		map.put("customerDetails", getSampling().getCustomerDetails());
+		map.put("moduleType",PennantConstants.MODULETYPE_ENQ);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",
+				getTabpanel("CUSTOMERDETAIL"), map);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for Rendering Customer Details Data in Sampling
+	 */
+	protected void appendCoApplicantDetailTab() {
+		logger.debug(Literal.ENTERING);
+		createTab("COAPPLICANT", true);
+		final HashMap<String, Object> map = getDefaultArguments();
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
+				getTabpanel("COAPPLICANT"), map);
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	/**
+	 * Method for Rendering Customer Details Data in Sampling
+	 */
+	protected void appendCollateralDetailTab() {
+		logger.debug(Literal.ENTERING);
+		createTab("COLLATERAL", true);
+		final HashMap<String, Object> map = getDefaultArguments();
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
+				getTabpanel("COLLATERAL"), map);
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	/**
+	 * Method for Rendering Customer Details Data in Sampling
+	 */
+	protected void appendQueryModuleTab() {
+		logger.debug(Literal.ENTERING);
+		createTab("QUERYMODULE", true);
+		final HashMap<String, Object> map = getDefaultArguments();
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
+				getTabpanel("QUERYMODULE"), map);
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	/**
+	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
+	 * parameter
+	 * 
+	 * @param moduleID
+	 * @param tabVisible
+	 */
+	public void createTab(String moduleID, boolean tabVisible) {
+		logger.debug(Literal.ENTERING);
+		String tabName = Labels.getLabel("tab_label_" + moduleID);
+		Tab tab = new Tab(tabName);
+		tab.setId(getTabID(moduleID));
+		tab.setVisible(tabVisible);
+		tabsIndexCenter.appendChild(tab);
+		Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setId(getTabpanelID(moduleID));
+		tabpanel.setStyle("overflow:auto;");
+		tabpanel.setParent(tabpanelsBoxIndexCenter);
+		tabpanel.setHeight("100%");
+		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void doFillCustomerExtLiabilityDetails(List<CustomerExtLiability> customerExtLiabilityDetails) {
+		logger.debug(Literal.ENTERING);
+		this.listBoxObligations.getItems().clear();
+
+		BigDecimal totalOriginalAmount = BigDecimal.ZERO;
+		BigDecimal totalInstalmentAmount = BigDecimal.ZERO;
+		BigDecimal totalOutStandingBal = BigDecimal.ZERO;
+
+		BigDecimal originalAmount;
+		BigDecimal instalmentAmount;
+		BigDecimal outStandingBal;
+
+		if (customerExtLiabilityDetails != null) {
+			for (CustomerExtLiability custExtLiability : customerExtLiabilityDetails) {
+				Listitem item = new Listitem();
+				Listcell lc;
+
+				lc = new Listcell(custExtLiability.getCustCif());
+				lc.setParent(item);
+
+				lc = new Listcell(custExtLiability.getCustShrtName());
+				lc.setParent(item);
+				
+				if(primaryCustomer.contains(custExtLiability.getCustCif())){
+					lc = new Listcell("Primary Customer");
+				}else{
+					lc = new Listcell("Co Applicant");
+				}
+				lc.setParent(item);
+				
+				if (custExtLiability.getFinDate() == null) {
+					lc = new Listcell();
+				} else {
+					lc = new Listcell(DateUtility.formatToLongDate(custExtLiability.getFinDate()));
+				}
+				lc.setParent(item);
+
+				lc = new Listcell(custExtLiability.getFinType());
+				lc.setParent(item);
+
+				lc = new Listcell(custExtLiability.getLoanBank());
+				lc.setParent(item);
+
+				originalAmount = custExtLiability.getOriginalAmount();
+				if (originalAmount == null) {
+					originalAmount = BigDecimal.ZERO;
+				}
+				totalOriginalAmount = totalOriginalAmount.add(originalAmount);
+				lc = new Listcell(PennantAppUtil.amountFormate(originalAmount, ccyFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				instalmentAmount = custExtLiability.getInstalmentAmount();
+				if (instalmentAmount == null) {
+					instalmentAmount = BigDecimal.ZERO;
+				}
+				totalInstalmentAmount = totalInstalmentAmount.add(instalmentAmount);
+				lc = new Listcell(PennantAppUtil.amountFormate(instalmentAmount, ccyFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				outStandingBal = custExtLiability.getOutstandingBalance();
+				if (outStandingBal == null) {
+					outStandingBal = BigDecimal.ZERO;
+				}
+				totalOutStandingBal = totalOutStandingBal.add(outStandingBal);
+				lc = new Listcell(PennantAppUtil.amountFormate(outStandingBal, ccyFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				lc = new Listcell(custExtLiability.getFinStatus());
+				lc.setParent(item);
+				lc = new Listcell(PennantJavaUtil.getLabel(custExtLiability.getRecordStatus()));
+				lc.setParent(item);
+
+				item.setAttribute("data", custExtLiability);
+				ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerExtLiabilityItemDoubleClicked");
+				this.listBoxObligations.appendChild(item);
+
+			}
+			// add summary list item
+			if (this.listBoxObligations.getItems() != null && !this.listBoxObligations.getItems().isEmpty()) {
+				Listitem item = new Listitem();
+				Listcell lc;
+				lc = new Listcell(Labels.getLabel("label_CustomerExtLiabilityDialog_Totals.value"));
+				lc.setParent(item);
+				lc = new Listcell("");
+				lc.setParent(item);
+				lc = new Listcell("");
+				lc.setParent(item);
+				lc = new Listcell("");
+				lc.setParent(item);
+				lc = new Listcell("");
+				lc.setParent(item);
+				lc = new Listcell("");
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(totalOriginalAmount, ccyFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(totalInstalmentAmount, ccyFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(totalOutStandingBal, ccyFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell("");
+				lc.setParent(item);
+				lc = new Listcell("");
+				lc.setParent(item);
+				lc = new Listcell("");
+				lc.setParent(item);
+				item.setAttribute("data", "");
+				
+				sampling.setTotalLiability(totalOutStandingBal);
+				calculateEligibility(false);
+				
+				this.listBoxObligations.appendChild(item);
+			}
+			setCustomerExtLiabilityDetailList(customerExtLiabilityDetails);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void doFillCustomerIncome(List<CustomerIncome> incomes) {
+		logger.debug(Literal.ENTERING);
+		setIncomeList(incomes);
+		createIncomeGroupList(incomes);
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void createIncomeGroupList(List<CustomerIncome> incomes) {
+		if (incomes != null && !incomes.isEmpty()) {
+			BigDecimal totIncome = BigDecimal.ZERO;
+			Map<String, List<CustomerIncome>> incomeMap = new HashMap<>();
+			for (CustomerIncome customerIncome : incomes) {
+				String category = StringUtils.trimToEmpty(customerIncome.getCategory());
+				if (customerIncome.getIncomeExpense().equals(PennantConstants.INCOME)) {
+					totIncome = totIncome.add(customerIncome.getCalculatedAmount());
+					if (incomeMap.containsKey(category)) {
+						incomeMap.get(category).add(customerIncome);
+					} else {
+						ArrayList<CustomerIncome> list = new ArrayList<>();
+						list.add(customerIncome);
+						incomeMap.put(category, list);
+					}
+				}
+			}
+			renderIncomeExpense(incomeMap, totIncome, ccyFormatter);
+		}
+	}
+
+	private void renderIncomeExpense(Map<String, List<CustomerIncome>> incomeMap, BigDecimal totIncome,
+			int ccyFormatter) {
+		this.listBoxCustomerIncomeDetails.getItems().clear();
+		Listitem item;
+		Listcell cell;
+		if (incomeMap != null) {
+			BigDecimal totalIncome = BigDecimal.ZERO;
+			BigDecimal total = BigDecimal.ZERO;
+			for (String category : incomeMap.keySet()) {
+				List<CustomerIncome> list = incomeMap.get(category);
+				if (CollectionUtils.isNotEmpty(list)) {
+					for (CustomerIncome customerIncome : list) {
+						item = new Listitem();
+						cell = new Listcell(customerIncome.getCustCif());
+						cell.setParent(item);
+						
+						cell = new Listcell(customerIncome.getCustShrtName());
+						cell.setParent(item);
+						if(primaryCustomer.contains(customerIncome.getCustCif())){
+							cell = new Listcell("Primary Customer");
+						}else{
+							cell = new Listcell("Co Applicant");
+						}
+						cell.setParent(item);
+						
+						cell = new Listcell(customerIncome.getIncomeType());
+						cell.setParent(item);
+						
+						cell = new Listcell(customerIncome.getCategoryDesc());
+						cell.setParent(item);
+						
+						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), ccyFormatter));
+						cell.setStyle("text-align:right;");
+						cell.setParent(item);
+						
+						totalIncome=totalIncome.add(customerIncome.getIncome());
+						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getMargin(), ccyFormatter));
+						cell.setStyle("text-align:right;");
+						cell.setParent(item);
+						
+						BigDecimal calculatedAmount = customerIncome.getCalculatedAmount();
+						cell = new Listcell(PennantAppUtil.amountFormate(calculatedAmount, ccyFormatter));
+						cell.setStyle("text-align:right;");
+						cell.setParent(item);
+						
+						total = total.add(calculatedAmount);
+						cell = new Listcell(customerIncome.getRecordStatus());
+						cell.setParent(item);
+						
+						item.setAttribute("data", customerIncome);
+						ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerIncomeItemDoubleClicked");
+						this.listBoxCustomerIncomeDetails.appendChild(item);
+					}
+
+				}
+			}
+
+			item = new Listitem();
+			cell = new Listcell("Total");
+			cell.setStyle("font-weight:bold;cursor:default");
+			cell.setParent(item);
+			cell = new Listcell(PennantAppUtil.amountFormate(totalIncome, ccyFormatter));
+			cell.setSpan(5);
+			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
+			cell.setParent(item);
+			
+			cell = new Listcell(PennantAppUtil.amountFormate(total, ccyFormatter));
+			cell.setSpan(2);
+			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
+			cell.setParent(item);
+			cell = new Listcell();
+			cell.setStyle("cursor:default");
+			cell.setParent(item);
+			this.listBoxCustomerIncomeDetails.appendChild(item);
+
+			
+			item = new Listitem();
+			cell = new Listcell("Net Income");
+			cell.setStyle("font-weight:bold;");
+			cell.setParent(item);
+			cell = new Listcell(PennantAppUtil.amountFormate(totalIncome, ccyFormatter));
+			cell.setSpan(5);
+			cell.setStyle("font-weight:bold; text-align:right;");
+			cell.setParent(item);
+			
+			cell = new Listcell(PennantAppUtil.amountFormate(total, ccyFormatter));
+			cell.setSpan(2);
+			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
+			cell.setParent(item);
+			cell = new Listcell();
+			cell.setStyle("cursor:default");
+			cell.setParent(item);
+			
+			sampling.setTotalIncome(totIncome);
+			calculateEligibility(false);
+
+			this.listBoxCustomerIncomeDetails.appendChild(item);
+		}
+
+	}
+
+	public void onCollateralItemDoubleClicked(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		final Listitem item = this.listBoxCollaterals.getSelectedItem();
+		if (item != null) {
+			final CollateralSetup collateralSetup = (CollateralSetup) item.getAttribute("data");
+			this.sampling.setCollateralSetup(collateralSetup);
+			if (isDeleteRecord(collateralSetup.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<>();
+
+				map.put("sampling", sampling);
+				map.put("samplingDialogCtrl", this);
+				map.put("roleCode", getRole());
+				map.put("extFieldRenderList", extFieldRenderList);
+				try {
+					Executions.createComponents("/WEB-INF/pages/Sampling/SamplingExtFieldCaptureDialog.zul", null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	private boolean isDeleteRecord(String rcdType) {
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, rcdType)
+				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, rcdType)) {
+			return true;
+		}
+		return false;
+	}
+
+	private Tabpanel getTabpanel(String id) {
+		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(getTabpanelID(id));
+	}
+
+	private String getTabID(String id) {
+		return "TAB" + StringUtils.trimToEmpty(id);
+	}
+
+	private String getTabpanelID(String id) {
+		return "TABPANEL" + StringUtils.trimToEmpty(id);
+	}
+
+	/**
+	 * The framework calls this event handler when user clicks the save button.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onClick$btnSave(Event event) {
+		logger.debug(Literal.ENTERING);
+		doSave();
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	/**
+	 * The framework calls this event handler when user clicks the edit button.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onClick$btnEdit(Event event) {
+		logger.debug(Literal.ENTERING);
+		doEdit();
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * The framework calls this event handler when user clicks the help button.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onClick$btnHelp(Event event) {
+		logger.debug(Literal.ENTERING);
+		MessageUtil.showHelpWindow(event, super.window);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * The framework calls this event handler when user clicks the delete button.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onClick$btnDelete(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+		doDelete();
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * The framework calls this event handler when user clicks the cancel button.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onClick$btnCancel(Event event) {
+		logger.debug(Literal.ENTERING);
+		doCancel();
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * The Click event is raised when the Close Button control is clicked.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of a component.
+	 */
+	public void onClick$btnClose(Event event) {
+		logger.debug(Literal.ENTERING);
+		doClose(this.btnSave.isVisible());
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * The framework calls this event handler when user clicks the notes button.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onClick$btnNotes(Event event) {
+		logger.debug(Literal.ENTERING);
+		doShowNotes(this.sampling);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Refresh the list page with the filters that are applied in list page.
+	 */
+	private void refreshList() {
+		logger.debug(Literal.ENTERING);
+		samplingListCtrl.search();
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Cancel the actual operation and Resets to the original status
+	 */
+	private void doCancel() {
+		logger.debug(Literal.ENTERING);
+
+		doWriteBeanToComponents(this.sampling.getBefImage());
+		doReadOnly();
+		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Saves the components to table. <br>
+	 */
+	public void doSave() {
+		logger.debug(Literal.ENTERING);
+		final Sampling sampling = new Sampling();
+		BeanUtils.copyProperties(this.sampling, sampling);
+		boolean isNew = false;
+
+		doSetValidation();
+		doWriteComponentsToBean(sampling);
+
+		isNew = sampling.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(sampling.getRecordType())) {
+				sampling.setVersion(sampling.getVersion() + 1);
+				if (isNew) {
+					sampling.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else {
+					sampling.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					sampling.setNewRecord(true);
+				}
+			}
+		} else {
+			sampling.setVersion(sampling.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		}
+		
+		// Document Details Saving
+
+		if (documentDetailDialogCtrl != null) {
+			sampling.setDocuments(documentDetailDialogCtrl.getDocumentDetailsList());
+		} else {
+			sampling.setDocuments(getSampling().getDocuments());
+		}
+
+		try {
+			if (doProcess(sampling, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+
+		} catch (final DataAccessException e) {
+			logger.error(e);
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Set the workFlow Details List to Object
+	 * 
+	 * @param aAuthorizedSignatoryRepository
+	 *            (AuthorizedSignatoryRepository)
+	 * 
+	 * @param tranType
+	 *            (String)
+	 * 
+	 * @return boolean
+	 * 
+	 */
+	private boolean doProcess(Sampling sampling, String tranType) {
+		logger.debug(Literal.ENTERING);
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
+		sampling.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		sampling.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		sampling.setUserDetails(getUserWorkspace().getLoggedInUser());
+
+		if (isWorkFlowEnabled()) {
+			String taskId = getTaskId(getRole());
+			String nextTaskId = "";
+			sampling.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(sampling.getNextTaskId());
+
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getNextTaskIds(taskId, sampling);
+				}
+
+				if (isNotesMandatory(taskId, sampling)) {
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
+					}
+
+				}
+			}
+			if (!StringUtils.isBlank(nextTaskId)) {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks != null && nextTasks.length > 0) {
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
+						}
+						nextRoleCode = getTaskOwner(nextTasks[i]);
+					}
+				} else {
+					nextRoleCode = getTaskOwner(nextTaskId);
+				}
+			}
+
+			sampling.setTaskId(taskId);
+			sampling.setNextTaskId(nextTaskId);
+			sampling.setRoleCode(getRole());
+			sampling.setNextRoleCode(nextRoleCode);
+
+			// Extended Field details
+			if (sampling.getExtFieldRenderList() != null) {
+				Map<String, ExtendedFieldRender> extList = sampling.getExtFieldRenderList();
+				for (Entry<String, ExtendedFieldRender> ext : extList.entrySet()) {
+					ExtendedFieldRender details = ext.getValue();
+					details.setReference(ext.getKey());
+					details.setSeqNo(1);
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					details.setRecordStatus(sampling.getRecordStatus());
+					details.setRecordType(sampling.getRecordType());
+					details.setVersion(sampling.getVersion());
+					details.setWorkflowId(sampling.getWorkflowId());
+					details.setTaskId(taskId);
+					details.setNextTaskId(nextTaskId);
+					details.setRoleCode(getRole());
+					details.setNextRoleCode(nextRoleCode);
+					details.setNewRecord(sampling.isNewRecord());
+					if (PennantConstants.RECORD_TYPE_DEL.equals(sampling.getRecordType())) {
+						if (StringUtils.trimToNull(details.getRecordType()) == null) {
+							details.setRecordType(sampling.getRecordType());
+							details.setNewRecord(true);
+						}
+					}
+				}
+			}
+			
+			// Document Details
+			if (sampling.getDocuments() != null && !sampling.getDocuments().isEmpty()) {
+				for (DocumentDetails details : sampling.getDocuments()) {
+					if (StringUtils.isEmpty(StringUtils.trimToEmpty(details.getRecordType()))) {
+						continue;
+					}
+
+					details.setReferenceId(String.valueOf(sampling.getId()));
+					details.setDocModule(CollateralConstants.SAMPLING_MODULE);
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					details.setRecordStatus(sampling.getRecordStatus());
+					details.setWorkflowId(sampling.getWorkflowId());
+					details.setTaskId(taskId);
+					details.setNextTaskId(nextTaskId);
+					details.setRoleCode(getRole());
+					details.setNextRoleCode(nextRoleCode);
+					if (PennantConstants.RECORD_TYPE_DEL.equals(sampling.getRecordType())) {
+						if (StringUtils.trimToNull(details.getRecordType()) == null) {
+							details.setRecordType(sampling.getRecordType());
+							details.setNewRecord(true);
+						}
+					}
+				}
+			}
+			
+
+			if (CollectionUtils.isNotEmpty(sampling.getCollSetupList())) {
+				List<CollateralSetup> collList = sampling.getCollSetupList();
+				Map<String, ExtendedFieldHeader> extFieldHeaderList = new HashMap<>();
+				for (CollateralSetup collateralSetup : collList) {
+
+					extendedFieldCtrl = new ExtendedFieldCtrl();
+					ExtendedFieldHeader extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(
+							CollateralConstants.MODULE_NAME, collateralSetup.getCollateralType());
+					extFieldHeaderList.put(collateralSetup.getCollateralRef(), extendedFieldHeader);
+				}
+				sampling.setExtFieldHeaderList(extFieldHeaderList);
+			}
+
+			auditHeader = getAuditHeader(sampling, tranType);
+			String operationRefs = getServiceOperations(taskId, sampling);
+
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader, null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader = getAuditHeader(sampling, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
+						break;
+					}
+				}
+			}
+		} else {
+			auditHeader = getAuditHeader(sampling, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return processCompleted;
+	}
+
+	/**
+	 * Get the result after processing DataBase Operations
+	 * 
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
+	 * @return boolean
+	 * 
+	 */
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+		logger.debug(Literal.ENTERING);
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		Sampling sampling = (Sampling) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
+
+		try {
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = samplingService.delete(auditHeader);
+						deleteNotes = true;
+					} else {
+						auditHeader = samplingService.saveOrUpdate(auditHeader);
+					}
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = samplingService.doApprove(auditHeader);
+
+						if (sampling.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
+						}
+
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = samplingService.doReject(auditHeader);
+						if (sampling.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
+						}
+
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						ErrorControl.showErrorControl(this.window_SamplingDialog, auditHeader);
+						return processCompleted;
+					}
+				}
+
+				auditHeader = ErrorControl.showErrorDetails(this.window_SamplingDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.sampling), true);
+					}
+				}
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
+			}
+		} catch (InterruptedException e) {
+			logger.error("Exception: ", e);
+		}
+		setOverideMap(auditHeader.getOverideMap());
+
+		logger.debug(Literal.LEAVING);
+		return processCompleted;
+	}
+
+	/**
+	 * Deletes a Sampling object from database.<br>
+	 * 
+	 * @throws InterruptedException
+	 */
+	private void doDelete() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		final Sampling entity = new Sampling();
+		BeanUtils.copyProperties(this.sampling, entity);
+		String tranType = PennantConstants.TRAN_WF;
+
+		// Show a confirm box
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ entity.getId();
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+			if (StringUtils.trimToEmpty(entity.getRecordType()).equals("")) {
+				entity.setVersion(entity.getVersion() + 1);
+				entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+
+				if (isWorkFlowEnabled()) {
+					entity.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+					entity.setNewRecord(true);
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), entity.getNextTaskId(), entity);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
+				}
+			}
+
+			try {
+				if (doProcess(entity, tranType)) {
+					refreshList();
+					closeDialog();
+				}
+
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * @param aAuthorizedSignatoryRepository
+	 * @param tranType
+	 * @return
+	 */
+
+	private AuditHeader getAuditHeader(Sampling sampling, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, sampling.getBefImage(), sampling);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, sampling.getUserDetails(),
+				getOverideMap());
+	}
+	
+	@Override
+	protected String getReference() {
+		return String.valueOf(this.sampling.getId());
+	}
+	
+	public Sampling getSampling() {
+		return sampling;
+	}
+
+	public void setSampling(Sampling sampling) {
+		this.sampling = sampling;
+	}
+
+	public List<CustomerIncome> getIncomeList() {
+		return incomeList;
+	}
+
+	public void setIncomeList(List<CustomerIncome> incomeList) {
+		this.incomeList = incomeList;
+	}
+
+	public List<CustomerExtLiability> getCustomerExtLiabilityDetailList() {
+		return customerExtLiabilityDetailList;
+	}
+
+	public void setCustomerExtLiabilityDetailList(List<CustomerExtLiability> customerExtLiabilityDetailList) {
+		this.customerExtLiabilityDetailList = customerExtLiabilityDetailList;
+	}
+
+	public DocumentDetailDialogCtrl getDocumentDetailDialogCtrl() {
+		return documentDetailDialogCtrl;
+	}
+
+	public void setDocumentDetailDialogCtrl(DocumentDetailDialogCtrl documentDetailDialogCtrl) {
+		this.documentDetailDialogCtrl = documentDetailDialogCtrl;
+	}
+	
+	public CustomerDialogCtrl getCustomerDialogCtrl() {
+		return CustomerDialogCtrl;
+	}
+
+	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
+		CustomerDialogCtrl = customerDialogCtrl;
+	}
+
+	public FinanceCheckListReferenceDialogCtrl getFinanceCheckListReferenceDialogCtrl() {
+		return financeCheckListReferenceDialogCtrl;
+	}
+
+	public void setFinanceCheckListReferenceDialogCtrl(
+			FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl) {
+		this.financeCheckListReferenceDialogCtrl = financeCheckListReferenceDialogCtrl;
+	}
+
+	public Map<String, ExtendedFieldRender> getExtFieldRenderList() {
+		return extFieldRenderList;
+	}
+
+	public void setExtFieldRenderList(Map<String, ExtendedFieldRender> extFieldRenderList) {
+		this.extFieldRenderList = extFieldRenderList;
+	}
+
+	public void doFillExtendedFileds(Map<String, ExtendedFieldRender> extFieldRenderList) {
+		setExtFieldRenderList(extFieldRenderList);
+	}
+
+}

@@ -1,13 +1,16 @@
 package com.pennant.backend.dao.collateral.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -65,40 +68,42 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 	 * Get Extended field details Maps by Reference
 	 */
 	@Override
-	public List<Map<String,Object>> getExtendedFieldMap(String reference, String tableName, String type) {
-		logger.debug("Entering");
+	public List<Map<String, Object>> getExtendedFieldMap(String reference, String tableName, String type) {
+		logger.debug(Literal.ENTERING);
 
 		List<Map<String, Object>> renderMap = null;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Reference", reference);
 		
-		StringBuilder selectSql = null;
-		if (StringUtils.startsWith(type, "_View")) {
-			selectSql = new StringBuilder("Select * from (Select * from ");
-			selectSql.append(tableName);
-			selectSql.append("_Temp");
-			selectSql.append(" T1  UNION ALL  Select * from ");
-			selectSql.append(tableName);
-			selectSql.append(" T1  WHERE NOT EXISTS (SELECT 1 FROM ");
-			selectSql.append(tableName);
-			selectSql.append("_Temp");
-			selectSql.append(" where  Reference =T1.Reference)) T WHERE T.Reference = :Reference ");
-		} else {
-			selectSql = new StringBuilder("Select * from ");
-			selectSql.append(tableName);
-			selectSql.append(StringUtils.trimToEmpty(type));
-			selectSql.append(" where  Reference = :Reference order by seqno");
-		}
+		type = type.toLowerCase();
 
-		logger.debug("selectSql: " + selectSql.toString());
+		StringBuilder sql = new StringBuilder();
+		if (StringUtils.startsWith(type, "_view")) {
+			sql.append("select * from (select * from ");
+			sql.append(tableName);
+			sql.append("_temp");
+			sql.append(" t1  union all select * from ");
+			sql.append(tableName);
+			sql.append(" t1  where not exists (select 1 from ");
+			sql.append(tableName);
+			sql.append("_temp");
+			sql.append(" where reference = t1.reference)) t where t.reference = :reference ");
+		} else {
+			sql.append("select * from ");
+			sql.append(tableName);
+			sql.append(StringUtils.trimToEmpty(type));
+			sql.append(" where reference = :reference order by seqno");
+		}
+		logger.trace(Literal.SQL + sql.toString());
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("reference", reference);
 		try {
-			renderMap = this.jdbcTemplate.queryForList(selectSql.toString(), source);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exceprtion ", e);
+			renderMap = this.jdbcTemplate.queryForList(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error(Literal.ENTERING, e);
 			renderMap = new ArrayList<>();
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return renderMap;
 	}
 	
@@ -468,24 +473,66 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 	}
 
 	@Override
-	public String getCategory(String reference) {
+	public String getCategory(String finReference) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
 		try {
-			sql = new StringBuilder(" Select FinCategory from FinanceMain Where FinReference = :Reference ");
+			StringBuilder sql = new StringBuilder();
+			sql.append("select fincategory from financemain_view where finreference = :finreference");
 			source = new MapSqlParameterSource();
-			source.addValue("Reference", reference);
+			source.addValue("finreference", finReference);
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-		} finally {
-			source = null;
-			sql = null;
-		}
+		} 
 		logger.debug(Literal.LEAVING);
 
 		return null;
+	}
+
+	@Override
+	public Map<String, Object> getCollateralMap(String reference, String tableName, String type) {
+		logger.debug(Literal.ENTERING);
+		Map<String, Object> map = new HashMap<>();
+
+		type = type.toLowerCase();
+
+		StringBuilder sql = new StringBuilder();
+		if (StringUtils.startsWith(type, "_view")) {
+			sql.append("select * from (select * from ");
+			sql.append(tableName);
+			sql.append("_temp");
+			sql.append(" t1  union all select * from ");
+			sql.append(tableName);
+			sql.append(" t1  where not exists (select 1 from ");
+			sql.append(tableName);
+			sql.append("_temp");
+			sql.append(" where reference = t1.reference)) t ");
+		} else {
+			sql.append("select * from ");
+			sql.append(tableName);
+			sql.append(StringUtils.trimToEmpty(type));
+		}
+		sql.append(" where reference = :reference");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("reference", reference);
+		try {
+			List<Map<String, Object>> list = this.jdbcTemplate.queryForList(sql.toString(), source);
+
+			if (CollectionUtils.isNotEmpty(list)) {
+				map.putAll(list.get(0));
+			}
+		} catch (DataAccessException e) {
+			logger.error(Literal.ENTERING, e);
+			return map;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return map;
+
 	}
 }

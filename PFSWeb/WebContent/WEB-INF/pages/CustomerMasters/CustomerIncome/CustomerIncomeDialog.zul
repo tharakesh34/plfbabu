@@ -18,22 +18,22 @@
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" 
+							<button id="btnNew"
 								tooltiptext="${c:l('btnNew.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnEdit" 
+							<button id="btnEdit"
 								tooltiptext="${c:l('btnEdit.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnDelete" 
+							<button id="btnDelete"
 								tooltiptext="${c:l('btnDelete.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnSave" 
+							<button id="btnSave"
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnCancel" 
+							<button id="btnCancel"
 								tooltiptext="${c:l('btnCancel.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnNotes" 
+							<button id="btnNotes"
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						</toolbar>
@@ -48,11 +48,11 @@
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" visible="false" 
+							<button id="btnHelp" visible="false"
 								label="${c:l('label_Help')}"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnClose" 
+							<button id="btnClose"
 								tooltiptext="${c:l('btnClose.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						</toolbar>
@@ -69,6 +69,17 @@
 							<column />
 						</columns>
 						<rows>
+							<row id="row_custType" visible="false">
+								<label
+									id="label_CustomerIncomeDialog_CustType"
+									value="${c:l('label_CustomerIncomeDialog_CustType.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="custType"
+										width="155px" readonly="true" />
+								</hbox>
+							</row>
 							<row>
 								<label
 									id="label_CustomerIncomeDialog_CustCIF"
@@ -82,7 +93,7 @@
 										maxlength="50" style="overflow: hidden;" />
 
 									<button id="btnSearchPRCustid"
-										image="/images/icons/LOVSearch.png"  />
+										image="/images/icons/LOVSearch.png" />
 									<label id="custShrtName"
 										width="150px" />
 								</hbox>
@@ -91,7 +102,7 @@
 								<label
 									id="label_CustomerIncomeDialog_CustIncomeType"
 									value="${c:l('label_CustomerIncomeDialog_CustIncomeType.value')}" />
-									<extendedcombobox id="custIncomeType"/>
+								<extendedcombobox id="custIncomeType" />
 							</row>
 							<row>
 								<label
@@ -110,12 +121,12 @@
 									<currencyBox id="custIncome" />
 								</hbox>
 							</row>
-							<row id = "row_isJoint">
+							<row id="row_isJoint">
 								<label
 									id="label_CustomerIncomeDialog_IsJoint"
 									value="${c:l('label_CustomerIncomeDialog_IsJoint.value')}" />
 								<hbox>
-									<space spacing="2px"/>
+									<space spacing="2px" />
 									<checkbox id="jointCust" />
 								</hbox>
 							</row>
@@ -133,10 +144,10 @@
 										readonly="true" />
 									<button
 										id="btnSearchCustIncomeCountry"
-										image="/images/icons/LOVSearch.png"  />
+										image="/images/icons/LOVSearch.png" />
 								</hbox>
 							</row>
-							
+
 						</rows>
 					</grid>
 				</groupbox>

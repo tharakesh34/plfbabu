@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<style>.z-groupbox-collapsed{ height: auto !important; }</style>
+
+	<window id="window_SamplingDialog" border="normal"
+		apply="${samplingDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+
+		<borderlayout id="borderlayoutSampling">
+			<north id="north">
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<!-- <button id="btnDelete"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" /> -->
+							<button id="btnSave"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_SamplingDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" visible="false" />
+							<button id="btnClose"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false">
+				<div width="100%" height="100%">
+					<tabbox width="100%" height="100%"
+						id="tabBoxIndexCenter">
+						<tabs id="tabsIndexCenter">
+							<tab
+								label="${c:l('label_SamplingDialog_SamplingDetails.value')}"
+								id="samplingDetailsTab" />
+						</tabs>
+						<tabpanels id="tabpanelsBoxIndexCenter">
+							<tabpanel style="overflow:auto"
+								ca:data-scrollable="true" id="samplingDetailsTabPanel">
+								<groupbox
+									contentStyle="overflow:auto;">
+									<caption label="Loan Details" />
+									<grid sclass="GridLayoutNoBorder"
+										fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="15%" />
+											<column width="35%" />
+											<column width="15%" />
+											<column width="35%" />
+										</columns>
+										<rows>
+											<row id="row0">
+												<label id="label_LoanNo"
+													value="${c:l('label_SamplingDialog_LoanNo.value')}" />
+												<hbox>
+													<space
+														id="space_LoanNo" spacing="2px" />
+													<textbox id="loanNo"
+														width="155px" readonly="true" />
+												</hbox>
+												<label
+													id="label_LoanType"
+													value="${c:l('label_SamplingDialog_LoanType.value')}" />
+												<hbox>
+													<space
+														id="space_LoanType" spacing="2px" />
+													<textbox
+														id="loanType" width="155px" readonly="true" />
+													<label id="finDesc"
+														style="margin-left:10px;display:inline-block;padding-top:3px;" />
+												</hbox>
+											</row>
+											<row id="row1">
+												<label id="label_Branch"
+													value="${c:l('label_SamplingDialog_Branch.value')}" />
+												<hbox>
+													<space
+														id="space_Branch" spacing="2px" />
+													<textbox id="branch"
+														width="155px" readonly="true" />
+													<label
+														id="branchDesc"
+														style="margin-left:10px;display:inline-block;padding-top:3px;" />
+												</hbox>
+												<label
+													id="label_LoanAmtReq"
+													value="${c:l('label_SamplingDialog_LoanAmtReq.value')}" />
+												<hbox>
+													<space
+														id="space_LoanAmtReq" spacing="2px" />
+													<decimalbox
+														id="loanAmtReq" width="155px" readonly="true" />
+												</hbox>
+											</row>
+											<row id="row2">
+												<label id="label_Tenure"
+													value="${c:l('label_SamplingDialog_Tenure.value')}" />
+												<hbox>
+													<space
+														id="space_Tenure" spacing="2px" />
+													<intbox id="tenure"
+														width="155px" readonly="true" />
+												</hbox>
+												<label
+													id="label_SamplingDate"
+													value="${c:l('label_SamplingDialog_samplingDate.value')}" />
+												<hbox>
+													<space
+														id="space_SamplingDate" spacing="2px" />
+													<datebox
+														id="samplingDate" width="155px" disabled="true" />
+												</hbox>
+											</row>
+											<row id="row3">
+												<label id="label_ROI"
+													value="${c:l('label_SamplingDialog_ROI.value')}" />
+												<hbox>
+													<space
+														id="space_ROI" spacing="2px" />
+													<decimalbox id="roi"
+														width="155px" readonly="true" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+
+								<!-- Customer Details-->
+								<groupbox
+									contentStyle="overflow:auto;">
+									<caption label="Customer Details" />
+									<listbox id="listBoxCustomerDetails"
+										emptyMessage="${c:l('listbox.emptyMessage')}"
+										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+										height="100%" multiple="false" sizedByContent="true"
+										span="true" style="overflow:auto;">
+										<listhead sizable="true">
+											<listheader
+												id="listheader_CIF" label="${c:l('listheader_CIF.label')}" />
+											<listheader
+												id="listheader_CustName"
+												label="${c:l('listheader_CustName.label')}" />
+											<listheader
+												id="listheader_CustType"
+												label="${c:l('listheader_CustType.label')}" />
+											<listheader
+												id="listheader_Address"
+												label="${c:l('listheader_Address.label')}" />
+											<listheader
+												id="listheader_ContactNo"
+												label="${c:l('listheader_ContactNo.label')}" />
+										</listhead>
+									</listbox>
+								</groupbox>
+
+								<!-- Income Details -->
+								<groupbox
+									contentStyle="overflow:auto;">
+									<caption label="Income Details" />
+									<toolbar align="end">
+										<button
+											id="btnNew_CustomerIncome" label="${c:l('label_New')}"
+											tooltiptext="${c:l('button_SamplingDialog_NewIncome.tooltiptext')}"
+											sclass="z-toolbarbutton" />
+									</toolbar>
+									<listbox
+										id="listBoxCustomerIncomeDetails"
+										emptyMessage="${c:l('listbox.emptyMessage')}"
+										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+										height="100%" multiple="false" sizedByContent="true"
+										span="true" style="overflow:auto;">
+										<listhead sizable="true">
+											<listheader
+												id="listheader_CustCIF"
+												label="${c:l('listheader_CustCIF.label')}" />
+											<listheader
+												id="listheader_IncomeCustName"
+												label="${c:l('listheader_CustName.label')}" />
+											<listheader
+												id="listheader_IncomeCustType"
+												label="${c:l('listheader_CustType.label')}" />
+											<listheader
+												id="listheader_IncomeHead"
+												label="${c:l('listheader_IncomeHead.label')}" />
+											<listheader
+												id="listheader_IncomeCategory"
+												label="${c:l('listheader_IncomeCategory.label')}" />
+											<listheader
+												id="listheader_IncomeAmt"
+												label="${c:l('listheader_IncomeAmt.label')}" />
+											<listheader
+												id="listheader_Margin"
+												label="${c:l('listheader_Margin.label')}" />
+											<listheader
+												id="listheader_FactoredIncome"
+												label="${c:l('listheader_FactoredIncome.label')}" />
+											<listheader
+												id="listheader_RecordStatus"
+												label="${c:l('listheader_RecordStatus.label')}" />
+										</listhead>
+									</listbox>
+								</groupbox>
+
+								<!-- Obligations -->
+								<groupbox
+									contentStyle="overflow:auto;">
+									<caption label="Obligations" />
+									<toolbar align="end">
+										<button id="btnNew_Obligation"
+											label="${c:l('label_New')}"
+											tooltiptext="${c:l('button_SamplingDialog_NewObligation.tooltiptext')}"
+											sclass="z-toolbarbutton" />
+									</toolbar>
+									<listbox id="listBoxObligations"
+										emptyMessage="${c:l('listbox.emptyMessage')}"
+										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+										height="100%" multiple="false" sizedByContent="true"
+										span="true" style="overflow:auto;">
+										<listhead sizable="true">
+											<listheader
+												id="listheader_ObligationCustCIF"
+												label="${c:l('listheader_CustCIF.label')}"/>
+											<listheader
+												id="listheader_ObligationCusName"
+												label="${c:l('listheader_CustName.label')}"/>
+											<listheader
+												id="listheader_ObligationCustType"
+												label="${c:l('listheader_CustType.label')}"/>
+											<listheader
+												id="listheader_LoanDate"
+												label="${c:l('listheader_LoanDate.label')}"/>
+											<listheader
+												id="listheader_LoanType"
+												label="${c:l('listheader_LoanType.label')}"/>
+											<listheader
+												id="listheader_BankName"
+												label="${c:l('listheader_BankName.label')}"/>
+											<listheader
+												id="listheader_OriginalAmt"
+												label="${c:l('listheader_OriginalAmt.label')}"/>
+											<listheader
+												id="listheader_InstalmentAmt"
+												label="${c:l('listheader_InstalmentAmt.label')}"/>
+											<listheader
+												id="listheader_OutstandingBal"
+												label="${c:l('listheader_OutstandingBal.label')}"/>
+											<listheader
+												id="listheader_LoanStatus"
+												label="${c:l('listheader_LoanStatus.label')}"/>
+											<listheader
+												id="listheader_RecordType"
+												label="${c:l('listheader_RecordStatus.label')}"/>
+										</listhead>
+									</listbox>
+								</groupbox>
+
+								<!-- Collateral Details -->
+								<groupbox
+									contentStyle="overflow:auto;">
+									<caption label="Collaterals" />
+									<listbox id="listBoxCollaterals"
+										emptyMessage="${c:l('listbox.emptyMessage')}"
+										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+										height="100%" multiple="false" sizedByContent="true"
+										span="true" style="overflow:auto;">
+										<listhead sizable="true">
+											<listheader
+												id="listheader_CollateralDepositerCif"
+												label="${c:l('listheader_CollateralDepositerCif.label')}"/>
+											<listheader
+												id="listheader_CollateralReference"
+												label="${c:l('listheader_CollateralReference.label')}"/>
+											<listheader
+												id="listheader_CollateralCcy"
+												label="${c:l('listheader_CollateralCcy.label')}"/>
+											<listheader
+												id="listheader_CollateralType"
+												label="${c:l('listheader_CollateralType.label')}"/>
+										</listhead>
+									</listbox>
+								</groupbox>
+
+								<!-- Loan Eligibility -->
+								<groupbox
+									contentStyle="overflow:auto;">
+									<caption label="Loan Eligibility" />
+									<grid sclass="GridLayoutNoBorder"
+										fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="15%" />
+											<column width="35%" />
+											<column width="15%" />
+											<column width="35%" />
+										</columns>
+										<rows>
+											<row id="row7">
+												<label
+													id="label_LoanTenure"
+													value="${c:l('label_SamplingDialog_LoanTenure.value')}" />
+												<hbox>
+													<space
+														id="space_loanTenure" spacing="2px" sclass="mandatory" />
+													<intbox
+														id="loanTenure" width="155px" />
+												</hbox>
+												<label
+													id="label_InterestRate"
+													value="${c:l('label_SamplingDialog_InterestRate.value')}" />
+												<hbox>
+													<space
+														id="space_InterestRate" spacing="2px" sclass="mandatory" />
+													<decimalbox
+														id="interestRate" width="155px" />
+												</hbox>
+											</row>
+											<row id="row8">
+
+											</row>
+											<row id="row9">
+												<label
+													id="label_FOIREligiblity"
+													value="${c:l('label_SamplingDialog_FOIREligiblity.value')}" />
+												<hbox>
+													<space
+														id="space_FOIREligiblity" spacing="2px" />
+													<decimalbox
+														id="foirEligiblity" width="155px" readonly="true" />
+												</hbox>
+												<label
+													id="label_FinAmtReq"
+													value="${c:l('label_SamplingDialog_LoanAmtReq.value')}" />
+												<hbox>
+													<space
+														id="space_FinAmtReq" spacing="2px" />
+													<decimalbox
+														id="finAmtReq" width="155px" readonly="true" />
+												</hbox>
+											</row>
+											<row id="row10">
+												<label
+													id="label_EMIPerLakh"
+													value="${c:l('label_SamplingDialog_EMIPerLakh.value')}" />
+												<hbox>
+													<space
+														id="space_EMIPerLakh" spacing="2px" />
+													<decimalbox
+														id="emiPerLakh" width="155px" readonly="true" />
+												</hbox>
+												<label
+													id="label_IIREligibility"
+													value="${c:l('label_SamplingDialog_IIREligibility.value')}" />
+												<hbox>
+													<space
+														id="space_IIREligibility" spacing="2px" />
+													<decimalbox
+														id="iirEligibility" width="155px" readonly="true" />
+												</hbox>
+											</row>
+											<row id="row11">
+												<label
+													id="label_LoanEligibility"
+													value="${c:l('label_SamplingDialog_LoanEligibility.value')}" />
+												<hbox>
+													<space
+														id="space_LoanEligibility" spacing="2px" />
+													<decimalbox
+														id="loanEligibility" width="155px" readonly="true" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</div>
+			</center>
+			<south id="south" sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%"
+					closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>
