@@ -781,13 +781,13 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.dsaCode.setMandatoryStyle(false);
 		this.dsaCode.setModuleName("DSA");
 		this.dsaCode.setValueColumn("DealerName");
-		this.dsaCode.setDescColumn("DealerCity");
+		this.dsaCode.setDescColumn("Code");
 		this.dsaCode.setValidateColumns(new String[] { "DealerName" });
 		this.dsaCode.getTextbox().setMaxlength(50);
 
 		this.applicationNo.setMaxlength(LengthConstants.LEN_REF);
 		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
-		this.dmaCode.setProperties("DMA", "DealerName", "DealerCity", false, LengthConstants.LEN_MASTER_CODE);
+		this.dmaCode.setProperties("DMA", "DealerName", "Code", false, LengthConstants.LEN_MASTER_CODE);
 		this.dmaCode.getTextbox().setMaxlength(50);
 		this.salesDepartment.setProperties("GeneralDepartment", "GenDepartment", "GenDeptDesc", false, 8);
 
