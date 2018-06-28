@@ -310,14 +310,14 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 				logger.debug("Error Respone: " + jsonObject.toString());
 
 			} else {
+				doInterfaceLogging(reference, builder.toString(), response, null, null, reqSentOn,
+						InterfaceConstants.STATUS_SUCCESS);
 				parseHeaderResponse(response);
 				HashMap<String, String> detailsResult = responseDetails.getCibilResponseArray(response);
 				jsonObject = parseDetailsresponse(detailsResult);
 				logger.debug("JSON Respone : " + jsonObject.toString());
 				mapdata = getPropValueFromResp(jsonObject.toString(), extConfigFileName);
 				appplicationdata.put(InterfaceConstants.RSN_CODE, "");
-				doInterfaceLogging(reference, builder.toString(), response, null, null, reqSentOn,
-						InterfaceConstants.STATUS_SUCCESS);
 				logger.debug("Success Respone :" + jsonObject.toString());
 			}
 
@@ -333,7 +333,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 			}
 
 			appplicationdata.put(InterfaceConstants.RSN_CODE, error);
-			doInterfaceLogging(reference, builder.toString(), null, null, error, reqSentOn,
+			doInterfaceLogging(reference, builder.toString(), response, null, error, reqSentOn,
 					InterfaceConstants.STATUS_FAILED);
 		}
 		return mapdata;
@@ -1222,9 +1222,9 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 					}
 
 					String gender = jsonObject.get("Gender").toString();
-					if (gender == "1") {
+					if ("1".equals(gender)) {
 						jsonObject.put("Gender", "Female");
-					} else {
+					} else if("2".equals(gender)) {
 						jsonObject.put("Gender", "Male");
 					}
 
@@ -1310,8 +1310,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							}
 						}
 
-						String phoneType = pt.get("TelephoneType").toString();
-						pt.put("TelephoneType", cibilPhoneTypes.get(phoneType));
+						if (!pt.isNull("TelephoneType")) {
+							String phoneType = pt.get("TelephoneType").toString();
+							pt.put("TelephoneType", cibilPhoneTypes.get(phoneType));
+						}
 
 						Array.add(pt);
 						pt = null;
@@ -1462,9 +1464,11 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							}
 						}
 
-						String stateCode = pa.get("StateCode").toString();
-						pa.put("StateCode", cibilStateCodes.get(stateCode));
-
+						if (!pa.isNull("StateCode")) {
+							String stateCode = pa.get("StateCode").toString();
+							pa.put("StateCode", cibilStateCodes.get(stateCode));
+						}
+						
 						if (!pa.isNull("AddressCategory")) {
 							String addCategory = (String) pa.get("AddressCategory");
 							pa.put("AddressCategory", cibilAddrCategory.get(addCategory));
@@ -1670,9 +1674,11 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 								}
 							}
 						}
-
-						String enqPurpose = iq.get("EnquiryPurpose").toString();
-						iq.put("EnquiryPurpose", cibilloanTypes.get(enqPurpose));
+						
+						if (!iq.isNull("EnquiryPurpose")) {
+							String enqPurpose = iq.get("EnquiryPurpose").toString();
+							iq.put("EnquiryPurpose", cibilloanTypes.get(enqPurpose));
+						}
 
 						if (!iq.isNull("DateofEnquiry")) {
 							String date = iq.get("DateofEnquiry").toString();

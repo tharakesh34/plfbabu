@@ -63,10 +63,19 @@ public class CibilResponseDetails {
 		}
 		}
 		else{	
-		map.put("PN", "03N");
-		map.put("ID", "");
-		map.put("PT", "03T");
-		map.put("EC", "");
+			map.put("PN", "03N");
+			/*if (str.contains("ID03I01")) {
+				map.put("ID", "");
+			}
+			if (str.contains("PT03T01")) {
+				map.put("PT", "03T");
+			}
+			if (str.contains("EC03C01")) {
+				map.put("EC", "");
+			}*/
+			map.put("ID", "");
+			map.put("PT", "03T");
+			map.put("EC", "");
 		map.put("EM", "");
 		map.put("PI", "");
 		map.put("SC", "");
@@ -188,39 +197,39 @@ public class CibilResponseDetails {
 				}
 				break;
 			case "PT":
-				if (indexEC != -1 && indexPT != -1) {
+				if (indexPT != -1 && indexEC != -1) {
 					ptmsg = details.substring(indexPT, indexEC);
 					returnMessages.put("PT", ptmsg);
 					break;
-				} else if (indexEM != -1) {
+				} else if (indexPT != -1 && indexEM != -1) {
 					ptmsg = details.substring(indexPT, indexEM);
 					returnMessages.put("PT", ptmsg);
 					break;
-				} else if (indexPI != -1) {
+				} else if (indexPT != -1 && indexPI != -1) {
 					ptmsg = details.substring(indexPT, indexPI);
 					returnMessages.put("PT", ptmsg);
 					break;
-				} else if (indexSC != -1) {
+				} else if (indexPT != -1 && indexSC != -1) {
 					ptmsg = details.substring(indexPT, indexSC);
 					returnMessages.put("PT", ptmsg);
 					break;
-				} else if (indexPA != -1) {
+				} else if (indexPT != -1 && indexPA != -1) {
 					ptmsg = details.substring(indexPT, indexPA);
 					returnMessages.put("PT", ptmsg);
 					break;
-				} else if (indexTL != -1) {
+				} else if (indexPT != -1 && indexTL != -1) {
 					ptmsg = details.substring(indexPT, indexTL);
 					returnMessages.put("PT", ptmsg);
 					break;
-				} else if (indexIQ != -1) {
+				} else if (indexPT != -1 && indexIQ != -1) {
 					ptmsg = details.substring(indexPT, indexIQ);
 					returnMessages.put("PT", ptmsg);
 					break;
-				} else if (indexDR != -1) {
+				} else if (indexPT != -1 && indexDR != -1) {
 					ptmsg = details.substring(indexPT, indexDR);
 					returnMessages.put("PT", ptmsg);
 					break;
-				} else if (indexES != -1) {
+				} else if (indexPT != -1 && indexES != -1) {
 					ptmsg = details.substring(indexPT, indexES);
 					returnMessages.put("PT", ptmsg);
 					break;
