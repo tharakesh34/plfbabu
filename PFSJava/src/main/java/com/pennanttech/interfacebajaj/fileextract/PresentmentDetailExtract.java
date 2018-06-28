@@ -110,17 +110,20 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 			Row row = null;
 			for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
-				lineNumber++;
 				row = sheet.getRow(i);
+				if (row == null) {
+					continue;
+				}
 
 				try {
 					if (i == 0 && (row != null && row.getPhysicalNumberOfCells() < row_NumberOfCells)) {
 						throw new Exception("Record is invalid at line :" + lineNumber);
 					}
-
 					if (i == 0) {
 						continue;
 					}
+					
+					lineNumber++;
 
 					StringUtils.trimToNull(String.valueOf(row.getCell(0)));
 					if (row.getCell(0) == null) {
@@ -206,15 +209,27 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	
 	// Validating the mandatory fields
 	private void validateFields(MapSqlParameterSource map) throws Exception {
+		
+		// Aggement Number
+		Object aggrementNum = map.getValue("AgreementNo");
+		if (aggrementNum != null && aggrementNum.toString().length() > 14) {
+			throw new Exception("Client Code  length should be less than 15.");
+		}
+	
+		//bflreferenceno
+		Object bflreferenceno = map.getValue("BFLReferenceNo");
+		if (bflreferenceno != null && bflreferenceno.toString().length() > 3) {
+			throw new Exception("Dealer Code  length should be less than 4.");
+		}
 
 		// batchReference
 		Object batchid = map.getValue("Batchid");
 		if (batchid == null) {
-			throw new Exception("Batchid should be mandatory.");
+			throw new Exception("Debit Ref should be mandatory.");
 		} else if (batchid.toString().length() != 29) {
-			throw new Exception("Batchid length should be 29.");
+			throw new Exception("Debit Ref length should be 29.");
 		}
-
+		
 		// status
 		Object status = map.getValue("Status");
 		if (status == null) {
@@ -225,11 +240,11 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 		// ReasonCode
 		Object reasonCode = map.getValue("ReasonCode");
-		if (!StringUtils.equals(RepayConstants.PAYMENT_SUCCESS, status.toString())) {
+		if (status != null && !StringUtils.equals(RepayConstants.PAYMENT_SUCCESS, status.toString())) {
 			if (reasonCode == null) {
-				throw new Exception("ReasonCode should be mandatory.");
+				throw new Exception("Failure Code should be mandatory.");
 			} else if (StringUtils.isBlank(reasonCode.toString())) {
-				throw new Exception("ReasonCode should not be empty.");
+				throw new Exception("Failure Code should not be empty.");
 			}
 		}
 	}
