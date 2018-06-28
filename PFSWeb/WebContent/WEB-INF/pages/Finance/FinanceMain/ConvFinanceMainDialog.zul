@@ -687,6 +687,17 @@
 															id="samplingRequired" checked="false"/>
 													</hbox>
 												</row>
+												<row id="legalRequiredRow">
+													<label
+														id="label_FinanceMainDialog_LegalRequired"
+														value="${c:l('label_FinanceMainDialog_LegalRequired.value')}" />
+													<hbox>
+														<space
+															spacing="2px" id="spacelegalRequired"/>
+														<checkbox
+															id="legalRequired" checked="false"/>
+													</hbox>
+												</row>
 											</rows>
 										</grid>
 									</groupbox>

@@ -369,6 +369,11 @@ public class FinanceConstants {
 	public static final String PROCEDT_SAMPLING_INIT = "SAMPINIT";
 	public static final String PROCEDT_SAMPLING_APPR = "SAMPAPPR";
 	
+	/**
+	 * Legal Details constants
+	 */
+	public static final String PROCEDT_LEGAL_INIT = "LEGALINIT";
+	
 	//Query Management
 	public static final String QUERY_MANAGEMENT = "QUERY_MGMT";
 }

@@ -277,6 +277,12 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean samplingApprover;
 	private Sampling sampling;
 	
+	/**
+	 * Legal Details variables
+	 */
+	private boolean legalInitiator;
+	
+	
 	public FinanceDetail() {
 		
 	}
@@ -1071,4 +1077,13 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setSampling(Sampling sampling) {
 		this.sampling = sampling;
 	}
+
+	public boolean isLegalInitiator() {
+		return legalInitiator;
+	}
+
+	public void setLegalInitiator(boolean legalInitiator) {
+		this.legalInitiator = legalInitiator;
+	}
+	
 }

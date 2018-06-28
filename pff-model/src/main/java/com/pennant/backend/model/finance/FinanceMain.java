@@ -658,6 +658,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal guidedValue = BigDecimal.ZERO;
 	private BigDecimal totalExposure = BigDecimal.ZERO;
 	private boolean samplingRequired;
+	private boolean legalRequired;
 	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -3705,6 +3706,15 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setSamplingRequired(boolean samplingRequired) {
 		this.samplingRequired = samplingRequired;
 	}
+	
+	public boolean isLegalRequired() {
+		return legalRequired;
+	}
+
+	public void setLegalRequired(boolean legalRequired) {
+		this.legalRequired = legalRequired;
+	}
+
 	public String getEmployeeName() {
 		return employeeName;
 	}

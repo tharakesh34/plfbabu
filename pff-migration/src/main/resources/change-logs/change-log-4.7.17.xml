@@ -23,7 +23,7 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
@@ -6657,13 +6657,21 @@ UNION ALL
 			          WHERE blacklistcustomer_temp.custcif = t1.custcif))
 		</createView>
 	</changeSet>
-	
+	 
 	<changeSet id="162" author="Siva">
 		<comment> Added Accrued and Unaccrued Tds calculated amounts for early settlement </comment>
 		<sql>
 			Delete from BMTAMOUNTCODES where allowedevent ='EARLYSTL' and amountcode in ('ae_accruedTds','ae_unAccruedTds');
 			Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('EARLYSTL',0,'ae_accruedTds','Accrued Interest TDS','1',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('EARLYSTL',0,'ae_unAccruedTds','UnAccrued Interest TDS','1',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+	<changeSet id="163" author="manikanta.p">
+		<sql>
+			<![CDATA[
+				delete from  LimitCodeDetail where LimitCode = 'LEGALINIT';
+				INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'LEGALINIT','Legal Initiation', 1);
+			]]>
 		</sql>
 	</changeSet>
 </databaseChangeLog>

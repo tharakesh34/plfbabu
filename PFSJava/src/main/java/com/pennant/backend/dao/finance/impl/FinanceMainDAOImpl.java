@@ -192,7 +192,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(
 				" PlanDeferCount, FinBranch, FinSourceID, AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange, AvailedDefFrqChange, ");
 		selectSql.append(
-				" RecalType, FinAssetValue, DisbAccountId, RepayAccountId, FinIsActive, LimitValid, OverrideLimit, SecurityDeposit, samplingRequired,");
+				" RecalType, FinAssetValue, DisbAccountId, RepayAccountId, FinIsActive, LimitValid, OverrideLimit, SecurityDeposit, samplingRequired,legalRequired,");
 		selectSql.append(
 				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,MinDownpayPerc,LastRepayDate, ");
 		selectSql.append(
@@ -637,7 +637,9 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		sql.append(
 				" PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , PlanEMIHLockPeriod , PlanEMICpz , CalRoundingMode ,RoundingTarget, AlwMultiDisb,FinRepayMethod, ");
 		sql.append(
-				" FeeChargeAmt, BpiAmount, DeductFeeDisb, RvwRateApplFor, SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin, FinCategory, ProductCategory,samplingRequired,");
+				" FeeChargeAmt, BpiAmount, DeductFeeDisb, RvwRateApplFor, SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin,");
+		sql.append(" FinCategory, ProductCategory,samplingRequired,legalRequired,");
+		
 		if (!wif) {
 			sql.append(" InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated,CustDSR,");
 			sql.append(
@@ -681,7 +683,8 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		sql.append(
 				" :PlanEMIHMethod , :PlanEMIHMaxPerYear , :PlanEMIHMax , :PlanEMIHLockPeriod , :PlanEMICpz , :CalRoundingMode ,:RoundingTarget, :AlwMultiDisb,:FinRepayMethod, ");
 		sql.append(
-				" :FeeChargeAmt, :BpiAmount, :DeductFeeDisb,:RvwRateApplFor ,:SchCalOnRvw,:PastduePftCalMthd,:DroppingMethod,:RateChgAnyDay,:PastduePftMargin, :FinCategory, :ProductCategory, :samplingRequired,");
+				" :FeeChargeAmt, :BpiAmount, :DeductFeeDisb,:RvwRateApplFor ,:SchCalOnRvw,:PastduePftCalMthd,:DroppingMethod,:RateChgAnyDay,:PastduePftMargin,");
+		sql.append(" :FinCategory, :ProductCategory, :samplingRequired,:legalRequired,");
 		if (!wif) {
 			sql.append(" :InvestmentRef, :MigratedFinance, :ScheduleMaintained, :ScheduleRegenerated, :CustDSR,");
 			sql.append(
@@ -802,7 +805,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			sql.append(
 					" UnPlanEMIHLockPeriod=:UnPlanEMIHLockPeriod , UnPlanEMICpz=:UnPlanEMICpz, ReAgeCpz=:ReAgeCpz, MaxUnplannedEmi=:MaxUnplannedEmi, MaxReAgeHolidays=:MaxReAgeHolidays ,");
 			sql.append(
-					" AvailedUnPlanEmi=:AvailedUnPlanEmi, AvailedReAgeH=:AvailedReAgeH,ReAgeBucket=:ReAgeBucket,EligibilityMethod=:EligibilityMethod,samplingRequired=:samplingRequired,");
+					" AvailedUnPlanEmi=:AvailedUnPlanEmi, AvailedReAgeH=:AvailedReAgeH,ReAgeBucket=:ReAgeBucket,EligibilityMethod=:EligibilityMethod,samplingRequired=:samplingRequired,legalRequired=:legalRequired,");
 		}
 		sql.append(" Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");

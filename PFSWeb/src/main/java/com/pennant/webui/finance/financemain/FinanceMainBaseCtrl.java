@@ -577,6 +577,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected Row samplingRequiredRow;
 	protected Checkbox samplingRequired;
+	
+	protected Row legalRequiredRow;
+	protected Checkbox legalRequired;
 
 	protected Space space_oDChargeAmtOrPerc;
 	protected Space space_oDMaxWaiverPerc;
@@ -3856,6 +3859,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Sampling Required flag
 		this.samplingRequired.setChecked(aFinanceMain.isSamplingRequired());
+		
+		//Legal Required flag
+		this.legalRequired.setChecked(aFinanceMain.isLegalRequired());
 
 		doFillEnquiryList(getFinBasicDetails());
 
@@ -11664,6 +11670,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		aFinanceMain.setSamplingRequired(samplingRequired.isChecked());
+		aFinanceMain.setLegalRequired(legalRequired.isChecked());
+		
 		logger.debug(" Total Exposure for Reference " + aFinanceMain.getFinReference() + "---"
 				+ aFinanceMain.getTotalExposure());
 
@@ -13282,13 +13290,28 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			samplingRequiredRow.setVisible(false);
 		}
-
+		
 		/**
 		 * Disabling sampling required filed when sampling already available
 		 */
 		if (financeMain.isSamplingRequired()
 				&& samplingService.isExist(getFinanceDetail().getFinScheduleData().getFinReference(), "_view")) {
 			samplingRequired.setDisabled(true);
+		}
+		/**
+		 * Enabling the Legal required flag for the role who is having the Legal required
+		 */
+		if (financeDetail.isLegalInitiator()) {
+			legalRequiredRow.setVisible(true);
+		} else {
+			legalRequiredRow.setVisible(false);
+		}
+		
+		/**
+		 * Disabling Legal required filed when Legal already available
+		 */
+		if (financeMain.isLegalRequired()) {
+			legalRequired.setDisabled(true);
 		}
 		
 		logger.debug("Leaving");
