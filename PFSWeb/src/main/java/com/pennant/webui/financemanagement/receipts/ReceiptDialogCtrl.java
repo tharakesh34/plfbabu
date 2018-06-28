@@ -38,6 +38,9 @@
  * 17-06-2018		Srinivasa Varma			 0.4		PSD 126950                          * 
  *                                                                                          *
  * 19-06-2018		Siva			 		 0.5		Auto Receipt Number Generation      * 
+ * 																							*
+ * 28-06-2018		Siva			 		 0.6		Stop printing Receipt if receipt 
+ * 												     mode status is either cancel or Bounce * 
  *                                                                                          * 
  ********************************************************************************************
  */
@@ -3122,7 +3125,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 							&& !"Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-						Events.sendEvent("onClick", this.btnPrint, null);
+						
+						if(!StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE) &&
+								!StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)){
+							Events.sendEvent("onClick", this.btnPrint, null);
+						}
 					}
 					
 				}
