@@ -73,7 +73,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	private int chequeSerialNo;
 	private String chequeType;
 	private Date chequeDate;
-	private int eMIRefNo;
+	private int eMIRefNo = -1;
 	private BigDecimal amount;
 	private String chequeCcy;
 	private String chequeStatus;

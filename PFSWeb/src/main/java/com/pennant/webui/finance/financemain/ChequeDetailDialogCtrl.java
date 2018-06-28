@@ -1447,7 +1447,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 						continue;
 					}
 					String emiRefNum = getComboboxValue(emiComboBox);
-					if (StringUtils.isNumeric(emiRefNum) &&  (Integer.parseInt(emiRefNum) == chequeDetail.geteMIRefNo())) {
+					if (StringUtils.isNumeric(emiRefNum) && (Integer.parseInt(emiRefNum) == chequeDetail.geteMIRefNo())
+							&& (FinanceConstants.REPAYMTH_PDC.equals(chequeDetail.getChequeType()))) {
 						emiRefNumCnt++;
 						if (emiRefNumCnt > 1) {
 							if (fromLoan) {
@@ -1650,14 +1651,14 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				if (StringUtils.isNumeric(emiRefNum)) {
 					chequeDetail.seteMIRefNo(Integer.parseInt(emiRefNum));
 				} else {
-					chequeDetail.seteMIRefNo(0);
+					chequeDetail.seteMIRefNo(-1);
 				}
 				chequeDetail.setChequeDate(DateUtil.parse(emi.getSelectedItem().getLabel(), DateFormat.SHORT_DATE.getPattern()));
 			} else {
 				if (StringUtils.equals(chequeDetail.getChequeType(), FinanceConstants.REPAYMTH_PDC)) {
 					wve.add(new WrongValueException(emi, Labels.getLabel("ChequeDetailDialog_Duedate_Mand")));
 				} else {
-					chequeDetail.seteMIRefNo(0);
+					chequeDetail.seteMIRefNo(-1);
 				}
 			}
 			
