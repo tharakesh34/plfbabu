@@ -63,12 +63,12 @@
 		</sql>
 	</changeSet>
 	
-	<!-- <changeSet id="5" author="Vinay">
+	<changeSet id="5" author="Vinay">
 		<dropNotNullConstraint tableName="FinCreditReviewDetails" columnName="Auditors"/>
 		<dropNotNullConstraint tableName="FinCreditReviewDetails" columnName="Location"/>
 		<dropNotNullConstraint tableName="FinCreditReviewDetails_Temp" columnName="Auditors"/>
 		<dropNotNullConstraint tableName="FinCreditReviewDetails_Temp" columnName="Location"/>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="5" author="Vinay">
 		<sql>
@@ -270,6 +270,301 @@
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 			UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
 		</sql>
+	</changeSet>
+	
+	<changeSet id="12" author="Vinay">
+		<sql>
+			update rmtprovincevscity set pccityname=INITCAP(pccityname);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="13" author="Vinay">
+		<sql>
+			update data_engine_config set header='ROW:{Transaction Type,Beneficiary Code,Beneficiary Account Number,Instrument Amount,Beneficiary Name,Drawee Location,Print Location,
+			Bene Address 1,Bene Address 2,Bene Address 3,Bene Address 4,Bene Address 5,Instruction Reference Number,Customer Reference Number,Payment details 1,Payment details 2,
+			Payment details 3,Payment details 4,Payment details 5,Payment details 6,Payment details 7,Cheque Number,Chq / Trn Date,MICR Number,IFC Code,Bene Bank Name,
+			Bene Bank Branch Name,Beneficiary email id,Client Code,ID}' where id=7;
+			
+			Update DATA_engine_column set Format=null  where name='DISBURSEMENT_DATE';
+			
+			update DATA_ENGINE_TABLE set recordlength=33 where id=8;
+			
+			DELETE From DATA_ENGINE_COLUMN where TableId=(select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'));
+			
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'Txn_Type', 1, 'N', NULL, 'R', NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'FINREFERENCE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'BENFICIARY_ACCOUNT', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'DISBURSEMENT_AMOUNT', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'BENFICIARY_NAME', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'DRAWEE_LOCATION', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'PRINT_LOCATION', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'BENFICIARY_ADDRESS1', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'BENFICIARY_ADDRESS2', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'BENFICIARY_ADDRESS3', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'BENFICIARY_ADDRESS4', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'BENFICIARY_ADDRESS5', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'PAYMENT_DETAIL7', 1, 'N', NULL, '', NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'CUSTCIF', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			       
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'PAYMENT_DETAIL1', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'PAYMENT_DETAIL2', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'PAYMENT_DETAIL3', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'PAYMENT_DETAIL4', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'PAYMENT_DETAIL5', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'PAYMENT_DETAIL6', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'PAYMENT_DETAIL7', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			       
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'CHEQUE_NUMBER', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'DISBURSEMENT_DATE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'yyy/MM/dd', 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'MICR_CODE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'IFSC_CODE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			       
+			
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'BENFICIARY_BANK', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'BENFICIARY_BRANCH', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			        
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'BENFICIRY_EMAIL', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'CLIENT_CODE', 1, 'N', NULL, 'PCP63RBI', NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'))), 'ID', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			
+			
+			DELETE From DATA_ENGINE_COLUMN where TableId=(select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'));
+			
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'DISBURSEMENT_TYPE', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'FINREFERENCE', 0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'O');
+			
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'BENFICIARY_ACCOUNT', 0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'DISBURSEMENT_AMOUNT', 0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'BENFICIARY_NAME', 0, 'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'DRAWEE_LOCATION', 0, 'N', NULL, NULL, NULL, NULL, '5', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'PRINT_LOCATION', 0, 'N', NULL, NULL, NULL, NULL, '6', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'CUSTOMER_ADDRESS1', 0, 'N', NULL, NULL, NULL, NULL, '7', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'CUSTOMER_ADDRESS2', 0, 'N', NULL, NULL, NULL, NULL, '8', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'CUSTOMER_ADDRESS3', 0, 'N', NULL, NULL, NULL, NULL, '9', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'CUSTOMER_ADDRESS4', 0, 'N', NULL, NULL, NULL, NULL, '10', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'CUSTOMER_ADDRESS5', 0, 'N', NULL, NULL, NULL, NULL, '11', NULL, NULL, NULL, NULL, 'O');
+			
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'PAYMENT_DETAIL7', 0, 'N', NULL, NULL, NULL, NULL, '12', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'CUSTCIF', 0, 'N', NULL, NULL, NULL, NULL, '13', NULL, NULL, NULL, NULL, 'O');
+			       
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'PAYMENT_DETAIL1', 0, 'N', NULL, NULL, NULL, NULL, '14', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'PAYMENT_DETAIL2', 0, 'N', NULL, NULL, NULL, NULL, '15', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'PAYMENT_DETAIL3', 0, 'N', NULL, NULL, NULL, NULL, '16', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'PAYMENT_DETAIL4', 0, 'N', NULL, NULL, NULL, NULL, '17', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'PAYMENT_DETAIL5', 0, 'N', NULL, NULL, NULL, NULL, '18', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'PAYMENT_DETAIL6', 0, 'N', NULL, NULL, NULL, NULL, '19', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'PAYMENT_DETAIL7', 0, 'N', NULL, NULL, NULL, NULL, '20', NULL, NULL, NULL, NULL, 'O');
+			       
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'CHEQUE_NUMBER', 0, 'N', NULL, NULL, NULL, NULL, '21', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'DISBURSEMENT_DATE', 0, 'N', NULL, NULL, NULL, NULL, '22', NULL, NULL, NULL, 'yyy/MM/dd', 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'MICR_CODE', 0, 'N', NULL, NULL, NULL, NULL, '23', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'IFSC_CODE', 0, 'N', NULL, NULL, NULL, NULL, '24', NULL, NULL, NULL, NULL, 'O');
+			       
+			
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'BENFICIARY_BANK', 0, 'N', NULL, NULL, NULL, NULL, '25', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'BENFICIARY_BRANCH', 0, 'N', NULL, NULL, NULL, NULL, '26', NULL, NULL, NULL, NULL, 'O');
+			        
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'BENFICIRY_EMAIL', 0, 'N', NULL, NULL, NULL, NULL, '27', NULL, NULL, NULL, NULL, 'O');
+			
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'CLIENT_CODE', 1, 'N', NULL, NULL, NULL, NULL, '28', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'ID', 0, 'N', NULL, NULL, NULL, NULL, '29', NULL, NULL, NULL, NULL, 'O');
+			
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'STATUS', 0, 'N', NULL, NULL, NULL, NULL, '30', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'REMARKS', 0, 'N', NULL, NULL, NULL, NULL, '31', NULL, NULL, NULL, NULL, 'O');
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'REJECT_REASON', 0, 'N', NULL, NULL, NULL, NULL, '32', NULL, NULL, NULL, NULL, 'O');
+			
+			INSERT INTO DATA_ENGINE_COLUMN (Id, TableId, Name, Skip, SeqType, SeqObject, DefaultValue, DerivedFrom, REFERENCECOLUMN, StartIndex, EndIndex, RuleForValue, QueryForValue, Format, CONSTRAINTTYPE) VALUES ((select max(Id)+1 from DATA_ENGINE_COLUMN), ((select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_IMPORT'))), 'Resp_batch_id', 0, 'N', NULL, NULL, '${FILE_ID}', NULL, '33', NULL, NULL, NULL, NULL, 'O');
+						
+		</sql>
+	</changeSet>
+	
+	<changeSet id="14" author="Vinay">
+		<createView viewName="collateralassignment_tview" replaceIfExists="true">
+			SELECT ca.module,
+		    ca.reference,
+		    ca.collateralref,
+		    ca.assignperc,
+		    cs.collateralccy,
+		    ca.active,
+		    cs.collateralvalue,
+		    cs.bankvaluation,
+		    t.totassignperc - ca.assignperc AS totassignperc,
+		    fm.fincurrassetvalue - fm.downpayment + fm.feechargeamt + fm.insuranceamt - fm.finrepaymentamount AS utilizedamount,
+		    ca.version,
+		    ca.lastmntby,
+		    ca.lastmnton,
+		    ca.recordstatus,
+		    ca.rolecode,
+		    ca.nextrolecode,
+		    ca.taskid,
+		    ca.nexttaskid,
+		    ca.recordtype,
+		    ca.workflowid,
+		    cs.specialltv,
+		    cs.bankltv,
+			cs.collateraltype
+		   FROM collateralassignment_temp ca
+		     JOIN collateralsetup cs ON ca.collateralref = cs.collateralref
+		     LEFT JOIN ( SELECT t1.collateralref,
+		            sum(t1.assignperc) AS totassignperc
+		           FROM ( SELECT collateralassignment_temp.reference,
+		                    collateralassignment_temp.collateralref,
+		                    collateralassignment_temp.assignperc
+		                   FROM collateralassignment_temp
+		                UNION
+		                 SELECT ca_1.reference,
+		                    ca_1.collateralref,
+		                    ca_1.assignperc
+		                   FROM collateralassignment ca_1
+		                  WHERE NOT (EXISTS ( SELECT 1
+		                           FROM collateralassignment_temp
+		                          WHERE collateralassignment_temp.collateralref = ca_1.collateralref AND collateralassignment_temp.module = ca_1.module AND collateralassignment_temp.reference = ca_1.reference))) t1
+		          GROUP BY t1.collateralref) t ON t.collateralref = ca.collateralref
+		     LEFT JOIN financemain_temp fm ON ca.reference = fm.finreference
+		</createView>
+	</changeSet>
+	
+	<changeSet id="15" author="Vinay">
+		<createView viewName="collateralassignment_view" replaceIfExists="true">
+			SELECT ca.module,
+		    ca.reference,
+		    ca.collateralref,
+		    ca.assignperc,
+		    cs.collateralccy,
+		    ca.active,
+		    cs.collateralvalue,
+		    cs.bankvaluation,
+		    t.totassignperc - ca.assignperc AS totassignperc,
+		    COALESCE(fm.fincurrassetvalue - fm.downpayment + fm.feechargeamt + fm.insuranceamt - fm.finrepaymentamount, cm.cmtutilizedamount) AS utilizedamount,
+		    ca.version,
+		    ca.lastmntby,
+		    ca.lastmnton,
+		    ca.recordstatus,
+		    ca.rolecode,
+		    ca.nextrolecode,
+		    ca.taskid,
+		    ca.nexttaskid,
+		    ca.recordtype,
+		    ca.workflowid,
+		    cs.specialltv,
+		    cs.bankltv,
+		    cs.collateraltype
+		   FROM collateralassignment_temp ca
+		     JOIN collateralsetup cs ON ca.collateralref = cs.collateralref
+		     LEFT JOIN ( SELECT t1.collateralref,
+		            sum(t1.assignperc) AS totassignperc
+		           FROM ( SELECT collateralassignment_temp.reference,
+		                    collateralassignment_temp.collateralref,
+		                    collateralassignment_temp.assignperc
+		                   FROM collateralassignment_temp
+		                UNION
+		                 SELECT ca_1.reference,
+		                    ca_1.collateralref,
+		                    ca_1.assignperc
+		                   FROM collateralassignment ca_1
+		                  WHERE NOT (EXISTS ( SELECT 1
+		                           FROM collateralassignment_temp
+		                          WHERE collateralassignment_temp.collateralref = ca_1.collateralref AND collateralassignment_temp.module = ca_1.module AND collateralassignment_temp.reference = ca_1.reference))) t1
+		          GROUP BY t1.collateralref) t ON t.collateralref = ca.collateralref
+		     LEFT JOIN financemain_temp fm ON ca.reference = fm.finreference
+		     LEFT JOIN commitments_temp cm ON cm.cmtreference = ca.reference
+		UNION ALL
+		 SELECT ca.module,
+		    ca.reference,
+		    ca.collateralref,
+		    ca.assignperc,
+		    cs.collateralccy,
+		    ca.active,
+		    cs.collateralvalue,
+		    cs.bankvaluation,
+		    t.totassignperc - ca.assignperc AS totassignperc,
+		    COALESCE(fm.fincurrassetvalue - fm.downpayment + fm.feechargeamt + fm.insuranceamt - fm.finrepaymentamount, cm.cmtutilizedamount) AS utilizedamount,
+		    ca.version,
+		    ca.lastmntby,
+		    ca.lastmnton,
+		    ca.recordstatus,
+		    ca.rolecode,
+		    ca.nextrolecode,
+		    ca.taskid,
+		    ca.nexttaskid,
+		    ca.recordtype,
+		    ca.workflowid,
+		    cs.specialltv,
+		    cs.bankltv,
+		    cs.collateraltype
+		   FROM collateralassignment ca
+		     JOIN collateralsetup cs ON ca.collateralref = cs.collateralref
+		     LEFT JOIN ( SELECT t1.collateralref,
+		            sum(t1.assignperc) AS totassignperc
+		           FROM ( SELECT collateralassignment_temp.reference,
+		                    collateralassignment_temp.collateralref,
+		                    collateralassignment_temp.assignperc
+		                   FROM collateralassignment_temp
+		                UNION
+		                 SELECT ca_1.reference,
+		                    ca_1.collateralref,
+		                    ca_1.assignperc
+		                   FROM collateralassignment ca_1
+		                  WHERE NOT (EXISTS ( SELECT 1
+		                           FROM collateralassignment_temp
+		                          WHERE collateralassignment_temp.collateralref = ca_1.collateralref AND collateralassignment_temp.module = ca_1.module AND collateralassignment_temp.reference = ca_1.reference))) t1
+		          GROUP BY t1.collateralref) t ON t.collateralref = ca.collateralref
+		     LEFT JOIN financemain fm ON ca.reference = fm.finreference
+		     LEFT JOIN commitments cm ON cm.cmtreference = ca.reference
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM collateralassignment_temp
+		          WHERE collateralassignment_temp.collateralref = ca.collateralref AND collateralassignment_temp.module = ca.module AND collateralassignment_temp.reference = ca.reference))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="16" author="Vinay">
+		<createView viewName="collateralassignment_aview" replaceIfExists="true">
+			SELECT ca.module,
+		    ca.reference,
+		    ca.collateralref,
+		    ca.assignperc,
+		    cs.collateralccy,
+		    ca.active,
+		    cs.collateralvalue,
+		    cs.bankvaluation,
+		    t.totassignperc - ca.assignperc AS totassignperc,
+		    COALESCE(fm.fincurrassetvalue - fm.downpayment + fm.feechargeamt + fm.insuranceamt - fm.finrepaymentamount, cm.cmtutilizedamount) AS utilizedamount,
+		    ca.version,
+		    ca.lastmntby,
+		    ca.lastmnton,
+		    ca.recordstatus,
+		    ca.rolecode,
+		    ca.nextrolecode,
+		    ca.taskid,
+		    ca.nexttaskid,
+		    ca.recordtype,
+		    ca.workflowid,
+		    cs.specialltv,
+		    cs.bankltv,
+		    cs.collateraltype
+		   FROM collateralassignment ca
+		     JOIN collateralsetup cs ON ca.collateralref = cs.collateralref
+		     LEFT JOIN ( SELECT t1.collateralref,
+		            sum(t1.assignperc) AS totassignperc
+		           FROM ( SELECT collateralassignment_temp.reference,
+		                    collateralassignment_temp.collateralref,
+		                    collateralassignment_temp.assignperc
+		                   FROM collateralassignment_temp
+		                UNION
+		                 SELECT ca_1.reference,
+		                    ca_1.collateralref,
+		                    ca_1.assignperc
+		                   FROM collateralassignment ca_1
+		                  WHERE NOT (EXISTS ( SELECT 1
+		                           FROM collateralassignment_temp
+		                          WHERE collateralassignment_temp.collateralref = ca_1.collateralref AND collateralassignment_temp.module = ca_1.module AND collateralassignment_temp.reference = ca_1.reference))) t1
+		          GROUP BY t1.collateralref) t ON t.collateralref = ca.collateralref
+		     LEFT JOIN financemain fm ON ca.reference = fm.finreference
+		     LEFT JOIN commitments cm ON cm.cmtreference = ca.reference
+		</createView>
 	</changeSet>
 </databaseChangeLog>
 	
