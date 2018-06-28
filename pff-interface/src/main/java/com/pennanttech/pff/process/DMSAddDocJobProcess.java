@@ -1,5 +1,7 @@
 package com.pennanttech.pff.process;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.backend.dao.dms.DMSIdentificationDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.util.DmsDocumentConstants;
 import com.pennanttech.model.dms.DMSDocumentDetails;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -31,6 +34,9 @@ public class DMSAddDocJobProcess {
 			for (DMSDocumentDetails dmsDocumentDetails : dmsDocRefList) {
 				if(null!=dmsDocumentDetails){
 					dmsDocumentDetails.setRetryCount(dmsDocumentDetails.getRetryCount()+1);
+					dmsDocumentDetails.setLastMntOn(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+					dmsDocumentDetails.setState("Initated");
+					dmsDocumentDetails.setStatus(DmsDocumentConstants.DMS_DOCUMENT_STATUS_PROCESSING);
 					boolean success=true;
 					String errorMsg=null;
 					AuditHeader auditHeader =new AuditHeader();
@@ -62,7 +68,7 @@ public class DMSAddDocJobProcess {
 							}
 						}
 					}else{
-						dmsDocumentDetails.setStatus("Error");
+						dmsDocumentDetails.setState("Error");
 						dmsDocumentDetails.setErrorDesc(errorMsg);
 						identificationDAO.processFailure(dmsDocumentDetails, retryCount);
 					}

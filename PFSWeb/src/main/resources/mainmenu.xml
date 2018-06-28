@@ -877,6 +877,9 @@
 			<menuItem id="menu_Item_PaymentInstructionsEnquiry"
 				zulNavigation="/WEB-INF/pages/Payment/PaymentHeaderList.zul?enqiryModule=Y"
 				rightName="menuItem_payment_PaymentInstructionsEnquiry" />
+			<menuItem id="menu_Item_DMSEnquiry"
+				zulNavigation="/WEB-INF/pages/DmsDocumentDetails/DmsDocumentDetailsList.zul?enqiryModule=Y"
+				rightName="menuItem_DmsDocumentDetails" />
 		</menu>
 		<menu id="menu_Category_Verification_Enquiry">
 			<menuItem id="menu_Item_FieldInvestigation_Enquiry"

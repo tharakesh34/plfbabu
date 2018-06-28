@@ -4838,6 +4838,10 @@
 		<property name="accountingSetService" ref="accountingSetService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
+	
+	<!-- DMS DocumentDetails -->
+	<bean id="dmsDocumentDetailListCtrl" class="com.pennant.webui.dms.DmsDocumentDetailListCtrl" parent="basisListCtrl" scope="prototype"/>
+	<bean id="dmsDocumentDetailsDialogCtrl" class="com.pennant.webui.dms.DmsDocumentDetailsDialogCtrl" parent="basisListCtrl" scope="prototype"/>
 
 	<!-- SelectPaymentHeaderDialogCtrl --> 
 	<bean id="selectPaymentHeaderDialogCtrl" class="com.pennant.webui.payment.paymentheader.SelectPaymentHeaderDialogCtrl" parent="basisListCtrl" scope="prototype">

@@ -6674,5 +6674,11 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="164" author="Amarnath.t">
+		<comment> Added DMS Document Details rights to display in main menu </comment>
+		<sql>
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_DmsDocumentDetails','MENU',0,1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	

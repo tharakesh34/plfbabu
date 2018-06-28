@@ -9,4 +9,5 @@ public interface DMSIdentificationDAO {
 	public List<DMSDocumentDetails> retrieveDMSDocumentReference();
 	public void processSuccessResponse(DMSDocumentDetails dmsDocumentDetails,DMSDocumentDetails responseDmsDocumentDetails);
 	public void processFailure(DMSDocumentDetails dmsDocumentDetails, int configRetryCount);
+	public List<DMSDocumentDetails> retrieveDMSDocumentLogs(long dmsId);
 }

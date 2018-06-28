@@ -3295,6 +3295,8 @@ public class PennantStaticListUtil {
 	// This Should be Similar to the Schedule Calculation Codes. 
 	private static Map<String, ValueLabel> disbCalculationCodes = new HashMap<>();
 	
+	private static ArrayList<ValueLabel> dmsDocumentStatus= new ArrayList<>();
+	
 	public static List<ValueLabel> getSchCalCodes() {
 		return new ArrayList<>(scheduleCalculationCodes.values());
 	}
@@ -3336,6 +3338,10 @@ public class PennantStaticListUtil {
 		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CHEQUE,Labels.getLabel("label_PaymentType_CHEQUE")));
 		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_DD,Labels.getLabel("label_PaymentType_DD")));
 		
+		dmsDocumentStatus.add(new ValueLabel(DmsDocumentConstants.DMS_DOCUMENT_STATUS_SUCCESS,Labels.getLabel("label_DmsDocumentStatus_Success")));
+		dmsDocumentStatus.add(new ValueLabel(DmsDocumentConstants.DMS_DOCUMENT_STATUS_PROCESSING,Labels.getLabel("label_DmsDocumentStatus_Processing")));
+		dmsDocumentStatus.add(new ValueLabel(DmsDocumentConstants.DMS_DOCUMENT_STATUS_NONPROCESSABLE,Labels.getLabel("label_DmsDocumentStatus_NonProcessable")));
+		
 		disbRegistrationTypes.addAll(paymentTypes);
 	}
 
@@ -3348,6 +3354,10 @@ public class PennantStaticListUtil {
 			payments.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_ESCROW,Labels.getLabel("label_PaymentType_ESCROW")));
 		}
 		return payments;
+	}
+	
+	public static ArrayList<ValueLabel> getDmsDocumentStatusTypes(){
+		return dmsDocumentStatus;
 	}
 
 	public static ArrayList<ValueLabel> getDisbRegistrationTypes(){

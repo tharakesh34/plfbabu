@@ -217,5 +217,18 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 		
 		logger.debug("Leaving");
 	}
+	
+	@Override
+	public List<DMSDocumentDetails> getDmsDocumentDetails(long dmsId){
+		logger.debug("Entering");
+		List<DMSDocumentDetails> dmsDocumentLogs = null;
+		try{
+			dmsDocumentLogs = dmsIdentificationDao.retrieveDMSDocumentLogs(dmsId);
+		}catch(Exception e){
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		logger.debug("Leaving");
+		return dmsDocumentLogs;
+	}
 
 }

@@ -379,6 +379,7 @@ import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.model.vasproducttype.VASProductType;
 import com.pennanttech.document.DocumentDataMapping;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.model.dms.DMSDocumentDetails;
 import com.pennanttech.pennapps.core.cache.CacheStats;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
@@ -2150,6 +2151,10 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("FileBatchStatus", new ModuleMapping("FileBatchStatus", FileBatchStatus.class, new String[] { "FileBatchStatus",
 		"FileBatchStatus_AView" }, null, new String[] {"Id","FileName"},null, 600));
+		
+		/* DMS Document Details Module */
+		ModuleUtil.register("DmsDocumentDetails", new ModuleMapping("DmsDocumentDetails", DMSDocumentDetails.class, new String[] { "dmsdocprocesslog"},
+				null, new String[] {"FinReference","Id","Status"},null, 600));
 
 		/* RMT Lov Filed Details */
 		//Two modules are there ,Need to check it. FIXME:
