@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -34,10 +35,15 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 		if (sampling.getDecision() == Decision.RESUBMIT.getKey()
 				&& !samplingService.isExist(sampling.getKeyReference(), "_Temp")) {
 			samplingDAO.save(sampling, TableType.TEMP_TAB);
+
+			for (CollateralSetup collateralSetup : sampling.getCollSetupList()) {
+				finSamplingDAO.saveCollateral(sampling.getId(), collateralSetup.getCollateralType());
+			}
+
 		}
 
 		finSamplingDAO.saveOrUpdateRemarks(sampling, TableType.MAIN_TAB);
-		//finSamplingDAO.updateCollateralRemarks(sampling, TableType.MAIN_TAB);
+		// finSamplingDAO.updateCollateralRemarks(sampling, TableType.MAIN_TAB);
 		logger.debug(Literal.LEAVING);
 		return new AuditDetail(auditTranType, 1, fields[0], fields[1], sampling.getBefImage(), sampling);
 	}

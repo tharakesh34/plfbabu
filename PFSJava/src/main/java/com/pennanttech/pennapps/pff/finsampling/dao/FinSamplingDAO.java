@@ -7,4 +7,6 @@ public interface FinSamplingDAO {
 	void updateSampling(Sampling sampling, TableType tableType);
 
 	void saveOrUpdateRemarks(Sampling sampling, TableType tableType);
+
+	void saveCollateral(long reference, String collateralType);
 }

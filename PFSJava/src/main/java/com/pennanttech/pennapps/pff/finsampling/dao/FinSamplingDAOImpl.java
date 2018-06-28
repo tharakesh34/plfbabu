@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -80,4 +81,30 @@ public class FinSamplingDAOImpl extends SequenceDao<Sampling> implements FinSamp
 		}
 		return list;
 	}
+	
+	
+	@Override
+	public void saveCollateral(long samplingId, String collateralType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("insert into verification_");
+		sql.append(StringUtils.trimToEmpty(collateralType));
+		sql.append("_tv_temp");
+		sql.append(" select * from verification_");
+		sql.append(StringUtils.trimToEmpty(collateralType));
+		sql.append(
+				"_tv  Where reference in(select linkId from link_sampling_collaterals  where samplingId=:samplingId)");
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("samplingId", samplingId);
+		try {
+			jdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 }

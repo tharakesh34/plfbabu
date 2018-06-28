@@ -64,6 +64,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.sampling.Decision;
 import com.pennanttech.pff.service.sampling.SamplingService;
 
+import bsh.Variable;
+
 @Component(value = "finSamplingDialogCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
@@ -119,7 +121,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		this.sampling = financeDetail.getSampling();
 		if (this.sampling == null) {
 
-			//this.sampling = new Sampling();
+			// this.sampling = new Sampling();
 			rows_Sampling.getChildren().clear();
 			Row emptyRow = new Row();
 			Cell cel = new Cell();
@@ -244,7 +246,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		BigDecimal variance = (current.subtract(original));
 
 		if (BigDecimal.ZERO.compareTo(original) == 0) {
-			return variance.setScale(2).abs();
+			return variance.abs();
 		}
 
 		variance = variance.divide(original, 2, RoundingMode.HALF_DOWN);
@@ -394,7 +396,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		decimalbox.setValue(PennantAppUtil.formateAmount(current, formatter));
 		decimalbox.setParent(row);
 
-		decimalbox = getDecimalbox();
+		decimalbox = getDecimalboxWithScale();
 		varaiance = getVariance(original, current);
 
 		if (varaiance.compareTo(new BigDecimal(25)) >= 0) {
@@ -402,7 +404,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		} else {
 			this.samplingTolerance.setValue("Tolerance");
 		}
-		decimalbox.setValue(varaiance);
+		decimalbox.setValue(PennantAppUtil.formateAmount(varaiance, formatter));
 		decimalbox.setParent(row);
 
 		setRemarksBox(row, "INCOME");
@@ -433,8 +435,8 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		decimalbox.setValue(current);
 		decimalbox.setParent(row);
 
-		decimalbox = getDecimalbox();
-		decimalbox.setValue(getVariance(original, current));
+		decimalbox = getDecimalboxWithScale();
+		decimalbox.setValue(PennantAppUtil.formateAmount(getVariance(original, current), formatter));
 		decimalbox.setParent(row);
 
 		setRemarksBox(row, "LIABILITY");
@@ -512,7 +514,8 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 					decimalbox = getDecimalbox(currentField);
 					decimalbox.setParent(row);
-					decimalbox.setValue(getVariance(getDecimalValue(originalField), getDecimalValue(currentField)));
+					decimalbox.setValue(PennantAppUtil.formateAmount(
+							getVariance(getDecimalValue(originalField), getDecimalValue(currentField)), formatter));
 					setRemarksBox(row, collateralRef.concat("-").concat(currentField.getFieldName()));
 
 					break;
@@ -574,8 +577,8 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		decimalbox.setValue(current);
 		decimalbox.setParent(row);
 
-		decimalbox = getDecimalbox();
-		decimalbox.setValue(getVariance(original, current));
+		decimalbox = getDecimalboxWithScale();
+		decimalbox.setValue(PennantAppUtil.formateAmount(getVariance(original, current), formatter));
 		decimalbox.setParent(row);
 
 		setRemarksBox(row, "RECOMMENDEDAMTREMARKS");
@@ -588,7 +591,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		fieldName = fieldName.toUpperCase();
 		Textbox textbox = getTextbox();
 		textbox.setReadonly(false);
-		
+
 		textbox.setId(fieldName);
 		textbox.setParent(row);
 		textbox.setWidth("300px");
@@ -598,7 +601,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		if (value != null) {
 			textbox.setValue(value.toString());
 		}
-		
+
 		remarks.add(fieldName);
 	}
 
@@ -611,14 +614,15 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	}
 
 	private Decimalbox getDecimalbox(int ccyEditField) {
-		Decimalbox decimalbox = getDecimalbox();
+		Decimalbox decimalbox = getDecimalboxWithScale();
 		decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(ccyEditField));
 		decimalbox.setScale(ccyEditField);
 		return decimalbox;
 	}
 
-	private Decimalbox getDecimalbox() {
+	private Decimalbox getDecimalboxWithScale() {
 		Decimalbox decimalbox = new Decimalbox();
+		decimalbox.setScale(formatter);
 		decimalbox.setWidth("120px");
 		decimalbox.setReadonly(true);
 		return decimalbox;
@@ -823,8 +827,8 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		this.samplingResubmitReason.setConstraint("");
 		this.samplingFinalRcmdAmt.setConstraint("");
 
-		//((Textbox) row_income.getChildren().get(4)).setConstraint("");
-		//((Textbox) row_Obligation.getChildren().get(4)).setConstraint("");
+		// ((Textbox) row_income.getChildren().get(4)).setConstraint("");
+		// ((Textbox) row_Obligation.getChildren().get(4)).setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -841,8 +845,8 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		this.samplingResubmitReason.setErrorMessage("");
 		this.samplingFinalRcmdAmt.setErrorMessage("");
 
-		//((Textbox) row_income.getChildren().get(4)).setErrorMessage("");
-		//((Textbox) row_Obligation.getChildren().get(4)).setErrorMessage("");
+		// ((Textbox) row_income.getChildren().get(4)).setErrorMessage("");
+		// ((Textbox) row_Obligation.getChildren().get(4)).setErrorMessage("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -875,8 +879,8 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		}
 
 		setRemarksConstraint(this.samplingRemarks);
-		//setRemarksConstraint((Textbox) row_income.getChildren().get(4));
-		//setRemarksConstraint((Textbox) row_Obligation.getChildren().get(4));
+		// setRemarksConstraint((Textbox) row_income.getChildren().get(4));
+		// setRemarksConstraint((Textbox) row_Obligation.getChildren().get(4));
 
 		logger.debug(Literal.LEAVING);
 	}
