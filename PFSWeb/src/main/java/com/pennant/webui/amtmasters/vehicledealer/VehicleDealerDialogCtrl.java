@@ -296,6 +296,10 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.space_dealerPoBox.setSclass(PennantConstants.mandateSclass);
 			this.space_Code.setSclass("");
 		}
+
+		if (module.equals("DMA")) {
+			this.space_Code.setClass(PennantConstants.mandateSclass);
+		}
 		this.zipCode.setMaxlength(8);
 
 		this.emirates.setMandatoryStyle(true);
@@ -906,7 +910,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.dealerCity.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_DealerCity.value"), null, true));
 		}
-		if (module.equals("DSA")) {
+		if (module.equals("DSA") || module.equals("DMA")) {
 			if (!this.code.isReadonly()) {
 				this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_Code.value"),
 								PennantRegularExpressions.REGEX_SPECIAL_REGX, true));

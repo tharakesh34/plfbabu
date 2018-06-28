@@ -349,4 +349,26 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		}
 		return null;
 	}
+
+	@Override
+	public int getVehicleDealerByCode(String code, String dealerType, long id, String type) {
+		logger.debug("Entering");
+		VehicleDealer vehicleDealer = new VehicleDealer();
+
+		vehicleDealer.setDealerType(dealerType);
+		vehicleDealer.setDealerId(id);
+		vehicleDealer.setCode(code);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From AMTVehicleDealer");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where DealerType =:DealerType AND Code =:Code AND DealerId !=:DealerId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+
 }

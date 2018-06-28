@@ -456,12 +456,28 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 			}
 		}
 	
+		if (!StringUtils.trimToEmpty(vehicleDealer.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)
+				&& !StringUtils.trimToEmpty(method).equals(PennantConstants.method_doReject)
+				&& StringUtils.isNotBlank(vehicleDealer.getCode())) {
+			int cnt = getVehicleDealerDAO().getVehicleDealerByCode(vehicleDealer.getCode(),vehicleDealer.getDealerType(), vehicleDealer.getDealerId(), "_View");
+			if (cnt != 0) {
+				String[] errParmvendor = new String[1];
+				String[] valueParmvendor = new String[1];
+				valueParmvendor[0] = String.valueOf(vehicleDealer.getCode());
+
+				errParmvendor[0] = PennantJavaUtil.getLabel("label_Code") + ":" + valueParmvendor[0];
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParmvendor, valueParmvendor),
+						usrLanguage));
+			}
+		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
+
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !vehicleDealer.isWorkflow()) {
 			vehicleDealer.setBefImage(befVehicleDealer);
 		}
-
+		
+		
 		return auditDetail;
 	}
 

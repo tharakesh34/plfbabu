@@ -63,4 +63,6 @@ public interface VehicleDealerDAO {
 	int getVASManufactureCode(String dealerName, String type);
 
 	List<VehicleDealer> getVehicleDealerById(List<Long> ids);
+
+	int getVehicleDealerByCode(String code, String dealerType, long id, String type);
 }
