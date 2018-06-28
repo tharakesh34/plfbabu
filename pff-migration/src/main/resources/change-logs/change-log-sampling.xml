@@ -2141,4 +2141,83 @@
 			<where>workflowtype='SAMPLING' and workflowactive=1</where>
 		</update>
 	</changeSet>
+	<changeSet id="14.2" author="lakshmi.n">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[
+					<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test">
+				  	<process id="SAMPLING" name="Sampling Workflow" isExecutable="true">
+				    <documentation>Maker/Checker for Sampling Workflow</documentation>
+				    <startEvent id="startEvent1" name="Start"/>
+				    <userTask id="sid-842BAF5E-D6EC-4357-9B85-AFD8BA60C1CA" name="Maker" activiti:actor="SAMPLING_MAKER" activiti:assignmentLevel="Role Queue"/>
+				    <sequenceFlow id="sid-ADB1C9A5-5DDC-46C4-90CF-E42626B43E06" sourceRef="startEvent1" targetRef="sid-842BAF5E-D6EC-4357-9B85-AFD8BA60C1CA" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+				    <userTask id="sid-C34C75EB-8F24-48D1-A1AF-C3E33298F71D" name="Approver" activiti:actor="SAMPLING_APPROVER" activiti:assignmentLevel="Role Queue"/>
+				    <sequenceFlow id="sid-E83FA66D-DCA0-46D0-A041-7DA14B0D93DB" sourceRef="sid-C34C75EB-8F24-48D1-A1AF-C3E33298F71D" targetRef="sid-1EFC0B49-B876-4618-A538-BBDB7A1D4EBA" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+				    <exclusiveGateway id="sid-1EFC0B49-B876-4618-A538-BBDB7A1D4EBA"/>
+				    <serviceTask id="sid-2BA38EEB-9884-4B2E-9B9F-FBB7AFA27A3F" name="Complete Process" activiti:operation="doApprove" activiti:rerunnable="true"/>
+				    <endEvent id="sid-C9F1C5C3-FC6C-4B51-A1D8-40E3D0F409CB" name="Approved"/>
+				    <sequenceFlow id="sid-D246DCFB-E559-4479-B8FF-E1315A86F091" sourceRef="sid-2BA38EEB-9884-4B2E-9B9F-FBB7AFA27A3F" targetRef="sid-C9F1C5C3-FC6C-4B51-A1D8-40E3D0F409CB" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+				    <sequenceFlow id="sid-542D07C0-FECC-4AFD-B69E-555A8056AEC2" name="Resubmit" sourceRef="sid-1EFC0B49-B876-4618-A538-BBDB7A1D4EBA" targetRef="sid-842BAF5E-D6EC-4357-9B85-AFD8BA60C1CA" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true" captureReasons="false">
+				      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression>
+				    </sequenceFlow>
+				    <sequenceFlow id="sid-4057BBEA-8EF3-4483-BD8F-D2B75F87C08D" name="Approve" sourceRef="sid-1EFC0B49-B876-4618-A538-BBDB7A1D4EBA" targetRef="sid-2BA38EEB-9884-4B2E-9B9F-FBB7AFA27A3F" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false" captureReasons="false">
+				      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression>
+				    </sequenceFlow>
+				    <sequenceFlow id="sid-88AA5153-7ECF-444E-9C6F-2FEC9F012B79" name="Submit" sourceRef="sid-842BAF5E-D6EC-4357-9B85-AFD8BA60C1CA" targetRef="sid-C34C75EB-8F24-48D1-A1AF-C3E33298F71D" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
+				      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression>
+				    </sequenceFlow>
+				  </process>
+				  <bpmndi:BPMNDiagram id="BPMNDiagram_SAMPLING">
+				    <bpmndi:BPMNPlane bpmnElement="SAMPLING" id="BPMNPlane_SAMPLING">
+				      <bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1">
+				        <omgdc:Bounds height="30.0" width="30.0" x="100.0" y="163.0"/>
+				      </bpmndi:BPMNShape>
+				      <bpmndi:BPMNShape bpmnElement="sid-842BAF5E-D6EC-4357-9B85-AFD8BA60C1CA" id="BPMNShape_sid-842BAF5E-D6EC-4357-9B85-AFD8BA60C1CA">
+				        <omgdc:Bounds height="80.0" width="100.0" x="195.0" y="138.0"/>
+				      </bpmndi:BPMNShape>
+				      <bpmndi:BPMNShape bpmnElement="sid-C34C75EB-8F24-48D1-A1AF-C3E33298F71D" id="BPMNShape_sid-C34C75EB-8F24-48D1-A1AF-C3E33298F71D">
+				        <omgdc:Bounds height="80.0" width="100.0" x="390.0" y="138.0"/>
+				      </bpmndi:BPMNShape>
+				      <bpmndi:BPMNShape bpmnElement="sid-1EFC0B49-B876-4618-A538-BBDB7A1D4EBA" id="BPMNShape_sid-1EFC0B49-B876-4618-A538-BBDB7A1D4EBA">
+				        <omgdc:Bounds height="40.0" width="40.0" x="540.0" y="158.0"/>
+				      </bpmndi:BPMNShape>
+				      <bpmndi:BPMNShape bpmnElement="sid-2BA38EEB-9884-4B2E-9B9F-FBB7AFA27A3F" id="BPMNShape_sid-2BA38EEB-9884-4B2E-9B9F-FBB7AFA27A3F">
+				        <omgdc:Bounds height="80.0" width="100.0" x="660.0" y="138.0"/>
+				      </bpmndi:BPMNShape>
+				      <bpmndi:BPMNShape bpmnElement="sid-C9F1C5C3-FC6C-4B51-A1D8-40E3D0F409CB" id="BPMNShape_sid-C9F1C5C3-FC6C-4B51-A1D8-40E3D0F409CB">
+				        <omgdc:Bounds height="28.0" width="28.0" x="825.0" y="164.0"/>
+				      </bpmndi:BPMNShape>
+				      <bpmndi:BPMNEdge bpmnElement="sid-ADB1C9A5-5DDC-46C4-90CF-E42626B43E06" id="BPMNEdge_sid-ADB1C9A5-5DDC-46C4-90CF-E42626B43E06">
+				        <omgdi:waypoint x="130.0" y="178.0"/>
+				        <omgdi:waypoint x="195.0" y="178.0"/>
+				      </bpmndi:BPMNEdge>
+				      <bpmndi:BPMNEdge bpmnElement="sid-D246DCFB-E559-4479-B8FF-E1315A86F091" id="BPMNEdge_sid-D246DCFB-E559-4479-B8FF-E1315A86F091">
+				        <omgdi:waypoint x="760.0" y="178.0"/>
+				        <omgdi:waypoint x="825.0" y="178.0"/>
+				      </bpmndi:BPMNEdge>
+				      <bpmndi:BPMNEdge bpmnElement="sid-4057BBEA-8EF3-4483-BD8F-D2B75F87C08D" id="BPMNEdge_sid-4057BBEA-8EF3-4483-BD8F-D2B75F87C08D">
+				        <omgdi:waypoint x="579.5637583892617" y="178.43624161073825"/>
+				        <omgdi:waypoint x="660.0" y="178.16722408026754"/>
+				      </bpmndi:BPMNEdge>
+				      <bpmndi:BPMNEdge bpmnElement="sid-88AA5153-7ECF-444E-9C6F-2FEC9F012B79" id="BPMNEdge_sid-88AA5153-7ECF-444E-9C6F-2FEC9F012B79">
+				        <omgdi:waypoint x="295.0" y="178.0"/>
+				        <omgdi:waypoint x="390.0" y="178.0"/>
+				      </bpmndi:BPMNEdge>
+				      <bpmndi:BPMNEdge bpmnElement="sid-542D07C0-FECC-4AFD-B69E-555A8056AEC2" id="BPMNEdge_sid-542D07C0-FECC-4AFD-B69E-555A8056AEC2">
+				        <omgdi:waypoint x="560.5" y="158.5"/>
+				        <omgdi:waypoint x="560.5" y="71.0"/>
+				        <omgdi:waypoint x="245.0" y="71.0"/>
+				        <omgdi:waypoint x="245.0" y="138.0"/>
+				      </bpmndi:BPMNEdge>
+				      <bpmndi:BPMNEdge bpmnElement="sid-E83FA66D-DCA0-46D0-A041-7DA14B0D93DB" id="BPMNEdge_sid-E83FA66D-DCA0-46D0-A041-7DA14B0D93DB">
+				        <omgdi:waypoint x="490.0" y="178.20746887966806"/>
+				        <omgdi:waypoint x="540.4166666666666" y="178.41666666666666"/>
+				      </bpmndi:BPMNEdge>
+				    </bpmndi:BPMNPlane>
+				  </bpmndi:BPMNDiagram>
+				</definitions>
+			]]>
+			</column>
+			<where>workflowtype='SAMPLING' and workflowactive=1</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
