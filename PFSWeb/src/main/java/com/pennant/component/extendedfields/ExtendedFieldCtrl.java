@@ -151,6 +151,9 @@ public class ExtendedFieldCtrl {
 		}
 
 		Map<String, Object> map = null;
+		if (this.parentTab != null) {
+			generator.setParentTab(parentTab);
+		}
 		map = generator.doSave(this.extendedFieldHeader.getExtendedFieldDetails(), this.isReadOnly);
 		this.extendedFieldRender.setMapValues(map);
 		this.extendedFieldRender.setTypeCode(this.extendedFieldHeader.getSubModuleName());

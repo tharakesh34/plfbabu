@@ -155,6 +155,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private final String		DELIMETR_DOUBLE_BAR	= "\\|\\|";
 	private Row					row;
 	private Tab					topLevelTab;// To through wrong value exceptions
+	private Tab					parentTab;
 	private String				userRole;
 	private int					columnCount;
 	private String				defaultComponentWidth	= "250px";
@@ -1211,6 +1212,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			HashMap<ExtendedFieldDetail, List<WrongValueException>> data = groupByParentTab(wveMap, notInputElements);
 			//
 			if (data != null && !data.isEmpty()) {
+			
+				if (getParentTab() != null) {
+					getParentTab().setSelected(true);
+				}
+				
 				if (topLevelTab != null) {
 					topLevelTab.setSelected(true);
 				}
@@ -2581,6 +2587,14 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 	public void setUserRole(String userRole) {
 		this.userRole = userRole;
+	}
+
+	public Tab getParentTab() {
+		return parentTab;
+	}
+
+	public void setParentTab(Tab parentTab) {
+		this.parentTab = parentTab;
 	}
 
 	
