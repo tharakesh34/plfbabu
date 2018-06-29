@@ -766,4 +766,5 @@ public class PennantConstants {
 	
 	// Sampling Fields
 	public static final String SAMPLING_RESUBMIT_REASON = "SAMPLINGRR";
+	public static final String OTHER_BANK = "OTHER";
 }
