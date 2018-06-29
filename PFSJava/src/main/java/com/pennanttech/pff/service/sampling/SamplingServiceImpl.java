@@ -1315,9 +1315,9 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		return samplingDAO.isExist(finReference, type);
 	}
 
-	public void saveIncomesForSnap(long linkId, long samplingLinkId) {
-		List<CustomerIncome> originalList = incomeDetailDAO.getIncomes(linkId);
-		List<CustomerIncome> currentList = incomeDetailDAO.getIncomes(samplingLinkId);
+	public void saveIncomesForSnap(Sampling sampling) {
+		List<CustomerIncome> originalList = customerIncomeDAO.getIncomesByFinReference(sampling.getKeyReference());
+		List<CustomerIncome> currentList = customerIncomeDAO.getIncomesBySamplingId(sampling.getId());
 
 		List<CustomerIncome> currentNewList = new ArrayList<>(currentList);
 		for (CustomerIncome current : currentList) {
@@ -1333,8 +1333,8 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 					try {
 						incomeDetailDAO.update(current, "");
 						incomeDetailDAO.update(current, "_temp");
-
-						samplingDAO.setIncomeSnapLinkId(original);
+						
+						original.setLinkId(samplingDAO.getIncomeLinkId(sampling.getId(), original.getCustId()));
 						incomeDetailDAO.save(current, "");
 
 					} catch (Exception e) {

@@ -64,6 +64,9 @@ public interface CustomerIncomeDAO {
 
 	void setLinkId(CustomerIncome customerIncome);
 
+	List<CustomerIncome> getIncomesByFinReference(String finReference);
+
+	List<CustomerIncome> getIncomesBySamplingId(long samplingId);	
+
 	long getLinkId(long custId);
-	
 }

@@ -592,40 +592,37 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	}
 
 	@Override
-	public void setIncomeSnapLinkId(CustomerIncome income) {
+	public long getIncomeSnapLinkId(long samplingId, long custId) {
 		logger.debug(Literal.ENTERING);
 
-		long linkId = income.getLinkId();
+		long linkId = getIncomeSnapLink(samplingId, custId);
 
 		if (linkId > 0) {
-			return;
-		}
-
-		linkId = getIncomeSnapLinkId(income.getCustId());
-
-		if (linkId > 0) {
-			income.setLinkId(linkId);
-			return;
+			return linkId;
 		}
 
 		linkId = getNextValue(IncomeDetailDAOImpl.SEQUENCE_LINK);
 		StringBuilder sql = new StringBuilder();
-		sql.append("insert into link_sampling_incomes_snap values(:custId, :linkId)");
+		sql.append("insert into link_sampling_incomes_snap values(:samplingid, :custid, :linkid)");
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("custid", income.getCustId());
+		source.addValue("samplingid", samplingId);
+		source.addValue("custid", custId);
 		source.addValue("linkid", linkId);
-
 		this.jdbcTemplate.update(sql.toString(), source);
+
+		return linkId;
 	}
 
-	private long getIncomeSnapLinkId(long custId) {
+	private long getIncomeSnapLink(long samplingId, long custId) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select coalesce(max(linkid), 0) from link_sampling_incomes_snap where custid=:custid");
+		sql.append("select coalesce(max(linkid), 0) from link_sampling_incomes_snap");
+		sql.append(" where samplingid = :samplingid and custid=:custid");
 
 		long linkid = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("samplingid", samplingId);
 		source.addValue("custid", custId);
 		try {
 			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
@@ -724,7 +721,6 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		logger.debug(Literal.LEAVING);
 		return map;
 	}
-
 	public String getCollateralRef(Sampling sampling, String linkId, String inputSource) {
 		logger.debug(Literal.ENTERING);
 

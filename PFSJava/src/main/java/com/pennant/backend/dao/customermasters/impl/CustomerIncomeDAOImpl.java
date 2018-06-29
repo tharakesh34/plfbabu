@@ -339,4 +339,54 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		return linkid;
 	}
 	
+	@Override
+	public List<CustomerIncome> getIncomesByFinReference(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder query = new StringBuilder();
+		query.append("select * from customer_income_details_view ci");
+		query.append(" inner join");
+		query.append(" select custid, finreference from financemain_view");
+		query.append(" union all");
+		query.append(" select jointaccountid custid, finreference from finjointaccountdetails_view) fm");
+		query.append(" on fm.custid=ci.custid where fm.finreference = :finreference");
+
+		logger.trace(Literal.SQL + query.toString());
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("finReference", finReference);
+		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+
+		logger.debug(Literal.LEAVING);
+
+		try {
+			return this.jdbcTemplate.query(query.toString(), parameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			return new ArrayList<>();
+		}
+	}
+	
+	@Override
+	public List<CustomerIncome> getIncomesBySamplingId(long samplingId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder query = new StringBuilder();
+		query.append("select ci.* from customer_income_details_view ci");
+		query.append(" inner join link_sampling_incomes si on si.linkid = ci.linkid");
+		query.append( "where si.samplingid = :samplingid");
+
+		logger.trace(Literal.SQL + query.toString());
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("samplingid", samplingId);
+		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+
+		logger.debug(Literal.LEAVING);
+
+		try {
+			return this.jdbcTemplate.query(query.toString(), parameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			return new ArrayList<>();
+		}
+	}
 }
