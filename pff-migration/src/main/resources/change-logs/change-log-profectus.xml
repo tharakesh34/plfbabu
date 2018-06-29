@@ -567,7 +567,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="15" author="Vinay">
+	<changeSet id="17" author="Vinay">
 		<sql>
 			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
