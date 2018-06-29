@@ -334,7 +334,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private SamplingService samplingService;
 	@Autowired
 	private FinSamplingService finSamplingService;
-	@Autowired
+	
 	private LegalDetailService legalDetailService;
 
 	@Autowired(required = false)
