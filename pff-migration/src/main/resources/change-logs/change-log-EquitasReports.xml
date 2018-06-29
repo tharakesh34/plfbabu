@@ -853,4 +853,47 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 			          WHERE loanpurposes_temp.loanpurposecode = t1.loanpurposecode))
 	 	</createView>
 	 </changeSet>
+	 
+	 <changeSet id="42" author="Manoj">
+	 	<createView viewName="loanpurposes_aview" replaceIfExists="true">
+	 		 SELECT t1.loanpurposecode,
+		    t1.loanpurposedesc,
+		    t1.loanpurposeisactive,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		      t1.eligibleamount
+  			 FROM loanpurposes t1
+	 	</createView>
+	 </changeSet>
+	 
+	 <changeSet id="43" author="Manoj">
+	<sql> 	
+		delete from secrights where rightname in ('LoanPurposeDialog_EligibleAmount', 'LoanPurposeDialog_IsEligibleAmountVisible');
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LoanPurposeDialog_EligibleAmount',              'LoanPurposeDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LoanPurposeDialog_EligibleAmountVisible',              'LoanPurposeDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		Delete from SecGroupRights where rightid = (select rightid from secrights where rightname = 'LoanPurposeDialog_EligibleAmount');
+		INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'LOANPURPOSE_MAKER'), (SELECT RightID FROM SecRights where RightName = 'LoanPurposeDialog_EligibleAmount'), 1, 1, 1000, NULL,'Approved',' ',' ',' ',' ',' ', 0);
+		
+		Delete from SecGroups where grpcode = 'LoanPurposeDialog_EligibleAmountVisible';
+		INSERT INTO SecGroups Values ((select max(grpid)+1 from SecGroups), 	'LoanPurposeDialog_EligibleAmountVisible',        'Row visible for Loan Purpose', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		Delete from SecGroupRights where rightid = (select rightid from secrights where rightname = 'LoanPurposeDialog_EligibleAmountVisible');
+		INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'LoanPurposeDialog_EligibleAmountVisible'), (SELECT RightID FROM SecRights where RightName = 'LoanPurposeDialog_EligibleAmountVisible'), 1, 1, 1000, NULL,'Approved',' ',' ',' ',' ',' ', 0);
+  </sql>
+	 </changeSet>
+	 
+	 <changeSet id="44" author="Manoj">
+	 	<sql>
+	 		update loanpurposes set eligibleamount =  0
+	 		update loanpurposes_temp set eligibleamount =  0
+	 	</sql>
+	 </changeSet>
 </databaseChangeLog>
