@@ -6680,5 +6680,324 @@ UNION ALL
 			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_DmsDocumentDetails','MENU',0,1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
 		</sql>
 	</changeSet>
+	<changeSet id="165" author="vijaykumar.l">
+  <sql>
+    UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM	SECRIGHTS);
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT	MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+	
+ 	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'CustomerExtLiabilityDialog_OtherName','CustomerExtLiabilityDialog',0,1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+	INSERT INTO  SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_OtherName'), 1,0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CustomerExtLiability_Maker'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_OtherName'), 1,0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_OtherName'), 1,0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	
+	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM	SECRIGHTS);
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT	MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+
+   </sql>
+</changeSet>	
+	<changeSet id="166" author="vijaykumar.l"> 
+	<comment> added column otherName </comment>
+		<addColumn tableName="external_liabilities">
+	        <column name="otherName"  type="varchar(50)"/>
+	    </addColumn>
+	</changeSet>
+ <changeSet id="167" author="vijaykumar.l">
+ <comment> added column otherName </comment>
+		<addColumn tableName="external_liabilities_temp">
+	        <column name="otherName"  type="varchar(50)"/>
+	    </addColumn>
+	 </changeSet>
+	
+	<changeSet id="168" author="vijaykumar.l">
+	<comment> added column otherName </comment>
+	 	<createView viewName="external_liabilities_aview" replaceIfExists="true">
+	 		 SELECT el.id,
+    el.linkid,
+    el.seqno,
+    el.fintype,
+    el.findate,
+    el.loanbank,
+    el.rateofinterest,
+    el.tenure,
+    el.originalamount,
+    el.instalmentamount,
+    el.outstandingbalance,
+    el.balancetenure,
+    el.bounceinstalments,
+    el.principaloutstanding,
+    el.overdueamount,
+    el.finstatus,
+    el.foir,
+    el.source,
+    el.checkedby,
+    el.securitydetails,
+    el.loanpurpose,
+    el.repaybank,
+    el.version,
+    el.lastmntby,
+    el.lastmnton,
+    el.recordstatus,
+    el.rolecode,
+    el.nextrolecode,
+    el.taskid,
+    el.nexttaskid,
+    el.recordtype,
+    el.workflowid,
+    lb.bankname AS loanbankname,
+    ft.fintypedesc,
+    cs.custstsdescription,
+    lb.bankname AS repayfrombankname,
+    lp.loanpurposedesc,
+	el.otherName
+   FROM external_liabilities el
+     JOIN bmtbankdetail lb ON lb.bankcode = el.loanbank
+     JOIN otherbankfinancetype ft ON ft.fintype = el.fintype
+     JOIN loanpurposes lp ON lp.loanpurposecode = el.loanpurpose
+     JOIN bmtbankdetail rb ON rb.bankcode = el.repaybank
+     LEFT JOIN bmtcuststatuscodes cs ON cs.custstscode = el.finstatus
+	 	</createView>
+	 </changeSet>
+	 
+	 <changeSet id="169" author="vijaykumar.l">
+	 <comment> added column otherName </comment>
+	 	<createView viewName="external_liabilities_view" replaceIfExists="true">
+SELECT el.id,
+    el.linkid,
+    el.seqno,
+    el.fintype,
+    el.findate,
+    el.loanbank,
+    el.rateofinterest,
+    el.tenure,
+    el.originalamount,
+    el.instalmentamount,
+    el.outstandingbalance,
+    el.balancetenure,
+    el.bounceinstalments,
+    el.principaloutstanding,
+    el.overdueamount,
+    el.finstatus,
+    el.foir,
+    el.source,
+    el.checkedby,
+    el.securitydetails,
+    el.loanpurpose,
+    el.repaybank,
+    el.version,
+    el.lastmntby,
+    el.lastmnton,
+    el.recordstatus,
+    el.rolecode,
+    el.nextrolecode,
+    el.taskid,
+    el.nexttaskid,
+    el.recordtype,
+    el.workflowid,
+    lb.bankname AS loanbankname,
+    ft.fintypedesc,
+    cs.custstsdescription,
+    lb.bankname AS repayfrombankname,
+    lp.loanpurposedesc,
+	el.otherName
+   FROM external_liabilities_temp el
+     JOIN bmtbankdetail lb ON lb.bankcode = el.loanbank
+     JOIN otherbankfinancetype ft ON ft.fintype = el.fintype
+     JOIN loanpurposes lp ON lp.loanpurposecode = el.loanpurpose
+     JOIN bmtbankdetail rb ON rb.bankcode = el.repaybank
+     LEFT JOIN bmtcuststatuscodes cs ON cs.custstscode = el.finstatus
+UNION ALL
+ SELECT el.id,
+    el.linkid,
+    el.seqno,
+    el.fintype,
+    el.findate,
+    el.loanbank,
+    el.rateofinterest,
+    el.tenure,
+    el.originalamount,
+    el.instalmentamount,
+    el.outstandingbalance,
+    el.balancetenure,
+    el.bounceinstalments,
+    el.principaloutstanding,
+    el.overdueamount,
+    el.finstatus,
+    el.foir,
+    el.source,
+    el.checkedby,
+    el.securitydetails,
+    el.loanpurpose,
+    el.repaybank,
+    el.version,
+    el.lastmntby,
+    el.lastmnton,
+    el.recordstatus,
+    el.rolecode,
+    el.nextrolecode,
+    el.taskid,
+    el.nexttaskid,
+    el.recordtype,
+    el.workflowid,
+    lb.bankname AS loanbankname,
+    ft.fintypedesc,
+    cs.custstsdescription,
+    lb.bankname AS repayfrombankname,
+    lp.loanpurposedesc,
+	el.otherName
+   FROM external_liabilities el
+     JOIN bmtbankdetail lb ON lb.bankcode = el.loanbank
+     JOIN otherbankfinancetype ft ON ft.fintype = el.fintype
+     JOIN loanpurposes lp ON lp.loanpurposecode= el.loanpurpose
+     JOIN bmtbankdetail rb ON rb.bankcode = el.repaybank
+     LEFT JOIN bmtcuststatuscodes cs ON cs.custstscode = el.finstatus
+	 	</createView>
+	 </changeSet>
+	 
+	<changeSet id="170" author="vijaykumar.l">
+	<comment> added column otherName </comment>
+	 	<createView viewName="customer_ext_liabilities_view" replaceIfExists="true">
+	 	SELECT el.id,
+    el.linkid,
+    el.seqno,
+    el.fintype,
+    el.findate,
+    el.loanbank,
+    el.rateofinterest,
+    el.tenure,
+    el.originalamount,
+    el.instalmentamount,
+    el.outstandingbalance,
+    el.balancetenure,
+    el.bounceinstalments,
+    el.principaloutstanding,
+    el.overdueamount,
+    el.finstatus,
+    el.foir,
+    el.source,
+    el.checkedby,
+    el.securitydetails,
+    el.loanpurpose,
+    el.repaybank,
+    el.version,
+    el.lastmntby,
+    el.lastmnton,
+    el.recordstatus,
+    el.rolecode,
+    el.nextrolecode,
+    el.taskid,
+    el.nexttaskid,
+    el.recordtype,
+    el.workflowid,
+    el.loanbankname,
+    el.fintypedesc,
+    el.custstsdescription,
+    el.repayfrombankname,
+    el.loanpurposedesc,
+    cu.custid,
+    cu.custcif,
+    cu.custshrtname,
+	el.othername
+   FROM external_liabilities_view el
+     JOIN link_cust_liabilities cl ON cl.linkid = el.linkid
+     JOIN customers cu ON cu.custid = cl.custid
+UNION ALL
+ SELECT el.id,
+    el.linkid,
+    el.seqno,
+    el.fintype,
+    el.findate,
+    el.loanbank,
+    el.rateofinterest,
+    el.tenure,
+    el.originalamount,
+    el.instalmentamount,
+    el.outstandingbalance,
+    el.balancetenure,
+    el.bounceinstalments,
+    el.principaloutstanding,
+    el.overdueamount,
+    el.finstatus,
+    el.foir,
+    el.source,
+    el.checkedby,
+    el.securitydetails,
+    el.loanpurpose,
+    el.repaybank,
+    el.version,
+    el.lastmntby,
+    el.lastmnton,
+    el.recordstatus,
+    el.rolecode,
+    el.nextrolecode,
+    el.taskid,
+    el.nexttaskid,
+    el.recordtype,
+    el.workflowid,
+    el.loanbankname,
+    el.fintypedesc,
+    el.custstsdescription,
+    el.repayfrombankname,
+    el.loanpurposedesc,
+    cu.custid,
+    cu.custcif,
+    cu.custshrtname,
+	el.othername
+   FROM external_liabilities_aview el
+     JOIN link_cust_liabilities cl ON cl.linkid = el.linkid
+     JOIN customers cu ON cu.custid = cl.custid
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM external_liabilities_view
+          WHERE external_liabilities_view.linkid = el.linkid))
+	 	</createView>
+	</changeSet>
+<changeSet id="171" author="vijaykumar.l">
+<comment> added column otherName </comment>
+	<createView viewName="customer_ext_liabilities_aview" replaceIfExists="true">
+	SELECT el.id,
+    el.linkid,
+    el.seqno,
+    el.fintype,
+    el.findate,
+    el.loanbank,
+    el.rateofinterest,
+    el.tenure,
+    el.originalamount,
+    el.instalmentamount,
+    el.outstandingbalance,
+    el.balancetenure,
+    el.bounceinstalments,
+    el.principaloutstanding,
+    el.overdueamount,
+    el.finstatus,
+    el.foir,
+    el.source,
+    el.checkedby,
+    el.securitydetails,
+    el.loanpurpose,
+    el.repaybank,
+    el.version,
+    el.lastmntby,
+    el.lastmnton,
+    el.recordstatus,
+    el.rolecode,
+    el.nextrolecode,
+    el.taskid,
+    el.nexttaskid,
+    el.recordtype,
+    el.workflowid,
+    el.loanbankname,
+    el.fintypedesc,
+    el.custstsdescription,
+    el.repayfrombankname,
+    el.loanpurposedesc,
+    cl.custid,
+    cu.custcif,
+    cu.custshrtname,
+	el.othername
+   FROM external_liabilities_aview el
+     JOIN link_cust_liabilities cl ON cl.linkid = el.linkid
+     JOIN customers cu ON cu.custid = cl.custid
+	</createView>
+	</changeSet>
 </databaseChangeLog>
 	

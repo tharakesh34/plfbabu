@@ -116,6 +116,15 @@
 									value="${c:l('label_CustomerExtLiabilityDialog_BankName.value')}" />
 								<extendedcombobox id="bankName"/>
 							</row>
+							<row>
+								<label
+									id="label_CustomerExtLiabilityDialog_Other"
+									value="${c:l('label_CustomerExtLiabilityDialog_Other.value')}" />
+								<hbox>
+									<space id="space_Other" spacing="2px" />
+									<textbox id="otherName"  width="180px"/>
+								</hbox>
+							</row>
 					
 							<row>
 								<label
