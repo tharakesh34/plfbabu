@@ -625,7 +625,7 @@
 	<changeSet id="19" author="Vinay">
 		<sql>
 			delete from ERRORDETAILS where code='FPH001';
-			Insert into ERRORDETAILS values ('FPH001','EN','E','Atleast one Collateral of type:PROPERY should be assigned',null,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);
+			Insert into ERRORDETAILS values ('FPH001','EN','E','Atleast one Collateral of type:PROPERTY should be assigned',null,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
 </databaseChangeLog>
