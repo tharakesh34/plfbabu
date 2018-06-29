@@ -44,10 +44,9 @@
 package com.pennant.backend.model.finance;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-
-import com.pennant.backend.model.finance.AgreementDetail.ExtendedDetail;
 
 public class AgreementDetail {
 
@@ -6929,5 +6928,16 @@ private String custAccount ="";
 
 	public void setOtherList(List<ExtendedDetail> otherList) {
 		this.otherList = otherList;
+	}
+	
+	private Map<String,String> otherMap;
+
+
+	public Map<String, String> getOtherMap() {
+		return otherMap;
+	}
+
+	public void setOtherMap(Map<String, String> otherMap) {
+		this.otherMap = otherMap;
 	}
 }

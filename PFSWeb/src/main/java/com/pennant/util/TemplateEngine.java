@@ -240,7 +240,7 @@ public class  TemplateEngine {
 
 						collection = null;
 					} else if (value instanceof Map<?, ?>) {
-						//
+						mapFields((Map<String, String>) value);
 					} else {
 						fields.add(field);
 						values.add(value);

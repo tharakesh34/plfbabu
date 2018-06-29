@@ -1149,6 +1149,34 @@ public class AgreementGeneration implements Serializable {
 				agreement.getOtherList().add(agreement.new ExtendedDetail());
 			}
 			
+			
+			Map<String, String> otherMap = new HashMap<>();
+			if (CollectionUtils.isNotEmpty(agreement.getExtendedDetails())) {
+				for (ExtendedDetail extendedDetail : agreement.getExtendedDetails()) {
+					if (null != extendedDetail) {
+						if (StringUtils.isNotBlank(extendedDetail.getKey())) {
+							switch (extendedDetail.getFieldType()) {
+							case "CUSTOMER":
+								otherMap.put("CUST_EXT_" + extendedDetail.getKey(), extendedDetail.getValue());
+								break;
+
+							case "COLLATERAL":
+								otherMap.put("COLL_EXT_" + extendedDetail.getKey(), extendedDetail.getValue());
+								break;
+
+							case "LOAN":
+								otherMap.put("LOAN_EXT_" + extendedDetail.getKey(), extendedDetail.getValue());
+								break;
+							}
+							otherMap.put(extendedDetail.getKey(), extendedDetail.getValue());
+						}
+					}
+				}
+			}
+			
+			agreement.setOtherMap(otherMap);
+			
+			
 		} catch (Exception e) {
 			logger.debug(e);
 		}
