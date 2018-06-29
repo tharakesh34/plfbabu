@@ -621,5 +621,12 @@
 			Insert into ERRORDETAILS values ('30704','EN','E','{0} Already had one Email with {1}.',null,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="19" author="Vinay">
+		<sql>
+			delete from ERRORDETAILS where code='FPH001';
+			Insert into ERRORDETAILS values ('FPH001','EN','E','Atleast one Collateral of type:PROPERY should be assigned',null,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
