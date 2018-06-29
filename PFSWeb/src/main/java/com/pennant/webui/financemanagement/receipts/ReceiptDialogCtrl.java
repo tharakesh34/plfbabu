@@ -639,9 +639,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.bounceCode.setValueColumn("BounceID");
 		// ### 10-05-2018 - PSD 126950
 		this.bounceCode.setValueType(DataType.LONG);
-		this.bounceCode.setDescColumn("BounceCode");
+		this.bounceCode.setDescColumn("Reason");
 		this.bounceCode.setDisplayStyle(2);
-		this.bounceCode.setValidateColumns(new String[] { "BounceID" , "BounceCode", "Category", "Reason" });
+		this.bounceCode.setValidateColumns(new String[] { "BounceID" , "BounceCode", "Lovdesccategory", "Reason" });
 
 		this.bounceCharge.setProperties(false , formatter);
 		this.bounceRemarks.setMaxlength(100);

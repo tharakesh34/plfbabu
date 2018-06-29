@@ -403,9 +403,9 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.bounceCode.setMandatoryStyle(true);
 		this.bounceCode.setValueColumn("BounceID");	
 		this.bounceCode.setValueType(DataType.LONG);
-		this.bounceCode.setDescColumn("BounceCode");
+		this.bounceCode.setDescColumn("Reason");
 		this.bounceCode.setDisplayStyle(2);
-		this.bounceCode.setValidateColumns(new String[] { "BounceID" , "BounceCode", "Category", "Reason" });
+		this.bounceCode.setValidateColumns(new String[] { "BounceID" , "BounceCode", "Lovdesccategory", "Reason" });
 		
 		this.bounceCharge.setProperties(false , formatter);
 		this.bounceRemarks.setMaxlength(100);
