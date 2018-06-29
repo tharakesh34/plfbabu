@@ -30,7 +30,7 @@
 		</sql>
 	</changeSet>
 
-	<!-- <changeSet id="1" author="Vinay">
+	<changeSet id="1" author="Vinay">
 		<sql>
 			alter table SeqJVPostingEntry  drop constraint seqjvpostingentry_pkey;
 		</sql>
@@ -50,7 +50,7 @@
 			delete from ERRORDETAILS where code='CV001';
 			Insert into ERRORDETAILS values ('CV001','EN','E','Pending covanents to be uploaded before submit.',null,'Approved',null,null,null,null,null,0,null,1000,0);
 		</sql>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="4" author="Vinay">
 		<sql>
@@ -612,6 +612,13 @@
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 			UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="18" author="Vinay">
+		<sql>
+			delete from ErrorDetails where code='30704';
+			Insert into ERRORDETAILS values ('30704','EN','E','{0} Already had one Email with {1}.',null,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
 </databaseChangeLog>
