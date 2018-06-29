@@ -203,8 +203,12 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 				String prvString = "";
 				Map<String, Object> mapoldData = creditInterfaceDao.getExtendedField(customer.getCustCIF(),
 						tableName.toString());
+				
 				if (mapoldData != null && mapoldData.containsKey("cibilRequest")) {
-					prvString = mapoldData.get("cibilRequest").toString();
+					Object data = mapoldData.get("cibilRequest");
+					if (data!=null) {
+						prvString = data.toString();
+					}
 				}
 
 				if (StringUtils.equals(prvString, builder) && !override) {
