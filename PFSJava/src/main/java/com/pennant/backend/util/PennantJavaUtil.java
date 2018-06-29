@@ -270,6 +270,12 @@ import com.pennant.backend.model.interfacemapping.InterfaceFields;
 import com.pennant.backend.model.interfacemapping.InterfaceMapping;
 import com.pennant.backend.model.interfacemapping.MasterMapping;
 import com.pennant.backend.model.inventorysettlement.InventorySettlement;
+import com.pennant.backend.model.legal.LegalApplicantDetail;
+import com.pennant.backend.model.legal.LegalDetail;
+import com.pennant.backend.model.legal.LegalECDetail;
+import com.pennant.backend.model.legal.LegalNote;
+import com.pennant.backend.model.legal.LegalPropertyDetail;
+import com.pennant.backend.model.legal.LegalPropertyTitle;
 import com.pennant.backend.model.limit.LimitDetails;
 import com.pennant.backend.model.limit.LimitGroup;
 import com.pennant.backend.model.limit.LimitGroupLines;
@@ -434,6 +440,7 @@ public class PennantJavaUtil {
 	private final static String WF_VERIFICATION_RCU="VERIFICATION_RCU";
 	private final static String PRESENTMENT_BATCH="PRESENTMENTBATCH";
 	private final static String GST_WF="GSTDETAILS";
+	private final static String LEGAL_DETAILS="LEGAL_DETAILS";
 	private final static String costCenters_WF="COSTCENTERS";
 	private final static String profitCenters_WF="PROFITCENTERS";
 	private final static String transactionCodes_WF="TRANSACTIONCODES";
@@ -2304,6 +2311,29 @@ public class PennantJavaUtil {
 					
 		ModuleUtil.register("GSTInvoiceReport", new ModuleMapping("GSTInvoiceReport", GSTInvoiceTxn.class, new String[] { "GST_Invoice_Txn",
 		"GST_Invoice_Txn" }, null, new String[] {"InvoiceNo","LoanAccountNo"}, null, 600));
+		
+		/*Legal Details*/
+		ModuleUtil.register("LegalDetail", new ModuleMapping("LegalDetail", LegalDetail.class, new String[] { "LegalDetails",
+		"LegalDetails_AView" }, LEGAL_DETAILS, new String[] {"LoanReference","CollaterialReference","Branch","LegalDate","SchedulelevelArea","LegalDecision"},null, 600));
+		
+		ModuleUtil.register("LegalApplicantDetail", new ModuleMapping("LegalApplicantDetail", LegalApplicantDetail.class, new String[] { "LegalApplicantDetails",
+		"LegalApplicantDetails_AView" }, null, new String[] {"Title"},null, 600));
+		
+		ModuleUtil.register("LegalPropertyDetail", new ModuleMapping("LegalPropertyDetail", LegalPropertyDetail.class, new String[] { "LegalPropertyDetails",
+		"LegalPropertyDetails_AView" }, null, new String[] {"ScheduleType"},null, 600));
+		
+		ModuleUtil.register("LegalDocument", new ModuleMapping("LegalDocument", LegalDetail.class, new String[] { "LegalDocuments",
+		"LegalDocuments_AView" }, null, new String[] {"DocumentDate"},null, 600));
+		
+		ModuleUtil.register("LegalPropertyTitle", new ModuleMapping("LegalPropertyTitle", LegalPropertyTitle.class, new String[] { "LegalPropertyTitle",
+		"LegalPropertyTitle_AView" }, null, new String[] {"Title"},null, 600));
+		
+		ModuleUtil.register("LegalECDetail", new ModuleMapping("LegalECDetail", LegalECDetail.class, new String[] { "LegalECDetails",
+		"LegalECDetails_AView" }, null, new String[] {"EcDate"},null, 600));
+		
+		ModuleUtil.register("LegalNote", new ModuleMapping("LegalNote", LegalNote.class, new String[] { "LegalNotes",
+		"LegalNotes_AView" }, null, new String[] {"Code"},null, 600));
+		
 
 		// Sampling
 		ModuleUtil.register("Sampling", new ModuleMapping("Sampling", Sampling.class,

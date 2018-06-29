@@ -75,6 +75,7 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	private String documentDetail;
 	private String documentName;
 	private String documentNo;
+	private String uploadDocumentType;
 	private String surveyNo;
 	private String documentType;
 	private String documentTypeMakerName;
@@ -342,6 +343,14 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 
 	public void setDocumentName(String documentName) {
 		this.documentName = documentName;
+	}
+
+	public String getUploadDocumentType() {
+		return uploadDocumentType;
+	}
+
+	public void setUploadDocumentType(String uploadDocumentType) {
+		this.uploadDocumentType = uploadDocumentType;
 	}
 
 }

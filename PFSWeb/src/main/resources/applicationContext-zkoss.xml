@@ -5336,6 +5336,41 @@
 	parent="basisCtrl" scope="prototype">
 </bean>
 
+	<!-- LegalDetail -->
+	<bean id="legalDetailListCtrl" class="com.pennant.webui.legal.legaldetail.LegalDetailListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="legalDetailService" ref="legalDetailService" />
+	</bean>
+	<bean id="legalDetailDialogCtrl" class="com.pennant.webui.legal.legaldetail.LegalDetailDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="legalDetailService" ref="legalDetailService" />
+		<property name="eventManager" ref="eventManager" />
+	</bean>
+	
+	<!-- LegalPropertyDetail -->
+	<bean id="legalPropertyDetailDialogCtrl" class="com.pennant.webui.legal.legalpropertydetail.LegalPropertyDetailDialogCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
+	<bean id="legalDocumentDialogCtrl" class="com.pennant.webui.legal.legaldocument.LegalDocumentDialogCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	<!-- LegalApplicantDetail -->
+	<bean id="legalApplicantDetailDialogCtrl" class="com.pennant.webui.legal.legalapplicantdetail.LegalApplicantDetailDialogCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
+	
+		
+	<!-- LegalPropertyTitle -->
+	<bean id="legalPropertyTitleDialogCtrl" class="com.pennant.webui.legal.legalpropertytitle.LegalPropertyTitleDialogCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	<!-- LegalECDetail -->
+	<bean id="legalECDetailDialogCtrl" class="com.pennant.webui.legal.legalecdetail.LegalECDetailDialogCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
+	
+		<!-- LegalNote -->
+	<bean id="legalNoteDialogCtrl" class="com.pennant.webui.legal.legalnote.LegalNoteDialogCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
+		<!-- legalDecisionDialog -->
+	<bean id="legalDecisionDialogCtrl" class="com.pennant.webui.legal.legalecdetail.LegalDecisionDialogCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
+	
 <!--============ Sampling ============== -->
 	<bean id="samplingListCtrl" class="com.pennant.webui.sampling.SamplingListCtrl" parent="basisListCtrl" scope="prototype"/>
 	

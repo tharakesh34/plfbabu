@@ -11476,6 +11476,94 @@
 		class="com.pennanttech.pennapps.pff.finsampling.dao.FinSamplingDAOImpl"
 		parent="sequenceDao" />
 
+	<!-- LegalDetail -->
+	<bean id="legalDetailDAO" class="com.pennant.backend.dao.legal.impl.LegalDetailDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="legalDetailService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager"> <ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="legalDetailServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="legalDetailServiceTarget"
+		class="com.pennant.backend.service.legal.impl.LegalDetailServiceImpl">
+		<property name="legalDetailDAO" ref="legalDetailDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
+		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
+		<property name="legalApplicantDetailService" ref="legalApplicantDetailService" />
+		<property name="legalPropertyDetailService" ref="legalPropertyDetailService" />
+		<property name="legalDocumentService" ref="legalDocumentService" />
+		<property name="legalPropertyTitleService" ref="legalPropertyTitleService" />
+		<property name="legalECDetailService" ref="legalECDetailService" />
+		<property name="legalNoteService" ref="legalNoteService" />
+	</bean>
+
+	<!-- LegallApplicantDetail -->
+	<bean id="legalApplicantDetailService"  class="com.pennant.backend.service.legal.impl.LegalApplicantDetailService">
+       <property name="legalApplicantDetailDAO" ref="legalApplicantDetailDAO" />
+   </bean>
+	<bean id="legalApplicantDetailDAO" class="com.pennant.backend.dao.legal.impl.LegalApplicantDetailDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- LegalPropertyDetail -->
+	<bean id="legalPropertyDetailDAO" class="com.pennant.backend.dao.legal.impl.LegalPropertyDetailDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="legalPropertyDetailService"  class="com.pennant.backend.service.legal.impl.LegalPropertyDetailService">
+       <property name="legalPropertyDetailDAO" ref="legalPropertyDetailDAO" />
+   </bean>
+ 
+ 	<!-- LegalDocument -->
+	<bean id="legalDocumentDAO" class="com.pennant.backend.dao.legal.impl.LegalDocumentDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+ 	<bean name="legalDocumentService" class="com.pennant.backend.service.legal.impl.LegalDocumentService">
+       <property name="legalDocumentDAO" ref="legalDocumentDAO" />
+       <property name="documentManagerDAO" ref="documentManagerDAO" />
+   </bean>
+ 
+ 	<!-- legalPropertyTitle -->
+ 	<bean id="legalPropertyTitleDAO" class="com.pennant.backend.dao.legal.impl.LegalPropertyTitleDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+ 	<bean name="legalPropertyTitleService" class="com.pennant.backend.service.legal.impl.LegalPropertyTitleService">
+       <property name="legalPropertyTitleDAO" ref="legalPropertyTitleDAO" />
+   </bean>
+   
+   	<!-- LegalECDetail -->
+	<bean id="legalECDetailDAO" class="com.pennant.backend.dao.legal.impl.LegalECDetailDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+ 	<bean name="legalECDetailService" class="com.pennant.backend.service.legal.impl.LegalECDetailService">
+       <property name="legalECDetailDAO" ref="legalECDetailDAO" />
+   </bean>
+   
+   	<!-- LegalNote -->
+	<bean id="legalNoteDAO" class="com.pennant.backend.dao.legal.impl.LegalNoteDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+ 	<bean name="legalNoteService" class="com.pennant.backend.service.legal.impl.LegalNoteService">
+       <property name="legalNoteDAO" ref="legalNoteDAO" />
+   </bean>
+   
 	<bean id="finSamplingService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">

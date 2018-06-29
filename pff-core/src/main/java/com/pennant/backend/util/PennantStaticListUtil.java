@@ -3407,5 +3407,72 @@ public class PennantStaticListUtil {
 	public void OverideBranchTypeList(ArrayList<ValueLabel> branchType){
 		this.branchType=branchType;
 	}
-	
+
+	private static ArrayList<ValueLabel> documentTypesList;
+	private static ArrayList<ValueLabel> documentAcceptedList;
+	private static ArrayList<ValueLabel> propertyTypes;
+	private static ArrayList<ValueLabel> scheduleTypes;
+	private static ArrayList<ValueLabel> decisionsList;
+
+	public static ArrayList<ValueLabel> getDocumentTypes() {
+		if (documentTypesList == null) {
+			documentTypesList = new ArrayList<ValueLabel>(4);
+			documentTypesList.add(new ValueLabel("O", Labels.getLabel("label_Legal_DocumentType_Original")));
+			documentTypesList.add(new ValueLabel("P", Labels.getLabel("label_Legal_DocumentType_Photocopy")));
+			documentTypesList.add(new ValueLabel("C", Labels.getLabel("label_Legal_DocumentType_CertifiedCopy")));
+			documentTypesList.add(new ValueLabel("T", Labels.getLabel("label_Legal_DocumentType_TrueCopy")));
+		}
+		return documentTypesList;
+	}
+
+	public static ArrayList<ValueLabel> getDocumentAcceptedList() {
+		if (documentAcceptedList == null) {
+			documentAcceptedList = new ArrayList<ValueLabel>(3);
+			documentAcceptedList = getYesNo();
+			documentAcceptedList.add(new ValueLabel("NQ", Labels.getLabel("common.NotRequired")));
+		}
+		return documentAcceptedList;
+	}
+
+	public static ArrayList<ValueLabel> getLegalPropertyTypes() {
+		if (propertyTypes == null) {
+			propertyTypes = new ArrayList<ValueLabel>(7);
+			propertyTypes.add(new ValueLabel("RESPLOT", Labels.getLabel("label_Legal_LegalProperty_ResPlot")));
+			propertyTypes.add(new ValueLabel("INDPLOT", Labels.getLabel("label_Legal_LegalProperty_IndPlot")));
+			propertyTypes.add(new ValueLabel("COMPLOT", Labels.getLabel("label_Legal_LegalProperty_ComPlot")));
+			propertyTypes
+					.add(new ValueLabel("RESHOUSEPLOT", Labels.getLabel("label_Legal_LegalProperty_ResHousePlot")));
+			propertyTypes.add(new ValueLabel("COMUNIT", Labels.getLabel("label_Legal_LegalProperty_ComUnit")));
+			propertyTypes.add(new ValueLabel("ROWHOUSE", Labels.getLabel("label_Legal_LegalProperty_RowHouse")));
+			propertyTypes.add(new ValueLabel("BUNVILLA", Labels.getLabel("label_Legal_LegalProperty_BunVilla")));
+		}
+		return propertyTypes;
+	}
+
+	public static ArrayList<ValueLabel> getScheduleTypes() {
+		if (scheduleTypes == null) {
+			scheduleTypes = new ArrayList<ValueLabel>();
+			scheduleTypes.add(new ValueLabel("1", Labels.getLabel("label_Legal_LegalSchedule_Type1")));
+			scheduleTypes.add(new ValueLabel("2", Labels.getLabel("label_Legal_LegalSchedule_Type2")));
+			scheduleTypes.add(new ValueLabel("3", Labels.getLabel("label_Legal_LegalSchedule_Type3")));
+			scheduleTypes.add(new ValueLabel("4", Labels.getLabel("label_Legal_LegalSchedule_Type4")));
+			scheduleTypes.add(new ValueLabel("5", Labels.getLabel("label_Legal_LegalSchedule_Type5")));
+			scheduleTypes.add(new ValueLabel("6", Labels.getLabel("label_Legal_LegalSchedule_Type6")));
+			scheduleTypes.add(new ValueLabel("7", Labels.getLabel("label_Legal_LegalSchedule_Type7")));
+			scheduleTypes.add(new ValueLabel("8", Labels.getLabel("label_Legal_LegalSchedule_Type8")));
+			scheduleTypes.add(new ValueLabel("9", Labels.getLabel("label_Legal_LegalSchedule_Type9")));
+			scheduleTypes.add(new ValueLabel("10", Labels.getLabel("label_Legal_LegalSchedule_Type10")));
+		}
+		return scheduleTypes;
+	}
+
+	public static ArrayList<ValueLabel> getDecisionList() {
+		if (decisionsList == null) {
+			decisionsList = new ArrayList<ValueLabel>(3);
+			decisionsList.add(new ValueLabel("p", Labels.getLabel("label_Legal_LegalDecision_Positive")));
+			decisionsList.add(new ValueLabel("N", Labels.getLabel("label_Legal_LegalDecision_Negative")));
+			decisionsList.add(new ValueLabel("RS", Labels.getLabel("label_Legal_LegalDecision_Resubmit")));
+		}
+		return decisionsList;
+	}
 }

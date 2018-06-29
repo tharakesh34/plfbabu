@@ -69,6 +69,7 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private String legalReference;
 	private String loanReference;
 	private BigDecimal finAmount = BigDecimal.ZERO;
+	private String finCcy;
 	private String collateralReference;
 	private String branch;
 	private String branchDesc;
@@ -102,6 +103,7 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("propertyDetailList");
 		excludeFields.add("documentList");
 		excludeFields.add("finAmount");
+		excludeFields.add("finCcy");
 		excludeFields.add("customer");
 		excludeFields.add("propertyTitleList");
 		excludeFields.add("ecdDetailsList");
@@ -360,6 +362,14 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setBranchDesc(String branchDesc) {
 		this.branchDesc = branchDesc;
+	}
+
+	public String getFinCcy() {
+		return finCcy;
+	}
+
+	public void setFinCcy(String finCcy) {
+		this.finCcy = finCcy;
 	}
 
 	 

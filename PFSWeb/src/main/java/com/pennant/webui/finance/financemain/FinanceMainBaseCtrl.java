@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - Pennant Technologies
+f * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -13305,13 +13305,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			legalRequiredRow.setVisible(true);
 		} else {
 			legalRequiredRow.setVisible(false);
-		}
-		
-		/**
-		 * Disabling Legal required filed when Legal already available
-		 */
-		if (financeMain.isLegalRequired()) {
-			legalRequired.setDisabled(true);
 		}
 		
 		logger.debug("Leaving");

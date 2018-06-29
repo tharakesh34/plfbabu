@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	 <changeSet id="pre_run_for_pgp1" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1.0" author="DurgaPrasad G">
+		<createTable tableName="AdtLegalDetails">
+			<column name="auditid" type="bigint">
+				<constraints nullable="false" primaryKey="true"/>			
+			</column>
+			<column name="auditdate" type="datetime">
+				<constraints nullable="false" primaryKey="true"/>	
+			</column>
+			<column name="auditseq" type="int">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="auditimage" type="varchar(10)">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="LegalId" type="bigint"/>
+			<column name="LegalReference" type="varchar(20)" />
+			<column name="LoanReference" type="varchar(20)" />
+			<column name="CollateralReference" type="varchar(20)" />
+			<column name="Branch" type="varchar(8)" />
+			<column name="LegalDate" type="datetime" />
+			<column name="SchedulelevelArea" type="varchar(2000)" />
+			<column name="LegalDecision" type="varchar(20)" />
+			<column name="LegalRemarks" type="varchar(3000)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	 
+	
+	<changeSet id="2.0" author="DurgaPrasad G">
+		<createTable tableName="AdtLegalApplicantDetails">
+		   <column name="auditid" type="bigint">
+				<constraints nullable="false" primaryKey="true"/>			
+			</column>
+			<column name="auditdate" type="datetime">
+				<constraints nullable="false" primaryKey="true"/>	
+			</column>
+			<column name="auditseq" type="int">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="auditimage" type="varchar(10)">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="LegalApplicantId" type="bigint"/>
+			<column name="LegalId" type="bigint"/>
+			<column name="Title" type="varchar(20)" />
+			<column name="PropertyOwnersName" type="varchar(50)" />
+			<column name="Age" type="int" />
+			<column name="Relationshiptype" type="varchar(50)" />
+			<column name="IDtype" type="varchar(50)" />
+			<column name="IDNo" type="varchar(20)" />
+			<column name="Remarks" type="varchar(3000)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	  
+	
+	
+	<changeSet id="3.0" author="DurgaPrasad G">
+		<createTable tableName="AdtLegalPropertyDetails">
+			<column name="auditid" type="bigint">
+				<constraints nullable="false" primaryKey="true"/>			
+			</column>
+			<column name="auditdate" type="datetime">
+				<constraints nullable="false" primaryKey="true"/>	
+			</column>
+			<column name="auditseq" type="int">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="auditimage" type="varchar(10)">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="LegalPropertyId" type="bigint"/>
+			<column name="LegalId" type="bigint"/>
+			<column name="ScheduleType" type="varchar(20)" />
+			<column name="PropertySchedule" type="varchar(3000)" />
+			<column name="PropertyType" type="varchar(50)" />
+			<column name="NorthBy" type="varchar(100)" />
+			<column name="SouthBy" type="varchar(100)" />
+			<column name="EastBy" type="varchar(100)" />
+			<column name="WestBy" type="varchar(100)" />
+			<column name="Measurement" type="decimal(18,0)" />
+			<column name="Registrationoffice" type="varchar(200)" />
+			<column name="RegistrationDistrict" type="varchar(100)" />
+			<column name="PropertyOwner" type="varchar(1000)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="4.0" author="DurgaPrasad G">
+		<createTable tableName="AdtLegalDocuments">
+			<column name="auditid" type="bigint">
+				<constraints nullable="false" primaryKey="true"/>			
+			</column>
+			<column name="auditdate" type="datetime">
+				<constraints nullable="false" primaryKey="true"/>	
+			</column>
+			<column name="auditseq" type="int">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="auditimage" type="varchar(10)">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="LegalId" type="bigint"/>
+			<column name="LegalDocumentId" type="bigint" />
+			<column name="DocumentDate" type="datetime" />
+			<column name="DocumentDetail" type="varchar(3000)" />
+			<column name="DocumentNo" type="varchar(20)" />
+			<column name="SurveyNo" type="varchar(3000)" />
+			<column name="DocumentType" type="varchar(10)" />
+			<column name="DocumentCategory" type="varchar(50)" />
+			<column name="ScheduleType" type="varchar(20)" />
+			<column name="DocumentName" type="varchar(100)" />
+			<column name="DocumentReference" type="bigint" />
+			<column name="DocumentRemarks" type="varchar(3000)" />
+			<column name="DocumentTypeVerify" type="varchar(20)" />
+			<column name="DocumentTypeApprove" type="varchar(20)" />
+			<column name="DocumentAccepted" type="varchar(10)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="5" author="Durgaprasad G">
+		<addColumn tableName="AdtLegalDetails">
+			<column name="PropertyDetailModt" type="varchar(3000)"/>
+			<column name="PropertyDetailECDate" type="datetime"/>
+			<column name="EcPropertyOwnerName" type="varchar(3000)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="6" author="DurgaPrasad G">
+		<createTable tableName="AdtLegalPropertyTitle">
+			<column name="auditid" type="bigint">
+				<constraints nullable="false" primaryKey="true"/>			
+			</column>
+			<column name="auditdate" type="datetime">
+				<constraints nullable="false" primaryKey="true"/>	
+			</column>
+			<column name="auditseq" type="int">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="auditimage" type="varchar(10)">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="LegalPropertyTitleId" type="bigint"/>
+			<column name="LegalId" type="bigint"/>
+			<column name="Title" type="varchar(3000)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="7" author="DurgaPrasad G">
+		<createTable tableName="AdtLegalECDetails">
+			<column name="auditid" type="bigint">
+				<constraints nullable="false" primaryKey="true"/>			
+			</column>
+			<column name="auditdate" type="datetime">
+				<constraints nullable="false" primaryKey="true"/>	
+			</column>
+			<column name="auditseq" type="int">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="auditimage" type="varchar(10)">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="legalECId" type="bigint"/>
+			<column name="LegalId" type="bigint"/>
+			<column name="ECDate" type="datetime"/>
+			<column name="document" type="varchar(1000)"/>
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="8" author="DurgaPrasad G">
+		<createTable tableName="AdtLegalNotes">
+			<column name="auditid" type="bigint">
+				<constraints nullable="false" primaryKey="true"/>			
+			</column>
+			<column name="auditdate" type="datetime">
+				<constraints nullable="false" primaryKey="true"/>	
+			</column>
+			<column name="auditseq" type="int">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="auditimage" type="varchar(10)">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="LegalNoteId" type="bigint"/>
+			<column name="LegalId" type="bigint"/>
+			<column name="Code" type="varchar(20)"/>
+			<column name="Description" type="varchar(1000)"/>
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="9" author="DurgaPrasad G">
+		<addColumn tableName="adtfinancemain">
+			<column name="legalrequired" type="smallint" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="10" author="Durgaprasad">
+		 <addColumn tableName="AdtLegalDetails">
+		 	<column name="Active" type="int"/>
+		 </addColumn>
+	</changeSet>
+	
+	<changeSet id="11" author="Durgaprasad">
+		<modifyDataType tableName="AdtLegalDetails" columnName="Branch" newDataType="varchar(12)"/>
+	</changeSet>
+	
+	<changeSet id="12" author="Durgaprasad">
+		<modifyDataType tableName="AdtLegalDetails" columnName="active" newDataType="smallint"/>
+	</changeSet>
+	
+	<changeSet id="13" author="DurgaPrasad G">
+		<addColumn tableName="AdtLegalDocuments">
+			<column name="uploadDocumentType" type="varchar(10)"/>
+		</addColumn>
+	</changeSet>
+</databaseChangeLog>

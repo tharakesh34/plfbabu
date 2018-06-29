@@ -91,7 +91,7 @@ public class PTListValidator implements Constraint{
 		}
 		compValue = StringUtils.trimToNull(compValue);
 		
-		if (compValue==null || StringUtils.trim(compValue).equals(PennantConstants.List_Select) ) {
+		if (compValue == null || PennantConstants.List_Select.equals(compValue) || Labels.getLabel("Combo.Select").equals(compValue)) {
 			if(isMandatory()){
 				return Labels.getLabel("FIELD_IS_MAND", new String[] {fieldParm});	
 			}else{
