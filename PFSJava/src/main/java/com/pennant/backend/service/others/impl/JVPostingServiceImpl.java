@@ -424,7 +424,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 					getPostingsDAO().saveBatch(list);
 					auditHeader.setErrorList(errorDetails);
 				}
-			} catch (InterfaceException e) {
+			} catch (Exception e) {
 				postingSuccess = false;
 				logger.error("Exception: ", e);
 			}
@@ -448,8 +448,12 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				// Regular Approving Process moving total Batch into main table
 				// and remove from Temp Table.
 				approveRecords(auditHeader, jVPosting);
-
+				//### 29-06-2018 Start - PSD Ticket ID 127014
+			}else{
+				auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+						"Invalid accounting configuration, please contact administrator", null));
 			}
+			//### 29-06-2018 END - PSD Ticket ID 127014
 		}
 		// Logic for posting threads creation
 		return auditHeader;
