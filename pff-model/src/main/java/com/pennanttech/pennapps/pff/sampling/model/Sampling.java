@@ -1,7 +1,6 @@
 package com.pennanttech.pennapps.pff.sampling.model;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;

@@ -4400,7 +4400,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 						custExtLiability.getBefImage(), custExtLiability));
 			}
-			externalLiabilityDAO.delete(custExtLiability.getLinkId(), tableType);
+			externalLiabilityDAO.delete(custExtLiability.getId(), tableType);
 		}
 
 		// Extended field Render Details.

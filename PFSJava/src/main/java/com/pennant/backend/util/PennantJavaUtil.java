@@ -2337,7 +2337,7 @@ public class PennantJavaUtil {
 
 		// Sampling
 		ModuleUtil.register("Sampling", new ModuleMapping("Sampling", Sampling.class,
-				new String[] { "Sampling", "Sampling_view" }, sampling_WF, null, null, 600));
+				new String[] { "Sampling", "Sampling_view" }, sampling_WF, new String[] {"FinReference"}, null, 600));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

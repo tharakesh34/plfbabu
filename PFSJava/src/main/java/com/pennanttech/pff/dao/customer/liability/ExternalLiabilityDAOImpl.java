@@ -93,16 +93,16 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 	}
 
 	@Override
-	public void delete(Long linkId, String type) {
+	public void delete(Long id, String type) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder(" delete from external_liabilities");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" where linkid =:id");
+		sql.append(" where id =:id");
 		logger.trace(Literal.ENTERING + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("id", linkId);
+		source.addValue("id", id);
 		int recordCount = 0;
 		try {
 			recordCount = this.jdbcTemplate.update(sql.toString(), source);

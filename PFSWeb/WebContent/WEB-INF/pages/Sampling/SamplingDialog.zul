@@ -103,9 +103,9 @@
 												    <hbox>	
 												    <label id="loanType"
 												    	style="font-weight:bold;" />
-												   <!--  <a
+												   <a
 												    	id="userActivityLog" 
-												    	label="Activity Log" style="padding-left:100px;" /> -->
+												    	label="Activity Log" style="padding-left:100px;" />
 												    </hbox>	
 											</row>
 											<row id="row1" height="24px">

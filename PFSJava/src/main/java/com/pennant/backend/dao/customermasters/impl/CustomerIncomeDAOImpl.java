@@ -234,6 +234,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		}
 
 		linkId = getNextValue(IncomeDetailDAOImpl.SEQUENCE_LINK);
+		customerIncome.setLinkId(linkId);
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into link_cust_incomes values(:custid, :linkid)");
 		logger.trace(Literal.SQL + sql.toString());

@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -69,9 +70,10 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -333,7 +335,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		this.branch.setValue(sampling.getBranchCode()+" - "+sampling.getBranchDesc());
 		this.loanAmtReq.setValue(sampling.getLoanAmountRequested().toString());
 		this.tenure.setValue(String.valueOf(sampling.getNumberOfTerms()));
-		this.samplingDate.setValue(DateUtil.getDatePart((sampling.getCreatedOn())).toString());
+		this.samplingDate.setValue(DateUtil.format(sampling.getCreatedOn(), DateFormat.SHORT_DATE));
 		if ("F".equals(sampling.getFinGrcRateType())) {
 			this.roi.setValue(PennantAppUtil.amountFormate(sampling.getRepaySpecialRate(),ccyFormatter));
 		} else {
@@ -353,7 +355,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		appendCoApplicantDetailTab();
 
-	    //appendQueryModuleTab();
+	  //  appendQueryModuleTab();
 
 		logger.debug(Literal.LEAVING);
 
@@ -438,6 +440,35 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		}
 	}
 	
+	public void onClick$userActivityLog(Event event) throws Exception {
+		logger.debug("Entering" +event.toString());
+		doUserActivityLog();
+		logger.debug("Leaving" +event.toString());
+	}
+	
+	private void doUserActivityLog() throws Exception {
+		logger.debug(Literal.ENTERING);
+		
+		
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+
+		map.put("label_SamplingDialog_LoanNo.value", this.sampling.getKeyReference());
+		map.put("label_SamplingDialog_LoanType.value", this.sampling.getFinType());
+		map.put("label_SamplingDialog_Branch.value", sampling.getBranchCode());
+		map.put("label_SamplingDialog_LoanAmtReq.value",  this.sampling.getLoanAmountRequested());
+		map.put("label_SamplingDialog_Tenure.value", this.sampling.getNumberOfTerms());
+		map.put("label_SamplingDialog_samplingDate.value", this.sampling.getCreatedOn());
+		if ("F".equals(sampling.getFinGrcRateType())) {
+			map.put("label_SamplingDialog_ROI.value", PennantAppUtil.amountFormate(this.sampling.getRepaySpecialRate(),ccyFormatter));
+		} else {
+			map.put("label_SamplingDialog_ROI.value", PennantAppUtil.amountFormate(this.sampling.getRepayProfitRate(),ccyFormatter));
+		}
+
+		doShowActivityLog(this.sampling.getKeyReference(), map);
+		
+		logger.debug("Leaving ");
+	}
+	
 	/**
 	 * View The Collateral Details
 	 */
@@ -455,7 +486,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 					map);
 		}
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClickViewAddress(ForwardEvent event) {
@@ -734,7 +765,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		arrayList.add(4, this.sampling.getBranchDesc()); 
 		arrayList.add(5, this.sampling.getLoanAmountRequested()); 
 		arrayList.add(6, this.sampling.getNumberOfTerms());
-		arrayList.add(7, this.sampling.getCreatedOn());
+		arrayList.add(7, DateUtil.format(this.sampling.getCreatedOn(),DateFormat.SHORT_DATE));
 		if ("F".equals(sampling.getFinGrcRateType())) {
 			arrayList.add(8, PennantAppUtil.amountFormate(this.sampling.getRepaySpecialRate(),ccyFormatter));
 		} else {
