@@ -29,10 +29,10 @@
 								tooltiptext="${c:l('btnEdit.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<!-- <button id="btnDelete"
+							<button id="btnDelete"
 								tooltiptext="${c:l('btnDelete.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" /> -->
+								sclass="z-toolbarbutton" />
 							<button id="btnSave"
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
@@ -91,77 +91,49 @@
 											<column width="35%" />
 										</columns>
 										<rows>
-											<row id="row0">
-												<label id="label_LoanNo"
-													value="${c:l('label_SamplingDialog_LoanNo.value')}" />
-												<hbox>
-													<space
-														id="space_LoanNo" spacing="2px" />
-													<textbox id="loanNo"
-														width="155px" readonly="true" />
-												</hbox>
-												<label
-													id="label_LoanType"
-													value="${c:l('label_SamplingDialog_LoanType.value')}" />
-												<hbox>
-													<space
-														id="space_LoanType" spacing="2px" />
-													<textbox
-														id="loanType" width="155px" readonly="true" />
-													<label id="finDesc"
-														style="margin-left:10px;display:inline-block;padding-top:3px;" />
-												</hbox>
+											<row id="row0" height="24px">
+												    <label
+												    	id="label_LoanNo"
+												    	value="${c:l('label_SamplingDialog_LoanNo.value')}" />
+												    <label id="loanNo"
+												    	style="font-weight:bold;" />
+												    <label
+												    	id="label_LoanType"
+												    	value="${c:l('label_SamplingDialog_LoanType.value')}" />
+												    <hbox>	
+												    <label id="loanType"
+												    	style="font-weight:bold;" />
+												   <!--  <a
+												    	id="userActivityLog" 
+												    	label="Activity Log" style="padding-left:100px;" /> -->
+												    </hbox>	
 											</row>
-											<row id="row1">
+											<row id="row1" height="24px">
 												<label id="label_Branch"
 													value="${c:l('label_SamplingDialog_Branch.value')}" />
-												<hbox>
-													<space
-														id="space_Branch" spacing="2px" />
-													<textbox id="branch"
-														width="155px" readonly="true" />
-													<label
-														id="branchDesc"
-														style="margin-left:10px;display:inline-block;padding-top:3px;" />
-												</hbox>
+												<label id="branch"
+													style="font-weight:bold;" />
 												<label
 													id="label_LoanAmtReq"
 													value="${c:l('label_SamplingDialog_LoanAmtReq.value')}" />
-												<hbox>
-													<space
-														id="space_LoanAmtReq" spacing="2px" />
-													<decimalbox
-														id="loanAmtReq" width="155px" readonly="true" />
-												</hbox>
+												<label id="loanAmtReq" style="font-weight:bold;" />
 											</row>
-											<row id="row2">
+											<row id="row2" height="24px">
 												<label id="label_Tenure"
 													value="${c:l('label_SamplingDialog_Tenure.value')}" />
-												<hbox>
-													<space
-														id="space_Tenure" spacing="2px" />
-													<intbox id="tenure"
-														width="155px" readonly="true" />
-												</hbox>
+												<label id="tenure"
+													style="font-weight:bold;" />
 												<label
 													id="label_SamplingDate"
 													value="${c:l('label_SamplingDialog_samplingDate.value')}" />
-												<hbox>
-													<space
-														id="space_SamplingDate" spacing="2px" />
-													<datebox
-														id="samplingDate" width="155px" disabled="true" />
-												</hbox>
+												<label id="samplingDate"
+													style="font-weight:bold;" />
 											</row>
-											<row id="row3">
+											<row id="row3" height="24px">
 												<label id="label_ROI"
 													value="${c:l('label_SamplingDialog_ROI.value')}" />
-												<hbox>
-													<space
-														id="space_ROI" spacing="2px" />
-													<decimalbox id="roi"
-														width="155px" readonly="true" />
-												</hbox>
+													
+												<label id="roi" style="font-weight:bold;" />
 											</row>
 										</rows>
 									</grid>
@@ -312,9 +284,6 @@
 											<listheader
 												id="listheader_CollateralReference"
 												label="${c:l('listheader_CollateralReference.label')}"/>
-											<listheader
-												id="listheader_CollateralCcy"
-												label="${c:l('listheader_CollateralCcy.label')}"/>
 											<listheader
 												id="listheader_CollateralType"
 												label="${c:l('listheader_CollateralType.label')}"/>

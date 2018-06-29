@@ -28,19 +28,18 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
@@ -55,7 +54,10 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -67,6 +69,7 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -90,15 +93,14 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	protected Button btnNew_CustomerIncome;
 	protected Button btnNew_Obligation;
 
-	protected Textbox loanNo;
-	protected Textbox loanType;
-	protected Label finDesc;
-	protected Textbox branch;
-	protected Label branchDesc;
-	protected Decimalbox loanAmtReq;
-	protected Intbox tenure;
-	protected Datebox samplingDate;
-	protected Decimalbox roi;
+	protected Label loanNo;
+	protected Label loanType;
+	protected Label branch;
+	protected Label loanAmtReq;
+	protected Label tenure;
+	protected Label samplingDate;
+	protected Label roi;
+	protected A userActivityLog;
 
 	protected Intbox loanTenure;
 	protected Decimalbox interestRate;
@@ -128,7 +130,10 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	private transient SamplingService samplingService;
 	@Autowired
 	private transient CustomerAddresService customerAddresService;
-
+	@Autowired
+	private FinanceDetailService			financeDetailService;
+	@Autowired
+	private transient CollateralSetupService collateralSetupService;
 	private Map<String, ExtendedFieldRender> extFieldRenderList;
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
 	private Set<String> primaryCustomer = new HashSet<>();
@@ -221,14 +226,14 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
 
-		/*
-		 * this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNew"));
-		 * this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnEdit"));
-		 * this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnDelete"));
-		 * this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnSave"));
-		 * this.btnNew_CustomerIncome.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNew"));
-		 * this.btnNew_Obligation.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNew"));
-		 */
+		
+		  this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNew"));
+		  this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnEdit"));
+		  this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnDelete"));
+		  this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnSave"));
+		  this.btnNew_CustomerIncome.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNewIncomeDetails"));
+		  this.btnNew_Obligation.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNewObligationDetails"));
+		 
 		this.btnCancel.setVisible(false);
 
 		logger.debug(Literal.LEAVING);
@@ -292,10 +297,10 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			this.btnCancel.setVisible(true);
 		}
 
-		/*
-		 * readOnlyComponent(isReadOnly("SamplingDialog_LoanTenure"), this.loanTenure);
-		 * readOnlyComponent(isReadOnly("SamplingDialog_interestRate"), this.interestRate);
-		 */
+		
+		  readOnlyComponent(isReadOnly("SamplingDialog_LoanTenure"), this.loanTenure);
+		  readOnlyComponent(isReadOnly("SamplingDialog_InterestRate"), this.interestRate);
+		 
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -324,17 +329,15 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		doFillExtendedFileds(sampling.getExtFieldRenderList());
 
 		this.loanNo.setValue(sampling.getKeyReference());
-		this.loanType.setValue(sampling.getFinType());
-		this.finDesc.setValue(sampling.getFinTypeDesc());
-		this.branch.setValue(sampling.getBranchCode());
-		this.branchDesc.setValue(sampling.getBranchDesc());
-		this.loanAmtReq.setValue(sampling.getLoanAmountRequested());
-		this.tenure.setValue(sampling.getNumberOfTerms());
-		this.samplingDate.setValue(sampling.getCreatedOn());
+		this.loanType.setValue(sampling.getFinType()+" - "+sampling.getFinTypeDesc());
+		this.branch.setValue(sampling.getBranchCode()+" - "+sampling.getBranchDesc());
+		this.loanAmtReq.setValue(sampling.getLoanAmountRequested().toString());
+		this.tenure.setValue(String.valueOf(sampling.getNumberOfTerms()));
+		this.samplingDate.setValue(DateUtil.getDatePart((sampling.getCreatedOn())).toString());
 		if ("F".equals(sampling.getFinGrcRateType())) {
-			this.roi.setValue(sampling.getRepaySpecialRate());
+			this.roi.setValue(PennantAppUtil.amountFormate(sampling.getRepaySpecialRate(),ccyFormatter));
 		} else {
-			this.roi.setValue(sampling.getRepayProfitRate());
+			this.roi.setValue(PennantAppUtil.amountFormate(sampling.getRepayProfitRate(),ccyFormatter));
 		}
 		this.finAmtReq.setValue(sampling.getLoanAmountRequested());
 		this.loanTenure.setValue(sampling.getTenure());
@@ -348,11 +351,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		appendCustomerDetailTab();
 
-		// appendCoApplicantDetailTab();
+		appendCoApplicantDetailTab();
 
-		// appendCollateralDetailTab();
-
-		// appendQueryModuleTab();
+	    //appendQueryModuleTab();
 
 		logger.debug(Literal.LEAVING);
 
@@ -370,13 +371,17 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 				lc = new Listcell(collateralSetup.getDepositorCif());
 				lc.setParent(item);
-
+				
 				lc = new Listcell(collateralSetup.getCollateralRef());
+				Space space = new Space();
+				space.setSpacing("6px");
+				Button collRef = new Button();
+				collRef.setImage("/images/icons/more.png");
+				collRef.addForward("onClick", self, "onClickCollateralReference", collateralSetup);
+				lc.appendChild(space);
+				lc.appendChild(collRef);
 				lc.setParent(item);
-
-				lc = new Listcell(collateralSetup.getCollateralCcy());
-				lc.setParent(item);
-
+				
 				lc = new Listcell(collateralSetup.getCollateralType());
 				lc.setParent(item);
 				item.setAttribute("data", collateralSetup);
@@ -431,6 +436,26 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			}
 
 		}
+	}
+	
+	/**
+	 * View The Collateral Details
+	 */
+	public void onClickCollateralReference(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+		CollateralSetup collSetup = (CollateralSetup) event.getData();
+
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		CollateralSetup collateralSetup = collateralSetupService
+				.getCollateralSetupByRef(collSetup.getCollateralRef(), "", true);
+		if (collateralSetup != null) {
+			map.put("collateralSetup", collateralSetup);
+			map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
+			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul", null,
+					map);
+		}
+
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onClickViewAddress(ForwardEvent event) {
@@ -693,6 +718,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getHeaderBasicDetails());
 		map.put("isNotFinanceProcess", true);
+		map.put("ccyFormatter",ccyFormatter);
+		map.put("enquiry", true);
 		map.put("moduleName", CollateralConstants.SAMPLING_MODULE);
 		return map;
 	}
@@ -702,14 +729,16 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		
 	    arrayList.add(0, this.sampling.getKeyReference()); 
 	    arrayList.add(1, this.sampling.getFinType()); 
-		arrayList.add(2, this.sampling.getBranchCode());
-		arrayList.add(3, this.sampling.getLoanAmountRequested()); 
-		arrayList.add(4, this.sampling.getNumberOfTerms());
-		arrayList.add(5, this.sampling.getCreatedOn());
+	    arrayList.add(2, this.sampling.getFinTypeDesc()); 
+		arrayList.add(3, this.sampling.getBranchCode());
+		arrayList.add(4, this.sampling.getBranchDesc()); 
+		arrayList.add(5, this.sampling.getLoanAmountRequested()); 
+		arrayList.add(6, this.sampling.getNumberOfTerms());
+		arrayList.add(7, this.sampling.getCreatedOn());
 		if ("F".equals(sampling.getFinGrcRateType())) {
-			arrayList.add(6, this.sampling.getRepaySpecialRate());
+			arrayList.add(8, PennantAppUtil.amountFormate(this.sampling.getRepaySpecialRate(),ccyFormatter));
 		} else {
-			arrayList.add(6, this.sampling.getRepayProfitRate());
+			arrayList.add(8, PennantAppUtil.amountFormate(this.sampling.getRepayProfitRate(),ccyFormatter));
 		}
 		return arrayList;
 	}
@@ -815,22 +844,12 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	protected void appendCoApplicantDetailTab() {
 		logger.debug(Literal.ENTERING);
 		createTab("COAPPLICANT", true);
+		FinScheduleData finScheduleData = financeDetailService.getFinSchDataById(this.sampling.getKeyReference(), "_View",true);
 		final HashMap<String, Object> map = getDefaultArguments();
-		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
+		//map.put("finScheduleData", finScheduleData);
+		map.put("financeMain", finScheduleData.getFinanceMain());
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/JointAccountDetailDialog.zul",
 				getTabpanel("COAPPLICANT"), map);
-		logger.debug(Literal.LEAVING);
-
-	}
-
-	/**
-	 * Method for Rendering Customer Details Data in Sampling
-	 */
-	protected void appendCollateralDetailTab() {
-		logger.debug(Literal.ENTERING);
-		createTab("COLLATERAL", true);
-		final HashMap<String, Object> map = getDefaultArguments();
-		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
-				getTabpanel("COLLATERAL"), map);
 		logger.debug(Literal.LEAVING);
 
 	}
@@ -842,7 +861,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.ENTERING);
 		createTab("QUERYMODULE", true);
 		final HashMap<String, Object> map = getDefaultArguments();
-		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
+		Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailDialog.zul",
 				getTabpanel("QUERYMODULE"), map);
 		logger.debug(Literal.LEAVING);
 

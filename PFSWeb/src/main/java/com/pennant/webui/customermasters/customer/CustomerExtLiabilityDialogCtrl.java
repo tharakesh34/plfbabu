@@ -418,7 +418,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("CustomerExtLiabilityDialog", userRole);
+		getUserWorkspace().allocateAuthorities(this.pageRightName, userRole);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerExtLiabilityDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerExtLiabilityDialog_btnEdit"));
@@ -455,8 +455,11 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		List<Filter> filtersList=new ArrayList<Filter>();
 		Filter filter =null;
 		if (arguments.containsKey("samplingDialogCtrl")) {
-			//List<String> custCif = customerIncomeService.getCustomerCif(finReference);
-			filter = new Filter("custcif", coApplicants.toArray(new String[0]), Filter.OP_IN);
+			if (!coApplicants.isEmpty()) {
+				filter = new Filter("custcif", coApplicants.toArray(new String[0]), Filter.OP_IN);
+			} else {
+				filter = new Filter("custcif", "", Filter.OP_EQUAL);
+			}
 		} else {
 			filter = new Filter("lovDescCustCtgType", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_EQUAL);
 		}
@@ -779,7 +782,9 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		logger.debug(Literal.ENTERING);
 		// this.reason.setErrorMessage("");
 		String type = this.custType.getSelectedItem().getValue();
-		visibleComponent(Integer.parseInt(type));
+		if (type != "#") {
+			visibleComponent(Integer.parseInt(type));
+		}
 		logger.debug(Literal.LEAVING);
 	}
 

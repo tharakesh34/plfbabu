@@ -441,6 +441,7 @@ public class PennantJavaUtil {
 	private final static String acnTypes_WF="ACNTYPES";
 	private final static String acntingSet_WF="ACNTINGSET";
 	private final static String hostGLMapping_WF="HOSTGLMAPPING";
+	private final static String sampling_WF="SAMPLING";
 
 	public static String getLabel(String label) {
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
@@ -2306,7 +2307,7 @@ public class PennantJavaUtil {
 
 		// Sampling
 		ModuleUtil.register("Sampling", new ModuleMapping("Sampling", Sampling.class,
-				new String[] { "Sampling", "Sampling_view" }, masterWF, null, null, 600));
+				new String[] { "Sampling", "Sampling_view" }, sampling_WF, null, null, 600));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

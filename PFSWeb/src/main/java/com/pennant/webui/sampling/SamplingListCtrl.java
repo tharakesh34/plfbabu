@@ -108,8 +108,6 @@ public class SamplingListCtrl extends GFCBaseListCtrl<Sampling> {
 		registerField("finType", listheader_LoanType, SortOrder.ASC, loanType,
 				sortOperator_LoanType, Operators.STRING);
 
-		/*registerField("loanType", listheader_LoanType, SortOrder.NONE, loanType, sortOperator_LoanType,
-				Operators.STRING);*/
 		// Render the page and display the data.
 		doRenderPage();
 		search();

@@ -163,12 +163,12 @@ public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.label_ROI.setValue(Labels.getLabel("label_SamplingDialog_ROI.value"));
 			
 			this.loanNo.setValue(String.valueOf(finHeaderList.get(0)));
-			this.loanType.setValue(String.valueOf(finHeaderList.get(1)));
-			this.branch.setValue(String.valueOf(finHeaderList.get(2)));
-			this.loanAmtReq.setValue(String.valueOf(finHeaderList.get(3)));
-			this.tenure.setValue(String.valueOf(finHeaderList.get(4)));
-			this.samplingDate.setValue(String.valueOf(finHeaderList.get(5)));
-			this.roi.setValue(String.valueOf(finHeaderList.get(6)));
+			this.loanType.setValue(String.valueOf(finHeaderList.get(1)+" - "+finHeaderList.get(2)));
+			this.branch.setValue(String.valueOf(finHeaderList.get(3)+" - "+finHeaderList.get(4)));
+			this.loanAmtReq.setValue(String.valueOf(finHeaderList.get(5)));
+			this.tenure.setValue(String.valueOf(finHeaderList.get(6)));
+			this.samplingDate.setValue(String.valueOf(finHeaderList.get(7)));
+			this.roi.setValue(String.valueOf(finHeaderList.get(8)));
 		}
 
 		logger.debug("Leaving");

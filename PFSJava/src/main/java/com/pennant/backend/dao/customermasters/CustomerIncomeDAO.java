@@ -63,5 +63,7 @@ public interface CustomerIncomeDAO {
 	int getVersion(CustomerIncome customerIncome);
 
 	void setLinkId(CustomerIncome customerIncome);
+
+	long getLinkId(long custId);
 	
 }

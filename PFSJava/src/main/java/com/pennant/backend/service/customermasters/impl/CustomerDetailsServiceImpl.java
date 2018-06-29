@@ -3459,6 +3459,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				customerIncome.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
+				customerIncomeDAO.setLinkId(customerIncome);
 				incomeDetailDAO.save(customerIncome, type);
 			}
 
@@ -4333,11 +4334,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			
 			for (int i = 0; i < custDetails.getCustomerIncomeList().size(); i++) {
 				CustomerIncome customerIncome = custDetails.getCustomerIncomeList().get(i);
-				linkId = customerIncome.getId();
+				linkId = customerIncome.getLinkId();
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], customerIncome.getBefImage(),
 						customerIncome));
 			}
-			getCustomerIncomeDAO().deleteByCustomer(custDetails.getCustID(), tableType, false);
 			incomeDetailDAO.delete(linkId, tableType);
 		}
 
@@ -4396,11 +4396,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			String[] fields = PennantJavaUtil.getFieldDetails(custExtLiability, custExtLiability.getExcludeFields());
 
 			for (int i = 0; i < custDetails.getCustomerExtLiabilityList().size(); i++) {
-				CustomerExtLiability customerExtLiability = liabilities.get(i);
+				 custExtLiability = liabilities.get(i);
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-						customerExtLiability.getBefImage(), customerExtLiability));
+						custExtLiability.getBefImage(), custExtLiability));
 			}
-			externalLiabilityDAO.delete(custExtLiability.getId(), tableType);
+			externalLiabilityDAO.delete(custExtLiability.getLinkId(), tableType);
 		}
 
 		// Extended field Render Details.
@@ -5167,7 +5167,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		for (int i = 0; i < customerDetails.getCustomerExtLiabilityList().size(); i++) {
 			liability = customerDetails.getCustomerExtLiabilityList().get(i);
-
+			
+			if(liability.getInputSource() == null){
+				liability.setInputSource("customer");
+			}
+			
 			if (StringUtils.isEmpty(liability.getRecordType())) {
 				continue;
 			}

@@ -267,7 +267,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			this.customerIncome.setWorkflowId(0);
 			if (arguments.containsKey("roleCode")) {
 				userRole = arguments.get("roleCode").toString();
-				getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerIncomeDialog");
+				getUserWorkspace().allocateRoleAuthorities(userRole, pageRightName);
 			}
 		}
 
@@ -279,7 +279,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
-			getUserWorkspace().allocateRoleAuthorities(getRole(),"CustomerIncomeDialog");
+			getUserWorkspace().allocateRoleAuthorities(getRole(), pageRightName);
 		}
 
 		// READ OVERHANDED parameters !
@@ -313,9 +313,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		this.custIncomeType.setMandatoryStyle(true);
 		this.custIncomeType.setTextBoxWidth(110);
 		this.custIncomeType.setModuleName("IncomeExpense");
-		this.custIncomeType.setValueColumn("IncomeExpense");
-		this.custIncomeType.setDescColumn("IncomeTypeDesc");
-		this.custIncomeType.setValidateColumns(new String[] { "IncomeExpense" });
+		this.custIncomeType.setValueColumn("IncomeTypeDesc");
+		this.custIncomeType.setDescColumn("lovDescCategoryName");
+		this.custIncomeType.setValidateColumns(new String[] { "IncomeTypeDesc" });
 		
 		this.custIncome.setMandatory(true);
 		this.custIncome.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
@@ -340,7 +340,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("CustomerIncomeDialog",userRole);
+		//getUserWorkspace().allocateAuthorities("CustomerIncomeDialog",userRole);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerIncomeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerIncomeDialog_btnEdit"));
@@ -552,10 +552,12 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	
 	
 	public void onChange$custType(Event event) {
-		logger.debug(Literal.ENTERING );
+		logger.debug(Literal.ENTERING);
 		String type = this.custType.getSelectedItem().getValue();
-		visibleComponent(Integer.parseInt(type));
-		logger.debug(Literal.LEAVING );
+		if (type != "#") {
+			visibleComponent(Integer.parseInt(type));
+		}
+		logger.debug(Literal.LEAVING);
 	}
 	
 	private void visibleComponent(Integer type) {

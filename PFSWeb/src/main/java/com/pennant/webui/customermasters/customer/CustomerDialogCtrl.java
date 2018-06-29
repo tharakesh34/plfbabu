@@ -3462,7 +3462,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 							deleteNotes = true;
 						}
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doFinnov)) {
-						auditHeader = finnovService.getFinnovReport(auditHeader);
+						if (finnovService != null) {
+							auditHeader = finnovService.getFinnovReport(auditHeader);
+						}
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_notifyCrm)) {
 						if (crm != null && "Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED"))) {
 							if (StringUtils.isEmpty(aCustomerDetails.getCustomer().getCustCoreBank())) {

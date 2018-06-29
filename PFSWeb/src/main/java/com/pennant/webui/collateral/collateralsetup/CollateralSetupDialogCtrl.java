@@ -533,6 +533,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
+			this.btnNotes.setVisible(false);
 		}
 		// fill the components with the data
 		doWriteBeanToComponents(collateralSetup);

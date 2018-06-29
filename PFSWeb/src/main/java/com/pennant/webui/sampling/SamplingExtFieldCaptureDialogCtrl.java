@@ -118,11 +118,23 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 					fieldSize = fieldSize + 1;
 				}
 			}
-			
+			ExtendedFieldRender extendedFieldRender  =null;
 			
 			linkId = samplingService.getCollateralLinkId(sampling.getId(), sampling.getCollateralSetup().getCollateralRef());
-			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(
-					String.valueOf(linkId), tableName.toString(), "_View");
+			
+			if (extFieldRenderList.containsKey(String.valueOf(linkId))) {
+				extendedFieldRender = extFieldRenderList.get(String.valueOf(linkId));
+			    extendedFieldCtrl.setExtendedFieldRender(extendedFieldRender);
+			} else if (extFieldRenderList.containsKey(sampling.getCollateralSetup().getCollateralRef())) {
+				extendedFieldRender = extFieldRenderList.get(sampling.getCollateralSetup().getCollateralRef());
+				extendedFieldCtrl.setExtendedFieldRender(extendedFieldRender);
+			} else {
+				extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(String.valueOf(linkId),
+						tableName.toString(), "_View");
+			}
+			
+			/*extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(String.valueOf(linkId),
+					tableName.toString(), "_View");*/
 			extendedFieldCtrl.setTabpanel(samplingExtFieldsTabPanel);
 			extendedFieldCtrl.setTab(this.samplingExtFields);
 			sampling.setExtendedFieldHeader(extendedFieldHeader);
@@ -175,10 +187,13 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		if (!extFieldRenderList.containsKey(String.valueOf(linkId))) {
 
-			this.extFieldRenderList.put(sampling.getCollateralSetup().getCollateralRef(),
+			this.extFieldRenderList.put(String.valueOf(linkId),
 					sampling.getExtendedFieldRender());
 		} else {
-			extFieldRenderList.replace(String.valueOf(linkId),
+			/*extFieldRenderList.remove(String.valueOf(linkId));
+			this.extFieldRenderList.put(sampling.getCollateralSetup().getCollateralRef(),
+					sampling.getExtendedFieldRender());*/
+		extFieldRenderList.replace(String.valueOf(linkId),
 					sampling.getExtendedFieldRender());
 		}
 		logger.debug(Literal.LEAVING);

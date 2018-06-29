@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -71,7 +72,7 @@ public class Sampling extends AbstractWorkflowEntity {
 
 	private List<CustomerIncome> customerIncomeList;
 	private List<CustomerExtLiability> customerExtLiabilityList;
-	private List<CollateralSetup> collSetupList = new ArrayList<>();
+	private List<CollateralSetup> collSetupList = new LinkedList<>();
 	private CollateralSetup collateralSetup;
 	private CustomerDetails customerDetails;
 	private ExtendedFieldHeader extendedFieldHeader;

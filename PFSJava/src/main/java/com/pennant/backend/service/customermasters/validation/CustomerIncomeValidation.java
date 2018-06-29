@@ -78,9 +78,9 @@ public class CustomerIncomeValidation {
 	private AuditDetail validate(AuditDetail auditDetail, long samplingId, String method,String  usrLanguage){
 		CustomerIncome customerIncome= (CustomerIncome) auditDetail.getModelData();
 		if ("sampling".equals(customerIncome.getInputSource())) {
-			customerIncome.setLinkId(samplingDAO.getIncomeLinkId(samplingId, customerIncome.getCustId()));
+			customerIncome.setLinkId(samplingDAO.getIncomeLinkIdByCustId(samplingId, customerIncome.getCustId()));
 		} else {
-			customerIncomeDAO.setLinkId(customerIncome);
+			customerIncome.setLinkId(customerIncomeDAO.getLinkId(customerIncome.getCustId()));
 		}
 		
 		CustomerIncome tempCustomerIncome= null;

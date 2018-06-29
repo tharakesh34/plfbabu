@@ -89,7 +89,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 
 		String view = null;
 		String table = null;
-		if (inputSource.equals("sampling")) {
+		if ("sampling".equals(inputSource)) {
 			view = "sampling_income_details";
 			table = "link_sampling_incomes";
 		} else {
@@ -321,7 +321,8 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		return recordCount;
 	}
 
-	private long getLinkId(long custId) {
+	@Override
+	public long getLinkId(long custId) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select coalesce(max(linkid), 0) from link_cust_incomes where custid=:custid");
 

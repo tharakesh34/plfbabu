@@ -566,7 +566,7 @@
 	<!-- Sampling -->
 	<menu id="menu_Category_Sampling">
 		<menuItem id="menu_Item_Sampling"
-			zulNavigation="/WEB-INF/pages/Sampling/SamplingList.zul"/>
+			zulNavigation="/WEB-INF/pages/Sampling/SamplingList.zul" rightName="menuItem_Sampling"/>
 	</menu>
 
 	<!-- Loan Management -->
@@ -577,7 +577,7 @@
 				rightName="menuItem_FinanceManagement_AddDisbursment" />
 			<menuItem id="menu_Item_CancelDisbursement"
 				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-				rightName="menuItem_FinanceManagement_CancelDisbursment" />
+				rightName="menuItem_FinanceManagement_CancelDisbursment" /> 
 			<menuItem id="menu_Item_PaymentOrderIssue"
 				zulNavigation="/WEB-INF/pages/Finance/PayOrderIssue/PayOrderIssueList.zul"
 				rightName="menuItem_Finance_PaymentOrderIssue" />

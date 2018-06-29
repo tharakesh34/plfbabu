@@ -59,5 +59,9 @@ public interface SamplingDAO {
 	BigDecimal getLoanEligibility(String finReference, String eligibilityRule);
 	
 	Map<String, Object> getRemarks(long samplingId);
+	
+	String getCollateralRef(Sampling sampling, String collRef, String inputSource);
+
+	long getIncomeLinkIdByCustId(long custId, long samplinId);
 
 }

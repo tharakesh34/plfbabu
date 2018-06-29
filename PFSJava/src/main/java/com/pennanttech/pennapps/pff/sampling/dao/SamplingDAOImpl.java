@@ -73,7 +73,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	public long getIncomeLinkId(long id, long custId) {
 		logger.debug(Literal.ENTERING);
 
-		long linkId = getIncomeLinkId1(custId, id);
+		long linkId = getIncomeLinkIdByCustId(custId, id);
 
 		if (linkId > 0) {
 			return linkId;
@@ -93,8 +93,9 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 
 		return linkId;
 	}
-
-	private long getIncomeLinkId1(long custId, long samplinId) {
+	
+	@Override
+	public long getIncomeLinkIdByCustId(long custId, long samplinId) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(
 				"select coalesce(max(linkid), 0) from link_sampling_incomes where custid=:custid and samplingid =:id");
@@ -724,4 +725,39 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		return map;
 	}
 
+	public String getCollateralRef(Sampling sampling, String linkId, String inputSource) {
+		logger.debug(Literal.ENTERING);
+
+		String table = null;
+		if (inputSource.equals("income")) {
+			table = "link_sampling_incomes";
+		} else if (inputSource.equals("obligation")) {
+			table = "link_sampling_liabilities";
+		} else {
+			table = "link_sampling_collaterals";
+		}
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select collateralreference from ");
+		sql.append(table);
+		sql.append(" where samplingid = :id");
+		if (inputSource.equals("collaterals")) {
+			sql.append(" and linkid = :linkId");
+		}
+
+		String collReference = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("id", sampling.getId());
+		if (linkId != null) {
+			source.addValue("linkId", Integer.parseInt(linkId));
+		}
+		try {
+			collReference = jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (DataAccessException e) {
+			collReference = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return collReference;
+	}
 }

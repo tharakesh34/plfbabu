@@ -222,8 +222,8 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				custExtLiability = (CustomerExtLiability) obligationDetails.get(i).getModelData();
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 						custExtLiability.getBefImage(), custExtLiability));
+				externalLiabilityDAO.delete(custExtLiability.getId(), tableType);
 			}
-			externalLiabilityDAO.delete(custExtLiability.getId(), tableType);
 		}
 
 		// Extended field Render Details.
@@ -835,8 +835,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		for (int i = 0; i < auditDetails.size(); i++) {
 			CustomerExtLiability liability = (CustomerExtLiability) auditDetails.get(i).getModelData();
 
-			liability.setLinkId(samplingDAO.getLiabilityLinkId(sampling.getId(), liability.getCustId()));
-
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -890,6 +888,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				liability.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
+				liability.setLinkId(samplingDAO.getLiabilityLinkId(sampling.getId(), liability.getCustId()));
 				externalLiabilityDAO.save(liability, type);
 			}
 

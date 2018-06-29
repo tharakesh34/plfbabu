@@ -18,7 +18,7 @@ import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.dao.customer.income.IncomeDetailDAOImpl;
+import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl;
 
 public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> implements CustomerExtLiabilityDAO {
 	private static Logger logger = Logger.getLogger(CustomerExtLiabilityDAOImpl.class);
@@ -278,7 +278,8 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 			return;
 		}
 
-		linkId = getNextValue(IncomeDetailDAOImpl.SEQUENCE_LINK);
+		linkId = getNextValue(ExternalLiabilityDAOImpl.SEQUENCE_LINK);
+		liability.setLinkId(linkId);
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into link_cust_liabilities values(:custid, :linkid)");
 		logger.trace(Literal.SQL + sql.toString());

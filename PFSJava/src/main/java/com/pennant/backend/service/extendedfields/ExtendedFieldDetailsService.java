@@ -742,7 +742,9 @@ public class ExtendedFieldDetailsService {
 			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
 				continue;
 			}
-			ExtendedFieldHeader extHeader = extHeaderMap.get(collList.get(i).getCollateralRef());
+			String collRef=samplingDAO.getCollateralRef(sampling, extendedFieldRender.getReference(), "collaterals");
+			
+			ExtendedFieldHeader extHeader = extHeaderMap.get(collRef);
 
 			StringBuilder tableName = new StringBuilder();
 			tableName.append(moduleCode);
@@ -750,8 +752,8 @@ public class ExtendedFieldDetailsService {
 			tableName.append(extHeader.getSubModuleName());
 			tableName.append("_tv");
 
-			extendedFieldRender.setReference(String
-					.valueOf(samplingDAO.getCollateralLinkId(sampling.getId(), collList.get(i).getCollateralRef())));
+		/*	extendedFieldRender.setReference(String
+					.valueOf(samplingDAO.getCollateralLinkId(sampling.getId(), extendedFieldRender.getReference())));*/
 
 			if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
 					&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
@@ -1011,7 +1013,9 @@ public class ExtendedFieldDetailsService {
 			for (int i = 0; i < deatils.size(); i++) {
 				if (deatils.get(i) != null) {
 					ExtendedFieldRender render = (ExtendedFieldRender) deatils.get(i).getModelData();
-					ExtendedFieldHeader extHeader = extHeaderMap.get(collList.get(i).getCollateralRef());
+					String collRef=null;
+					collRef = samplingDAO.getCollateralRef(sampling, render.getReference(), "collaterals");
+					ExtendedFieldHeader extHeader = extHeaderMap.get(collRef);
 					StringBuilder tableName = new StringBuilder();
 					tableName.append(moduleCode);
 					tableName.append("_");
