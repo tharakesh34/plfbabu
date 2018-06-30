@@ -5277,9 +5277,9 @@ UNION ALL
 	</addColumn>
  </changeSet>
  
- <changeSet id="123" author="vijaykumar.l">
+ <changeSet id="123.1" author="vijaykumar.l">
  	<sql>
- 		Update amtvehicledealer set code =dealerid where dealertype='DSA';
+ 		Update amtvehicledealer set code =dealerid where dealertype !='DSA';
  	</sql>
  </changeSet>
  
