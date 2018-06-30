@@ -1157,15 +1157,15 @@ public class AgreementGeneration implements Serializable {
 						if (StringUtils.isNotBlank(extendedDetail.getKey())) {
 							switch (extendedDetail.getFieldType()) {
 							case "CUSTOMER":
-								otherMap.put("CUST_EXT_" + extendedDetail.getKey(), extendedDetail.getValue());
+								otherMap.put("CUST_EXT_" + extendedDetail.getKey().toUpperCase(), extendedDetail.getValue());
 								break;
 
 							case "COLLATERAL":
-								otherMap.put("COLL_EXT_" + extendedDetail.getKey(), extendedDetail.getValue());
+								otherMap.put("COLL_EXT_" + extendedDetail.getKey().toUpperCase(), extendedDetail.getValue());
 								break;
 
 							case "LOAN":
-								otherMap.put("LOAN_EXT_" + extendedDetail.getKey(), extendedDetail.getValue());
+								otherMap.put("LOAN_EXT_" + extendedDetail.getKey().toUpperCase(), extendedDetail.getValue());
 								break;
 							}
 							otherMap.put(extendedDetail.getKey(), extendedDetail.getValue());

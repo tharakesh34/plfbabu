@@ -240,7 +240,8 @@ public class  TemplateEngine {
 
 						collection = null;
 					} else if (value instanceof Map<?, ?>) {
-						mapFields((Map<String, String>) value);
+						Map<?, ?> valueMap= (Map<?, ?>) value;
+						document.getMailMerge().execute(valueMap.keySet().stream().toArray(String[]::new), valueMap.values().toArray());
 					} else {
 						fields.add(field);
 						values.add(value);
