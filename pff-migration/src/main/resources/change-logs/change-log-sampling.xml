@@ -856,6 +856,8 @@
 				   FROM financemain_temp
 				  WHERE (financemain_temp.finreference = t1.finreference))))
 		</createView>
+		</changeSet>
+	<changeSet id="10.1" author="murthy.y">
 		<createView viewName="financemain_tview" replaceIfExists="true">
 			SELECT t1.finreference,
 			t1.investmentref,
@@ -1097,6 +1099,8 @@
 			 LEFT JOIN smtdivisiondetail t11 ON ((t2.findivision = t11.divisioncode)))
 			 LEFT JOIN relationshipofficers t12 ON (((t1.employeename) = (t12.rofficercode))))
 		</createView>
+		</changeSet>
+	<changeSet id="10.2" author="murthy.y">
 		<createView viewName="financemain_aview" replaceIfExists="true">
 			SELECT t1.finreference,
 			t1.numberofterms,
@@ -1351,6 +1355,8 @@
 			 LEFT JOIN smtdivisiondetail t36 ON ((t7.findivision = t36.divisioncode)))
 			 LEFT JOIN relationshipofficers t37 ON (((t1.employeename) = (t37.rofficercode))))
 		</createView>
+		</changeSet>
+	<changeSet id="10.3" author="murthy.y">
 		<createView viewName="financemaintenance_view"
 			replaceIfExists="true">
 			SELECT t1.finreference,
@@ -1480,6 +1486,8 @@
 				   FROM financemain_temp
 				  WHERE (financemain_temp.finreference = t1.finreference))))
 		</createView>
+		</changeSet>
+	<changeSet id="10.4" author="murthy.y">
 		<createView viewName="financemaintenance_aview"
 			replaceIfExists="true">
 					SELECT t1.finreference,
@@ -1533,6 +1541,8 @@
 					 JOIN rmtfinancetypes t3 ON ((t1.fintype = t3.fintype)))
 					 JOIN bmtproduct t4 ON ((t3.fincategory = t4.productcode)))
 		</createView>
+		</changeSet>
+	<changeSet id="10.5" author="murthy.y">
 		<createView viewName="financemain_lview" replaceIfExists="true">
 			SELECT t1.finreference,
 			t1.investmentref,
@@ -1581,6 +1591,8 @@
 			 JOIN rmtfinancetypes t3 ON ((t3.fintype = t1.fintype)))
 			 LEFT JOIN secroles t4 ON ((t1.nextrolecode = t4.rolecd)))
 		</createView>
+		</changeSet>
+	<changeSet id="10.6" author="murthy.y">
 		<createView viewName="financemainlimitcheck_tview" replaceIfExists="true">
 			SELECT fm.finreference,
 			fm.finbranch,
@@ -1620,6 +1632,8 @@
 			 JOIN rmtfinancetypes ft ON (((ft.fintype) = (fm.fintype))))
 			 LEFT JOIN customeraddresses ca ON (((ca.custid = c.custid) AND ((ca.custaddrtype) = 'PERM'))))
 		</createView>
+		</changeSet>
+	<changeSet id="10.7" author="murthy.y">
 		<createView viewName="financemainlimitcheck_aview" replaceIfExists="true">
 			SELECT fm.finreference,
 			fm.finbranch,
@@ -1659,6 +1673,8 @@
 			 JOIN rmtfinancetypes ft ON (((ft.fintype) = (fm.fintype))))
 			 LEFT JOIN customeraddresses ca ON (((ca.custid = c.custid) AND ((ca.custaddrtype) = 'PERM'))));
 		</createView>
+		</changeSet>
+	<changeSet id="10.8" author="murthy.y">
 		<createView viewName="financemain_dview" replaceIfExists="true">
 			SELECT t1.finreference,
 			t1.investmentref,
@@ -1686,6 +1702,8 @@
 			 JOIN rmtfinancetypes t3 ON ((t3.fintype = t1.fintype)))
 			 JOIN investmentfinheader t4 ON ((t4.investmentref = t1.investmentref)))
 		</createView>
+		</changeSet>
+	<changeSet id="10.9" author="murthy.y">
 		<createView viewName="sampling_tview" replaceIfExists="true">
 			select s.id, s.keyreference, s.createdby, s.createdon, s.tenure, s.interestRate, s.foirEligibility, s.emi, s.loanEligibility, s.irrEligibility, s.totalIncome, s.totalLiability,
 			s.remarks, s.samplingon, s.decision, s.recommendedamount,
@@ -1702,6 +1720,8 @@
 			left join rmtbranches lb on lb.branchcode = fm.finbranch
 			left join reasons r on r.id = s.resubmitreason
 		</createView>
+		</changeSet>
+	<changeSet id="10.10" author="murthy.y">
 		<createView viewName="sampling_view" replaceIfExists="true">
 			select s.id, s.keyreference, s.createdby, s.createdon, s.tenure, s.interestRate, s.foirEligibility, s.emi, s.loanEligibility, s.irrEligibility, s.totalIncome, s.totalLiability,
 			s.remarks, s.samplingon, s.decision, s.recommendedamount,
@@ -1734,6 +1754,8 @@
 			left join reasons r on r.id = s.resubmitreason
 			where not exists (select 1 from sampling_temp where id = s.id);
 		</createView>
+		</changeSet>
+	<changeSet id="10.12" author="murthy.y">
 		<createView viewName="sampling_aview" replaceIfExists="true">
 			select s.id, s.keyreference, s.createdby, s.createdon, s.tenure, s.interestRate, s.foirEligibility, s.emi, s.loanEligibility, s.irrEligibility, s.totalIncome, s.totalLiability,
 			s.remarks, s.samplingon, s.decision, s.recommendedamount,
@@ -1751,6 +1773,8 @@
 			left join rmtbranches lb on lb.branchcode = fm.finbranch
 			left join reasons r on r.id = s.resubmitreason;
 		</createView>
+	</changeSet>
+	<changeSet id="10.13" author="murthy.y">
 		<createView viewName="sampling_income_details_aview"
 			replaceIfExists="true">
 			 select id.*, cl.custid, cu.custcif, cu.custshrtname
@@ -1758,6 +1782,8 @@
 			 inner join link_sampling_incomes cl on cl.linkid = id.linkid
 			 inner join customers cu on cu.custid = cl.custid
 		</createView>
+	</changeSet>
+	<changeSet id="10.14" author="murthy.y">
 		<createView viewName="sampling_income_details_view"
 			replaceIfExists="true">
 			 select id.*, cu.custid, cu.custcif, cu.custshrtname
@@ -1771,6 +1797,8 @@
 			 inner join customers cu on cu.custid = cl.custid
 			 where (not exists (select 1 from income_details_view where linkid = id.linkid ));
 		</createView>
+	</changeSet>
+	<changeSet id="10.15" author="murthy.y">
 		<createView viewName="sampling_liabilities_aview"
 			replaceIfExists="true">
 			 select el.*, cl.custid, cu.custcif, cu.custshrtname
@@ -1778,6 +1806,8 @@
 			 inner join link_sampling_liabilities cl on cl.linkid = el.linkid
 			 inner join customers cu on cu.custid = cl.custid
 		</createView>
+		</changeSet>
+	<changeSet id="10.16" author="murthy.y">
 		<createView viewName="sampling_liabilities_view"
 			replaceIfExists="true">
 			 select el.*, cu.custid, cu.custcif, cu.custshrtname

@@ -1251,7 +1251,7 @@
 			</addColumn>
 		</changeSet>
 		 
-		<changeSet id="67" author="DurgaPrasad G">
+		<changeSet id="67.1" author="DurgaPrasad G">
 				<createView viewName="financemain_view" replaceIfExists="true">
 					SELECT t1.finreference,
 					t1.investmentref,
@@ -1758,6 +1758,9 @@
 						   FROM financemain_temp
 						  WHERE (financemain_temp.finreference = t1.finreference))))
 				</createView>
+				</changeSet>
+		 
+		<changeSet id="67.2" author="DurgaPrasad G">
 				<createView viewName="financemain_tview" replaceIfExists="true">
 					SELECT t1.finreference,
 					t1.investmentref,
@@ -2000,6 +2003,9 @@
 					 LEFT JOIN smtdivisiondetail t11 ON ((t2.findivision = t11.divisioncode)))
 					 LEFT JOIN relationshipofficers t12 ON (((t1.employeename) = (t12.rofficercode))))
 				</createView>
+				</changeSet>
+		 
+		<changeSet id="67.3" author="DurgaPrasad G">
 				<createView viewName="financemain_aview" replaceIfExists="true">
 					SELECT t1.finreference,
 					t1.numberofterms,
@@ -2255,6 +2261,9 @@
 					 LEFT JOIN smtdivisiondetail t36 ON ((t7.findivision = t36.divisioncode)))
 					 LEFT JOIN relationshipofficers t37 ON (((t1.employeename) = (t37.rofficercode))))
 				</createView>
+				</changeSet>
+		 
+		<changeSet id="67.4" author="DurgaPrasad G">
 				<createView viewName="financemaintenance_view"
 					replaceIfExists="true">
 					SELECT t1.finreference,
@@ -2386,6 +2395,9 @@
 						   FROM financemain_temp
 						  WHERE (financemain_temp.finreference = t1.finreference))))
 				</createView>
+				</changeSet>
+		 
+		<changeSet id="67.5" author="DurgaPrasad G">
 				<createView viewName="financemaintenance_aview"
 					replaceIfExists="true">
 							SELECT t1.finreference,
@@ -2440,6 +2452,9 @@
 							 JOIN rmtfinancetypes t3 ON ((t1.fintype = t3.fintype)))
 							 JOIN bmtproduct t4 ON ((t3.fincategory = t4.productcode)))
 				</createView>
+				</changeSet>
+		 
+		<changeSet id="67.6" author="DurgaPrasad G">
 				<createView viewName="financemain_lview" replaceIfExists="true">
 					SELECT t1.finreference,
 					t1.investmentref,
@@ -2489,6 +2504,9 @@
 					 JOIN rmtfinancetypes t3 ON ((t3.fintype = t1.fintype)))
 					 LEFT JOIN secroles t4 ON ((t1.nextrolecode = t4.rolecd)))
 				</createView>
+				</changeSet>
+		 
+		<changeSet id="67.7" author="DurgaPrasad G">
 				<createView viewName="financemainlimitcheck_tview" replaceIfExists="true">
 					SELECT fm.finreference,
 					fm.finbranch,
@@ -2529,6 +2547,9 @@
 					 JOIN rmtfinancetypes ft ON (((ft.fintype) = (fm.fintype))))
 					 LEFT JOIN customeraddresses ca ON (((ca.custid = c.custid) AND ((ca.custaddrtype) = 'PERM'))))
 				</createView>
+				</changeSet>
+		 
+		<changeSet id="67.8" author="DurgaPrasad G">
 				<createView viewName="financemainlimitcheck_aview" replaceIfExists="true">
 					SELECT fm.finreference,
 					fm.finbranch,
@@ -2569,6 +2590,9 @@
 					 JOIN rmtfinancetypes ft ON (((ft.fintype) = (fm.fintype))))
 					 LEFT JOIN customeraddresses ca ON (((ca.custid = c.custid) AND ((ca.custaddrtype) = 'PERM'))));
 				</createView>
+				</changeSet>
+		 
+		<changeSet id="67.9" author="DurgaPrasad G">
 				<createView viewName="financemain_dview" replaceIfExists="true">
 					SELECT t1.finreference,
 					t1.investmentref,
