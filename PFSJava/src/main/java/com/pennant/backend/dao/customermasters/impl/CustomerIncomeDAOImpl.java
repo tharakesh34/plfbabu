@@ -344,7 +344,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		StringBuilder query = new StringBuilder();
 		query.append("select * from customer_income_details_view ci");
 		query.append(" inner join");
-		query.append(" select custid, finreference from financemain_view");
+		query.append(" (select custid, finreference from financemain_view");
 		query.append(" union all");
 		query.append(" select jointaccountid custid, finreference from finjointaccountdetails_view) fm");
 		query.append(" on fm.custid=ci.custid where fm.finreference = :finreference");
@@ -352,7 +352,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		logger.trace(Literal.SQL + query.toString());
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("finReference", finReference);
+		parameterSource.addValue("finreference", finReference);
 		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
 		logger.debug(Literal.LEAVING);
@@ -369,9 +369,9 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder query = new StringBuilder();
-		query.append("select ci.* from customer_income_details_view ci");
+		query.append("select * from income_details_view ci");
 		query.append(" inner join link_sampling_incomes si on si.linkid = ci.linkid");
-		query.append( "where si.samplingid = :samplingid");
+		query.append(" where si.samplingid = :samplingid");
 
 		logger.trace(Literal.SQL + query.toString());
 

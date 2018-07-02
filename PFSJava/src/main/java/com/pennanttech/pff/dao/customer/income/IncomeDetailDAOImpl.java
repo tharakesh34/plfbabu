@@ -96,9 +96,9 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 			throw new DependencyFoundException(e);
 		}
 
-		if (recordCount <= 0) {
+		/*if (recordCount <= 0) {
 			throw new ConcurrencyException();
-		}
+		}*/
 
 		logger.debug(Literal.LEAVING);
 	}

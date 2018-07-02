@@ -756,4 +756,25 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		logger.debug(Literal.LEAVING);
 		return collReference;
 	}
+	
+	@Override
+	public long getLinkId(long samplingId, String tableName) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select coalesce(max(linkid), 0) from ");
+		sql.append(tableName);
+		sql.append(" where samplingid=:samplingid");
+
+		long linkid = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("samplingid", samplingId);
+		try {
+			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (DataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return linkid;
+	}
+	
 }

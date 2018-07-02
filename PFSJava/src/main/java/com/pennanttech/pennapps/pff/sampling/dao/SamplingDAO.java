@@ -64,4 +64,6 @@ public interface SamplingDAO {
 
 	long getIncomeSnapLinkId(long samplingId, long custId);
 
+	long getLinkId(long samplingId, String tableName);
+
 }

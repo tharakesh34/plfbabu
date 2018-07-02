@@ -325,7 +325,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		logger.trace(Literal.SQL + query.toString());
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("finReference", finReference);
+		parameterSource.addValue("finreference", finReference);
 		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerExtLiability.class);
 
 		logger.debug(Literal.LEAVING);
