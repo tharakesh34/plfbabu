@@ -30,7 +30,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="1" author="Vinay">
+	<!-- <changeSet id="1" author="Vinay">
 		<sql>
 			alter table SeqJVPostingEntry  drop constraint seqjvpostingentry_pkey;
 		</sql>
@@ -620,12 +620,191 @@
 			delete from ErrorDetails where code='30704';
 			Insert into ERRORDETAILS values ('30704','EN','E','{0} Already had one Email with {1}.',null,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
-	</changeSet>
+	</changeSet>F
 	
 	<changeSet id="19" author="Vinay">
 		<sql>
 			delete from ERRORDETAILS where code='FPH001';
 			Insert into ERRORDETAILS values ('FPH001','EN','E','Atleast one Collateral of type:PROPERTY should be assigned',null,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet> -->
+	
+	<changeSet id="25" author="Vinay">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerExtLiabilityDialog_BalTransfer','CustomerExtLiabilityDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CustomerExtLiability_Maker') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_BalTransfer'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		</sql>
+	</changeSet>
+	
+	<changeSet id="27" author="Vinay">
+		<addColumn tableName="CustomerExtLiability">
+			<column name="balTransfer" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="28" author="Vinay">
+		<addColumn tableName="CustomerExtLiability_Temp">
+			<column name="balTransfer" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="29" author="Vinay">
+		<sql>
+			update CustomerExtLiability set balTransfer=0;
+			update CustomerExtLiability_temp set balTransfer=0;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="30" author="Vinay">
+		<createView viewName="customerextliability_aview" replaceIfExists="true">
+			 SELECT t1.custid,
+			    t1.liabilityseq,
+			    t1.findate,
+			    t1.fintype,
+			    t1.bankname,
+			    t1.originalamount,
+			    t1.instalmentamount,
+			    t1.outstandingbal,
+			    t1.finstatus,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t3.bankname AS lovdescbankname,
+			    t4.fintypedesc AS lovdescfintype,
+			    t5.custstsdescription AS lovdescfinstatus,
+			    t1.roi,
+			    t1.tenure,
+			    t1.tenurebal,
+			    t1.bounceno,
+			    t1.pos,
+			    t1.overdue,
+			    t1.emicnsdrforfoir,
+			    t1.source,
+			    t1.checkedby,
+			    t1.securitydetail,
+			    t1.enduseoffunds,
+			    t1.repayfrom,
+			    t6.loanpurposedesc,
+			    t7.bankname AS lovdescrepayfrom,
+			    t1.balTransfer
+			   FROM customerextliability t1
+			     JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+			     JOIN otherbankfinancetype t4 ON t4.fintype = t1.fintype
+			     LEFT JOIN bmtcuststatuscodes t5 ON t5.custstscode = t1.finstatus
+			     JOIN loanpurposes t6 ON t6.loanpurposecode = t1.enduseoffunds
+			     JOIN bmtbankdetail t7 ON t7.bankcode = t1.repayfrom;
+			 </createView>
+	</changeSet>
+	<changeSet id="32" author="Vinay">
+		<createView viewName="customerextliability_view" replaceIfExists="true">
+			SELECT t1.custid,
+		    t1.liabilityseq,
+		    t1.findate,
+		    t1.fintype,
+		    t1.bankname,
+		    t1.originalamount,
+		    t1.instalmentamount,
+		    t1.outstandingbal,
+		    t1.finstatus,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t3.bankname AS lovdescbankname,
+		    t4.fintypedesc AS lovdescfintype,
+		    t5.custstsdescription AS lovdescfinstatus,
+		    t1.roi,
+		    t1.tenure,
+		    t1.tenurebal,
+		    t1.bounceno,
+		    t1.pos,
+		    t1.overdue,
+		    t1.emicnsdrforfoir,
+		    t1.source,
+		    t1.checkedby,
+		    t1.securitydetail,
+		    t1.enduseoffunds,
+		    t1.repayfrom,
+		    t6.loanpurposedesc,
+		    t7.bankname AS lovdescrepayfrom,
+			t1.balTransfer
+		   FROM customerextliability_temp t1
+		     JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+		     JOIN otherbankfinancetype t4 ON t4.fintype = t1.fintype
+		     LEFT JOIN bmtcuststatuscodes t5 ON t5.custstscode = t1.finstatus
+		     JOIN loanpurposes t6 ON t6.loanpurposecode::text = t1.enduseoffunds::text
+		     JOIN bmtbankdetail t7 ON t7.bankcode::text = t1.repayfrom::text
+		UNION ALL
+		 SELECT t1.custid,
+		    t1.liabilityseq,
+		    t1.findate,
+		    t1.fintype,
+		    t1.bankname,
+		    t1.originalamount,
+		    t1.instalmentamount,
+		    t1.outstandingbal,
+		    t1.finstatus,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t3.bankname AS lovdescbankname,
+		    t4.fintypedesc AS lovdescfintype,
+		    t5.custstsdescription AS lovdescfinstatus,
+		    t1.roi,
+		    t1.tenure,
+		    t1.tenurebal,
+		    t1.bounceno,
+		    t1.pos,
+		    t1.overdue,
+		    t1.emicnsdrforfoir,
+		    t1.source,
+		    t1.checkedby,
+		    t1.securitydetail,
+		    t1.enduseoffunds,
+		    t1.repayfrom,
+		    t6.loanpurposedesc,
+		    t7.bankname AS lovdescrepayfrom,
+			t1.balTransfer
+		   FROM customerextliability t1
+		     JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+		     JOIN otherbankfinancetype t4 ON t4.fintype = t1.fintype
+		     LEFT JOIN bmtcuststatuscodes t5 ON t5.custstscode = t1.finstatus
+		     JOIN loanpurposes t6 ON t6.loanpurposecode = t1.enduseoffunds
+		     JOIN bmtbankdetail t7 ON t7.bankcode = t1.repayfrom
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM customerextliability_temp
+		          WHERE customerextliability_temp.custid = t1.custid AND customerextliability_temp.liabilityseq = t1.liabilityseq));
+			 </createView>
+	</changeSet>
+	
+	<changeSet id="33" author="Vinay">
+		<sql>
+			update reportconfiguration set reportname='Excel:Presentment Details' where menuitemcode='menu_Item_Presentment';
+			update reportconfiguration set wherecondition=0 where menuitemcode='menu_Item_PresentmentExcludeReport';
 		</sql>
 	</changeSet>
 </databaseChangeLog>

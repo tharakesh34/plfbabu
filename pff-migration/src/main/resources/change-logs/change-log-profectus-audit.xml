@@ -31,5 +31,11 @@
 		<dropNotNullConstraint tableName="AdtFinCreditReviewDetails" columnName="Location"/>
 	</changeSet>
 
+	<changeSet id="4" author="Vinay">
+		<addColumn tableName="AdtCustomerExtLiability">
+			<column name="balTransfer" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
 	
