@@ -59,7 +59,9 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		StringBuilder query = new StringBuilder();
 		query.append(" update income_details");
 		query.append(StringUtils.trimToEmpty(type));
-		query.append(" set income = :Income, margin = :Margin");
+		query.append(" set income = :Income, margin = :Margin ,");
+		query.append(" version=:version, lastmntby=:lastMntBy, lastmnton=:lastMntOn, recordStatus=:recordStatus, ");
+		query.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode, taskid=:taskId, nexttaskid=:nextTaskId, recordtype=:recordType, workflowid=:workflowId ");
 		query.append(" where id = :id ");
 		logger.trace(Literal.SQL + query.toString());
 
@@ -80,7 +82,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		StringBuilder query = new StringBuilder();
 		query.append(" delete from income_details");
 		query.append(StringUtils.trimToEmpty(type));
-		query.append(" where linkid = :id ");
+		query.append(" where Id = :id ");
 		logger.trace(Literal.SQL + query.toString());
 
 		int recordCount = 0;
@@ -100,6 +102,28 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public void deletebyLinkId(long linkId, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder query = new StringBuilder();
+		query.append(" delete from income_details");
+		query.append(StringUtils.trimToEmpty(type));
+		query.append(" where linkId = :linkId ");
+		logger.trace(Literal.SQL + query.toString());
+
+		int recordCount = 0;
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("linkId", linkId);
+
+		try {
+			recordCount = this.jdbcTemplate.update(query.toString(), parameterSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 	/**
 	 * Fetch the Record Customer Incomes details by key field
 	 * 

@@ -250,7 +250,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 
 		if (customerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType=PennantConstants.TRAN_DEL;
-			incomeDetailDAO.delete(customerIncome.getId(),"");				
+			incomeDetailDAO.deletebyLinkId(customerIncome.getLinkId(),"");				
 		} else {
 			customerIncome.setRoleCode("");
 			customerIncome.setNextRoleCode("");
@@ -271,9 +271,9 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 		}
 
 		if(!StringUtils.equals(customerIncome.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
-		incomeDetailDAO.delete(customerIncome.getId(),"_Temp");
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+			incomeDetailDAO.deletebyLinkId(customerIncome.getLinkId(),"_Temp");
+			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+			getAuditHeaderDAO().addAudit(auditHeader);
 		}
 
 		auditHeader.setAuditTranType(tranType);
@@ -306,7 +306,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 
 		CustomerIncome customerIncome= (CustomerIncome) auditHeader.getAuditDetail().getModelData();			
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		incomeDetailDAO.delete(customerIncome.getId(),"_Temp");
+		incomeDetailDAO.deletebyLinkId(customerIncome.getLinkId(),"_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");

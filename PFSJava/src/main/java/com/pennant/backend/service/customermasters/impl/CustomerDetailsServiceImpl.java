@@ -4338,7 +4338,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], customerIncome.getBefImage(),
 						customerIncome));
 			}
-			incomeDetailDAO.delete(linkId, tableType);
+			incomeDetailDAO.deletebyLinkId(linkId, tableType);
 		}
 
 		if (custDetails.getCustomerDirectorList() != null && custDetails.getCustomerDirectorList().size() > 0) {

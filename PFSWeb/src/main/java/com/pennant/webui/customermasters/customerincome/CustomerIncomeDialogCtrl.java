@@ -745,14 +745,16 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 				aCustomerIncome.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				if(getCustomerDialogCtrl() != null &&  getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()){
 					aCustomerIncome.setNewRecord(true);	
+				}else{
+					tranType = PennantConstants.TRAN_DEL;
 				}
-				if (isWorkFlowEnabled()) {
+/*				if (isWorkFlowEnabled()) {
 					aCustomerIncome.setNewRecord(true);
 					tranType = PennantConstants.TRAN_WF;
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
-			}
+*/			}
 
 			try {
 				if(isNewCustomer()){

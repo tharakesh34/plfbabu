@@ -5835,11 +5835,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			marginDeviation = false;
 			for (CustomerIncome customerIncome : incomes) {
 				String category = StringUtils.trimToEmpty(customerIncome.getCategory());
+				
 				if(customerIncome.isMarginDeviation()){
 					marginDeviation=customerIncome.isMarginDeviation();
 				}
 				if (customerIncome.getIncomeExpense().equals(PennantConstants.INCOME)) {
-					totIncome = totIncome.add(customerIncome.getCalculatedAmount());
+					if(!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerIncome.getRecordType())){
+						totIncome = totIncome.add(customerIncome.getCalculatedAmount());
+					}
 					if (incomeMap.containsKey(category)) {
 						incomeMap.get(category).add(customerIncome);
 					} else {
@@ -5848,7 +5851,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						incomeMap.put(category, list);
 					}
 				} else {
-					totExpense = totExpense.add(customerIncome.getCalculatedAmount());
+					if(!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerIncome.getRecordType())){
+						totExpense = totExpense.add(customerIncome.getCalculatedAmount());
+					}
 					if (expenseMap.containsKey(category)) {
 						expenseMap.get(category).add(customerIncome);
 					} else {
@@ -5900,7 +5905,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						cb.setDisabled(true);
 						cb.setParent(cell);
 						cell.setParent(item);*/
-						cell = new Listcell(customerIncome.getRecordStatus());
+						cell = new Listcell(customerIncome.getRecordType());
 						cell.setParent(item);
 						/*cell = new Listcell(PennantJavaUtil.getLabel(customerIncome.getRecordType()));
 						cell.setParent(item);*/
