@@ -6999,5 +6999,104 @@ UNION ALL
      JOIN customers cu ON cu.custid = cl.custid
 	</createView>
 	</changeSet>
+	
+	<changeSet id="172" author="Manoj">
+			<comment>New Column to capture module in query Management</comment>
+		<addColumn tableName="querydetail_Temp">
+			<column name="Module" type="varchar(50)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="173" author="Manoj">
+		<addColumn tableName="querydetail">
+			<column name="Module" type="varchar(50)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="174" author="Manoj">
+		<createView viewName="querydetail_aview" replaceIfExists="true">
+			SELECT t1.finreference,
+		    t1.id,
+		    s1.usrlogin,
+		    t1.raisedon,
+		    b1.description,
+		    t1.qrynotes,
+		    t1.status,
+		    t1.raisedby,
+		    b1.code AS categorycode,
+		    b1.description AS categorydescription,
+		    t1.categoryid,
+		    t1.assignedrole,
+		    t1.notifyto,
+		    t1.responsnotes,
+		    t1.responseby,
+		    s2.usrlogin AS responseuser,
+		    t1.responseon,
+		    t1.closernotes,
+		    t1.closerby,
+		    s3.usrlogin AS closeruser,
+		    t1.closeron,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.module
+   
+   FROM querydetail t1
+     JOIN bmtquerycategories b1 ON t1.categoryid = b1.id
+     JOIN secusers s1 ON t1.raisedby = s1.usrid
+     LEFT JOIN secusers s2 ON t1.responseby = s2.usrid
+     LEFT JOIN secusers s3 ON t1.closerby = s3.usrid
+			
+		</createView>
+	</changeSet>
+	
+	<changeSet id="175" author="Manoj">
+		<createView viewName="querydetail_view" replaceIfExists="true">
+			SELECT t1.finreference,
+		    t1.id,
+		    s1.usrlogin,
+		    t1.raisedon,
+		    b1.description,
+		    t1.qrynotes,
+		    t1.status,
+		    t1.raisedby,
+		    b1.code AS categorycode,
+		    b1.description AS categorydescription,
+		    t1.categoryid,
+		    t1.assignedrole,
+		    t1.notifyto,
+		    t1.responsnotes,
+		    t1.responseby,
+		    s2.usrlogin AS responseuser,
+		    t1.responseon,
+		    t1.closernotes,
+		    t1.closerby,
+		    s3.usrlogin AS closeruser,
+		    t1.closeron,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.module
+ 	  FROM querydetail t1
+     JOIN bmtquerycategories b1 ON t1.categoryid = b1.id
+     JOIN secusers s1 ON t1.raisedby = s1.usrid
+     LEFT JOIN secusers s2 ON t1.responseby = s2.usrid
+     LEFT JOIN secusers s3 ON t1.closerby = s3.usrid
+		</createView>
+	</changeSet>
 </databaseChangeLog>
 	
