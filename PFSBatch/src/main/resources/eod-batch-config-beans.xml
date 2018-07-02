@@ -625,7 +625,7 @@
 	</bean>
 	
 	<!-- SnapShotConfiguration -->
-	<!-- <bean id="snapShotConfigurationDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotConfigurationDAOImpl"  parent="basisNextidDao">
+<!-- 	<bean id="snapShotConfigurationDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotConfigurationDAOImpl"  parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<bean id="snapShotConditionsDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotConditionsDAOImpl"  parent="basisNextidDao">
