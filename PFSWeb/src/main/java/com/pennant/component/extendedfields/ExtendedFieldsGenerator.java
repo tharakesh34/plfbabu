@@ -387,7 +387,17 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				}
 			}
 
-			readOnlyComponent(!editable, component);
+			//2-Jul-2018 Bug Fix related to Rights Issue with fieldType Phone & MULTIEXTENDEDCOMBO.
+			if (component instanceof Hbox) {
+				Hbox phnBox = (Hbox) component;
+				List<Component> childs = phnBox.getChildren();
+				for (Component child : childs) {
+					readOnlyComponent(!editable, child);
+				}
+			} else {
+				readOnlyComponent(!editable, component);
+			}
+			
 			hbox.appendChild(component);
 		}
 
