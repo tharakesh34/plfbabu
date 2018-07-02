@@ -1592,30 +1592,31 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			appendCustomerDetailTab(onLoad);
 		}
 
-		//FI Initiation Tab
-		appendFIInitiationTab(onLoad);
-
-		//FI Approval Tab
-		appendFIApprovalTab(onLoad);
-
-		//TV Initiation Tab
-		appendTVInitiationTab(onLoad);
-
-		//TV Approval Tab
-		appendTVApprovalTab(onLoad);
-
-		//LV Initiation Tab
-		appendLVInitiationTab(onLoad);
-
-		//LV Initiation Tab
-		appendLVApprovalTab(onLoad);
-
-		//RCU Initiation Tab
-		appendRCUInitiationTab(onLoad);
-
-		//RCU Approval Tab
-		appendRCUApprovalTab(onLoad);
-
+		if (StringUtils.isEmpty(moduleDefiner)){
+			//FI Initiation Tab
+			appendFIInitiationTab(onLoad);
+	
+			//FI Approval Tab
+			appendFIApprovalTab(onLoad);
+	
+			//TV Initiation Tab
+			appendTVInitiationTab(onLoad);
+	
+			//TV Approval Tab
+			appendTVApprovalTab(onLoad);
+	
+			//LV Initiation Tab
+			appendLVInitiationTab(onLoad);
+	
+			//LV Initiation Tab
+			appendLVApprovalTab(onLoad);
+	
+			//RCU Initiation Tab
+			appendRCUInitiationTab(onLoad);
+	
+			//RCU Approval Tab
+			appendRCUApprovalTab(onLoad);
+		}
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
 
 			//Step Policy Details
@@ -1637,16 +1638,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		//Advance Payment Detail Tab Addition
-		/*
-		 * if ((StringUtils.isEmpty(moduleDefiner) && !(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
-		 * aFinanceDetail.getFinScheduleData().getFinanceMain().getProductCategory()))) ||
-		 * StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner) ||
-		 * StringUtils.equals(FinanceConstants.FINSER_EVENT_CANCELDISB, moduleDefiner)) {
-		 * appendAdvancePaymentsDetailTab(onLoad); }
-		 */
-		if (isTabVisible(StageTabConstants.AdvancePayment)) {
-			appendAdvancePaymentsDetailTab(onLoad);
-		}
+		
+		  if ((StringUtils.isEmpty(moduleDefiner) && !(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+		  aFinanceDetail.getFinScheduleData().getFinanceMain().getProductCategory()))) ||
+		  StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner) ||
+		  StringUtils.equals(FinanceConstants.FINSER_EVENT_CANCELDISB, moduleDefiner)) {
+		   
+		  if (isTabVisible(StageTabConstants.AdvancePayment)) {
+				appendAdvancePaymentsDetailTab(onLoad);
+			}
+		  }
+		 
+		
 		//Asset Evaluation Tab Addition
 		if (StringUtils.isEmpty(moduleDefiner) && StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_RETAIL)
 				&& (StringUtils.equals(FinanceConstants.PRODUCT_IJARAH, financeType.getFinCategory())
@@ -1661,29 +1664,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				appendScheduleDetailTab(true, false);
 			}
 		}
-
+		if (StringUtils.isEmpty(moduleDefiner)){
 		//Joint Account and Guaranteer  Tab Addition
-		/*
-		 * if (!StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_COMMERCIAL) &&
-		 * !StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_CORPORATE)) {
-		 */
-		if (isTabVisible(StageTabConstants.CoApplicants)) {
-			appendJointGuarantorDetailTab(onLoad);
-		}
-		//}
+			if (isTabVisible(StageTabConstants.CoApplicants)) {
+				appendJointGuarantorDetailTab(onLoad);
+			}
 
-		// Finance Tax Details
-		if (isTabVisible(StageTabConstants.TaxDetail)) {
-			appendTaxDetailTab(onLoad);
+			// Finance Tax Details
+			if (isTabVisible(StageTabConstants.TaxDetail)) {
+				appendTaxDetailTab(onLoad);
+			}
 		}
 
-		//Eligibility Details Tab Adding
 		if (StringUtils.isEmpty(moduleDefiner) || isFinPreApproved) {
+			//Eligibility Details Tab Adding
 			appendEligibilityDetailTab(onLoad);
-		}
 
-		//Scoring Detail Tab Addition
-		if (StringUtils.isEmpty(moduleDefiner) || isFinPreApproved) {
+			//Scoring Detail Tab Addition
 			appendFinScoringDetailTab(onLoad);
 		}
 
@@ -1697,42 +1694,43 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (isTabVisible(StageTabConstants.Documents)) {
 			appendDocumentDetailTab(onLoad);
 		}
+		if (StringUtils.isEmpty(moduleDefiner)) {
 		// Covenant Type Tab Addition
-		if (ImplementationConstants.ALLOW_COVENANT_TYPES && isTabVisible(StageTabConstants.Covenant)) {
-			appendCovenantTypeTab(onLoad);
-		}
-
-		// Deviation Detail Tab 
-		if (ImplementationConstants.ALLOW_DEVIATIONS) {
-			if (StringUtils.isEmpty(moduleDefiner)) {
-				boolean allowed = deviationExecutionCtrl.deviationAllowed(financeType.getFinCategory());
-				if (allowed) {
-					appendDeviationDetailTab(onLoad);
-				}
+			if (ImplementationConstants.ALLOW_COVENANT_TYPES && isTabVisible(StageTabConstants.Covenant)) {
+				appendCovenantTypeTab(onLoad);
 			}
-		}
+			// Deviation Detail Tab 
+			if (ImplementationConstants.ALLOW_DEVIATIONS) {
+					boolean allowed = deviationExecutionCtrl.deviationAllowed(financeType.getFinCategory());
+					if (allowed) {
+						appendDeviationDetailTab(onLoad);
+					}
+			}
 
-		//Mandate Details Tab 
-		if (isTabVisible(StageTabConstants.Mandate)) {
-			appendMandateDetailTab(onLoad);
-		}
+			//Mandate Details Tab 
+			if (isTabVisible(StageTabConstants.Mandate)) {
+				appendMandateDetailTab(onLoad);
+			}
 
-		if (isTabVisible(StageTabConstants.Cheque)) {
-			appendChequeDetailTab(onLoad);
-		}
+			if (isTabVisible(StageTabConstants.Cheque)) {
+				appendChequeDetailTab(onLoad);
+			}
 
-		// Collateral Detail Tab
-		if (isTabVisible(StageTabConstants.Collaterals)) {
-			/*
-			 * if (StringUtils.isEmpty(moduleDefiner) || StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB,
-			 * moduleDefiner)) {
-			 */
-			appendFinCollateralTab(onLoad);
-		}
-		
-		// VAS Recording Detail Tab
-		if (isTabVisible(StageTabConstants.VAS)) {
-			appendVasRecordingTab(onLoad);
+			// Collateral Detail Tab
+			if (isTabVisible(StageTabConstants.Collaterals)) {
+				appendFinCollateralTab(onLoad);	
+			}
+
+			// VAS Recording Detail Tab
+			if (isTabVisible(StageTabConstants.VAS)) {
+				appendVasRecordingTab(onLoad);
+			}
+		}else{
+			// Collateral Detail Tab
+			if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB,moduleDefiner)) {
+				 appendFinCollateralTab(onLoad);
+			 }
+			
 		}
 
 		//Stage Accounting details Tab Addition
@@ -1776,17 +1774,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Recommend & Comments Details Tab Addition
 		appendRecommendDetailTab(onLoad);
 
-		//Sampling Approval Details
-		appendSamplingApprovalTab(onLoad);
-
-		if(isTabVisible(StageTabConstants.ExtendedField)){
-			if (onLoad) {
-				appendExtendedFieldDetails(aFinanceDetail, moduleDefiner);
+		if (StringUtils.isEmpty(moduleDefiner)) {
+			//Sampling Approval Details
+			appendSamplingApprovalTab(onLoad);
+			if(isTabVisible(StageTabConstants.ExtendedField)){
+				if (onLoad) {
+					appendExtendedFieldDetails(aFinanceDetail, moduleDefiner);
+				}
 			}
-		}
-		//Query Mangement Tab 
-		if (isTabVisible(StageTabConstants.QueryMangement)) {
-			appendQueryMangementTab(false);
+			//Query Mangement Tab 
+			if (isTabVisible(StageTabConstants.QueryMangement)) {
+				appendQueryMangementTab(false);
+			}
 		}
 		logger.debug("Leaving");
 	}
