@@ -820,9 +820,9 @@
 			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'CHEQUEMAINTENANCE_MAKER', 'CHEQUEMAINTENANCE_MAKER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
 			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'CHEQUEMAINTENANCE_APPROVER', 'CHEQUEMAINTENANCE_APPROVER','', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
 
-			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CHEQUEHEADER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='CHEQUEMAINTENANCE_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			<!-- INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CHEQUEHEADER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='CHEQUEMAINTENANCE_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
 			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CHEQUEHEADER_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='CHEQUEMAINTENANCE_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
-
+ -->
 			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='CHEQUEMAINTENANCE_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
 			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='CHEQUEMAINTENANCE_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
 
@@ -870,6 +870,17 @@
 		<sql>
 			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM
 			workflowdetails);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="38" author="Vinay">
+		<sql>
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CHEQUEDETAIL_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='CHEQUEMAINTENANCE_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CHEQUEDETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='CHEQUEMAINTENANCE_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 		</sql>
 	</changeSet>
 </databaseChangeLog>
