@@ -1333,6 +1333,7 @@
 		<property name="taxDetailDAO" ref="taxDetailDAO" />
 		<property name="taxDetailService" ref="taxDetailService" />
 		<property name="cityDAO" ref="cityDAO" />
+		<property name="gstInvoiceTxnDAO" ref="gstInvoiceTxnDAO" />
 	</bean>
 
 	<!--============ Salutation Details ============== -->
@@ -10290,6 +10291,7 @@
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="entityDAO" ref="entityDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="gstInvoiceTxnDAO" ref="gstInvoiceTxnDAO" />
 	</bean>
 
 	<!-- Entity -->
@@ -11584,4 +11586,24 @@
 	</bean>
 	<bean id="finSamplingServiceTarget"
 		class="com.pennanttech.pennapps.pff.finsampling.service.FinSamplingServiceImpl" />
+	
+	<!-- Gst Invoice Number Preparation -->	
+	<bean id="defaultGstInvoiceGenerator"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="defaultGstInvoiceGeneratorTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="generate*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="defaultGstInvoiceGeneratorTarget" class="com.pennanttech.pff.external.gst.GSTInvoiceGeneratorServiceImpl">
+		<property name="gstInvoiceTxnDAO" ref="gstInvoiceTxnDAO" />
+	</bean>
 </beans>

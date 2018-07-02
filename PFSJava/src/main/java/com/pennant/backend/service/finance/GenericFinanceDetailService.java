@@ -1660,7 +1660,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			gstInvoiceTxn.setTransactionID(transactionId);
 			List<GSTInvoiceTxnDetails> gstInvoiceTxnDetails = new ArrayList<GSTInvoiceTxnDetails>();
 
-			gstInvoiceTxn.setInvoice_Status("I");
+			gstInvoiceTxn.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
+			gstInvoiceTxn.setInvoice_Status(PennantConstants.GST_INVOICE_STATUS_INITIATED);
 			gstInvoiceTxn.setInvoiceDate(DateUtility.getAppDate()); //Need to confirm either it is system date or application date
 			Entity entity = null;
 			if (StringUtils.isNotBlank(financeMain.getLovDescEntityCode())) {

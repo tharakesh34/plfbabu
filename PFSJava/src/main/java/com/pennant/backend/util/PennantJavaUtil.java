@@ -2308,9 +2308,13 @@ public class PennantJavaUtil {
 		ModuleUtil.register("StageTabDetail", new ModuleMapping("StageTabDetail", StageTabDetail.class, new String[] { "StageTabDetail",
 		"StageTabDetail" }, null, new String[] {"TabCode","TabDescription"}, new Object[][] { {
 			"Active", "0", 1 } }, 600));
-					
+		
+		// GST Invoice Report
 		ModuleUtil.register("GSTInvoiceReport", new ModuleMapping("GSTInvoiceReport", GSTInvoiceTxn.class, new String[] { "GST_Invoice_Txn",
-		"GST_Invoice_Txn" }, null, new String[] {"InvoiceNo","LoanAccountNo"}, null, 600));
+		"GST_Invoice_Txn_View" }, null, new String[] {"InvoiceNo","LoanAccountNo"}, null, 600));
+		
+		ModuleUtil.register("GSTFinanceMain", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
+				"FinanceMain", "GST_FinanceMain_View" }, null, new String[] { "FinReference", "FinType" }, null, 350));
 		
 		/*Legal Details*/
 		ModuleUtil.register("LegalDetail", new ModuleMapping("LegalDetail", LegalDetail.class, new String[] { "LegalDetails",

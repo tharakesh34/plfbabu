@@ -832,7 +832,8 @@ public class RepaymentProcessUtil {
 			gstInvoiceTxn.setTransactionID(linkedTranId);
 			List<GSTInvoiceTxnDetails> gstInvoiceTxnDetails = new ArrayList<GSTInvoiceTxnDetails>();
 
-			gstInvoiceTxn.setInvoice_Status("I");
+			gstInvoiceTxn.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
+			gstInvoiceTxn.setInvoice_Status(PennantConstants.GST_INVOICE_STATUS_INITIATED);
 			gstInvoiceTxn.setInvoiceDate(DateUtility.getAppDate()); //Need to confirm either it is system date or application date
 			Entity entity = null;
 			if (StringUtils.isNotBlank(financeMain.getLovDescEntityCode())) {
@@ -885,8 +886,8 @@ public class RepaymentProcessUtil {
 				gstInvoiceTxn.setCustomerAddress(finTaxDetail.getAddrLine1());
 			} else {
 				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-				if (CollectionUtils.isNotEmpty(addressList)) {
 
+				if (CollectionUtils.isNotEmpty(addressList)) {
 					for (CustomerAddres customerAddres : addressList) {
 						if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 							country = customerAddres.getCustAddrCountry();
@@ -951,7 +952,6 @@ public class RepaymentProcessUtil {
 							}
 							
 							gstInvoiceTxn.setCustomerAddress(custAddress);
-							//gstInvoiceTxn.setCustomerGSTIN(finTaxDetail.getTaxNumber());
 							break;
 						}
 					}
@@ -987,7 +987,7 @@ public class RepaymentProcessUtil {
 						gstInvoiceTxnDetails.add(details);
 					}
 				}
-			} else if (CollectionUtils.isNotEmpty(movements)) {	// Manual Advise
+			} else if (CollectionUtils.isNotEmpty(movements)) {	// Receivable Advise
 				
 				Map<String, BigDecimal> taxPercmap = getTaxPercentages(financeDetail);
 				

@@ -18,7 +18,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 	}
 
 	@Override
-	public String save(GSTInvoiceTxn gstInvoiceTxn) {
+	public long save(GSTInvoiceTxn gstInvoiceTxn) {
 		return this.gstInvoiceTxnDAO.save(gstInvoiceTxn);
 	}
 	

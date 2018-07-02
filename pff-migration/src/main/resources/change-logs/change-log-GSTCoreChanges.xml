@@ -2375,6 +2375,338 @@ UNION ALL
 			 where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport') and fieldid='3';
 		</sql>
 	</changeSet>
-
+	
+	<changeSet author="Kesav" id="116">
+		<comment> InvoiceType column added in GST_Invoice_Txn</comment>
+		<addColumn tableName="GST_Invoice_Txn">
+			<column name="InvoiceType" type="varchar(1)" defaultValue="D">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="117" dbms="postgresql">
+		<sql>
+			 create table gst_invoice_txn_bkp as select * from gst_invoice_txn;
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="117" dbms="mssql">
+		<sql>
+			 select * into gst_invoice_txn_bkp from gst_invoice_txn;
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="117" dbms="oracle">
+		<sql>
+			 create table gst_invoice_txn_bkp as select * from gst_invoice_txn;
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="118">
+		<comment> InvoiceId column added in gst_invoice_txn_bkp</comment>
+		<addColumn tableName="gst_invoice_txn_bkp">
+			<column name="InvoiceId" type="bigint"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="119" dbms="postgresql">
+		<sql>
+			 update gst_invoice_txn_bkp fp set invoiceid = cast (SPLIT_PART(invoiceno, 'INV', 2) as bigint) 
+			 where  invoiceno = (select invoiceno from gst_invoice_txn_bkp fm where fm.invoiceno = fp.invoiceno);
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="119" dbms="oracle">
+		<sql>
+			update 	GST_INVOICE_TXN_bkp T1 
+			set 	INVOICEID = (Select SUBSTR(INVOICENO, INSTR(INVOICENO,'INV') + 3, LENGTH(INVOICENO)) 
+								 from 	GST_INVOICE_TXN_bkp t2
+								 where 	t2.INVOICENO = t1.INVOICENO);
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="119" dbms="mssql">
+		<sql>
+			update GST_INVOICE_TXN_bkp 
+			set INVOICEID = (Select SUBSTR(INVOICENO,INSTR(INVOICENO,'INV') + 3, LENGTH(INVOICENO)) 
+							 from 	GST_INVOICE_TXN_bkp t2
+							 where 	t2.INVOICENO = GST_INVOICE_TXN_bkp.INVOICENO);
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="120">
+		<dropTable tableName="GST_Invoice_Txn" />
+	</changeSet>
+	
+	 <changeSet id="121" author="Kesava">
+		<createTable tableName="GST_Invoice_Txn">
+			<column name="InvoiceId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="InvoiceNo" type="varchar(50)"/>
+			<column name="TransactionID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="InvoiceDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Invoice_Amt" type="decimal(18,0)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="CompanyCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CompanyName" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_GSTIN" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_Address1" type="varchar(1000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_Address2" type="varchar(1000)"/>
+			<column name="Company_Address3" type="varchar(1000)"/>
+			<column name="Company_PINCode" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_State_Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_State_Name" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HSNNumber" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NatureService" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PanNumber" type="varchar(10)" />
+			<column name="LoanAccountNo" type="varchar(20)" />
+			<column name="CustomerID" type="varchar(20)" />	
+			<column name="CustomerName" type="varchar(150)"/>
+			<column name="CustomerGSTIN" type="varchar(100)"/>
+			<column name="CustomerStateCode" type="varchar(2)" />
+			<column name="CustomerStateName" type="varchar(50)" />
+			<column name="CustomerAddress" type="varchar(1000)" />
+			<column name="Invoice_Status" type="varchar(1)" defaultValue="I">
+				<constraints nullable="false" />
+			</column>
+			<column name="InvoiceType" type="varchar(1)" defaultValue="D">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="122">
+		<sql>
+			Insert 	into gst_invoice_txn (invoiceid,invoiceno,transactionid,invoicedate,invoice_amt,companycode,companyname,company_gstin,company_address1,
+					company_address2,company_address3,company_pincode,company_state_code,company_state_name,hsnnumber,natureservice,pannumber,loanaccountno,
+					customerid,customername,customergstin,customerstatecode,customerstatename,customeraddress,invoice_status,invoicetype)
+			Select 	invoiceid,invoiceno,transactionid,invoicedate,invoice_amt,companycode,companyname,company_gstin,company_address1,
+					company_address2,company_address3,company_pincode,company_state_code,company_state_name,hsnnumber,natureservice,pannumber,loanaccountno,
+					customerid,customername,customergstin,customerstatecode,customerstatename,customeraddress,invoice_status,invoicetype
+			from 	gst_invoice_txn_bkp;
+		</sql>
+	</changeSet>
+		
+	<changeSet author="Kesav" id="123" dbms="postgresql">
+		<sql>
+			 create table gst_invoice_txn_details_bkp as select * from gst_invoice_txn_details;
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="123" dbms="mssql">
+		<sql>
+			 select * into gst_invoice_txn_details_bkp from gst_invoice_txn_details;
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="123" dbms="oracle">
+		<sql>
+			 create table gst_invoice_txn_details_bkp as select * from gst_invoice_txn_details;
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="124">
+		<comment> InvoiceId column added in gst_invoice_txn_details_bkp</comment>
+		<addColumn tableName="gst_invoice_txn_details_bkp">
+			<column name="InvoiceId" type="bigint"/>
+			<column name="Id" type="bigint"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="125" dbms="postgresql">
+		<sql>
+			 update gst_invoice_txn_details_bkp fp set invoiceid = cast (SPLIT_PART(invoiceno, 'INV', 2) as bigint) 
+			 where  invoiceno = (select invoiceno from gst_invoice_txn_details_bkp fm where fm.invoiceno=fp.invoiceno and fm.feecode=fp.feecode);
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="125" dbms="oracle">
+		<sql>
+			update 	gst_invoice_txn_details_bkp T1 
+			set 	INVOICEID = (Select SUBSTR(INVOICENO, INSTR(INVOICENO,'INV') + 3, LENGTH(INVOICENO)) 
+								 from 	gst_invoice_txn_details_bkp t2
+								 where  t2.INVOICENO = t1.INVOICENO and t2.feecode = t1.feecode);
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="125" dbms="mssql">
+		<sql>
+			update 	gst_invoice_txn_details_bkp 
+			set 	INVOICEID = (Select SUBSTR(INVOICENO,INSTR(INVOICENO,'INV')+3, LENGTH(INVOICENO)) 
+								 from 	gst_invoice_txn_details_bkp t2
+								 where 	t2.INVOICENO = gst_invoice_txn_details_bkp.INVOICENO and t2.feecode = gst_invoice_txn_details_bkp.feecode);
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="126">
+		<dropTable tableName="gst_invoice_txn_details" />
+	</changeSet>
+	
+	<changeSet id="127" author="Kesava">
+		<createTable tableName="GST_Invoice_Txn_Details">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="InvoiceId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="InvoiceNo" type="varchar(50)"/>
+			<column name="FeeCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="CGST_RATE" type="decimal(5,2)" defaultValue="0"/>
+			<column name="CGST_AMT" type="decimal(18,0)" defaultValue="0"/>
+			<column name="SGST_RATE" type="decimal(5,2)" defaultValue="0"/>
+			<column name="SGST_AMT" type="decimal(18,0)" defaultValue="0"/>
+			<column name="IGST_RATE" type="decimal(5,2)" defaultValue="0"/>
+			<column name="IGST_AMT" type="decimal(18,0)" defaultValue="0"/>
+			<column name="UGST_RATE" type="decimal(5,2)" defaultValue="0"/>
+			<column name="UGST_AMT" type="decimal(18,0)" defaultValue="0"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="128">
+		<sql>
+			Insert 	Into gst_invoice_txn_details (id,invoiceid,invoiceno,feecode,FeeAmount,cgst_rate,cgst_amt,sgst_rate,sgst_amt,igst_rate,igst_amt,ugst_rate,ugst_amt)
+			Select 	row_number() over (order by invoiceid) id,invoiceid,invoiceno,feecode,FeeAmount,cgst_rate,cgst_amt,sgst_rate,sgst_amt,igst_rate,igst_amt,ugst_rate,ugst_amt 
+			From 	gst_invoice_txn_details_bkp order by invoiceid;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="129" author="Kesav">
+		<createTable tableName="Seq_Gst_Invoice_Txn_Details">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="130" author="Kesav">
+		<sql>
+			Insert into Seq_Gst_Invoice_Txn_Details values (0);
+			update Seq_Gst_Invoice_Txn_Details set SeqNo = (select max(Id) from gst_invoice_txn_details);
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="131">
+		<comment>Adding Unique Key with GST_Invoice_Txn</comment>
+		<addUniqueConstraint tableName="GST_Invoice_Txn" constraintName="UK_GST_Invoice_Txn_InvoiceId" columnNames="InvoiceId" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="132">
+		<comment>Adding Foreign Key with GST_Invoice_Txn</comment>
+		<addForeignKeyConstraint constraintName="FK_GST_Invoice_Txn_InvoiceId"
+			baseTableName="GST_Invoice_Txn_Details" baseColumnNames="InvoiceId"
+			referencedColumnNames="InvoiceId" referencedTableName="GST_Invoice_Txn" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="133">
+		<dropColumn tableName="GST_Invoice_Txn_Details" columnName="InvoiceNo"/>
+	</changeSet>
+	
+	<changeSet id="134" author="Kesava">
+		<createTable tableName="Seq_GST_Invoice">
+			<column name="FromState" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Entity" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TransactionType" type="varchar(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqNo" type="bigint" defaultValue="0" >
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="135">
+		<comment>Adding Composite Primary Key to Seq_GST_Invoice</comment>
+		<addPrimaryKey columnNames="FromState,Entity,TransactionType" constraintName="PK_Seq_GST_Inv" tableName="Seq_GST_Invoice" />
+	</changeSet>
+	
+	<changeSet id="136" author="Kesav">
+		<sql>
+			Insert Into Seq_GST_Invoice (FromState, Entity, TransactionType, SeqNo) Select StateCode, EntityCode, 'D' TransactionType, 0 SeqNo From TaxDetail;
+			Insert Into Seq_GST_Invoice (FromState, Entity, TransactionType, SeqNo) Select StateCode, EntityCode, 'C' TransactionType, 0 SeqNo From TaxDetail;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="137" author="Kesav">
+		<createView viewName="GST_Invoice_Txn_View" replaceIfExists="true">
+			  Select 	InvoiceNo,  LoanAccountNo From 	GST_Invoice_Txn  Where 	InvoiceNo is not null
+		</createView>	
+	</changeSet>
+	
+	<changeSet author="Kesav" id="138">
+		<dropTable tableName="gst_invoice_txn_bkp" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="139">
+		<dropTable tableName="gst_invoice_txn_details_bkp" />
+	</changeSet>
+	
+	<changeSet id="140" author="Kesav">
+		<createView viewName="GST_FinanceMain_View" replaceIfExists="true">
+			 Select 	T1.FinReference, T1.FinType 
+			 From 		FinanceMain T1
+			 Inner Join GST_Invoice_Txn T2 ON T2.LoanAccountNo = T1.FinReference
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="141" author="Kesav">
+		<sql>
+			update reportfilterfields set modulename = 'GSTFinanceMain' 
+ 			where  reportid = (select reportid from reportconfiguration where menuitemcode = 'menu_Item_GST_InvoiceReport') and fieldid='2';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="142" author="Kesav">
+		<sql>
+			Delete from SMTPARAMETERS where SysParmCode = 'AUTO_GST_INVOICE_REQ_JOB_CORNEXP';
+			Delete from SMTParameters where sysparmCode = 'AUTO_GST_INVOICE_NO';
+						
+			Insert into SMTPARAMETERS 
+			values ('AUTO_GST_INVOICE_REQ_JOB_CORNEXP','GST Invoice No Request Job Cron expression.','String',1,'0 0 * * * ?',30,0,null,null,'GST Invoice No Request Job Cron expression.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+						
+			Insert into SMTPARAMETERS 
+			values ('AUTO_GST_INVOICE_NO','GST Invoice Nubmber Auto Generation','String',1,'Y',1,0,null,null,'GST Invoice Nubmber Auto Generation',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="143" author="Kesav">
+		<renameTable newTableName="Seq_Gst_Invoice_Txn" oldTableName="SeqGst_Invoice_Txn" />
+	</changeSet>
+	
+	<changeSet id="144" author="Kesav">
+		<sql>
+			Update Gst_Invoice_Txn set InvoiceNo = null;
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>

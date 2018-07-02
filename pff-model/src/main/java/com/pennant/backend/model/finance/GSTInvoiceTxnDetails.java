@@ -44,6 +44,8 @@ import java.math.BigDecimal;
 
 public class GSTInvoiceTxnDetails {
 
+	private long id = Long.MIN_VALUE;
+	private long invoiceId = 0;
 	private String invoiceNo;
 	
 	private String feeCode;
@@ -157,6 +159,22 @@ public class GSTInvoiceTxnDetails {
 
 	public void setFeeAmount(BigDecimal feeAmount) {
 		this.feeAmount = feeAmount;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public long getInvoiceId() {
+		return invoiceId;
+	}
+
+	public void setInvoiceId(long invoiceId) {
+		this.invoiceId = invoiceId;
 	}
 
 }

@@ -49,7 +49,7 @@ import com.pennant.backend.model.Entity;
 
 public class GSTInvoiceTxn implements Entity {
 
-	private long id = Long.MIN_VALUE;
+	private long invoiceId = Long.MIN_VALUE;
 	private long transactionID;
 	private String invoiceNo;
 	private Date invoiceDate;
@@ -77,6 +77,7 @@ public class GSTInvoiceTxn implements Entity {
 	private String customerAddress;
 	
 	private String invoice_Status;
+	private String invoiceType = "D";
 	
 	private List<GSTInvoiceTxnDetails> gstInvoiceTxnDetailsList = new ArrayList<GSTInvoiceTxnDetails>();
 	
@@ -277,11 +278,11 @@ public class GSTInvoiceTxn implements Entity {
 	}
 
 	public long getId() {
-		return id;
+		return invoiceId;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public void setId(long invoiceId) {
+		this.invoiceId = invoiceId;
 	}
 
 	@Override
@@ -295,5 +296,21 @@ public class GSTInvoiceTxn implements Entity {
 
 	public void setCustomerStateName(String customerStateName) {
 		this.customerStateName = customerStateName;
+	}
+
+	public String getInvoiceType() {
+		return invoiceType;
+	}
+
+	public void setInvoiceType(String invoiceType) {
+		this.invoiceType = invoiceType;
+	}
+
+	public long getInvoiceId() {
+		return invoiceId;
+	}
+
+	public void setInvoiceId(long invoiceId) {
+		this.invoiceId = invoiceId;
 	}
 }

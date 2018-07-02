@@ -767,4 +767,11 @@ public class PennantConstants {
 	// Sampling Fields
 	public static final String SAMPLING_RESUBMIT_REASON = "SAMPLINGRR";
 	public static final String OTHER_BANK = "OTHER";
+	
+	//GST Invoice Constants
+	public static final String				GST_INVOICE_TRANSACTION_TYPE_DEBIT		= "D";
+	public static final String				GST_INVOICE_TRANSACTION_TYPE_CREDIT		= "C";
+	public static final String				GST_INVOICE_STATUS_INITIATED			= "I";
+	public static final String				GST_INVOICE_STATUS_PRINTED				= "P";
+	public static final String				GST_INVOICE_STATUS_CANCELLED			= "C";
 }

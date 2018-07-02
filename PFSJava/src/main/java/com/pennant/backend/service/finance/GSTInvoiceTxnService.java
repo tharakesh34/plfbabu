@@ -6,7 +6,7 @@ import com.pennant.backend.model.systemmasters.Province;
 
 public interface GSTInvoiceTxnService {
 	
-	String save(GSTInvoiceTxn gstInvoiceTxn);
+	long save(GSTInvoiceTxn gstInvoiceTxn);
 
 	Entity getEntity(String entityCode);
 

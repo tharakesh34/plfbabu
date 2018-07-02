@@ -54,11 +54,13 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.SeqGSTInvoice;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.TaxDetailService;
@@ -81,6 +83,8 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	private TaxDetailDAO taxDetailDAO;
 	private CityDAO cityDAO;
 	private transient TaxDetailService taxDetailService;
+	private GSTInvoiceTxnDAO  gstInvoiceTxnDAO;
+	
 	public ProvinceServiceImpl() {
 		super();
 	}
@@ -240,7 +244,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			if (updateRecord) {
 				taxDetailDAO.update(taxDetail, type);
 			}
-
+			
 			if (deleteRecord) {
 				taxDetailDAO.delete(taxDetail, type);
 			}
@@ -248,6 +252,10 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			if (approveRec) {
 				taxDetail.setRecordType(rcdType);
 				taxDetail.setRecordStatus(recordStatus);
+				// GST Invoice Report Sequence Table insert
+				if (saveRecord || updateRecord) {
+					saveSeqGstInvoice(taxDetail);
+				}
 			}
 
 			auditDetails.get(i).setModelData(taxDetail);
@@ -256,6 +264,32 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		logger.debug("Leaving");
 
 		return auditDetails;
+	}
+	
+	/**
+	 * Save Sequence Table for GST Invoice Preparation
+	 * @param taxDetail
+	 */
+	private void saveSeqGstInvoice(TaxDetail taxDetail) {
+		SeqGSTInvoice seqGstInvoice = new SeqGSTInvoice();
+		seqGstInvoice.setEntity(taxDetail.getEntityCode());
+		seqGstInvoice.setFromState(taxDetail.getStateCode());
+		seqGstInvoice.setSeqNo(0);
+		seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
+
+		SeqGSTInvoice seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
+
+		if (seqGstInvoiceTemp == null) {
+			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
+		}
+
+		seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
+
+		seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
+
+		if (seqGstInvoiceTemp == null) {
+			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
+		}
 	}
 
 	/**
@@ -763,5 +797,13 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	
 	public void setCityDAO(CityDAO cityDAO) {
 		this.cityDAO = cityDAO;
+	}
+
+	public GSTInvoiceTxnDAO getGstInvoiceTxnDAO() {
+		return gstInvoiceTxnDAO;
+	}
+
+	public void setGstInvoiceTxnDAO(GSTInvoiceTxnDAO gstInvoiceTxnDAO) {
+		this.gstInvoiceTxnDAO = gstInvoiceTxnDAO;
 	}
 }
