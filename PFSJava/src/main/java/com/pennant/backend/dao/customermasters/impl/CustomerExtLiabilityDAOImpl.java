@@ -54,8 +54,8 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 			sql.append(" fintype, el.fintypedesc, findate, loanbank, loanbankname,");
 			sql.append(" rateofinterest, tenure, originalamount, instalmentamount,");
 			sql.append(" outstandingbalance, balancetenure, bounceinstalments, principaloutstanding,");
-			sql.append(" overdueamount, finstatus, el.custstsdescription,");
-			sql.append(" foir, source, checkedby, securitydetails, loanpurpose, el.loanpurposedesc,");
+			sql.append(" overdueamount, finstatus, custstsdescription,");
+			sql.append(" foir, source, checkedby, securitydetails, loanpurpose, loanpurposedesc,");
 			sql.append(" repaybank, repayfrombankname,");
 			sql.append(" version, lastMntOn, lastMntBy, recordStatus, roleCode, nextRoleCode,");
 			sql.append(" taskId, nextTaskId, recordType, workflowId");
@@ -64,11 +64,11 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 			sql.append(" where linkid =:linkId and custId = :custId and seqno = :seqno");
 		} else {
 			sql.append(" select id, el.linkId, seqno, cel.custid, cu.custcif, cu.custshrtname,");
-			sql.append(" el.fintype, el.fintypedesc, findate, loanbank, lb.bankname loanbankname,");
+			sql.append(" el.fintype, ft.fintypedesc, findate, loanbank, lb.bankname loanbankname,");
 			sql.append(" rateofinterest, tenure, originalamount, instalmentamount,");
 			sql.append(" outstandingbalance, balancetenure, bounceinstalments, principaloutstanding,");
-			sql.append(" overdueamount, finstatus, el.custstsdescription,");
-			sql.append(" foir, source, checkedby, securitydetails, loanpurpose, el.loanpurposedesc,");
+			sql.append(" overdueamount, finstatus, cs.custstsdescription,");
+			sql.append(" foir, source, checkedby, securitydetails, loanpurpose, lp.loanpurposedesc,");
 			sql.append(" repaybank, rb.bankname repayfrombankname,");
 			sql.append(" el.version, el.lastMntOn, el.lastMntBy, el.recordStatus, el.roleCode, el.nextRoleCode,");
 			sql.append(" el.taskId, el.nextTaskId, el.recordType, el.workflowId");
@@ -292,7 +292,8 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		this.jdbcTemplate.update(sql.toString(), source);
 	}
 	
-	private long getLinkId(long custId) {
+	@Override
+	public long getLinkId(long custId) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select coalesce(max(linkid), 0) from link_cust_liabilities where custid=:custid");
 

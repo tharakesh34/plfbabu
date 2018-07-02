@@ -88,6 +88,7 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 		excludeFields.add("sourceId");
 		excludeFields.add("inputSource");
 		excludeFields.add("custType");
+		excludeFields.add("otherName");
 		return excludeFields;
 	}
 

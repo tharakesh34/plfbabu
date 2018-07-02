@@ -51,9 +51,11 @@ public class CustomerExtLiabilityValidation {
 		CustomerExtLiability liability = (CustomerExtLiability) auditDetail.getModelData();
 		CustomerExtLiability tempLiability = null;
 		
-		/*if(liability.getLinkId()==0 && samplingId!=0){
-			samplingDAO.getLiabilityLinkId(samplingId, liability.getCustId());
-		}*/
+		if ("sampling".equals(liability.getInputSource())) {
+			liability.setLinkId(samplingDAO.getIncomeLinkIdByCustId(liability.getCustId(), samplingId));
+		} else {
+		    customerExtLiabilityDAO.setLinkId(liability);
+		}
 		
 		if (liability.isWorkflow()) {
 			tempLiability = customerExtLiabilityDAO.getLiability(liability, "_temp",liability.getInputSource());
@@ -76,10 +78,10 @@ public class CustomerExtLiabilityValidation {
 
 		if (liability.isNew()) { 
 			if (!liability.isWorkflow()) {
-				if (oldLiability != null) {
+				if (beforeLiability != null) {
 					errorCode = "41001";
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, errorCode, errParm, null));
 				}
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, errorCode, errParm, null));
 			} else {
 				if (liability.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					if (beforeLiability != null || tempLiability != null) {

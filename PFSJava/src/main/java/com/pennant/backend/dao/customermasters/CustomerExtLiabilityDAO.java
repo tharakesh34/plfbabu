@@ -29,4 +29,6 @@ public interface CustomerExtLiabilityDAO {
 	List<CustomerExtLiability> getLiabilityByFinReference(String finReference);
 
 	List<CustomerExtLiability> getLiabilityBySamplingId(long samplingLinkId);
+
+	long getLinkId(long custId);
 }

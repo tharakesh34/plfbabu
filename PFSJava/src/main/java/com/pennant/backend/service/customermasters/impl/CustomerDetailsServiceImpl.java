@@ -3425,7 +3425,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 			if (customerIncome.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
-			} else if (customerIncome.isNewRecord()) {
+			} else if (customerIncome.isNewRecord() && !approveRec) {
 				saveRecord = true;
 				if (customerIncome.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					customerIncome.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -4001,7 +4001,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 			if (customerExtLiability.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
-			} else if (customerExtLiability.isNewRecord()) {
+			} else if (customerExtLiability.isNewRecord() && !approveRec) {
 				saveRecord = true;
 				if (customerExtLiability.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					customerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_NEW);
