@@ -248,7 +248,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	private void doSearchSelection() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
 		List<Filter> filterList = new ArrayList<>();
-		filterList.add(new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL));
+		//filterList.add(new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL));
 		for (int i = 0; i < cifFilters.length; i++) {
 			filterList.add(new Filter("CustCIF", cifFilters[i], Filter.OP_NOT_EQUAL));
 		}

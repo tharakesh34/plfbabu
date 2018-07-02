@@ -9699,10 +9699,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (isBranchanged) {
 			aFinanceMain.setSwiftBranchCode(branchSwiftCode);
 		} else {
-			aFinanceMain
-					.setSwiftBranchCode(getFinanceDetail().getCustomerDetails().getCustomer().getCustSwiftBrnCode());
+			aFinanceMain.setSwiftBranchCode(getFinanceDetail().getCustomerDetails().getCustomer().getCustSwiftBrnCode());
 		}
 
+		try {
+			aFinanceMain.setFinBranch(this.finBranch.getValue());
+			aFinanceMain.setLovDescFinBranchName(this.finBranch.getDescription());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		
 		Date financeDate = null;
 
 		try {
@@ -9777,12 +9784,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 
-		try {
-			aFinanceMain.setFinBranch(this.finBranch.getValue());
-			aFinanceMain.setLovDescFinBranchName(this.finBranch.getDescription());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
+
 
 		try {
 
