@@ -87,7 +87,7 @@ public class QueryDetailDAOImpl extends BasisNextidDaoImpl<QueryDetail> implemen
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, finReference, categoryId, qryNotes, assignedRole, notifyTo, ");
 		sql.append(" status, Coalesce(raisedBy,0) raisedBy, raisedOn, responsNotes, Coalesce(responseBy,0) responseBy, responseOn, ");
-		sql.append(" closerNotes, Coalesce(closerBy,0) closerBy, closerOn, Version");		
+		sql.append(" closerNotes, Coalesce(closerBy,0) closerBy, closerOn, module, Version");		
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			//sql.append(" code, description,usrLogin " );
@@ -126,10 +126,10 @@ public class QueryDetailDAOImpl extends BasisNextidDaoImpl<QueryDetail> implemen
 		StringBuilder sql =new StringBuilder(" insert into QUERYDETAIL");
 		//sql.append(tableType.getSuffix());
 		sql.append("(id, finReference, categoryId, qryNotes, assignedRole, notifyTo, ");
-		sql.append("status, raisedBy, raisedOn, Version, LastMntBy,WorkflowId)" );
+		sql.append("status, raisedBy, raisedOn, Version, LastMntBy,WorkflowId, Module)" );
 		sql.append(" values(");
 		sql.append(" :id, :finReference, :categoryId, :qryNotes, :assignedRole, :notifyTo, ");
-		sql.append(" :status, :raisedBy, :raisedOn, :Version, :LastMntBy, :WorkflowId)");
+		sql.append(" :status, :raisedBy, :raisedOn, :Version, :LastMntBy, :WorkflowId, :Module)");
 
 		if (queryDetail.getId()==Long.MIN_VALUE){
 			queryDetail.setId(getNextidviewDAO().getNextId("SeqQUERYDETAIL"));
@@ -159,7 +159,7 @@ public class QueryDetailDAOImpl extends BasisNextidDaoImpl<QueryDetail> implemen
 		//sql.append(tableType.getSuffix());
 		sql.append("  set status = :status, qryNotes = :qryNotes, responsNotes = :responsNotes, ");
 		sql.append(" responseBy = :responseBy, responseOn = :responseOn, closerNotes = :closerNotes, ");
-		sql.append(" closerBy = :closerBy, closerOn = :closerOn, Version = :Version ");
+		sql.append(" closerBy = :closerBy, closerOn = :closerOn, Version = :Version, Module = :Module");
 		sql.append(" where id = :id ");
 	
 		// Execute the SQL, binding the arguments.

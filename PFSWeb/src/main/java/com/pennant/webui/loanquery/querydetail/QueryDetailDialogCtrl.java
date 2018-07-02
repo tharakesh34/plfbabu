@@ -185,6 +185,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	protected Button btnNotifyTo;
 	protected Textbox qryNotesMnt;
 	protected Textbox responsNotesMnt;
+	protected Textbox module;
 
 	// protected Textbox code;
 	// protected Textbox description;
@@ -252,6 +253,15 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 			if (arguments.containsKey("financeMain")) {
 				this.financeMain = (FinanceMain) arguments.get("financeMain");
+				this.module.setValue(PennantConstants.QUERY_ORIGINATION);
+			}
+			
+			if (arguments.containsKey("sampling")) {
+				this.module.setValue(PennantConstants.QUERY_SAMPLING);
+			}
+			
+			if (arguments.containsKey("LegalVerification")) {
+				this.module.setValue(PennantConstants.QUERY_LEGAL_VERIFICATION);
 			}
 			
 			if (arguments.containsKey("roleCode")) {
@@ -321,6 +331,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		this.closerBy.setMaxlength(19);
 		this.closerOn.setFormat(PennantConstants.dateTimeFormat);
 		this.docRemarks.setMaxlength(50);
+		this.module.setReadonly(true);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -984,6 +995,12 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		String usrnameDate = "--"+getUserWorkspace().getUserDetails().getUsername()+","+DateUtility.getAppDate();
 
+		try {
+			aQueryDetail.setModule(this.module.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		// Finance Reference
 		try {
 			aQueryDetail.setFinReference(this.finReference.getValue());

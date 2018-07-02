@@ -78,11 +78,17 @@
 							</columns>
 							<rows>
 								<row id="row0">
+									<label
+										id="label_QueryDetailList_Module"
+										value="${c:l('label_QueryDetailDialog_Module.value')}" />
+									<hbox>
+										<textbox id="module"
+											width="180px" />
+									</hbox>
 									<label id="label_FinReference"
 										value="${c:l('label_QueryDetailDialog_FinReference.value')}" />
 									<extendedcombobox id="finReference"
 										readonly="true" />
-
 								</row>
 							</rows>
 						</grid>

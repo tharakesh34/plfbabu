@@ -107,6 +107,7 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	protected Longbox raisedBy; // autowired
 	protected Datebox raisedOn; // autowired
 	protected Textbox queryCtg; // autowired
+	protected Textbox module; // autowired
 	
 	protected Listbox sortOperator_Id;
 	protected Listbox sortOperator_FinReference;
@@ -115,6 +116,8 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	protected Listbox sortOperator_RaisedBy;
 	protected Listbox sortOperator_RaisedOn;
 	protected Listbox sortOperator_QueryCtg;
+	protected Listbox sortOperator_Module;
+	
 	
 	private transient QueryDetailService queryDetailService;
 	private final List<ValueLabel> queryModuleStatusList = PennantStaticListUtil.getQueryModuleStatusList();
@@ -163,6 +166,7 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		registerField("categoryCode",listheader_QryCtg,SortOrder.NONE,queryCtg,sortOperator_QueryCtg, Operators.STRING);	
 		registerField("categoryDescription");	
 		registerField("usrLogin");	
+		registerField("Module", module, SortOrder.NONE, sortOperator_Module, Operators.BOOLEAN);
 		fillComboBox(this.status, "", queryModuleStatusList, "");
 		// Render the page and display the data.
 		doRenderPage();

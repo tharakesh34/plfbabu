@@ -61,12 +61,15 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.service.loanquery.QueryDetailService;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.loanquery.querydetail.model.QueryDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -100,6 +103,8 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	
 	private transient QueryDetailService queryDetailService;
 	private FinanceMain financeMain = null;
+	private LegalDetail legalDetail = null;
+	private Sampling sampling = null;
 	private String roleCode;
 
 	/**
@@ -113,7 +118,18 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	protected void doAddFilters() {
 		super.doAddFilters();
 		if (financeMain != null) {
+			this.searchObject.addFilterEqual("Module", PennantConstants.QUERY_ORIGINATION);
 			this.searchObject.addFilterEqual("FinReference", financeMain.getFinReference());
+		}
+		if (legalDetail != null) {
+			this.searchObject.addFilterEqual("Module", PennantConstants.QUERY_LEGAL_VERIFICATION);
+			this.searchObject.addFilterEqual("FinReference", legalDetail.getLoanReference());
+		}
+
+		if (sampling != null) {
+			this.searchObject.addFilterEqual("Module", PennantConstants.QUERY_SAMPLING);
+			this.searchObject.addFilterEqual("FinReference", sampling.getKeyReference());
+
 		}
 	}
 	
@@ -142,6 +158,14 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		
 		if(arguments.containsKey("financeMain")){
 			this.financeMain = (FinanceMain) arguments.get("financeMain");
+		}
+		
+		if(arguments.containsKey("sampling")){
+			this.sampling = (Sampling) arguments.get("Sampling");
+		}
+		
+		if(arguments.containsKey("legalVerification")){
+			this.legalDetail = (LegalDetail) arguments.get("LegalDetail");
 		}
 		
 		if (arguments.containsKey("roleCode")) {
@@ -273,6 +297,13 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		arg.put("finQueryDetailListCtrl", this);
 		arg.put("financeMain", financeMain);
 		arg.put("roleCode", roleCode);
+		
+		if (legalDetail != null) {
+			arg.put("LegalVerification", legalDetail);
+		}
+		if (sampling != null) {
+			arg.put("sampling", sampling);
+		}
 		
 		try {
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailNewDialog.zul", null, arg);

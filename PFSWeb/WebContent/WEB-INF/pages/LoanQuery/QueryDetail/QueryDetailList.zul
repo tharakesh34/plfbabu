@@ -67,6 +67,17 @@
 							<rows>
 								<row>
 									<label
+										id="label_QueryDetailList_Module"
+										value="${c:l('label_QueryDetailList_Module.value')}" />
+									<listbox id="sortOperator_Module"
+										width="43px" mold="select" rows="1"
+										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<hbox>
+										<textbox id="module"
+											width="180px" />
+									</hbox>
+
+									<label
 										id="label_QueryDetailList_FinReference"
 										value="${c:l('label_QueryDetailList_FinReference.value')}" />
 									<listbox
@@ -77,7 +88,6 @@
 											width="180px" />
 									</hbox>
 								</row>
-
 								<row>
 									<label
 										id="label_QueryDetailList_QueryCtg"
