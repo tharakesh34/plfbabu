@@ -7098,5 +7098,12 @@ UNION ALL
      LEFT JOIN secusers s3 ON t1.closerby = s3.usrid
 		</createView>
 	</changeSet>
+	<changeSet id="176" author="PasVarma">
+		<sql>
+			Delete from RBFIELDDETAILS where RBMODULE = 'ELGRULE' and RBEVENT = 'ELGRULE' and RbFldName = 'ASL_ELIGABLE_AMOUNT';
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+	   		('ELGRULE','ELGRULE','ASL_ELIGABLE_AMOUNT',' ASL End Use Eligible Amount','decimal',18,'1','1','','static,calvalue','');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
