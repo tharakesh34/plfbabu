@@ -4045,7 +4045,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 
 			if (deleteRecord) {
-				externalLiabilityDAO.delete(customerExtLiability.getLinkId(), type);
+				externalLiabilityDAO.delete(customerExtLiability.getId(), type);
 			}
 
 			if (approveRec) {
@@ -4400,7 +4400,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 						custExtLiability.getBefImage(), custExtLiability));
 			}
-			externalLiabilityDAO.delete(custExtLiability.getId(), tableType);
+			externalLiabilityDAO.deleteByLinkId(custExtLiability.getLinkId(), tableType);
 		}
 
 		// Extended field Render Details.

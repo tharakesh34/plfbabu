@@ -91,21 +91,23 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
+	
 	@Override
-	public void delete(Long id, String type) {
+	public void delete(long id, String type) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder(" delete from external_liabilities");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" where id =:id");
-		logger.trace(Literal.ENTERING + sql.toString());
+		StringBuilder query = new StringBuilder();
+		query.append(" delete from external_liabilities");
+		query.append(StringUtils.trimToEmpty(type));
+		query.append(" where Id = :id ");
+		logger.trace(Literal.SQL + query.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("id", id);
 		int recordCount = 0;
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("id", id);
+
 		try {
-			recordCount = this.jdbcTemplate.update(sql.toString(), source);
+			recordCount = this.jdbcTemplate.update(query.toString(), parameterSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -114,6 +116,26 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 			throw new ConcurrencyException();
 		}
 
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void deleteByLinkId(Long linkId, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder(" delete from external_liabilities");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" where linkId =:linkid");
+		logger.trace(Literal.ENTERING + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("linkid", linkId);
+		int recordCount = 0;
+		try {
+			recordCount = this.jdbcTemplate.update(sql.toString(), source);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 	

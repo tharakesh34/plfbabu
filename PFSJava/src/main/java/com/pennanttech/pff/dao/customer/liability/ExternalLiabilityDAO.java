@@ -11,7 +11,9 @@ public interface ExternalLiabilityDAO {
 
 	void update(CustomerExtLiability custExtLiability, String type);
 	
-	void delete(Long id, String type);
+	void delete(long id, String type);
+	
+	void deleteByLinkId(Long linkId, String type);
 	
 	CustomerExtLiability getLiability(CustomerExtLiability liability, String type);
 	
