@@ -1969,7 +1969,7 @@ UNION ALL
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="47" author="Vinay">
+	<changeSet id="47.1" author="Vinay">
 		<createView viewName="LMTFINREFDETAIL_TFSVIEW" replaceIfExists="true">
 			SELECT     T1.FinRefDetailId, T1.FinType, T2.FinTypeDesc lovDescFinTypeDescName, T1.FinRefType, T1.FinRefId, T3.TabCode lovDescNamelov, 
 					  T1.IsActive, T1.ShowInStage, T1.MandInputInStage, T1.AllowInputInStage, T1.AllowDeviation, T1.AllowWaiver, T1.AllowPostpone, 
