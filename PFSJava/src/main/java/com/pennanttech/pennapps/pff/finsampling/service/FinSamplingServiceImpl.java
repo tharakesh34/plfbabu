@@ -40,6 +40,8 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 				finSamplingDAO.saveCollateral(sampling.getId(), collateralSetup.getCollateralType());
 			}
 
+		} else if (sampling.getDecision() == Decision.CREDITCAM.getKey() && !financeDetail.isActionSave()) {
+			samplingService.saveSnap(sampling);
 		}
 
 		finSamplingDAO.saveOrUpdateRemarks(sampling, TableType.MAIN_TAB);

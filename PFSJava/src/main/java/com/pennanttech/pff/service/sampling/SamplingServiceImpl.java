@@ -1260,10 +1260,10 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		List<ExtendedFieldData> data = null;
 		for (Entry<String, ExtendedFieldData> currentData : current.entrySet()) {
 			for (Entry<String, ExtendedFieldData> originalData : original.entrySet()) {
-				data = new ArrayList<>(2); // FIXME MURTHY
+				/*data = new ArrayList<>(2); // FIXME MURTHY
 				data.add(originalData.getValue());
 				data.add(currentData.getValue());
-				collateralFileds.put(currentData.getKey(), data);
+				collateralFileds.put(currentData.getKey(), data);*/
 				if (StringUtils.equals(currentData.getKey(), originalData.getKey())) {
 					data = new ArrayList<>(2);
 					data.add(originalData.getValue());
@@ -1315,7 +1315,13 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		return samplingDAO.isExist(finReference, type);
 	}
 
-	public void saveIncomesForSnap(Sampling sampling) {
+	@Override
+	public void saveSnap(Sampling sampling) {
+		saveIncomeSnap(sampling);
+		//saveLiabilitiesForSnap(sampling);
+	}
+	
+	private void saveIncomeSnap(Sampling sampling) {
 		List<CustomerIncome> originalList = customerIncomeDAO.getIncomesByFinReference(sampling.getKeyReference());
 		List<CustomerIncome> currentList = customerIncomeDAO.getIncomesBySamplingId(sampling.getId());
 

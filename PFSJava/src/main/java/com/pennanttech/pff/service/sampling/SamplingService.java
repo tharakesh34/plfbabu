@@ -31,11 +31,13 @@ public interface SamplingService {
 	Sampling getSampling(String keyReference, String type);
 
 	void calculateEligilibity(Sampling sampling);
-	
+
 	long getCollateralLinkId(long samplingId, String reference);
-	
+
 	Map<String, List<ExtendedFieldData>> getCollateralFields(String type, String reference, long sequence);
 
-	boolean isExist(String finReference,String type);
+	boolean isExist(String finReference, String type);
+
+	void saveSnap(Sampling sampling);
 
 }

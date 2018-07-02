@@ -64,8 +64,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.sampling.Decision;
 import com.pennanttech.pff.service.sampling.SamplingService;
 
-import bsh.Variable;
-
 @Component(value = "finSamplingDialogCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
@@ -246,7 +244,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		BigDecimal variance = (current.subtract(original));
 
 		if (BigDecimal.ZERO.compareTo(original) == 0) {
-			return variance.abs();
+			return PennantAppUtil.formateAmount(variance, formatter).abs();
 		}
 
 		variance = variance.divide(original, 2, RoundingMode.HALF_DOWN);
@@ -259,8 +257,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		if (original == 0) {
 			return Math.abs(variance);
 		}
-		variance = variance / original;
-		variance = variance * (100);
+		variance = ((variance * (100) / original));
 
 		return Math.abs(variance);
 	}
@@ -388,15 +385,15 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		label.setValue(Labels.getLabel("label_FinSampling_Income.value"));
 		label.setParent(row);
 
-		decimalbox = getDecimalbox(formatter);
+		decimalbox = getDecimalbox();
 		decimalbox.setValue(PennantAppUtil.formateAmount(original, formatter));
 		decimalbox.setParent(row);
 
-		decimalbox = getDecimalbox(formatter);
+		decimalbox = getDecimalbox();
 		decimalbox.setValue(PennantAppUtil.formateAmount(current, formatter));
 		decimalbox.setParent(row);
 
-		decimalbox = getDecimalboxWithScale();
+		decimalbox = getDecimalbox();
 		varaiance = getVariance(original, current);
 
 		if (varaiance.compareTo(new BigDecimal(25)) >= 0) {
@@ -404,7 +401,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		} else {
 			this.samplingTolerance.setValue("Tolerance");
 		}
-		decimalbox.setValue(PennantAppUtil.formateAmount(varaiance, formatter));
+		decimalbox.setValue(varaiance);
 		decimalbox.setParent(row);
 
 		setRemarksBox(row, "INCOME");
@@ -427,15 +424,15 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		label.setValue(Labels.getLabel("label_FinSampling_Obligation.value"));
 		label.setParent(row);
 
-		decimalbox = getDecimalbox(formatter);
+		decimalbox = getDecimalbox();
 		decimalbox.setValue(original);
 		decimalbox.setParent(row);
 
-		decimalbox = getDecimalbox(formatter);
+		decimalbox = getDecimalbox();
 		decimalbox.setValue(current);
 		decimalbox.setParent(row);
 
-		decimalbox = getDecimalboxWithScale();
+		decimalbox = getDecimalbox();
 		decimalbox.setValue(PennantAppUtil.formateAmount(getVariance(original, current), formatter));
 		decimalbox.setParent(row);
 
@@ -453,7 +450,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			cell = new Cell();
 			cell.setColspan(5);
 			label = new Label(caption);
-			label.setStyle("font-weight:bold");
+			label.setStyle("font-weight:bold;color: #ff4500;");
 			cell.appendChild(label);
 			cell.setParent(row);
 			row.setParent(rows_Sampling);
@@ -514,8 +511,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 					decimalbox = getDecimalbox(currentField);
 					decimalbox.setParent(row);
-					decimalbox.setValue(PennantAppUtil.formateAmount(
-							getVariance(getDecimalValue(originalField), getDecimalValue(currentField)), formatter));
+					decimalbox.setValue(getVariance(getDecimalValue(originalField), getDecimalValue(currentField)));
 					setRemarksBox(row, collateralRef.concat("-").concat(currentField.getFieldName()));
 
 					break;
@@ -569,15 +565,15 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		label.setValue(Labels.getLabel("label_FinSampling_FinalRcmdAmt.value"));
 		label.setParent(row);
 
-		decimalbox = getDecimalbox(formatter);
+		decimalbox = getDecimalbox();
 		decimalbox.setValue(original);
 		decimalbox.setParent(row);
 
-		decimalbox = getDecimalbox(formatter);
+		decimalbox = getDecimalbox();
 		decimalbox.setValue(current);
 		decimalbox.setParent(row);
 
-		decimalbox = getDecimalboxWithScale();
+		decimalbox = getDecimalbox();
 		decimalbox.setValue(PennantAppUtil.formateAmount(getVariance(original, current), formatter));
 		decimalbox.setParent(row);
 
@@ -613,18 +609,13 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		return textbox;
 	}
 
-	private Decimalbox getDecimalbox(int ccyEditField) {
-		Decimalbox decimalbox = getDecimalboxWithScale();
-		decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(ccyEditField));
-		decimalbox.setScale(ccyEditField);
-		return decimalbox;
-	}
-
-	private Decimalbox getDecimalboxWithScale() {
+	private Decimalbox getDecimalbox() {
 		Decimalbox decimalbox = new Decimalbox();
 		decimalbox.setScale(formatter);
 		decimalbox.setWidth("120px");
 		decimalbox.setReadonly(true);
+		decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+		decimalbox.setScale(formatter);
 		return decimalbox;
 	}
 
@@ -664,6 +655,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		Intbox intbox = new Intbox();
 		intbox.setReadonly(true);
 		intbox.setWidth("120px");
+		intbox.setStyle("text-align:right;");
 
 		return intbox;
 	}
@@ -672,6 +664,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		Longbox longbox = new Longbox();
 		longbox.setReadonly(true);
 		longbox.setWidth("120px");
+		longbox.setStyle("text-align:right;");
 
 		return longbox;
 	}

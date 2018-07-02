@@ -45,7 +45,6 @@ public class FinSamplingDAOImpl extends SequenceDao<Sampling> implements FinSamp
 
 	}
 
-
 	public void saveOrUpdateRemarks(Sampling sampling, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
@@ -81,30 +80,48 @@ public class FinSamplingDAOImpl extends SequenceDao<Sampling> implements FinSamp
 		}
 		return list;
 	}
-	
-	
+
 	@Override
 	public void saveCollateral(long samplingId, String collateralType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
+		List<String> linkIds = getLinkIds(samplingId);
 		StringBuilder sql = new StringBuilder("insert into verification_");
 		sql.append(StringUtils.trimToEmpty(collateralType));
 		sql.append("_tv_temp");
 		sql.append(" select * from verification_");
 		sql.append(StringUtils.trimToEmpty(collateralType));
-		sql.append(
-				"_tv  Where reference in(select linkId from link_sampling_collaterals  where samplingId=:samplingId)");
+		sql.append("_tv  Where reference in(:linkIds)");
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("samplingId", samplingId);
+		paramSource.addValue("linkIds",linkIds);
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private List<String> getLinkIds(long samplingId) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("select linkId from link_sampling_collaterals  where samplingId=:samplingId");
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("samplingId", samplingId);
+
+		try {
+			return jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
 	}
 
 }
