@@ -1905,10 +1905,6 @@
 				insert into Income_details
 				select ROW_NUMBER() OVER (ORDER BY custid), custid, custincometype, incomeexpense, category, custincome, margin, null, null, null, null, null, version, lastmntby, lastmnton, recordStatus, roleCode, nextRoleCode, taskId, nextTaskId, recordType, workflowId from customerincomes;
 				
-				update income_details_temp t
-				set id =  m.id
-				from income_details m
-				where m.linkid = t.linkid and m.incometype = t.incometype and m.incomeexpense = t.incomeexpense and m.category = t.category;
 				
 				delete from link_cust_incomes;
 				insert into link_cust_incomes select linkid, ROW_NUMBER() OVER (ORDER BY linkid) 
@@ -1926,6 +1922,10 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="12.1_Pre" author="murthy.y">
+		<modifyDataType tableName="external_liabilities" columnName="rateOfInterest" newDataType="decimal(18,0)"/>
+		<modifyDataType tableName="external_liabilities_temp" columnName="rateOfInterest" newDataType="decimal(18,0)"/>
+	</changeSet>
 	<changeSet id="12.1" author="murthy.y">
 		<sql>
 			<![CDATA[
@@ -1934,7 +1934,7 @@
 				Update customerextliability_temp set source=0 where source='';
 				Update customerextliability_temp set checkedby=0 where checkedby='';
 				insert into external_liabilities_temp
-				select ROW_NUMBER() OVER (ORDER BY custid), custid, liabilityseq, fintype, findate, bankname, ROUND(roi, 5), tenure,
+				select ROW_NUMBER() OVER (ORDER BY custid), custid, liabilityseq, fintype, findate, bankname, roi, tenure,
 				originalamount, instalmentamount, outstandingbal, tenurebal, bounceno, pos, overdue, finstatus, emicnsdrforfoir, 
 				cast(source as integer), cast(checkedby as integer) checkedby, securitydetail,enduseoffunds, repayfrom, 
 				null, null, null, null, null, version, lastmntby, lastmnton, recordStatus, roleCode, nextRoleCode, taskId, nextTaskId, recordType, workflowId 
@@ -1945,7 +1945,7 @@
 				Update customerextliability set source=0 where source='';
 				Update customerextliability set checkedby=0 where checkedby='';
 				insert into external_liabilities
-				select ROW_NUMBER() OVER (ORDER BY custid), custid, liabilityseq, fintype, findate, bankname, ROUND(roi, 5), tenure,
+				select ROW_NUMBER() OVER (ORDER BY custid), custid, liabilityseq, fintype, findate, bankname, roi, tenure,
 				originalamount, instalmentamount, outstandingbal, tenurebal, bounceno, pos, overdue, finstatus, emicnsdrforfoir, 
 				cast(source as integer), cast(checkedby as integer) checkedby, securitydetail,enduseoffunds, repayfrom, 
 				null, null, null, null, null, version, lastmntby, lastmnton, recordStatus, roleCode, nextRoleCode, taskId, nextTaskId, recordType, workflowId 
@@ -1957,7 +1957,7 @@
 				where m.linkid = t.linkid and m.seqno = t.seqno;
 									
 				delete from link_cust_liabilities;
-				insert into link_cust_liabilities select linkid, ROW_NUMBER() OVER (ORDER BY linkid);
+				insert into link_cust_liabilities select linkid, ROW_NUMBER() OVER (ORDER BY linkid)
 				from (select distinct linkid from  customer_ext_liabilities_view) t;
 								
 				update external_liabilities t
@@ -1975,11 +1975,11 @@
 	<changeSet id="13.0" author="murthy.y">
 		<sql>
 			<![CDATA[
-				ALTER SEQUENCE SeqIncomeDetails RESTART WITH select Max(id) from income_details_view;
-				alter sequence SeqIncomeLink RESTART select Max(linkId) from income_details_view;
+				 select setval('SeqIncomeDetails',(select Max(id) from income_details_view));
+				 select setval('SeqIncomeLink',(select Max(linkId) from income_details_view));
 				
-				ALTER SEQUENCE SeqExternalLiabilities RESTART WITH select Max(id) from external_liabilities_view;
-				alter sequence SeqIncomeLink RESTART select Max(linkId) from external_liabilities_view;
+				select setval('SeqExternalLiabilities',(select Max(id) from external_liabilities_view));
+				select setval('SeqIncomeLink',(select Max(linkId) from external_liabilities_view));
 			]]>
 		</sql>
 	</changeSet>
