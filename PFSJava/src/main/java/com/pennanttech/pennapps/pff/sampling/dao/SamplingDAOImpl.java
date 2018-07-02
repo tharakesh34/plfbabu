@@ -97,8 +97,8 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	@Override
 	public long getIncomeLinkIdByCustId(long custId, long samplinId) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(
-				"select coalesce(max(linkid), 0) from link_sampling_incomes where custid=:custid and samplingid =:id");
+		sql.append("select coalesce(max(linkid), 0) from link_sampling_incomes");
+		sql.append(" where custid=:custid and samplingid =:id");
 
 		long linkid = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();

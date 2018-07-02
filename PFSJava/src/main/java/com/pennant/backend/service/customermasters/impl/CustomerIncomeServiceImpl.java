@@ -194,7 +194,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	 */
 	@Override
 	public CustomerIncome 	getCustomerIncomeById(CustomerIncome customerIncome){
-		return getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_View" ,"customer");
+		return getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_View", "customer");
 	}
 	
 /*	@Override

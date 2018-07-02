@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.customermasters;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
@@ -24,4 +25,8 @@ public interface CustomerExtLiabilityDAO {
 	BigDecimal getExternalLiabilitySum(long custId);
 	
 	BigDecimal getSumAmtCustomerExtLiabilityById(Set<Long> custId);
+
+	List<CustomerExtLiability> getLiabilityByFinReference(String finReference);
+
+	List<CustomerExtLiability> getLiabilityBySamplingId(long samplingLinkId);
 }

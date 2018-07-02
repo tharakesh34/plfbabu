@@ -5,12 +5,14 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerIncome;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.pff.sampling.dao.SamplingDAO;
 
@@ -74,20 +76,20 @@ public class CustomerIncomeValidation {
 	private AuditDetail validate(AuditDetail auditDetail, long samplingId, String method,String  usrLanguage){
 		CustomerIncome customerIncome= (CustomerIncome) auditDetail.getModelData();
 		if ("sampling".equals(customerIncome.getInputSource())) {
-			customerIncome.setLinkId(samplingDAO.getIncomeLinkIdByCustId(customerIncome.getCustId(),samplingId));
+			customerIncome.setLinkId(samplingDAO.getIncomeLinkIdByCustId(customerIncome.getCustId(), samplingId));
 		} else {
 			customerIncome.setLinkId(customerIncomeDAO.getLinkId(customerIncome.getCustId()));
 		}
 		
-		CustomerIncome tempCustomerIncome= null;
-		/*if (customerIncome.isWorkflow()){
-			tempCustomerIncome = getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_Temp" ,customerIncome.getInputSource());
+	/*	CustomerIncome tempCustomerIncome= null;
+		if (customerIncome.isWorkflow()){
+			tempCustomerIncome = getCustomerIncomeDAO().getCustomerIncomeById(customerIncome, "_Temp", customerIncome.getInputSource());
 		}*/
 
-		CustomerIncome befCustomerIncome= getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"",customerIncome.getInputSource());
+		CustomerIncome befCustomerIncome= getCustomerIncomeDAO().getCustomerIncomeById(customerIncome, "", customerIncome.getInputSource());
 		
 
-/*		String[] valueParm = new String[3];
+		String[] valueParm = new String[3];
 		String[] errParm = new String[3];
 
 		valueParm[0] = StringUtils.trimToEmpty(customerIncome.getCustCif());
@@ -98,7 +100,7 @@ public class CustomerIncomeValidation {
 		errParm[1] = PennantJavaUtil.getLabel("label_CustIncomeType") + ":"+valueParm[1];
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-*/
+
 		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !customerIncome.isWorkflow()){
 			customerIncome.setBefImage(befCustomerIncome);	
 		}

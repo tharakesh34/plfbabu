@@ -2220,4 +2220,76 @@
 			<where>workflowtype='SAMPLING' and workflowactive=1</where>
 		</update>
 	</changeSet>
+	<changeSet id="15" author="murthy.y">
+		<dropForeignKeyConstraint baseTableName="link_sampling_incomes" constraintName="fk_link_sampling_incomes_cid"/>
+		<dropForeignKeyConstraint baseTableName="link_sampling_liabilities" constraintName="fk_link_liabilities_cid"/>
+		<dropForeignKeyConstraint baseTableName="sampling_remarks" constraintName="fk_sampling_sid"/>
+	</changeSet>
+	<changeSet id="16" author="murthy.y">
+		<sql>
+			<![CDATA[
+				delete from secoperationroles where roleid IN (select roleid from SecRoles where rolecd IN('SAMPLING_MAKER', 'SAMPLING_APPROVER'));
+				delete from secRoleGroups where roleid IN (select roleid from SecRoles where rolecd IN('SAMPLING_MAKER', 'SAMPLING_APPROVER'));
+				delete from SecRoles where RoleCd IN ('SAMPLING_MAKER', 'SAMPLING_APPROVER');
+				delete from secGrouprights where grpid in (select grpid from secGroups where grpcode IN ('SAMPLING_MAKER', 'SAMPLING_APPROVER'));
+				delete from secGroups where grpcode IN ('SAMPLING_MAKER', 'SAMPLING_APPROVER');
+				
+				Delete from SecRights where page IN('SamplingDialog','SamplingList');
+				Delete from SecRights where RightName = 'menuItem_Sampling';
+				Delete from SecRights where RightName = 'menuItem_Sampling_Enquiry';
+				
+				update SeqSecRoles set SeqNo=(select MAX(RoleId) from SecRoles);
+				INSERT INTO SecRoles values ((select SeqNo+1 from SeqSecRoles), '1', 'SAMPLING_MAKER', 'Role For Admin Manager','', 1,1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+				INSERT INTO SecRoles values ((select SeqNo+2 from SeqSecRoles), '1', 'SAMPLING_APPROVER', 'Role For Admin Approver','', 1,1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+				update SeqSecRoles set SeqNo=(select MAX(RoleId) from SecRoles);
+				
+				--Sampling Rights
+				update SeqSecRights set SeqNo=(select MAX(RightID) from SecRights);
+				INSERT INTO SecRights VALUES ((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Sampling', 'MENU',  1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				INSERT INTO SecRights VALUES ((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Sampling_Enquiry', 'MENU',  1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				Insert into SecRights Values((Select MAX(RightID)+1 From SecRights),  2, 'button_SamplingList_btnNew', 'SamplingList', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				Insert into SecRights Values((Select MAX(RightID)+1 From SecRights),  2, 'button_SamplingDialog_btnEdit', 'SamplingDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				Insert into SecRights Values((Select MAX(RightID)+1 From SecRights),  2, 'button_SamplingDialog_btnDelete', 'SamplingDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				Insert into SecRights Values((Select MAX(RightID)+1 From SecRights),  2, 'button_SamplingDialog_btnSave', 'SamplingDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				Insert into SecRights Values((Select MAX(RightID)+1 From SecRights),  2, 'button_SamplingDialog_btnNewIncomeDetails', 'SamplingDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				Insert into SecRights Values((Select MAX(RightID)+1 From SecRights),  2, 'button_SamplingDialog_btnNewObligationDetails', 'SamplingDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				Insert into SecRights Values((Select MAX(RightID)+1 From SecRights),  3, 'SamplingDialog_LoanTenure', 'SamplingDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				Insert into SecRights Values((Select MAX(RightID)+1 From SecRights),  3, 'SamplingDialog_InterestRate', 'SamplingDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				update SeqSecRights set SeqNo=(select MAX(RightID) from SecRights);
+				
+				--Sampling SecGroups
+				update SeqSecGroups set SeqNo=(select MAX(GrpID) from secGroups);
+				Insert Into secGroups values((Select MAX(GrpID)+1 From secGroups),'SAMPLING_MAKER','WF Maker for  Sampling',0 ,1000,current_timestamp, 'Approved','','','','','',0);
+				Insert Into secGroups values((Select MAX(GrpID)+1 From secGroups),'SAMPLING_APPROVER','WF Approver for Sampling',0,1000,current_timestamp, 'Approved','','','','','',0);
+				update SeqSecGroups set SeqNo=(select MAX(GrpID) from secGroups);
+				
+				--Sampling GroupRights for maker
+				update SeqSecGrouprights set SeqNo=(select MAX(GrpRightID) from secGrouprights);
+				Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='SAMPLING_MAKER'),(select RightId from secRights where RightName='menuItem_Sampling'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+				Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='SAMPLING_MAKER'),(select RightId from secRights where RightName='menuItem_Sampling_Enquiry'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+				Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='SAMPLING_MAKER'),(select RightId from secRights where RightName='button_SamplingDialog_btnEdit'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+				Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='SAMPLING_MAKER'),(select RightId from secRights where RightName='button_SamplingDialog_btnDelete'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+				Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='SAMPLING_MAKER'),(select RightId from secRights where RightName='button_SamplingDialog_btnSave'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+				Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='SAMPLING_MAKER'),(select RightId from secRights where RightName='button_SamplingDialog_btnNewIncomeDetails'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+				Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='SAMPLING_MAKER'),(select RightId from secRights where RightName='button_SamplingDialog_btnNewObligationDetails'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+				Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='SAMPLING_MAKER'),(select RightId from secRights where RightName='SamplingDialog_LoanTenure'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+				Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='SAMPLING_MAKER'),(select RightId from secRights where RightName='SamplingDialog_InterestRate'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+				update SeqSecGrouprights set SeqNo=(select MAX(GrpRightID) from secGrouprights);
+				
+				--Sampling GroupRights for Approver
+				Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='SAMPLING_APPROVER'),(select RightId from secRights where RightName='menuItem_Sampling'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+				Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='SAMPLING_APPROVER'),(select RightId from secRights where RightName='menuItem_Sampling_Enquiry'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+				Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='SAMPLING_APPROVER'),(select RightId from secRights where RightName='button_SamplingDialog_btnSave'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+				update SeqSecGrouprights set SeqNo=(select MAX(GrpRightID) from secGrouprights);
+				
+				--Sampling SecRoleGroups
+				update SeqSecRoleGroups set SeqNo=(select MAX(RoleGrpID) from SecRoleGroups);
+				Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='SAMPLING_MAKER'),(select RoleID from secRoles where RoleCd='SAMPLING_MAKER'),0,1000,current_timestamp,'Approved','','','','','',0);
+				Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='SAMPLING_APPROVER'),(select RoleID from secRoles where RoleCd='SAMPLING_APPROVER'),0,1000,current_timestamp,'Approved','','','','','',0);
+				Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CUSTOMERINCOME_MAKER'),(select RoleID from secRoles where RoleCd='SAMPLING_MAKER'),0,1000,current_timestamp,'Approved','','','','','',0);
+				Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CUSTOMEREXTLIABILITY_MAKER'),(select RoleID from secRoles where RoleCd='SAMPLING_MAKER'),0,1000,current_timestamp,'Approved','','','','','',0);
+				update SeqSecRoleGroups set SeqNo=(select MAX(RoleGrpID) from SecRoleGroups);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

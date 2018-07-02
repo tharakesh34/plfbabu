@@ -61,7 +61,8 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		query.append(StringUtils.trimToEmpty(type));
 		query.append(" set income = :Income, margin = :Margin ,");
 		query.append(" version=:version, lastmntby=:lastMntBy, lastmnton=:lastMntOn, recordStatus=:recordStatus, ");
-		query.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode, taskid=:taskId, nexttaskid=:nextTaskId, recordtype=:recordType, workflowid=:workflowId ");
+		query.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode, taskid=:taskId, nexttaskid=:nextTaskId,");
+		query.append(" recordtype=:recordType, workflowid=:workflowId");
 		query.append(" where id = :id ");
 		logger.trace(Literal.SQL + query.toString());
 

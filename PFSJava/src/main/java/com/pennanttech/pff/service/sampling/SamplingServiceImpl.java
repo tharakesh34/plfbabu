@@ -1350,9 +1350,9 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		}
 	}
 
-	public void saveLiabilitiesForSnap(long linkId, long samplingLinkId) {
-		List<CustomerExtLiability> originalList = externalLiabilityDAO.getLiabilities(linkId);
-		List<CustomerExtLiability> currentList = externalLiabilityDAO.getLiabilities(samplingLinkId);
+	public void saveLiabilitiesForSnap(Sampling sampling) {
+		List<CustomerExtLiability> originalList = customerExtLiabilityDAO.getLiabilityByFinReference(sampling.getKeyReference());
+		List<CustomerExtLiability> currentList = customerExtLiabilityDAO.getLiabilityBySamplingId(sampling.getId());
 
 		List<CustomerExtLiability> currentNewList = new ArrayList<>(currentList);
 
