@@ -72,10 +72,9 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 			sql.append(" repaybank, rb.bankname repayfrombankname,");
 			sql.append(" el.version, el.lastMntOn, el.lastMntBy, el.recordStatus, el.roleCode, el.nextRoleCode,");
 			sql.append(" el.taskId, el.nextTaskId, el.recordType, el.workflowId");
-			sql.append(" from ");
-			sql.append(view).append(" el");
+			sql.append(" from external_liabilities");
+			sql.append(type).append(" el");
 			sql.append(" inner join ").append(table).append(" cel on cel.linkid = el.linkid");
-
 			sql.append(" inner join customers cu on cu.custid = cel.custid");
 			sql.append(" inner join bmtbankdetail lb on lb.bankcode = el.loanbank");
 			sql.append(" inner join otherbankfinancetype ft on ft.fintype = el.fintype");

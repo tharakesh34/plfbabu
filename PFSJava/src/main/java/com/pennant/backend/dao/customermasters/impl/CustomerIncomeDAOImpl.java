@@ -115,15 +115,13 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 			query.append(" Where linkid =:linkId and custid = :custId and incometype = :incomeType ");
 			query.append(" and incomeExpense = :incomeExpense and category=:category");
 		} else {
-			query.append(
-					" select cu.custid, incd.income, incd.incometype, incd.incomeExpense, incd.category, incd.margin,");
+			query.append(" select cu.custid, incd.income, incd.incometype, incd.incomeExpense, incd.category, incd.margin,");
 			query.append(" it.incometypedesc, ic.categorydesc, ");
 			query.append(" cu.custcif, cu.custshrtname, cu.custbaseccy toccy, ");
-			query.append(
-					" incd.Version, incd.LastMntOn, incd.LastMntBy, incd.RecordStatus, incd.RoleCode, incd.NextRoleCode,");
+			query.append(" incd.Version, incd.LastMntOn, incd.LastMntBy, incd.RecordStatus, incd.RoleCode, incd.NextRoleCode,");
 			query.append(" incd.TaskId, incd.NextTaskId, incd.RecordType, incd.WorkflowId");
-			query.append(" from ");
-			query.append(view).append(" incd");
+			query.append(" from income_details");
+			query.append(type).append(" incd");
 			query.append(" inner join ").append(table).append(" cin");
 			query.append(" on cin.linkid = incd.linkid");
 			query.append(" inner join bmtincometypes it on it.incometypecode=incd.incometype");
@@ -132,9 +130,8 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 			query.append(" inner join bmtincomecategory ic on ic.incomecategory = incd.category");
 			query.append(" Where incd.linkid =:linkId and cu.custid = :custId and incd.incometype = :incomeType ");
 			query.append(" and incd.incomeExpense = :incomeExpense and incd.category=:category");
-
 		}
-
+			
 		logger.trace(Literal.SQL + query.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIncome);
