@@ -1553,6 +1553,15 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrZIP.setObject("");
 		this.custAddrZIP.setValue("");
 		this.custAddrZIP.setDescription("");
+
+		Filter[] filters = new Filter[2];
+		filters[1] = new Filter("CITYISACTIVE", 1, Filter.OP_EQUAL);
+		
+		if (this.custAddrProvince != null) {
+			filters[0] = new Filter("PCProvince", custAddrProvince.getActualValue(), Filter.OP_EQUAL);
+		}
+		
+		this.custAddrCity.setFilters(filters);
 		
 		logger.debug("Leaving");
 	}

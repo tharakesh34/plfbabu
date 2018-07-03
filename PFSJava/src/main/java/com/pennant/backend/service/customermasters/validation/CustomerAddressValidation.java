@@ -86,7 +86,7 @@ public class CustomerAddressValidation {
         errParm[0] = PennantJavaUtil.getLabel("AddressDetails") +" , " + PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0]+ " and ";
         errParm[1] = PennantJavaUtil.getLabel("label_CustAddrType") + "-" + valueParm[1];
 		
-		if (customerAddres.isNew()) { // for New record or new record into work
+/*		if (customerAddres.isNew()) { // for New record or new record into work
 			// flow
 
 			if (!customerAddres.isWorkflow()) {// With out Work flow only new
@@ -153,7 +153,7 @@ public class CustomerAddressValidation {
 									PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
-		}
+		}*/
 
 		auditDetail.setErrorDetail(screenValidations(customerAddres));
 		
