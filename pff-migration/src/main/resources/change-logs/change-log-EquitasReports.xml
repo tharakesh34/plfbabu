@@ -892,8 +892,12 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 	 
 	 <changeSet id="44" author="Manoj">
 	 	<sql>
-	 		update loanpurposes set eligibleamount =  0
-	 		update loanpurposes_temp set eligibleamount =  0
+	 		update loanpurposes set eligibleamount =  0;
+	 		update loanpurposes_temp set eligibleamount =  0;
 	 	</sql>
+	 </changeSet>
+	 <changeSet id="45" author="Jayant">
+	 	<modifyDataType tableName="psldetail" columnName="loanpurpose" newDataType="varchar(500)"/>
+	 	<modifyDataType tableName="psldetail_temp" columnName="loanpurpose" newDataType="varchar(500)"/>
 	 </changeSet>
 </databaseChangeLog>
