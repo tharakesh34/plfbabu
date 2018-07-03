@@ -3233,9 +3233,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerRating.setWorkflowId(0);
 			customerRating.setCustID(custId);
 
-			if (customerRating.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (customerRating.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
 				deleteRecord = true;
-			} else if (customerRating.isNewRecord()) {
+			} else if (customerRating.isNewRecord() && !approveRec) {
 				saveRecord = true;
 				if (customerRating.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					customerRating.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -3328,9 +3328,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerEmploymentDetail.setWorkflowId(0);
 			customerEmploymentDetail.setCustID(custId);
 
-			if (customerEmploymentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (customerEmploymentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
 				deleteRecord = true;
-			} else if (customerEmploymentDetail.isNewRecord()) {
+			} else if (customerEmploymentDetail.isNewRecord() && !approveRec) {
 				saveRecord = true;
 				if (customerEmploymentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					customerEmploymentDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -3423,7 +3423,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerIncome.setWorkflowId(0);
 			customerIncome.setCustId(custId);
 
-			if (customerIncome.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (customerIncome.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
 				deleteRecord = true;
 			} else if (customerIncome.isNewRecord() && !approveRec) {
 				saveRecord = true;
@@ -3517,9 +3517,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerEMail.setWorkflowId(0);
 			customerEMail.setCustID(custId);
 
-			if (customerEMail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (customerEMail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
 				deleteRecord = true;
-			} else if (customerEMail.isNewRecord()) {
+			} else if (customerEMail.isNewRecord() && !approveRec) {
 				saveRecord = true;
 				if (customerEMail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					customerEMail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -3610,9 +3610,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerAddres.setWorkflowId(0);
 			customerAddres.setCustID(custId);
 
-			if (customerAddres.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (customerAddres.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
 				deleteRecord = true;
-			} else if (customerAddres.isNewRecord()) {
+			} else if (customerAddres.isNewRecord() && !approveRec) {
 				saveRecord = true;
 				if (customerAddres.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					customerAddres.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -3704,9 +3704,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerDocument.setCustID(custId);
 
 			if (StringUtils.trimToEmpty(customerDocument.getRecordType())
-					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
 				deleteRecord = true;
-			} else if (customerDocument.isNewRecord()) {
+			} else if (customerDocument.isNewRecord() && !approveRec) {
 				saveRecord = true;
 				if (StringUtils.trimToEmpty(customerDocument.getRecordType())
 						.equalsIgnoreCase(PennantConstants.RCD_ADD)) {
@@ -3813,9 +3813,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerBankInfo.setWorkflowId(0);
 			customerBankInfo.setCustID(custId);
 
-			if (customerBankInfo.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (customerBankInfo.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
 				deleteRecord = true;
-			} else if (customerBankInfo.isNewRecord()) {
+			} else if (customerBankInfo.isNewRecord() && !approveRec) {
 				saveRecord = true;
 				if (customerBankInfo.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					customerBankInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -3906,9 +3906,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerChequeInfo.setWorkflowId(0);
 			customerChequeInfo.setCustID(custId);
 
-			if (customerChequeInfo.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (customerChequeInfo.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
 				deleteRecord = true;
-			} else if (customerChequeInfo.isNewRecord()) {
+			} else if (customerChequeInfo.isNewRecord() && !approveRec) {
 				saveRecord = true;
 				if (customerChequeInfo.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					customerChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -3999,7 +3999,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerExtLiability.setWorkflowId(0);
 			customerExtLiability.setCustId(custId);
 
-			if (customerExtLiability.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (customerExtLiability.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
 				deleteRecord = true;
 			} else if (customerExtLiability.isNewRecord() && !approveRec) {
 				saveRecord = true;
@@ -4093,9 +4093,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerPhoneNumber.setWorkflowId(0);
 			customerPhoneNumber.setPhoneCustID(custId);
 
-			if (customerPhoneNumber.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (customerPhoneNumber.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
 				deleteRecord = true;
-			} else if (customerPhoneNumber.isNewRecord()) {
+			} else if (customerPhoneNumber.isNewRecord() && !approveRec) {
 				saveRecord = true;
 				if (customerPhoneNumber.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					customerPhoneNumber.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -4186,9 +4186,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			directorDetail.setWorkflowId(0);
 			directorDetail.setCustID(custId);
 
-			if (directorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (directorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
 				deleteRecord = true;
-			} else if (directorDetail.isNewRecord()) {
+			} else if (directorDetail.isNewRecord() && !approveRec) {
 				saveRecord = true;
 				if (directorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					directorDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);

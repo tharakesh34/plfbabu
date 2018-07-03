@@ -1130,11 +1130,6 @@ public class ExtendedFieldDetailsService {
 												// flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-
-				if (tempRender != null && oldExRender != null
-						&& !oldExRender.getLastMntOn().equals(tempRender.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-				}
 			}
 		}
 
