@@ -79,4 +79,6 @@ public interface LegalDetailDAO extends BasicCrudDao<LegalDetail> {
 
 	void updateLegalDeatils(String reference, String collateralRef, boolean active);
 
+	boolean isExists(String finReference, TableType mainTab);
+
 }

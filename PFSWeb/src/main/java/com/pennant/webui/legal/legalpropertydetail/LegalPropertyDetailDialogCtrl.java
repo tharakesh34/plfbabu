@@ -684,7 +684,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	 */
 	private AuditHeader processDetails(LegalPropertyDetail aLegalPropertyDetail, String tranType) {
 		boolean recordAdded = false;
-		boolean duplicateRecord = !(isNewRecord());
+		boolean duplicateRecord = false;
 
 		AuditHeader auditHeader = getAuditHeader(aLegalPropertyDetail, tranType);
 		this.legalPropertyDetailList = new ArrayList<>();
@@ -696,7 +696,12 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		}
 
 		if (oldLegalProipertytDetailsList != null && !oldLegalProipertytDetailsList.isEmpty()) {
-			for (LegalPropertyDetail oldLegalApplicantDetail : oldLegalProipertytDetailsList) {
+			for (LegalPropertyDetail oldDeatils : oldLegalProipertytDetailsList) {
+
+				if (oldDeatils.getSeqNum() == aLegalPropertyDetail.getSeqNum()) {
+					duplicateRecord = true;
+				}
+				
 				if (duplicateRecord) {
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
 						if (aLegalPropertyDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
@@ -714,11 +719,11 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 						}
 					} else {
 						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
-							this.legalPropertyDetailList.add(oldLegalApplicantDetail);
+							this.legalPropertyDetailList.add(oldDeatils);
 						}
 					}
 				} else {
-					this.legalPropertyDetailList.add(oldLegalApplicantDetail);
+					this.legalPropertyDetailList.add(oldDeatils);
 				}
 				duplicateRecord = false;
 			}

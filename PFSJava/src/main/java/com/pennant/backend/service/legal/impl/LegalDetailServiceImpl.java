@@ -855,4 +855,24 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		return auditList;
 	}
 	
+	/*Check the legal ap[proved or not
+	 */
+	@Override
+	public AuditHeader isLegalApproved(AuditHeader auditHeader) {
+		logger.debug(Literal.ENTERING);
+		
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		
+		boolean IsExists = getLegalDetailDAO().isExists(financeMain.getFinReference(), TableType.TEMP_TAB);
+		
+		if (IsExists) {
+			AuditDetail auditDetail = auditHeader.getAuditDetail();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "LG001", null, null), auditHeader.getUsrLanguage()));
+		}
+		
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
 }

@@ -5346,30 +5346,21 @@
 	</bean>
 	
 	<!-- LegalPropertyDetail -->
-	<bean id="legalPropertyDetailDialogCtrl" class="com.pennant.webui.legal.legalpropertydetail.LegalPropertyDetailDialogCtrl" parent="basisCtrl" scope="prototype">
-	</bean>
-	<bean id="legalDocumentDialogCtrl" class="com.pennant.webui.legal.legaldocument.LegalDocumentDialogCtrl" parent="basisCtrl" scope="prototype">
-	</bean>
+	<bean id="legalPropertyDetailDialogCtrl" class="com.pennant.webui.legal.legalpropertydetail.LegalPropertyDetailDialogCtrl" parent="basisCtrl" scope="prototype"/>
+	
+	<bean id="legalDocumentDialogCtrl" class="com.pennant.webui.legal.legaldocument.LegalDocumentDialogCtrl" parent="basisCtrl" scope="prototype"/>
 	
 	<!-- LegalApplicantDetail -->
-	<bean id="legalApplicantDetailDialogCtrl" class="com.pennant.webui.legal.legalapplicantdetail.LegalApplicantDetailDialogCtrl" parent="basisCtrl" scope="prototype">
-	</bean>
-	
+	<bean id="legalApplicantDetailDialogCtrl" class="com.pennant.webui.legal.legalapplicantdetail.LegalApplicantDetailDialogCtrl" parent="basisCtrl" scope="prototype"/>
 		
 	<!-- LegalPropertyTitle -->
-	<bean id="legalPropertyTitleDialogCtrl" class="com.pennant.webui.legal.legalpropertytitle.LegalPropertyTitleDialogCtrl" parent="basisCtrl" scope="prototype">
-	</bean>
+	<bean id="legalPropertyTitleDialogCtrl" class="com.pennant.webui.legal.legalpropertytitle.LegalPropertyTitleDialogCtrl" parent="basisCtrl" scope="prototype"/>
 	
 	<!-- LegalECDetail -->
-	<bean id="legalECDetailDialogCtrl" class="com.pennant.webui.legal.legalecdetail.LegalECDetailDialogCtrl" parent="basisCtrl" scope="prototype">
-	</bean>
+	<bean id="legalECDetailDialogCtrl" class="com.pennant.webui.legal.legalecdetail.LegalECDetailDialogCtrl" parent="basisCtrl" scope="prototype"/>
 	
 		<!-- LegalNote -->
-	<bean id="legalNoteDialogCtrl" class="com.pennant.webui.legal.legalnote.LegalNoteDialogCtrl" parent="basisCtrl" scope="prototype">
-	</bean>
-		<!-- legalDecisionDialog -->
-	<bean id="legalDecisionDialogCtrl" class="com.pennant.webui.legal.legalecdetail.LegalDecisionDialogCtrl" parent="basisCtrl" scope="prototype">
-	</bean>
+	<bean id="legalNoteDialogCtrl" class="com.pennant.webui.legal.legalnote.LegalNoteDialogCtrl" parent="basisCtrl" scope="prototype"/>
 	
 <!--============ Sampling ============== -->
 	<bean id="samplingListCtrl" class="com.pennant.webui.sampling.SamplingListCtrl" parent="basisListCtrl" scope="prototype"/>

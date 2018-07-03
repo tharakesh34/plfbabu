@@ -2864,4 +2864,69 @@
 		</update>
 	</changeSet>
 	
+	<!-- Second release -->
+	<changeSet id="84" author="DurgaPrasad G">
+		<createView viewName="LegalDetails_AView" replaceIfExists="true">
+			SELECT T1.LegalId, T1.LegalReference, T1.LoanReference, T1.CollateralReference, T1.Branch, T1.LegalDate, T1.SchedulelevelArea, T1.LegalDecision, T1.LegalRemarks,
+			T1.PropertyDetailModt, T1.PropertyDetailECDate, T1.EcPropertyOwnerName, T1.Active, T3.FinCcy
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			T2.BranchDesc,T3.FinAmount, T3.Fintype
+			FROM    	LegalDetails T1 
+			Inner Join RmtBranches T2 ON T1.Branch = T2.BranchCode
+			Inner Join Financemain_View T3 ON T1.LoanReference = T3.FinReference
+		</createView>
+	</changeSet>
+	
+	<changeSet id="85" author="DurgaPrasad G">
+		<createView viewName="LegalDetails_TView" replaceIfExists="true">
+			SELECT T1.LegalId, T1.LegalReference, T1.LoanReference, T1.CollateralReference, T1.Branch, T1.LegalDate, T1.SchedulelevelArea, T1.LegalDecision, T1.LegalRemarks,
+			T1.PropertyDetailModt, T1.PropertyDetailECDate, T1.EcPropertyOwnerName, T1.Active, T3.FinCcy
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			T2.BranchDesc,T3.FinAmount, T3.Fintype
+			FROM    	LegalDetails_Temp T1 
+			Inner Join RmtBranches T2 ON T1.Branch = T2.BranchCode
+			Inner Join Financemain_View T3 ON T1.LoanReference = T3.FinReference
+		</createView>
+	</changeSet>
+	
+	<changeSet id="86" author="DurgaPrasad G">
+		<createView viewName="LegalDetails_View" replaceIfExists="true">
+			SELECT T1.LegalId, T1.LegalReference, T1.LoanReference, T1.CollateralReference, T1.Branch, T1.LegalDate, T1.SchedulelevelArea, T1.LegalDecision, T1.LegalRemarks,
+				T1.PropertyDetailModt, T1.PropertyDetailECDate, T1.EcPropertyOwnerName, T1.Active, T3.FinCcy
+				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				T2.BranchDesc,T3.FinAmount, T3.Fintype
+				FROM    	LegalDetails_Temp T1 
+				Inner Join RmtBranches T2 ON T1.Branch = T2.BranchCode
+				Inner Join Financemain_View T3 ON T1.LoanReference = T3.FinReference
+			UNION ALL
+			SELECT T1.LegalId, T1.LegalReference, T1.LoanReference, T1.CollateralReference, T1.Branch, T1.LegalDate, T1.SchedulelevelArea, T1.LegalDecision, T1.LegalRemarks,
+				T1.PropertyDetailModt, T1.PropertyDetailECDate, T1.EcPropertyOwnerName, T1.Active, T3.FinCcy
+				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				T2.BranchDesc,T3.FinAmount, T3.Fintype
+				FROM    	LegalDetails T1 
+				Inner Join RmtBranches T2 ON T1.Branch = T2.BranchCode
+				Inner Join Financemain_View T3 ON T1.LoanReference = T3.FinReference
+			WHERE     NOT EXISTS (SELECT 1 FROM LegalDetails_TEMP WHERE LegalId = T1.LegalId)
+		</createView>
+	</changeSet>
+	
+	<changeSet author="G Durgaprasad" id="87">
+		<insert tableName="ErrorDetails">
+			<column name="Code">LG001</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Unless legal details are approved it wouldn't allow to move forward.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+	</changeSet>
 	</databaseChangeLog>

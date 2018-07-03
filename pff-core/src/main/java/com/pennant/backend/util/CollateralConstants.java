@@ -17,5 +17,6 @@ public class CollateralConstants {
 	public static final String VERIFICATION_MODULE = "VERIFICATION";
 
 	public static final String SAMPLING_MODULE = "SAMPLING";
+	public static final String LEGAL_MODULE = "LEGAL";
 
 }

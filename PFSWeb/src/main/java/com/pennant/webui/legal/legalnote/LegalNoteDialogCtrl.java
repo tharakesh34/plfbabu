@@ -640,7 +640,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 	private AuditHeader processDetails(LegalNote aLegalNote, String tranType) {
 
 		boolean recordAdded = false;
-		boolean duplicateRecord = !(isNewRecord());
+		boolean duplicateRecord = false;
 
 		AuditHeader auditHeader = getAuditHeader(aLegalNote, tranType);
 
@@ -653,6 +653,11 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 
 		if (oldLegalNoteList != null && !oldLegalNoteList.isEmpty()) {
 			for (LegalNote oldLegalNotes : oldLegalNoteList) {
+				
+				if (oldLegalNotes.getSeqNum() == aLegalNote.getSeqNum()) {
+					duplicateRecord = true;
+				}
+				
 				if (duplicateRecord) {
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
 						if (aLegalNote.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {

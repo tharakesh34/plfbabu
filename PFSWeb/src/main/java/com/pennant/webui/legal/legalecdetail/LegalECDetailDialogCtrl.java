@@ -638,7 +638,7 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 
 	private AuditHeader processDetails(LegalECDetail aLegalECDetail, String tranType) {
 		boolean recordAdded = false;
-		boolean duplicateRecord = !(isNewRecord());
+		boolean duplicateRecord = false;
 
 		AuditHeader auditHeader = getAuditHeader(aLegalECDetail, tranType);
 
@@ -650,7 +650,11 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 		}
 
 		if (oldLegalECDetailsList != null && !oldLegalECDetailsList.isEmpty()) {
-			for (LegalECDetail oldLegalApplicantDetail : oldLegalECDetailsList) {
+			for (LegalECDetail oldLegalDetail : oldLegalECDetailsList) {
+				if (oldLegalDetail.getSeqNum() == aLegalECDetail.getSeqNum()) {
+					duplicateRecord = true;
+				}
+				
 				if (duplicateRecord) {
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
 						if (aLegalECDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
@@ -668,11 +672,11 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 						}
 					} else {
 						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
-							this.legalEcdDetailsList.add(oldLegalApplicantDetail);
+							this.legalEcdDetailsList.add(oldLegalDetail);
 						}
 					}
 				} else {
-					this.legalEcdDetailsList.add(oldLegalApplicantDetail);
+					this.legalEcdDetailsList.add(oldLegalDetail);
 				}
 				duplicateRecord = false;
 			}

@@ -67,6 +67,7 @@ public class LegalApplicantDetail extends AbstractWorkflowEntity implements Enti
 
 	private long legalApplicantId = Long.MIN_VALUE;
 	private long legalId = Long.MIN_VALUE;
+	private int seqNum = 0;
 	private String legalReference;;
 	private String title;
 	private String titleName;
@@ -104,6 +105,7 @@ public class LegalApplicantDetail extends AbstractWorkflowEntity implements Enti
 		excludeFields.add("titleName");
 		excludeFields.add("iDTypeName");
 		excludeFields.add("legalReference");
+		excludeFields.add("seqNum");
 		return excludeFields;
 	}
 
@@ -245,6 +247,14 @@ public class LegalApplicantDetail extends AbstractWorkflowEntity implements Enti
 
 	public void setLegalReference(String legalReference) {
 		this.legalReference = legalReference;
+	}
+
+	public int getSeqNum() {
+		return seqNum;
+	}
+
+	public void setSeqNum(int seqNum) {
+		this.seqNum = seqNum;
 	}
 
 }

@@ -69,6 +69,7 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 
 	private long legalPropertyId = Long.MIN_VALUE;
 	private long legalId = Long.MIN_VALUE;
+	private int seqNum = 0;
 	private String legalReference;
 	private String scheduleType;
 	private String scheduleTypeName;
@@ -110,6 +111,7 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 		excludeFields.add("scheduleTypeName");
 		excludeFields.add("propertyTypeName");
 		excludeFields.add("legalReference");
+		excludeFields.add("seqNum");
 		return excludeFields;
 	}
 
@@ -283,6 +285,14 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 
 	public void setLegalId(long legalId) {
 		this.legalId = legalId;
+	}
+
+	public int getSeqNum() {
+		return seqNum;
+	}
+
+	public void setSeqNum(int seqNum) {
+		this.seqNum = seqNum;
 	}
 
 }

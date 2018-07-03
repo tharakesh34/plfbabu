@@ -59,6 +59,7 @@ public class LegalPropertyTitle extends AbstractWorkflowEntity implements Entity
 
 	private long legalPropertyTitleId = Long.MIN_VALUE;
 	private long legalId = Long.MIN_VALUE;
+	private int seqNum = 0;
 	private String title;
 	private boolean newRecord = false;
 	private String lovValue;
@@ -80,6 +81,7 @@ public class LegalPropertyTitle extends AbstractWorkflowEntity implements Entity
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("seqNum");
 		return excludeFields;
 	}
 
@@ -149,6 +151,14 @@ public class LegalPropertyTitle extends AbstractWorkflowEntity implements Entity
 
 	public void setLegalId(long legalId) {
 		this.legalId = legalId;
+	}
+
+	public int getSeqNum() {
+		return seqNum;
+	}
+
+	public void setSeqNum(int seqNum) {
+		this.seqNum = seqNum;
 	}
 
 }

@@ -55,6 +55,7 @@ import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -70,6 +71,7 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private String loanReference;
 	private BigDecimal finAmount = BigDecimal.ZERO;
 	private String finCcy;
+	private String finType;
 	private String collateralReference;
 	private String branch;
 	private String branchDesc;
@@ -94,6 +96,7 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private List<LegalPropertyTitle> propertyTitleList = new ArrayList<>();
 	private List<LegalECDetail> ecdDetailsList = new ArrayList<>();
 	private List<LegalNote> legalNotesList = new ArrayList<>();
+	private List<FinCovenantType> covenantTypeList = new ArrayList<>();
 
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
@@ -108,8 +111,10 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("propertyTitleList");
 		excludeFields.add("ecdDetailsList");
 		excludeFields.add("legalNotesList");
-		excludeFields.add("collateralDocumentList");
+		excludeFields.add("collateralDocumentList"); 
+		excludeFields.add("covenantTypeList"); 
 		excludeFields.add("branchDesc");
+		excludeFields.add("finType");
 		return excludeFields;
 	}
 
@@ -370,6 +375,22 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
+	}
+
+	public List<FinCovenantType> getCovenantTypeList() {
+		return covenantTypeList;
+	}
+
+	public void setCovenantTypeList(List<FinCovenantType> covenantTypeList) {
+		this.covenantTypeList = covenantTypeList;
+	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
 	}
 
 	 

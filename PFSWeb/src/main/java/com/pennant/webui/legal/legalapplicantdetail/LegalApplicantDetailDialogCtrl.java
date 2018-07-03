@@ -851,7 +851,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	private AuditHeader processDetails(LegalApplicantDetail aLegalApplicantDetail, String tranType) {
 
 		boolean recordAdded = false;
-		boolean duplicateRecord = !(isNewRecord());
+		boolean duplicateRecord = false;
 
 		AuditHeader auditHeader = getAuditHeader(aLegalApplicantDetail, tranType);
 
@@ -863,7 +863,12 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 		}
 
 		if (oldLegalApplicantDetailsList != null && !oldLegalApplicantDetailsList.isEmpty()) {
-			for (LegalApplicantDetail oldLegalApplicantDetail : oldLegalApplicantDetailsList) {
+			for (LegalApplicantDetail oldDetails : oldLegalApplicantDetailsList) {
+				
+				if (oldDetails.getSeqNum() == aLegalApplicantDetail.getSeqNum()) {
+					duplicateRecord = true;
+				}
+				
 				if (duplicateRecord) {
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
 						if (aLegalApplicantDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
@@ -881,11 +886,11 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 						}
 					} else {
 						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
-							this.legalApplicantDetailsList.add(oldLegalApplicantDetail);
+							this.legalApplicantDetailsList.add(oldDetails);
 						}
 					}
 				} else {
-					this.legalApplicantDetailsList.add(oldLegalApplicantDetail);
+					this.legalApplicantDetailsList.add(oldDetails);
 				}
 				duplicateRecord = false;
 			}

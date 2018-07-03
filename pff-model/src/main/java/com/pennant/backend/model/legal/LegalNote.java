@@ -59,6 +59,7 @@ public class LegalNote extends AbstractWorkflowEntity implements Entity {
 
 	private long legalNoteId = Long.MIN_VALUE;
 	private long legalId = Long.MIN_VALUE;
+	private int seqNum = 0;
 	private String code;
 	private String description;
 	private boolean newRecord = false;
@@ -81,6 +82,7 @@ public class LegalNote extends AbstractWorkflowEntity implements Entity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("seqNum");
 		return excludeFields;
 	}
 
@@ -158,6 +160,14 @@ public class LegalNote extends AbstractWorkflowEntity implements Entity {
 
 	public void setLegalId(long legalId) {
 		this.legalId = legalId;
+	}
+
+	public int getSeqNum() {
+		return seqNum;
+	}
+
+	public void setSeqNum(int seqNum) {
+		this.seqNum = seqNum;
 	}
 
 }

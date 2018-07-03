@@ -300,6 +300,30 @@ public class LegalDetailDAOImpl extends BasisNextidDaoImpl<LegalDetail> implemen
 		reference = reference.concat(StringUtils.leftPad(String.valueOf(legalId), 18, "0"));
 		return reference;
 	}
+	
+
+	@Override
+	public boolean isExists(String loanReference, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		int count = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		
+		StringBuilder selectSql = new StringBuilder("SELECT  COUNT(*)  FROM  LegalDetails");
+		selectSql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
+		selectSql.append(" Where loanReference = :loanReference");
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		source.addValue("loanReference", loanReference);
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			count = 0;
+		}
+		logger.debug(Literal.LEAVING);
+		return count > 0 ? true : false;
+	}
+
 	/**
 	 * Sets a new <code>JDBC Template</code> for the given data source.
 	 * 
@@ -309,5 +333,4 @@ public class LegalDetailDAOImpl extends BasisNextidDaoImpl<LegalDetail> implemen
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-
 }

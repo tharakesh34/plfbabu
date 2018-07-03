@@ -69,6 +69,7 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 
 	private long legalDocumentId = Long.MIN_VALUE;
 	private long legalId = Long.MIN_VALUE;
+	private int seqNum = 0;
 	private byte[] docImage;
 	private long documentReference = Long.MIN_VALUE;
 	private Date documentDate;
@@ -122,6 +123,7 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("documentAcceptedName");
 		excludeFields.add("legalReference");
 		excludeFields.add("docImage");
+		excludeFields.add("seqNum");
 		return excludeFields;
 	}
 
@@ -351,6 +353,14 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 
 	public void setUploadDocumentType(String uploadDocumentType) {
 		this.uploadDocumentType = uploadDocumentType;
+	}
+
+	public int getSeqNum() {
+		return seqNum;
+	}
+
+	public void setSeqNum(int seqNum) {
+		this.seqNum = seqNum;
 	}
 
 }

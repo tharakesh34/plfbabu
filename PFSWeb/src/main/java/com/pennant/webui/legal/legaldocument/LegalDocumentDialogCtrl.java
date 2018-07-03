@@ -1022,7 +1022,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 	private AuditHeader processDetails(LegalDocument aLegalDocument, String tranType) {
 		boolean recordAdded = false;
-		boolean duplicateRecord = !(isNewRecord());
+		boolean duplicateRecord = false;
 
 		AuditHeader auditHeader = getAuditHeader(aLegalDocument, tranType);
 
@@ -1035,6 +1035,9 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 		if (oldLegalDocumentDetailsList != null && !oldLegalDocumentDetailsList.isEmpty()) {
 			for (LegalDocument oldLegalApplicantDetail : oldLegalDocumentDetailsList) {
+				if (oldLegalApplicantDetail.getSeqNum() == aLegalDocument.getSeqNum()) {
+					duplicateRecord = true;
+				}
 				if (duplicateRecord) {
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
 						if (aLegalDocument.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {

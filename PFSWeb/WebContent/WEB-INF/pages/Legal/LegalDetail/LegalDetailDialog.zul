@@ -6,7 +6,7 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-
+<window>
 	<window id="window_LegalDetailDialog" border="normal"
 		apply="${legalDetailDialogCtrl}" width="100%" height="100%"
 		sizable="false">
@@ -78,6 +78,8 @@
 							label="${c:l('Tab_LegalDetails_EncumbranceCertificateTab')}" />
 						<tab id="legalNotesTab" 
 							label="${c:l('Tab_LegalDetails_LegalNotesTab')}" />
+						<tab id="coventsTab" 
+							label="${c:l('Tab_LegalDetails_CoventsTab')}" visible="false" />
 						<tab id="legalDecisionTab" 
 							label="${c:l('Tab_LegalDetails_LegalDecisionTab')}" />
 					</tabs>
@@ -682,6 +684,10 @@
 							</div>
 						</tabpanel>
 						
+						<!-- Covents details -->
+						<tabpanel id="coventsTabPanel"
+							style="overflow:auto" height="100%"/>
+						
 						<!-- Legal Decision details -->
 						<tabpanel id="legalDecisionTabPanel"
 							style="overflow:auto">
@@ -770,4 +776,5 @@
 			</south>
 		</borderlayout>
 	</window>
+</window>
 </zk>

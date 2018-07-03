@@ -60,6 +60,7 @@ public class LegalECDetail extends AbstractWorkflowEntity implements Entity {
 
 	private long legalId = Long.MIN_VALUE;;
 	private long legalECId = Long.MIN_VALUE;
+	private int seqNum = 0;
 	private Date ecDate;
 	private String document;
 	private boolean newRecord = false;
@@ -82,6 +83,7 @@ public class LegalECDetail extends AbstractWorkflowEntity implements Entity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("seqNum");
 		return excludeFields;
 	}
 
@@ -159,6 +161,14 @@ public class LegalECDetail extends AbstractWorkflowEntity implements Entity {
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public int getSeqNum() {
+		return seqNum;
+	}
+
+	public void setSeqNum(int seqNum) {
+		this.seqNum = seqNum;
 	}
 
 }

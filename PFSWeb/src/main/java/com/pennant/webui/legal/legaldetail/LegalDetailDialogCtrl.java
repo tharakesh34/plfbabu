@@ -75,10 +75,13 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.legal.LegalApplicantDetail;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.legal.LegalDocument;
@@ -86,15 +89,20 @@ import com.pennant.backend.model.legal.LegalECDetail;
 import com.pennant.backend.model.legal.LegalNote;
 import com.pennant.backend.model.legal.LegalPropertyDetail;
 import com.pennant.backend.model.legal.LegalPropertyTitle;
+import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.legal.LegalDetailService;
+import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.webui.finance.financemain.FinCovenantTypeListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -118,7 +126,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	protected Tab applicationDetailsTab;
 	protected Tab propertryDetailsTab;
 	protected Tab documentDetailTab;
-	//protected Tab querryModuleTab;
+	protected Tab querryModuleTab;
 	protected Tab propertryTittleTab;
 	protected Tab encumbranceCertificateTab;
 	protected Tab legalNotesTab;
@@ -128,9 +136,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	protected Tabpanel applicationDetailTabPanel;
 	protected Tabpanel propertyDetailTabPanel;
 	protected Tabpanel documentDetailTabPanel;
-	//protected Tabpanel querryModuleTabpanel;
+	protected Tabpanel querryModuleTabpanel;
 	protected Tabpanel propertyTittleTabPanel;
 	protected Tabpanel propertyEncumbranceTabPanel;
+	protected Tabpanel coventsTabPanel;
 	protected Tabpanel legalDecisionTabPanel;
 
 	//Tabs Headers Labels
@@ -209,8 +218,11 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	private transient LegalDetailService legalDetailService;
 	
 	@Autowired
+	private FinanceWorkFlowDAO financeWorkFlowDAO;
+	@Autowired
 	private SearchProcessor searchProcessor;
 	private EventManager eventManager;
+	private FinCovenantTypeListCtrl	finCovenantTypeListCtrl;
 	
 	// Module Usage
 	private List<LegalApplicantDetail> applicantDetailList = null;
@@ -482,6 +494,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	public void doWriteBeanToComponents(LegalDetail aLegalDetail) {
 		logger.debug(Literal.ENTERING);
 		
+		setChildRecordsSeqNum(aLegalDetail);
+		
 		boolean selectedTab = false;
 
 		// Applicant Details
@@ -518,6 +532,12 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		}
 		doFillLegalNotesDetails(aLegalDetail.getLegalNotesList());
 
+		/*//Coventgs tab
+		if (this.coventsTab.isVisible()) {
+			selectedTab = true;
+			appendCovenantTypeTab();
+		}*/
+		 
 		// LegalDecision
 		fillComboBox(this.legalDecision, aLegalDetail.getLegalDecision(), PennantStaticListUtil.getDecisionList(), "");
 		this.legalRemarks.setValue(aLegalDetail.getLegalRemarks());
@@ -552,6 +572,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		
 		logger.debug(Literal.LEAVING);
 	}
+	
 
 	/**
 	 * Writes the components values to the bean.<br>
@@ -674,12 +695,14 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		//Notes Tab
 		this.legalNotesTab.setVisible(getUserWorkspace().isAllowed("tab_LegalDetailDialog_legalNotesTab"));
 	
+		//Covents tab
+		//this.coventsTab.setVisible(getUserWorkspace().isAllowed("tab_LegalDetailDialog_coventsTab"));
+		
 		//Decision details
 		this.legalDecisionTab.setVisible(getUserWorkspace().isAllowed("tab_LegalDetailDialog_legalDecisionTab"));
 		readOnlyComponent(isReadOnly("LegalDetailDialog_LegalDecision"), this.legalDecision);
 		readOnlyComponent(isReadOnly("LegalDetailDialog_LegalRemarks"), this.legalRemarks);
 		
-		//this.coventsTab.setVisible(getUserWorkspace().isAllowed("tab_LegalDetailDialog_coventsTab"));
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -729,6 +752,12 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			this.applicationDetailsTab.setSelected(true);
 			MessageUtil.showError(Labels.getLabel("label_LegalDetail_ApplicantDetails_Validation"));
 			return;
+		} else if (this.applicationDetailsTab.isVisible() && aLegalDetail.getApplicantDetailList().size() == 1) {
+			String recordType = getApplicantDetailList().get(0).getRecordType();
+			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType) || PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+				MessageUtil.showError(Labels.getLabel("label_LegalDetail_ApplicantDetails_Del_Validation"));
+				return;
+			}
 		}
 
 		// Property details
@@ -738,6 +767,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			MessageUtil.showError(Labels.getLabel("label_LegalDetail_PropertyDetails_Validation"));
 			return;
 		}
+		
 		if (this.propertryDetailsTab.isVisible() && CollectionUtils.isNotEmpty(getLegalPropertyDetailList())) {
 			if (StringUtils.trimToNull(this.scheduleLevelArea.getValue()) == null) {
 				this.propertryDetailsTab.setSelected(true);
@@ -748,12 +778,26 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			}
 		}
 		
+		if (this.propertryDetailsTab.isVisible() && aLegalDetail.getPropertyDetailList().size() == 1) {
+			String recordType = getLegalPropertyDetailList().get(0).getRecordType();
+			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType) || PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+				MessageUtil.showError(Labels.getLabel("label_LegalDetail_PropertyDetails_Del_Validation"));
+				return;
+			}
+		}
+		
 		//Document Details
 		aLegalDetail.setDocumentList(getLegalDocumentList());
 		if (this.documentDetailTab.isVisible() && CollectionUtils.isEmpty(getLegalDocumentList())) {
 			this.documentDetailTab.setSelected(true);
 			MessageUtil.showError(Labels.getLabel("label_LegalDetail_DocumentDetails_Validation"));
 			return;
+		} else if (this.documentDetailTab.isVisible() && aLegalDetail.getDocumentList().size() == 1) {
+			String recordType = getLegalDocumentList().get(0).getRecordType();
+			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType) || PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+				MessageUtil.showError(Labels.getLabel("label_LegalDetail_DocumentDetails_Del_Validation"));
+				return;
+			}
 		}
 		
 		// Title details
@@ -770,6 +814,13 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 						new String[] { Labels.getLabel("label_LegalPropertyTitleDialog_MODT.value") }));
 			} else {
 				aLegalDetail.setPropertyDetailModt(this.propertyDetailModt.getValue());
+			}
+		}
+		if (this.propertryTittleTab.isVisible() && aLegalDetail.getPropertyTitleList().size() == 1) {
+			String recordType = getPropertyTitleList().get(0).getRecordType();
+			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType) || PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+				MessageUtil.showError(Labels.getLabel("label_LegalDetail_PropertryTittle_Del_Validation"));
+				return;
 			}
 		}
 		
@@ -792,6 +843,13 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				aLegalDetail.setEcPropertyOwnerName(this.ecPropertyOwnerName.getValue());
 			}
 		}
+		if (this.encumbranceCertificateTab.isVisible() &&  aLegalDetail.getEcdDetailsList().size() == 1) {
+			String recordType = getEcdDetailList().get(0).getRecordType();
+			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType) || PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+				MessageUtil.showError(Labels.getLabel("label_LegalDetail_ECDetails_Del_Validation"));
+				return;
+			}
+		}
 		
 		// Legal Notes details
 		aLegalDetail.setLegalNotesList(getLegalNotesList());
@@ -799,6 +857,19 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			this.legalNotesTab.setSelected(true);
 			MessageUtil.showError(Labels.getLabel("label_LegalDetail_LegalNotes_Validation"));
 			return;
+		}
+		if (this.legalNotesTab.isVisible() && aLegalDetail.getLegalNotesList().size() == 1) {
+			String recordType = getLegalNotesList().get(0).getRecordType();
+			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType) || PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+				MessageUtil.showError(Labels.getLabel("label_LegalDetail_LegalNotes_DEL_Validation"));
+				return;
+			}
+		}
+		// Covenant Details Saving
+		if (finCovenantTypeListCtrl != null) {
+			aLegalDetail.setCovenantTypeList(finCovenantTypeListCtrl.getFinCovenantTypeDetailList());
+		} else {
+			aLegalDetail.setCovenantTypeList(getLegalDetail().getCovenantTypeList());
 		}
 		
 		//Legal Decision
@@ -1138,6 +1209,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		LegalApplicantDetail legalApplicantDetail = new LegalApplicantDetail();
 		legalApplicantDetail.setNewRecord(true);
 		legalApplicantDetail.setWorkflowId(0);
+		legalApplicantDetail.setSeqNum(getAppSeqNum());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("legalApplicantDetail", legalApplicantDetail);
@@ -1154,6 +1226,18 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private int getAppSeqNum() {
+		int seqNum = 0;
+		if (CollectionUtils.isNotEmpty(getApplicantDetailList())) {
+			for (LegalApplicantDetail detail : getApplicantDetailList()) {
+				if (detail.getSeqNum() > seqNum) {
+					seqNum = detail.getSeqNum();
+				}
+			}
+		}
+		return seqNum + 1;
+	}
+	
 	/**
 	 * Double click the item
 	 * 
@@ -1248,6 +1332,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		LegalPropertyDetail propertyDetail = new LegalPropertyDetail();
 		propertyDetail.setNewRecord(true);
 		propertyDetail.setWorkflowId(0);
+		propertyDetail.setSeqNum(getPropDetSeqNum());
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("legalPropertyDetail", propertyDetail);
 		map.put("legalDetailDialogCtrl", this);
@@ -1262,6 +1347,17 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private int getPropDetSeqNum() {
+		int seqNum = 0;
+		if (CollectionUtils.isNotEmpty(getLegalPropertyDetailList())) {
+			for (LegalPropertyDetail detail : getLegalPropertyDetailList()) {
+				if (detail.getSeqNum() > seqNum) {
+					seqNum = detail.getSeqNum();
+				}
+			}
+		}
+		return seqNum + 1;
+	}
 	/**
 	 * Double click the item
 	 * 
@@ -1408,6 +1504,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		LegalDocument legalDocument = new LegalDocument();
 		legalDocument.setNewRecord(true);
 		legalDocument.setWorkflowId(0);
+		legalDocument.setSeqNum(getDocSeqNum());
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("legalDocument", legalDocument);
 		map.put("legalDetailDialogCtrl", this);
@@ -1422,6 +1519,18 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private int getDocSeqNum() {
+		int seqNum = 0;
+		if (CollectionUtils.isNotEmpty(getLegalDocumentList())) {
+			for (LegalDocument detail : getLegalDocumentList()) {
+				if (detail.getSeqNum() > seqNum) {
+					seqNum = detail.getSeqNum();
+				}
+			}
+		}
+		return seqNum + 1;
+	}
+	
 	/**
 	 * Double click the item
 	 * 
@@ -1469,7 +1578,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		int i = 0;
 		
 		ArrayList<ValueLabel> documentTypesList = PennantStaticListUtil.getDocumentTypes();
-		ArrayList<ValueLabel> documentCategoryList = new ArrayList<>();
+		ArrayList<ValueLabel> documentCategoryList = getDocumentCategoryList();
 		ArrayList<ValueLabel> documentAccepted = PennantStaticListUtil.getDocumentAcceptedList();
 		
 		if (documentDetailList != null && !documentDetailList.isEmpty()) {
@@ -1519,6 +1628,20 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private ArrayList<ValueLabel> getDocumentCategoryList() {
+		ArrayList<ValueLabel> documentCategoryList = new ArrayList<>();
+		List<DocumentDetails> collateralDocumentList = getLegalDetail().getCollateralDocumentList();
+		if (CollectionUtils.isNotEmpty(collateralDocumentList)) {
+			for (DocumentDetails documentDetails : collateralDocumentList) {
+				ValueLabel valueLabel = new ValueLabel();
+				valueLabel.setLabel(documentDetails.getDocCategory());
+				valueLabel.setValue(documentDetails.getDocCategory());
+				documentCategoryList.add(valueLabel);
+			}
+		}
+		return documentCategoryList;
+	}
+
 	/**
 	 ********************************************************************************************
 	 * Property Title Details *
@@ -1537,6 +1660,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		LegalPropertyTitle legalPropertyTitle = new LegalPropertyTitle();
 		legalPropertyTitle.setNewRecord(true);
 		legalPropertyTitle.setWorkflowId(0);
+		legalPropertyTitle.setSeqNum(getPropTitSeqNum());
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("legalPropertyTitle", legalPropertyTitle);
 		map.put("legalDetailDialogCtrl", this);
@@ -1550,6 +1674,17 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private int getPropTitSeqNum() {
+		int seqNum = 0;
+		if (CollectionUtils.isNotEmpty(getPropertyTitleList())) {
+			for (LegalPropertyTitle detail : getPropertyTitleList()) {
+				if (detail.getSeqNum() > seqNum) {
+					seqNum = detail.getSeqNum();
+				}
+			}
+		}
+		return seqNum + 1;
+	}
 	/**
 	 * Double click the item
 	 * 
@@ -1636,6 +1771,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		LegalECDetail legalECDetail = new LegalECDetail();
 		legalECDetail.setNewRecord(true);
 		legalECDetail.setWorkflowId(0);
+		legalECDetail.setSeqNum(getECSeqNum());
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("legalECDetail", legalECDetail);
 		map.put("legalDetailDialogCtrl", this);
@@ -1650,6 +1786,17 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private int getECSeqNum() {
+		int seqNum = 0;
+		if (CollectionUtils.isNotEmpty(getEcdDetailList())) {
+			for (LegalECDetail detail : getEcdDetailList()) {
+				if (detail.getSeqNum() > seqNum) {
+					seqNum = detail.getSeqNum();
+				}
+			}
+		}
+		return seqNum + 1;
+	}
 	/**
 	 * Double click the item
 	 * 
@@ -1729,6 +1876,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		LegalNote legalNote = new LegalNote();
 		legalNote.setNewRecord(true);
 		legalNote.setWorkflowId(0);
+		legalNote.setSeqNum(getNotesSeqNum());
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("legalNote", legalNote);
 		map.put("legalDetailDialogCtrl", this);
@@ -1742,6 +1890,17 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private int getNotesSeqNum() {
+		int seqNum = 0;
+		if (CollectionUtils.isNotEmpty(getLegalNotesList())) {
+			for (LegalNote detail : getLegalNotesList()) {
+				if (detail.getSeqNum() > seqNum) {
+					seqNum = detail.getSeqNum();
+				}
+			}
+		}
+		return seqNum + 1;
+	}
 	/**
 	 * Double click the item
 	 * 
@@ -1803,39 +1962,49 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
+	
 	/**
 	 ********************************************************************************************
-	 * Legal Decision details *
+	 * Covenant Type details *
 	 ********************************************************************************************
 	 */
-	/**
-	 * The framework calls this event handler when user clicks the
-	 * btnNew_LegalDecisionDetails button.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
-	public void onClick$btnNew_LegalDecisionDetails(Event event) {
+	
+	private void appendCovenantTypeTab() {
 		logger.debug(Literal.ENTERING);
-
-		LegalNote legalNote = new LegalNote();
-		legalNote.setNewRecord(true);
-		legalNote.setWorkflowId(0);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("legalNote", legalNote);
-		map.put("legalDetailDialogCtrl", this);
-		map.put("newRecord", true);
-		map.put("roleCode", getRole());
-		try {
-			Executions.createComponents("/WEB-INF/pages/Legal/LegalDetail/LegalDecisionDialog.zul",
-					window_LegalDetailDialog, map);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
+		final HashMap<String, Object> map = getDefaultArguments();
+		map.put("covenantTypes", getLegalDetail().getCovenantTypeList());
+		map.put("legalDetails", getLegalDetail());
+		map.put("allowedRoles", getLoanWorkFlowRoles());
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinCovenantTypeList.zul",coventsTabPanel, map);
 		logger.debug(Literal.LEAVING);
 	}
+	
+	private String[] getLoanWorkFlowRoles() {
+		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(getLegalDetail().getFinType(),
+				FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_FINANCE, "_FTView");
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
+		String[] roles = workFlowDetails.getFlowRoles();
+		return roles;
+	}
 
+	public HashMap<String, Object> getDefaultArguments() {
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("roleCode", getRole());
+		map.put("financeMainDialogCtrl", this);
+		map.put("finHeaderList", getHeaderBasicDetails());
+		map.put("isNotFinanceProcess", true);
+		map.put("moduleName", CollateralConstants.LEGAL_MODULE);
+		return map;
+	}
+	
+	private ArrayList<Object> getHeaderBasicDetails() {
+		ArrayList<Object> arrayList = new ArrayList<Object>();
+		arrayList.add(0, this.label_LoanReference.getValue());
+		arrayList.add(1, this.label_CollateralRef.getValue());
+		arrayList.add(2, this.label_LoanBranch.getValue());
+		arrayList.add(3, this.label_Date.getValue());
+		return arrayList;
+	}
 	
 	/**
 	 * Setting the window title based on the role
@@ -1904,6 +2073,61 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		this.label_LDDate.setValue(legalDate);
 	}
 
+	/**
+	 * Setting the all child records Sequences
+	 * 
+	 * @param aLegalDetail
+	 */
+	private void setChildRecordsSeqNum(LegalDetail aLegalDetail) {
+		//Documents
+		List<LegalDocument> documentList = aLegalDetail.getDocumentList();
+		if (CollectionUtils.isNotEmpty(documentList)) {
+			for (int i = 0; i < documentList.size(); i++) {
+				documentList.get(i).setSeqNum(i+1);
+			}
+		}
+		
+		//Applicant
+		List<LegalApplicantDetail> applicantList = aLegalDetail.getApplicantDetailList();
+		if (CollectionUtils.isNotEmpty(applicantList)) {
+			for (int i = 0; i < applicantList.size(); i++) {
+				applicantList.get(i).setSeqNum(i+1);
+			}
+		}
+		
+		//LegalPropertyDetail
+		List<LegalPropertyDetail> propertyDetailList = aLegalDetail.getPropertyDetailList();
+		if (CollectionUtils.isNotEmpty(propertyDetailList)) {
+			for (int i = 0; i < propertyDetailList.size(); i++) {
+				propertyDetailList.get(i).setSeqNum(i+1);
+			}
+		}
+		
+		//LegalPropertyTitle
+		List<LegalPropertyTitle> propertyTittleList = aLegalDetail.getPropertyTitleList();
+		if (CollectionUtils.isNotEmpty(propertyTittleList)) {
+			for (int i = 0; i < propertyDetailList.size(); i++) {
+				propertyTittleList.get(i).setSeqNum(i+1);
+			}
+		}
+		
+		//LegalECDetail
+		List<LegalECDetail> ecdDetailsList = aLegalDetail.getEcdDetailsList();
+		if (CollectionUtils.isNotEmpty(ecdDetailsList)) {
+			for (int i = 0; i < ecdDetailsList.size(); i++) {
+				ecdDetailsList.get(i).setSeqNum(i+1);
+			}
+		}
+		
+		//LegalNote
+		List<LegalNote> legalNoteList = aLegalDetail.getLegalNotesList();
+		if (CollectionUtils.isNotEmpty(legalNoteList)) {
+			for (int i = 0; i < legalNoteList.size(); i++) {
+				legalNoteList.get(i).setSeqNum(i+1);
+			}
+		}
+	}
+	
 	/**
 	 * @param aLegalDetail
 	 * @param tranType
@@ -1992,4 +2216,20 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		this.documentsValidate = documentsValidate;
 	}
 
+	public FinanceWorkFlowDAO getFinanceWorkFlowDAO() {
+		return financeWorkFlowDAO;
+	}
+
+	public void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {
+		this.financeWorkFlowDAO = financeWorkFlowDAO;
+	}
+
+	public FinCovenantTypeListCtrl getFinCovenantTypeListCtrl() {
+		return finCovenantTypeListCtrl;
+	}
+
+	public void setFinCovenantTypeListCtrl(FinCovenantTypeListCtrl finCovenantTypeListCtrl) {
+		this.finCovenantTypeListCtrl = finCovenantTypeListCtrl;
+	}
+	
 }

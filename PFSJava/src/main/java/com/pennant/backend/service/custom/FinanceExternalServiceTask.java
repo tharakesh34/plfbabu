@@ -30,6 +30,7 @@ import com.pennant.backend.model.servicetask.ServiceTaskDetail;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.finance.CustomServiceTask;
+import com.pennant.backend.service.legal.LegalDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -83,6 +84,9 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 
 	@Autowired(required = false)
 	private Crm				crm;
+	
+	@Autowired(required = false)
+	private LegalDetailService legalDetailService;
 	
 	private CollateralMarkProcess	collateralMarkProcess;
 	private DDAControllerService	ddaControllerService;
@@ -255,6 +259,10 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					taskExecuted = true;
 					setRemarks(auditHeader, PennantConstants.method_bre, e.getMessage());
 				}	
+				break;
+			case PennantConstants.METHOD_DO_VALIDATE_LEGAL_APPROVAL:
+				auditHeader = getLegalDetailService().isLegalApproved(auditHeader);
+				taskExecuted = true;
 				break;
 			default:
 				return taskExecuted;
@@ -612,5 +620,13 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 
 	public void setServiceTaskDAO(ServiceTaskDAO serviceTaskDAO) {
 		this.serviceTaskDAO = serviceTaskDAO;
+	}
+
+	public LegalDetailService getLegalDetailService() {
+		return legalDetailService;
+	}
+
+	public void setLegalDetailService(LegalDetailService legalDetailService) {
+		this.legalDetailService = legalDetailService;
 	}
 }
