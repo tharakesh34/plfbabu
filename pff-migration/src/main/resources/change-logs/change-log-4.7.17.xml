@@ -6800,5 +6800,9 @@ UNION ALL
 	   		('ELGRULE','ELGRULE','ASL_ELIGABLE_AMOUNT',' ASL End Use Eligible Amount','decimal',18,'1','1','','static,calvalue','');
 		</sql>
 	</changeSet>
+<changeSet id="177" author="vijaykumar.l">
+	<dropColumn tableName="external_liabilities_temp" columnName="othername"/>
+	<dropColumn tableName="external_liabilities" columnName="othername"/>
+</changeSet>
 </databaseChangeLog>
 	
