@@ -37,5 +37,12 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="5" author="Vinay">
+		<renameColumn tableName="adtExternal_liabilities" oldColumnName="auxiliary2" newColumnName="balTransfer" />
+	</changeSet>
+	
+	<changeSet id="6" author="Vinay">
+		<modifyDataType tableName="adtExternal_liabilities" columnName="balTransfer" newDataType="boolean"/>
+	</changeSet>
 </databaseChangeLog>
 	
