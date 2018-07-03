@@ -17,15 +17,16 @@ import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.pff.sampling.dao.SamplingDAO;
 
 public class CustomerExtLiabilityValidation {
 	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
-	@Autowired
 	protected SamplingDAO samplingDAO;
 
 	public CustomerExtLiabilityValidation(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
 		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
+		samplingDAO = (SamplingDAO) SpringBeanUtil.getBean("samplingDAO");
 	}
 
 	public AuditHeader extLiabilityValidation(AuditHeader auditHeader, String method){
@@ -52,7 +53,7 @@ public class CustomerExtLiabilityValidation {
 		CustomerExtLiability tempLiability = null;
 		
 		if ("sampling".equals(liability.getInputSource())) {
-			liability.setLinkId(samplingDAO.getLiabilityLinkId(liability.getCustId(), samplingId));
+			liability.setLinkId(samplingDAO.getLiabilityLinkId(samplingId,liability.getCustId()));
 		} else {
 			liability.setLinkId(customerExtLiabilityDAO.getLinkId(liability.getCustId()));
 		}

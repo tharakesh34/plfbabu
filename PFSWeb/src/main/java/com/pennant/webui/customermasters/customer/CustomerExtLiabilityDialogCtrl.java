@@ -1138,6 +1138,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		}
 		this.custID.setReadonly(true);
 		this.custCIF.setReadonly(true);
+		this.custType.setDisabled(isReadOnly("CustomerExtLiabilityDialog_BankName"));
 		this.bankName.setReadonly(isReadOnly("CustomerExtLiabilityDialog_BankName"));
 		this.finDate.setDisabled(isReadOnly("CustomerExtLiabilityDialog_finDate"));
 		this.finStatus.setReadonly(isReadOnly("CustomerExtLiabilityDialog_finStatus"));
@@ -1205,6 +1206,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		boolean isCustomerWorkflow = false;
 		if (getCustomerDialogCtrl() != null) {
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}else if(getSamplingDialogCtrl()!=null){
+			isCustomerWorkflow = getSamplingDialogCtrl().getSampling().isWorkflow();
 		}
 		if (isWorkFlowEnabled() || isCustomerWorkflow) {
 			return getUserWorkspace().isReadOnly(componentName);

@@ -906,7 +906,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			}
 
 			if (deleteRecord) {
-				externalLiabilityDAO.delete(liability.getLinkId(), type);
+				externalLiabilityDAO.delete(liability.getId(), type);
 			}
 
 			if (approveRec) {

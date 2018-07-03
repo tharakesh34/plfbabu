@@ -45,7 +45,7 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 	
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_SamplingExtendedFieldDialog(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_SamplingExtendedFieldDialog);
 
@@ -68,27 +68,38 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
 			
+			doCheckRights();
 			doShowDialog(sampling);
-			
 
 		} catch (Exception e) {
 			closeDialog();
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	
 	public void doShowDialog(Sampling sampling) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		renderExtendedFieldDetails(sampling);
 		window_SamplingExtendedFieldDialog.setWidth("80%");
 		window_SamplingExtendedFieldDialog.setHeight("80%");
 		setDialog(DialogType.MODAL);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
+	}
+	
+	/**
+	 * Set Visible for components by checking if there's a right for it.
+	 */
+	private void doCheckRights() {
+		logger.debug(Literal.ENTERING);
+
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("SamplingDialog_CollateralExtFields"));
+
+		logger.debug(Literal.LEAVING);
 	}
 
 
@@ -145,7 +156,7 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 				sampling.getBefImage().setExtendedFieldRender(extendedFieldRender);
 			}
 			extendedFieldCtrl.setCcyFormat(2);
-			extendedFieldCtrl.setReadOnly(false);
+			extendedFieldCtrl.setReadOnly(isReadOnly("SamplingDialog_CollateralExtFields"));
 			extendedFieldCtrl.setWindow(this.window_SamplingExtendedFieldDialog);
 			extendedFieldCtrl.render();
 			this.samplingExtFields.setLabel(Labels.getLabel("label_LegalVerificationDialog_VerificationDetails.value"));
