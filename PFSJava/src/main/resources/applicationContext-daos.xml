@@ -6594,7 +6594,6 @@
 		<!-- GST Invoice Changes -->
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
-		<property name="customerDAO" ref="customerDAO" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
