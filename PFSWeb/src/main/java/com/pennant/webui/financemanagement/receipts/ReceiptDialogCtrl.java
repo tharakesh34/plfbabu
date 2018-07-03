@@ -6418,18 +6418,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			return false;
 		}
 		
-		
-		if (StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE) ||StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
-			
-			BigDecimal remainingPaid1 = (totalDue.add(totalAdvDue)).subtract(totalPaid).subtract(totalWaived).subtract(totalAdvPaid).subtract(totalAdvWaived);
-			if(remainingPaid1.compareTo(BigDecimal.ZERO) != 0){
-				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Settlement" ,
-						new String[] { PennantAppUtil.getlabelDesc(tempReceiptPurpose, PennantStaticListUtil.getReceiptPurpose())}));
-				//MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_RePaid_EarlySettlement"));
-				return false;
-			}
-		}
-		
 		if(!isCalProcess){
 			return true;
 		}

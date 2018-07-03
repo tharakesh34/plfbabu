@@ -5790,7 +5790,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			aFinanceDetail.setUserAction(this.userAction.getSelectedItem().getLabel());
 		}
-		aFinanceDetail.setAccountingEventCode(eventCode);
+		
 		aFinanceDetail.setModuleDefiner(
 				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
 
@@ -5810,6 +5810,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// fill the financeMain object with the components data
 		this.doWriteComponentsToBean(aFinScheduleData);
 
+		// Setting Accounting Event Code for Postings execution
+		if (StringUtils.isBlank(eventCode)) {
+			eventCode = PennantApplicationUtil.getEventCode(aFinanceMain.getFinStartDate());
+		}
+		aFinanceDetail.setAccountingEventCode(eventCode);
+		
 		// Extended Field validations
 		if (aFinanceDetail.getExtendedFieldHeader() != null) {
 			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save());
