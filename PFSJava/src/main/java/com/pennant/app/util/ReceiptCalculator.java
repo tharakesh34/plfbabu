@@ -710,7 +710,7 @@ public class ReceiptCalculator implements Serializable {
 					}
 						
 					BigDecimal gstAmount = BigDecimal.ZERO;
-					if(StringUtils.equals(advise.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+					if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
 
 						if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
 							BigDecimal cgst =  (adviseBal.multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
@@ -733,7 +733,7 @@ public class ReceiptCalculator implements Serializable {
 							gstAmount = gstAmount.add(igst);
 						}
 
-					}else if(StringUtils.equals(advise.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
+					}else if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
 
 						BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
 						BigDecimal actualAmt = adviseBal.divide(percentage, 9, RoundingMode.HALF_DOWN);
