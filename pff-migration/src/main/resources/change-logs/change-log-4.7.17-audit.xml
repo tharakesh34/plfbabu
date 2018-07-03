@@ -126,10 +126,4 @@ update adtCustomers set marginDeviation=0;
 			<column name="employeeName" defaultValue="" type="VARCHAR(8)" />
 		</addColumn>
 	 </changeSet>
-	 <changeSet id="14" author="vijaykumar.l">
-	 <comment>added column</comment>
-		<addColumn tableName="adtexternal_liabilities">
-	        <column name="otherName"  type="varchar(50)"/>
-	    </addColumn>
-	 </changeSet>
 </databaseChangeLog>
