@@ -43,9 +43,6 @@
 package com.pennant.util;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -57,7 +54,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.WeakHashMap;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -66,7 +62,6 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1126,30 +1121,7 @@ public class AgreementGeneration implements Serializable {
 				agreement.setQueryDetails(new ArrayList<>());
 				agreement.getQueryDetails().add(agreement.new LoanQryDetails());
 			}
-			
-			populateEquitasExtendedDetails(agreement);
-			
-			if(CollectionUtils.isEmpty(agreement.getLoanList())){
-				agreement.setLoanList(new ArrayList<>());
-				agreement.getLoanList().add(agreement.new ExtendedDetail());
-			}
-			
-			if(CollectionUtils.isEmpty(agreement.getCustomerList())){
-				agreement.setCustomerList(new ArrayList<>());
-				agreement.getCustomerList().add(agreement.new ExtendedDetail());
-			}
-			
-			if(CollectionUtils.isEmpty(agreement.getCollateralList())){
-				agreement.setCollateralList(new ArrayList<>());
-				agreement.getCollateralList().add(agreement.new ExtendedDetail());
-			}
-			
-			if(CollectionUtils.isEmpty(agreement.getOtherList())){
-				agreement.setOtherList(new ArrayList<>());
-				agreement.getOtherList().add(agreement.new ExtendedDetail());
-			}
-			
-			
+
 			Map<String, String> otherMap = new HashMap<>();
 			if (CollectionUtils.isNotEmpty(agreement.getExtendedDetails())) {
 				for (ExtendedDetail extendedDetail : agreement.getExtendedDetails()) {
@@ -1176,92 +1148,11 @@ public class AgreementGeneration implements Serializable {
 			
 			agreement.setOtherMap(otherMap);
 			
-			
 		} catch (Exception e) {
 			logger.debug(e);
 		}
 		logger.debug("Leaving");
 		return agreement;
-	}
-
-	/**
-	 * Populate the extended details for the equitas
-	 * 
-	 * @param agreement
-	 */
-	private void populateEquitasExtendedDetails(AgreementDetail agreement) {
-		Properties properties = new Properties();
-		StringBuilder stringBuilder=new StringBuilder();
-		stringBuilder.append(File.separator).append("agreements").append(File.separator)
-					.append("equitas_extended_field").append(File.separator).append("equitas_extended_fields.properties");
-		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(stringBuilder.toString());
-
-		try {
-			properties.load(inputStream);
-		} catch (IOException ioException) {
-			logger.debug(ioException.getMessage());
-		}
-		if(!properties.isEmpty()){
-			String equitas_loan = properties.getProperty("equitas_loan");
-			List<ExtendedDetail> loanList=new ArrayList<>();
-			if(StringUtils.isNotBlank(equitas_loan)){
-				String[] loanExtendedFields = equitas_loan.toLowerCase().split(",");
-				if(ArrayUtils.isNotEmpty(loanExtendedFields)){
-					agreement.getExtendedDetails().forEach((extendedDetail)->{
-						if(ArrayUtils.contains(loanExtendedFields, extendedDetail.getKey())){
-							loanList.add(extendedDetail);
-						}
-					});
-				}
-			}
-			
-			agreement.setLoanList(loanList);
-			
-			String equitas_customer = properties.getProperty("equitas_customer");
-			List<ExtendedDetail> customerList=new ArrayList<>();
-			if(StringUtils.isNotBlank(equitas_customer)){
-				String[] loanExtendedFields = equitas_customer.split(",");
-				if(ArrayUtils.isNotEmpty(loanExtendedFields)){
-					agreement.getExtendedDetails().forEach((extendedDetail)->{
-						if(ArrayUtils.contains(loanExtendedFields, extendedDetail.getKey())){
-							customerList.add(extendedDetail);
-						}
-					});
-				}
-			}
-			
-			agreement.setCustomerList(customerList);
-			
-			String equitas_collateral = properties.getProperty("equitas_collateral");
-			List<ExtendedDetail> collateralList=new ArrayList<>();
-			if(StringUtils.isNotBlank(equitas_collateral)){
-				String[] loanExtendedFields = equitas_collateral.toLowerCase().split(",");
-				if(ArrayUtils.isNotEmpty(loanExtendedFields)){
-					agreement.getExtendedDetails().forEach((extendedDetail)->{ArrayUtils.contains(loanExtendedFields, extendedDetail.getKey());
-						if(ArrayUtils.contains(loanExtendedFields, extendedDetail.getKey())){
-							collateralList.add(extendedDetail);
-						}
-					});
-				}
-			}
-			
-			agreement.setCollateralList(collateralList);
-			
-			String equitas_other = properties.getProperty("equitas_other");
-			List<ExtendedDetail> otherList=new ArrayList<>();
-			if(StringUtils.isNotBlank(equitas_other)){
-				String[] loanExtendedFields = equitas_other.toLowerCase().split(",");
-				if(ArrayUtils.isNotEmpty(loanExtendedFields)){
-					agreement.getExtendedDetails().forEach((extendedDetail)->{
-						if(ArrayUtils.contains(loanExtendedFields, extendedDetail.getKey())){
-							otherList.add(extendedDetail);
-						}
-					});
-				}
-			}
-			
-			agreement.setOtherList(otherList);
-		}
 	}
 
 	/**

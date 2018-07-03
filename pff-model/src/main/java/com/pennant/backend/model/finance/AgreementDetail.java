@@ -6893,43 +6893,6 @@ private String custAccount ="";
 		}
 	}
 	
-	List<ExtendedDetail> loanList;
-	List<ExtendedDetail> customerList;
-	List<ExtendedDetail> collateralList;
-	List<ExtendedDetail> otherList;
-
-	public List<ExtendedDetail> getLoanList() {
-		return loanList;
-	}
-
-	public void setLoanList(List<ExtendedDetail> loanList) {
-		this.loanList = loanList;
-	}
-
-	public List<ExtendedDetail> getCustomerList() {
-		return customerList;
-	}
-
-	public void setCustomerList(List<ExtendedDetail> customerList) {
-		this.customerList = customerList;
-	}
-
-	public List<ExtendedDetail> getCollateralList() {
-		return collateralList;
-	}
-
-	public void setCollateralList(List<ExtendedDetail> collateralList) {
-		this.collateralList = collateralList;
-	}
-
-	public List<ExtendedDetail> getOtherList() {
-		return otherList;
-	}
-
-	public void setOtherList(List<ExtendedDetail> otherList) {
-		this.otherList = otherList;
-	}
-	
 	private Map<String,String> otherMap;
 
 
