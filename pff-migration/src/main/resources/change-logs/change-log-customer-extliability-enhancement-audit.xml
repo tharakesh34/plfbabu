@@ -115,4 +115,6 @@
 			columnNames="auditId, auditDate, auditSeq, auditImage"
 			constraintName="pk_adtExternal_liabilities" />
 	</changeSet>
+	<changeSet id="2" author="vijaykumar.l">
+		<renameColumn tableName="adtExternal_liabilities" oldColumnName="auxiliary1" newColumnName="otherFinInstitute"/>
 </databaseChangeLog>
