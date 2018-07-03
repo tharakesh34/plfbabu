@@ -41,7 +41,6 @@ import com.pennant.backend.service.customermasters.validation.CustomerExtLiabili
 import com.pennant.backend.service.customermasters.validation.CustomerIncomeValidation;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.CollateralConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleReturnType;
@@ -522,13 +521,18 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 		BigDecimal custTotalIncome = sampling.getTotalIncome();
 		BigDecimal custTotalExpense = sampling.getTotalLiability();
-		int ccyEditField = sampling.getCcyeditfield();
-
+		
 		fieldsandvalues.put("custCtgCode", sampling.getCustCategory());
-		fieldsandvalues.put("custTotalIncome", PennantApplicationUtil.formateAmount(custTotalIncome, ccyEditField));
-		fieldsandvalues.put("custTotalExpense", PennantApplicationUtil.formateAmount(custTotalExpense, ccyEditField));
+		fieldsandvalues.put("custTotalIncome", custTotalIncome);
+		fieldsandvalues.put("custTotalExpense", custTotalExpense);
 		fieldsandvalues.put("finProfitRate", sampling.getInterestRate());
 		fieldsandvalues.put("noOfTerms", sampling.getTenure());
+		
+		fieldsandvalues.put("Total_Co_Applicants_Income", BigDecimal.ZERO);
+		fieldsandvalues.put("Co_Applicants_Obligation_External", BigDecimal.ZERO);
+		fieldsandvalues.put("Co_Applicants_Obligation_Internal", BigDecimal.ZERO);
+		fieldsandvalues.put("Customer_Obligation_External", BigDecimal.ZERO);
+		fieldsandvalues.put("Customer_Obligation_Internal", BigDecimal.ZERO);
 
 		ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_FOIRAMT);
 		if (ruleCode != null) {
@@ -561,6 +565,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	}
 
 	private Object excuteRule(String foirRule, String finCcy, HashMap<String, Object> fieldsandvalues) {
+		logger.info(String.format("Rule>> %s", foirRule));
 		return ruleExecutionUtil.executeRule(foirRule, fieldsandvalues, finCcy, RuleReturnType.DECIMAL);
 	}
 

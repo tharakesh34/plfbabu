@@ -60,6 +60,7 @@ import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
@@ -331,19 +332,21 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		doFillExtendedFileds(sampling.getExtFieldRenderList());
 
 		this.loanNo.setValue(sampling.getKeyReference());
-		this.loanType.setValue(sampling.getFinType()+" - "+sampling.getFinTypeDesc());
-		this.branch.setValue(sampling.getBranchCode()+" - "+sampling.getBranchDesc());
-		this.loanAmtReq.setValue(sampling.getLoanAmountRequested().toString());
+		this.loanType.setValue(sampling.getFinType().concat(" - ").concat(sampling.getFinTypeDesc()));
+		this.branch.setValue(sampling.getBranchCode().concat(" - ").concat(sampling.getBranchDesc()));
+		this.loanAmtReq.setValue(PennantAppUtil.amountFormate(sampling.getLoanAmountRequested(), ccyFormatter));
 		this.tenure.setValue(String.valueOf(sampling.getNumberOfTerms()));
 		this.samplingDate.setValue(DateUtil.format(sampling.getCreatedOn(), DateFormat.SHORT_DATE));
+		
 		if ("F".equals(sampling.getFinGrcRateType())) {
-			this.roi.setValue(PennantAppUtil.amountFormate(sampling.getRepaySpecialRate(),ccyFormatter));
+			this.roi.setValue(PennantAppUtil.amountFormate(sampling.getRepaySpecialRate(), ccyFormatter));
 		} else {
-			this.roi.setValue(PennantAppUtil.amountFormate(sampling.getRepayProfitRate(),ccyFormatter));
+			this.roi.setValue(PennantAppUtil.amountFormate(sampling.getRepayProfitRate(), ccyFormatter));
 		}
-		this.finAmtReq.setValue(sampling.getLoanAmountRequested());
+		
+		this.finAmtReq.setValue(PennantAppUtil.formateAmount(sampling.getLoanAmountRequested(), ccyFormatter));
 		this.loanTenure.setValue(sampling.getTenure());
-		this.interestRate.setValue(sampling.getInterestRate());
+		this.interestRate.setValue(PennantApplicationUtil.formatRate(sampling.getInterestRate().doubleValue(), 2));
 		
 		calculateEligibility(false);
 
@@ -449,8 +452,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	private void doUserActivityLog() throws Exception {
 		logger.debug(Literal.ENTERING);
 		
-		
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		Map<String, Object> map = new LinkedHashMap<>();
 
 		map.put("label_SamplingDialog_LoanNo.value", this.sampling.getKeyReference());
 		map.put("label_SamplingDialog_LoanType.value", this.sampling.getFinType());
@@ -458,10 +460,11 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		map.put("label_SamplingDialog_LoanAmtReq.value",  this.sampling.getLoanAmountRequested());
 		map.put("label_SamplingDialog_Tenure.value", this.sampling.getNumberOfTerms());
 		map.put("label_SamplingDialog_samplingDate.value", this.sampling.getCreatedOn());
+		
 		if ("F".equals(sampling.getFinGrcRateType())) {
-			map.put("label_SamplingDialog_ROI.value", PennantAppUtil.amountFormate(this.sampling.getRepaySpecialRate(),ccyFormatter));
+			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepaySpecialRate().doubleValue(), ccyFormatter));
 		} else {
-			map.put("label_SamplingDialog_ROI.value", PennantAppUtil.amountFormate(this.sampling.getRepayProfitRate(),ccyFormatter));
+			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepayProfitRate().doubleValue(), ccyFormatter));
 		}
 
 		doShowActivityLog(this.sampling.getKeyReference(), map);
@@ -479,6 +482,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		CollateralSetup collateralSetup = collateralSetupService
 				.getCollateralSetupByRef(collSetup.getCollateralRef(), "", true);
+		
 		if (collateralSetup != null) {
 			map.put("collateralSetup", collateralSetup);
 			map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
@@ -492,6 +496,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	public void onClickViewAddress(ForwardEvent event) {
 		Customer customer = (Customer) event.getData();
 		CustomerAddres address;
+	
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			address = customerAddresService.getCustomerAddresById(customer.getCustID(), customer.getCustAddlVar1());
@@ -536,9 +541,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		
 		this.samplingService.calculateEligilibity(aSampling);
 		
-		this.foirEligiblity.setValue(aSampling.getFoirEligibility());
+		this.foirEligiblity.setValue(PennantAppUtil.amountFormate(aSampling.getFoirEligibility(), ccyFormatter));
 		this.emiPerLakh.setValue(aSampling.getEmi());
-		this.iirEligibility.setValue(aSampling.getIrrEligibility());
+		this.iirEligibility.setValue(PennantAppUtil.amountFormate(aSampling.getIrrEligibility(), ccyFormatter));
 		
 		BigDecimal loanEligibilityAmount = BigDecimal.ZERO;
 		BigDecimal requestedAmount = aSampling.getLoanAmountRequested();
@@ -551,7 +556,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			loanEligibilityAmount = requestedAmount;
 		}
 
-		this.loanEligibility.setValue(loanEligibilityAmount);
+		this.loanEligibility.setValue(PennantAppUtil.amountFormate(loanEligibilityAmount, ccyFormatter));
 	}
 
 	public void onCustomerIncomeItemDoubleClicked(Event event) throws Exception {
@@ -676,31 +681,64 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		}
 
 		try {
+			BigDecimal interestRate = this.interestRate.getValue();
+			if(interestRate == null) {
+				interestRate = BigDecimal.ZERO;
+			}
+
+			interestRate = PennantAppUtil.unFormateAmount(interestRate, 2);
+			
 			sampling.setInterestRate(this.interestRate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			sampling.setLoanEligibility(this.loanEligibility.getValue());
+			BigDecimal loanEligibility = this.loanEligibility.getValue();
+			if(loanEligibility == null) {
+				loanEligibility = BigDecimal.ZERO;
+			}
+
+			loanEligibility = PennantAppUtil.unFormateAmount(loanEligibility, 2);
+			sampling.setLoanEligibility(loanEligibility);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		
 		try {
-			sampling.setFoirEligibility(this.foirEligiblity.getValue());
+			BigDecimal foirEligiblity = this.foirEligiblity.getValue();
+			if(foirEligiblity == null) {
+				foirEligiblity = BigDecimal.ZERO;
+			}
+
+			foirEligiblity = PennantAppUtil.unFormateAmount(foirEligiblity, 2);
+			sampling.setFoirEligibility(foirEligiblity);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		
 		try {
+			BigDecimal iirEligibility = this.iirEligibility.getValue();
+			if(iirEligibility == null) {
+				iirEligibility = BigDecimal.ZERO;
+			}
+
+			iirEligibility = PennantAppUtil.unFormateAmount(iirEligibility, 2);
+			
 			sampling.setIrrEligibility(this.iirEligibility.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		
 		try {
-			sampling.setEmi(this.emiPerLakh.getValue());
+			BigDecimal emiPerLakh = this.emiPerLakh.getValue();
+			if(emiPerLakh == null) {
+				emiPerLakh = BigDecimal.ZERO;
+			}
+
+			emiPerLakh = PennantAppUtil.unFormateAmount(emiPerLakh, 2);
+			
+			sampling.setEmi(emiPerLakh);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -765,12 +803,14 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		arrayList.add(4, this.sampling.getBranchDesc()); 
 		arrayList.add(5, this.sampling.getLoanAmountRequested()); 
 		arrayList.add(6, this.sampling.getNumberOfTerms());
-		arrayList.add(7, DateUtil.format(this.sampling.getCreatedOn(),DateFormat.SHORT_DATE));
+		arrayList.add(7, DateUtil.format(this.sampling.getCreatedOn(), DateFormat.SHORT_DATE));
+		
 		if ("F".equals(sampling.getFinGrcRateType())) {
-			arrayList.add(8, PennantAppUtil.amountFormate(this.sampling.getRepaySpecialRate(),ccyFormatter));
+			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepaySpecialRate().doubleValue(), 2));
 		} else {
-			arrayList.add(8, PennantAppUtil.amountFormate(this.sampling.getRepayProfitRate(),ccyFormatter));
+			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepayProfitRate().doubleValue(), 2));
 		}
+		
 		return arrayList;
 	}
 	

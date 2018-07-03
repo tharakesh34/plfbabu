@@ -275,7 +275,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		sql.append(" where custid in (select custid from (");
 		sql.append(" select custid, finreference from financemain_view");
 		sql.append(" union all");
-		sql.append(" select jointaccountid custid,finreference from finjointaccountdetails_view");
+		sql.append(" select custid, finreference from finjointaccountdetails_view");
 		sql.append(") t where t.finreference = :keyReference)");
 
 		logger.debug(Literal.SQL + sql.toString());

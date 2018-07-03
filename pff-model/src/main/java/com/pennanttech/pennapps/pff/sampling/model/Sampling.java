@@ -218,7 +218,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getInterestRate() {
-		return interestRate;
+		return interestRate == null ? BigDecimal.ZERO : interestRate;
 	}
 
 	public void setInterestRate(BigDecimal interestRate) {
@@ -370,7 +370,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getRepaySpecialRate() {
-		return repaySpecialRate;
+		return repaySpecialRate == null ? BigDecimal.ZERO : repaySpecialRate;
 	}
 
 	public void setRepaySpecialRate(BigDecimal repaySpecialRate) {
@@ -378,7 +378,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getRepayProfitRate() {
-		return repayProfitRate;
+		return repayProfitRate == null ? BigDecimal.ZERO : repayProfitRate;
 	}
 
 	public void setRepayProfitRate(BigDecimal repayProfitRate) {

@@ -410,7 +410,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append(" ca.custaddrtype custAddlVar1");
 		sql.append(" from sampling").append(type).append(" s");
 		sql.append(" inner join finjointaccountdetails_view ja on ja.finreference = s.keyreference");
-		sql.append(" inner join customers_view cu on cu.custid = ja.jointaccountid");
+		sql.append(" inner join customers_view cu on cu.custid = ja.custid");
 		sql.append(" inner join customeraddresses_view ca on ca.custid = cu.custid");
 		sql.append(" where s.keyreference = :keyreference and ca.custaddrpriority = :custaddrpriority");
 
