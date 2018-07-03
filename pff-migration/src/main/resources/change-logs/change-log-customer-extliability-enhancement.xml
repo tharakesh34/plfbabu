@@ -380,10 +380,10 @@
 			 where (not exists (select 1 from external_liabilities_view where linkid = el.linkid ));
 		</createView>
 	</changeSet>
-	<changeSet id="8" author="vinay.b">
+	<changeSet id="8.2" author="vinay.b">
 	<comment> adding Column as baltransfer</comment>
-		<renameColumn tableName="external_liabilities_temp" oldColumnName="auxiliary2" newColumnName="balTransfer" columnDataType="boolean" />
-		<renameColumn tableName="external_liabilities" oldColumnName="auxiliary2" newColumnName="balTransfer" columnDataType="boolean"/>
+		<renameColumn tableName="external_liabilities_temp" oldColumnName="auxiliary2" newColumnName="balTransfer"/>
+		<renameColumn tableName="external_liabilities" oldColumnName="auxiliary2" newColumnName="balTransfer"/>
 		<createView viewName="external_liabilities_aview"
 			replaceIfExists="true">
 			select el.id, el.linkid, el.seqno ,el.fintype ,el.findate ,el.loanbank ,el.rateOfInterest
