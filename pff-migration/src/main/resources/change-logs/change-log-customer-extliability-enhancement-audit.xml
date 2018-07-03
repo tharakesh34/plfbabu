@@ -121,4 +121,7 @@
 	<changeSet id="3.1" author="vinay.b">
 		<renameColumn tableName="adtExternal_liabilities" oldColumnName="auxiliary2" newColumnName="balTransfer" columnDataType="boolean"/>
 	</changeSet>
+	<changeSet id="4" author="vijaykumar.l">
+	<dropColumn tableName="adtExternal_liabilities" columnName="othername"/>
+ </changeSet>
 </databaseChangeLog>
