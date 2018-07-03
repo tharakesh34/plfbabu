@@ -890,7 +890,7 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
   </sql>
 	 </changeSet>
 	 
-	 <changeSet id="44" author="Manoj">
+	 <changeSet id="44.1" author="Manoj">
 	 	<sql>
 	 		update loanpurposes set eligibleamount =  0;
 	 		update loanpurposes_temp set eligibleamount =  0;
