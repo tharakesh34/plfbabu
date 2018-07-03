@@ -14,4 +14,6 @@ public class StageTabConstants {
 	public static final long VAS 				= 9;
 	public static final long ExtendedField		= 10;
 	public static final long QueryMangement		= 11;
+	public static final long PSLDetails			= 12;
+
 }

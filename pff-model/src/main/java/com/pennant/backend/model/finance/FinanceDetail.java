@@ -69,6 +69,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -260,6 +261,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private Verification tvVerification;
 	private Verification lvVerification;
 	private Verification rcuVerification;
+	private PSLDetail pslDetail;
 	private boolean fiApprovalTab =false;
 	private boolean fiInitTab = false;
 	private boolean tvApprovalTab =false;
@@ -281,8 +283,8 @@ public class FinanceDetail implements java.io.Serializable {
 	 * Legal Details variables
 	 */
 	private boolean legalInitiator;
-	
-	
+		
+
 	public FinanceDetail() {
 		
 	}
@@ -1084,6 +1086,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setLegalInitiator(boolean legalInitiator) {
 		this.legalInitiator = legalInitiator;
+	}
+
+	public PSLDetail getPslDetail() {
+		return pslDetail;
+	}
+
+	public void setPslDetail(PSLDetail pslDetail) {
+		this.pslDetail = pslDetail;
 	}
 	
 }

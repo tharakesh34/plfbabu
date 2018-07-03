@@ -43,6 +43,7 @@
 
 package com.pennant.backend.model.systemmasters;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -62,7 +63,9 @@ public class LoanPurpose extends AbstractWorkflowEntity {
 	private String				lovValue;
 	private LoanPurpose			befImage;
 	private LoggedInUser		userDetails;
-
+	private BigDecimal  eligibleAmount 	=BigDecimal.ZERO;
+			
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -147,4 +150,13 @@ public class LoanPurpose extends AbstractWorkflowEntity {
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+
+	public BigDecimal getEligibleAmount() {
+		return eligibleAmount;
+	}
+
+	public void setEligibleAmount(BigDecimal eligibleAmount) {
+		this.eligibleAmount = eligibleAmount;
+	}
+
 }

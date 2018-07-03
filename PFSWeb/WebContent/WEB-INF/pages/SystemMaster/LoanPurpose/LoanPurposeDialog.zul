@@ -91,6 +91,14 @@
 										maxlength="50" width="450px" />
 								</hbox>
 							</row>
+							<row id = "row_EligibleAmount" visible="true">
+								<label
+									id="label_LoanPurposeDialog_LoanEligibleAmount"
+									value="${c:l('label_LoanPurposeDialog_LoanEligibleAmount.value')}" />
+								<hbox>
+									<currencyBox id="loanEligibleAmount"/>
+								</hbox>
+							</row>
 							<row visible="true">
 								<label
 									id="label_LoanPurposeDialog_LoanPurposeIsActive"

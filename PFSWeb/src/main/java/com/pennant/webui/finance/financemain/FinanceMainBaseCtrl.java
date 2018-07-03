@@ -220,6 +220,7 @@ import com.pennant.backend.model.finance.RolledoverFinanceHeader;
 import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.finance.TATDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.limits.LimitDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -294,6 +295,7 @@ import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailDialogCtrl;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
+import com.pennant.webui.finance.psldetails.PSLDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.mandate.mandate.MandateDialogCtrl;
 import com.pennant.webui.pdfupload.PdfParserCaller;
@@ -806,6 +808,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient LVerificationCtrl lVerificationCtrl;
 	private transient RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
 	private transient FinSamplingDialogCtrl finSamplingDialogCtrl;
+	private transient PSLDetailDialogCtrl pSLDetailDialogCtrl;
+	
 
 	private transient FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private transient CustomerInterfaceService customerInterfaceService;
@@ -1787,6 +1791,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				appendQueryMangementTab(false);
 			}
 		}
+
+		if (isTabVisible(StageTabConstants.PSLDetails)) {
+			appendPslDetailsTab(onLoad);
+		}
+		
+
 		logger.debug("Leaving");
 	}
 
@@ -2817,6 +2827,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (isTabVisible(StageTabConstants.QueryMangement)) {
 				appendQueryMangementTab(true);
 			}
+			break;
+		case AssetConstants.UNIQUE_ID_PSL_DETAILS:
+			pSLDetailDialogCtrl.doSetLabels(getFinBasicDetails());
 			break;
 		default:
 			break;
@@ -3890,6 +3903,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
+	
 	/**
 	 * Method for Credit Review Details Data in finance
 	 */
@@ -3975,6 +3989,41 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			extendedFieldCtrl.render();
 		} catch (Exception e) {
 			logger.error("Exception", e);
+		}
+		logger.debug("Leaving");
+	}
+	
+	
+	/**
+	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * 
+	 * @throws InterruptedException
+	 */
+	protected void appendPslDetailsTab(boolean onLoad) throws InterruptedException {
+		logger.debug("Entering");
+		try {
+			if (onLoad) {
+				createTab(AssetConstants.UNIQUE_ID_PSL_DETAILS, true);
+			} else {
+				
+				PSLDetail pslDetail = getFinanceDetail().getPslDetail();
+				if (pslDetail == null) {
+					pslDetail = new PSLDetail();
+					pslDetail.setNewRecord(true);
+				}
+				
+				HashMap<String, Object> map = getDefaultArguments();
+				map.put("finHeaderList", getFinBasicDetails());
+				map.put("pSLDetail", pslDetail);
+				map.put("tab", getTab(AssetConstants.UNIQUE_ID_TAX));
+				map.put("fromLoan", true);
+				map.put("financeDetail", getFinanceDetail());
+				map.put("financeMainDialogCtrl", this);
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/PslDetailDialog.zul",
+						getTabpanel(AssetConstants.UNIQUE_ID_PSL_DETAILS), map);
+			}
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -6369,6 +6418,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				return;
 			}
 
+		}
+		
+		
+		Tab pslDetailsTab = getTab(AssetConstants.UNIQUE_ID_PSL_DETAILS);
+		if ((pslDetailsTab != null && pslDetailsTab.isVisible()) && pSLDetailDialogCtrl != null) {
+			pSLDetailDialogCtrl.doSave(aFinanceDetail, pslDetailsTab, recSave);
 		}
 
 		//Validation For Mandatory Recommendation
@@ -17629,5 +17684,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
+	}
+
+	public PSLDetailDialogCtrl getpSLDetailDialogCtrl() {
+		return pSLDetailDialogCtrl;
+	}
+
+	public void setpSLDetailDialogCtrl(PSLDetailDialogCtrl pSLDetailDialogCtrl) {
+		this.pSLDetailDialogCtrl = pSLDetailDialogCtrl;
 	}
 }

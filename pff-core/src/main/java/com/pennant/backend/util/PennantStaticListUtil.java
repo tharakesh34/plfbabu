@@ -251,6 +251,11 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> financeClosingStatusList;
 	private static List<Property> manualDeviationSeverities;
 	private static ArrayList<ValueLabel> queryModuleStatusList;
+	private static ArrayList<ValueLabel> landAreaList;
+	private static ArrayList<ValueLabel> subCategoryList;
+	private static ArrayList<ValueLabel> sectorList;
+	private static ArrayList<ValueLabel> subSectorList;
+	private static ArrayList<ValueLabel> subCategoryGeneralList;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -3475,4 +3480,65 @@ public class PennantStaticListUtil {
 		}
 		return decisionsList;
 	}
+
+
+	
+	public static List<ValueLabel> getLandAreaList() {
+		if (landAreaList == null) {
+			landAreaList = new ArrayList<ValueLabel>(2);
+			landAreaList.add(new ValueLabel("1", "<1 Hectare"));
+			landAreaList.add(new ValueLabel("2", "1-2 Hectares"));
+			landAreaList.add(new ValueLabel("3", ">2 Hectares"));
+		}
+		return landAreaList;
+	}
+
+	public static List<ValueLabel> getSubCategoryList() {
+		if (subCategoryList == null) {
+			subCategoryList = new ArrayList<ValueLabel>(2);
+			subCategoryList.add(new ValueLabel("MF", Labels.getLabel("label_PSLDetailDialog_MarginalFarmer")));
+			subCategoryList.add(new ValueLabel("SF", Labels.getLabel("label_PSLDetailDialog_SmallFarmer")));
+			subCategoryList.add(new ValueLabel("OF", Labels.getLabel("label_PSLDetailDialog_OtherFarmer")));
+			subCategoryList.add(new ValueLabel("LL", Labels.getLabel("label_PSLDetailDialog_LandLessLabours")));
+			subCategoryList.add(new ValueLabel("TF", Labels.getLabel("label_PSLDetailDialog_TenantFarmers")));
+			subCategoryList.add(new ValueLabel("OL", Labels.getLabel("label_PSLDetailDialog_OralLesses")));
+			subCategoryList.add(new ValueLabel("SC", Labels.getLabel("label_PSLDetailDialog_ShareCopper")));
+		}
+		return subCategoryList;
+	}
+	
+	public static List<ValueLabel> getPSLSectorList() {
+		if (sectorList == null) {
+			sectorList = new ArrayList<ValueLabel>(2);
+			sectorList.add(new ValueLabel("MNF", Labels.getLabel("label_PSLDetailDialog_Manufacturing")));
+			sectorList.add(new ValueLabel("SVS", Labels.getLabel("label_PSLDetailDialog_Services")));
+			sectorList.add(new ValueLabel("KVI", Labels.getLabel("label_PSLDetailDialog_KhadiAndVillageIndustries")));
+		}
+		return sectorList;
+	}
+	
+	public static List<ValueLabel> getSubSectorList() {
+		if (subSectorList == null) {
+			subSectorList = new ArrayList<ValueLabel>(2);
+			subSectorList.add(new ValueLabel("MI", Labels.getLabel("label_PSLDetailDialog_MicroEnterprises")));
+			subSectorList.add(new ValueLabel("SI", Labels.getLabel("label_PSLDetailDialog_SmallEnterprises")));
+			subSectorList.add(new ValueLabel("ME", Labels.getLabel("label_PSLDetailDialog_MediumEnterprises")));
+			subSectorList.add(new ValueLabel("HF", Labels.getLabel("label_PSLDetailDialog_Housing")));
+		}
+		return subSectorList;
+	}
+
+	public static List<ValueLabel> getSubCategoryGeneralList() {
+		
+		if (subCategoryGeneralList == null) {
+			subCategoryGeneralList = new ArrayList<ValueLabel>(2);
+			subCategoryGeneralList.add(new ValueLabel("EC", Labels.getLabel("label_PSLDetailDialog_ExportCredit")));
+			subCategoryGeneralList.add(new ValueLabel("SI", Labels.getLabel("label_PSLDetailDialog_SocialInfrastructure")));
+			subCategoryGeneralList.add(new ValueLabel("RE", Labels.getLabel("label_PSLDetailDialog_RenewableEnergy")));
+			subCategoryGeneralList.add(new ValueLabel("ED", Labels.getLabel("label_PSLDetailDialog_Education")));
+			subCategoryGeneralList.add(new ValueLabel("OT", Labels.getLabel("label_PSLDetailDialog_Others")));
+		}
+		return subCategoryGeneralList;
+	}
+
 }

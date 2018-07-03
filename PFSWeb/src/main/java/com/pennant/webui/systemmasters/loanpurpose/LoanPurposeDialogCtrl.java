@@ -42,6 +42,7 @@
  */
 package com.pennant.webui.systemmasters.loanpurpose;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
@@ -54,13 +55,17 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.CurrencyBox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.LoanPurpose;
 import com.pennant.backend.service.systemmasters.LoanPurposeService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
@@ -85,7 +90,9 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	protected Window						window_LoanPurposeDialog;											// autoWired
 	protected Textbox						loanPurposeCode;													// autoWired
 	protected Textbox						loanPurposeDesc;													// autoWired
+	protected CurrencyBox					loanEligibleAmount;													// autoWired
 	protected Checkbox						loanPurposeIsActive;												// autoWired
+	protected Row                            row_EligibleAmount;
 
 
 	// not autoWired Var's
@@ -153,17 +160,16 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
-			
-
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getLoanPurpose());
+			this.row_EligibleAmount.setVisible(isReadOnly("LoanPurposeDialog_EligibleAmountVisible"));
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_LoanPurposeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
-	}
+	}	
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
@@ -174,6 +180,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		// Empty sent any required attributes
 		this.loanPurposeCode.setMaxlength(8);
 		this.loanPurposeDesc.setMaxlength(50);
+  		this.loanEligibleAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -296,6 +303,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		this.loanPurposeCode.setValue(aLoanPurpose.getLoanPurposeCode());
 		this.loanPurposeDesc.setValue(aLoanPurpose.getLoanPurposeDesc());
 		this.loanPurposeIsActive.setChecked(aLoanPurpose.isLoanPurposeIsActive());
+		this.loanEligibleAmount.setValue(PennantApplicationUtil.formateAmount(aLoanPurpose.getEligibleAmount(), CurrencyUtil.getFormat("")));
 		this.recordStatus.setValue(aLoanPurpose.getRecordStatus());
 		
 		if(aLoanPurpose.isNew() || (aLoanPurpose.getRecordType() != null ? aLoanPurpose.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
@@ -329,6 +337,15 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		}
 		try {
 			aLoanPurpose.setLoanPurposeIsActive(this.loanPurposeIsActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			if (this.loanEligibleAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
+				aLoanPurpose.setEligibleAmount(PennantApplicationUtil
+						.unFormateAmount(this.loanEligibleAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -509,6 +526,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		}
 
 		this.loanPurposeDesc.setReadonly(isReadOnly("LoanPurposeDialog_loanPurposeDesc"));
+		this.loanEligibleAmount.setReadonly(isReadOnly("LoanPurposeDialog_EligibleAmount"));
 		this.loanPurposeIsActive.setDisabled(isReadOnly("LoanPurposeDialog_loanPurposeIsActive"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -536,6 +554,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 
 		this.loanPurposeCode.setReadonly(true);
 		this.loanPurposeDesc.setReadonly(true);
+		this.loanEligibleAmount.setReadonly(true);
 		this.loanPurposeIsActive.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {

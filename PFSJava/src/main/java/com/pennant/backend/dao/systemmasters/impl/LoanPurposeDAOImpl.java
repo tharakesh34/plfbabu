@@ -94,7 +94,7 @@ public class LoanPurposeDAOImpl extends BasisCodeDAO<LoanPurpose> implements Loa
 		loanPurpose.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT LoanPurposeCode, LoanPurposeDesc, LoanPurposeIsActive," );
+		selectSql.append("SELECT LoanPurposeCode, LoanPurposeDesc, LoanPurposeIsActive, EligibleAmount," );
 		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		selectSql.append(" FROM  LoanPurposes");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -157,10 +157,10 @@ public class LoanPurposeDAOImpl extends BasisCodeDAO<LoanPurpose> implements Loa
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into LoanPurposes");
 		sql.append(tableType.getSuffix());
-		sql.append(" (LoanPurposeCode, LoanPurposeDesc, LoanPurposeIsActive," );
+		sql.append(" (LoanPurposeCode, LoanPurposeDesc, LoanPurposeIsActive, EligibleAmount," );
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
 		sql.append(" RecordType, WorkflowId)");
-		sql.append(" values(:LoanPurposeCode, :LoanPurposeDesc, :LoanPurposeIsActive, " );
+		sql.append(" values(:LoanPurposeCode, :LoanPurposeDesc, :LoanPurposeIsActive, :EligibleAmount," );
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		sql.append(" :RecordType, :WorkflowId)");
 	
@@ -185,7 +185,7 @@ public class LoanPurposeDAOImpl extends BasisCodeDAO<LoanPurpose> implements Loa
 		StringBuilder sql = new StringBuilder("update LoanPurposes");
 		sql.append(tableType.getSuffix());
 		sql.append(" set LoanPurposeDesc = :LoanPurposeDesc," );
-		sql.append(" LoanPurposeIsActive = :LoanPurposeIsActive ," );
+		sql.append(" LoanPurposeIsActive = :LoanPurposeIsActive, EligibleAmount = :EligibleAmount," );
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );

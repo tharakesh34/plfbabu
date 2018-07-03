@@ -4139,6 +4139,7 @@
 		<property name="finTypeExpenseDAO" ref="finTypeExpenseDAO" />
 		<property name="finExpenseDetailsDAO" ref="finExpenseDetailsDAO" />
 		<property name="finIRRDetailsDAO" ref="finIRRDetailsDAO" />
+		<property name="pSLDetailDAO" ref="pSLDetailDAO" />
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
 		<property name="jointAccountDetailService" ref="finJointAccountDetailService" />
@@ -4165,6 +4166,7 @@
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="customServiceTask" ref="customServiceTask" />
 		<property name="queryDetailService" ref="queryDetailService" />
+		<property name="pSLDetailService" ref="pSLDetailService" />
 
 		<!-- Limits -->
 		<property name="limitManagement" ref="limitManagement" />
@@ -11441,7 +11443,7 @@
 	<bean id="masterDefService" class="com.pennant.backend.service.masters.impl.MasterDefServiceImpl" >
 		<property name="masterDefDAO" ref="masterDefDAO" />
 	</bean>
-	
+
 	<!-- DMS DAO Configurations and Service -->
 	<bean name="dmsIdentificationService" class="com.pennant.backend.service.dms.impl.DMSIdentificationServiceImpl"/>
 	
@@ -11536,6 +11538,29 @@
 	<bean id="legalDocumentDAO" class="com.pennant.backend.dao.legal.impl.LegalDocumentDAOImpl"  parent="basisNextidDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	
+		<!-- PSLDetail -->
+	<bean id="pSLDetailDAO" class="com.pennant.backend.dao.psl.impl.PSLDetailDAOImpl" parent="basisNextidDao">
+			<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="pSLDetailService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
+	   <property name="target"><ref bean="pSLDetailServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="pSLDetailServiceTarget" class="com.pennant.backend.service.finance.impl.PSLDetailServiceImpl">
+       <property name="pSLDetailDAO" ref="pSLDetailDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
 
  	<bean name="legalDocumentService" class="com.pennant.backend.service.legal.impl.LegalDocumentService">
        <property name="legalDocumentDAO" ref="legalDocumentDAO" />

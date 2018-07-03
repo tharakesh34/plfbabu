@@ -5378,4 +5378,14 @@
 
   <bean id="samplingExtFieldCaptureDialogCtrl" class="com.pennant.webui.sampling.SamplingExtFieldCaptureDialogCtrl" parent="basisCtrl" scope="prototype"/>
 
+	<bean id="pSLDetailListCtrl"
+		class="com.pennant.webui.finance.psldetails.PSLDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="pSLDetailService" ref="pSLDetailService" />
+	</bean>
+	<bean id="pSLDetailDialogCtrl"
+		class="com.pennant.webui.finance.psldetails.PSLDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="pSLDetailService" ref="pSLDetailService" />
+	</bean>
 </beans>

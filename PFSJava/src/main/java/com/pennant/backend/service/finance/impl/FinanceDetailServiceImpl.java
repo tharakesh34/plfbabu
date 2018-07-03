@@ -101,6 +101,7 @@ import com.pennant.backend.dao.finance.RolledoverFinanceDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
+import com.pennant.backend.dao.psl.PSLDetailDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
@@ -181,6 +182,7 @@ import com.pennant.backend.model.finance.RolledoverFinanceHeader;
 import com.pennant.backend.model.finance.TATDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -216,6 +218,7 @@ import com.pennant.backend.service.finance.FinChequeHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
+import com.pennant.backend.service.finance.PSLDetailService;
 import com.pennant.backend.service.handlinstruction.HandlingInstructionService;
 import com.pennant.backend.service.legal.LegalDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
@@ -289,23 +292,25 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private LimitManagement limitManagement;
 	private LimitCheckDetails limitCheckDetails;
 
-	private OverdraftScheduleDetailDAO overdraftScheduleDetailDAO;
-	private FlagDetailValidation flagDetailValidation;
-	private FinFlagDetailsDAO finFlagDetailsDAO;
-	private FinChequeHeaderService finChequeHeaderService;
-	private FinTypeInsuranceDAO finTypeInsuranceDAO;
-	private VASRecordingDAO vasRecordingDAO;
-	private FinTypeFeesDAO finTypeFeesDAO;
-	private VasRecordingValidation vasRecordingValidation;
-	private FinTypeVASProductsDAO finTypeVASProductsDAO;
-	private PromotionDAO promotionDAO;
-	private FinFeeDetailDAO finFeeDetailDAO;
-	private FinanceTaxDetailDAO financeTaxDetailDAO;
-	private FinanceTaxDetailService financeTaxDetailService;
+	private OverdraftScheduleDetailDAO		overdraftScheduleDetailDAO;
+	private FlagDetailValidation			flagDetailValidation;
+	private FinFlagDetailsDAO				finFlagDetailsDAO;
+	private FinChequeHeaderService 			finChequeHeaderService;
+	private FinTypeInsuranceDAO				finTypeInsuranceDAO;
+	private VASRecordingDAO					vasRecordingDAO;
+	private FinTypeFeesDAO					finTypeFeesDAO;
+	private VasRecordingValidation			vasRecordingValidation;
+	private FinTypeVASProductsDAO			finTypeVASProductsDAO;
+	private PromotionDAO					promotionDAO;
+	private FinFeeDetailDAO					finFeeDetailDAO;
+	private FinanceTaxDetailDAO				financeTaxDetailDAO;
+	private PSLDetailDAO					pSLDetailDAO;
+	private FinanceTaxDetailService			financeTaxDetailService;
+	
+	private ExtendedFieldDetailsService		extendedFieldDetailsService;
+	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
+	private ExtendedFieldDetailDAO			extendedFieldDetailDAO;
 
-	private ExtendedFieldDetailsService extendedFieldDetailsService;
-	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
-	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
 
 	private CustomServiceTask customServiceTask;
 	private CustomerService customerService;
@@ -318,6 +323,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinExpenseDetailsDAO finExpenseDetailsDAO;
 	private FinIRRDetailsDAO finIRRDetailsDAO;
 	private VehicleDealerService vehicleDealerService;
+	private PSLDetailService			pSLDetailService;
 
 	@Autowired(required = false)
 	private Crm crm;
@@ -605,6 +611,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// financeMain.setSamplingRequired(samplingService.isExist(finReference));
 		financeDetail.setSampling(
 				samplingService.getSampling(financeDetail.getFinScheduleData().getFinReference(), "_aview"));
+
+		
+		//PSL details
+		financeDetail.setPslDetail(pSLDetailService.getPSLDetail((finReference)));
 
 		logger.debug("Leaving");
 		return financeDetail;
@@ -2122,6 +2132,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				getFinanceTaxDetailDAO().save(taxDetail, tableType);
 			}
 		}
+		
 
 		// Save Contributor Header Details
 		// =======================================
@@ -2441,7 +2452,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				details = processingVasRecordngList(details, tableType.getSuffix());
 				auditDetails.addAll(details);
 			}
-
+			
 			// Vas Recording Extended Field Details
 			if (financeDetail.getFinScheduleData().getVasRecordingList() != null
 					&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
@@ -2494,8 +2505,21 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.add(getFinAssetEvaluationService().saveOrUpdate(financeDetail.getFinAssetEvaluation(),
 						tableType.getSuffix(), auditTranType));
 			}
-
-			// Verifications
+			
+			// psl Details
+			//=======================================
+			if (financeDetail.getPslDetail() != null) {
+				financeDetail.getPslDetail().setRecordStatus(financeMain.getRecordStatus());
+				financeDetail.getPslDetail().setRoleCode(financeMain.getRoleCode());
+				financeDetail.getPslDetail().setNextRoleCode(financeMain.getNextRoleCode());
+				financeDetail.getPslDetail().setTaskId((financeMain.getTaskId()));
+				financeDetail.getPslDetail().setNextTaskId((financeMain.getNextTaskId()));
+				financeDetail.getPslDetail().setWorkflowId((financeMain.getWorkflowId()));
+				auditDetails.add(getpSLDetailService().saveOrUpdate(financeDetail.getPslDetail(),
+						tableType, auditTranType));
+			}
+			
+			//Verifications
 			saveOrUpdateVerifications(auditDetails, financeDetail, financeMain, auditTranType);
 
 			/**
@@ -3609,6 +3633,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						getFinanceTaxDetailDAO().save(financeTaxDetail, TableType.MAIN_TAB);
 					}
 				}
+				
 
 				// Indicative Term Sheet Details Maintenance
 				// =======================================
@@ -3899,6 +3924,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (financeDetail.getFinAssetEvaluation() != null) {
 					getFinAssetEvaluationService().doApprove(financeDetail.getFinAssetEvaluation(), "", tranType);
 				}
+				
+				if (financeDetail.getPslDetail() != null) {
+					getpSLDetailService().doApprove(financeDetail.getPslDetail(), TableType.MAIN_TAB, tranType);
+				}
 
 				// Verifications
 				saveOrUpdateVerifications(auditDetails, financeDetail, financeMain, tranType);
@@ -4156,6 +4185,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (financeDetail.getFinAssetEvaluation() != null) {
 					auditDetailList.add(getFinAssetEvaluationService().delete(financeDetail.getFinAssetEvaluation(),
 							"_Temp", auditHeader.getAuditTranType()));
+				}
+				
+				if (financeDetail.getPslDetail() != null) {
+					auditDetailList.add(getpSLDetailService().delete(financeDetail.getPslDetail(),
+							TableType.TEMP_TAB, auditHeader.getAuditTranType()));
 				}
 
 				// Collateral assignment Details
@@ -5995,6 +6029,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getFinAssetEvaluation() != null) {
 				financeDetail.getFinAssetEvaluation().setWorkflowId(financeMain.getWorkflowId());
 				auditDetails.add(getFinAssetEvaluationService().validate(financeDetail.getFinAssetEvaluation(), method,
+						auditTranType, usrLanguage));
+			}
+			
+			//PSL details
+			//=======================================
+			if (financeDetail.getPslDetail() != null) {
+				financeDetail.getPslDetail().setWorkflowId(financeMain.getWorkflowId());
+				auditDetails.add(getpSLDetailService().validate(financeDetail.getPslDetail(), method,
 						auditTranType, usrLanguage));
 			}
 
@@ -9831,5 +9873,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
 		this.vehicleDealerService = vehicleDealerService;
 	}
+
+	public PSLDetailService getpSLDetailService() {
+		return pSLDetailService;
+	}
+
+	public void setpSLDetailService(PSLDetailService pSLDetailService) {
+		this.pSLDetailService = pSLDetailService;
+	}
+
+	public PSLDetailDAO getpSLDetailDAO() {
+		return pSLDetailDAO;
+	}
+
+	public void setpSLDetailDAO(PSLDetailDAO pSLDetailDAO) {
+		this.pSLDetailDAO = pSLDetailDAO;
+	}
+
 
 }

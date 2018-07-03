@@ -93,6 +93,7 @@ public class AssetConstants {
 	public static final String 	UNIQUE_ID_RCUAPPROVAL 		= "RCUAPPROVAL";
 	public static final String 	UNIQUE_ID_SAMPLINGAPPROVAL 	= "SAMPLINGAPPROVAL";
 	public static final String 	UNIQUE_ID_QUERY_MGMT 		= "QUERYMGMT";
+	public static final String 	UNIQUE_ID_PSL_DETAILS 		= "PSLDETAILS";
 
 	public static final int 	DEFAULT_ITEMNO 			= 1;
 	

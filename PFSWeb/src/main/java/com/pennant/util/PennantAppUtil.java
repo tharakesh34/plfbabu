@@ -94,6 +94,7 @@ import com.pennant.backend.model.dedup.DynamicCollateralType;
 import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
 import com.pennant.backend.model.finance.commodity.CommodityDetail;
+import com.pennant.backend.model.finance.psl.PSLCategory;
 import com.pennant.backend.model.limit.LimitGroup;
 import com.pennant.backend.model.limit.LimitGroupLines;
 import com.pennant.backend.model.limit.LimitHeader;
@@ -2279,5 +2280,27 @@ public class PennantAppUtil {
 		}
 
 		return collateralTypes;
+	}
+	
+	
+	/**
+	 * To get list of Collateral Types which are active from CollateralStructure table
+	 * @return
+	 */
+	public static List<ValueLabel> getPslCategoryList() {
+		ArrayList<ValueLabel> categoryTypes = new ArrayList<ValueLabel>();
+
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<PSLCategory> searchObject = new JdbcSearchObject<PSLCategory>(
+				PSLCategory.class);
+		searchObject.addTabelName("Pslcategory");
+
+		List<PSLCategory> categoryList = pagedListService.getBySearchObject(searchObject);
+		for (int i = 0; i < categoryList.size(); i++) {
+			ValueLabel pftRateLabel = new ValueLabel(String.valueOf(categoryList.get(i).getCode()), categoryList.get(i).getDescription());
+			categoryTypes.add(pftRateLabel);
+		}
+
+		return categoryTypes;
 	}
 }

@@ -252,6 +252,10 @@ import com.pennant.backend.model.finance.commodity.CommodityDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
+import com.pennant.backend.model.finance.psl.PSLCategory;
+import com.pennant.backend.model.finance.psl.PSLEndUse;
+import com.pennant.backend.model.finance.psl.PSLPurpose;
+import com.pennant.backend.model.finance.psl.PSLWeakerSection;
 import com.pennant.backend.model.financemanagement.FileBatchStatus;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.FinSuspHold;
@@ -2339,9 +2343,25 @@ public class PennantJavaUtil {
 		"LegalNotes_AView" }, null, new String[] {"Code"},null, 600));
 		
 
+		ModuleUtil.register("PSLCategory", new ModuleMapping("PSLCategory", PSLCategory.class, new String[] {
+				"PSLCategory", "PSLCategory" }, null, new String[] { "Code", "Description" }, null, 350));
+
+		ModuleUtil.register("PSLWeakerSection", new ModuleMapping("PSLWeakerSection", PSLWeakerSection.class, new String[] {
+				"PSLWeakerSection", "PSLWeakerSection" }, null, new String[] { "Code", "Description" }, null, 350));
+
+		ModuleUtil.register("PSLPurpose", new ModuleMapping("PSLPurpose", PSLPurpose.class, new String[] {
+				"PSLPurpose", "PSLPurpose" }, null, new String[] { "Code","Description" }, null, 500));
+
 		// Sampling
 		ModuleUtil.register("Sampling", new ModuleMapping("Sampling", Sampling.class,
 				new String[] { "Sampling", "Sampling_view" }, sampling_WF, new String[] {"FinReference"}, null, 600));
+		ModuleUtil.register("PSLEndUse", new ModuleMapping("PSLEndUse", PSLEndUse.class, new String[] {
+				"PSLEndUse", "PSLEndUse" }, null, new String[] { "Code","Description" }, null, 350));
+		
+		ModuleUtil.register("PSLDetail", new ModuleMapping("PSLDetail", FinAssetEvaluation.class,
+				new String[] { "PSLDetail", "PSLDetail_AView" }, masterWF, new String[] {
+						"FinReference", "CategoryCode" }, null, 300));
+
 	}
 
 	public static ModuleMapping getModuleMap(String code) {
