@@ -226,10 +226,6 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		this.documentName.setMaxlength(100);
 		this.documentRemarks.setMaxlength(3000);
 		
-		if (getLegalDetailDialogCtrl() != null) {
-			getLegalDetailDialogCtrl().setDocumentsValidate(true);
-		}
-
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -958,6 +954,9 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		doSetValidation();
 		doWriteComponentsToBean(aLegalDocument);
 		
+		if (getLegalDetailDialogCtrl() != null) {
+			getLegalDetailDialogCtrl().setDocumentsValidate(true);
+		}
 		
 		isNew = aLegalDocument.isNew();
 		String tranType = "";
