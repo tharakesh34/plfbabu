@@ -145,7 +145,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	protected Textbox securityDetail;
 	protected ExtendedCombobox endUseOfFunds;
 	protected ExtendedCombobox repayFrom;
-	protected Textbox otherName;
+	protected Textbox otherFinInstitute;
 	protected Space space_Other;
 	private final List<ValueLabel> sourceInfoList = PennantStaticListUtil.getSourceInfoList();
 	private final List<ValueLabel> trackCheckList = PennantStaticListUtil.getTrackCheckList();
@@ -312,7 +312,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.bankName.setDescColumn("BankName");
 		this.bankName.setValidateColumns(new String[] { "BankCode" });
 
-		this.otherName.setMaxlength(50);
+		this.otherFinInstitute.setMaxlength(50);
 		if (StringUtils.isNotBlank(externalLiability.getLoanBank())&& externalLiability.getLoanBank().equals(PennantConstants.OTHER_BANK)) {
 				this.space_Other.setClass(PennantConstants.mandateSclass);
 		}
@@ -607,7 +607,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.noOfBounces.setValue(liability.getBounceInstalments());
 		this.emiFoir.setChecked(liability.isFoir());
 		this.securityDetail.setValue(liability.getSecurityDetails());
-		this.otherName.setValue(liability.getOtherName());
+		this.otherFinInstitute.setValue(liability.getOtherFinInstitute());
 		this.endUseOfFunds.setValue(liability.getLoanPurpose());
 		this.endUseOfFunds.setDescription(liability.getLoanPurpose());
 		this.repayFrom.setValue(liability.getRepayBank());
@@ -663,7 +663,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			wve.add(we);
 		}
 		try {
-			aLiability.setOtherName(this.otherName.getValue());
+			aLiability.setOtherFinInstitute(this.otherFinInstitute.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -896,7 +896,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			this.source.setReadonly(true);
 			this.checkedBy.setReadonly(true);
 			this.securityDetail.setReadonly(true);
-			this.otherName.setReadonly(true);
+			this.otherFinInstitute.setReadonly(true);
 			this.endUseOfFunds.setReadonly(true);
 			this.repayFrom.setReadonly(true);
 		}
@@ -967,9 +967,9 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			this.securityDetail.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_CustomerExtLiabilityDialog_SecurityDetail.value"), null, false, true));
 		}
-		if (!this.otherName.isReadonly()) {
+		if (!this.otherFinInstitute.isReadonly()) {
 			if (StringUtils.trimToEmpty(this.bankName.getValue()).equals(PennantConstants.OTHER_BANK)) {
-				this.otherName.setConstraint(new PTStringValidator(
+				this.otherFinInstitute.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_CustomerExtLiabilityDialog_Other.value"), null, true));
 			}
 		}
@@ -1048,7 +1048,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.originalAmount.setErrorMessage("");
 		this.installmentAmount.setErrorMessage("");
 		this.outStandingBal.setErrorMessage("");
-		this.otherName.setErrorMessage("");
+		this.otherFinInstitute.setErrorMessage("");
 		this.roi.setErrorMessage("");
 		this.totalTenure.setErrorMessage("");
 		this.balanceTenure.setErrorMessage("");
@@ -1163,12 +1163,12 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 		if (externalLiability.getLoanBank() != null) {
 			if (!externalLiability.getLoanBank().equals(PennantConstants.OTHER_BANK)) {
-				this.otherName.setReadonly(true);
+				this.otherFinInstitute.setReadonly(true);
 			} else {
-				this.otherName.setReadonly(isReadOnly("CustomerExtLiabilityDialog_OtherName"));
+				this.otherFinInstitute.setReadonly(isReadOnly("CustomerExtLiabilityDialog_OtherName"));
 			}
 		} else {
-			this.otherName.setReadonly(true);
+			this.otherFinInstitute.setReadonly(true);
 		}
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1238,7 +1238,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.source.setReadonly(true);
 		this.checkedBy.setReadonly(true);
 		this.securityDetail.setReadonly(true);
-		this.otherName.setReadonly(true);
+		this.otherFinInstitute.setReadonly(true);
 		this.endUseOfFunds.setReadonly(true);
 		this.repayFrom.setReadonly(true);
 
@@ -1459,18 +1459,18 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		if (dataObject == null || dataObject instanceof String) {
 			this.bankName.setValue("");
 			this.bankName.setDescription("");
-			this.otherName.setValue("");
-			this.otherName.setReadonly(true);
+			this.otherFinInstitute.setValue("");
+			this.otherFinInstitute.setReadonly(true);
 			this.space_Other.setClass("");
 		} else {
 			BankDetail details = (BankDetail) dataObject;
 			if (details.getBankCode().equals(PennantConstants.OTHER_BANK)) {
 				this.space_Other.setClass(PennantConstants.mandateSclass);
-				this.otherName.setReadonly(isReadOnly("CustomerExtLiabilityDialog_OtherName"));
+				this.otherFinInstitute.setReadonly(isReadOnly("CustomerExtLiabilityDialog_OtherName"));
 			} else {
 				this.space_Other.setClass("");
-				this.otherName.setValue("");
-				this.otherName.setReadonly(true);
+				this.otherFinInstitute.setValue("");
+				this.otherFinInstitute.setReadonly(true);
 			}
 		}
 		logger.debug(Literal.LEAVING);

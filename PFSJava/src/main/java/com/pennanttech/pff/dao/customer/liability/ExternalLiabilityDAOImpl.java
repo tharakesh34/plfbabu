@@ -39,13 +39,13 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		sql.append(type);
 		sql.append(" (id, linkid, seqno, fintype, findate, loanbank, rateofinterest,");
 		sql.append(" tenure, originalamount, instalmentamount, outstandingbalance, balancetenure, bounceinstalments,");
-		sql.append(" principaloutstanding, overdueamount, finstatus, foir, source, checkedby, securitydetails, loanpurpose, repaybank,");
+		sql.append(" principaloutstanding, overdueamount, finstatus, foir, source, checkedby, securitydetails, loanpurpose, repaybank,otherFinInstitute,");
 		sql.append(" version, lastmntby, lastmnton, recordstatus,");
 		sql.append(" rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)");
 		
 		sql.append(" values(:Id, :LinkId, :SeqNo, :FinType, :finDate, :loanBank, :rateOfInterest,");
 		sql.append(" :tenure, :originalAmount, :instalmentAmount, :outstandingBalance, :balanceTenure, :bounceInstalments,");
-		sql.append(" :principalOutstanding, :overdueAmount, :finStatus, :foir, :source, :checkedBy, :securityDetails, :loanPurpose, :repayBank,");
+		sql.append(" :principalOutstanding, :overdueAmount, :finStatus, :foir, :source, :checkedBy, :securityDetails, :loanPurpose, :repayBank,:otherFinInstitute ,");
 		sql.append(" :version, :lastMntBy, :lastMntOn, :recordStatus,");
 		sql.append(" :roleCode, :nextRoleCode,");
 		sql.append(" :taskId, :nextTaskId, :recordType, :workflowId");
@@ -73,7 +73,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		sql.append(" balancetenure=:balanceTenure, bounceinstalments=:bounceInstalments,");
 		sql.append(" principaloutstanding=:principalOutstanding, overdueamount=:overdueAmount, finstatus=:finStatus,");
 		sql.append(" foir=:foir, source=:source, checkedby=:checkedBy, securitydetails=:securityDetails,");
-		sql.append(" loanpurpose=:loanPurpose, repaybank=:repayBank,");
+		sql.append(" loanpurpose=:loanPurpose, repaybank=:repayBank, otherFinInstitute=:otherFinInstitute,");
 		sql.append(" version=:version, lastmntby=:lastMntBy,lastmnton=:lastMntOn, recordstatus=:recordStatus,");
 		sql.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode,");
 		sql.append(" taskid=:taskId, nexttaskid=:nextTaskId, recordtype=:recordType, workflowid=:workflowId");
@@ -159,7 +159,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 			sql.append(" where custId = :custId and seqno = :seqno");
 		} else {
 			sql.append(" select id, el.linkId, seqno, cel.custid, custcif, custshrtname,");
-			sql.append(" el.fintype, fintypedesc, findate, loanbank, lb.bankname loanbankname,el.otherName,");
+			sql.append(" el.fintype, fintypedesc, findate, loanbank, lb.bankname loanbankname,el.otherFinInstitute,");
 			sql.append(" rateofinterest, tenure, originalamount, instalmentamount,");
 			sql.append(" outstandingbalance, balancetenure, bounceinstalments, principaloutstanding,");
 			sql.append(" overdueamount, finstatus, custstsdescription,");

@@ -53,7 +53,7 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	private String finTypeDesc;
 	private String custStatusDesc;
 	private String repayBankName;
-	private String otherName;
+	private String otherFinInstitute;
 	private boolean newRecord = false;
 	private CustomerExtLiability befImage;
 	private LoggedInUser userDetails;
@@ -88,7 +88,6 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 		excludeFields.add("sourceId");
 		excludeFields.add("inputSource");
 		excludeFields.add("custType");
-		excludeFields.add("otherName");
 		return excludeFields;
 	}
 
@@ -377,12 +376,12 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 		this.userDetails=userDetails;
 	}
 
-	public String getOtherName() {
-		return otherName;
+	public String getOtherFinInstitute() {
+		return otherFinInstitute;
 	}
 
-	public void setOtherName(String otherName) {
-		this.otherName = otherName;
+	public void setOtherFinInstitute(String otherFinInstitute) {
+		this.otherFinInstitute = otherFinInstitute;
 	}
 
 
