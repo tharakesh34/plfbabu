@@ -1305,7 +1305,9 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			this.btnNotes.setVisible(false);
 		}
 		
-		this.btnSave.setLabel("Send Query");
+		if (queryDetail.isNew()) {
+			this.btnSave.setLabel("Send Query");
+		}
 		
 		this.btnNotes.setVisible(false);
 		if (financeMain != null && financeMain.getWorkflowId() > 0) {
