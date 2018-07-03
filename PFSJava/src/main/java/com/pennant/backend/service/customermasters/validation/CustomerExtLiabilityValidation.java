@@ -52,11 +52,11 @@ public class CustomerExtLiabilityValidation {
 		CustomerExtLiability tempLiability = null;
 		
 		if ("sampling".equals(liability.getInputSource())) {
-			liability.setLinkId(samplingDAO.getIncomeLinkIdByCustId(liability.getCustId(), samplingId));
+			liability.setLinkId(samplingDAO.getLiabilityLinkId(liability.getCustId(), samplingId));
 		} else {
-		    customerExtLiabilityDAO.setLinkId(liability);
+			liability.setLinkId(customerExtLiabilityDAO.getLinkId(liability.getCustId()));
 		}
-		
+
 		if (liability.isWorkflow()) {
 			tempLiability = customerExtLiabilityDAO.getLiability(liability, "_temp",liability.getInputSource());
 		}
