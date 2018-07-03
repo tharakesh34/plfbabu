@@ -162,7 +162,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	public long getCollateralLinkId(long id, String CollateralReference) {
 		logger.debug(Literal.ENTERING);
 
-		long linkId = getCollateralLinkId(CollateralReference, id);
+		long linkId = getCollateralLinkId(CollateralReference, id,"");
 
 		if (linkId > 0) {
 			return linkId;
@@ -183,9 +183,10 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		return linkId;
 	}
 
-	public long getCollateralLinkId(String collateralreference, long samplingId) {
+	public long getCollateralLinkId(String collateralreference, long samplingId,String type) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select coalesce(max(linkid), 0) from link_sampling_collaterals");
+		sql.append(type);
 		sql.append(" where samplingid = :id and collateralreference=:collateralreference");
 
 		long linkid = 0;
@@ -663,6 +664,30 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		this.jdbcTemplate.update(sql.toString(), source);
 	}
 
+	@Override
+	public long getCollateralSnapLinkId(long samplingId, String collateralRef) {
+		logger.debug(Literal.ENTERING);
+
+		long linkId = getCollateralLinkId(collateralRef, samplingId,"_snap");
+
+		if (linkId > 0) {
+			return linkId;
+		}
+		
+		linkId = getNextValue("seqcollaterallink");
+		StringBuilder sql = new StringBuilder();
+		sql.append("insert into link_sampling_collaterals_snap values(:samplingId, :collateralRef,:linkId)");
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("samplingId",samplingId);
+		source.addValue("collateralRef", collateralRef);
+		source.addValue("linkId", linkId);
+
+		this.jdbcTemplate.update(sql.toString(), source);
+		return linkId;
+	}
+	
 	private long getLiabilitySnapLinkId(long custId) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select coalesce(max(linkid), 0) from link_sampling_liabilities_snap where custid=:custid");

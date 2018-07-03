@@ -52,7 +52,7 @@ public interface SamplingDAO {
 
 	long getCollateralLinkId(long id, String CollateralReference);
 	
-	long getCollateralLinkId(String collateralreference,long samplingId);
+	long getCollateralLinkId(String collateralreference,long samplingId,String type);
 
 	BigDecimal getLoanEligibility(String finReference, String eligibilityRule);
 	
@@ -65,5 +65,7 @@ public interface SamplingDAO {
 	long getIncomeSnapLinkId(long samplingId, long custId);
 
 	long getLinkId(long samplingId, String tableName);
+	
+	long getCollateralSnapLinkId(long samplingId, String collateralRef);
 
 }

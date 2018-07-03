@@ -315,9 +315,9 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder query = new StringBuilder();
-		query.append("select cl.* from customer_ext_liabilities_view cl");
+		query.append("select * from customer_ext_liabilities_view cl");
 		query.append(" inner join");
-		query.append(" select custid, finreference from financemain_view");
+		query.append(" (select custid, finreference from financemain_view");
 		query.append(" union all");
 		query.append(" select jointaccountid custid, finreference from finjointaccountdetails_view) fm");
 		query.append(" on fm.custid=cl.custid where fm.finreference = :finreference");
@@ -342,9 +342,9 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder query = new StringBuilder();
-		query.append("select ci.* from customer_ext_liabilities_view cl");
+		query.append("select * from customer_ext_liabilities_view cl");
 		query.append(" inner join link_sampling_liabilities sl on sl.linkid = cl.linkid");
-		query.append( "where sl.samplingid = :samplingid");
+		query.append(" where sl.samplingid = :samplingid");
 
 		logger.trace(Literal.SQL + query.toString());
 

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
@@ -87,6 +88,8 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	private DocumentDetailValidation documentValidation;
 	@Autowired
 	private CustomerDetailsService customerDetailsService;
+	@Autowired
+	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 
 	@Override
 	public void save(Sampling sampling) {
@@ -600,7 +603,8 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 					tableName.append(collateralSetup.getCollateralType());
 					tableName.append("_tv");
 
-					long linkId = samplingDAO.getCollateralLinkId(collateralSetup.getCollateralRef(), sampling.getId());
+					long linkId = samplingDAO.getCollateralLinkId(collateralSetup.getCollateralRef(), sampling.getId(),
+							"");
 					Map<String, Object> renderMap = samplingDAO.getExtendedField(linkId,
 							collateralSetup.getCollateralRef(), tableName.toString(), "_View");
 					/*
@@ -684,26 +688,26 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		}
 
 		Long incomeLinkId = samplingDAO.getLinkId(sampling.getId(), "link_sampling_incomes_snap");
-		Long liabilityLinkId = samplingDAO.getLinkId(sampling.getId(), "link_sampling_liabilities_snap");
-		
 		if (incomeLinkId != null && incomeLinkId != 0) {
 			sampling.setOriginalTotalIncome(incomeDetailDAO.getTotalIncomeByLinkId(incomeLinkId));
 		} else {
 			sampling.setOriginalTotalIncome(incomeDetailDAO.getTotalIncomeByFinReference(keyReference));
 		}
-		
-		sampling.setTotalIncome(incomeDetailDAO.getTotalIncomeByLinkId(sampling.getIncomeLinkId()));
-		
+
+		if (sampling.getIncomeLinkId() != null) {
+			sampling.setTotalIncome(incomeDetailDAO.getTotalIncomeByLinkId(sampling.getIncomeLinkId()));
+		}
+
+		Long liabilityLinkId = samplingDAO.getLinkId(sampling.getId(), "link_sampling_liabilities_snap");
 		if (liabilityLinkId != null && liabilityLinkId != 0) {
+			sampling.setOriginalTotalLiability(externalLiabilityDAO.getTotalLiabilityByLinkId(liabilityLinkId));
+		} else {
 			sampling.setOriginalTotalLiability(externalLiabilityDAO.getTotalLiabilityByFinReference(keyReference));
-			sampling.setTotalLiability(externalLiabilityDAO.getTotalLiabilityByLinkId(liabilityLinkId));
 		}
 
-		if (incomeLinkId == 0) {
-			incomeLinkId = sampling.getIncomeLinkId();
+		if (sampling.getLiabilityLinkId() != null) {
+			sampling.setTotalLiability(externalLiabilityDAO.getTotalLiabilityByLinkId(sampling.getLiabilityLinkId()));
 		}
-		liabilityLinkId = sampling.getLiabilityLinkId();
-
 
 		sampling.setCollSetupList(samplingDAO.getCollateralsBySamplingId(sampling.getId()));
 
@@ -1254,17 +1258,15 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	 * @return Return Extended collateral fields.
 	 */
 	@Override
-	public Map<String, List<ExtendedFieldData>> getCollateralFields(String type, String reference, long samplingId) {
+	public Map<String, List<ExtendedFieldData>> getCollateralFields(String type, long linkId, long snapLinkId) {
 		Map<String, List<ExtendedFieldData>> collateralFileds = new HashMap<>();
 		Map<String, ExtendedFieldData> current = null;
 		Map<String, ExtendedFieldData> original = null;
 
-		long linkId = samplingDAO.getCollateralLinkId(samplingId, reference);
-
 		String table = "verification_".concat(type.toLowerCase()).concat("_tv");
-		current = extendedFieldDetailsService.getCollateralMap(table, String.valueOf(linkId), "");
+		current = extendedFieldDetailsService.getCollateralMap(table, String.valueOf(linkId));
 		table = "collateral_".concat(type.toLowerCase()).concat("_ed");
-		original = extendedFieldDetailsService.getCollateralMap(table, reference, "");
+		original = extendedFieldDetailsService.getCollateralMap(table, String.valueOf(snapLinkId));
 
 		List<ExtendedFieldData> data = null;
 		for (Entry<String, ExtendedFieldData> currentData : current.entrySet()) {
@@ -1322,8 +1324,9 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 	@Override
 	public void saveSnap(Sampling sampling) {
-		//saveIncomeSnap(sampling);
-		//saveLiabilitiesSnap(sampling);
+		/*saveIncomeSnap(sampling);
+		saveLiabilitiesSnap(sampling);
+		saveCollateralsSnap(sampling);*/
 	}
 
 	private void saveIncomeSnap(Sampling sampling) {
@@ -1346,10 +1349,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 					try {
 						incomeDetailDAO.update(current, "");
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					try {
 						incomeDetailDAO.update(current, "_temp");
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -1383,6 +1382,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		List<CustomerExtLiability> currentList = customerExtLiabilityDAO.getLiabilityBySamplingId(sampling.getId());
 
 		List<CustomerExtLiability> currentNewList = new ArrayList<>(currentList);
+		List<CustomerExtLiability> originalNewList = new ArrayList<>(originalList);
 
 		for (CustomerExtLiability current : currentList) {
 			for (CustomerExtLiability original : originalList) {
@@ -1393,10 +1393,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 					try {
 						externalLiabilityDAO.update(current, "");
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					try {
 						externalLiabilityDAO.update(current, "_temp");
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -1415,6 +1411,69 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			customerExtLiabilityDAO.setLinkId(currentNew);
 			externalLiabilityDAO.save(currentNew, "");
 		}
+		for (CustomerExtLiability originalNew : originalNewList) {
+			originalNew.setLinkId(samplingDAO.getLiabilityLinkId(sampling.getId(), originalNew.getCustId()));
+			originalNew.setId(0);
+			customerExtLiabilityDAO.setLinkId(originalNew);
+			externalLiabilityDAO.save(originalNew, "");
+		}
 	}
 
+	private void saveCollateralsSnap(Sampling sampling) {
+		Map<String, Object> newOriginal;
+		Map<String, Object> newOriginalTemp;
+
+		Map<String, Object> original = null;
+		Map<String, Object> current = null;
+
+		for (CollateralSetup collSetup : sampling.getCollSetupList()) {
+			long linkId = samplingDAO.getCollateralLinkId(sampling.getId(), collSetup.getCollateralRef());
+
+			String tableName = "verification_".concat(collSetup.getCollateralType().toLowerCase()).concat("_tv");
+			current = extendedFieldDetailsService.getCollateralsMap(tableName, String.valueOf(linkId));
+
+			tableName = "collateral_".concat(collSetup.getCollateralType().toLowerCase()).concat("_ed");
+			original = extendedFieldDetailsService.getCollateralsMap(tableName, collSetup.getCollateralRef());
+
+			newOriginalTemp = new HashMap<>(original);
+			newOriginal = new HashMap<>(original);
+			for (Entry<String, Object> currField : current.entrySet()) {
+				for (Entry<String, Object> orgField : original.entrySet()) {
+					if (orgField.getKey().equals(currField.getKey())) {
+						newOriginalTemp.put(orgField.getKey(), currField.getValue());
+					}
+				}
+			}
+			try {
+				extendedFieldRenderDAO.update(collSetup.getCollateralRef(), (Integer) newOriginalTemp.get("seqno"),
+						newOriginalTemp, "", tableName);
+				extendedFieldRenderDAO.update(collSetup.getCollateralRef(), (Integer) newOriginalTemp.get("seqno"),
+						newOriginalTemp, "_temp", tableName);
+			} catch (Exception e) {
+				logger.warn(e);
+			} finally {
+				linkId = samplingDAO.getCollateralSnapLinkId(sampling.getId(), collSetup.getCollateralRef());
+				newOriginal.put("reference", linkId);
+				extendedFieldRenderDAO.save(newOriginal, "", tableName);
+			}
+
+		}
+
+	}
+
+	/*
+	 * private Map<String, Object> getMap(Map<String, ExtendedFieldData> current) { Map<String, Object> map = new
+	 * HashMap<>();
+	 * 
+	 * for (Entry<String, ExtendedFieldData> item : current.entrySet()) { map.put(item.getKey(),
+	 * item.getValue().getFieldValue()); }
+	 * 
+	 * return map;
+	 * 
+	 * }
+	 */
+	@Override
+	public long getCollateralLinkId(String collateralRef, long id, String type) {
+		return samplingDAO.getCollateralLinkId(collateralRef, id, type);
+	}
 }

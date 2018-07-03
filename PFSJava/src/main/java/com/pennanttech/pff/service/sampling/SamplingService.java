@@ -34,10 +34,12 @@ public interface SamplingService {
 
 	long getCollateralLinkId(long samplingId, String reference);
 
-	Map<String, List<ExtendedFieldData>> getCollateralFields(String type, String reference, long sequence);
+	Map<String, List<ExtendedFieldData>> getCollateralFields(String type, long linkId, long snapLinkId);
 
 	boolean isExist(String finReference, String type);
 
 	void saveSnap(Sampling sampling);
+
+	long getCollateralLinkId(String collateralRef, long id, String string);
 
 }

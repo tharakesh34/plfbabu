@@ -84,7 +84,8 @@ public class ExtendedFieldDetailsService {
 		return value;
 	}
 
-	public List<Map<String, ExtendedFieldData>> getExtendedFildValueLableMap(String tableName, String reference, String tableType) {
+	public List<Map<String, ExtendedFieldData>> getExtendedFildValueLableMap(String tableName, String reference,
+			String tableType) {
 		logger.debug("Entering");
 
 		ExtendedFieldHeader fieldHeader = getExtendedFieldHeader(tableName);
@@ -98,7 +99,8 @@ public class ExtendedFieldDetailsService {
 			return null;
 		}
 
-		List<Map<String, Object>> fiildValueMap = extendedFieldRenderDAO.getExtendedFieldMap(reference, tableName, tableType);
+		List<Map<String, Object>> fiildValueMap = extendedFieldRenderDAO.getExtendedFieldMap(reference, tableName,
+				tableType);
 
 		List<Map<String, ExtendedFieldData>> resultList = new ArrayList<>();
 
@@ -110,25 +112,26 @@ public class ExtendedFieldDetailsService {
 		logger.debug("Leaving");
 		return resultList;
 	}
-	
+
 	public List<ExtendedFieldData> getExtendedFildValueLableList(String tableName, String reference, String tableType) {
 		logger.debug("Entering");
-		
+
 		ExtendedFieldHeader fieldHeader = getExtendedFieldHeader(tableName);
-		
+
 		if (fieldHeader == null) {
 			return null;
 		}
-		
+
 		List<ExtendedFieldDetail> fieldDetailsList = fieldHeader.getExtendedFieldDetails();
 		if (fieldDetailsList != null && !fieldDetailsList.isEmpty()) {
 			return null;
 		}
-		
-		List<Map<String, Object>> fiildValueMap = extendedFieldRenderDAO.getExtendedFieldMap(reference, tableName, tableType);
-		
+
+		List<Map<String, Object>> fiildValueMap = extendedFieldRenderDAO.getExtendedFieldMap(reference, tableName,
+				tableType);
+
 		List<ExtendedFieldData> resultList = new ArrayList<>();
-		
+
 		if (fiildValueMap != null && !fiildValueMap.isEmpty()) {
 			for (Map<String, Object> map : fiildValueMap) {
 				resultList.add(getExtendedFieldData(fieldDetailsList, map));
@@ -138,9 +141,10 @@ public class ExtendedFieldDetailsService {
 		return resultList;
 	}
 
-	private ExtendedFieldData getExtendedFieldData(List<ExtendedFieldDetail> fieldDetailsList, Map<String, Object> map) {
+	private ExtendedFieldData getExtendedFieldData(List<ExtendedFieldDetail> fieldDetailsList,
+			Map<String, Object> map) {
 		ExtendedFieldData extendedFieldData = null;
-		
+
 		for (ExtendedFieldDetail detail : fieldDetailsList) {
 			if (map.containsKey(detail.getFieldName())) {
 				extendedFieldData = new ExtendedFieldData();
@@ -152,13 +156,13 @@ public class ExtendedFieldDetailsService {
 		}
 		return extendedFieldData;
 	}
-	
-	public Map<String, ExtendedFieldData> getCollateralMap(String tableName, String reference, String type) {
+
+	public Map<String, ExtendedFieldData> getCollateralMap(String tableName, String reference) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, ExtendedFieldData> resultList = new HashMap<>();
 		ExtendedFieldHeader fieldHeader;
-		String tempTableName=tableName;
+		String tempTableName = tableName;
 		if (tempTableName.startsWith("verification")) {
 			tempTableName = tempTableName.replace("verification", "collateral");
 			tempTableName = tempTableName.replace("tv", "ed");
@@ -175,13 +179,37 @@ public class ExtendedFieldDetailsService {
 			return resultList;
 		}
 
-		Map<String, Object> fieldMap = extendedFieldRenderDAO.getCollateralMap(reference, tableName, type);
-
+		Map<String, Object> fieldMap = extendedFieldRenderDAO.getCollateralMap(reference, tableName, "");
 		resultList = getResultMap(fieldDetailsList, fieldMap);
+		
 		logger.debug(Literal.LEAVING);
 		return resultList;
 	}
 
+	
+	public Map<String, Object> getCollateralsMap(String tableName, String reference) {
+		logger.debug(Literal.ENTERING);
+		Map<String, Object> fieldMap = new HashMap<>();
+		ExtendedFieldHeader fieldHeader;
+		String tempTableName = tableName;
+		if (tempTableName.startsWith("verification")) {
+			tempTableName = tempTableName.replace("verification", "collateral");
+			tempTableName = tempTableName.replace("tv", "ed");
+		}
+
+		fieldHeader = getExtendedFieldHeader(tempTableName);
+
+		if (fieldHeader == null) {
+			return fieldMap;
+		}
+
+		List<ExtendedFieldDetail> fieldDetailsList = fieldHeader.getExtendedFieldDetails();
+		if (CollectionUtils.isEmpty(fieldDetailsList)) {
+			return fieldMap;
+		}
+		return extendedFieldRenderDAO.getCollateralMap(reference, tableName, "");
+	}
+	
 	private Map<String, ExtendedFieldData> getResultMap(List<ExtendedFieldDetail> fieldDetailsList,
 			Map<String, Object> map) {
 		Map<String, ExtendedFieldData> resultMap = new HashMap<>();
@@ -742,8 +770,8 @@ public class ExtendedFieldDetailsService {
 			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
 				continue;
 			}
-			String collRef=samplingDAO.getCollateralRef(sampling, extendedFieldRender.getReference(), "collaterals");
-			
+			String collRef = samplingDAO.getCollateralRef(sampling, extendedFieldRender.getReference(), "collaterals");
+
 			ExtendedFieldHeader extHeader = extHeaderMap.get(collRef);
 
 			StringBuilder tableName = new StringBuilder();
@@ -752,8 +780,10 @@ public class ExtendedFieldDetailsService {
 			tableName.append(extHeader.getSubModuleName());
 			tableName.append("_tv");
 
-		/*	extendedFieldRender.setReference(String
-					.valueOf(samplingDAO.getCollateralLinkId(sampling.getId(), extendedFieldRender.getReference())));*/
+			/*
+			 * extendedFieldRender.setReference(String .valueOf(samplingDAO.getCollateralLinkId(sampling.getId(),
+			 * extendedFieldRender.getReference())));
+			 */
 
 			if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
 					&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
@@ -1013,7 +1043,7 @@ public class ExtendedFieldDetailsService {
 			for (int i = 0; i < deatils.size(); i++) {
 				if (deatils.get(i) != null) {
 					ExtendedFieldRender render = (ExtendedFieldRender) deatils.get(i).getModelData();
-					String collRef=null;
+					String collRef = null;
 					collRef = samplingDAO.getCollateralRef(sampling, render.getReference(), "collaterals");
 					ExtendedFieldHeader extHeader = extHeaderMap.get(collRef);
 					StringBuilder tableName = new StringBuilder();
@@ -1076,18 +1106,18 @@ public class ExtendedFieldDetailsService {
 
 			if (!render.isWorkflow()) {// With out Work flow only new records
 				if (befExtRender != null) { // Record Already Exists in the
-												// table then error
+											// table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (render.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																							// records
+																						// records
 																						// type
 																						// is
 																						// new
 					if (befExtRender != null || tempRender != null) { // if
-																			// records
+																		// records
 																		// already
 																		// exists
 																		// in
@@ -1106,10 +1136,10 @@ public class ExtendedFieldDetailsService {
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!render.isWorkflow()) { // With out Work flow for update and
-											// delete
+										// delete
 
 				if (befExtRender == null) { // if records not exists in the main
-												// table
+											// table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
@@ -1127,7 +1157,7 @@ public class ExtendedFieldDetailsService {
 			} else {
 
 				if (tempRender == null) { // if records not exists in the Work
-												// flow table
+											// flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}

@@ -247,7 +247,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			return PennantAppUtil.formateAmount(variance, formatter).abs();
 		}
 
-		variance = variance.divide(original, 2, RoundingMode.HALF_DOWN);
+		variance = variance.divide(original, formatter, RoundingMode.HALF_DOWN);
 		variance = variance.multiply(new BigDecimal(100));
 		return variance.abs();
 	}
@@ -313,6 +313,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		this.samplingFinalRcmdAmt.setProperties(true, ccyFormatter);
+		this.samplingDecision.setReadonly(true);
 		fillReasons(this.samplingResubmitReason);
 		logger.debug("Leaving");
 	}
@@ -425,15 +426,15 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		label.setParent(row);
 
 		decimalbox = getDecimalbox();
-		decimalbox.setValue(original);
+		decimalbox.setValue(PennantAppUtil.formateAmount(original, formatter));
 		decimalbox.setParent(row);
 
 		decimalbox = getDecimalbox();
-		decimalbox.setValue(current);
+		decimalbox.setValue(PennantAppUtil.formateAmount(current, formatter));
 		decimalbox.setParent(row);
 
 		decimalbox = getDecimalbox();
-		decimalbox.setValue(PennantAppUtil.formateAmount(getVariance(original, current), formatter));
+		decimalbox.setValue(getVariance(original, current));
 		decimalbox.setParent(row);
 
 		setRemarksBox(row, "LIABILITY");
@@ -443,7 +444,15 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		for (CollateralSetup coll : sampling.getCollSetupList()) {
 			String collateralType = coll.getCollateralType();
 			String collateralRef = coll.getCollateralRef();
-			collaterals = samplingService.getCollateralFields(collateralType, collateralRef, sampling.getId());
+
+			long originallinkId = samplingService.getCollateralLinkId(collateralRef, sampling.getId(), "");
+			long sanpLinkId = samplingService.getCollateralLinkId(collateralRef, sampling.getId(), "_snap");
+
+			if (sanpLinkId > 0) {
+				collaterals = samplingService.getCollateralFields(collateralType, originallinkId, sanpLinkId);
+			} else {
+				collaterals = samplingService.getCollateralFields(collateralType, originallinkId, originallinkId);
+			}
 			String caption = String.format("%s - %s", collateralRef, collateralType);
 
 			row = new Row();
@@ -566,15 +575,15 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		label.setParent(row);
 
 		decimalbox = getDecimalbox();
-		decimalbox.setValue(original);
+		decimalbox.setValue(PennantAppUtil.formateAmount(original, formatter));
 		decimalbox.setParent(row);
 
 		decimalbox = getDecimalbox();
-		decimalbox.setValue(current);
+		decimalbox.setValue(PennantAppUtil.formateAmount(current, formatter));
 		decimalbox.setParent(row);
 
 		decimalbox = getDecimalbox();
-		decimalbox.setValue(PennantAppUtil.formateAmount(getVariance(original, current), formatter));
+		decimalbox.setValue(getVariance(original, current));
 		decimalbox.setParent(row);
 
 		setRemarksBox(row, "RECOMMENDEDAMTREMARKS");
