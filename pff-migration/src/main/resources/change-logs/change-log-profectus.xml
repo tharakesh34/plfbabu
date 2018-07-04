@@ -1011,6 +1011,12 @@
 		<modifyDataType tableName="external_liabilities" columnName="balTransfer" newDataType="boolean"/>
 		<modifyDataType tableName="external_liabilities_temp" columnName="balTransfer" newDataType="boolean"/>
 	</changeSet>
+	<changeSet id="42" author="Vinay">
+		<sql>
+			delete from errordetails where code='PH0001';
+			insert into errordetails values('PH0001','EN','E','Eligibility Method codes did not match in finance and collaterals.','','Approved','','','','','','0','','1000',0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
