@@ -1,8 +1,9 @@
 package com.pennanttech.eod.process;
 
-import com.pennant.app.util.DateUtility;
-import com.pennanttech.bajaj.process.TrailBalanceEngine;
 import javax.sql.DataSource;
+
+import com.pennant.app.util.DateUtility;
+import com.pennanttech.pff.trialbalance.TrailBalanceEngine;
 
 public class EODHealthCheck {
 	DataSource dataSource;
