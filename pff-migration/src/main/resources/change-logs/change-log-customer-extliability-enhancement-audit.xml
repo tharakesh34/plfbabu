@@ -124,4 +124,7 @@
 	<changeSet id="4" author="vijaykumar.l">
 	<dropColumn tableName="adtExternal_liabilities" columnName="othername"/>
  </changeSet>
+ <changeSet id="5" author="Vinay">
+		<modifyDataType tableName="adtExternal_liabilities" columnName="balTransfer" newDataType="boolean"/>
+	</changeSet>
 </databaseChangeLog>
