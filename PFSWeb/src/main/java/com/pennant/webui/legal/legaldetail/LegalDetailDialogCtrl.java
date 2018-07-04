@@ -2106,7 +2106,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		//LegalPropertyTitle
 		List<LegalPropertyTitle> propertyTittleList = aLegalDetail.getPropertyTitleList();
 		if (CollectionUtils.isNotEmpty(propertyTittleList)) {
-			for (int i = 0; i < propertyDetailList.size(); i++) {
+			for (int i = 0; i < propertyTittleList.size(); i++) {
 				propertyTittleList.get(i).setSeqNum(i+1);
 			}
 		}
