@@ -2916,8 +2916,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		String usrLanguage = customerDetails.getCustomer().getUserDetails().getLanguage();
 		String custctg = customerDetails.getCustomer().getCustCtgCode();
 
-		doPostHookValidation(auditHeader);	
-
 		// Rating Validation
 		if (customerDetails.getRatingsList() != null && customerDetails.getRatingsList().size() > 0) {
 			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("Rating");
