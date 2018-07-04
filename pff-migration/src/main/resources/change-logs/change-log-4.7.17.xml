@@ -7594,5 +7594,22 @@ UNION ALL
 				  WHERE (rmtfinancetypes_temp.fintype = t1.fintype))))
 		</createView>
 	</changeSet>
+	
+	<changeSet id="183" author="Ganesh.p">
+	<comment>Added New Error Message for Disbursments When Bisbursment mode is IFT then PartnerBank and Disbursment BankBranch should be same bank</comment>
+		<sql>
+			Delete from ErrorDetails where Code='65033';
+			INSERT INTO ErrorDetails VALUES('65033','EN','E','Payment Type Internal Fund Trasfer is not allowed if Partner bank and disbusement bank are not same.','','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+</changeSet>
+
+<changeSet id="184" author="Ganesh.p">
+	<comment>Added New Error Message for Partner bank and Disbusement bank are same but the Payment Type is not IFT</comment>
+	<sql>
+		Delete from ErrorDetails where Code='65034';
+		INSERT INTO ErrorDetails VALUES('65034','EN','W','Partner bank and Disbusement bank are same but the Payment Type is {0}. Do you want to proceed ?','','Approved','','','','','',0,current_timestamp,1000,0);
+	</sql>
+</changeSet>
+	
 </databaseChangeLog>
 	
