@@ -126,4 +126,9 @@ update adtCustomers set marginDeviation=0;
 			<column name="employeeName" defaultValue="" type="VARCHAR(8)" />
 		</addColumn>
 	 </changeSet>
+	 <changeSet id="14.1" author="Sriram">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="finLTVCheck" type="varchar(12)"/>		
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
