@@ -6903,4 +6903,105 @@ private String custAccount ="";
 	public void setOtherMap(Map<String, String> otherMap) {
 		this.otherMap = otherMap;
 	}
+
+	//----------------------------- PSL Details
+	private String pslCategoryCodeName = "";
+	private String pslWeakerSectionName = "";
+	private String pslLandHoldingName = "";
+	private String pslLandAreaName = "";
+	private String pslSectorName = "";
+	private String pslAmount = "";
+	private String pslSubCategoryName = "";
+	private String pslPurposeName = "";
+	private String pslEndUseName = "";
+	private String pslLoanPurposeName = "";
+	private String pslEligibleAmount = "";
+
+	public String getPslCategoryCodeName() {
+		return pslCategoryCodeName;
+	}
+
+	public void setPslCategoryCodeName(String pslCategoryCodeName) {
+		this.pslCategoryCodeName = pslCategoryCodeName;
+	}
+
+	public String getPslWeakerSectionName() {
+		return pslWeakerSectionName;
+	}
+
+	public void setPslWeakerSectionName(String pslWeakerSectionName) {
+		this.pslWeakerSectionName = pslWeakerSectionName;
+	}
+
+	public String getPslLandHoldingName() {
+		return pslLandHoldingName;
+	}
+
+	public void setPslLandHoldingName(String pslLandHoldingName) {
+		this.pslLandHoldingName = pslLandHoldingName;
+	}
+
+	public String getPslLandAreaName() {
+		return pslLandAreaName;
+	}
+
+	public void setPslLandAreaName(String pslLandAreaName) {
+		this.pslLandAreaName = pslLandAreaName;
+	}
+
+	public String getPslSectorName() {
+		return pslSectorName;
+	}
+
+	public void setPslSectorName(String pslSectorName) {
+		this.pslSectorName = pslSectorName;
+	}
+
+	public String getPslAmount() {
+		return pslAmount;
+	}
+
+	public void setPslAmount(String pslAmount) {
+		this.pslAmount = pslAmount;
+	}
+
+	public String getPslSubCategoryName() {
+		return pslSubCategoryName;
+	}
+
+	public void setPslSubCategoryName(String pslSubCategoryName) {
+		this.pslSubCategoryName = pslSubCategoryName;
+	}
+
+	public String getPslPurposeName() {
+		return pslPurposeName;
+	}
+
+	public void setPslPurposeName(String pslPurposeName) {
+		this.pslPurposeName = pslPurposeName;
+	}
+
+	public String getPslEndUseName() {
+		return pslEndUseName;
+	}
+
+	public void setPslEndUseName(String pslEndUseName) {
+		this.pslEndUseName = pslEndUseName;
+	}
+
+	public String getPslLoanPurposeName() {
+		return pslLoanPurposeName;
+	}
+
+	public void setPslLoanPurposeName(String pslLoanPurposeName) {
+		this.pslLoanPurposeName = pslLoanPurposeName;
+	}
+
+	public String getPslEligibleAmount() {
+		return pslEligibleAmount;
+	}
+
+	public void setPslEligibleAmount(String pslEligibleAmount) {
+		this.pslEligibleAmount = pslEligibleAmount;
+	}
 }

@@ -151,6 +151,8 @@ import com.pennant.backend.model.finance.FinanceScoreHeader;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.psl.PSLCategory;
+import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.loanquery.QueryDetail;
@@ -160,12 +162,14 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.NotesService;
+import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.applicationmaster.MMAgreementService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.PSLDetailService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -180,6 +184,7 @@ import com.pennanttech.activity.log.ActivityLogService;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
@@ -224,8 +229,15 @@ public class AgreementGeneration implements Serializable {
 	private DeviationHelper	deviationHelper;
 	@Autowired
 	private QueryDetailService queryDetailService;
+	@Autowired
+	private PSLDetailService pSLDetailService;
 	
-	List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
+	private List<ValueLabel> listLandHolding=PennantStaticListUtil.getYesNo();
+	private List<ValueLabel> subCategoryList=PennantStaticListUtil.getSubCategoryList();
+	private List<ValueLabel> landAreaList=PennantStaticListUtil.getLandAreaList();
+	private List<ValueLabel> sectorList=PennantStaticListUtil.getPSLSectorList();
+	
+	private List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
 
 	public AgreementGeneration() {
 		super();
@@ -1148,8 +1160,102 @@ public class AgreementGeneration implements Serializable {
 			
 			agreement.setOtherMap(otherMap);
 			
+			//Populate the PSL Details in Agreements
+			if (aggModuleDetails.contains(PennantConstants.AGG_PSLMODL)) {
+				logger.debug("Start of PSL Details in Agreements");
+				PSLDetail pslDetail = pSLDetailService.getPSLDetail(finRef);
+				if (null != pslDetail) {
+					agreement.setPslAmount(
+							PennantAppUtil.amountFormate(new BigDecimal(pslDetail.getAmount()), formatter));
+					//categoryList
+					PagedListService pagedListService = (PagedListService) SpringBeanUtil.getBean("pagedListService");
+					JdbcSearchObject<PSLCategory> searchObject = new JdbcSearchObject<PSLCategory>(
+							PSLCategory.class);
+					searchObject.addTabelName("Pslcategory");
+
+					List<PSLCategory> categoryList = pagedListService.getBySearchObject(searchObject);
+					
+					String pslCategoryCodeName = null;
+					if (CollectionUtils.isNotEmpty(categoryList)
+							&& StringUtils.isNotBlank(pslDetail.getCategoryCode())) {
+						for (PSLCategory category : categoryList) {
+							if (null != category && category.getCode().equalsIgnoreCase(pslDetail.getCategoryCode())) {
+								pslCategoryCodeName = category.getDescription();
+								break;
+							}
+						}
+					}
+					if (StringUtils.isNotBlank(pslCategoryCodeName)) {
+						agreement.setPslCategoryCodeName(pslCategoryCodeName);
+					}
+					agreement.setPslEligibleAmount(
+							PennantAppUtil.amountFormate(pslDetail.getEligibleAmount(), formatter));
+					agreement.setPslEndUseName(StringUtils.trimToEmpty(pslDetail.getEndUseName()));
+					//landAreaList;
+					String pslLandAreaName = null;
+					if (CollectionUtils.isNotEmpty(landAreaList) && StringUtils.isNotBlank(pslDetail.getLandArea())) {
+						for (ValueLabel landArea : landAreaList) {
+							if (null != landArea && landArea.getValue().equalsIgnoreCase(pslDetail.getLandArea())) {
+								pslLandAreaName = landArea.getLabel();
+								break;
+							}
+						}
+					}
+					if (StringUtils.isNotBlank(pslLandAreaName)) {
+						agreement.setPslLandAreaName(StringUtils.trimToEmpty(pslLandAreaName));
+					}
+					//listLandHolding;
+					String pslLandHolding = null;
+					if (CollectionUtils.isNotEmpty(listLandHolding)
+							&& StringUtils.isNotBlank(pslDetail.getLandHolding())) {
+						for (ValueLabel landHolding : listLandHolding) {
+							if (null != landHolding
+									&& landHolding.getValue().equalsIgnoreCase(pslDetail.getLandHolding())) {
+								pslLandHolding = landHolding.getLabel();
+								break;
+							}
+						}
+					}
+					if (StringUtils.isNotBlank(pslLandHolding)) {
+						agreement.setPslLandHoldingName(StringUtils.trimToEmpty(pslLandHolding));
+					}
+					agreement.setPslLoanPurposeName(StringUtils.trimToEmpty(pslDetail.getLoanPurposeName()));
+					agreement.setPslPurposeName(StringUtils.trimToEmpty(pslDetail.getPurposeName()));
+					//sectorList
+					String pslSector = null;
+					if (CollectionUtils.isNotEmpty(sectorList) && StringUtils.isNotBlank(pslDetail.getSector())) {
+						for (ValueLabel sector : sectorList) {
+							if (null != sector && sector.getValue().equalsIgnoreCase(pslDetail.getSector())) {
+								pslSector = sector.getLabel();
+								break;
+							}
+						}
+					}
+					if (StringUtils.isNotBlank(pslSector)) {
+						agreement.setPslSectorName(StringUtils.trimToEmpty(pslSector));
+					}
+					//subCategoryList;
+					String pslSubCategoryName = null;
+					if (CollectionUtils.isNotEmpty(subCategoryList)
+							&& StringUtils.isNotBlank(pslDetail.getSubCategory())) {
+						for (ValueLabel subCategory : subCategoryList) {
+							if (null != subCategory
+									&& subCategory.getValue().equalsIgnoreCase(pslDetail.getSubCategory())) {
+								pslSubCategoryName = subCategory.getLabel();
+								break;
+							}
+						}
+					}
+					if (StringUtils.isNotBlank(pslSubCategoryName)) {
+						agreement.setPslSubCategoryName(StringUtils.trimToEmpty(pslSubCategoryName));
+					}
+					agreement.setPslWeakerSectionName(StringUtils.trimToEmpty(pslDetail.getWeakerSectionName()));
+				}
+				logger.debug("End of PSL Details in Agreements");
+			}
+			
 		} catch (Exception e) {
-			logger.debug(e);
+			logger.error(e);
 		}
 		logger.debug("Leaving");
 		return agreement;

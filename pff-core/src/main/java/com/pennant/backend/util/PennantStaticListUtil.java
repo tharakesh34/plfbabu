@@ -1184,6 +1184,7 @@ public class PennantStaticListUtil {
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_ACTIVIT,Labels.getLabel("label_AggActivityDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_ELGBLTY,Labels.getLabel("label_AggEligibilityDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_QRYMODL,Labels.getLabel("label_AggQueryDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_PSLMODL,Labels.getLabel("label_AggPSLDetails")));
 		}
 		return aggDetails;
 	}
