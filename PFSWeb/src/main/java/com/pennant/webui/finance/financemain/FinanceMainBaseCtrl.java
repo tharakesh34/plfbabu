@@ -1792,7 +1792,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		if (isTabVisible(StageTabConstants.PSLDetails)) {
+		if (isTabVisible(StageTabConstants.PSLDetails) && StringUtils.isEmpty(moduleDefiner)) {
 			appendPslDetailsTab(onLoad);
 		}
 		
