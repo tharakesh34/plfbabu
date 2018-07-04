@@ -2709,4 +2709,52 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet author="Kesav" id="145">
+		<dropTable tableName="Seq_GST_Invoice" />
+	</changeSet>
+	
+	<changeSet id="146" author="Kesava">
+		<createTable tableName="Seq_GST_Invoice">
+			<column name="GstStateCode" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TransactionType" type="varchar(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqNo" type="bigint" defaultValue="0" >
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="147">
+		<comment>Adding Composite Primary Key to Seq_GST_Invoice</comment>
+		<addPrimaryKey columnNames="GstStateCode,TransactionType" constraintName="PK_Seq_GST_Inv" tableName="Seq_GST_Invoice" />
+	</changeSet>
+	
+	<changeSet id="148" author="Kesav">
+		<sql>
+			Update Gst_Invoice_Txn set InvoiceNo = null;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="149" author="Kesav">
+		<sql>
+			Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'D' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != '' and TaxStateCode != ' ';
+			Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'C' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != '' and TaxStateCode != ' ';
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="150">
+		<comment> data type modified from varchar(50) to varchar(16)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn" columnName="InvoiceNo" newDataType="varchar(16)" />
+	</changeSet>
+	
+	<changeSet id="151" author="Kesav">
+		<sql>
+			Delete from SMTPARAMETERS where SysParmCode = 'AUTO_GST_INVOICE_REQ_JOB_CORNEXP';
+			Delete from SMTParameters where sysparmCode = 'AUTO_GST_INVOICE_NO';
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

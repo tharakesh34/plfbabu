@@ -1674,17 +1674,25 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			gstInvoiceTxn.setPanNumber(entity.getPANNumber());
 			gstInvoiceTxn.setLoanAccountNo(financeMain.getFinReference());
 
+			// Check whether State level Tax Details exists or not
 			Province companyProvince = gstInvoiceTxnService.getApprovedProvince(entity.getCountry(), entity.getStateCode());
-
 			if (companyProvince != null) {
 				
+				if (StringUtils.isBlank(companyProvince.getCPProvince()) || StringUtils.isBlank(companyProvince.getCPProvinceName())) {
+					return; //FIXME write this case as a error message
+				}
+						
 				gstInvoiceTxn.setCompany_State_Code(companyProvince.getCPProvince());
 				gstInvoiceTxn.setCompany_State_Name(companyProvince.getCPProvinceName());
 
 				if (CollectionUtils.isNotEmpty(companyProvince.getTaxDetailList())) {
 					TaxDetail taxDetail = companyProvince.getTaxDetailList().get(0);
 					
-					if (StringUtils.isBlank(taxDetail.getHsnNumber()) || StringUtils.isBlank(taxDetail.getNatureService())) {
+					if (StringUtils.isBlank(taxDetail.getHsnNumber()) 
+							|| StringUtils.isBlank(taxDetail.getNatureService())
+							|| StringUtils.isBlank(taxDetail.getPinCode())
+							|| StringUtils.isBlank(taxDetail.getAddressLine1())
+							|| StringUtils.isBlank(taxDetail.getTaxCode())) {
 						return;		//FIXME write this case as a error message
 					}
 					
@@ -1716,71 +1724,72 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
 				if (CollectionUtils.isNotEmpty(addressList)) {
 					for (CustomerAddres customerAddres : addressList) {
-						if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-							country = customerAddres.getCustAddrCountry();
-							
-							Customer cust =  customerDAO.getCustomerByID(customerAddres.getCustID());
-							province = customerAddres.getCustAddrProvince();
-							gstInvoiceTxn.setCustomerID(cust.getCustCIF()); 
-							gstInvoiceTxn.setCustomerName(cust.getCustShrtName());
-							
-							String custAddress = "";
-							
-							if (StringUtils.isNotBlank(customerAddres.getCustAddrHNbr())) {
-								custAddress = customerAddres.getCustAddrHNbr();
-							}
-							
-							if (StringUtils.isNotBlank(customerAddres.getCustFlatNbr())) {
-								if (StringUtils.isBlank(custAddress)) {
-									custAddress = custAddress.concat(customerAddres.getCustFlatNbr());
-								} else {
-									custAddress = custAddress + ", " + customerAddres.getCustFlatNbr();
-								}
-							}
-							
-							if (StringUtils.isNotBlank(customerAddres.getCustAddrStreet())) {
-								if (StringUtils.isBlank(custAddress)) {
-									custAddress = custAddress.concat(customerAddres.getCustAddrStreet());
-								} else {
-									custAddress = custAddress + ", " + customerAddres.getCustAddrStreet();
-								}
-							}
-							
-							if (StringUtils.isNotBlank(customerAddres.getLovDescCustAddrCityName())) {
-								if (StringUtils.isBlank(custAddress)) {
-									custAddress = custAddress.concat(customerAddres.getLovDescCustAddrCityName());
-								} else {
-									custAddress = custAddress + ", " + customerAddres.getLovDescCustAddrCityName();
-								}
-							}
-							
-							if (StringUtils.isNotBlank(customerAddres.getLovDescCustAddrProvinceName())) {
-								if (StringUtils.isBlank(custAddress)) {
-									custAddress = custAddress.concat(customerAddres.getLovDescCustAddrProvinceName());
-								} else {
-									custAddress = custAddress + ", " + customerAddres.getLovDescCustAddrProvinceName();
-								}
-							}
-							
-							if (StringUtils.isNotBlank(customerAddres.getLovDescCustAddrCountryName())) {
-								if (StringUtils.isBlank(custAddress)) {
-									custAddress = custAddress.concat(customerAddres.getLovDescCustAddrCountryName());
-								} else {
-									custAddress = custAddress + ", " + customerAddres.getLovDescCustAddrCountryName();
-								}
-							}
-							
-							if (StringUtils.isNotBlank(customerAddres.getCustPOBox())) {
-								if (StringUtils.isBlank(custAddress)) {
-									custAddress = custAddress.concat(customerAddres.getCustPOBox());
-								} else {
-									custAddress = custAddress + ", " + customerAddres.getCustPOBox();
-								}
-							}
-							
-							gstInvoiceTxn.setCustomerAddress(custAddress);
-							break;
+						if (customerAddres.getCustAddrPriority() != Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+							continue;
 						}
+						country = customerAddres.getCustAddrCountry();
+						
+						Customer cust =  customerDAO.getCustomerByID(customerAddres.getCustID());
+						province = customerAddres.getCustAddrProvince();
+						gstInvoiceTxn.setCustomerID(cust.getCustCIF()); 
+						gstInvoiceTxn.setCustomerName(cust.getCustShrtName());
+						
+						String custAddress = "";
+						
+						if (StringUtils.isNotBlank(customerAddres.getCustAddrHNbr())) {
+							custAddress = customerAddres.getCustAddrHNbr();
+						}
+						
+						if (StringUtils.isNotBlank(customerAddres.getCustFlatNbr())) {
+							if (StringUtils.isBlank(custAddress)) {
+								custAddress = custAddress.concat(customerAddres.getCustFlatNbr());
+							} else {
+								custAddress = custAddress + ", " + customerAddres.getCustFlatNbr();
+							}
+						}
+						
+						if (StringUtils.isNotBlank(customerAddres.getCustAddrStreet())) {
+							if (StringUtils.isBlank(custAddress)) {
+								custAddress = custAddress.concat(customerAddres.getCustAddrStreet());
+							} else {
+								custAddress = custAddress + ", " + customerAddres.getCustAddrStreet();
+							}
+						}
+						
+						if (StringUtils.isNotBlank(customerAddres.getLovDescCustAddrCityName())) {
+							if (StringUtils.isBlank(custAddress)) {
+								custAddress = custAddress.concat(customerAddres.getLovDescCustAddrCityName());
+							} else {
+								custAddress = custAddress + ", " + customerAddres.getLovDescCustAddrCityName();
+							}
+						}
+						
+						if (StringUtils.isNotBlank(customerAddres.getLovDescCustAddrProvinceName())) {
+							if (StringUtils.isBlank(custAddress)) {
+								custAddress = custAddress.concat(customerAddres.getLovDescCustAddrProvinceName());
+							} else {
+								custAddress = custAddress + ", " + customerAddres.getLovDescCustAddrProvinceName();
+							}
+						}
+						
+						if (StringUtils.isNotBlank(customerAddres.getLovDescCustAddrCountryName())) {
+							if (StringUtils.isBlank(custAddress)) {
+								custAddress = custAddress.concat(customerAddres.getLovDescCustAddrCountryName());
+							} else {
+								custAddress = custAddress + ", " + customerAddres.getLovDescCustAddrCountryName();
+							}
+						}
+						
+						if (StringUtils.isNotBlank(customerAddres.getCustPOBox())) {
+							if (StringUtils.isBlank(custAddress)) {
+								custAddress = custAddress.concat(customerAddres.getCustPOBox());
+							} else {
+								custAddress = custAddress + ", " + customerAddres.getCustPOBox();
+							}
+						}
+						
+						gstInvoiceTxn.setCustomerAddress(custAddress);
+						break;
 					}
 				}
 			}
@@ -1790,6 +1799,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			gstInvoiceTxn.setCustomerStateName(customerProvince.getCPProvinceName());
 			
 			BigDecimal invoiceAmout = BigDecimal.ZERO;
+			// Invoice Transaction details preparation for Fee Details if any exists
 			for (FinFeeDetail feeDetail : finFeeDetailsList) {
 				FinTaxDetails finTaxDetails = feeDetail.getFinTaxDetails();
 				if (finTaxDetails != null) {
@@ -1801,7 +1811,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					details.setIGST_RATE(feeDetail.getIgst());
 					details.setSGST_RATE(feeDetail.getSgst());
 					details.setUGST_RATE(feeDetail.getUgst());
-					details.setCGST_AMT(finTaxDetails.getNetCGST()); //confirm which GST amount
+					details.setCGST_AMT(finTaxDetails.getNetCGST());
 					details.setIGST_AMT(finTaxDetails.getNetIGST());
 					details.setSGST_AMT(finTaxDetails.getNetSGST());
 					details.setUGST_AMT(finTaxDetails.getNetUGST());

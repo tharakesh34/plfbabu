@@ -22,26 +22,22 @@ public class GSTInvoiceGeneratorServiceImpl implements GSTInvoiceGeneratorServic
 		List<GSTInvoiceTxn> gstInvoiceList = this.gstInvoiceTxnDAO.getGSTInvoiceTxnList();
 		
 		if (CollectionUtils.isNotEmpty(gstInvoiceList)) {
-			String invoiceNo = null;
+			
 			for (GSTInvoiceTxn gstInvoiceTxn : gstInvoiceList) {
-				SeqGSTInvoice seqGSTInvoice = new SeqGSTInvoice();
-				seqGSTInvoice.setEntity(gstInvoiceTxn.getCompanyCode());
-				seqGSTInvoice.setTransactionType(gstInvoiceTxn.getInvoiceType());
-				seqGSTInvoice.setFromState(gstInvoiceTxn.getCompany_State_Code());
-				long seqNo = this.gstInvoiceTxnDAO.getSeqNoFromSeqGSTInvoice(seqGSTInvoice);
-				seqNo++;
-				if (StringUtils.isNotBlank(gstInvoiceTxn.getCompany_State_Code())
-						&& StringUtils.isNotBlank(gstInvoiceTxn.getCompanyCode())
-						&& StringUtils.isNotBlank(gstInvoiceTxn.getInvoiceType())) {
-					invoiceNo = gstInvoiceTxn.getCompany_State_Code() + gstInvoiceTxn.getCompanyCode() + gstInvoiceTxn.getInvoiceType() + seqNo;
-				} else {
-					continue;
-				}
 				
-				gstInvoiceTxn.setInvoiceNo(invoiceNo);
-				this.gstInvoiceTxnDAO.updateGSTInvoiceNo(gstInvoiceTxn);
-				seqGSTInvoice.setSeqNo(seqNo);
-				this.gstInvoiceTxnDAO.updateSeqGSTInvoice(seqGSTInvoice);
+				if (StringUtils.isNotBlank(gstInvoiceTxn.getCompany_GSTIN()) && StringUtils.isNotBlank(gstInvoiceTxn.getInvoiceType())) {
+					SeqGSTInvoice seqGSTInvoice = new SeqGSTInvoice();
+					seqGSTInvoice.setTransactionType(gstInvoiceTxn.getInvoiceType());
+					String gstStateCode = gstInvoiceTxn.getCompany_GSTIN().substring(0, 2);
+					seqGSTInvoice.setGstStateCode(gstStateCode);
+					long seqNo = this.gstInvoiceTxnDAO.getSeqNoFromSeqGSTInvoice(seqGSTInvoice);
+					seqNo++;
+					String invoiceNo = gstStateCode + gstInvoiceTxn.getInvoiceType() + StringUtils.leftPad(String.valueOf(seqNo), 13, "0");
+					gstInvoiceTxn.setInvoiceNo(invoiceNo);
+					this.gstInvoiceTxnDAO.updateGSTInvoiceNo(gstInvoiceTxn);
+					seqGSTInvoice.setSeqNo(seqNo);
+					this.gstInvoiceTxnDAO.updateSeqGSTInvoice(seqGSTInvoice);
+				}
 			}
 		}
 	}

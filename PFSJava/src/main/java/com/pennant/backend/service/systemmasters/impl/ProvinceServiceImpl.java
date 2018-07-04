@@ -252,10 +252,6 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			if (approveRec) {
 				taxDetail.setRecordType(rcdType);
 				taxDetail.setRecordStatus(recordStatus);
-				// GST Invoice Report Sequence Table insert
-				if (saveRecord || updateRecord) {
-					saveSeqGstInvoice(taxDetail);
-				}
 			}
 
 			auditDetails.get(i).setModelData(taxDetail);
@@ -270,21 +266,24 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	 * Save Sequence Table for GST Invoice Preparation
 	 * @param taxDetail
 	 */
-	private void saveSeqGstInvoice(TaxDetail taxDetail) {
+	private void saveSeqGstInvoice(Province province) {
+		
+		if (StringUtils.isBlank(province.getTaxStateCode())) {
+			return;
+		}
+		
 		SeqGSTInvoice seqGstInvoice = new SeqGSTInvoice();
-		seqGstInvoice.setEntity(taxDetail.getEntityCode());
-		seqGstInvoice.setFromState(taxDetail.getStateCode());
 		seqGstInvoice.setSeqNo(0);
+		seqGstInvoice.setGstStateCode(province.getTaxStateCode());
+		
 		seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
-
 		SeqGSTInvoice seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
-
+		
 		if (seqGstInvoiceTemp == null) {
 			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
 		}
 
 		seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
-
 		seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
 
 		if (seqGstInvoiceTemp == null) {
@@ -428,6 +427,9 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 				province.setRecordType("");
 				getProvinceDAO().update(province, TableType.MAIN_TAB);
 			}
+			
+			// GST Invoice Report Sequence Table insert
+			saveSeqGstInvoice(province);
 			
 			if (province.getTaxDetailList() != null && province.getTaxDetailList().size() > 0) {
 				List<AuditDetail> details = province.getAuditDetailMap().get("TaxDetail");

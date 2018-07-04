@@ -42,8 +42,7 @@ package com.pennant.backend.model.finance;
 
 public class SeqGSTInvoice {
 
-	private String fromState;
-	private String entity;
+	private String gstStateCode;
 	private String transactionType = "D";
 	private long seqNo = 0;
 	
@@ -51,20 +50,12 @@ public class SeqGSTInvoice {
 		super();
 	}
 
-	public String getFromState() {
-		return fromState;
+	public String getGstStateCode() {
+		return gstStateCode;
 	}
 
-	public void setFromState(String fromState) {
-		this.fromState = fromState;
-	}
-
-	public String getEntity() {
-		return entity;
-	}
-
-	public void setEntity(String entity) {
-		this.entity = entity;
+	public void setGstStateCode(String gstStateCode) {
+		this.gstStateCode = gstStateCode;
 	}
 
 	public String getTransactionType() {
@@ -82,5 +73,4 @@ public class SeqGSTInvoice {
 	public void setSeqNo(long seqNo) {
 		this.seqNo = seqNo;
 	}
-
 }

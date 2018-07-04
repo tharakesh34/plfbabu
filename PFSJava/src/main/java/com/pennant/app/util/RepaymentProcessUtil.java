@@ -852,6 +852,10 @@ public class RepaymentProcessUtil {
 			// Check whether State level Tax Details exists or not
 			Province companyProvince = gstInvoiceTxnService.getApprovedProvince(entity.getCountry(), entity.getStateCode());
 			if (companyProvince != null) {
+
+				if (StringUtils.isBlank(companyProvince.getCPProvince()) || StringUtils.isBlank(companyProvince.getCPProvinceName())) {
+					return; //FIXME write this case as a error message
+				}
 				
 				gstInvoiceTxn.setCompany_State_Code(companyProvince.getCPProvince());
 				gstInvoiceTxn.setCompany_State_Name(companyProvince.getCPProvinceName());
@@ -859,7 +863,11 @@ public class RepaymentProcessUtil {
 				if (CollectionUtils.isNotEmpty(companyProvince.getTaxDetailList())) {
 					TaxDetail taxDetail = companyProvince.getTaxDetailList().get(0);
 					
-					if (StringUtils.isBlank(taxDetail.getHsnNumber()) || StringUtils.isBlank(taxDetail.getNatureService())) {
+					if (StringUtils.isBlank(taxDetail.getHsnNumber()) 
+							|| StringUtils.isBlank(taxDetail.getNatureService())
+							|| StringUtils.isBlank(taxDetail.getPinCode())
+							|| StringUtils.isBlank(taxDetail.getAddressLine1())
+							|| StringUtils.isBlank(taxDetail.getTaxCode())) {
 						return;		//FIXME write this case as a error message
 					}
 					

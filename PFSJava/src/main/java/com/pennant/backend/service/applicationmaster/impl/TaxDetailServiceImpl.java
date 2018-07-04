@@ -52,13 +52,11 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.finance.SeqGSTInvoice;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.TaxDetailService;
@@ -79,7 +77,6 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	private TaxDetailDAO taxDetailDAO;
 	private ProvinceDAO  provinceDAO;
 	private EntityDAO  entityDAO;
-	private GSTInvoiceTxnDAO  gstInvoiceTxnDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -275,9 +272,6 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 				taxDetail.setRecordType("");
 				getTaxDetailDAO().update(taxDetail, TableType.MAIN_TAB);
 			}
-			
-			//Save GSt Invoice Sequence Table data 
-			saveSeqGstInvoice(taxDetail);
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -292,32 +286,6 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 		return auditHeader;
 		
 		}
-	
-	/**
-	 * Save Sequence Table for GST Invoice Preparation
-	 * @param taxDetail
-	 */
-	private void saveSeqGstInvoice(TaxDetail taxDetail) {
-		SeqGSTInvoice seqGstInvoice = new SeqGSTInvoice();
-		seqGstInvoice.setEntity(taxDetail.getEntityCode());
-		seqGstInvoice.setFromState(taxDetail.getStateCode());
-		seqGstInvoice.setSeqNo(0);
-		seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
-
-		SeqGSTInvoice seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
-
-		if (seqGstInvoiceTemp == null) {
-			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
-		}
-
-		seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
-
-		seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
-
-		if (seqGstInvoiceTemp == null) {
-			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
-		}
-	}
 
 		/**
 		 * doReject method do the following steps. 1) Do the Business validation by
@@ -509,14 +477,4 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 		public void setEntityDAO(EntityDAO entityDAO) {
 			this.entityDAO = entityDAO;
 		}
-
-		public GSTInvoiceTxnDAO getGstInvoiceTxnDAO() {
-			return gstInvoiceTxnDAO;
-		}
-
-		public void setGstInvoiceTxnDAO(GSTInvoiceTxnDAO gstInvoiceTxnDAO) {
-			this.gstInvoiceTxnDAO = gstInvoiceTxnDAO;
-		}
-
-
 }

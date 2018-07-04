@@ -192,8 +192,8 @@ public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> impl
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("Insert Into Seq_GST_Invoice");
-		sql.append("(FromState, Entity, TransactionType, SeqNo)");
-		sql.append(" Values (:FromState, :Entity, :TransactionType, :SeqNo)");
+		sql.append("(GstStateCode, TransactionType, SeqNo)");
+		sql.append(" Values (:GstStateCode, :TransactionType, :SeqNo)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -217,7 +217,7 @@ public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> impl
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("Update Seq_GST_Invoice");
 		sql.append(" Set SeqNo = :SeqNo");
-		sql.append(" Where FromState = :FromState And Entity = :Entity And TransactionType = :TransactionType");
+		sql.append(" Where GstStateCode = :GstStateCode And TransactionType = :TransactionType");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -242,13 +242,12 @@ public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> impl
 		
 		try {
 			selectSql.append(" SELECT SeqNo From Seq_GST_Invoice");
-			selectSql.append(" Where FromState = :FromState And Entity = :Entity And TransactionType = :TransactionType");
+			selectSql.append(" Where GstStateCode = :GstStateCode And TransactionType = :TransactionType");
 			
 			logger.debug("selectSql: " + selectSql.toString());
 			
 			parameter = new MapSqlParameterSource();
-			parameter.addValue("FromState", seqGSTInvoice.getFromState());
-			parameter.addValue("Entity", seqGSTInvoice.getEntity());
+			parameter.addValue("GstStateCode", seqGSTInvoice.getGstStateCode());
 			parameter.addValue("TransactionType", seqGSTInvoice.getTransactionType());
 			
 			seqNo = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), parameter, Long.class);
@@ -268,9 +267,9 @@ public class GSTInvoiceTxnDAOImpl extends BasisNextidDaoImpl<GSTInvoiceTxn> impl
 		logger.debug(Literal.ENTERING);
 		
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT FromState, Entity, TransactionType, SeqNo");
+		StringBuilder sql = new StringBuilder("SELECT GstStateCode, TransactionType, SeqNo");
 		sql.append(" From Seq_GST_Invoice");
-		sql.append(" Where FromState = :FromState And Entity = :Entity And TransactionType = :TransactionType");
+		sql.append(" Where GstStateCode = :GstStateCode And TransactionType = :TransactionType");
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

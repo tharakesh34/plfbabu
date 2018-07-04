@@ -10292,7 +10292,6 @@
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="entityDAO" ref="entityDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="gstInvoiceTxnDAO" ref="gstInvoiceTxnDAO" />
 	</bean>
 
 	<!-- Entity -->
