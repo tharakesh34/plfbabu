@@ -1389,6 +1389,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
 			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()).subtract(finFeeDetail.getPaidAmount()));
 			
+			//Paid Amount
+			finFeeDetail.setPaidAmountOriginal(finFeeDetail.getPaidAmount());
+			finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
+
 			//Actual Fee
 			finTaxDetails.setActualCGST(BigDecimal.ZERO);
 			finTaxDetails.setActualIGST(BigDecimal.ZERO);
