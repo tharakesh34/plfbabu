@@ -380,7 +380,7 @@
 			 where (not exists (select 1 from external_liabilities_view where linkid = el.linkid ));
 		</createView>
 	</changeSet>
-	<changeSet id="8.2" author="vinay.b">
+	<changeSet id="8.2.1" author="vinay.b">
 	<comment> adding Column as baltransfer</comment>
 		<renameColumn tableName="external_liabilities_temp" oldColumnName="auxiliary2" newColumnName="balTransfer"/>
 		<renameColumn tableName="external_liabilities" oldColumnName="auxiliary2" newColumnName="balTransfer"/>
@@ -398,6 +398,8 @@
 			inner join bmtbankdetail rb on rb.bankcode=el.repaybank
 			left join  bmtcuststatuscodes cs on cs.custstscode = el.finstatus;
 		</createView>
+		</changeSet>
+	<changeSet id="8.2.2" author="vinay.b">
 		<createView viewName="external_liabilities_view"
 			replaceIfExists="true">
 			select el.id, el.linkid, el.seqno ,el.fintype ,el.findate ,el.loanbank ,el.rateOfInterest
@@ -426,6 +428,8 @@
 			where (not exists (select 1 from  
 						external_liabilities_temp where id =el.id));	
 		</createView>
+		</changeSet>
+	<changeSet id="8.2.3" author="vinay.b">
 		<createView viewName="customer_ext_liabilities_aview"
 			replaceIfExists="true">
 			 select el.*, cl.custid, cu.custcif, cu.custshrtname
@@ -433,6 +437,8 @@
 			 inner join link_cust_liabilities cl on cl.linkid = el.linkid
 			 inner join customers cu on cu.custid = cl.custid
 		</createView>
+		</changeSet>
+	<changeSet id="8.2.4" author="vinay.b">
 		<createView viewName="customer_ext_liabilities_view"
 			replaceIfExists="true">
 			 select el.*, cu.custid, cu.custcif, cu.custshrtname
