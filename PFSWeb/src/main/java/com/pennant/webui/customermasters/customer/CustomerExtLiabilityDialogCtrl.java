@@ -970,7 +970,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		if (!this.otherFinInstitute.isReadonly()) {
 			if (StringUtils.trimToEmpty(this.bankName.getValue()).equals(PennantConstants.OTHER_BANK)) {
 				this.otherFinInstitute.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_CustomerExtLiabilityDialog_Other.value"), null, true));
+						Labels.getLabel("label_CustomerExtLiabilityDialog_otherFinInstitute.value"), null, true));
 			}
 		}
 		logger.debug("Leaving");
