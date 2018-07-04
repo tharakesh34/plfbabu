@@ -77,6 +77,7 @@ import com.pennant.backend.service.finance.GuarantorDetailService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -123,10 +124,13 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private String roleCode = "";
 	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
 	private FieldVerificationDialogCtrl fieldVerificationDialogCtrl;
+	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
 	protected Groupbox finBasicdetails;
 	private Object mainController;
 	private boolean enquiry;
 	private	boolean fromApproved;
+	private boolean isFinanceProcess = false;
+	private String moduleName;
 	//### 10-05-2018 Start Development Item 82
 	private Map<String, Object> rules= new HashMap<>();
 	
@@ -198,6 +202,19 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.fromApproved = (Boolean) arguments.get("fromApproved");
 		}
 		
+		if (arguments.containsKey("isFinanceProcess")) {
+			isFinanceProcess = (boolean) arguments.get("isFinanceProcess");
+		}
+
+		if (arguments.containsKey("moduleName")) {
+			this.moduleName = (String) arguments.get("moduleName");
+		}
+		// append finance basic details
+		if (arguments.containsKey("finHeaderList")) {
+			appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
+		} else {
+			this.finBasicdetails.setZclass("null");
+		}
 		rules.put("Guarantors_Bank_CustomerCount", 0);
 		rules.put("Guarantors_Other_CustomerCount", 0);
 		rules.put("Guarantors_Total_Count", 0);
@@ -235,9 +252,6 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private void doShowDialog() {
 		logger.debug("Entering");
 
-		// append finance basic details 
-		appendFinBasicDetails();
-
 		if (enquiry) {
 			if (!financeMain.isNewRecord()) {
 				List<JointAccountDetail> jointAccountDetailList= new ArrayList<JointAccountDetail>();
@@ -263,7 +277,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					doFillGurantorsDetails(gurantorsAccDetailList);
 				}
 			}
-			this.finBasicdetails.setVisible(false);
+			//this.finBasicdetails.setVisible(false);
 		} else {
 			// Rendering Joint Account Details
 			List<JointAccountDetail> jointAcctDetailList = financeDetail.getJountAccountDetailList();
@@ -761,11 +775,19 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	/**
 	 * This method is for append finance basic details to respective parent tabs
 	 */
-	private void appendFinBasicDetails() {
+	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this );
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",this.finBasicdetails, map);
+			map.put("finHeaderList", finHeaderList);
+			map.put("moduleName", moduleName);
+			if (isFinanceProcess) {
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",
+						this.finBasicdetails, map);
+			} else {
+				Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralBasicDetails.zul",
+						this.finBasicdetails, map);
+			}
 		} catch (Exception e) {
 			logger.debug(e);
 		}
@@ -942,4 +964,13 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	public void setFieldVerificationDialogCtrl(FieldVerificationDialogCtrl fieldVerificationDialogCtrl) {
 		this.fieldVerificationDialogCtrl = fieldVerificationDialogCtrl;
 	}
+
+	public CollateralBasicDetailsCtrl getCollateralBasicDetailsCtrl() {
+		return collateralBasicDetailsCtrl;
+	}
+
+	public void setCollateralBasicDetailsCtrl(CollateralBasicDetailsCtrl collateralBasicDetailsCtrl) {
+		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
+	}
+	
 }

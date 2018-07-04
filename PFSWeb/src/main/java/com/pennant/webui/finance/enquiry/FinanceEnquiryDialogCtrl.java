@@ -1426,6 +1426,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_JOINTGUARANTOR));
 		map.put("enquiry", enquiry);
 		map.put("financeMain", getFinScheduleData().getFinanceMain());
+		map.put("isFinanceProcess", true);
 		map.put("ccyFormatter",
 				CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy()));
 		map.put("mainController", this);

@@ -7,7 +7,7 @@
 			<borderlayout id="borderlayoutFinanceMain" width="100%">
 				<center border="none">
 					<div id="divCenter">
-						<groupbox id="finBasicdetails" zclass="null">
+						<groupbox id="finBasicdetails">
 						</groupbox>
 						<groupbox id="gb_JointAccountDetails">
 							<caption label="Co-Applicant Details" />

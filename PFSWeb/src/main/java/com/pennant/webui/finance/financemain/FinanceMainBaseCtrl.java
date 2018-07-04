@@ -2868,6 +2868,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getFinBasicDetails());
 		map.put("financeDetail", getFinanceDetail());
+		map.put("isFinanceProcess", true);
 		map.put("ccyFormatter",
 				CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
 		return map;

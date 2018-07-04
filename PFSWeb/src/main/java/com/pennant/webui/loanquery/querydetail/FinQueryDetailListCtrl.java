@@ -65,6 +65,7 @@ import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.loanquery.querydetail.model.QueryDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -100,6 +101,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 
 	protected Groupbox finBasicdetails;
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
+	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
 	
 	private transient QueryDetailService queryDetailService;
 	private FinanceMain financeMain = null;
@@ -161,7 +163,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		}
 		
 		if(arguments.containsKey("sampling")){
-			this.sampling = (Sampling) arguments.get("Sampling");
+			this.sampling = (Sampling) arguments.get("sampling");
 		}
 		
 		if(arguments.containsKey("legalVerification")){
@@ -234,8 +236,14 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 			if (finHeaderList != null) {
 				map.put("finHeaderList", finHeaderList);
 			}
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
-					map);
+			if (sampling == null) {
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",
+						this.finBasicdetails, map);
+			}else{
+				map.put("moduleName", (String) arguments.get("moduleName"));
+				Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralBasicDetails.zul",
+						this.finBasicdetails, map);
+			}
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -296,6 +304,9 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		arg.put("queryDetail", querydetail);
 		arg.put("finQueryDetailListCtrl", this);
 		arg.put("financeMain", financeMain);
+		if (this.sampling != null) {
+			arg.put("sampling", this.sampling);
+		}
 		arg.put("roleCode", roleCode);
 		
 		if (legalDetail != null) {
@@ -343,6 +354,14 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 
 	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
+	}
+
+	public CollateralBasicDetailsCtrl getCollateralBasicDetailsCtrl() {
+		return collateralBasicDetailsCtrl;
+	}
+
+	public void setCollateralBasicDetailsCtrl(CollateralBasicDetailsCtrl collateralBasicDetailsCtrl) {
+		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
 	}
 	
 }

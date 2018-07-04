@@ -21,6 +21,7 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -81,6 +82,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	private List<Customer> customers;
 	private List<DocumentDetails> documents = null;
 	private Map<String, Object> reamrksMap = new HashMap<>();
+	private QueryDetail queryDetail = new QueryDetail();
 
 	/**
 	 * Sampling approve details
@@ -171,6 +173,7 @@ public class Sampling extends AbstractWorkflowEntity {
 
 		excludeFields.add("documents");
 		excludeFields.add("reamrksMap");
+		excludeFields.add("queryDetail");
 
 		return excludeFields;
 	}
@@ -665,4 +668,11 @@ public class Sampling extends AbstractWorkflowEntity {
 		this.reamrksMap = reamrksMap;
 	}
 
+	public QueryDetail getQueryDetail() {
+		return queryDetail;
+	}
+
+	public void setQueryDetail(QueryDetail queryDetail) {
+		this.queryDetail = queryDetail;
+	}
 }

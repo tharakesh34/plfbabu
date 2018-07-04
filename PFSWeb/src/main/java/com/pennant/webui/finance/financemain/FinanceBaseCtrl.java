@@ -1162,6 +1162,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 			//Joint Account Detail & Guarantor Detail Tab
 			final HashMap<String, Object> map = getDefaultArguments();
+			map.put("isFinanceProcess", true);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/JointAccountDetailDialog.zul", tabpanel,
 					map);
 

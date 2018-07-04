@@ -121,6 +121,7 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 import freemarker.cache.StringTemplateLoader;
@@ -210,6 +211,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	private SecurityUserOperationsService securityUserOperationsService;
 	List<String> emailList = null;
 	private String roleCode;
+	private Sampling sampling = null;
 
 	/**
 	 * default constructor.<br>
@@ -257,6 +259,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			}
 			
 			if (arguments.containsKey("sampling")) {
+				this.sampling = (Sampling) arguments.get("sampling");
 				this.module.setValue(PennantConstants.QUERY_SAMPLING);
 			}
 			
@@ -734,6 +737,9 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		if (financeMain != null) {
 			this.finReference.setValue(financeMain.getFinReference());
 			currentRole.add(roleCode);
+		}else if (sampling!=null) {
+			this.finReference.setValue(sampling.getKeyReference());
+			currentRole.add(roleCode);
 		} else {
 			this.finReference.setValue(aQueryDetail.getFinReference());
 		}
@@ -746,7 +752,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		this.closerNotes.setValue(StringUtils.trim(aQueryDetail.getCloserNotes()));
 		if (aQueryDetail.isNewRecord()) {
 			fillComboBox(this.status, "Open", queryModuleStatusList, "");
-			if(financeMain != null){
+			if (financeMain != null || sampling != null){
 				fillComboBox(this.assignedRole, aQueryDetail.getAssignedRole(), assignedRolesList, currentRole);
 			}else{
 				fillComboBox(this.assignedRole, aQueryDetail.getAssignedRole(), assignedRolesList, "");
@@ -770,23 +776,24 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * @return
 	 */
 	private void setValueLabelList() {
+		String workFlowTpe = null;
 		if (financeMain != null && financeMain.getWorkflowId() > 0) { // In Loan
-			// origination
-			// work
-			// flow
-			String workFlowTpe = PennantApplicationUtil.getWorkFlowType(financeMain.getWorkflowId());
-			WorkFlowDetails workflow = null;
-			workflow = WorkFlowUtil.getDetailsByType(workFlowTpe);
-			ValueLabel valueLabel;
-			if (workflow != null && workflow.getFlowRoles().length >= 0) {
-				for (int j = 0; j < workflow.getFlowRoles().length; j++) {
-					String[] s2 = workflow.getFlowRoles()[j].split("\\;");
-					for (int i = 0; i < s2.length; i++) {
-						valueLabel = new ValueLabel();
-						valueLabel.setLabel(s2[i]);
-						valueLabel.setValue(s2[i]);
-						assignedRolesList.add(valueLabel);
-					}
+			// origination work flow
+			workFlowTpe = PennantApplicationUtil.getWorkFlowType(financeMain.getWorkflowId());
+		} else if (sampling != null && sampling.getWorkflowId() > 0) {
+			workFlowTpe = PennantApplicationUtil.getWorkFlowType(sampling.getWorkflowId());
+		}
+		WorkFlowDetails workflow = null;
+		workflow = WorkFlowUtil.getDetailsByType(workFlowTpe);
+		ValueLabel valueLabel;
+		if (workflow != null && workflow.getFlowRoles().length >= 0) {
+			for (int j = 0; j < workflow.getFlowRoles().length; j++) {
+				String[] s2 = workflow.getFlowRoles()[j].split("\\;");
+				for (int i = 0; i < s2.length; i++) {
+					valueLabel = new ValueLabel();
+					valueLabel.setLabel(s2[i]);
+					valueLabel.setValue(s2[i]);
+					assignedRolesList.add(valueLabel);
 				}
 			}
 		}
@@ -1002,11 +1009,11 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		}
 		
 		// Finance Reference
-		try {
-			aQueryDetail.setFinReference(this.finReference.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
+			try {
+				aQueryDetail.setFinReference(this.finReference.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		// Category Id
 		try {
 			this.qryCategory.getValidatedValue();
@@ -1315,7 +1322,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			this.window_QueryDetailDialog.setWidth("85%");
 			this.window_QueryDetailDialog.doModal();
 		} else {
-			setDialog(DialogType.EMBEDDED);
+			setDialog(DialogType.MODAL);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1555,7 +1562,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CategoryId"),
 		 * this.btnNotifyTo);
 		 */
-		if(this.financeMain == null){
+		if(this.financeMain == null && this.sampling == null){
 			readOnlyComponent(false, this.finReference);
 		}
 		readOnlyComponent(false, this.qryCategory);

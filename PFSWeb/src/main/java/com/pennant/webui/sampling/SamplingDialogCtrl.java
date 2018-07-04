@@ -67,6 +67,7 @@ import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
@@ -352,13 +353,13 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		this.recordStatus.setValue(sampling.getRecordStatus());
 
-		appendDocumentDetailTab();
+		  appendDocumentDetailTab();
 
-		appendCustomerDetailTab();
+		  appendCustomerDetailTab();
 
-		appendCoApplicantDetailTab();
+          appendCoApplicantDetailTab();
 
-	  //  appendQueryModuleTab();
+	      appendQueryModuleTab();
 
 		logger.debug(Literal.LEAVING);
 
@@ -651,9 +652,10 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
-		if (this.loanTenure.intValue() <= 0) {
-			throw new WrongValueException(this.loanTenure, Labels.getLabel("AMOUNT_NOT_NEGATIVE",
-					new String[] { Labels.getLabel("label_SamplingDialog_LoanTenure.value") }));
+		if (!this.loanTenure.isReadonly()) {
+			/*throw new WrongValueException(this.loanTenure, Labels.getLabel("AMOUNT_NOT_NEGATIVE",
+					new String[] { Labels.getLabel("label_SamplingDialog_LoanTenure.value") }));*/
+			this.loanTenure.setConstraint(new PTNumberValidator(Labels.getLabel("label_SamplingDialog_LoanTenure.value"), true, false));
 		}
 
 		if (!this.interestRate.isReadonly()) {
@@ -785,7 +787,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
-		map.put("finHeaderList", getHeaderBasicDetails());
+	  	map.put("finHeaderList", getHeaderBasicDetails());
 		map.put("isNotFinanceProcess", true);
 		map.put("ccyFormatter",ccyFormatter);
 		map.put("enquiry", true);
@@ -917,8 +919,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		createTab("COAPPLICANT", true);
 		FinScheduleData finScheduleData = financeDetailService.getFinSchDataById(this.sampling.getKeyReference(), "_View",true);
 		final HashMap<String, Object> map = getDefaultArguments();
-		//map.put("finScheduleData", finScheduleData);
 		map.put("financeMain", finScheduleData.getFinanceMain());
+		map.put("isFinanceProcess", false);
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/JointAccountDetailDialog.zul",
 				getTabpanel("COAPPLICANT"), map);
 		logger.debug(Literal.LEAVING);
@@ -932,7 +934,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.ENTERING);
 		createTab("QUERYMODULE", true);
 		final HashMap<String, Object> map = getDefaultArguments();
-		Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailDialog.zul",
+		map.put("queryDetail", this.sampling.getQueryDetail());
+		map.put("sampling", this.sampling);
+		Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/FinQueryDetailList.zul",
 				getTabpanel("QUERYMODULE"), map);
 		logger.debug(Literal.LEAVING);
 

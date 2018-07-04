@@ -772,8 +772,8 @@ public class PennantConstants {
 	
 	//Query Management
 	public static final String QUERY_ORIGINATION = "Origination";
-	public static final String QUERY_SAMPLING = "Sampling";
-	public static final String QUERY_LEGAL_VERIFICATION = "Legal Verification";
+	public static final String QUERY_SAMPLING = "SAMPLING";
+	public static final String QUERY_LEGAL_VERIFICATION = "LEGAL";
 
 	public static final String OTHER_BANK = "OTHER";
 
