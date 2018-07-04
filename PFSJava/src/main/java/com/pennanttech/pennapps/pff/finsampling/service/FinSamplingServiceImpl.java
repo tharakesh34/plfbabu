@@ -2,6 +2,7 @@ package com.pennanttech.pennapps.pff.finsampling.service;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.model.audit.AuditDetail;
@@ -30,6 +31,8 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 	public AuditDetail saveOrUpdate(FinanceDetail financeDetail, String auditTranType) {
 		logger.debug(Literal.ENTERING);
 		Sampling sampling = financeDetail.getSampling();
+		Sampling samplingRemarks=new Sampling();
+		BeanUtils.copyProperties(sampling, samplingRemarks);
 		String[] fields = PennantJavaUtil.getFieldDetails(sampling, sampling.getExcludeFields());
 		finSamplingDAO.updateSampling(sampling, TableType.MAIN_TAB);
 		if (sampling.getDecision() == Decision.RESUBMIT.getKey()
@@ -44,7 +47,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 			samplingService.saveSnap(sampling);
 		}
 
-		finSamplingDAO.saveOrUpdateRemarks(sampling, TableType.MAIN_TAB);
+		finSamplingDAO.saveOrUpdateRemarks(samplingRemarks, TableType.MAIN_TAB);
 		// finSamplingDAO.updateCollateralRemarks(sampling, TableType.MAIN_TAB);
 		logger.debug(Literal.LEAVING);
 		return new AuditDetail(auditTranType, 1, fields[0], fields[1], sampling.getBefImage(), sampling);

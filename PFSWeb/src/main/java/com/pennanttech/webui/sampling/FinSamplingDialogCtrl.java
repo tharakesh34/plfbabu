@@ -449,9 +449,11 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			long sanpLinkId = samplingService.getCollateralLinkId(collateralRef, sampling.getId(), "_snap");
 
 			if (sanpLinkId > 0) {
-				collaterals = samplingService.getCollateralFields(collateralType, originallinkId, sanpLinkId);
+				collaterals = samplingService.getCollateralFields(collateralType, String.valueOf(originallinkId),
+						String.valueOf(sanpLinkId));
 			} else {
-				collaterals = samplingService.getCollateralFields(collateralType, originallinkId, originallinkId);
+				collaterals = samplingService.getCollateralFields(collateralType, String.valueOf(originallinkId),
+						collateralRef);
 			}
 			String caption = String.format("%s - %s", collateralRef, collateralType);
 

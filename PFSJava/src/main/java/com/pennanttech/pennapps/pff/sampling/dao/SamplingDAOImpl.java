@@ -196,6 +196,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		try {
 			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
 		} catch (DataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -708,7 +709,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	@Override
 	public BigDecimal getLoanEligibility(String finReference, String eligibilityRule) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select coalesce(ruleresult, 0) from financeeligibilitydetail_view er");
+		sql.append(" select coalesce(ruleresult, '0') from financeeligibilitydetail_view er");
 		sql.append(" inner join rules r on r.ruleid = er.elgrulecode");
 		sql.append(" where finreference = :finreference and rulecode = :rulecode");
 

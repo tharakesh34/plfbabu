@@ -1263,15 +1263,15 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	 * @return Return Extended collateral fields.
 	 */
 	@Override
-	public Map<String, List<ExtendedFieldData>> getCollateralFields(String type, long linkId, long snapLinkId) {
+	public Map<String, List<ExtendedFieldData>> getCollateralFields(String type, String linkId, String snapLinkId) {
 		Map<String, List<ExtendedFieldData>> collateralFileds = new HashMap<>();
 		Map<String, ExtendedFieldData> current = null;
 		Map<String, ExtendedFieldData> original = null;
 
 		String table = "verification_".concat(type.toLowerCase()).concat("_tv");
-		current = extendedFieldDetailsService.getCollateralMap(table, String.valueOf(linkId));
+		current = extendedFieldDetailsService.getCollateralMap(table, linkId);
 		table = "collateral_".concat(type.toLowerCase()).concat("_ed");
-		original = extendedFieldDetailsService.getCollateralMap(table, String.valueOf(snapLinkId));
+		original = extendedFieldDetailsService.getCollateralMap(table, snapLinkId);
 
 		List<ExtendedFieldData> data = null;
 		for (Entry<String, ExtendedFieldData> currentData : current.entrySet()) {
@@ -1329,9 +1329,9 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 	@Override
 	public void saveSnap(Sampling sampling) {
-		/*saveIncomeSnap(sampling);
-		saveLiabilitiesSnap(sampling);
-		saveCollateralsSnap(sampling);*/
+		saveIncomeSnap(sampling);
+		// saveLiabilitiesSnap(sampling);
+		saveCollateralsSnap(sampling);
 	}
 
 	private void saveIncomeSnap(Sampling sampling) {
@@ -1356,10 +1356,11 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 						incomeDetailDAO.update(current, "");
 						incomeDetailDAO.update(current, "_temp");
 					} catch (Exception e) {
-						e.printStackTrace();
+						logger.warn(e);
 					} finally {
 						original.setLinkId(samplingDAO.getIncomeSnapLinkId(sampling.getId(), original.getCustId()));
 						original.setId(0);
+						incomeDetailDAO.deletebyLinkId(original.getLinkId(), "");
 						incomeDetailDAO.save(original, "");
 					}
 
@@ -1371,12 +1372,13 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			currentNew.setLinkId(0);
 			currentNew.setId(0);
 			customerIncomeDAO.setLinkId(currentNew);
+			incomeDetailDAO.deletebyLinkId(currentNew.getLinkId(), "");
 			incomeDetailDAO.save(currentNew, "");
 		}
 		for (CustomerIncome originalNew : originalNewList) {
 			originalNew.setLinkId(samplingDAO.getIncomeSnapLinkId(sampling.getId(), originalNew.getCustId()));
 			originalNew.setId(0);
-			customerIncomeDAO.setLinkId(originalNew);
+			incomeDetailDAO.deletebyLinkId(originalNew.getLinkId(), "");
 			incomeDetailDAO.save(originalNew, "");
 		}
 	}
@@ -1429,23 +1431,28 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		Map<String, Object> newOriginalTemp;
 
 		Map<String, Object> original = null;
-		Map<String, Object> current = null;
+		Map<String, ExtendedFieldData> current = null;
 
 		for (CollateralSetup collSetup : sampling.getCollSetupList()) {
 			long linkId = samplingDAO.getCollateralLinkId(sampling.getId(), collSetup.getCollateralRef());
+			long originallinkId = getCollateralLinkId(collSetup.getCollateralRef(), sampling.getId(), "_snap");
 
 			String tableName = "verification_".concat(collSetup.getCollateralType().toLowerCase()).concat("_tv");
-			current = extendedFieldDetailsService.getCollateralsMap(tableName, String.valueOf(linkId));
-
+			current = extendedFieldDetailsService.getCollateralMap(tableName, String.valueOf(linkId));
 			tableName = "collateral_".concat(collSetup.getCollateralType().toLowerCase()).concat("_ed");
-			original = extendedFieldDetailsService.getCollateralsMap(tableName, collSetup.getCollateralRef());
+			if (originallinkId > 0) {
+				original = extendedFieldDetailsService.getCollateralsMap(tableName, String.valueOf(originallinkId));
+			} else {
+				original = extendedFieldDetailsService.getCollateralsMap(tableName, collSetup.getCollateralRef());
+			}
 
 			newOriginalTemp = new HashMap<>(original);
 			newOriginal = new HashMap<>(original);
-			for (Entry<String, Object> currField : current.entrySet()) {
+			for (Entry<String, Object> currField : getMap(current).entrySet()) {
 				for (Entry<String, Object> orgField : original.entrySet()) {
-					if (orgField.getKey().equals(currField.getKey())) {
+					if (orgField.getKey().equals(currField.getKey().toLowerCase())) {
 						newOriginalTemp.put(orgField.getKey(), currField.getValue());
+						break;
 					}
 				}
 			}
@@ -1457,26 +1464,28 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			} catch (Exception e) {
 				logger.warn(e);
 			} finally {
-				linkId = samplingDAO.getCollateralSnapLinkId(sampling.getId(), collSetup.getCollateralRef());
-				newOriginal.put("reference", linkId);
-				extendedFieldRenderDAO.save(newOriginal, "", tableName);
+				if (originallinkId == 0) {
+					newOriginal.put("lastmnton", new Timestamp(System.currentTimeMillis()));
+					newOriginal.put("lastmntby", sampling.getLastMntBy());
+					newOriginal.put("reference",
+							samplingDAO.getCollateralSnapLinkId(sampling.getId(), collSetup.getCollateralRef()));
+					extendedFieldRenderDAO.save(newOriginal, "", tableName);
+				}
 			}
-
 		}
+	}
+
+	private Map<String, Object> getMap(Map<String, ExtendedFieldData> current) {
+		Map<String, Object> map = new HashMap<>();
+
+		for (Entry<String, ExtendedFieldData> item : current.entrySet()) {
+			map.put(item.getKey(), item.getValue().getFieldValue());
+		}
+
+		return map;
 
 	}
 
-	/*
-	 * private Map<String, Object> getMap(Map<String, ExtendedFieldData> current) { Map<String, Object> map = new
-	 * HashMap<>();
-	 * 
-	 * for (Entry<String, ExtendedFieldData> item : current.entrySet()) { map.put(item.getKey(),
-	 * item.getValue().getFieldValue()); }
-	 * 
-	 * return map;
-	 * 
-	 * }
-	 */
 	@Override
 	public long getCollateralLinkId(String collateralRef, long id, String type) {
 		return samplingDAO.getCollateralLinkId(collateralRef, id, type);

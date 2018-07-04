@@ -34,7 +34,7 @@ public interface SamplingService {
 
 	long getCollateralLinkId(long samplingId, String reference);
 
-	Map<String, List<ExtendedFieldData>> getCollateralFields(String type, long linkId, long snapLinkId);
+	Map<String, List<ExtendedFieldData>> getCollateralFields(String type, String linkId, String snapLinkId);
 
 	boolean isExist(String finReference, String type);
 
