@@ -3100,7 +3100,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			return;
 		}
 
-		if (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel())) {
+		if (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel())
+				|| StringUtils.equals("Approve", userAction.getSelectedItem().getLabel())) {
 			if (!validateAddressDetails(this.tabkYCDetails)) {
 				return;
 			}
