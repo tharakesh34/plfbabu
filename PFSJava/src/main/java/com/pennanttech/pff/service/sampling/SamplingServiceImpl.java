@@ -1457,6 +1457,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				}
 			}
 			try {
+				newOriginalTemp.remove("reference");
 				extendedFieldRenderDAO.update(collSetup.getCollateralRef(), (Integer) newOriginalTemp.get("seqno"),
 						newOriginalTemp, "", tableName);
 				extendedFieldRenderDAO.update(collSetup.getCollateralRef(), (Integer) newOriginalTemp.get("seqno"),
