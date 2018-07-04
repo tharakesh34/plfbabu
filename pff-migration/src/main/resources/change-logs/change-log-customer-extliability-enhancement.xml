@@ -453,4 +453,8 @@
 			 where (not exists (select 1 from external_liabilities_view where linkid = el.linkid ));
 		</createView>
 	</changeSet>
+	<changeSet id="9" author="Vinay">
+		<modifyDataType tableName="external_liabilities" columnName="balTransfer" newDataType="boolean"/>
+		<modifyDataType tableName="external_liabilities_temp" columnName="balTransfer" newDataType="boolean"/>
+	</changeSet>
 </databaseChangeLog>
