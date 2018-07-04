@@ -75,7 +75,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 			sql.append(" from external_liabilities");
 			sql.append(type).append(" el");
 			sql.append(" inner join ").append(table).append(" cel on cel.linkid = el.linkid");
-			sql.append(" inner join customers cu on cu.custid = cel.custid");
+			sql.append(" inner join customers_view cu on cu.custid = cel.custid");
 			sql.append(" inner join bmtbankdetail lb on lb.bankcode = el.loanbank");
 			sql.append(" inner join otherbankfinancetype ft on ft.fintype = el.fintype");
 			sql.append(" inner join loanpurposes lp on lp.loanpurposecode = el.loanpurpose");

@@ -126,7 +126,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 			query.append(" on cin.linkid = incd.linkid");
 			query.append(" inner join bmtincometypes it on it.incometypecode=incd.incometype");
 			query.append(" and it.incomeexpense=incd.incomeexpense and it.category=incd.category");
-			query.append(" inner join customers cu on cin.custid = cu.custid");
+			query.append(" inner join customers_view cu on cin.custid = cu.custid");
 			query.append(" inner join bmtincomecategory ic on ic.incomecategory = incd.category");
 			query.append(" Where incd.linkid =:linkId and cu.custid = :custId and incd.incometype = :incomeType ");
 			query.append(" and incd.incomeExpense = :incomeExpense and incd.category=:category");

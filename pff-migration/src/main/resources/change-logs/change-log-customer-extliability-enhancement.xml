@@ -457,4 +457,22 @@
 		<modifyDataType tableName="external_liabilities" columnName="balTransfer" newDataType="boolean"/>
 		<modifyDataType tableName="external_liabilities_temp" columnName="balTransfer" newDataType="boolean"/>
 	</changeSet>
+	<changeSet id="10" author="lakshmi.n">
+		<dropForeignKeyConstraint baseTableName="link_cust_liabilities" constraintName="fk_cust_ext_liabilit_custid"/>
+	</changeSet>
+	<changeSet id="10." author="">
+		<createView viewName="customer_ext_liabilities_view"
+			replaceIfExists="true">
+			 select el.*, cu.custid, cu.custcif, cu.custshrtname
+			 from external_liabilities_view el 
+			 inner join link_cust_liabilities cl on cl.linkid = el.linkid
+			 inner join customers_temp cu on cu.custid = cl.custid
+			 union all
+			 select el.*, cu.custid, cu.custcif, cu.custshrtname
+			 from external_liabilities_aview el 
+			 inner join link_cust_liabilities cl on cl.linkid = el.linkid
+			 inner join customers_temp cu on cu.custid = cl.custid
+			 where (not exists (select 1 from external_liabilities_view where linkid = el.linkid ));
+		</createView>
+	</changeSet>
 </databaseChangeLog>
