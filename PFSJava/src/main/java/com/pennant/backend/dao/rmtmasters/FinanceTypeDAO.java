@@ -87,5 +87,6 @@ public interface FinanceTypeDAO {
 	boolean isDivisionCodeExistsInFinanceTypes(String divisionCode, String type);
 
 	boolean isCostOfFundsExist(String costOfFunds, String type);
-
+	
+	FinanceType getFinLtvCheckByFinType(String finType);
 }

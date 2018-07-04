@@ -785,4 +785,6 @@ public class PennantConstants {
 	public static final String				GST_INVOICE_STATUS_PRINTED				= "P";
 	public static final String				GST_INVOICE_STATUS_CANCELLED			= "C";
 
+	public static final String COLLATERAL_LTV_CHECK_DISBAMT	= "LTVDISBAMT";		
+	public static final String COLLATERAL_LTV_CHECK_FINAMT	= "LTVFINAMT";	
 }

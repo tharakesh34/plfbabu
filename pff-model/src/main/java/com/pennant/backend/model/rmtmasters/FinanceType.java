@@ -286,6 +286,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String costOfFunds;
 	private List<IRRFinanceType> irrFinanceTypeList =new ArrayList<IRRFinanceType>();
 	
+	//Collateral LTV Check Details
+	private String finLTVCheck;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -1987,6 +1990,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setChequeCaptureReq(boolean chequeCaptureReq) {
 		this.chequeCaptureReq = chequeCaptureReq;
+	}
+
+	public String getFinLTVCheck() {
+		return finLTVCheck;
+	}
+
+	public void setFinLTVCheck(String finLTVCheck) {
+		this.finLTVCheck = finLTVCheck;
 	}
 
 }

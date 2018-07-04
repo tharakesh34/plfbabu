@@ -256,6 +256,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> sectorList;
 	private static ArrayList<ValueLabel> subSectorList;
 	private static ArrayList<ValueLabel> subCategoryGeneralList;
+	private static ArrayList<ValueLabel> finLVTCheckList;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -3542,4 +3543,12 @@ public class PennantStaticListUtil {
 		return subCategoryGeneralList;
 	}
 
+	public static ArrayList<ValueLabel> getfinLVTCheckList() {
+		if (finLVTCheckList == null) {
+			finLVTCheckList = new ArrayList<ValueLabel>();
+			finLVTCheckList.add(new ValueLabel(PennantConstants.COLLATERAL_LTV_CHECK_DISBAMT, Labels.getLabel("label_LTVCheck_DisbAmt")));
+			finLVTCheckList.add(new ValueLabel(PennantConstants.COLLATERAL_LTV_CHECK_FINAMT, Labels.getLabel("label_LTVCheck_FinAmt")));
+		}
+		return finLVTCheckList;
+	}
 }

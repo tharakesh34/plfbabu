@@ -145,6 +145,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -524,6 +525,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Textbox alwdIRRDetails;
 	protected Button btnAlwIRRDetails;
 	private List<IRRFinanceType> irrFinanceTypeList = null;
+	
+	//Collateral LTV Check Details
+	protected Combobox 	finLTVCheck;
+	protected Row 		row_LTVCheck;
+	private ArrayList<ValueLabel> finLVTCheckList = PennantStaticListUtil.getfinLVTCheckList();
+	FinanceType 		fintypeLTVCheck = null;
 
 	/** default constructor.<br> */
 	public FinanceTypeDialogCtrl() {
@@ -1067,6 +1074,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		fillComboBox(this.cbfinProductType, aFinanceType.getFinCategory(), PennantAppUtil.getProductByCtg(filters), "");
 		this.finAssetType.setValue(StringUtils.trimToEmpty(aFinanceType.getFinAssetType()));
 		this.collateralType.setValue(StringUtils.trimToEmpty(aFinanceType.getCollateralType()));
+		fillComboBox(this.finLTVCheck, aFinanceType.getFinLTVCheck(), finLVTCheckList, "");
 		this.alwEarlyPayMethods.setValue(StringUtils.trimToEmpty(aFinanceType.getAlwEarlyPayMethods()));
 		this.alwEarlyPayMethods.setTooltiptext(getEarlypayMthdDescription(aFinanceType.getAlwEarlyPayMethods()));
 		this.finIsDwPayRequired.setChecked(aFinanceType.isFinIsDwPayRequired());
@@ -1466,7 +1474,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		doChangeSuspTrigger();
 
 		doSetDownpayProperties(aFinanceType.getProductCategory(), false);
-		doSetCollateralProp();
+		
+		//Collaterl LTV Checking In Main Table//FIXME
+		if (!this.isCompReadonly) {
+			
+			this.fintypeLTVCheck = getFinanceTypeService().getFinLtvCheckByFinType(aFinanceType.getFinType());
+		}
+		doSetCollateralProp(fintypeLTVCheck);
 
 		this.recordStatus.setValue(aFinanceType.getRecordStatus());
 		
@@ -1974,6 +1988,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		//LTV Check For Collateral
+		try {
+			aFinanceType.setFinLTVCheck(getComboboxValue(this.finLTVCheck));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 
 		if (!isOverdraft) {
 			showErrorDetails(wve, basicDetails);
@@ -3532,7 +3554,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.alwdIRRDetails.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_AlwIRRDetails.value"), null, true));
 			}
 		}
-
+		if (!this.finLTVCheck.isDisabled() && this.row_LTVCheck.isVisible()) {
+			this.finLTVCheck.setConstraint(new StaticListValidator(finLVTCheckList, Labels
+					.getLabel("label_FinanceTypeDialog_FinCollateralLTV.value")));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -3578,7 +3603,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.roundingTarget.setConstraint("");
 		this.costOfFunds.setConstraint("");
 		this.alwdIRRDetails.setConstraint("");
-		
+		this.finLTVCheck.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -3895,7 +3920,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.alwMaxDisbCheckReq.setDisabled(isTrue);
 		this.quickDisb.setDisabled(isTrue);
 		this.developerFinance.setDisabled(isTrue);
-
+		readOnlyComponent(isTrue, this.finLTVCheck);
+		
 		// Grace Details
 		this.cbfinGrcRvwRateApplFor.setDisabled(isTrue);
 		this.cbfinGrcRateType.setDisabled(isTrue);
@@ -4212,7 +4238,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.cpzAtUnPlannedEmi.setChecked(false);
 		this.cpzAtReAge.setChecked(false);
 		this.fddLockPeriod.setValue(0);
-		
+		this.finLTVCheck.setSelectedIndex(0);
 		if (ImplementationConstants.ALLOW_IRRCODES) {
 			this.alwdIRRDetails.setValue("");
 		}
@@ -6145,6 +6171,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (ImplementationConstants.ALLOW_IRRCODES) {
 			this.alwdIRRDetails.setErrorMessage("");
 		}
+		this.finLTVCheck.setErrorMessage("");
 		
 		logger.debug("Leaving");
 	}
@@ -6315,21 +6342,42 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Leaving  " + event.toString());
 
 	}
-
+	/**
+	 * 
+	 * @param event
+	 */
 	public void onCheck$finCollateralReq(Event event) {
 		logger.debug("Entering");
 		doCheckBoxChecked(this.finCollateralReq.isChecked(), this.finCollateralOvrride);
-		doSetCollateralProp();
+		doSetCollateralProp(this.fintypeLTVCheck);
+		
 		logger.debug("Leaving");
 	}
 
-	private void doSetCollateralProp() {
+	/**
+	 * In finance type check the Collateral required then collaterlType and Collateral Check is enabled.
+	 * 
+	 * @param finType
+	 */
+	private void doSetCollateralProp(FinanceType finType) {
 		logger.debug("Entering");
 		if (this.finCollateralReq.isChecked()) {
 			this.btnSearchCollateralType.setDisabled(isCompReadonly);
+			this.row_LTVCheck.setVisible(true);
+
+			if (finType != null && !StringUtils.equals(finType.getRecordType(), PennantConstants.RECORD_TYPE_NEW)
+					&& !PennantConstants.List_Select.equals(getComboboxValue(this.finLTVCheck))) {
+				if (StringUtils.isNotEmpty(finType.getFinLTVCheck())) {
+					readOnlyComponent(true, this.finLTVCheck);
+				}
+			}
 		} else {
 			this.btnSearchCollateralType.setDisabled(true);
+			this.row_LTVCheck.setVisible(false);
 			this.collateralType.setValue("");
+			if(!finLTVCheck.isDisabled()){
+				this.finLTVCheck.setSelectedIndex(0);
+			}
 		}
 		logger.debug("Leaving");
 	}

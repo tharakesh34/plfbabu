@@ -524,6 +524,15 @@
 														image="/images/icons/LOVSearch.png" />
 												</hbox>
 											</row>
+											<row id="row_LTVCheck" visible="false">
+												<label
+													id="label_FinanceTypeDialog_FinCollateralLTV"
+													value="${c:l('label_FinanceTypeDialog_FinCollateralLTV.value')}" />
+												<hbox>
+													<space spacing="2px"  sclass="mandatory"/>
+													<combobox id="finLTVCheck" width="200px"/>
+												</hbox>
+											</row>
 											<row id="row_ManualSchedule"
 												visible="true">
 												<label

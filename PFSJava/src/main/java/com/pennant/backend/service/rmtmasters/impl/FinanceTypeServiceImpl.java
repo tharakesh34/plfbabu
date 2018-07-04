@@ -1978,4 +1978,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		this.irrFinanceTypeDAO = irrFinanceTypeDAO;
 	}
 
+	@Override
+	public FinanceType getFinLtvCheckByFinType(String finType) {
+		return financeTypeDAO.getFinLtvCheckByFinType(finType);
+	}
+	
 }

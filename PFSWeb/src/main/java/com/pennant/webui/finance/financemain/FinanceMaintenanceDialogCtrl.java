@@ -2209,19 +2209,32 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							.getCollateralAssignments().isEmpty())) {
 
 				BigDecimal utilizedAmt = BigDecimal.ZERO;
-				for (FinanceDisbursement curDisb : getFinanceDetail().getFinScheduleData().getDisbursementDetails()) {
-					if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
-						continue;
+				
+				if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT
+						.equals(getFinanceDetail().getFinScheduleData().getFinanceType().getFinLTVCheck())) {
+					utilizedAmt = utilizedAmt.add(aFinanceMain.getFinAssetValue())
+							.add(aFinanceMain.getFeeChargeAmt().add(aFinanceMain.getInsuranceAmt()));
+				} else {
+					for (FinanceDisbursement curDisb : getFinanceDetail().getFinScheduleData()
+							.getDisbursementDetails()) {
+						if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
+							continue;
+						}
+						utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount())
+								.add(aFinanceMain.getFeeChargeAmt().add(aFinanceMain.getInsuranceAmt()));
 					}
-					utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount()).add(
-							aFinanceMain.getFeeChargeAmt().add(aFinanceMain.getInsuranceAmt()));
+					utilizedAmt = utilizedAmt.subtract(aFinanceMain.getDownPayment())
+							.subtract(aFinanceMain.getFinRepaymentAmount());
 				}
-				utilizedAmt = utilizedAmt.subtract(aFinanceMain.getDownPayment()).subtract(
-						aFinanceMain.getFinRepaymentAmount());
 
 				boolean isValid = getCollateralHeaderDialogCtrl().validCollateralValue(utilizedAmt);
 				if (!isValid) {
-					MessageUtil.showError(Labels.getLabel("label_CollateralAssignment_InSufficient"));
+					if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT
+							.equals(getFinanceDetail().getFinScheduleData().getFinanceType().getFinLTVCheck())) {
+						MessageUtil.showError(Labels.getLabel("label_CollateralAssignment_InSufficient_FinAmt"));
+					} else {
+						MessageUtil.showError(Labels.getLabel("label_CollateralAssignment_InSufficient"));
+					}
 					return;
 				}
 			}

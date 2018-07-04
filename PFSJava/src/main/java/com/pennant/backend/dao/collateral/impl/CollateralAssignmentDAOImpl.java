@@ -260,9 +260,11 @@ public class CollateralAssignmentDAOImpl extends BasisNextidDaoImpl<CollateralMo
 		
 		StringBuilder selectSql = new StringBuilder("Select Module, CA.Reference, Coalesce(FM.FinCcy,CM.CmtCcy) Currency, AssignPerc AssignedPerc, ");
 		selectSql.append(" BankValuation CollateralValue, TotAssignedPerc,  ");
-		selectSql.append("Coalesce(FinCurrAssetValue+FeeChargeAmt+InsuranceAmt-FinRepaymentAmount,CmtUtilizedAmount) UtilizedValue, ");
-		selectSql.append(" CmtExpDate , Coalesce(FinIsActive,Coalesce(CmtActive,0)) FinIsActive, TotalUtilized	from CollateralAssignment CA Left Join ");
+		selectSql.append("Coalesce(FinCurrAssetValue+FeeChargeAmt+InsuranceAmt-FinRepaymentAmount,CmtUtilizedAmount) FinCurrAssetValue, ");
+		selectSql.append("Coalesce(FinAssetValue+FeeChargeAmt+InsuranceAmt,CmtUtilizedAmount) FinAssetValue, ");
+		selectSql.append(" CmtExpDate , Coalesce(FM.FinIsActive,Coalesce(CmtActive,0)) FinIsActive, TotalUtilized,FT.FinLTVCheck from CollateralAssignment CA Left Join ");
 		selectSql.append(" FinanceMain FM on CA.Reference = FM.FinReference left join ");
+		selectSql.append(" RMTFinanceTypes FT on  FM.FINTYPE = FT.FINTYPE Left Join ");
 		selectSql.append(" Commitments CM on CM.CmtReference = CA.Reference ");
 		selectSql.append(" inner join CollateralSetUp CS on CS.CollateralRef = CA.CollateralRef ");
 		selectSql.append(" Left join ( Select CollateralRef, SUM(AssignPerc) TotAssignedPerc from CollateralAssignment group by CollateralRef) T ");

@@ -80,4 +80,6 @@ public interface FinanceTypeService {
 	
 	boolean getFinTypeExist(String finType, String type);
 	FinanceType getApprovedFinanceType(String finType);
+	
+	FinanceType getFinLtvCheckByFinType(String finType);
 }

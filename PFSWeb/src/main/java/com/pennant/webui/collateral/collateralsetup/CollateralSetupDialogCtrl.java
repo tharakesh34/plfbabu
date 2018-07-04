@@ -2500,8 +2500,15 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 				BigDecimal utilizedAmt = BigDecimal.ZERO;
 				if(assignmentDetail.getTotalUtilized() != null && assignmentDetail.getTotalUtilized().compareTo(BigDecimal.ZERO) > 0){
-					utilizedAmt = assignedvalue.multiply(assignmentDetail.getUtilizedValue()).divide(
-							assignmentDetail.getTotalUtilized(), 0, RoundingMode.HALF_DOWN);
+					
+					if(PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(assignmentDetail.getFinLTVCheck())){
+						
+						utilizedAmt = assignedvalue.multiply(assignmentDetail.getFinAssetValue()).divide(
+								assignmentDetail.getTotalUtilized(), 0, RoundingMode.HALF_DOWN);
+					}else{
+						utilizedAmt = assignedvalue.multiply(assignmentDetail.getFinCurrAssetValue()).divide(
+								assignmentDetail.getTotalUtilized(), 0, RoundingMode.HALF_DOWN);
+					}
 				}
 				lc = new Listcell(PennantApplicationUtil.amountFormate(utilizedAmt,  getCcyFormat()));
 				lc.setStyle("text-align:right;");

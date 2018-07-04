@@ -1,5 +1,5 @@
 /**
-f * Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -2586,22 +2586,27 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			createTab(AssetConstants.UNIQUE_ID_COLLATERAL, true);
 		} else {
 			final HashMap<String, Object> map = getDefaultArguments();
+			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 			if (ImplementationConstants.COLLATERAL_INTERNAL) {
 
 				map.put("collateralAssignmentList", getFinanceDetail().getCollateralAssignmentList());
 				map.put("assetTypeList", getFinanceDetail().getExtendedFieldRenderList());
-				map.put("finassetTypeList", getFinanceDetail().getFinAssetTypesList());
-				map.put("utilizedAmount",
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCurrAssetValue().subtract(
-								getFinanceDetail().getFinScheduleData().getFinanceMain().getFinRepaymentAmount()));
-				map.put("finType", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinType());
-				map.put("customerId", getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
+		
+
+				map.put("finassetTypeList", getFinanceDetail().getFinAssetTypesList());	
+				map.put("utilizedAmount",financeMain.getFinCurrAssetValue().subtract(financeMain.getFinRepaymentAmount()));
+				map.put("finAssetValue",financeMain.getFinAssetValue());
+				map.put("finType", financeMain.getFinType());
+				map.put("customerId", financeMain.getCustID());
 				map.put("assetsReq", true);
 				map.put("collateralReq", getFinanceDetail().getFinScheduleData().getFinanceType().isFinCollateralReq()
 						|| !getFinanceDetail().getCollateralAssignmentList().isEmpty());
 
 				map.put("assignCollateralRef", assignCollateralRef);
 
+				map.put("finLTVCheck", financeType.getFinLTVCheck());
+				map.put("finDivision", financeType.getFinDivision());
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CollateralHeaderDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_COLLATERAL), map);
 			} else {
@@ -2745,32 +2750,47 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (ImplementationConstants.COLLATERAL_INTERNAL) {
 				collateralHeaderDialogCtrl.doSetLabels(getFinBasicDetails());
 
-				int formatter = CurrencyUtil
-						.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+				FinanceMain  financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+				FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+				int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
+
 				BigDecimal utilizedAmt = BigDecimal.ZERO;
 
-				if (!getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescIsSchdGenerated()) {
-					utilizedAmt = PennantAppUtil
-							.unFormateAmount(this.finAmount.getActualValue().subtract(this.downPayBank.getActualValue())
-									.subtract(this.downPaySupl.getActualValue()), formatter)
-							.add(getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt())
-							.add(getFinanceDetail().getFinScheduleData().getFinanceMain().getInsuranceAmt());
-
-				} else {
-					for (FinanceDisbursement curDisb : getFinanceDetail().getFinScheduleData()
-							.getDisbursementDetails()) {
-						if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
-							continue;
-						}
-						utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount())
-								.add(curDisb.getFeeChargeAmt().add(curDisb.getInsuranceAmt()));
+				if (!financeMain.isLovDescIsSchdGenerated()) {
+					if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeType.getFinLTVCheck())) {
+						utilizedAmt = PennantAppUtil
+								.unFormateAmount((this.finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
+										? this.finAssetValue.getActualValue() : this.finAmount.getActualValue())
+												.subtract(this.downPayBank.getActualValue()).subtract(
+														this.downPaySupl.getActualValue()), formatter)
+								.add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
+					} else {
+						utilizedAmt = PennantAppUtil
+								.unFormateAmount(
+										this.finAmount.getActualValue().subtract(this.downPayBank.getActualValue())
+												.subtract(this.downPaySupl.getActualValue()), formatter)
+								.add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
 					}
 
-					utilizedAmt = utilizedAmt
-							.subtract(PennantAppUtil.unFormateAmount(
-									this.downPayBank.getActualValue().subtract(this.downPaySupl.getActualValue()),
-									formatter))
-							.subtract(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinRepaymentAmount());
+				} else {
+					if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeType.getFinLTVCheck())) {
+						utilizedAmt = utilizedAmt
+								.add(BigDecimal.ZERO.compareTo(financeMain.getFinAssetValue()) < 0
+										? financeMain.getFinAssetValue() : financeMain.getFinAmount())
+								.add(financeMain.getFeeChargeAmt().add(financeMain.getInsuranceAmt()));
+					} else {
+						for (FinanceDisbursement curDisb : getFinanceDetail().getFinScheduleData()
+								.getDisbursementDetails()) {
+							if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
+								continue;
+							}
+							utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount())
+									.add(curDisb.getFeeChargeAmt().add(curDisb.getInsuranceAmt()));
+						}
+						utilizedAmt = utilizedAmt.subtract(PennantAppUtil.unFormateAmount(
+								this.downPayBank.getActualValue().subtract(this.downPaySupl.getActualValue()), formatter))
+								.subtract(financeMain.getFinRepaymentAmount());
+					}
 				}
 
 				if (this.oldVar_utilizedAmount != utilizedAmt) {
@@ -6182,23 +6202,37 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				BigDecimal utilizedAmt = BigDecimal.ZERO;
 				if (!aFinanceMain.isLovDescIsSchdGenerated()) {
-					utilizedAmt = aFinanceMain.getFinAmount().subtract(aFinanceMain.getDownPayment())
-							.add(aFinanceMain.getFeeChargeAmt()).add(aFinanceMain.getInsuranceAmt());
-				} else {
-					for (FinanceDisbursement curDisb : aFinScheduleData.getDisbursementDetails()) {
-						if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
-							continue;
-						}
-						utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount())
-								.add(aFinanceMain.getFeeChargeAmt().add(aFinanceMain.getInsuranceAmt()));
+					if(PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(finType.getFinLTVCheck())){
+						utilizedAmt = aFinanceMain.getFinAssetValue().subtract(aFinanceMain.getDownPayment())
+								.add(aFinanceMain.getFeeChargeAmt()).add(aFinanceMain.getInsuranceAmt());
+					} else {
+						utilizedAmt = aFinanceMain.getFinAmount().subtract(aFinanceMain.getDownPayment())
+								.add(aFinanceMain.getFeeChargeAmt()).add(aFinanceMain.getInsuranceAmt());
 					}
-					utilizedAmt = utilizedAmt.subtract(aFinanceMain.getDownPayment())
-							.subtract(aFinanceMain.getFinRepaymentAmount());
-				}
+				} else {
+					if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(finType.getFinLTVCheck())) {
+						utilizedAmt = utilizedAmt.add(aFinanceMain.getFinAssetValue())
+								.add(aFinanceMain.getFeeChargeAmt().add(aFinanceMain.getInsuranceAmt()));
+					} else {
+						for (FinanceDisbursement curDisb : aFinScheduleData.getDisbursementDetails()) {
+							if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
+								continue;
+							}
+							utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount())
+									.add(aFinanceMain.getFeeChargeAmt().add(aFinanceMain.getInsuranceAmt()));
+						}
 
+						utilizedAmt = utilizedAmt.subtract(aFinanceMain.getDownPayment())
+								.subtract(aFinanceMain.getFinRepaymentAmount());
+					}
+				}
 				boolean isValid = collateralHeaderDialogCtrl.validCollateralValue(utilizedAmt);
 				if (!isValid) {
-					MessageUtil.showError(Labels.getLabel("label_CollateralAssignment_InSufficient"));
+					if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(finType.getFinLTVCheck())) {
+						MessageUtil.showError(Labels.getLabel("label_CollateralAssignment_InSufficient_FinAmt"));
+					} else {
+						MessageUtil.showError(Labels.getLabel("label_CollateralAssignment_InSufficient"));
+					}
 					return;
 				}
 			}
@@ -14473,11 +14507,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void onFulfill$finAmount(Event event) {
 		logger.debug("Entering " + event.toString());
-		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		getFinanceDetail().getFinScheduleData().getFinanceMain()
-				.setFinAmount(PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter));
+		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
+		financeMain.setFinAmount(PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter));
 
-		if (getFinanceDetail().getFinScheduleData().getFinanceType().isAllowDownpayPgm()) {
+		if (financeType.isAllowDownpayPgm()) {
 			setDownpaymentRulePercentage(false);
 			if (this.finAmount.getActualValue() != null
 					&& this.finAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
@@ -14486,6 +14521,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter),
 								getFinanceDetail().getFinScheduleData().getFinanceMain().getMinDownPayPerc()),
 						formatter));
+
+				this.downPayBank.setValue(PennantAppUtil.formateAmount(PennantAppUtil.getPercentageValue(
+						PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter),
+						financeMain.getMinDownPayPerc()), formatter));
 			} else {
 				this.downPayBank.setValue(BigDecimal.ZERO);
 			}
@@ -14508,13 +14547,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (collateralHeaderDialogCtrl != null) {
 
-			BigDecimal UtilizedAmt = PennantAppUtil
-					.unFormateAmount(this.finAmount.getActualValue().subtract(this.downPayBank.getActualValue())
-							.subtract(this.downPaySupl.getActualValue()), formatter)
-					.add(getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt())
-					.add(getFinanceDetail().getFinScheduleData().getFinanceMain().getInsuranceAmt());
-
+			BigDecimal UtilizedAmt = BigDecimal.ZERO;
+			if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeType.getFinLTVCheck())) {
+				UtilizedAmt = PennantAppUtil
+						.unFormateAmount((this.finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
+								? this.finAssetValue.getActualValue() : this.finAmount.getActualValue())
+										.subtract(this.downPayBank.getActualValue()).subtract(
+												this.downPaySupl.getActualValue()),
+								formatter)
+						.add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
+			} else {
+				UtilizedAmt = PennantAppUtil
+						.unFormateAmount(this.finAmount.getActualValue().subtract(this.downPayBank.getActualValue())
+								.subtract(this.downPaySupl.getActualValue()), formatter)
+						.add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
+			}
 			collateralHeaderDialogCtrl.updateShortfall(UtilizedAmt);
+
 		}
 
 		logger.debug("Leaving " + event.toString());
@@ -14525,11 +14574,30 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void onFulfill$finAssetValue(Event event) {
 		logger.debug("Entering");
-
+		
+		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner)) {
 			org_finAssetValue = getFinanceDetailService().getFinAssetValue(finReference.getValue());
 		}
-
+		if (collateralHeaderDialogCtrl != null) {
+			BigDecimal UtilizedAmt  = BigDecimal.ZERO;
+			if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeType.getFinLTVCheck())) {
+				UtilizedAmt = PennantAppUtil
+						.unFormateAmount((this.finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
+								? this.finAssetValue.getActualValue() : this.finAmount.getActualValue())
+										.subtract(this.downPayBank.getActualValue()).subtract(
+												this.downPaySupl.getActualValue()), formatter)
+						.add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
+			} else {
+				UtilizedAmt = PennantAppUtil
+						.unFormateAmount(this.finAmount.getActualValue().subtract(this.downPayBank.getActualValue())
+								.subtract(this.downPaySupl.getActualValue()), formatter)
+						.add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
+			}
+			collateralHeaderDialogCtrl.updateShortfall(UtilizedAmt);
+		}
 		logger.debug("Leaving");
 	}
 

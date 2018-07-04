@@ -13,6 +13,9 @@ public class AssignmentDetails {
 	private BigDecimal	totalUtilized;
 	private Date		cmtExpDate;
 	private boolean		finIsActive;
+	private BigDecimal	finCurrAssetValue;
+	private BigDecimal	finAssetValue;
+	private String		finLTVCheck;
 
 	public String getModule() {
 		return module;
@@ -73,6 +76,24 @@ public class AssignmentDetails {
 	}
 	public void setTotalUtilized(BigDecimal totalUtilized) {
 		this.totalUtilized = totalUtilized;
+	}
+	public BigDecimal getFinCurrAssetValue() {
+		return finCurrAssetValue;
+	}
+	public void setFinCurrAssetValue(BigDecimal finCurrAssetValue) {
+		this.finCurrAssetValue = finCurrAssetValue;
+	}
+	public BigDecimal getFinAssetValue() {
+		return finAssetValue;
+	}
+	public void setFinAssetValue(BigDecimal finAssetValue) {
+		this.finAssetValue = finAssetValue;
+	}
+	public String getFinLTVCheck() {
+		return finLTVCheck;
+	}
+	public void setFinLTVCheck(String finLTVCheck) {
+		this.finLTVCheck = finLTVCheck;
 	}
 
 }
