@@ -565,7 +565,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getTotalLiability() {
-		return totalLiability;
+		return totalLiability == null ? BigDecimal.ZERO : totalLiability;
 	}
 
 	public void setTotalLiability(BigDecimal totalLiability) {
@@ -573,7 +573,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getLoanAmountRequested() {
-		return loanAmountRequested;
+		return loanAmountRequested == null ? BigDecimal.ZERO : loanAmountRequested;
 	}
 
 	public void setLoanAmountRequested(BigDecimal loanAmountRequested) {
@@ -581,7 +581,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getOriginalLoanEligibility() {
-		return originalLoanEligibility;
+		return originalLoanEligibility == null ? BigDecimal.ZERO : originalLoanEligibility;
 	}
 
 	public void setOriginalLoanEligibility(BigDecimal originalLoanEligibility) {
@@ -613,7 +613,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getFoirEligibility() {
-		return foirEligibility;
+		return foirEligibility == null ? BigDecimal.ZERO:foirEligibility;
 	}
 
 	public void setFoirEligibility(BigDecimal foirEligibility) {
@@ -621,7 +621,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getEmi() {
-		return emi;
+		return emi == null ? BigDecimal.ZERO:emi;
 	}
 
 	public void setEmi(BigDecimal emi) {
@@ -629,7 +629,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getLoanEligibility() {
-		return loanEligibility;
+		return loanEligibility == null ? BigDecimal.ZERO:loanEligibility;
 	}
 
 	public void setLoanEligibility(BigDecimal loanEligibility) {
@@ -637,7 +637,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getIrrEligibility() {
-		return irrEligibility;
+		return irrEligibility == null ? BigDecimal.ZERO:irrEligibility;
 	}
 
 	public void setIrrEligibility(BigDecimal irrEligibility) {
@@ -645,7 +645,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getOriginalTotalIncome() {
-		return originalTotalIncome;
+		return originalTotalIncome == null ? BigDecimal.ZERO:originalTotalIncome;
 	}
 
 	public void setOriginalTotalIncome(BigDecimal originalTotalIncome) {
@@ -653,7 +653,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getOriginalTotalLiability() {
-		return originalTotalLiability;
+		return originalTotalLiability == null ? BigDecimal.ZERO:originalTotalLiability;
 	}
 
 	public void setOriginalTotalLiability(BigDecimal originalTotalLiability) {
