@@ -15220,7 +15220,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isNotBlank(financeMain.getFinPurpose())) {
 			finPurpose = financeMain.getFinPurpose();
 		}
-		detail.getCustomerEligibilityCheck().addExtendedField("finPurpose", finPurpose);
+		detail.getCustomerEligibilityCheck().addExtendedField("finPurpose", this.finPurpose.getValue());
 
 		// ### 08-05-2018 - End- Development Item 81
 
@@ -15296,6 +15296,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Obligation_Internal", internal_Obligation);
 		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Obligation_External", external_Obligation);
+
+		if(pSLDetailDialogCtrl!=null){
+			detail.getCustomerEligibilityCheck().setExtendedFields(pSLDetailDialogCtrl.getRules());
+		}else{
+			detail.getCustomerEligibilityCheck().addExtendedField("ASL_ELIGABLE_AMOUNT", 0);
+		}
+
+		// FOIR  (Total Obligation /Total Income)*100
+		BigDecimal foir= BigDecimal.ZERO;
+		BigDecimal total = internal_Obligation.add(external_Obligation);
+		
+		
+		if(total.compareTo(BigDecimal.ZERO)!=0 && customer.getCustTotalIncome().compareTo(BigDecimal.ZERO)!=0 ){
+			foir= total.divide(customer.getCustTotalIncome(),4,RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+		}
+			
+		detail.getCustomerEligibilityCheck().addExtendedField("FOIR_Ratio", foir);
 
 		setFinanceDetail(detail);
 		logger.debug("Leaving");
