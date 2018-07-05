@@ -7611,6 +7611,6 @@ UNION ALL
 	</sql>
 </changeSet>
 	
->>>>>>> .r92298
+
 </databaseChangeLog>
 	
