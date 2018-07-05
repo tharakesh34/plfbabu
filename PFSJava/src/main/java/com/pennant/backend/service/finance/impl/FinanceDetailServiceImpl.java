@@ -182,7 +182,6 @@ import com.pennant.backend.model.finance.RolledoverFinanceHeader;
 import com.pennant.backend.model.finance.TATDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
-import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -2526,7 +2525,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			 * save sampling details
 			 */
 
-			if (financeMain.isSamplingRequired() && !financeDetail.isActionSave()) {
+			if (financeMain.isSamplingRequired() && !financeDetail.isActionSave()
+					&& samplingService.isExist(financeDetail.getFinScheduleData().getFinReference(), "_view")) {
 				Sampling sampling = new Sampling();
 				sampling.setKeyReference(financeMain.getFinReference());
 				sampling.setLastMntBy(financeMain.getLastMntBy());
