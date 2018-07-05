@@ -140,62 +140,6 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 	}
 	
 	@Override
-	public CustomerExtLiability getLiability(CustomerExtLiability liability, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		if (type.contains("view")) {
-			sql.append(" select id, linkId, seqno, custid, custcif, custshrtname,");
-			sql.append(" fintype, fintypedesc, findate, loanbank, loanbankname,");
-			sql.append(" rateofinterest, tenure, originalamount, instalmentamount,");
-			sql.append(" outstandingbalance, balancetenure, bounceinstalments, principaloutstanding,");
-			sql.append(" overdueamount, finstatus, custstsdescription,");
-			sql.append(" foir, source, checkedby, securitydetails, loanpurpose, loanpurposedesc,");
-			sql.append(" repaybank, repayfrombankname,");
-			sql.append(" version, lastMntOn, lastMntBy, recordStatus, roleCode, nextRoleCode,");
-			sql.append(" taskId, nextTaskId, recordType, workflowId");
-			sql.append(" from");
-			sql.append(" customer_ext_liabilities").append(type);
-			sql.append(" where custId = :custId and seqno = :seqno");
-		} else {
-			sql.append(" select id, el.linkId, seqno, cel.custid, custcif, custshrtname,");
-			sql.append(" el.fintype, fintypedesc, findate, loanbank, lb.bankname loanbankname,el.otherFinInstitute,");
-			sql.append(" rateofinterest, tenure, originalamount, instalmentamount,");
-			sql.append(" outstandingbalance, balancetenure, bounceinstalments, principaloutstanding,");
-			sql.append(" overdueamount, finstatus, custstsdescription,");
-			sql.append(" foir, source, checkedby, securitydetails, loanpurpose, loanpurposedesc,");
-			sql.append(" repaybank, rb.bankname repayfrombankname,");
-			sql.append(" el.version, el.lastMntOn, el.lastMntBy, el.recordStatus, el.roleCode, el.nextRoleCode,");
-			sql.append(" el.taskId, el.nextTaskId, el.recordType, el.workflowId");
-			sql.append(" from");
-			sql.append(" external_liabilities").append(type).append(" el");
-			sql.append(" inner join customer_ext_liabilities").append(type).append(" cel on cel.linkid = el.linkid");
-
-			sql.append(" inner join customers cu on cu.custid = cel.custid");
-			sql.append(" inner join bmtbankdetail lb on lb.bankcode = el.loanbank");
-			sql.append(" inner join otherbankfinancetype ft on ft.fintype = el.fintype");
-			sql.append(" inner join loanpurposes lp on lp.loanpurposecode = el.loanpurpose");
-			sql.append(" inner join bmtbankdetail rb on rb.bankcode = el.repaybank");
-			sql.append(" left join bmtcuststatuscodes cs on cs.custstscode = el.finstatus");
-			sql.append(" where cel.custId = :custId and seqno = :seqNo");
-		}
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liability);
-		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerExtLiability.class);
-
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
-	}
-	
-	@Override
 	public List<CustomerExtLiability> getLiabilities(long custId, String type) {
 
 		if (StringUtils.equalsIgnoreCase(type, "_temp")) {

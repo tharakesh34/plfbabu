@@ -15,8 +15,6 @@ public interface ExternalLiabilityDAO {
 	
 	void deleteByLinkId(Long linkId, String type);
 	
-	CustomerExtLiability getLiability(CustomerExtLiability liability, String type);
-	
 	List<CustomerExtLiability> getLiabilities(long custId, String type);
 
 	BigDecimal getTotalLiabilityByLinkId(Long liabilityLinkId);

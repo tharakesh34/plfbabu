@@ -12,8 +12,6 @@ public interface IncomeDetailDAO {
 
 	void delete(long id, String type);
 
-	CustomerIncome getCustomerIncomeById(CustomerIncome customerIncome, String type, String source);
-
 	BigDecimal getTotalIncomeByLinkId(long linkId);
 
 	BigDecimal getTotalIncomeByFinReference(String keyReference);
