@@ -2757,4 +2757,18 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="152" author="Kesav">
+		<sql>
+			Update 	GST_INVOICE_TXN_DETAILS T6 
+			Set 	FeeAmount = (
+			            Select 		T3.NetAmountOriginal from GST_INVOICE_TXN_DETAILS T1
+			            Inner JOIN 	GST_INVOICE_TXN T2 on T2.InvoiceId = T1.InvoiceId
+			            Inner JOIN 	FinFeeDetail T3 on T3.FinReference= T2.LoanAccountNo and T3.OriginationFee = 1
+			            inner Join 	FeeTypes T4 on T4.FeeTypeId = T3.FeetypeId and T1.FeeCode = T4.FeeTypeCode
+			            Inner Join 	FinTaxDetails T5 on T5.FeeId = T3.FeeId and T1.Cgst_Amt = T5.NetCgst 
+			    					and T1.Sgst_Amt = T5.NetSgst and T1.Ugst_amt = T5.NetUgst and T1.Igst_amt = T5.NetIgst
+			            Where 		T6.Id = T1.Id);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
