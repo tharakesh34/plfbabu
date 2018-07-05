@@ -82,14 +82,14 @@
 								<row>
 									<label id="label_FinApprovalStsInquiryDialog_CustDocType" value="${c:l('label_FinApprovalStsInquiryDialog_LoanType.value')}" />
 									<textbox id="custDocType" width="200px" maxlength="50" />
-										<label id="label_FinApprovalStsInquiryDialog_EmailID" value="${c:l('label_FinApprovalStsInquiryDialog_Currency.value')}" />
+										<label id="label_FinApprovalStsInquiryDialog_EmailID" value="${c:l('label_FinApprovalStsInquiryDialog_StartDate.value')}" />
 									<textbox id="emailID" width="200px" maxlength="50" />
 								
 								</row>
 								<row id="rowFinance">
-									<label id="label_FinApprovalStsInquiryDialog_CustID" value="${c:l('label_FinApprovalStsInquiryDialog_LoanAmount.value')}" />
+									<label id="label_FinApprovalStsInquiryDialog_CustID" value="${c:l('label_FinApprovalStsInquiryDialog_Currency.value')}" />
 									<textbox id="custID" width="200px" maxlength="19" />
-									<label id="label_FinApprovalStsInquiryDialog_MobileNo" value="${c:l('label_FinApprovalStsInquiryDialog_StartDate.value')}" />
+									<label id="label_FinApprovalStsInquiryDialog_MobileNo" value="${c:l('label_FinApprovalStsInquiryDialog_LoanAmount.value')}" />
 									<textbox id="mobileNo" width="200px" maxlength="50" />
 								</row>
 								<row>
