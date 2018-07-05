@@ -2411,4 +2411,8 @@
 			inner join customers cu on cu.custid = cl.custid
 		</createView>
 	</changeSet>
+	<changeSet id="18" author="murthy.y">
+		<addUniqueConstraint tableName="sampling_temp" columnNames="keyReference"/>
+		<addUniqueConstraint tableName="sampling" columnNames="keyReference"/>
+	</changeSet>
 </databaseChangeLog>
