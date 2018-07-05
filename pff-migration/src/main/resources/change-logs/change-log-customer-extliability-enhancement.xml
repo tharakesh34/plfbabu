@@ -627,7 +627,7 @@
 									
 				delete from link_cust_liabilities;
 				insert into link_cust_liabilities select linkid, ROW_NUMBER() OVER (ORDER BY linkid)
-				from (select distinct linkid from  customer_ext_liabilities_view) t;
+				from (select distinct linkid from  external_liabilities_view) t;
 								
 				update external_liabilities t
 				set linkid =  m.linkid
