@@ -573,9 +573,9 @@ public class PennantJavaUtil {
 				new String[] { "BMTIdentityType", "BMTIdentityType_AView" }, masterWF, new String[] { "IdentityType",
 						"IdentityDesc" }, null, 300));
 
-		ModuleUtil.register("IncomeType", new ModuleMapping("IncomeType", IncomeType.class, new String[] {
-				"BMTIncomeTypes", "BMTIncomeTypes_AView" }, masterWF, new String[] { "IncomeTypeCode", "IncomeTypeDesc" },
-				new Object[][] { { "IncomeTypeIsActive", "0", 1 } }, 400));
+		ModuleUtil.register("IncomeExpense", new ModuleMapping("IncomeType", IncomeType.class, new String[] {
+				"BMTIncomeTypes", "BMTIncomeTypes_AView" }, masterWF, new String[] { "IncomeTypeCode","IncomeTypeDesc",
+				"lovDescCategoryName", "IncomeExpense" }, new Object[][] { { "IncomeTypeIsActive", "0", 1 } }, 500));
 
 		ModuleUtil.register("IncomeExpense", new ModuleMapping("IncomeType", IncomeType.class, new String[] {
 				"BMTIncomeTypes", "BMTIncomeTypes_AView" }, masterWF, new String[] { "IncomeTypeDesc",
