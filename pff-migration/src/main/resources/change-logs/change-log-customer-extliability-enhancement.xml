@@ -450,7 +450,7 @@
 			 from external_liabilities_aview el 
 			 inner join link_cust_liabilities cl on cl.linkid = el.linkid
 			 inner join customers cu on cu.custid = cl.custid
-			 where (not exists (select 1 from external_liabilities_view where linkid = el.linkid ));
+			 where (not exists (select 1 from external_liabilities_view where id = el.linkid ));
 		</createView>
 	</changeSet>
 	<changeSet id="9" author="Vinay">
@@ -555,6 +555,40 @@
 			left join bmtbankdetail rb on rb.bankcode=el.repaybank
 			left join bmtcuststatuscodes cs on cs.custstscode = el.finstatus
 			inner join (select custid,  custcif, custshrtname from customers union  select custid,  custcif, custshrtname from customers_temp) cu on cu.custid = cl.custid
+		</createView>
+	</changeSet>
+	<changeSet id="10.5" author="murthy.y">
+		<createView viewName="customer_ext_liabilities_view" replaceIfExists="true">
+			select el.id, el.linkid, el.seqno ,el.fintype ,el.findate ,el.loanbank ,el.rateOfInterest
+			,el.tenure ,el.originalamount ,el.instalmentamount ,el.outstandingbalance ,el.balancetenure ,el.bounceinstalments ,el.principaloutstanding
+			,el.overdueamount ,el.finstatus ,el.foir ,el.source ,el.checkedby ,el.securitydetails ,el.loanpurpose ,el.repaybank
+			,el.version ,el.lastmntby ,el.lastmnton ,el.recordstatus ,el.rolecode ,el.nextrolecode ,el.taskid ,el.nexttaskid ,el.recordtype ,el.workflowid
+			,lb.bankname loanbankname ,ft.fintypedesc ,cs.custstsdescription ,rb.bankname repayfrombankname ,lp.loanpurposedesc, el.otherFinInstitute,el.balTransfer,  
+			cu.custid, cu.custcif, cu.custshrtname
+			from external_liabilities_temp el 
+			inner join link_cust_liabilities cl on cl.linkid = el.linkid
+			inner join bmtbankdetail lb on lb.bankcode=el.loanbank
+			inner join otherbankfinancetype ft on ft.fintype = el.fintype
+			left join loanpurposes lp on lp.loanpurposecode=el.loanpurpose
+			left join bmtbankdetail rb on rb.bankcode=el.repaybank
+			left join bmtcuststatuscodes cs on cs.custstscode = el.finstatus
+			inner join (select custid,  custcif, custshrtname from customers union  select custid,  custcif, custshrtname from customers_temp) cu on cu.custid = cl.custid
+			union all
+			select el.id, el.linkid, el.seqno ,el.fintype ,el.findate ,el.loanbank ,el.rateOfInterest
+			,el.tenure ,el.originalamount ,el.instalmentamount ,el.outstandingbalance ,el.balancetenure ,el.bounceinstalments ,el.principaloutstanding
+			,el.overdueamount ,el.finstatus ,el.foir ,el.source ,el.checkedby ,el.securitydetails ,el.loanpurpose ,el.repaybank
+			,el.version ,el.lastmntby ,el.lastmnton ,el.recordstatus ,el.rolecode ,el.nextrolecode ,el.taskid ,el.nexttaskid ,el.recordtype ,el.workflowid
+			,lb.bankname loanbankname ,ft.fintypedesc ,cs.custstsdescription ,rb.bankname repayfrombankname ,lp.loanpurposedesc, el.otherFinInstitute,el.balTransfer, 
+			cu.custid, cu.custcif, cu.custshrtname
+			from external_liabilities el 
+			inner join link_cust_liabilities cl on cl.linkid = el.linkid
+			inner join bmtbankdetail lb on lb.bankcode=el.loanbank
+			inner join otherbankfinancetype ft on ft.fintype = el.fintype
+			left join loanpurposes lp on lp.loanpurposecode=el.loanpurpose
+			left join bmtbankdetail rb on rb.bankcode=el.repaybank
+			left join bmtcuststatuscodes cs on cs.custstscode = el.finstatus
+			inner join (select custid,  custcif, custshrtname from customers union  select custid,  custcif, custshrtname from customers_temp) cu on cu.custid = cl.custid
+			where (not exists (select 1 from external_liabilities_temp where id = el.id ));
 		</createView>
 	</changeSet>
 </databaseChangeLog>
