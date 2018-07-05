@@ -289,9 +289,14 @@
 				insert into Income_details
 				select ROW_NUMBER() OVER (ORDER BY custid), custid, custincometype, incomeexpense, category, custincome, margin, null, null, null, null, null, version, lastmntby, lastmnton, recordStatus, roleCode, nextRoleCode, taskId, nextTaskId, recordType, workflowId from customerincomes;
 								
+				update income_details_temp t
+				set id =  m.id
+				from income_details m
+				where m.linkid = t.linkid and m.incometype = t.incometype and m.incomeexpense = t.incomeexpense and m.category = t.category;
+				
 				delete from link_cust_incomes;
 				insert into link_cust_incomes select linkid, ROW_NUMBER() OVER (ORDER BY linkid) 
-				from (select distinct linkid from  income_details_view) t;
+				from (select linkid from income_details union select linkid from income_details_temp) t;
 				
 				update income_details_temp t
 				set linkid =  m.linkid
