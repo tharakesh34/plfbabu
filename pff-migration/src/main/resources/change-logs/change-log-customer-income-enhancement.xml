@@ -305,7 +305,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="9.0" author="murthy.y">
+	<changeSet id="9.1" author="murthy.y">
 		<sql>
 			<![CDATA[
 				 select setval('SeqIncomeDetails',(select Max(id) from income_details_view));
