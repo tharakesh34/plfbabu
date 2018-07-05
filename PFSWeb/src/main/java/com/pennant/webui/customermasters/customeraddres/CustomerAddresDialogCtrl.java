@@ -154,6 +154,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	private String moduleType="";
     private String userRole="";
     private boolean isFinanceProcess = false;
+    private boolean workflow = false;
     
     private final List<ValueLabel> CustomerPriorityList = PennantStaticListUtil
 			.getCustomerEmailPriority();
@@ -246,6 +247,11 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		if (arguments.containsKey("isFinanceProcess")) {
 			isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 		}
+		
+		if (getCustomerDialogCtrl() != null) {
+			workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
+		
 		doLoadWorkFlow(this.customerAddres.isWorkflow(),
 				this.customerAddres.getWorkflowId(),this.customerAddres.getNextTaskId());
 		/* set components visible dependent of the users rights */
@@ -1135,6 +1141,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 					aCustomerAddres.setRecordType(PennantConstants.RCD_ADD);
 				}else{
 					tranType = PennantConstants.TRAN_UPD;
+					if(workflow){
+						aCustomerAddres.setNewRecord(true);
+					}
 				}
 
 				if(StringUtils.isBlank(aCustomerAddres.getRecordType())){

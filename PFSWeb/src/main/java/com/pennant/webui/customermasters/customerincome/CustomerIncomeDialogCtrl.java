@@ -152,6 +152,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	private String inputSource = "customer";
 	private String finReference;
 	private Set<String> coApplicants;
+	private boolean workflow = false;
 
 	/**
 	 * default constructor.<br>
@@ -241,6 +242,10 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerIncomeDialog");
 			}
+		}
+		
+		if (getCustomerDialogCtrl() != null) {
+			workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
 		
 		if (arguments.containsKey("samplingDialogCtrl")) {
@@ -930,6 +935,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 					aCustomerIncome.setRecordType(PennantConstants.RCD_ADD);
 				}else{
 					tranType = PennantConstants.TRAN_UPD;
+					if(workflow) {
+						aCustomerIncome.setNewRecord(true);
+					}
 				}
 
 				if(StringUtils.isBlank(aCustomerIncome.getRecordType())){

@@ -167,6 +167,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	private String userRole = "";
 	private int finFormatter;
 	private boolean isFinanceProcess = false;
+	private boolean workflow = false;
 	Date appDate = DateUtility.getAppDate();
 	Date appStartDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE);
 	private String inputSource = "customer";
@@ -251,6 +252,10 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 					userRole = arguments.get("roleCode").toString();
 					getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerExtLiabilityDialog");
 				}
+			}
+			
+			if (getCustomerDialogCtrl() != null) {
+				workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 			}
 			
 			if (arguments.containsKey("samplingDialogCtrl")) {
@@ -1332,6 +1337,9 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 					aCustomerExtLiability.setRecordType(PennantConstants.RCD_ADD);
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
+					if(workflow) {
+						aCustomerExtLiability.setNewRecord(true);
+					}
 				}
 
 				if (StringUtils.isBlank(aCustomerExtLiability.getRecordType())) {

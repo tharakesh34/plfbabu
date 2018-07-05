@@ -138,6 +138,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	private String moduleType = "";
 	private String userRole = "";
 	private boolean isFinanceProcess = false;
+	private boolean workflow = false;
 	protected Row row_phoneNumber;
 	private final List<ValueLabel> CustomerPriorityList = PennantStaticListUtil
 			.getCustomerEmailPriority();
@@ -226,6 +227,11 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 			if (arguments.containsKey("isFinanceProcess")) {
 				isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 			}
+			
+			if (getCustomerDialogCtrl() != null) {
+				workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+			}
+			
 			doLoadWorkFlow(this.customerPhoneNumber.isWorkflow(), this.customerPhoneNumber.getWorkflowId(),
 					this.customerPhoneNumber.getNextTaskId());
 			/* set components visible dependent of the users rights */
@@ -841,6 +847,9 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 					aCustomerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
+					if (workflow) {
+						aCustomerPhoneNumber.setNewRecord(true);
+					}
 				}
 
 				if (StringUtils.isBlank(aCustomerPhoneNumber.getRecordType())) {
