@@ -275,6 +275,9 @@
 			inner join (select custid, custcif, custshrtname, custbaseccy from customers union  select custid,  custcif, custshrtname, custbaseccy from customers_temp) cu on cu.custid = ci.custid
 		</createView>
 	</changeSet>
+	<changeSet id="9.0" author="murthy.y">
+		<dropForeignKeyConstraint baseTableName="link_cust_incomes" constraintName="fk_link_cust_incomes_custid"/>
+	</changeSet>
 	<!-- <changeSet id="9" author="murthy.y">
 		<sql>
 			<![CDATA[
