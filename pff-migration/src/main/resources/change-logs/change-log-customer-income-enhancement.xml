@@ -275,4 +275,39 @@
 			inner join (select custid, custcif, custshrtname, custbaseccy from customers union  select custid,  custcif, custshrtname, custbaseccy from customers_temp) cu on cu.custid = ci.custid
 		</createView>
 	</changeSet>
+	<!-- <changeSet id="9" author="murthy.y">
+		<sql>
+			<![CDATA[
+				delete from Income_details_temp;
+				insert into Income_details_temp
+				select ROW_NUMBER() OVER (ORDER BY custid), custid, custincometype, incomeexpense, category, custincome, margin, null, null, null, null, null, version, lastmntby, lastmnton, recordStatus, roleCode, nextRoleCode, taskId, nextTaskId, recordType, workflowId from customerincomes_temp;
+				
+				delete from Income_details;
+				insert into Income_details
+				select ROW_NUMBER() OVER (ORDER BY custid), custid, custincometype, incomeexpense, category, custincome, margin, null, null, null, null, null, version, lastmntby, lastmnton, recordStatus, roleCode, nextRoleCode, taskId, nextTaskId, recordType, workflowId from customerincomes;
+								
+				delete from link_cust_incomes;
+				insert into link_cust_incomes select linkid, ROW_NUMBER() OVER (ORDER BY linkid) 
+				from (select distinct linkid from  income_details_view) t;
+				
+				update income_details_temp t
+				set linkid =  m.linkid
+				from link_cust_incomes m
+				where m.custid = t.linkid;
+				
+				update income_details t
+				set linkid =  m.linkid
+				from link_cust_incomes m
+				where m.custid = t.linkid;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="9.0" author="murthy.y">
+		<sql>
+			<![CDATA[
+				 select setval('SeqIncomeDetails',(select Max(id) from income_details_view));
+				 select setval('SeqIncomeLink',(select Max(linkid) from link_cust_incomes));
+			]]>
+		</sql>
+	</changeSet> -->
 </databaseChangeLog>

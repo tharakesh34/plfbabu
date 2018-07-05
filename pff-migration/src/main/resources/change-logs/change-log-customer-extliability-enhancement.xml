@@ -595,7 +595,7 @@
 		<modifyDataType tableName="external_liabilities" columnName="rateOfInterest" newDataType="decimal(18,0)"/>
 		<modifyDataType tableName="external_liabilities_temp" columnName="rateOfInterest" newDataType="decimal(18,0)"/>
 	</changeSet>
-	<changeSet id="12.1" author="murthy.y">
+	<!-- <changeSet id="12.1" author="murthy.y">
 		<sql>
 			<![CDATA[
 				delete from external_liabilities_temp;
@@ -645,7 +645,8 @@
 		<sql>
 			<![CDATA[
 				select setval('SeqExternalLiabilities',(select Max(id) from external_liabilities_view));
+				select setval('SeqExternalLiabilitiLink',(select Max(linkid) from link_cust_incomes));
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 </databaseChangeLog>
