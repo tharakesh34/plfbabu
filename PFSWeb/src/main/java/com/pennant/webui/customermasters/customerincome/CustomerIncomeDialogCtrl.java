@@ -808,7 +808,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		this.custCIF.setReadonly(true);
 		this.custID.setReadonly(isReadOnly("CustomerIncomeDialog_custID"));
 		this.custIncome.setReadonly(isReadOnly("CustomerIncomeDialog_custIncome"));
-
+		this.margin.setReadonly(isReadOnly("CustomerIncomeDialog_custIncome"));
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -861,7 +862,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		this.custIncomeType.setReadonly(true);
 		this.custIncome.setReadonly(true);
 		this.jointCust.setDisabled(true);
-
+		this.margin.setReadonly(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
