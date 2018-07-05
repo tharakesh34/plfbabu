@@ -1562,12 +1562,14 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				
 				Listitem item = new Listitem();
 				Listcell lc;
-				String taxComponent = "Not Applicable";
+				String taxComponent = null;
 				
 				if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())) {
 					taxComponent = Labels.getLabel("label_FeeTypeDialog_Exclusive");
 				} else if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, finFeeDetail.getTaxComponent())) {
 					taxComponent = Labels.getLabel("label_FeeTypeDialog_Inclusive");
+				} else {
+					taxComponent = Labels.getLabel("label_GST_NotApplicable");
 				}
 				
 				String feeType = finFeeDetail.getFeeTypeDesc() + " - (" + taxComponent + ")";
