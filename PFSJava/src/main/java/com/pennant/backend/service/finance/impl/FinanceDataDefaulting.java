@@ -299,7 +299,8 @@ public class FinanceDataDefaulting {
 			if (StringUtils.isNotBlank(finMain.getGrcSchdMthd())) {
 				if (!StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_NOPAY)
 						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFT)
-						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_GRCENDPAY)) {
+						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_GRCENDPAY)
+						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCAP)) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Grace";
 					valueParm[1] = finMain.getGrcSchdMthd();

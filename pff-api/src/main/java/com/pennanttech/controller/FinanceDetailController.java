@@ -337,7 +337,11 @@ public class FinanceDetailController extends SummaryDetailService {
 		}
 		// fetch finType fees details
 		String finEvent = "";
-		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent, null);
+		boolean enquiry=true;
+		if(financeDetail.getFinScheduleData().getFinFeeDetailList()!=null) {
+			enquiry=false;
+		} 
+		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent, null, enquiry);
 		
 		// Step Policy Details
 		if(financeMain.isStepFinance()) {

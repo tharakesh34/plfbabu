@@ -747,7 +747,11 @@ public class CreateFinanceController extends SummaryDetailService {
 		
 		// execute fee charges
 		String finEvent = "";
-		executeFeeCharges(financeDetail, finEvent);
+		boolean enquiry=true;
+		if(financeDetail.getFinScheduleData().getFinFeeDetailList()!=null) {
+			enquiry=false;
+		} 
+		executeFeeCharges(financeDetail, finEvent, enquiry);
 
 		if(financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
 			for(FinFeeDetail feeDetail: financeDetail.getFinScheduleData().getFinFeeDetailList()) {
@@ -999,16 +1003,16 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 	}
 
-	private void executeFeeCharges(FinanceDetail financeDetail, String eventCode)
+	private void executeFeeCharges(FinanceDetail financeDetail, String eventCode,boolean enquiry)
 			throws IllegalAccessException, InvocationTargetException {
 		FinScheduleData schData = financeDetail.getFinScheduleData();
 		if (CollectionUtils.isEmpty(schData.getFinFeeDetailList())) {
 			if (StringUtils.isBlank(eventCode)) {
 				eventCode = PennantApplicationUtil.getEventCode(schData.getFinanceMain().getFinStartDate());
 			}
-			feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, null);
+			feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, null,enquiry);
 		} else {
-			feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, null);
+			feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, null,enquiry);
 		}
 		if (financeDetail.isStp()) {
 			for (FinFeeDetail feeDetail : schData.getFinFeeDetailList()) {

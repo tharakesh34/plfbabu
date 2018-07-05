@@ -2272,14 +2272,18 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				}
 
 				// validate address
-				City city = cityDAO.getCityById(coOwnerDetail.getAddrCountry(), coOwnerDetail.getAddrProvince(),
-						coOwnerDetail.getAddrCity(), "");
-				if (city == null) {
-					String[] valueParm = new String[2];
-					valueParm[0] = coOwnerDetail.getAddrProvince();
-					valueParm[1] = coOwnerDetail.getAddrCountry();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
-				}
+					if (!coOwnerDetail.isBankCustomer()) {
+
+						City city = cityDAO.getCityById(coOwnerDetail.getAddrCountry(), coOwnerDetail.getAddrProvince(),
+								coOwnerDetail.getAddrCity(), "");
+						if (city == null) {
+							String[] valueParm = new String[2];
+							valueParm[0] = coOwnerDetail.getAddrProvince();
+							valueParm[1] = coOwnerDetail.getAddrCountry();
+							auditDetail
+									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+						}
+					}
 			}
 		}
 

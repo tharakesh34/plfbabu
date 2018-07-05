@@ -61,7 +61,7 @@ public class FeeDetailService {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private void executeFeeCharges(FinanceDetail financeDetail, boolean isOriginationFee, FinServiceInstruction finServiceInst) 
+	private void executeFeeCharges(FinanceDetail financeDetail, boolean isOriginationFee, FinServiceInstruction finServiceInst,boolean enquiry) 
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -74,7 +74,7 @@ public class FeeDetailService {
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
 		setFinFeeDetailList(convertToFinanceFees(financeDetail, finReference));
 		List<FinFeeDetail> finTypeFees = getFinFeeDetailList();
-		List<FinFeeDetail> actualFinFeeList = prepareActualFinFees(finTypeFees, finScheduleData.getFinFeeDetailList());
+		List<FinFeeDetail> actualFinFeeList = prepareActualFinFees(finTypeFees, finScheduleData.getFinFeeDetailList());//TODO Set Actual Amount Origianl values
 		setFinFeeDetailList(actualFinFeeList);
 		
 		// Organize Fee detail changes
@@ -96,11 +96,11 @@ public class FeeDetailService {
 		
 		// Execute fee rules if exists
 		if (feeRuleCodes.size() > 0) {
-			doExecuteFeeRules(financeDetail, finServiceInst, finScheduleData, feeRuleCodes);
+			doExecuteFeeRules(financeDetail, finServiceInst, finScheduleData, feeRuleCodes, enquiry);
 		}
 		
 		// calculate fee percentage if exists
-		calculateFeePercentageAmount(finScheduleData, financeDetail);
+		calculateFeePercentageAmount(finScheduleData, financeDetail, enquiry);
 		
 		// Validate Provided fee details with configured fee details
 		validateFeeConfig(getFinFeeDetailList(), finScheduleData);
@@ -308,7 +308,7 @@ public class FeeDetailService {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public void doProcessFeesForInquiry(FinanceDetail financeDetail, String finEvent, FinServiceInstruction finServiceInst) 
+	public void doProcessFeesForInquiry(FinanceDetail financeDetail, String finEvent, FinServiceInstruction finServiceInst, boolean enquiry) 
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -358,11 +358,11 @@ public class FeeDetailService {
 
 		// Execute fee rules if exists
 		if (feeRuleCodes.size() > 0) {
-			doExecuteFeeRules(financeDetail, finServiceInst, finScheduleData, feeRuleCodes);
+			doExecuteFeeRules(financeDetail, finServiceInst, finScheduleData, feeRuleCodes, enquiry);
 		}
 
 		// calculate fee percentage if exists
-		calculateFeePercentageAmount(finScheduleData, financeDetail);
+		calculateFeePercentageAmount(finScheduleData, financeDetail, enquiry);
 		
 		// Calculating GST
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
@@ -427,7 +427,7 @@ public class FeeDetailService {
 	}
 
 	private void doExecuteFeeRules(FinanceDetail financeDetail, FinServiceInstruction finServiceInst,
-			FinScheduleData finScheduleData, List<String> feeRuleCodes) {
+			FinScheduleData finScheduleData, List<String> feeRuleCodes, boolean enquiry) {
 		
 		List<Rule> feeRules = ruleService.getRuleDetailList(feeRuleCodes, RuleConstants.MODULE_FEES, finScheduleData.getFeeEvent());
 		if (feeRules != null && !feeRules.isEmpty()) {
@@ -500,12 +500,14 @@ public class FeeDetailService {
 					this.finFeeDetailService.processGSTCalForRule(finFeeDetail, feeResult, financeDetail, branchCode);
 				}  else {
 					
-					if (!finFeeDetail.isFeeModified()) {
+					/*if (!finFeeDetail.isFeeModified()) {
 						finFeeDetail.setActualAmountOriginal(feeResult);
 						finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
 						finFeeDetail.setActualAmount(feeResult);
+					}*/
+					if (enquiry) {
+						finFeeDetail.setActualAmount(feeResult);
 					}
-					
 					finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount()).
 							subtract(finFeeDetail.getWaivedAmount()));
 				}
@@ -531,7 +533,7 @@ public class FeeDetailService {
 		return finTypeFees;
 	}
 
-	private void calculateFeePercentageAmount(FinScheduleData finScheduleData, FinanceDetail financeDetail) {
+	private void calculateFeePercentageAmount(FinScheduleData finScheduleData, FinanceDetail financeDetail, boolean enquiry) {
 		
 		if (CollectionUtils.isNotEmpty(getFinFeeDetailList())) {
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
@@ -550,9 +552,12 @@ public class FeeDetailService {
 					if (finFeeDetail.isTaxApplicable()) {	//if GST applicable
 						this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee, financeDetail, branchCode);
 					} else {
-						if (!finFeeDetail.isFeeModified()) {
+						/*if (!finFeeDetail.isFeeModified()) {
 							finFeeDetail.setActualAmountOriginal(calPercentageFee);
 							finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
+							finFeeDetail.setActualAmount(calPercentageFee);
+						}*/
+						if (enquiry) {
 							finFeeDetail.setActualAmount(calPercentageFee);
 						}
 						finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount()).subtract(finFeeDetail.getWaivedAmount()));
@@ -734,7 +739,7 @@ public class FeeDetailService {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public void doExecuteFeeCharges(FinanceDetail financeDetail, String finEvent, FinServiceInstruction finServiceInst) 
+	public void doExecuteFeeCharges(FinanceDetail financeDetail, String finEvent, FinServiceInstruction finServiceInst, boolean enquiry) 
 			throws IllegalAccessException, InvocationTargetException {
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		boolean isOriginationFee = false;
@@ -767,7 +772,7 @@ public class FeeDetailService {
 				}
 			}
 		}
-		executeFeeCharges(financeDetail, isOriginationFee, finServiceInst);
+		executeFeeCharges(financeDetail, isOriginationFee, finServiceInst, enquiry);
 	}
 	
 	private String getUniqueID(FinFeeDetail finFeeDetail) {

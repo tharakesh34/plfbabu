@@ -233,14 +233,14 @@ public class FinServiceInstController extends SummaryDetailService {
 		if (finServiceInst.getFinFeeDetails() != null) {
 			if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_INQUIRY)
 					&& (finServiceInst.getFinFeeDetails() == null || finServiceInst.getFinFeeDetails().isEmpty())) {
-				feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, finServiceInst);
+				feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, finServiceInst,true);
 			} else {
 				for (FinFeeDetail finFeeDetail : finServiceInst.getFinFeeDetails()) {
 					finFeeDetail.setFinEvent(eventCode);
 					financeDetail.getFinScheduleData().getFinFeeDetailList().add(finFeeDetail);
 					finFeeDetail.setFeeScheduleMethod(PennantConstants.List_Select);
 				}
-				feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, finServiceInst);
+				feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, finServiceInst,false);
 
 				if (financeDetail.isStp()) {
 					for (FinFeeDetail feeDetail : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
