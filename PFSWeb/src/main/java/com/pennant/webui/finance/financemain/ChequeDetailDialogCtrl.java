@@ -315,7 +315,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.totNoOfCheques.setReadonly(true);
 		this.totAmount.setReadonly(true);
 		
-		this.chequeStatus.setDisabled(fromLoan);
+		this.chequeStatus.setDisabled(true);
 		
 		setStatusDetails();
 
@@ -723,11 +723,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		logger.debug(Literal.ENTERING);
 
 		fillComboBox(this.chequeType, "", chequeTypeList, "");
-		if (fromLoan) {
-			fillComboBox(this.chequeStatus, PennantConstants.CHEQUESTATUS_NEW, chequeStatusList, "");
-		} else {
-			fillComboBox(this.chequeStatus, "", chequeStatusList, "");
-		}
+		fillComboBox(this.chequeStatus, PennantConstants.CHEQUESTATUS_NEW, chequeStatusList, "");
 		fillComboBox(this.accountType, "", accTypeList, "");
 
 		List<ChequeDetail> chequeDetails = aChequeHeader.getChequeDetailList();
@@ -1365,11 +1361,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				listcell = new Listcell();
 				Combobox chequeStatus = getChequeStatusComboBox(detail.getChequeStatus());
 				chequeStatus.setWidth("100px");
-				if(fromLoan){
-					readOnlyComponent(true, chequeStatus);
-				} else {
-					readOnlyComponent(isReadOnly, chequeStatus);
-				}
+				readOnlyComponent(true, chequeStatus);
 				listcell.appendChild(chequeStatus);
 				listcell.setParent(listitem);
 				
@@ -1741,7 +1733,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				}
 			}
 			
-			if (getChequeHeader().isNew()) {
+			if (chequeDetail.isNew()) {
 				removeFromList(chequeDetail);
 			}
 			onFulfill$EmiAmount(event);

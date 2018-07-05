@@ -474,11 +474,13 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			
 		} else if ("DEVENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_DeviationEnquiry"));
-			List<FinanceDeviations> approvalEnqList = getDeviationDetailsService().getApprovedFinanceDeviations(this.finReference);
-			map.put("approvalEnquiry", "");			
+			List<FinanceDeviations> approvalLoanEnqList = getDeviationDetailsService().getApprovedFinanceDeviations(this.finReference);
+			List<FinanceDeviations> inprocessLoanEnqList = getDeviationDetailsService().getFinanceDeviations(this.finReference);
+			map.put("loanEnquiry", "");			
 			map.put("tabPaneldialogWindow", tabPanel_dialogWindow);			
 			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
-			map.put("approvalEnqList", approvalEnqList);
+			map.put("approvalLoanEnqList", approvalLoanEnqList);
+			map.put("inprocessLoanEnqList", inprocessLoanEnqList);
 			path = "/WEB-INF/pages/Finance/FinanceMain/DeviationDetailDialog.zul";
 
 		}else if ("DDAENQ".equals(this.enquiryType)) {

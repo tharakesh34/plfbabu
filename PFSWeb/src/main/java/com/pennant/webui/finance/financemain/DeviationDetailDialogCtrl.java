@@ -60,14 +60,14 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 
 	List<DeviationParam>		eligibilitiesList		= PennantAppUtil.getDeviationParams();
 	boolean						enquiry					= false;
-	boolean						approvalEnquiry			= false;
+	boolean						loanEnquiry				= false;
 	int							ccyformat				= 0;
 	private String				roleCode				= null;
 
 	Tab							parenttab				= null;
 	private Tabpanel			tabPanel_dialogWindow;
 
-	List<FinanceDeviations>		approvalEnqList			= null;
+	
 	//Manual deviations
 	List<FinanceDeviations>		manualDeviationList		= null;
 	private Button				btnNew_ManualDeviation;
@@ -78,6 +78,9 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	@Autowired
 	private DeviationRenderer	deviationRenderer;
 
+	//for enquiry only
+	List<FinanceDeviations>		approvalLoanEnqList			= null;
+	List<FinanceDeviations>		inprocessLoanEnqList		= null;
 	/**
 	 * default constructor.<br>
 	 */
@@ -125,13 +128,18 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 				this.financeMainDialogCtrl = arguments.get("financeMainDialogCtrl");
 			}
 
-			if (arguments.containsKey("approvalEnquiry")) {
-				approvalEnquiry = true;
+			if (arguments.containsKey("loanEnquiry")) {
+				loanEnquiry = true;
 			}
 
-			if (arguments.containsKey("approvalEnqList")) {
-				approvalEnqList = (List<FinanceDeviations>) arguments.get("approvalEnqList");
+			if (arguments.containsKey("approvalLoanEnqList")) {
+				approvalLoanEnqList = (List<FinanceDeviations>) arguments.get("approvalLoanEnqList");
 			}
+			
+			if (arguments.containsKey("inprocessLoanEnqList")) {
+				inprocessLoanEnqList = (List<FinanceDeviations>) arguments.get("inprocessLoanEnqList");
+			}
+			
 			if (arguments.containsKey("ccyformat")) {
 				ccyformat = Integer.parseInt(arguments.get("ccyformat").toString());
 			}
@@ -155,10 +163,10 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 			} else {
 				appendFinBasicDetails(null);
 			}
-			if (!approvalEnquiry) {
+			if (!loanEnquiry && !enquiry) {
 				doCheckRight();
 			}
-			if (approvalEnquiry || enquiry) {
+			if (loanEnquiry || enquiry) {
 				this.btnNew_ManualDeviation.setVisible(false);	
 			}
 			
@@ -192,20 +200,31 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 			this.listBoxAutoDeviations.setHeight(height + "px");
 			this.listBoxManualDeviations.setHeight(height + "px");
 
-			if (approvalEnquiry) {
+			if (loanEnquiry) {
 				this.finBasicdetails.setVisible(false);
 				this.northdeviationDetailDialog.setVisible(false);
 				this.window_deviationDetailDialog.setHeight(borderLayoutHeight - 150 + "px");
 				this.tabPanel_dialogWindow.appendChild(this.window_deviationDetailDialog);
 
-				deviationRenderer.renderAutoDeviations(approvalEnqList, null, this.listBoxAutoDeviations);
 				//Auto deviation
-				List<FinanceDeviations> listAuto = deviationHelper.getDeviationDetais(approvalEnqList, false);
-				deviationRenderer.renderAutoDeviations(null, listAuto, this.listBoxAutoDeviations);
-				//manual Deviation
-				List<FinanceDeviations> listManual = deviationHelper.getDeviationDetais(approvalEnqList, true);
-				deviationRenderer.setDescriptions(listManual);
-				deviationRenderer.renderManualDeviations(null, listManual, this.listBoxManualDeviations);
+				List<FinanceDeviations> listAutoApproved =null;
+				List<FinanceDeviations> listManualApproved=null;
+				if (approvalLoanEnqList!=null) {
+					deviationRenderer.setDescriptions(approvalLoanEnqList);
+					listAutoApproved=deviationHelper.getDeviationDetais(approvalLoanEnqList, false);
+					listManualApproved = deviationHelper.getDeviationDetais(approvalLoanEnqList, true);
+				}
+				//manual deviation
+				List<FinanceDeviations> listAutoInProgress =null;
+				List<FinanceDeviations> listManualInProgress=null;
+				if (inprocessLoanEnqList!=null) {
+					deviationRenderer.setDescriptions(inprocessLoanEnqList);
+					listAutoInProgress=deviationHelper.getDeviationDetais(inprocessLoanEnqList, false);
+					listManualInProgress = deviationHelper.getDeviationDetais(inprocessLoanEnqList, true);
+				}
+				
+				deviationRenderer.renderAutoDeviations(listAutoInProgress, listAutoApproved, this.listBoxAutoDeviations);
+				deviationRenderer.renderManualDeviations(listManualInProgress, listManualApproved, this.listBoxManualDeviations);
 				return;
 			} else {
 
