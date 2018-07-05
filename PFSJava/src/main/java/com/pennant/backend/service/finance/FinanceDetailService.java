@@ -69,6 +69,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -197,4 +198,5 @@ public interface FinanceDetailService {
 	
 	//GST
 	HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail, String branchCode);
+	FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schDate);
  }

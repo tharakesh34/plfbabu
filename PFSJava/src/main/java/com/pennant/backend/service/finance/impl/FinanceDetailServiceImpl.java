@@ -9117,6 +9117,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return getFinanceMainDAO().getFinanceMainForBatch(finReference);
 	}
 
+	@Override
+	public FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schdDate) {
+		return getFinanceScheduleDetailDAO().getFinSchduleDetails(finReference, schdDate, false);
+	}
+
 	// ******************************************************//
 	// *************** EOD PROCESS Details ******************//
 	// ******************************************************//
@@ -9889,6 +9894,5 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setpSLDetailDAO(PSLDetailDAO pSLDetailDAO) {
 		this.pSLDetailDAO = pSLDetailDAO;
 	}
-
 
 }
