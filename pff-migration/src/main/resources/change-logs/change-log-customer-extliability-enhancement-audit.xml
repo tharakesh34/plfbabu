@@ -127,4 +127,7 @@
  <changeSet id="5" author="Vinay">
 		<modifyDataType tableName="adtExternal_liabilities" columnName="balTransfer" newDataType="boolean"/>
 	</changeSet>
+	<changeSet id="6" author="murthy.y">
+		<modifyDataType tableName="adtexternal_liabilities" columnName="rateOfInterest" newDataType="decimal(18,0)"/>
+	</changeSet>
 </databaseChangeLog>
