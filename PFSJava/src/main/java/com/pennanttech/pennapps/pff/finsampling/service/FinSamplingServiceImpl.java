@@ -72,8 +72,8 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 		BigDecimal current;
 		SamplingDetails sd;
 		Sampling sampling = samplingService.getSampling(finReference, type);
-		
-		if(sampling==null){
+
+		if (sampling == null) {
 			return null;
 		}
 		int formatter = sampling.getCcyeditfield();
@@ -92,18 +92,21 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 
 		sd = new SamplingDetails();
 		sd.setParameter(Labels.getLabel("label_FinSampling_Income.value"));
-		sd.setBranchCam(PennantApplicationUtil.amountFormate(original,formatter));
-		sd.setCreditCam(PennantApplicationUtil.amountFormate(current,formatter));
+		sd.setBranchCam(PennantApplicationUtil.amountFormate(original, formatter));
+		sd.setCreditCam(PennantApplicationUtil.amountFormate(current, formatter));
 
 		varaiance = getVariance(original, current);
-
 		if (varaiance.compareTo(new BigDecimal(25)) >= 0) {
 			sampling.setSamplingTolerance("Out of Tolerance");
 		} else {
 			sampling.setSamplingTolerance("Tolerance");
 		}
 
-		sd.setVariance(PennantApplicationUtil.amountFormate(varaiance, formatter));
+		if (original == BigDecimal.ZERO) {
+			sd.setVariance(PennantApplicationUtil.amountFormate(varaiance, formatter));
+		} else {
+			sd.setVariance(String.valueOf(varaiance));
+		}
 		sd.setRemarks(String.valueOf(sampling.getReamrksMap().get("INCOME")));
 		sd.setRemarksId("INCOME");
 		sdList.add(sd);
@@ -121,8 +124,8 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 
 		sd = new SamplingDetails();
 		sd.setParameter(Labels.getLabel("label_FinSampling_Obligation.value"));
-		sd.setBranchCam(PennantApplicationUtil.amountFormate(original,formatter));
-		sd.setCreditCam(PennantApplicationUtil.amountFormate(current,formatter));
+		sd.setBranchCam(PennantApplicationUtil.amountFormate(original, formatter));
+		sd.setCreditCam(PennantApplicationUtil.amountFormate(current, formatter));
 		sd.setVariance(getVariance(original, current, formatter));
 		sd.setRemarks(String.valueOf(sampling.getReamrksMap().get("LIABILITY")));
 		sd.setRemarksId("LIABILITY");
@@ -170,8 +173,8 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 				case ExtendedFieldConstants.FIELDTYPE_DECIMAL:
 				case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
 				case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
-					sd.setBranchCam(PennantApplicationUtil.amountFormate(getBigDecimal(originalField),formatter));
-					sd.setCreditCam(PennantApplicationUtil.amountFormate(getBigDecimal(currentField),formatter));
+					sd.setBranchCam(PennantApplicationUtil.amountFormate(getBigDecimal(originalField), formatter));
+					sd.setCreditCam(PennantApplicationUtil.amountFormate(getBigDecimal(currentField), formatter));
 					sd.setVariance(getVariance(getBigDecimal(originalField), getBigDecimal(currentField), formatter));
 					break;
 
@@ -204,8 +207,8 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 		}
 		sd = new SamplingDetails();
 		sd.setParameter(Labels.getLabel("label_FinSampling_FinalRcmdAmt.value"));
-		sd.setBranchCam(PennantApplicationUtil.amountFormate(original,formatter));
-		sd.setCreditCam(PennantApplicationUtil.amountFormate(current,formatter));
+		sd.setBranchCam(PennantApplicationUtil.amountFormate(original, formatter));
+		sd.setCreditCam(PennantApplicationUtil.amountFormate(current, formatter));
 		sd.setVariance(getVariance(original, current, formatter));
 		sd.setRemarks(String.valueOf(sampling.getReamrksMap().get("RECOMMENDEDAMTREMARKS")));
 		sd.setRemarksId("RECOMMENDEDAMTREMARKS");
@@ -222,7 +225,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 			return PennantApplicationUtil.amountFormate(variance.abs(), formatter);
 		}
 
-		variance = variance.divide(original,formatter,RoundingMode.HALF_DOWN);
+		variance = variance.divide(original, formatter, RoundingMode.HALF_DOWN);
 		variance = variance.multiply(new BigDecimal(100));
 		return String.valueOf(variance.abs());
 	}
@@ -233,7 +236,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 		if (BigDecimal.ZERO.compareTo(original) == 0) {
 			return variance.abs();
 		}
-		variance = variance.divide(original, RoundingMode.HALF_DOWN);
+		variance = variance.divide(original, 2, RoundingMode.HALF_DOWN);
 		variance = variance.multiply(new BigDecimal(100));
 		return variance.abs();
 	}
