@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
 	<property name="add.schema" value=" " dbms="oracle" />
@@ -2864,7 +2862,7 @@
 		</update>
 	</changeSet>
 	
-	Second release
+	 
 	<changeSet id="84" author="DurgaPrasad G">
 		<createView viewName="LegalDetails_AView" replaceIfExists="true">
 			SELECT T1.LegalId, T1.LegalReference, T1.LoanReference, T1.CollateralReference, T1.Branch, T1.LegalDate, T1.SchedulelevelArea, T1.LegalDecision, T1.LegalRemarks,
@@ -2928,7 +2926,8 @@
 			<column name="LastMntBy">1000</column>
 			<column name="Version">0</column>
 		</insert>
-	</changeSet> 
+	</changeSet>
+	
 	
 	<changeSet id="88" author="DurgaPrasad G">
 		<createView viewName="LegalDetails_AView" replaceIfExists="true">
