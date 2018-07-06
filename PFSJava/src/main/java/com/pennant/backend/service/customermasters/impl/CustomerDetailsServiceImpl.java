@@ -1491,6 +1491,18 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			AuditDetail auditDetail = new AuditDetail(auditTranType, 1, fields[0], fields[1],
 					customerDetails.getCustomer().getBefImage(), customerDetails);
 			auditDetails.add(validation(auditDetail, usrLanguage, method));
+
+			if (customerPostValidationHook != null) {
+				AuditHeader auditHeader = new AuditHeader(String.valueOf(customerDetails.getCustID()), String.valueOf(customerDetails.getCustID()), null, null, auditDetail,customerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				List<ErrorDetail> errorDetails = customerPostValidationHook.validation(auditHeader);
+				if(CollectionUtils.isNotEmpty(errorDetails)){
+					if(CollectionUtils.isNotEmpty(auditDetail.getErrorDetails())){
+						auditDetail.getErrorDetails().addAll(ErrorUtil.getErrorDetails(errorDetails, usrLanguage));	
+					}else{
+						auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(errorDetails, usrLanguage));
+					}
+				}
+			}	
 		}
 
 		auditDetails.addAll(getAuditDetail(customerDetails, auditTranType, method, workflowId));
