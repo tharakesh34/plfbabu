@@ -136,6 +136,8 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	private List<ValueLabel> listDocumentTypeVerify = PennantStaticListUtil.getDocumentTypes();
 	private List<ValueLabel> listDocumentTypeApprove = PennantStaticListUtil.getDocumentTypes();
 	private List<ValueLabel> listDocumentAccepted = PennantStaticListUtil.getDocumentAcceptedList();
+	
+	private boolean enquiry = false;
 
 	/**
 	 * default constructor.<br>
@@ -193,6 +195,10 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
 
+			if (arguments.containsKey("enquiry")) {
+				setEnquiry((boolean) arguments.get("enquiry"));
+			} 
+
 			// Store the before image.
 			LegalDocument legalDocument = new LegalDocument();
 			BeanUtils.copyProperties(this.legalDocument, legalDocument);
@@ -237,11 +243,13 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalDocumentDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalDocumentDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalDocumentDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalDocumentDialog_btnSave"));
-		this.btnUploadDoc.setVisible(getUserWorkspace().isAllowed("button_LegalDocumentDialog_btUpload"));
+		if (!isEnquiry()) {
+			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalDocumentDialog_btnNew"));
+			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalDocumentDialog_btnEdit"));
+			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalDocumentDialog_btnDelete"));
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalDocumentDialog_btnSave"));
+			this.btnUploadDoc.setVisible(getUserWorkspace().isAllowed("button_LegalDocumentDialog_btUpload"));
+		}
 		this.btnCancel.setVisible(false);
 
 		logger.debug(Literal.LEAVING);
@@ -558,6 +566,16 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			if (isNewDocumentDetails()) {
 				this.groupboxWf.setVisible(false);
 			}
+			
+			if (isEnquiry()) {
+				this.btnCtrl.setBtnStatus_Enquiry();
+				this.btnNotes.setVisible(false);
+				this.gb_documentBasicDetails.setVisible(true);
+				this.gb_documentVerifyDetails.setVisible(true);
+				this.gb_documentApproverDetails.setVisible(true);
+				doReadOnly();
+			}
+			
 			setDialog(DialogType.MODAL);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -785,7 +803,6 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 				+ aLegalDocument.getDocumentNo();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-
 			if (StringUtils.isBlank(aLegalDocument.getRecordType())) {
 				aLegalDocument.setVersion(aLegalDocument.getVersion() + 1);
 				aLegalDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -908,13 +925,8 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		readOnlyComponent(true, this.documentName);
 		readOnlyComponent(true, this.documentTypeApprove);
 		readOnlyComponent(true, this.documentAccepted);
-
-		if (isWorkFlowEnabled()) {
-			for (int i = 0; i < userAction.getItemCount(); i++) {
-				userAction.getItemAtIndex(i).setDisabled(true);
-			}
-			this.userAction.setSelectedIndex(0);
-		}
+		readOnlyComponent(true, this.btnUploadDoc);
+ 
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -953,10 +965,6 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		doRemoveLOVValidation();
 		doSetValidation();
 		doWriteComponentsToBean(aLegalDocument);
-		
-		if (getLegalDetailDialogCtrl() != null) {
-			getLegalDetailDialogCtrl().setDocumentsValidate(true);
-		}
 		
 		isNew = aLegalDocument.isNew();
 		String tranType = "";
@@ -1133,6 +1141,14 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 	public void setListDocumentCategory(List<ValueLabel> listDocumentCategory) {
 		this.listDocumentCategory = listDocumentCategory;
+	}
+
+	public boolean isEnquiry() {
+		return enquiry;
+	}
+
+	public void setEnquiry(boolean enquiry) {
+		this.enquiry = enquiry;
 	}
 
 }

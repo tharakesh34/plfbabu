@@ -78,6 +78,9 @@ public class LegalDetailListModelItemRenderer implements ListitemRenderer<LegalD
 	  	lc = new Listcell(legalDetail.getCollateralReference());
 		lc.setParent(item);
 		
+		lc = new Listcell(legalDetail.getLegalReference());
+		lc.setParent(item);
+		
 	  	lc = new Listcell(legalDetail.getBranchDesc());
 		lc.setParent(item);
 		

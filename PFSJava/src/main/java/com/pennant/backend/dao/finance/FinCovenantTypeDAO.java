@@ -63,4 +63,5 @@ public interface FinCovenantTypeDAO {
 	String save(FinCovenantType aFinCovenantType, TableType tableType);
 	void update(FinCovenantType aFinCovenantType, TableType tableType);
 	FinCovenantType getCovenantTypeById(String finReference,String covenantType, String type);
+	boolean isExists(FinCovenantType finCovenantType, String string);
 }

@@ -5342,6 +5342,8 @@
 	</bean>
 	<bean id="legalDetailDialogCtrl" class="com.pennant.webui.legal.legaldetail.LegalDetailDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="legalDetailService" ref="legalDetailService" />
+		<property name="financeWorkFlowDAO" ref="financeWorkFlowDAO" />
+		<property name="searchProcessor" ref="searchProcessor" />
 		<property name="eventManager" ref="eventManager" />
 	</bean>
 	

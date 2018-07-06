@@ -56,6 +56,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -85,10 +86,13 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private boolean active = false;
 	private boolean newRecord = false;
 	private String lovValue;
+	private String finNextRoleCode;
+	private byte[] docImage;
 	private LegalDetail befImage;
 	private LoggedInUser userDetails;
 
 	private Customer customer;
+	private QueryDetail queryDetail = new QueryDetail();
 	private List<DocumentDetails> collateralDocumentList = new ArrayList<>();
 	private List<LegalApplicantDetail> applicantDetailList = new ArrayList<>();
 	private List<LegalPropertyDetail> propertyDetailList = new ArrayList<>();
@@ -115,6 +119,9 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("covenantTypeList"); 
 		excludeFields.add("branchDesc");
 		excludeFields.add("finType");
+		excludeFields.add("finNextRoleCode");
+		excludeFields.add("queryDetail");
+		excludeFields.add("docImage");
 		return excludeFields;
 	}
 
@@ -391,6 +398,30 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setFinType(String finType) {
 		this.finType = finType;
+	}
+
+	public String getFinNextRoleCode() {
+		return finNextRoleCode;
+	}
+
+	public void setFinNextRoleCode(String finNextRoleCode) {
+		this.finNextRoleCode = finNextRoleCode;
+	}
+
+	public QueryDetail getQueryDetail() {
+		return queryDetail;
+	}
+
+	public void setQueryDetail(QueryDetail queryDetail) {
+		this.queryDetail = queryDetail;
+	}
+
+	public byte[] getDocImage() {
+		return docImage;
+	}
+
+	public void setDocImage(byte[] docImage) {
+		this.docImage = docImage;
 	}
 
 	 

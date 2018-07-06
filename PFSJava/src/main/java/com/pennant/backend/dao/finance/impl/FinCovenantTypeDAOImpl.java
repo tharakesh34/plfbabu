@@ -491,6 +491,27 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
+
+
+	@Override
+	public boolean isExists(FinCovenantType finCovenantType, String tableType) {
+		logger.debug(Literal.ENTERING);
+
+		int count = 0;
+		StringBuilder selectSql = new StringBuilder("SELECT  COUNT(*)  FROM  FinCovenantType");
+		selectSql.append(StringUtils.trimToEmpty(tableType));
+		selectSql.append(" Where FinReference = :FinReference and CovenantType = :CovenantType");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			count = 0;
+		}
+		logger.debug(Literal.LEAVING);
+		return count > 0 ? true : false;
+	}
 	
 	
 }

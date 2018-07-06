@@ -45,6 +45,7 @@ package com.pennant.webui.legal.legaldetail;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -89,6 +90,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	protected Listheader listheader_CollaterialReference;
 	protected Listheader listheader_Branch;
 	protected Listheader listheader_LegalDate;
+	protected Listheader listheader_LegalReference;
 
 	// checkRights
 	protected Button button_LegalDetailList_NewLegalDetail;
@@ -101,6 +103,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	protected Datebox legalDate; 
 	protected Textbox schedulelevelArea; 
 	protected Textbox legalDecision; 
+	protected Textbox legalReference; 
 
 	protected Listbox sortOperator_LoanReference;
 	protected Listbox sortOperator_CollaterialReference;
@@ -108,8 +111,10 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	protected Listbox sortOperator_LegalDate;
 	protected Listbox sortOperator_SchedulelevelArea;
 	protected Listbox sortOperator_LegalDecision;
+	protected Listbox sortOperator_LegalReference;
 
 	private transient LegalDetailService legalDetailService;
+	private String module;
 
 	/**
 	 * default constructor.<br>
@@ -120,11 +125,18 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 
 	@Override
 	protected void doSetProperties() {
+		this.module = getArgument("enqiryModule");
 		super.moduleCode = "LegalDetail";
 		super.pageRightName = "LegalDetailList";
-		super.tableName = "LegalDetails_TView";
-		super.queueTableName = "LegalDetails_TView";
-		super.enquiryTableName = "LegalDetails_View";
+		if (StringUtils.equals(this.module, PennantConstants.YES)) {
+			super.tableName = "LegalDetails_View";
+			super.queueTableName = "LegalDetails_View";
+			super.enquiryTableName = "LegalDetails_View";
+		} else {
+			super.tableName = "LegalDetails_TView";
+			super.queueTableName = "LegalDetails_TView";
+			super.enquiryTableName = "LegalDetails_View";
+		}
 	}
 
 	/**
@@ -145,11 +157,11 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 		
 		registerField("loanReference", listheader_LoanReference, SortOrder.NONE, loanReference, sortOperator_LoanReference, Operators.STRING);
 		registerField("collateralReference", listheader_CollaterialReference, SortOrder.NONE, collaterialReference, sortOperator_CollaterialReference, Operators.STRING);
+		registerField("legalReference", listheader_LegalReference, SortOrder.NONE, legalReference, sortOperator_LegalReference, Operators.STRING);
 		registerField("branchDesc", listheader_Branch, SortOrder.NONE, branch, sortOperator_Branch, Operators.STRING);
 		registerField("legalDate", listheader_LegalDate, SortOrder.NONE, legalDate, sortOperator_LegalDate, Operators.DATE);
 		registerField("legalRemarks");
 		registerField("legalId");
-		registerField("legalReference");
 		registerField("active");
 
 		doSetFieldProperties();

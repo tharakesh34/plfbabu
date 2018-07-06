@@ -72,6 +72,8 @@
 							label="${c:l('Tab_LegalDetails_PropertyDetailsTab')}" />
 						<tab id="documentDetailTab"
 							label="${c:l('Tab_LegalDetails_DocumentDetailsTab')}" />
+						<tab id="queryModuleTab"
+							label="${c:l('Tab_LegalDetails_QuerryModuleTab')}" />
 						<tab id="propertryTittleTab"
 							label="${c:l('Tab_LegalDetails_PropertyTittleTab')}" />
 						<tab id="encumbranceCertificateTab" 
@@ -79,7 +81,7 @@
 						<tab id="legalNotesTab" 
 							label="${c:l('Tab_LegalDetails_LegalNotesTab')}" />
 						<tab id="coventsTab" 
-							label="${c:l('Tab_LegalDetails_CoventsTab')}" visible="false" />
+							label="${c:l('Tab_LegalDetails_CoventsTab')}" />
 						<tab id="legalDecisionTab" 
 							label="${c:l('Tab_LegalDetails_LegalDecisionTab')}" />
 					</tabs>
@@ -393,6 +395,10 @@
 								</groupbox>
 							</div>
 						</tabpanel>
+						
+						<!-- Query Module Tab Panel -->
+						<tabpanel id="queryModuleTabpanel"
+							style="overflow:auto" height="100%"/>
 						
 						<!-- Property Tittle -->
 						<tabpanel id="propertyTittleTabPanel"

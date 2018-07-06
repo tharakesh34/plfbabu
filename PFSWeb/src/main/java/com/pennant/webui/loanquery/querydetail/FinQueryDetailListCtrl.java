@@ -98,7 +98,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	protected Listheader listheader_UsrLogin;
 	// checkRights
 	protected Button button_FinQueryDetailList_NewQueryDetail;
-
+	private boolean enquiry = false;
 	protected Groupbox finBasicdetails;
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
@@ -125,7 +125,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		}
 		if (legalDetail != null) {
 			this.searchObject.addFilterEqual("Module", PennantConstants.QUERY_LEGAL_VERIFICATION);
-			this.searchObject.addFilterEqual("FinReference", legalDetail.getLoanReference());
+			this.searchObject.addFilterEqual("FinReference", legalDetail.getLegalReference());
 		}
 
 		if (sampling != null) {
@@ -166,8 +166,8 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 			this.sampling = (Sampling) arguments.get("sampling");
 		}
 		
-		if(arguments.containsKey("legalVerification")){
-			this.legalDetail = (LegalDetail) arguments.get("LegalDetail");
+		if(arguments.containsKey("legalDetail")){
+			this.legalDetail = (LegalDetail) arguments.get("legalDetail");
 		}
 		
 		if (arguments.containsKey("roleCode")) {
@@ -180,10 +180,18 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 			appendFinBasicDetails(null);
 		}
 		
+		if (arguments.containsKey("enquiry")) {
+			setEnquiry((boolean) arguments.get("enquiry"));
+		} 
+		
 		// Register buttons and fields.
 		//registerButton(button_FinQueryDetailList_NewQueryDetail, "button_FinQueryDetailList_NewQueryDetail", true);
 		this.button_FinQueryDetailList_NewQueryDetail.setVisible(true);
 
+		if (isEnquiry()) {
+			this.button_FinQueryDetailList_NewQueryDetail.setVisible(false);
+		}
+		
 		registerField("id");
 		registerField("finReference");
 		registerField("categoryId");
@@ -232,17 +240,17 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
+			String module = (String) arguments.get("moduleName");
 			map.put("parentCtrl", this);
 			if (finHeaderList != null) {
 				map.put("finHeaderList", finHeaderList);
 			}
-			if (sampling == null) {
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",
-						this.finBasicdetails, map);
-			}else{
-				map.put("moduleName", (String) arguments.get("moduleName"));
-				Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralBasicDetails.zul",
-						this.finBasicdetails, map);
+			
+			if (PennantConstants.QUERY_ORIGINATION.equals(module)) {
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails, map);
+			} else {
+				map.put("moduleName", module);
+				Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralBasicDetails.zul", this.finBasicdetails, map);
 			}
 		} catch (Exception e) {
 			logger.error(e);
@@ -310,7 +318,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		arg.put("roleCode", roleCode);
 		
 		if (legalDetail != null) {
-			arg.put("LegalVerification", legalDetail);
+			arg.put("legalDetail", legalDetail);
 		}
 		if (sampling != null) {
 			arg.put("sampling", sampling);
@@ -333,7 +341,13 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		arg.put("queryDetail", querydetail);
 		arg.put("finQueryDetailListCtrl", this);
 		arg.put("financeMain", financeMain);
-		
+		arg.put("enquiry", isEnquiry());
+		if (legalDetail != null) {
+			arg.put("legalDetail", legalDetail);
+		}
+		if (sampling != null) {
+			arg.put("sampling", sampling);
+		}
 		try {
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -362,6 +376,14 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 
 	public void setCollateralBasicDetailsCtrl(CollateralBasicDetailsCtrl collateralBasicDetailsCtrl) {
 		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
+	}
+
+	public boolean isEnquiry() {
+		return enquiry;
+	}
+
+	public void setEnquiry(boolean enquiry) {
+		this.enquiry = enquiry;
 	}
 	
 }

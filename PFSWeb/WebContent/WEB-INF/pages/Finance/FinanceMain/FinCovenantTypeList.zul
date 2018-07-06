@@ -26,7 +26,7 @@
 									sclass="toolbar-start" width="300px">
 									<hbox align="center"
 										style="padding: 0px">
-										<label
+										<label id="window_FinCovenantTypeList_title"
 											value="${c:l('window_FinCovenantTypeList.title')}"
 											style="font-weight:bold; font-size: 11px;" />
 									</hbox>

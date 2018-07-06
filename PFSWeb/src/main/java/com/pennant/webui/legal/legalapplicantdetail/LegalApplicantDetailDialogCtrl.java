@@ -161,10 +161,8 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 				setNewRecord(false);
 			}
 			if (arguments.containsKey("enquiry")) {
-				setEnquiry(true);
-			} else {
-				setEnquiry(false);
-			}
+				setEnquiry((boolean) arguments.get("enquiry"));
+			}  
 			this.legalApplicantDetail.setWorkflowId(0);
 			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
@@ -224,13 +222,13 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
-
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalApplicantDetailDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalApplicantDetailDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalApplicantDetailDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalApplicantDetailDialog_btnSave"));
-		this.btnCancel.setVisible(false);
-
+		if (!isEnquiry()) {
+			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalApplicantDetailDialog_btnNew"));
+			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalApplicantDetailDialog_btnEdit"));
+			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalApplicantDetailDialog_btnDelete"));
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalApplicantDetailDialog_btnSave"));
+			this.btnCancel.setVisible(false);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -423,7 +421,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 		}
 		// Age
 		try {
-			aLegalApplicantDetail.setAge(this.age.getValue());
+			aLegalApplicantDetail.setAge(this.age.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -496,6 +494,11 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 			doWriteBeanToComponents(legalApplicantDetail);
 			if (isNewApplicantDetails()) {
 				this.groupboxWf.setVisible(false);
+			}
+			if (isEnquiry()) {
+				this.btnCtrl.setBtnStatus_Enquiry();
+				this.btnNotes.setVisible(false);
+				doReadOnly();
 			}
 			setDialog(DialogType.MODAL);
 		} catch (Exception e) {
@@ -736,14 +739,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 		readOnlyComponent(true, this.iDNo);
 		readOnlyComponent(true, this.remarks);
 
-		if (isWorkFlowEnabled()) {
-			for (int i = 0; i < userAction.getItemCount(); i++) {
-				userAction.getItemAtIndex(i).setDisabled(true);
-			}
-		}
-		if (isWorkFlowEnabled()) {
-			this.userAction.setSelectedIndex(0);
-		}
+		 
 		logger.debug(Literal.LEAVING);
 	}
 

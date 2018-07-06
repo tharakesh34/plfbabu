@@ -83,6 +83,7 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 	private boolean enquiry = false;
 	private boolean newRecord = false;
 	private boolean newLegalECDetails = false;
+	
 
 	private LegalECDetail legalECDetail;
 	private LegalDetailDialogCtrl legalDetailDialogCtrl;
@@ -136,10 +137,9 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 				setNewRecord(false);
 			}
 			if (arguments.containsKey("enquiry")) {
-				setEnquiry(true);
-			} else {
-				setEnquiry(false);
-			}
+				setEnquiry((boolean) arguments.get("enquiry"));
+			} 
+			
 			this.legalECDetail.setWorkflowId(0);
 			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
@@ -181,13 +181,13 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
-
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalECDetailDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalECDetailDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalECDetailDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalECDetailDialog_btnSave"));
-		this.btnCancel.setVisible(false);
-
+		if (!isEnquiry()) {
+			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalECDetailDialog_btnNew"));
+			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalECDetailDialog_btnEdit"));
+			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalECDetailDialog_btnDelete"));
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalECDetailDialog_btnSave"));
+			this.btnCancel.setVisible(false);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -372,6 +372,11 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 			if (isNewLegalECDetails()) {
 				this.groupboxWf.setVisible(false);
 			}
+			if (isEnquiry()) {
+				this.btnCtrl.setBtnStatus_Enquiry();
+				this.btnNotes.setVisible(false);
+				doReadOnly();
+			}
 			setDialog(DialogType.MODAL);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -520,15 +525,6 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 		logger.debug(Literal.LEAVING);
 		readOnlyComponent(true, this.ecDate);
 		readOnlyComponent(true, this.document);
-
-		if (isWorkFlowEnabled()) {
-			for (int i = 0; i < userAction.getItemCount(); i++) {
-				userAction.getItemAtIndex(i).setDisabled(true);
-			}
-		}
-		if (isWorkFlowEnabled()) {
-			this.userAction.setSelectedIndex(0);
-		}
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
@@ -56,12 +57,15 @@ import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
+import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.legal.LegalDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.legal.LegalApplicantDetail;
@@ -73,6 +77,7 @@ import com.pennant.backend.model.legal.LegalPropertyDetail;
 import com.pennant.backend.model.legal.LegalPropertyTitle;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.legal.LegalDetailService;
+import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -97,6 +102,8 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	private CustomerDAO customerDAO;
 	private DocumentDetailsDAO documentDetailsDAO;
 	private CollateralAssignmentDAO collateralAssignmentDAO;
+	private FinanceMainDAO financeMainDAO;
+	private FinCovenantTypeDAO finCovenantTypeDAO;
 
 	private LegalApplicantDetailService legalApplicantDetailService;
 	private LegalPropertyDetailService legalPropertyDetailService;
@@ -104,6 +111,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	private LegalPropertyTitleService legalPropertyTitleService;
 	private LegalECDetailService legalECDetailService;
 	private LegalNoteService legalNoteService;
+	private QueryDetailService queryDetailService;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -348,6 +356,12 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			details = getLegalNoteService().processingDetails(legalDetail, details, tableType);
 			auditDetails.addAll(details);
 		}
+		
+		// Convents Details
+		if (legalDetail.getCovenantTypeList() != null && !legalDetail.getCovenantTypeList().isEmpty()) {
+			List<AuditDetail>  details = processingCoventsDetails(legalDetail, tableType, auditHeader.getAuditTranType());
+			auditDetails.addAll(details);
+		}
 
 		auditHeader.getAuditDetail().setModelData(legalDetail);
 		auditHeader.setAuditReference(String.valueOf(legalDetail.getLegalId()));
@@ -357,6 +371,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
+	
 
 	/**
 	 * delete method do the following steps. 1) Do the Business validation by
@@ -427,6 +442,9 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			//LegalNotes  
 			legalDetail.setLegalNotesList(getLegalNoteService().getDetailsList(legalId, "_View"));
 			
+			// Covenant Details
+			legalDetail.setCovenantTypeList(getFinCovenantTypeDAO().getFinCovenantTypeByFinRef(legalDetail.getLoanReference(), "_View", false));
+
 			//Collateral Against Customer and document Details
 			CollateralSetup collateralSetup = getCollateralSetupDAO().getCollateralSetupByRef(legalDetail.getCollateralReference(), "_View");
 			if (collateralSetup != null) {
@@ -434,6 +452,16 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				legalDetail.setCollateralDocumentList(getDocumentDetailsDAO().getDocumentDetailsByRef(collateralSetup.getCollateralRef(),
 						CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View"));
 			}
+			
+			//Finance details
+			FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(legalDetail.getLoanReference(), "_View", false);
+			if (financeMain != null) {
+				legalDetail.setFinAmount(financeMain.getFinAssetValue());
+				legalDetail.setFinType(financeMain.getFinType());
+				legalDetail.setFinCcy(financeMain.getFinCcy());
+				legalDetail.setFinNextRoleCode(financeMain.getNextRoleCode());
+			}
+			
 		}
 		return legalDetail;
 	}
@@ -633,7 +661,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
@@ -689,7 +717,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			details = getLegalNoteService().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
-
+		
 		auditHeader = nextProcess(auditHeader);
 
 		logger.debug(Literal.LEAVING);
@@ -704,10 +732,11 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
+	 * @param method 
 	 * @return
 	 */
 
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
@@ -725,6 +754,12 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
+		
+		// Query module, Validating the all quarry's raised by users resolved or not.
+		if ("doApprove".equals(method)) {
+			auditDetail = getQueryDetailService().validate(auditDetail);
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
@@ -792,7 +827,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 					getLegalNoteService().getDetailsAuditData(legalDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("LegalNotes"));
 		}
-
+		
 		legalDetail.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(legalDetail);
 		auditHeader.setAuditDetails(auditDetails);
@@ -855,7 +890,88 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		return auditList;
 	}
 	
-	/*Check the legal ap[proved or not
+	/**
+	 ********************************************************************************************
+	 * Processing the convents details which are added in legal details
+	 ********************************************************************************************
+	 */
+	private List<AuditDetail> processingCoventsDetails(LegalDetail legalDetail, TableType tableType,
+			String auditTranType) {
+		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<FinCovenantType> finCovenantTypeList = legalDetail.getCovenantTypeList();
+
+		if (finCovenantTypeList != null && !finCovenantTypeList.isEmpty()) {
+
+			int i = 0;
+			for (FinCovenantType finCovenantType : finCovenantTypeList) {
+				if (StringUtils.isEmpty(StringUtils.trimToEmpty(finCovenantType.getRecordType()))) {
+					continue;
+				}
+				boolean deleteRecord = false;
+				boolean approveRec = false;
+
+				if (StringUtils.isEmpty(tableType.getSuffix())) {
+					approveRec = true;
+					finCovenantType.setRoleCode("");
+					finCovenantType.setNextRoleCode("");
+					finCovenantType.setTaskId("");
+					finCovenantType.setNextTaskId("");
+				}
+				finCovenantType.setWorkflowId(0);
+
+				if (StringUtils.equalsIgnoreCase(finCovenantType.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+					deleteRecord = true;
+				} else if (finCovenantType.isNewRecord()) {
+					if (PennantConstants.RCD_ADD.equalsIgnoreCase(finCovenantType.getRecordType())) {
+						finCovenantType.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					} else if (PennantConstants.RCD_DEL.equalsIgnoreCase(finCovenantType.getRecordType())) {
+						finCovenantType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					} else if (PennantConstants.RCD_UPD.equalsIgnoreCase(finCovenantType.getRecordType())) {
+						finCovenantType.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					}
+				} else if (StringUtils.equalsIgnoreCase(finCovenantType.getRecordType(),
+						(PennantConstants.RECORD_TYPE_NEW))) {
+					if (approveRec) {
+					}  
+				} else if (StringUtils.equalsIgnoreCase(finCovenantType.getRecordType(),
+						(PennantConstants.RECORD_TYPE_UPD))) {
+				} else if (StringUtils.equalsIgnoreCase(finCovenantType.getRecordType(),
+						(PennantConstants.RECORD_TYPE_DEL))) {
+					if (approveRec) {
+						deleteRecord = true;
+					}  
+				}
+				if (deleteRecord) {
+					getFinCovenantTypeDAO().delete(finCovenantType, tableType.getSuffix());
+				}
+				if (!deleteRecord) {
+					boolean isExists = getFinCovenantTypeDAO().isExists(finCovenantType, "_Temp");
+					if (isExists) {
+						if (approveRec) {
+							finCovenantType.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+							finCovenantType.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
+						}
+						getFinCovenantTypeDAO().update(finCovenantType, "_Temp");
+					} else {
+
+						getFinCovenantTypeDAO().save(finCovenantType, "_Temp");
+					}
+				}
+				String[] fields = PennantJavaUtil.getFieldDetails(finCovenantType, finCovenantType.getExcludeFields());
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+						finCovenantType.getBefImage(), finCovenantType));
+				i++;
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return auditDetails;
+	}
+	
+	
+	
+	/*Check the legal approved or not
 	 */
 	@Override
 	public AuditHeader isLegalApproved(AuditHeader auditHeader) {
@@ -874,5 +990,29 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public FinCovenantTypeDAO getFinCovenantTypeDAO() {
+		return finCovenantTypeDAO;
+	}
+
+	public void setFinCovenantTypeDAO(FinCovenantTypeDAO finCovenantTypeDAO) {
+		this.finCovenantTypeDAO = finCovenantTypeDAO;
+	}
+
+	public QueryDetailService getQueryDetailService() {
+		return queryDetailService;
+	}
+
+	public void setQueryDetailService(QueryDetailService queryDetailService) {
+		this.queryDetailService = queryDetailService;
 	}
 }

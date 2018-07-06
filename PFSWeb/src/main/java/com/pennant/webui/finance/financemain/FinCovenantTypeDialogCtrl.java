@@ -79,6 +79,7 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.FinanceConstants;
@@ -154,6 +155,9 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	
 	protected String moduleDefiner = "";
 	private FinCovenantMaintanceDialogCtrl finCovenantMaintanceDialogCtrl;
+	
+	private boolean isNotFinanceProcess = false;
+	private LegalDetail legalDetail;
 
 	/**
 	 * default constructor.<br>
@@ -252,6 +256,13 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "FinCovenantTypeDialog");
 			}
 
+			if (arguments.containsKey("isNotFinanceProcess")) {
+				isNotFinanceProcess = (boolean) arguments.get("isNotFinanceProcess");
+			}
+			
+			if (arguments.containsKey("legalDetail")) {
+				setLegalDetail((LegalDetail) arguments.get("legalDetail"));
+			}
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -1027,8 +1038,14 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 							finCovenantTypesDetails.add(afinCovenantTypes);
 						} else if (afinCovenantTypes.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
 							recordAdded = true;
-							for (int j = 0; j < getFinancedetail().getCovenantTypeList().size(); j++) {
-								FinCovenantType detail = getFinancedetail().getCovenantTypeList().get(j);
+							List<FinCovenantType> covenentList = null;
+							if(isNotFinanceProcess){
+								covenentList = getLegalDetail().getCovenantTypeList();
+							} else {
+								covenentList = getFinancedetail().getCovenantTypeList();
+							}
+							for (int j = 0; j < covenentList.size(); j++) {
+								FinCovenantType detail = covenentList.get(j);
 								if (detail.getFinReference() == afinCovenantTypes.getFinReference()
 										&& StringUtils.equals(detail.getCovenantType(),
 												afinCovenantTypes.getCovenantType())) {
@@ -1238,7 +1255,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Entering");
 		//validate the document selected exists with the customer/Finance
 		boolean  isDocNotfound=false; 
-		if (getFinancedetail().getCustomerDetails() != null
+		if (!isNotFinanceProcess && getFinancedetail().getCustomerDetails() != null
 				&& !getFinancedetail().getCustomerDetails().getCustomerDocumentsList().isEmpty()) {
 
 			for (CustomerDocument custdocument : getFinancedetail().getCustomerDetails().getCustomerDocumentsList()) {
@@ -1254,7 +1271,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 
 		}
 
-		if (!isDocNotfound && getFinancedetail().getDocumentDetailsList() != null
+		if (!isNotFinanceProcess && !isDocNotfound && getFinancedetail().getDocumentDetailsList() != null
 				&& !getFinancedetail().getDocumentDetailsList().isEmpty()) {
 			for (DocumentDetails documentdetail : getFinancedetail().getDocumentDetailsList()) {
 				if (StringUtils.equals(documentdetail.getDocCategory(), dcoType.getDocTypeCode())) {
@@ -1268,7 +1285,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			}
 
 		}
-		
+ 
 		// ###_0.2
 		if(!isDocNotfound){
 			if(dcoType.isPdd()){
@@ -1384,6 +1401,14 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 
 	public void setFinCovenantMaintanceDialogCtrl(FinCovenantMaintanceDialogCtrl finCovenantMaintanceDialogCtrl) {
 		this.finCovenantMaintanceDialogCtrl = finCovenantMaintanceDialogCtrl;
+	}
+
+	public LegalDetail getLegalDetail() {
+		return legalDetail;
+	}
+
+	public void setLegalDetail(LegalDetail legalDetail) {
+		this.legalDetail = legalDetail;
 	}
 
 }

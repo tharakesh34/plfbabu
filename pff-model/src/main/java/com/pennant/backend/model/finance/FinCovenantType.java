@@ -81,6 +81,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	private boolean alwOtc;
 	@XmlElement
 	private int postponeDays;
+	private String module;
 
 	private boolean newRecord=false;
 	private String lovValue;
@@ -121,6 +122,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 		excludeFields.add("categoryCode");
 		excludeFields.add("pddFlag");
 		excludeFields.add("otcFlag");
+		excludeFields.add("module");
 		
 		return excludeFields;
 	}
@@ -273,6 +275,14 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 
 	public void setOtcFlag(boolean otcFlag) {
 		this.otcFlag = otcFlag;
+	}
+
+	public String getModule() {
+		return module;
+	}
+
+	public void setModule(String module) {
+		this.module = module;
 	}
 
 }

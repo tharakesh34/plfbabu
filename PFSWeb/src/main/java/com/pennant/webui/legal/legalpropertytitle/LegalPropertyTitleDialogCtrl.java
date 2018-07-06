@@ -84,6 +84,7 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 
 	private boolean newRecord = false;
 	private boolean newPropertyTitles = false;
+	private boolean enquiry = false;
 
 	private LegalPropertyTitle legalPropertyTitle;
 	private LegalDetailDialogCtrl legalDetailDialogCtrl;
@@ -135,6 +136,10 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 				setNewRecord(false);
 			}
 
+			if (arguments.containsKey("enquiry")) {
+				setEnquiry((boolean) arguments.get("enquiry"));
+			} 
+			
 			this.legalPropertyTitle.setWorkflowId(0);
 			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
@@ -175,12 +180,13 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
-
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyTitleDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyTitleDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyTitleDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyTitleDialog_btnSave"));
-		this.btnCancel.setVisible(false);
+		if (!isEnquiry()) {
+			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyTitleDialog_btnNew"));
+			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyTitleDialog_btnEdit"));
+			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyTitleDialog_btnDelete"));
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyTitleDialog_btnSave"));
+			this.btnCancel.setVisible(false);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -359,6 +365,11 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 			if (isNewPropertyTitles()) {
 				this.groupboxWf.setVisible(false);
 			}
+			if (isEnquiry()) {
+				this.btnCtrl.setBtnStatus_Enquiry();
+				this.btnNotes.setVisible(false);
+				doReadOnly();
+			}
 			setDialog(DialogType.MODAL);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -517,12 +528,6 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 	public void doReadOnly() {
 		logger.debug(Literal.LEAVING);
 		readOnlyComponent(true, this.title);
-		if (isWorkFlowEnabled()) {
-			for (int i = 0; i < userAction.getItemCount(); i++) {
-				userAction.getItemAtIndex(i).setDisabled(true);
-			}
-			this.userAction.setSelectedIndex(0);
-		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -700,6 +705,14 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 
 	public void setNewPropertyTitles(boolean newPropertyTitles) {
 		this.newPropertyTitles = newPropertyTitles;
+	}
+
+	public boolean isEnquiry() {
+		return enquiry;
+	}
+
+	public void setEnquiry(boolean enquiry) {
+		this.enquiry = enquiry;
 	}
 
 }

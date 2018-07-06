@@ -96,6 +96,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.loanquery.QueryCategory;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.mail.MailTemplate;
@@ -188,6 +189,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	protected Textbox responsNotesMnt;
 	protected Textbox module;
 
+	private boolean enquiry = false;
 	// protected Textbox code;
 	// protected Textbox description;
 
@@ -212,6 +214,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	List<String> emailList = null;
 	private String roleCode;
 	private Sampling sampling = null;
+	private LegalDetail legalDetail = null;
 
 	/**
 	 * default constructor.<br>
@@ -257,14 +260,23 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 				this.financeMain = (FinanceMain) arguments.get("financeMain");
 				this.module.setValue(PennantConstants.QUERY_ORIGINATION);
 			}
-			
+
 			if (arguments.containsKey("sampling")) {
 				this.sampling = (Sampling) arguments.get("sampling");
 				this.module.setValue(PennantConstants.QUERY_SAMPLING);
 			}
-			
-			if (arguments.containsKey("LegalVerification")) {
+
+			if (arguments.containsKey("legalDetail")) {
+				this.legalDetail = (LegalDetail) arguments.get("legalDetail");
 				this.module.setValue(PennantConstants.QUERY_LEGAL_VERIFICATION);
+			}
+
+			if (arguments.containsKey("legalModuleName")) {
+				String legalModuleName = (String) arguments.get("legalModuleName");
+				if (StringUtils.trimToNull(legalModuleName) != null
+						&& StringUtils.trimToNull(this.module.getValue()) == null) {
+					this.module.setValue(legalModuleName);
+				}
 			}
 			
 			if (arguments.containsKey("roleCode")) {
@@ -275,6 +287,9 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
 
+			if (arguments.containsKey("enquiry")) {
+				setEnquiry((boolean) arguments.get("enquiry"));
+			} 
 			doLoadWorkFlow(this.queryDetail.isWorkflow(), this.queryDetail.getWorkflowId(),
 					this.queryDetail.getNextTaskId());
 			// Store the before image.
@@ -299,8 +314,8 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 		doReadOnly();
-		
-		if(this.queryDetail != null){
+
+		if (this.queryDetail != null) {
 			this.finReference.setMandatoryStyle(true);
 			this.finReference.setTextBoxWidth(280);
 			this.finReference.setModuleName("QryFinanceMain");
@@ -308,7 +323,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			this.finReference.setDescColumn("FinType");
 			this.finReference.setValidateColumns(new String[] { "FinReference" });
 		}
-		
+
 		this.qryCategory.setMandatoryStyle(true);
 		this.qryCategory.setTextBoxWidth(280);
 		this.qryCategory.setModuleName("QueryCategory");
@@ -321,16 +336,16 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		this.custDocType.setValueColumn("DocTypeCode");
 		this.custDocType.setDescColumn("DocTypeDesc");
 		this.custDocType.setValidateColumns(new String[] { "DocTypeCode" });
-		//this.qryNotes.setMaxlength(2000);
+		// this.qryNotes.setMaxlength(2000);
 		this.assignedRole.setMaxlength(100);
 		this.notifyTo.setMaxlength(1000);
 		this.raisedBy.setMaxlength(19);
 		this.raisedOn.setDisabled(true);
 		this.raisedOn.setFormat(PennantConstants.dateTimeFormat);
-		//this.responsNotes.setMaxlength(2000);
+		// this.responsNotes.setMaxlength(2000);
 		this.responseBy.setMaxlength(19);
 		this.responseOn.setFormat(PennantConstants.dateTimeFormat);
-		//this.closerNotes.setMaxlength(2000);
+		// this.closerNotes.setMaxlength(2000);
 		this.closerBy.setMaxlength(19);
 		this.closerOn.setFormat(PennantConstants.dateTimeFormat);
 		this.docRemarks.setMaxlength(50);
@@ -350,7 +365,10 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		// this.btnSave.setVisible(getUserWorkspace().isAllowed("button_QueryDetailDialog_btnSave"));
 		this.btnSave.setVisible(true);
 		this.btnCancel.setVisible(false);
-
+		
+		if(isEnquiry()){
+			this.btnSave.setVisible(false);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -533,7 +551,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			Filedownload.save(new AMedia(documentDetails.getDocName(), "xls", "application/vnd.ms-excel",
 					documentDetails.getDocImage()));
 		} else if (documentDetails.getDocName().endsWith(".png") || documentDetails.getDocName().endsWith(".jpeg")
-				|| documentDetails.getDocName().endsWith(".pdf") ||documentDetails.getDocName().endsWith(".jpg")){
+				|| documentDetails.getDocName().endsWith(".pdf") || documentDetails.getDocName().endsWith(".jpg")) {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("documentDetails", documentDetails);
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDocumentView.zul", null, map);
@@ -587,7 +605,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onFulfill$finReference(Event event) throws WrongValueException, Exception {
 		logger.debug("Entering" + event.toString());
 
@@ -737,8 +755,11 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		if (financeMain != null) {
 			this.finReference.setValue(financeMain.getFinReference());
 			currentRole.add(roleCode);
-		}else if (sampling!=null) {
+		} else if (sampling != null) {
 			this.finReference.setValue(sampling.getKeyReference());
+			currentRole.add(roleCode);
+		} else if (legalDetail != null) {
+			this.finReference.setValue(legalDetail.getLegalReference());
 			currentRole.add(roleCode);
 		} else {
 			this.finReference.setValue(aQueryDetail.getFinReference());
@@ -752,9 +773,9 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		this.closerNotes.setValue(StringUtils.trim(aQueryDetail.getCloserNotes()));
 		if (aQueryDetail.isNewRecord()) {
 			fillComboBox(this.status, "Open", queryModuleStatusList, "");
-			if (financeMain != null || sampling != null){
+			if (financeMain != null || sampling != null || legalDetail != null) {
 				fillComboBox(this.assignedRole, aQueryDetail.getAssignedRole(), assignedRolesList, currentRole);
-			}else{
+			} else {
 				fillComboBox(this.assignedRole, aQueryDetail.getAssignedRole(), assignedRolesList, "");
 			}
 		} else {
@@ -778,10 +799,11 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	private void setValueLabelList() {
 		String workFlowTpe = null;
 		if (financeMain != null && financeMain.getWorkflowId() > 0) { // In Loan
-			// origination work flow
 			workFlowTpe = PennantApplicationUtil.getWorkFlowType(financeMain.getWorkflowId());
 		} else if (sampling != null && sampling.getWorkflowId() > 0) {
 			workFlowTpe = PennantApplicationUtil.getWorkFlowType(sampling.getWorkflowId());
+		} else if (legalDetail != null && legalDetail.getWorkflowId() > 0) {
+			workFlowTpe = PennantApplicationUtil.getWorkFlowType(legalDetail.getWorkflowId());
 		}
 		WorkFlowDetails workflow = null;
 		workflow = WorkFlowUtil.getDetailsByType(workFlowTpe);
@@ -799,7 +821,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		}
 	}
 
-	private void setRolesList(Long workFlowId){
+	private void setRolesList(Long workFlowId) {
 		if (workFlowId != null && workFlowId > 0) { // Master menu for default
 			// workflow as Maker and
 			// Checker(1)
@@ -820,6 +842,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			}
 		}
 	}
+
 	/**
 	 * 
 	 * @param event
@@ -831,9 +854,10 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		if (this.assignedRole.getSelectedItem().getValue() != null
 				&& !this.assignedRole.getSelectedItem().getValue().toString().equals("#")) {
 			Object dataObject = MultiSelectionSearchListBox.show(this.window_QueryDetailDialog, "SecurityUserEmails",
-					this.notifyTo.getValue(), new Filter[] {
+					this.notifyTo.getValue(),
+					new Filter[] {
 							new Filter("RoleCd", this.assignedRole.getSelectedItem().getValue(), Filter.OP_EQUAL),
-							new Filter("UsrEmail", "", Filter.OP_NOT_EQUAL)});
+							new Filter("UsrEmail", "", Filter.OP_NOT_EQUAL) });
 
 			if (dataObject != null) {
 				String details = (String) dataObject;
@@ -1000,20 +1024,20 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		String usrnameDate = "--"+getUserWorkspace().getUserDetails().getUsername()+","+DateUtility.getAppDate();
+		String usrnameDate = "--" + getUserWorkspace().getUserDetails().getUsername() + "," + DateUtility.getAppDate();
 
 		try {
 			aQueryDetail.setModule(this.module.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Finance Reference
-			try {
-				aQueryDetail.setFinReference(this.finReference.getValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
+		try {
+			aQueryDetail.setFinReference(this.finReference.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		// Category Id
 		try {
 			this.qryCategory.getValidatedValue();
@@ -1026,12 +1050,11 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		}
 		// Notes
 		try {
-			if(StringUtils.equals("Resubmit", this.status.getValue())){
-				aQueryDetail.setQryNotes(this.qryNotes.getValue()+
-			'\n'+this.closerNotes.getValue()+usrnameDate);
-			} else if(StringUtils.equals("Open", this.status.getValue()) && queryDetail.isNew()){
-				aQueryDetail.setQryNotes(this.qryNotes.getValue()+usrnameDate);
-			}else{
+			if (StringUtils.equals("Resubmit", this.status.getValue())) {
+				aQueryDetail.setQryNotes(this.qryNotes.getValue() + '\n' + this.closerNotes.getValue() + usrnameDate);
+			} else if (StringUtils.equals("Open", this.status.getValue()) && queryDetail.isNew()) {
+				aQueryDetail.setQryNotes(this.qryNotes.getValue() + usrnameDate);
+			} else {
 				aQueryDetail.setQryNotes(this.qryNotes.getValue());
 			}
 		} catch (WrongValueException we) {
@@ -1069,26 +1092,27 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		}
 		// Respons Notes
 		try {
-			if(StringUtils.equals("Resolve", this.status.getValue()) && StringUtils.equals("Resubmit", queryDetail.getStatus())){
-			aQueryDetail.setResponsNotes(this.responsNotesMnt.getValue()+'\n'+this.responsNotes.getValue()
-			+usrnameDate);
-			}else if(StringUtils.equals("Resubmit", this.status.getValue())){
+			if (StringUtils.equals("Resolve", this.status.getValue())
+					&& StringUtils.equals("Resubmit", queryDetail.getStatus())) {
+				aQueryDetail.setResponsNotes(
+						this.responsNotesMnt.getValue() + '\n' + this.responsNotes.getValue() + usrnameDate);
+			} else if (StringUtils.equals("Resubmit", this.status.getValue())) {
 				aQueryDetail.setResponsNotes(this.responsNotes.getValue());
-			}else if(StringUtils.equals("Close", this.status.getValue())){
+			} else if (StringUtils.equals("Close", this.status.getValue())) {
 				aQueryDetail.setResponsNotes(this.responsNotes.getValue());
-			}else{
-				aQueryDetail.setResponsNotes(this.responsNotes.getValue()+usrnameDate);
+			} else {
+				aQueryDetail.setResponsNotes(this.responsNotes.getValue() + usrnameDate);
 			}
-			//aQueryDetail.setResponsNotes(this.responsNotes.getValue());
+			// aQueryDetail.setResponsNotes(this.responsNotes.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Response By
 		try {
-			if(StringUtils.equals(this.status.getValue(), "Close") ||
-					StringUtils.equals(this.status.getValue(), "Resubmit")){
+			if (StringUtils.equals(this.status.getValue(), "Close")
+					|| StringUtils.equals(this.status.getValue(), "Resubmit")) {
 				aQueryDetail.setResponseBy(queryDetail.getResponseBy());
-			}else{
+			} else {
 				aQueryDetail.setResponseBy(getUserWorkspace().getUserId());
 			}
 		} catch (WrongValueException we) {
@@ -1162,7 +1186,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		setValueLabelList();
 		doWriteBeanToComponents(queryDetail);
 
-		if(queryDetail != null && queryDetail.isNew()){
+		if (queryDetail != null && queryDetail.isNew()) {
 			this.qryNotes.setMaxlength(2000);
 			this.responsNotes.setMaxlength(2000);
 			this.closerNotes.setMaxlength(2000);
@@ -1175,9 +1199,9 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 				this.responsNotes.setMaxlength(2000);
 			} else if (StringUtils.equals("Close", this.status.getValue())) {
 				this.closerNotes.setMaxlength(2000);
-			} 
+			}
 		}
-		
+
 		if (queryDetail.isNew()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
@@ -1190,12 +1214,13 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			// editable
 			if ((financeMain != null && StringUtils.equals(queryDetail.getAssignedRole(), financeMain.getRoleCode()))
 					|| (queryDetail != null && role.contains(getUserWorkspace().getUserDetails().getUsername()))
-					|| (StringUtils.equals(String.valueOf(getUserWorkspace().getUserId()), String.valueOf(queryDetail.getRaisedBy())))) {
+					|| (StringUtils.equals(String.valueOf(getUserWorkspace().getUserId()),
+							String.valueOf(queryDetail.getRaisedBy())))) {
 				List<String> list = new ArrayList<>();
 				if ((queryDetail.getStatus().equals("Open")
 						&& !StringUtils.equals(String.valueOf(getUserWorkspace().getUserId()),
-								String.valueOf(queryDetail.getRaisedBy()))) || 
-						(queryDetail.getStatus().equals("Resubmit")
+								String.valueOf(queryDetail.getRaisedBy())))
+						|| (queryDetail.getStatus().equals("Resubmit")
 								&& !StringUtils.equals(String.valueOf(getUserWorkspace().getUserId()),
 										String.valueOf(queryDetail.getCloserBy())))) {
 					doReadOnly();
@@ -1208,20 +1233,20 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 					readOnlyComponent(false, this.btnUploadDoc);
 					readOnlyComponent(false, this.btnUploadDocs);
 					readOnlyComponent(false, this.custDocType);
-					
-					if(StringUtils.equals("Resubmit", queryDetail.getStatus())){
+
+					if (StringUtils.equals("Resubmit", queryDetail.getStatus())) {
 						fillComboBox(this.status, "Resolve", queryModuleStatusList, "");
 						this.responsNotes.setValue("");
 						this.responsNotesMnt.setVisible(true);
 						this.responsNotesMnt.setValue(queryDetail.getResponsNotes());
-						
+
 						this.qryNotes.setValue(queryDetail.getQryNotes());
 						this.label_CloserNotes.setValue(Labels.getLabel("label_QueryDetailDialog_ResubmitNotes.value"));
 						this.row6.setVisible(false);
-					}else{
+					} else {
 						fillComboBox(this.status, "Resolve", queryModuleStatusList, "");
 					}
-					
+
 				} else if (queryDetail.getStatus().equals("Resolve") && StringUtils.equals(
 						String.valueOf(getUserWorkspace().getUserId()), String.valueOf(queryDetail.getRaisedBy()))) {
 					this.row5.setVisible(true);
@@ -1234,13 +1259,13 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 					this.closerBy.setValue(getUserWorkspace().getUserDetails().getUsername());
 					this.closerOn.setValue(DateUtility.getAppDate());
 					readOnlyComponent(false, this.status);
-					
+
 					readOnlyComponent(false, this.docRemarks);
 					readOnlyComponent(false, this.btnUploadDoc);
 					readOnlyComponent(false, this.btnUploadDocs);
 					readOnlyComponent(false, this.custDocType);
-					
-					if(StringUtils.equals("Resubmit", queryDetail.getStatus())){
+
+					if (StringUtils.equals("Resubmit", queryDetail.getStatus())) {
 						readOnlyComponent(false, this.status);
 						list.add(Labels.getLabel("label_QueryDetailDialog_Opened"));
 						list.add(Labels.getLabel("label_QueryDetailDialog_Closed"));
@@ -1248,14 +1273,14 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 						this.responsNotesMnt.setVisible(true);
 						this.responsNotesMnt.setValue(queryDetail.getCloserNotes());
 					} else {
-						
+
 						list.add(Labels.getLabel("label_QueryDetailDialog_Opened"));
 						list.add(Labels.getLabel("label_QueryDetailDialog_Resolved"));
 						fillComboBox(this.status, "Close", queryModuleStatusList, list);
 						this.status.setValue("Close");
 					}
-					
-				} else if(queryDetail.getStatus().equals("Close")){
+
+				} else if (queryDetail.getStatus().equals("Close")) {
 					this.row5.setVisible(true);
 					this.row6.setVisible(true);
 					this.row7.setVisible(true);
@@ -1266,13 +1291,13 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 					this.responseOn.setValue(queryDetail.getResponseOn());
 					this.closerBy.setValue(queryDetail.getCloserUser());
 					this.closerOn.setValue(queryDetail.getCloserOn());
-				}else{
-					if(queryDetail.getStatus().equals("Open")){
+				} else {
+					if (queryDetail.getStatus().equals("Open")) {
 						this.row5.setVisible(false);
-					}else if(queryDetail.getStatus().equals("Resolve")){
+					} else if (queryDetail.getStatus().equals("Resolve")) {
 						this.row5.setVisible(true);
 						this.row6.setVisible(true);
-					}else if(queryDetail.getStatus().equals("Resubmit")){
+					} else if (queryDetail.getStatus().equals("Resubmit")) {
 						this.row5.setVisible(true);
 						this.row6.setVisible(true);
 						this.row7.setVisible(true);
@@ -1280,7 +1305,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 						this.label_CloserNotes.setValue(Labels.getLabel("label_QueryDetailDialog_ResubmitNotes.value"));
 						this.label_CloserBy.setValue(Labels.getLabel("label_QueryDetailDialog_ResubmitBy.value"));
 						this.label_CloserOn.setValue(Labels.getLabel("label_QueryDetailDialog_ResubmitOn.value"));
-					}else{
+					} else {
 						this.row5.setVisible(true);
 						this.row6.setVisible(true);
 						this.row7.setVisible(true);
@@ -1310,12 +1335,18 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
+			doReadOnly();
 		}
-		
+
 		if (queryDetail.isNew()) {
 			this.btnSave.setLabel("Send Query");
 		}
-		
+
+		if (isEnquiry()) {
+			this.btnCtrl.setBtnStatus_Enquiry();
+			this.btnNotes.setVisible(false);
+			doReadOnly();
+		}
 		this.btnNotes.setVisible(false);
 		if (financeMain != null && financeMain.getWorkflowId() > 0) {
 			this.window_QueryDetailDialog.setHeight("70%");
@@ -1330,14 +1361,14 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 	public void onSelect$status(Event event) {
 		logger.debug("Entering" + event.toString());
-		if(StringUtils.equals("Resubmit", this.status.getValue())){
+		if (StringUtils.equals("Resubmit", this.status.getValue())) {
 			this.label_CloserNotes.setValue(Labels.getLabel("label_QueryDetailDialog_ResubmitNotes.value"));
-		}else{
+		} else {
 			this.label_CloserNotes.setValue(Labels.getLabel("label_QueryDetailDialog_CloserNotes.value"));
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
@@ -1345,19 +1376,17 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		logger.debug(Literal.LEAVING);
 
 		if (!this.finReference.isReadonly() || this.finReference.isReadonly()) {
-			this.finReference
-			.setConstraint(new PTStringValidator(Labels.getLabel("label_QueryDetailDialog_FinReference.value"),
-					null, true));
+			this.finReference.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_QueryDetailDialog_FinReference.value"), null, true));
 		}
 		if (!this.qryCategory.isReadonly()) {
 			this.qryCategory
-			.setConstraint(new PTStringValidator(Labels.getLabel("label_QueryDetailDialog_CategoryId.value"),
-					PennantRegularExpressions.REGEX_NAME, true));
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_QueryDetailDialog_CategoryId.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (!this.custDocType.isReadonly()) {
-			this.custDocType
-			.setConstraint(new PTStringValidator(Labels.getLabel("label_QueryDetailDialog_CustDocType.value"),
-					null, true));
+			this.custDocType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_QueryDetailDialog_CustDocType.value"), null, true));
 		}
 		if (!this.qryNotes.isReadonly()) {
 			this.qryNotes.setConstraint(new PTStringValidator(Labels.getLabel("label_QueryDetailDialog_QryNotes.value"),
@@ -1385,8 +1414,8 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		}
 		if (this.row5.isVisible() && !this.responsNotes.isReadonly()) {
 			this.responsNotes
-			.setConstraint(new PTStringValidator(Labels.getLabel("label_QueryDetailDialog_ResponsNotes.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_QueryDetailDialog_ResponsNotes.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.responseBy.isReadonly()) {
 			this.responseBy.setConstraint(new PTNumberValidator(
@@ -1398,8 +1427,8 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		}
 		if (this.row7.isVisible() && !this.closerNotes.isReadonly()) {
 			this.closerNotes
-			.setConstraint(new PTStringValidator(Labels.getLabel("label_QueryDetailDialog_CloserNotes.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_QueryDetailDialog_CloserNotes.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.closerBy.isReadonly()) {
 			this.closerBy.setConstraint(
@@ -1525,7 +1554,6 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		} else {
 			this.btnCancel.setVisible(true);
 			readOnlyComponent(isReadOnly("QueryDetailDialog_Status"), this.status);
-
 		}
 
 		/*
@@ -1562,8 +1590,12 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CategoryId"),
 		 * this.btnNotifyTo);
 		 */
-		if(this.financeMain == null && this.sampling == null){
+		if (this.financeMain == null && this.sampling == null) {
 			readOnlyComponent(false, this.finReference);
+		}
+		
+		if (PennantConstants.QUERY_LEGAL_VERIFICATION.equals(this.module.getValue())) {
+			readOnlyComponent(true, this.finReference);
 		}
 		readOnlyComponent(false, this.qryCategory);
 		readOnlyComponent(false, this.qryNotes);
@@ -1857,6 +1889,22 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 	public void setSecurityUserOperationsService(SecurityUserOperationsService securityUserOperationsService) {
 		this.securityUserOperationsService = securityUserOperationsService;
+	}
+
+	public LegalDetail getLegalDetail() {
+		return legalDetail;
+	}
+
+	public void setLegalDetail(LegalDetail legalDetail) {
+		this.legalDetail = legalDetail;
+	}
+
+	public boolean isEnquiry() {
+		return enquiry;
+	}
+
+	public void setEnquiry(boolean enquiry) {
+		this.enquiry = enquiry;
 	}
 
 }

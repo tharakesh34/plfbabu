@@ -103,6 +103,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	private List<ValueLabel> listScheduleType = PennantStaticListUtil.getScheduleTypes();
 	private List<ValueLabel> listPropertyType = PennantStaticListUtil.getLegalPropertyTypes();
 	
+	private boolean enquiry = false;
 	private boolean newRecord = false;
 	private boolean newLegalPropertyDetails = false;
 	private LegalDetailDialogCtrl legalDetailDialogCtrl;
@@ -164,6 +165,10 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
 			
+			if (arguments.containsKey("enquiry")) {
+				setEnquiry((boolean) arguments.get("enquiry"));
+			} 
+			
 			// Store the before image.
 			LegalPropertyDetail legalPropertyDetail = new LegalPropertyDetail();
 			BeanUtils.copyProperties(this.legalPropertyDetail, legalPropertyDetail);
@@ -213,14 +218,13 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
-
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyDetailDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyDetailDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyDetailDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyDetailDialog_btnSave"));
-		this.btnCancel.setVisible(false);
-		this.btnSave.setVisible(true);
-
+		if (!isEnquiry()) {
+			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyDetailDialog_btnNew"));
+			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyDetailDialog_btnEdit"));
+			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyDetailDialog_btnDelete"));
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalPropertyDetailDialog_btnSave"));
+			this.btnCancel.setVisible(false);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -479,11 +483,15 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 			if (isNewLegalPropertyDetails()) {
 				this.groupboxWf.setVisible(false);
 			}
+			if (isEnquiry()) {
+				this.btnCtrl.setBtnStatus_Enquiry();
+				this.btnNotes.setVisible(false);
+				doReadOnly();
+			}
 			setDialog(DialogType.MODAL);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -814,15 +822,6 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		readOnlyComponent(true, this.registrationDistrict);
 		readOnlyComponent(true, this.propertyOwner);
 
-		if (isWorkFlowEnabled()) {
-			for (int i = 0; i < userAction.getItemCount(); i++) {
-				userAction.getItemAtIndex(i).setDisabled(true);
-			}
-			this.recordStatus.setValue("");
-			this.userAction.setSelectedIndex(0);
-
-		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -968,6 +967,14 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 
 	public void setLegalDetailDialogCtrl(LegalDetailDialogCtrl legalDetailDialogCtrl) {
 		this.legalDetailDialogCtrl = legalDetailDialogCtrl;
+	}
+
+	public boolean isEnquiry() {
+		return enquiry;
+	}
+
+	public void setEnquiry(boolean enquiry) {
+		this.enquiry = enquiry;
 	}
 
 	

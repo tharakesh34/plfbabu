@@ -27,7 +27,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="1.0" author="DurgaPrasad G">
+	<!-- <changeSet id="1.0" author="DurgaPrasad G">
 		<createTable tableName="LegalDetails">
 			<column name="LegalId" type="bigint"/>
 			<column name="LegalReference" type="varchar(20)" />
@@ -2864,7 +2864,7 @@
 		</update>
 	</changeSet>
 	
-	<!-- Second release -->
+	Second release
 	<changeSet id="84" author="DurgaPrasad G">
 		<createView viewName="LegalDetails_AView" replaceIfExists="true">
 			SELECT T1.LegalId, T1.LegalReference, T1.LoanReference, T1.CollateralReference, T1.Branch, T1.LegalDate, T1.SchedulelevelArea, T1.LegalDecision, T1.LegalRemarks,
@@ -2928,5 +2928,111 @@
 			<column name="LastMntBy">1000</column>
 			<column name="Version">0</column>
 		</insert>
+	</changeSet> -->
+	
+	
+	<changeSet id="88" author="DurgaPrasad G">
+		<createView viewName="LegalDetails_AView" replaceIfExists="true">
+			SELECT T1.LegalId, T1.LegalReference, T1.LoanReference, T1.CollateralReference, T1.Branch, T1.LegalDate, T1.SchedulelevelArea, T1.LegalDecision, T1.LegalRemarks,
+			T1.PropertyDetailModt, T1.PropertyDetailECDate, T1.EcPropertyOwnerName, T1.Active
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			T2.BranchDesc
+			FROM    	LegalDetails T1 
+			Inner Join RmtBranches T2 ON T1.Branch = T2.BranchCode
+		</createView>
+	</changeSet>
+	
+	<changeSet id="89" author="DurgaPrasad G">
+		<createView viewName="LegalDetails_TView" replaceIfExists="true">
+			SELECT T1.LegalId, T1.LegalReference, T1.LoanReference, T1.CollateralReference, T1.Branch, T1.LegalDate, T1.SchedulelevelArea, T1.LegalDecision, T1.LegalRemarks,
+			T1.PropertyDetailModt, T1.PropertyDetailECDate, T1.EcPropertyOwnerName, T1.Active
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			T2.BranchDesc
+			FROM    	LegalDetails_Temp T1 
+			Inner Join RmtBranches T2 ON T1.Branch = T2.BranchCode
+		</createView>
+	</changeSet>
+	
+	<changeSet id="90" author="DurgaPrasad G">
+		<createView viewName="LegalDetails_View" replaceIfExists="true">
+			SELECT T1.LegalId, T1.LegalReference, T1.LoanReference, T1.CollateralReference, T1.Branch, T1.LegalDate, T1.SchedulelevelArea, T1.LegalDecision, T1.LegalRemarks,
+				T1.PropertyDetailModt, T1.PropertyDetailECDate, T1.EcPropertyOwnerName, T1.Active
+				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				T2.BranchDesc
+				FROM    	LegalDetails_Temp T1 
+				Inner Join RmtBranches T2 ON T1.Branch = T2.BranchCode
+			UNION ALL
+			SELECT T1.LegalId, T1.LegalReference, T1.LoanReference, T1.CollateralReference, T1.Branch, T1.LegalDate, T1.SchedulelevelArea, T1.LegalDecision, T1.LegalRemarks,
+				T1.PropertyDetailModt, T1.PropertyDetailECDate, T1.EcPropertyOwnerName, T1.Active
+				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				T2.BranchDesc	
+				FROM    	LegalDetails T1 
+				Inner Join RmtBranches T2 ON T1.Branch = T2.BranchCode
+			WHERE     NOT EXISTS (SELECT 1 FROM LegalDetails_TEMP WHERE LegalId = T1.LegalId)
+		</createView>
+	</changeSet>
+	<changeSet id="91" author="DurgaPrasad G">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);	
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
+			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(roleid) FROM SECROLES );	
+			UPDATE SEQSECOPERATIONS SET SEQNO= (SELECT MAX(oprid) FROM SECOPERATIONS);	
+			UPDATE SEQSecOperationRoles SET SEQNO= (SELECT MAX(OprRoleID) FROM SecOperationRoles);	
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_Legal_LegalDetail_Enquiry','LegalDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LEGAL_DETAIL_ENQUIRY', '', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_DETAIL_ENQUIRY') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_Legal_LegalDetail_Enquiry'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECROLES SELECT (select MAX(RoleID)+1 from SecRoles),1,'LEGAL_DETAIL_ENQUIRY','Legal document verifier','',0,1000,null,' ',' ',null,' ',' ',' ',0 FROM SeqSecRoles WHERE 0=0;
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_DETAIL_ENQUIRY'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_DETAIL_ENQUIRY'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SECOPERATIONS SELECT (SELECT MAX(OPRID)+1 FROM SECOPERATIONS), 'LEGAL_DETAIL_ENQUIRY_OPERATION', '', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECOPERATIONS WHERE 0=0;
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='LEGAL_DETAIL_ENQUIRY_OPERATION'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_DETAIL_ENQUIRY'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);	
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
+			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(roleid) FROM SECROLES );	
+			UPDATE SEQSECOPERATIONS SET SEQNO= (SELECT MAX(oprid) FROM SECOPERATIONS);	
+			UPDATE SEQSecOperationRoles SET SEQNO= (SELECT MAX(OprRoleID) FROM SecOperationRoles);	
+		</sql>
+	</changeSet>
+	
+	<changeSet id="92" author="Durgaprasad G">
+		<sql>
+		 UPDATE SECGROUPS SET GRPDESC = 'Legal detail enquiry'  WHERE GRPCODE = 'LEGAL_DETAIL_ENQUIRY';
+		 UPDATE SECOPERATIONS SET OPRDESC = 'legal detail enquiry operation'  WHERE OPRCODE = 'LEGAL_DETAIL_ENQUIRY_OPERATION';
+		</sql>
+	</changeSet>
+	 
+	<changeSet id="93" author="DurgaPrasad G">
+		<createView viewName="LegalApplicantDetails_View" replaceIfExists="true">
+			Select T1.LegalApplicantId, T1.LegalId, T1.Title, T1.PropertyOwnersName, T1.Age, T1.Relationshiptype, T1.IDtype, T1.IDNo, T1.Remarks,		
+						T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						t2.doctypedesc iDTypeName, t3.saluationDesc titleName
+			FROM    	LegalApplicantDetails_Temp T1 
+			LEFT JOIN bmtdocumenttypes t2 ON t1.IDtype = t2.doctypecode
+			LEFT join BMTSalutations t3 on t3.salutationCode = t1.Title
+			UNION ALL
+			Select T1.LegalApplicantId, T1.LegalId, T1.Title, T1.PropertyOwnersName, T1.Age, T1.Relationshiptype, T1.IDtype, T1.IDNo, T1.Remarks,		
+						T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						t2.doctypedesc iDTypeName, t3.saluationDesc titleName
+			FROM    	LegalApplicantDetails T1 
+			LEFT JOIN bmtdocumenttypes t2 ON t1.IDtype = t2.doctypecode
+			LEFT join BMTSalutations t3 on t3.salutationCode = t1.Title
+			WHERE     NOT EXISTS (SELECT 1 FROM LegalApplicantDetails_Temp WHERE LegalApplicantId = T1.LegalApplicantId)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="94" author="DurgaPrasad G">
+		<createView viewName="LegalApplicantDetails_AView" replaceIfExists="true">
+			Select T1.LegalApplicantId, T1.LegalId, T1.Title, T1.PropertyOwnersName, T1.Age, T1.Relationshiptype, T1.IDtype, T1.IDNo, T1.Remarks, 	
+			T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			t2.doctypedesc iDTypeName, t3.saluationDesc titleName
+			FROM    	LegalApplicantDetails T1 
+			LEFT JOIN bmtdocumenttypes t2 ON t1.IDtype = t2.doctypecode
+			LEFT join BMTSalutations t3 on t3.salutationCode = t1.Title
+		</createView>
 	</changeSet>
 	</databaseChangeLog>

@@ -79,18 +79,12 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	private String uploadDocumentType;
 	private String surveyNo;
 	private String documentType;
-	private String documentTypeMakerName;
 	private String documentCategory;
-	private String documentCategoryName;
 	private String scheduleType;
-	private String scheduleTypeName;
 	private String documentTypeVerify;
-	private String documentTypeVerifyName;
 	private String documentRemarks;
 	private String documentTypeApprove;
-	private String documentTypeApproveName;
 	private String documentAccepted;
-	private String documentAcceptedName;
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
@@ -115,12 +109,6 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		excludeFields.add("documentTypeMakerName");
-		excludeFields.add("documentCategoryName");
-		excludeFields.add("scheduleTypeName");
-		excludeFields.add("documentTypeVerifyName");
-		excludeFields.add("documentTypeApproveName");
-		excludeFields.add("documentAcceptedName");
 		excludeFields.add("legalReference");
 		excludeFields.add("docImage");
 		excludeFields.add("seqNum");
@@ -183,28 +171,12 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 		this.documentType = documentType;
 	}
 
-	public String getDocumentTypeMakerName() {
-		return this.documentTypeMakerName;
-	}
-
-	public void setDocumentTypeMakerName(String documentTypeMakerName) {
-		this.documentTypeMakerName = documentTypeMakerName;
-	}
-
 	public String getDocumentCategory() {
 		return documentCategory;
 	}
 
 	public void setDocumentCategory(String documentCategory) {
 		this.documentCategory = documentCategory;
-	}
-
-	public String getDocumentCategoryName() {
-		return this.documentCategoryName;
-	}
-
-	public void setDocumentCategoryName(String documentCategoryName) {
-		this.documentCategoryName = documentCategoryName;
 	}
 
 	public String getScheduleType() {
@@ -215,28 +187,12 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 		this.scheduleType = scheduleType;
 	}
 
-	public String getScheduleTypeName() {
-		return this.scheduleTypeName;
-	}
-
-	public void setScheduleTypeName(String scheduleTypeName) {
-		this.scheduleTypeName = scheduleTypeName;
-	}
-
 	public String getDocumentTypeVerify() {
 		return documentTypeVerify;
 	}
 
 	public void setDocumentTypeVerify(String documentTypeVerify) {
 		this.documentTypeVerify = documentTypeVerify;
-	}
-
-	public String getDocumentTypeVerifyName() {
-		return this.documentTypeVerifyName;
-	}
-
-	public void setDocumentTypeVerifyName(String documentTypeVerifyName) {
-		this.documentTypeVerifyName = documentTypeVerifyName;
 	}
 
 	public String getDocumentRemarks() {
@@ -255,28 +211,12 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 		this.documentTypeApprove = documentTypeApprove;
 	}
 
-	public String getDocumentTypeApproveName() {
-		return this.documentTypeApproveName;
-	}
-
-	public void setDocumentTypeApproveName(String documentTypeApproveName) {
-		this.documentTypeApproveName = documentTypeApproveName;
-	}
-
 	public String getDocumentAccepted() {
 		return documentAccepted;
 	}
 
 	public void setDocumentAccepted(String documentAccepted) {
 		this.documentAccepted = documentAccepted;
-	}
-
-	public String getDocumentAcceptedName() {
-		return this.documentAcceptedName;
-	}
-
-	public void setDocumentAcceptedName(String documentAcceptedName) {
-		this.documentAcceptedName = documentAcceptedName;
 	}
 
 	public boolean isNewRecord() {

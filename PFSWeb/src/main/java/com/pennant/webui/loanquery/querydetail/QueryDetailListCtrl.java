@@ -284,6 +284,7 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("queryDetail", querydetail);
 		arg.put("queryDetailListCtrl", this);
+		arg.put("legalModuleName", querydetail.getModule());
 		
 		try {
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailDialog.zul", null, arg);

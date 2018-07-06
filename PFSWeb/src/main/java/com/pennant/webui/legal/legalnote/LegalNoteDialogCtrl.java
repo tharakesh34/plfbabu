@@ -88,6 +88,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 
 	private boolean newRecord = false;
 	private boolean newLegalNotes = false;
+	private boolean enquiry = false;
 
 	private LegalNote legalNote;
 	private LegalDetailDialogCtrl legalDetailDialogCtrl;
@@ -140,6 +141,10 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 				setNewRecord(false);
 			}
 
+			if (arguments.containsKey("enquiry")) {
+				setEnquiry((boolean) arguments.get("enquiry"));
+			} 
+			
 			this.legalNote.setWorkflowId(0);
 			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
@@ -180,11 +185,12 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
-
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalNoteDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalNoteDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalNoteDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalNoteDialog_btnSave"));
+		if (!isEnquiry()) {
+			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LegalNoteDialog_btnNew"));
+			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LegalNoteDialog_btnEdit"));
+			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_LegalNoteDialog_btnDelete"));
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalNoteDialog_btnSave"));
+		}
 		this.btnCancel.setVisible(false);
 
 		logger.debug(Literal.LEAVING);
@@ -369,6 +375,12 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 			if (isNewLegalNotes()) {
 				this.groupboxWf.setVisible(false);
 			}
+
+			if (isEnquiry()) {
+				this.btnCtrl.setBtnStatus_Enquiry();
+				this.btnNotes.setVisible(false);
+				doReadOnly();
+			}
 			setDialog(DialogType.MODAL);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -518,15 +530,6 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 
 		readOnlyComponent(true, this.code);
 		readOnlyComponent(true, this.description);
-
-		if (isWorkFlowEnabled()) {
-			for (int i = 0; i < userAction.getItemCount(); i++) {
-				userAction.getItemAtIndex(i).setDisabled(true);
-			}
-			this.recordStatus.setValue("");
-			this.userAction.setSelectedIndex(0);
-
-		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -736,5 +739,13 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 
 	public void setLegalDetailDialogCtrl(LegalDetailDialogCtrl legalDetailDialogCtrl) {
 		this.legalDetailDialogCtrl = legalDetailDialogCtrl;
+	}
+
+	public boolean isEnquiry() {
+		return enquiry;
+	}
+
+	public void setEnquiry(boolean enquiry) {
+		this.enquiry = enquiry;
 	}
 }

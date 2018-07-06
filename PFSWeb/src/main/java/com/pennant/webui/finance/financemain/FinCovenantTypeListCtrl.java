@@ -60,6 +60,7 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -69,8 +70,11 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.legal.LegalDetail;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -107,6 +111,14 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected Groupbox finBasicdetails;
 	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
 	private String allowedRoles;
+	
+	private boolean enquiry = false;
+	private boolean isNotFinanceProcess = false;
+	private  ArrayList<Object> headerList;
+	private String moduleName;
+	private LegalDetail legalDetail;
+	private CollateralBasicDetailsCtrl  collateralBasicDetailsCtrl;
+	private Label  window_FinCovenantTypeList_title;
 	/**
 	 * default constructor.<br>
 	 */
@@ -129,6 +141,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * @param event
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	public void onCreate$window_FinCovenantTypeList(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
 
@@ -138,7 +151,6 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		try {
 			if (event.getTarget().getParent() != null) {
 				parent = event.getTarget().getParent();
-				//parent.setStyle("overflow:auto;");
 			}
 
 		if (arguments.containsKey("financeMainDialogCtrl")) {
@@ -146,6 +158,10 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 				this.window_FinCovenantTypeList.setTitle("");
 				setNewFinance(true);
 			}
+
+			if (arguments.containsKey("enquiry")) {
+				setEnquiry((boolean) arguments.get("enquiry"));
+			} 
 
 			if (arguments.containsKey("roleCode")) {
 				roleCode = (String) arguments.get("roleCode");
@@ -180,11 +196,30 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if(arguments.containsKey("financeMainDialogCtrl")){
 				this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
 				try {
-						financeMainDialogCtrl.getClass().getMethod("setFinCovenantTypeListCtrl", this.getClass()).invoke(getFinanceMainDialogCtrl(), this);
+					financeMainDialogCtrl.getClass().getMethod("setFinCovenantTypeListCtrl", this.getClass()).invoke(getFinanceMainDialogCtrl(), this);
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
 				}
 				this.window_FinCovenantTypeList.setTitle("");
+			}
+			
+			//moduleName
+			if (arguments.containsKey("moduleName")) {
+				this.moduleName = (String) arguments.get("moduleName");
+			}
+			if (arguments.containsKey("legalDetail")) {
+				setLegalDetail((LegalDetail) arguments.get("legalDetail"));
+				if (getLegalDetail() != null) {
+					if (getLegalDetail().getCovenantTypeList() != null) {
+						setFinCovenantTypeDetailList(getLegalDetail().getCovenantTypeList());
+					}
+				}
+			}
+			if (arguments.containsKey("isNotFinanceProcess")) {
+				isNotFinanceProcess = (boolean) arguments.get("isNotFinanceProcess");
+			}
+			if (arguments.containsKey("finHeaderList")) {
+				headerList = (ArrayList<Object>) arguments.get("finHeaderList");
 			}
 			
 			doEdit();
@@ -202,7 +237,9 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+		if (isNotFinanceProcess) {
+			window_FinCovenantTypeList_title.setVisible(false);
+		}
 		logger.debug("Leaving");
 	}
 		
@@ -221,6 +258,9 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("FinCovenantTypeList",roleCode);
 		this.btnNew_NewFinCovenantType.setVisible(getUserWorkspace().isAllowed("FinCovenantTypeList_NewFinCovenantTypeDetail"));
+		if (isEnquiry()) {
+			this.btnNew_NewFinCovenantType.setVisible(false);
+		}
 		logger.debug("leaving");
 	}
 
@@ -256,13 +296,28 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			appendFinBasicDetails();
 			doCheckEnquiry();
 			doWriteBeanToComponents();
+			
+			try {
+				doCheckEnquiry();
+				doWriteBeanToComponents();
 
-			this.listBoxFinCovenantType.setHeight(borderLayoutHeight - 226 +"px");
-			if (parent != null) {
-				this.window_FinCovenantTypeList.setHeight(borderLayoutHeight-75+"px");
-				parent.appendChild(this.window_FinCovenantTypeList);
+				if (arguments.containsKey("financeMainDialogCtrl")) {
+					this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
+					try {
+						financeMainDialogCtrl.getClass().getMethod("setFinCovenantTypeListCtrl", this.getClass()).invoke(getFinanceMainDialogCtrl(), this);
+					} catch (Exception e) {
+						logger.error("Exception: ", e);
+					}
+					this.window_FinCovenantTypeList.setTitle("");
+				}
+				this.listBoxFinCovenantType.setHeight(borderLayoutHeight - 226 + "px");
+				if (parent != null) {
+					this.window_FinCovenantTypeList.setHeight(borderLayoutHeight - 75 + "px");
+					parent.appendChild(this.window_FinCovenantTypeList);
+				}
+			} catch (Exception e) {
+				MessageUtil.showError(e);
 			}
-
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -374,7 +429,12 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		Clients.clearWrongValue(this.btnNew_NewFinCovenantType);
 		
 		final FinCovenantType aFinCovenantType = new FinCovenantType();
-		aFinCovenantType.setFinReference(financedetail.getFinScheduleData().getFinReference());
+		if (isNotFinanceProcess) {
+			aFinCovenantType.setFinReference(getLegalDetail().getLoanReference());
+			aFinCovenantType.setModule(CollateralConstants.LEGAL_MODULE);
+		} else {
+			aFinCovenantType.setFinReference(financedetail.getFinScheduleData().getFinReference());
+		}
 		aFinCovenantType.setNewRecord(true);
 		aFinCovenantType.setWorkflowId(0);
 
@@ -386,7 +446,12 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		map.put("roleCode", roleCode);
 		map.put("financeMainDialogCtrl", this.financeMainDialogCtrl);
 		map.put("allowedRoles", allowedRoles);
-		map.put("financeDetail", getFinancedetail());
+		if (isNotFinanceProcess) {
+			map.put("legalDetail", getLegalDetail());
+		} else {
+			map.put("financeDetail", getFinancedetail());
+		}
+		map.put("isNotFinanceProcess", isNotFinanceProcess);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -405,9 +470,9 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		Listitem listitem = this.listBoxFinCovenantType.getSelectedItem();
 		if (listitem != null && listitem.getAttribute("data") != null) {
 			final FinCovenantType aFinCovenantType = (FinCovenantType) listitem.getAttribute("data");
-			if (isDeleteRecord(aFinCovenantType.getRecordType())) {
+			if (isDeleteRecord(aFinCovenantType)) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
-			}else{
+			} else{
 				aFinCovenantType.setNewRecord(false);
 
 				final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -416,9 +481,14 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 				map.put("finCovenantTypesListCtrl", this);
 				map.put("financeMainDialogCtrl", this.financeMainDialogCtrl);
 				map.put("roleCode", roleCode);
-				map.put("enqModule", isEnquiry);
+				map.put("enqModule", isEnquiry());
 				map.put("allowedRoles", allowedRoles);
-				map.put("financeDetail", getFinancedetail());
+				if (isNotFinanceProcess) {
+					map.put("legalDetail", getLegalDetail());
+				} else {
+					map.put("financeDetail", getFinancedetail());
+				}
+				map.put("isNotFinanceProcess", isNotFinanceProcess);
 
 				// call the ZUL-file with the parameters packed in a map
 				try {
@@ -479,11 +549,13 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	
-	
-	
-	private boolean isDeleteRecord(String rcdType){
-		if(StringUtils.equals(PennantConstants.RECORD_TYPE_CAN,rcdType) || 
-				StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, rcdType)){
+	private boolean isDeleteRecord(FinCovenantType aFinCovenantType) {
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, aFinCovenantType.getRecordType())
+				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, aFinCovenantType.getRecordType())) {
+			return true;
+		}
+
+		if (isNotFinanceProcess && !CollateralConstants.LEGAL_MODULE.equals(aFinCovenantType.getModule())) {
 			return true;
 		}
 		return false;
@@ -496,15 +568,25 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this );
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",this.finBasicdetails, map);
+			map.put("finHeaderList", headerList);
+			map.put("moduleName", moduleName);
+			if(isNotFinanceProcess){
+				Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralBasicDetails.zul",this.finBasicdetails, map);
+			}else {
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",this.finBasicdetails, map);
+			}
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		
 	}
-
+	 
+	
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
-		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
+		if (isNotFinanceProcess) {
+			getCollateralBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
+		} else {
+			getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
+		}
 	}
 	
 	// ******************************************************//
@@ -546,6 +628,30 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
+	}
+
+	public CollateralBasicDetailsCtrl getCollateralBasicDetailsCtrl() {
+		return collateralBasicDetailsCtrl;
+	}
+
+	public void setCollateralBasicDetailsCtrl(CollateralBasicDetailsCtrl collateralBasicDetailsCtrl) {
+		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
+	}
+
+	public LegalDetail getLegalDetail() {
+		return legalDetail;
+	}
+
+	public void setLegalDetail(LegalDetail legalDetail) {
+		this.legalDetail = legalDetail;
+	}
+
+	public boolean isEnquiry() {
+		return enquiry;
+	}
+
+	public void setEnquiry(boolean enquiry) {
+		this.enquiry = enquiry;
 	}
 
 }
