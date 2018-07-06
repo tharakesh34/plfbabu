@@ -148,38 +148,6 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 	}
 
 	/**
-	 * Fetch the Records Customer Incomes details by key field
-	 * 
-	 * @param customerId
-	 *            (long)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return CustomerIncome
-	 */
-	@Override
-	public List<CustomerIncome> getCustomerIncomeByCustomer(final long id, String type) {
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select * from customer_income_details").append(type);
-		sql.append(" where custid = :custid");
-
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("custid", id);
-
-		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
-
-		logger.debug(Literal.LEAVING);
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		}
-
-		return new ArrayList<>();
-
-	}
-
-	/**
 	 * This method Deletes the Records from the CustomerIncomes or CustomerIncomes_Temp if records Existed in table.
 	 * 
 	 * @param customerId

@@ -333,7 +333,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	
 	@Override
     public Map<String, BigDecimal> getCustomerIncomeByCustomer(long custID, boolean isWIF) {
-	    List<CustomerIncome> list = getCustomerIncomeDAO().getCustomerIncomeByCustomer(custID, "_AView");
+	    List<CustomerIncome> list = incomeDetailDAO.getIncomesByCustomer(custID, "_AView");
 	    Map<String, BigDecimal> map = null;
 	    if(list != null && list.size() > 0){
 	    	map = new HashMap<String, BigDecimal>(list.size());
@@ -357,7 +357,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	
 	@Override
     public List<CustomerIncome> getCustomerIncomes(long custID, boolean isWIF) {
-	    return getCustomerIncomeDAO().getCustomerIncomeByCustomer(custID, "_AView");
+	    return incomeDetailDAO.getIncomesByCustomer(custID, "_AView");
     }
 
 	@Override

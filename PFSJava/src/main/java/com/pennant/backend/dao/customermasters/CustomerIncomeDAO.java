@@ -53,11 +53,8 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 public interface CustomerIncomeDAO {
 	CustomerIncome getCustomerIncomeById(CustomerIncome customerIncome, String type, String inputSource);
 
-	List<CustomerIncome> getCustomerIncomeByCustomer(final long id, String type);
-
 	void deleteByCustomer(final long id, String type, boolean isWIF);
 
-	/* BigDecimal getTotalIncomeByCustomer(long custId); */
 	void saveBatch(List<CustomerIncome> customerIncome, String type, boolean isWIF);
 
 	int getVersion(CustomerIncome customerIncome);

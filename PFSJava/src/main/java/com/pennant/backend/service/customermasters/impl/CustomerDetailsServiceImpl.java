@@ -696,8 +696,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				customerDetails.setCustEmployeeDetail(getCustEmployeeDetailDAO().getCustEmployeeDetailById(id, type));
 			}
 			if (ImplementationConstants.ALLOW_CUSTOMER_INCOMES) {
-				customerDetails
-						.setCustomerIncomeList(getCustomerIncomeDAO().getCustomerIncomeByCustomer(id, type));
+				customerDetails.setCustomerIncomeList(incomeDetailDAO.getIncomesByCustomer(id, type));
 			}
 			// ### Ticket 126612 LMS > PDE > newly added shareholder are not displayed in PDE. Changed the condition to
 			// non individual.
