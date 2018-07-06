@@ -405,4 +405,35 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		return count;
 	}
 
+	@Override
+	public FinanceWorkFlow getFinanceWorkFlow(String finType, String finEvent, String moduleName, String type) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = null;
+		MapSqlParameterSource source = null;
+
+		selectSql = new StringBuilder("Select FinType, FinEvent, ScreenCode, WorkFlowType,ModuleName");
+		selectSql.append(" From LMTFinanceWorkFlowDef");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinType =:FinType AND FinEvent=:FinEvent AND ModuleName=:ModuleName ");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("FinType", finType);
+		source.addValue("FinEvent", finEvent);
+		source.addValue("ModuleName", moduleName.toUpperCase());
+
+		RowMapper<FinanceWorkFlow> typeRowMapper = ParameterizedBeanPropertyRowMapper .newInstance(FinanceWorkFlow.class);
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		} finally {
+			source = null;
+			selectSql = null;
+		}
+		logger.debug("Leaving");
+		return null;
+	}
+
 }
