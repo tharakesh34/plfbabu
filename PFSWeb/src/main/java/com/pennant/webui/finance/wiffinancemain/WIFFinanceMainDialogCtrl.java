@@ -264,6 +264,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Decimalbox								grcAdvPftRate;
 	protected Row										row_GrcAdvBaseRate;
 	protected Row										row_GrcAdvPftRate;
+	protected Row										row_GrcMaxAmount;
+	protected CurrencyBox								grcMaxAmount;
 
 	//Finance Main Details Tab---> 3. Repayment Period Details
 
@@ -426,6 +428,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient BigDecimal						oldVar_grcAdvPftRate;
 	private transient String							oldVar_grcAdvBaseRate;
 	private transient BigDecimal						oldVar_grcAdvMargin;
+	private transient BigDecimal						oldVar_grcMaxAmount;
 
 	//Finance Main Details Tab---> 3. Repayment Period Details 
 
@@ -690,6 +693,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.grcAdvEffRate.setFormat(PennantConstants.rateFormate9);
 		this.grcAdvEffRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.grcAdvEffRate.setScale(9);
+		
+		this.grcMaxAmount.setProperties(true, finFormatter);
 
 		// Finance Basic Details Tab ---> 3. Repayment Period Details
 		this.numberOfTerms.setMaxlength(4);
@@ -1224,6 +1229,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!this.allowGrace.isChecked()) {
 				doAllowGraceperiod(false);
 			}
+			
+			onChangeGrcSchdMthd();
+			this.grcMaxAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getGrcMaxAmount(), format));
 
 		} else {
 			this.gracePeriodEndDate_two.setValue(this.finStartDate.getValue());
@@ -1957,6 +1965,12 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			
+			try {
+				aFinanceMain.setGrcMaxAmount(PennantAppUtil.unFormateAmount(this.grcMaxAmount.getActualValue(), formatter));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 
 		} else {
 			aFinanceMain.setGrcCpzFrq("");
@@ -1970,6 +1984,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceMain.setGrcPeriodEndDate(DateUtility.getDate(DateUtility.formatUtilDate(
 					this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
 			aFinanceMain.setGraceTerms(0);
+			aFinanceMain.setGrcMaxAmount(BigDecimal.ZERO);
 		}
 
 		try {
@@ -3012,6 +3027,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.oldVar_grcAdvBaseRate = this.grcAdvBaseRate.getValue();
 			this.oldVar_grcAdvMargin = this.grcAdvMargin.getValue();
 			this.oldVar_grcAdvPftRate = this.grcAdvPftRate.getValue();
+			this.oldVar_grcMaxAmount = this.grcMaxAmount.getActualValue();
 		}
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
@@ -3311,6 +3327,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (this.oldVar_grcAdvPftRate != this.grcAdvPftRate.getValue()) {
 				return true;
 			}
+			if (this.oldVar_grcMaxAmount != this.grcMaxAmount.getActualValue()) {
+				return true;
+			}
 		}
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
@@ -3559,6 +3578,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (this.row_GrcAdvPftRate.isVisible() && !this.grcAdvPftRate.isDisabled()) {
 				this.grcAdvPftRate.setConstraint(new PTDecimalValidator(Labels
 						.getLabel("label_FinanceMainDialog_GrcAdvPftRate.value"), 9, false));
+			}
+			
+			if (this.row_GrcMaxAmount.isVisible() && !this.grcMaxAmount.isReadonly()) {
+				this.grcMaxAmount.setConstraint(new PTDecimalValidator(Labels
+						.getLabel("label_FinanceMainDialog_GrcMaxReqAmount.value"), format, true, false));
 			}
 		}
 
@@ -4007,6 +4031,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.graceCpzFrq.setDisabled(isReadOnly("WIFFinanceMainDialog_graceCpzFrq"));
 		this.nextGrcCpzDate.setDisabled(isReadOnly("WIFFinanceMainDialog_nextGrcCpzDate"));
+		this.grcMaxAmount.setReadonly(isReadOnly("WIFFinanceMainDialog_grcMaxAmount"));
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
 
@@ -4105,6 +4130,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.nextGrcPftDate.setDisabled(true);
 		this.nextGrcPftRvwDate.setDisabled(true);
 		this.nextGrcCpzDate.setDisabled(true);
+		this.grcMaxAmount.setReadonly(true);
 
 		readOnlyComponent(true, this.grcAdvBaseRate);
 		readOnlyComponent(true, this.grcAdvMargin);
@@ -5316,6 +5342,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
+		onChangeGrcSchdMthd();
 		logger.debug("Leaving");
 	}
 
@@ -7012,6 +7039,29 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering " + event.toString());
 		//doFillCommonDetails();
 		logger.debug("Leaving " + event.toString());
+	}
+	
+	/**
+	 * When user Changes Grace schedule method component
+	 * 
+	 * @param event
+	 */
+	public void onChange$cbGrcSchdMthd(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering " + event.toString());
+		onChangeGrcSchdMthd();
+		logger.debug("Leaving " + event.toString());
+	}
+	
+	private void onChangeGrcSchdMthd(){
+		if(this.cbGrcSchdMthd.getSelectedIndex() > 0 && 
+				StringUtils.equals(this.cbGrcSchdMthd.getSelectedItem().getValue().toString(), CalculationConstants.SCHMTHD_PFTCAP)){
+			this.row_GrcMaxAmount.setVisible(true);
+			this.grcMaxAmount.setMandatory(true);
+		}else{
+			this.row_GrcMaxAmount.setVisible(false);
+			this.grcMaxAmount.setValue(BigDecimal.ZERO);
+			this.grcMaxAmount.setMandatory(false);
+		}
 	}
 
 	/**

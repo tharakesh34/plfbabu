@@ -131,4 +131,12 @@ update adtCustomers set marginDeviation=0;
 			<column name="finLTVCheck" type="varchar(12)"/>		
 		</addColumn>
 	</changeSet>
+	 
+	<changeSet author="Siva" id="15">
+	<comment>Adding Column Grace Maximum Amount for capping Interest Amount</comment>
+		<addColumn tableName="AdtFinanceMain">
+			<column name="GrcMaxAmount" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

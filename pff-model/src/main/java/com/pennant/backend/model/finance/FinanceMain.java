@@ -74,7 +74,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"tDSApplicable", "manualSchedule", "planDeferCount", "stepFinance", "alwManualSteps", "stepPolicy", "stepType",
 		"graceTerms", "grcPeriodEndDate", "grcRateBasis", "grcPftRate", "graceBaseRate", "graceSpecialRate",
 		"grcMargin", "grcProfitDaysBasis", "grcPftFrq", "nextGrcPftDate", "grcPftRvwFrq", "nextGrcPftRvwDate",
-		"grcCpzFrq", "nextGrcCpzDate", "allowGrcRepay", "grcSchdMthd", "grcMinRate", "grcMaxRate", "grcAdvPftRate",
+		"grcCpzFrq", "nextGrcCpzDate", "allowGrcRepay", "grcSchdMthd", "grcMinRate", "grcMaxRate","grcMaxAmount", "grcAdvPftRate",
 		"grcAdvBaseRate", "grcAdvMargin", "numberOfTerms", "reqRepayAmount", "repayRateBasis", "repayProfitRate",
 		"repayBaseRate", "repaySpecialRate", "repayMargin", "scheduleMethod", "repayFrq", "nextRepayDate",
 		"repayPftFrq", "nextRepayPftDate", "repayRvwFrq", "nextRepayRvwDate", "repayCpzFrq", "nextRepayCpzDate",
@@ -260,6 +260,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal grcMinRate = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal grcMaxRate = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal grcMaxAmount = BigDecimal.ZERO;
 
 	// Advised profit Rates
 	@XmlElement
@@ -3729,6 +3731,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setEmployeeNameDesc(String employeeNameDesc) {
 		this.employeeNameDesc = employeeNameDesc;
+	}
+
+	public BigDecimal getGrcMaxAmount() {
+		return grcMaxAmount;
+	}
+
+	public void setGrcMaxAmount(BigDecimal grcMaxAmount) {
+		this.grcMaxAmount = grcMaxAmount;
 	}
 
 }

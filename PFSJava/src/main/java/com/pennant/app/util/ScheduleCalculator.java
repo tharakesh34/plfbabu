@@ -641,6 +641,14 @@ public class ScheduleCalculator {
 		// PREPARE FIND SCHDULE DATA
 		finScheduleData = preapareFinSchdData(finScheduleData, isCalFlat);
 		finScheduleData = calSchdProcess(finScheduleData, isCalFlat, true);
+		
+		// If Grace Period calculation amount has maximum capping
+		if(finMain.isAllowGrcPeriod() && finMain.getGrcMaxAmount().compareTo(BigDecimal.ZERO) > 0 &&
+				StringUtils.equals(CalculationConstants.SCHMTHD_PFTCAP, finMain.getGrcSchdMthd())){
+			finScheduleData.getFinanceMain().setEventFromDate(finMain.getFinStartDate());
+			finScheduleData.getFinanceMain().setEventToDate(finMain.getGrcPeriodEndDate());
+			finScheduleData = procChangeRepay(finScheduleData, finMain.getGrcMaxAmount(), CalculationConstants.SCHMTHD_PFTCAP);
+		}
 
 		// CONVERT FLAT RATE TO REDUCING RATE.
 		if (isCalFlat) {
@@ -677,6 +685,7 @@ public class ScheduleCalculator {
 					finMain.getIncreasedCost());
 		}
 
+		finScheduleData = setFinanceTotals(finScheduleData);
 		setFinScheduleData(finScheduleData);
 
 		// Return the schedule header
@@ -3157,10 +3166,7 @@ public class ScheduleCalculator {
 				"_AView");
 		finScheduleData.setiRRDetails(new ArrayList<FinIRRDetails>()); // reseting list object.
 		
-		//FIXME: PV: To avoid error
-		if (irrFinanceTypes.isEmpty()) {
-			//calculateXIRRAndIRR(finScheduleData, finMain, null);
-		} else {
+		if (!irrFinanceTypes.isEmpty()) {
 			for (int j = 0; j < irrFinanceTypes.size(); j++) {
 				calculateXIRRAndIRR(finScheduleData, finMain, irrFinanceTypes.get(j));
 			}

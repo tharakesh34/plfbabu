@@ -972,6 +972,13 @@
 															id="cbGrcSchdMthd" width="275px" readonly="true" />
 													</hbox>
 												</row>
+												<row id="row_GrcMaxAmount">
+													<label
+														id="label_FinanceMainDialog_GrcMaxReqAmount"
+														value="${c:l('label_FinanceMainDialog_GrcMaxReqAmount.value')}" />
+													<currencyBox
+														id="grcMaxAmount" />
+												</row>
 											</rows>
 										</grid>
 									</groupbox>

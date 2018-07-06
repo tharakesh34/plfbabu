@@ -474,6 +474,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Space space_GrcSchdMthd;
 	protected Row grcBaseRateRow;
 	protected Row row_GrcPftDayBasis;
+	protected Row row_GrcMaxAmount;
+	protected CurrencyBox grcMaxAmount;
 
 	//Advised Profit Rates
 	protected RateBox grcAdvRate;
@@ -671,6 +673,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient String oldVar_grcAdvBaseRate;
 	private transient BigDecimal oldVar_grcAdvMargin;
 	private transient BigDecimal oldVar_grcAdvPftRate;
+	private transient BigDecimal oldVar_grcMaxAmount;
 	protected transient int oldVar_numberOfTerms;
 	protected transient BigDecimal oldVar_finRepaymentAmount;
 	protected transient String oldVar_repayFrq;
@@ -1153,6 +1156,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.nextGrcCpzDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextGrcCpzDate_two.setFormat(DateFormat.LONG_DATE.getPattern());
 
+		this.grcMaxAmount.setProperties(false, finFormatter);
+		
 		// Finance Basic Details Tab ---> 3. Repayment Period Details
 
 		this.numberOfTerms.setMaxlength(4);
@@ -3371,6 +3376,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!this.allowGrace.isChecked()) {
 				doAllowGraceperiod(false);
 			}
+			
+			onChangeGrcSchdMthd();
+			this.grcMaxAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getGrcMaxAmount(), format));
 
 		} else {
 			this.gracePeriodEndDate_two.setValue(this.finStartDate.getValue());
@@ -4443,6 +4451,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.oldVar_grcAdvBaseRate = this.grcAdvRate.getBaseValue();
 			this.oldVar_grcAdvMargin = this.grcAdvRate.getMarginValue();
 			this.oldVar_grcAdvPftRate = this.grcAdvPftRate.getValue();
+			this.oldVar_grcMaxAmount = this.grcMaxAmount.getActualValue();
 		}
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
@@ -4704,6 +4713,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				return true;
 			}
 			if (this.oldVar_grcAdvPftRate != this.grcAdvPftRate.getValue()) {
+				return true;
+			}
+			if (this.oldVar_grcMaxAmount != this.grcMaxAmount.getActualValue()) {
 				return true;
 			}
 		}
@@ -5134,6 +5146,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.finGrcMaxRate.setConstraint(new PTDecimalValidator(
 							Labels.getLabel("label_FinanceMainDialog_FinGrcMaxRate.value"), 9, false, false, 0, 9999));
 				}
+			}
+			
+			if (this.row_GrcMaxAmount.isVisible() && !this.grcMaxAmount.isReadonly()) {
+				this.grcMaxAmount.setConstraint(new PTDecimalValidator(Labels
+						.getLabel("label_FinanceMainDialog_GrcMaxReqAmount.value"), finFormatter, true, false));
 			}
 		}
 
@@ -7525,7 +7542,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-
+	
 	public void onChange$gracePeriodEndDate(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		if (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
@@ -7837,6 +7854,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.grcCpzFrqRow.setVisible(isGraceCheck);
 			this.row_GrcPftDayBasis.setVisible(isGraceCheck);
 		}
+		onChangeGrcSchdMthd();
 		logger.debug("Leaving");
 	}
 
@@ -8646,7 +8664,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		cbGrcSchddemethod = getComboboxValue(this.cbGrcSchdMthd);
+		onChangeGrcSchdMthd();
 		logger.debug("Leaving");
+	}
+	
+	private void onChangeGrcSchdMthd(){
+		if(this.cbGrcSchdMthd.getSelectedIndex() > 0 && StringUtils.equals(this.cbGrcSchdMthd.getSelectedItem().getValue().toString(), 
+				CalculationConstants.SCHMTHD_PFTCAP)){
+			this.row_GrcMaxAmount.setVisible(true);
+			this.grcMaxAmount.setMandatory(true);
+		}else{
+			this.row_GrcMaxAmount.setVisible(false);
+			this.grcMaxAmount.setValue(BigDecimal.ZERO);
+			this.grcMaxAmount.setMandatory(false);
+		}
 	}
 
 	/**
@@ -10505,6 +10536,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			
+			try {
+				aFinanceMain.setGrcMaxAmount(PennantAppUtil.unFormateAmount(this.grcMaxAmount.getActualValue(), formatter));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			
 		} else {
 			aFinanceMain.setGrcCpzFrq("");
 			aFinanceMain.setNextGrcCpzDate(null);
@@ -10529,6 +10567,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceMain.setGrcAdvMargin(BigDecimal.ZERO);
 			aFinanceMain.setGrcAdvPftRate(BigDecimal.ZERO);
 			aFinanceMain.setGrcPftRate(BigDecimal.ZERO);
+			aFinanceMain.setGrcMaxAmount(BigDecimal.ZERO);
 		}
 
 		//FinanceMain Details tab ---> 3. Repayment Period Details
@@ -13792,6 +13831,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.grcAdvRate.getBaseComp().setReadonly(true);
 			this.grcAdvRate.getMarginComp().setReadonly(true);
 			this.grcAdvPftRate.setReadonly(true);
+			this.grcMaxAmount.setReadonly(true);
 			gb_gracePeriodDetails.setVisible(false);
 
 			logger.debug("Leaving");
@@ -13831,6 +13871,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_GrcAdvBaseRate"), this.grcAdvRate.getBaseComp());
 		readOnlyComponent(isReadOnly("FinanceMainDialog_GrcAdvMargin"), this.grcAdvRate.getMarginComp());
 		readOnlyComponent(isReadOnly("FinanceMainDialog_GrcAdvPftRate"), this.grcAdvPftRate);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_GrcMaxAmount"), this.grcMaxAmount);
+		
 
 		logger.debug("Leaving");
 	}
@@ -13937,6 +13979,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(true, this.grcAdvRate.getBaseComp());
 		readOnlyComponent(true, this.grcAdvRate.getMarginComp());
 		readOnlyComponent(true, this.grcAdvPftRate);
+		readOnlyComponent(true, this.grcMaxAmount);
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
 
