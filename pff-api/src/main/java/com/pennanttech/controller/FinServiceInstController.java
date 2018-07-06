@@ -826,10 +826,9 @@ public class FinServiceInstController extends SummaryDetailService {
 						advPayment.setDisbCCy(financeMain.getFinCcy());
 
 						if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IMPS)
-								|| StringUtils.equals(advPayment.getPaymentType(),
-										DisbursementConstants.PAYMENT_TYPE_NEFT)
-								|| StringUtils.equals(advPayment.getPaymentType(),
-										DisbursementConstants.PAYMENT_TYPE_RTGS)) {
+								|| StringUtils.equals(advPayment.getPaymentType(),DisbursementConstants.PAYMENT_TYPE_NEFT)
+								|| StringUtils.equals(advPayment.getPaymentType(),DisbursementConstants.PAYMENT_TYPE_RTGS)
+								|| StringUtils.equals(advPayment.getPaymentType(),DisbursementConstants.PAYMENT_TYPE_IFT)) {
 
 							BankBranch bankBranch = new BankBranch();
 							if (StringUtils.isNotBlank(advPayment.getiFSC())) {

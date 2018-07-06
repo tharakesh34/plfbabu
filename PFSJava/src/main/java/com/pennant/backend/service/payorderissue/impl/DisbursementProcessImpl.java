@@ -63,7 +63,8 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 			
 			if (DisbursementConstants.PAYMENT_TYPE_IMPS.equals(paymentType)
 					|| DisbursementConstants.PAYMENT_TYPE_NEFT.equals(paymentType)
-					|| DisbursementConstants.PAYMENT_TYPE_RTGS.equals(paymentType)) {
+					|| DisbursementConstants.PAYMENT_TYPE_RTGS.equals(paymentType)
+					|| DisbursementConstants.PAYMENT_TYPE_IFT.equals(paymentType)) {
 				addToCustomerBeneficiary(disbursement, financeMain.getCustID());
 			}
 			
