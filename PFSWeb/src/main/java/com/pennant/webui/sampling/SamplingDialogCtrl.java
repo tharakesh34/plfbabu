@@ -465,6 +465,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		} else {
 			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepayProfitRate().doubleValue(), ccyFormatter));
 		}
+		
+		map.put("moduleCode", "FinanceMain");
 
 		doShowActivityLog(this.sampling.getKeyReference(), map);
 		

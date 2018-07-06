@@ -1298,6 +1298,10 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		arg.put("moduleCode", moduleCode);
 		arg.put("keyValue", keyValue);
 		arg.put("map", map);
+		
+		if(moduleCode == null) {
+			arg.put("moduleCode", map.get("moduleCode"));
+		}
 
 		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/ActivityLog.zul", window, arg);
 	}
