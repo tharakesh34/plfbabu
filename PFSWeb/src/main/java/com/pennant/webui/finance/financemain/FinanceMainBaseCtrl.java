@@ -4044,7 +4044,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				HashMap<String, Object> map = getDefaultArguments();
 				map.put("finHeaderList", getFinBasicDetails());
 				map.put("pSLDetail", pslDetail);
-				map.put("tab", getTab(AssetConstants.UNIQUE_ID_TAX));
+				map.put("tab", getTab(AssetConstants.UNIQUE_ID_PSL_DETAILS));
 				map.put("fromLoan", true);
 				map.put("financeDetail", getFinanceDetail());
 				map.put("financeMainDialogCtrl", this);

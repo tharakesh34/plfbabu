@@ -143,6 +143,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 	protected Label label_SubCategory;
 	protected Label label_WeakerSection;
 	protected Space space_SubCategory;
+	protected Button btnNotes;
 
 	private transient PSLDetailListCtrl pSLDetailListCtrl; // overhanded per param
 	private transient PSLDetailService pSLDetailService;
@@ -265,7 +266,9 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 			} else {
 				this.gb_EndUseDetails.setVisible(false);
 			}
-			
+			this.btnCancel.setVisible(false);
+			this.btnNotes.setVisible(false);
+			this.eligibiltyAmount.setReadonly(true);
 		} catch (Exception e) {
 			closeDialog();
 			MessageUtil.showError(e);
@@ -413,6 +416,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 			this.landHolding.setValue("");
 			this.landArea.setValue("");
 			this.endUse.setValue("");
+			this.subCategory.setValue("");
 			this.space_SubCategory.setSclass("");
 			this.purpose.setValue("");
 			this.purpose.setValue("");
@@ -869,7 +873,6 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		
 		this.loanPurpose.setValue(aPSLDetail.getLoanPurpose());
 		this.eligibiltyAmount.setValue(aPSLDetail.getEligibleAmount());
-
 
 		this.recordStatus.setValue(aPSLDetail.getRecordStatus());
 		rules.put("ASL_ELIGABLE_AMOUNT", aPSLDetail.getEligibleAmount());
