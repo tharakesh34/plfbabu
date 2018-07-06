@@ -211,8 +211,8 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				custIncome = (CustomerIncome) custIncomeDetails.get(i).getModelData();
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], custIncome.getBefImage(),
 						custIncome));
+				incomeDetailDAO.deletebyLinkId(custIncome.getLinkId(), tableType);
 			}
-			incomeDetailDAO.delete(custIncome.getLinkId(), tableType);
 		}
 
 		// Obligation Details.
@@ -224,7 +224,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				custExtLiability = (CustomerExtLiability) obligationDetails.get(i).getModelData();
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 						custExtLiability.getBefImage(), custExtLiability));
-				externalLiabilityDAO.delete(custExtLiability.getId(), tableType);
+				externalLiabilityDAO.deleteByLinkId(custExtLiability.getLinkId(), tableType);
 			}
 		}
 
