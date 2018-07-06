@@ -614,7 +614,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeDetail.setSampling(
 				finSamplingService.getSamplingDetails(financeDetail.getFinScheduleData().getFinReference(), "_aview"));
 
-		
 		//PSL details
 		financeDetail.setPslDetail(pSLDetailService.getPSLDetail((finReference)));
 
