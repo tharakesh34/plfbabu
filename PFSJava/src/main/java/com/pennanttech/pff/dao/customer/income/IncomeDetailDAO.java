@@ -21,4 +21,6 @@ public interface IncomeDetailDAO {
 	List<CustomerIncome> getIncomesByCustomer(long custId, String type);
 
 	void deletebyLinkId(long linkId, String type);
+
+	BigDecimal getTotalIncomeBySamplingId(long id);
 }

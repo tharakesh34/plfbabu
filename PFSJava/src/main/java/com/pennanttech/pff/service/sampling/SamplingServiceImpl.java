@@ -703,9 +703,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			sampling.setOriginalTotalIncome(incomeDetailDAO.getTotalIncomeByFinReference(keyReference));
 		}
 
-		if (sampling.getIncomeLinkId() != null) {
-			sampling.setTotalIncome(incomeDetailDAO.getTotalIncomeByLinkId(sampling.getIncomeLinkId()));
-		}
+		sampling.setTotalIncome(incomeDetailDAO.getTotalIncomeBySamplingId(sampling.getId()));
 
 		Long liabilityLinkId = samplingDAO.getLinkId(sampling.getId(), "link_sampling_liabilities_snap");
 		if (liabilityLinkId != null && liabilityLinkId != 0) {
@@ -714,9 +712,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			sampling.setOriginalTotalLiability(externalLiabilityDAO.getTotalLiabilityByFinReference(keyReference));
 		}
 
-		if (sampling.getLiabilityLinkId() != null) {
-			sampling.setTotalLiability(externalLiabilityDAO.getTotalLiabilityByLinkId(sampling.getLiabilityLinkId()));
-		}
+		sampling.setTotalLiability(externalLiabilityDAO.getTotalLiabilityBySamplingId(sampling.getId()));
 
 		sampling.setCollSetupList(samplingDAO.getCollateralsBySamplingId(sampling.getId()));
 

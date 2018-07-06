@@ -196,6 +196,29 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		logger.debug(Literal.LEAVING);
 		return totalIncome;
 	}
+	
+	@Override
+	public BigDecimal getTotalIncomeBySamplingId(long samplingId) {
+		logger.debug(Literal.ENTERING);
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("select coalesce(sum(income), 0) from income_details");
+		sql.append(" where linkid in  (select linkid from link_sampling_incomes where samplingid = :id)");
+		logger.debug(Literal.SQL + sql.toString());
+		
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("id", samplingId);
+		BigDecimal totalIncome = BigDecimal.ZERO;
+		try {
+			totalIncome = this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, BigDecimal.class);
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+			totalIncome = BigDecimal.ZERO;
+		}
+		
+		logger.debug(Literal.LEAVING);
+		return totalIncome;
+	}
 
 	@Override
 	public BigDecimal getTotalIncomeByFinReference(String keyReference) {

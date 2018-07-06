@@ -436,12 +436,9 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		Sampling sampling = null;
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" select distinct");
-		sql.append(" s.*,");
-		sql.append(" ls.linkid incomeLinkId,ll.linkid liabilityLinkId ");
-		sql.append(" from sampling").append(type).append(" s");
-		sql.append(" left join link_sampling_incomes ls on ls.samplingid = s.id");
-		sql.append(" left join link_sampling_liabilities ll on ll.samplingid=s.id");
+		sql.append(" select * from sampling").append(type).append(" s");
+		//sql.append(" left join link_sampling_incomes ls on ls.samplingid = s.id");
+		//sql.append(" left join link_sampling_liabilities ll on ll.samplingid=s.id");
 		sql.append(" where s.keyreference = :keyreference");
 
 		RowMapper<Sampling> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Sampling.class);

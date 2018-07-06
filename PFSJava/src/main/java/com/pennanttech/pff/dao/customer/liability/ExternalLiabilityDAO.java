@@ -23,4 +23,6 @@ public interface ExternalLiabilityDAO {
 
 	List<CustomerExtLiability> getLiabilities(long linkId);
 
+	BigDecimal getTotalLiabilityBySamplingId(long id);
+
 }

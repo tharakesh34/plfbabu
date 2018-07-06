@@ -138,7 +138,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+		
 	@Override
 	public List<CustomerExtLiability> getLiabilities(long custId, String type) {
 
@@ -180,6 +180,28 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		BigDecimal emiSum = BigDecimal.ZERO;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("linkid", linkid);
+		
+		try {
+			emiSum = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return emiSum;
+	}
+	
+	@Override
+	public BigDecimal getTotalLiabilityBySamplingId(long samplingId) {
+		logger.debug(Literal.ENTERING);
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select coalesce(sum(instalmentamount), 0) from external_liabilities");
+		sql.append(" where linkid in  (select linkid from link_sampling_incomes where samplingid = :id)");
+		logger.debug(Literal.SQL + sql.toString());
+		
+		BigDecimal emiSum = BigDecimal.ZERO;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("id", samplingId);
 		
 		try {
 			emiSum = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);

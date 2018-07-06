@@ -333,12 +333,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private DeviationHelper deviationHelper;
 	@Autowired
 	private AuthorizationLimitService authorizationLimitService;
+
 	@Autowired
 	private DMSIdentificationService dmsIdentificationService;
+
 	@Autowired
 	private SamplingService samplingService;
 	@Autowired
 	private FinSamplingService finSamplingService;
+
+
 	@Autowired
 	private LegalDetailService legalDetailService;
 
@@ -2505,8 +2509,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						tableType.getSuffix(), auditTranType));
 			}
 			
+			
 			// psl Details
-			//=======================================
+			// =======================================
 			if (financeDetail.getPslDetail() != null) {
 				financeDetail.getPslDetail().setRecordStatus(financeMain.getRecordStatus());
 				financeDetail.getPslDetail().setRoleCode(financeMain.getRoleCode());
@@ -2514,11 +2519,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				financeDetail.getPslDetail().setTaskId((financeMain.getTaskId()));
 				financeDetail.getPslDetail().setNextTaskId((financeMain.getNextTaskId()));
 				financeDetail.getPslDetail().setWorkflowId((financeMain.getWorkflowId()));
-				auditDetails.add(getpSLDetailService().saveOrUpdate(financeDetail.getPslDetail(),
-						tableType, auditTranType));
+				auditDetails.add(
+						getpSLDetailService().saveOrUpdate(financeDetail.getPslDetail(), tableType, auditTranType));
 			}
-			
-			//Verifications
+
+			// Verifications
 			saveOrUpdateVerifications(auditDetails, financeDetail, financeMain, auditTranType);
 
 			/**
@@ -3925,6 +3930,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					getFinAssetEvaluationService().doApprove(financeDetail.getFinAssetEvaluation(), "", tranType);
 				}
 				
+				//PSL details
 				if (financeDetail.getPslDetail() != null) {
 					getpSLDetailService().doApprove(financeDetail.getPslDetail(), TableType.MAIN_TAB, tranType);
 				}
