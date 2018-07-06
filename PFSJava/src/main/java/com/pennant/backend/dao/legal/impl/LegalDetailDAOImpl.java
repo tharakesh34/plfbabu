@@ -88,7 +88,7 @@ public class LegalDetailDAOImpl extends BasisNextidDaoImpl<LegalDetail> implemen
 		sql.append(" legalDecision, legalRemarks, propertyDetailModt, propertyDetailECDate, ecPropertyOwnerName, active,");
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (type.contains("View")) {
-			sql.append(" ,branchDesc, finAmount, finCcy");
+			sql.append(" ,branchDesc");
 		}
 		sql.append(" From LegalDetails");
 		sql.append(type);
