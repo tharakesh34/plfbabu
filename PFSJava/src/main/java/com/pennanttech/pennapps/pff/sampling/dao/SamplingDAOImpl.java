@@ -433,8 +433,8 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	public Sampling getSampling(String keyReference, String type) {
 		logger.debug(Literal.ENTERING);
 		Sampling sampling = null;
-
 		StringBuilder sql = new StringBuilder();
+		
 		sql.append(" select distinct");
 		sql.append(" s.*,");
 		sql.append(" ls.linkid incomeLinkId,ll.linkid liabilityLinkId ");

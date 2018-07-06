@@ -1,6 +1,7 @@
 package com.pennanttech.pennapps.pff.sampling.model;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,6 +53,8 @@ public class Sampling extends AbstractWorkflowEntity {
 	private String collateralReference;
 	private String custCategory;
 	private String resubmitReasonCode;
+	private String samplingTolerance;
+	private List<SamplingDetails> samplingDetailsList = new ArrayList<>();
 
 	private int custId;
 	private String custCif;
@@ -174,6 +177,8 @@ public class Sampling extends AbstractWorkflowEntity {
 		excludeFields.add("documents");
 		excludeFields.add("reamrksMap");
 		excludeFields.add("queryDetail");
+		excludeFields.add("samplingTolerance");
+		excludeFields.add("samplingDetailsList");
 
 		return excludeFields;
 	}
@@ -675,4 +680,21 @@ public class Sampling extends AbstractWorkflowEntity {
 	public void setQueryDetail(QueryDetail queryDetail) {
 		this.queryDetail = queryDetail;
 	}
+
+	public List<SamplingDetails> getSamplingDetailsList() {
+		return samplingDetailsList;
+	}
+
+	public void setSamplingDetailsList(List<SamplingDetails> samplingDetailsList) {
+		this.samplingDetailsList = samplingDetailsList;
+	}
+
+	public String getSamplingTolerance() {
+		return samplingTolerance;
+	}
+
+	public void setSamplingTolerance(String samplingTolerance) {
+		this.samplingTolerance = samplingTolerance;
+	}
+
 }

@@ -1,14 +1,11 @@
 package com.pennanttech.webui.sampling;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -28,11 +25,8 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Cell;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
-import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
-import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
@@ -44,11 +38,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
-import com.pennant.backend.model.collateral.CollateralSetup;
-import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.util.ExtendedFieldConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.PennantAppUtil;
@@ -60,6 +50,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
+import com.pennanttech.pennapps.pff.sampling.model.SamplingDetails;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.sampling.Decision;
 import com.pennanttech.pff.service.sampling.SamplingService;
@@ -215,6 +206,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.ENTERING);
 
 		this.samplingRemarks.setValue(sampling.getRemarks());
+		this.samplingTolerance.setValue(sampling.getSamplingTolerance());
 		if (this.sampling.getDecision() != null) {
 			fillComboBox(this.samplingDecision, this.sampling.getDecision(), Decision.getList());
 		} else {
@@ -238,38 +230,6 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	private BigDecimal getVariance(BigDecimal original, BigDecimal current) {
-		BigDecimal variance = (current.subtract(original));
-
-		if (BigDecimal.ZERO.compareTo(original) == 0) {
-			return PennantAppUtil.formateAmount(variance, formatter).abs();
-		}
-
-		variance = variance.divide(original, formatter, RoundingMode.HALF_DOWN);
-		variance = variance.multiply(new BigDecimal(100));
-		return variance.abs();
-	}
-
-	private Integer getVariance(Integer original, Integer current) {
-		Integer variance = (current - original);
-		if (original == 0) {
-			return Math.abs(variance);
-		}
-		variance = ((variance * (100) / original));
-
-		return Math.abs(variance);
-	}
-
-	private Long getVariance(Long original, Long current) {
-		Long variance = (current - original);
-		if (original == 0) {
-			return Math.abs(variance);
-		}
-		variance = variance / original;
-		variance = variance * (100);
-		return Math.abs(variance);
 	}
 
 	private void fillComboBox(Combobox combobox, int value, List<ValueLabel> list) {
@@ -303,7 +263,8 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	}
 
 	private void renderList() {
-		renderFields();
+		// renderFields();
+		renderSamplingDtails();
 		this.samplingResubmitReason.addForward("onFulfill", self, "onChangeReason");
 	}
 
@@ -318,278 +279,63 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug("Leaving");
 	}
 
-	private String getStringValue(ExtendedFieldData data) {
-		Object object = data.getFieldValue();
-		return object == null ? "" : object.toString();
-	}
-
-	private BigDecimal getDecimalValue(ExtendedFieldData data) {
-		Object object = data.getFieldValue();
-		if (object == null) {
-			return BigDecimal.ZERO;
-		} else if (!StringUtils.isNumeric(object.toString())) {
-			return BigDecimal.ZERO;
-		} else {
-			return new BigDecimal(object.toString());
-		}
-	}
-
-	private Integer getIntValue(ExtendedFieldData data) {
-		Object object = data.getFieldValue();
-		if (object == null) {
-			return 0;
-		} else if (!StringUtils.isNumeric(object.toString())) {
-			return 0;
-		} else {
-			return new Integer(object.toString());
-		}
-	}
-
-	private Long getLongValue(ExtendedFieldData data) {
-		Object object = data.getFieldValue();
-		if (object == null) {
-			return new Long(0);
-		} else if (!StringUtils.isNumeric(object.toString())) {
-			return new Long(0);
-		} else {
-			return new Long(object.toString());
-		}
-	}
-
-	private void renderFields() {
+	private void renderSamplingDtails() {
 		formatter = sampling.getCcyeditfield();
-
 		Textbox textbox;
-		Decimalbox decimalbox;
-		Intbox intbox;
-		Longbox longbox;
 		Row row;
 		Label label;
 		Cell cell;
-		BigDecimal varaiance;
-		BigDecimal original;
-		BigDecimal current;
 
-		original = sampling.getOriginalTotalIncome();
-		current = sampling.getTotalIncome();
+		for (SamplingDetails sd : sampling.getSamplingDetailsList()) {
 
-		if (original == null) {
-			original = BigDecimal.ZERO;
-		}
-
-		if (current == null) {
-			current = BigDecimal.ZERO;
-		}
-
-		row = new Row();
-		label = new Label();
-		label.setValue(Labels.getLabel("label_FinSampling_Income.value"));
-		label.setParent(row);
-
-		decimalbox = getDecimalbox();
-		decimalbox.setValue(PennantAppUtil.formateAmount(original, formatter));
-		decimalbox.setParent(row);
-
-		decimalbox = getDecimalbox();
-		decimalbox.setValue(PennantAppUtil.formateAmount(current, formatter));
-		decimalbox.setParent(row);
-
-		decimalbox = getDecimalbox();
-		varaiance = getVariance(original, current);
-
-		if (varaiance.compareTo(new BigDecimal(25)) >= 0) {
-			this.samplingTolerance.setValue("Out of Tolerance");
-		} else {
-			this.samplingTolerance.setValue("Tolerance");
-		}
-		decimalbox.setValue(varaiance);
-		decimalbox.setParent(row);
-
-		setRemarksBox(row, "INCOME");
-
-		row.setParent(rows_Sampling);
-
-		original = sampling.getOriginalTotalLiability();
-		current = sampling.getTotalLiability();
-
-		if (original == null) {
-			original = BigDecimal.ZERO;
-		}
-
-		if (current == null) {
-			current = BigDecimal.ZERO;
-		}
-
-		row = new Row();
-		label = new Label();
-		label.setValue(Labels.getLabel("label_FinSampling_Obligation.value"));
-		label.setParent(row);
-
-		decimalbox = getDecimalbox();
-		decimalbox.setValue(PennantAppUtil.formateAmount(original, formatter));
-		decimalbox.setParent(row);
-
-		decimalbox = getDecimalbox();
-		decimalbox.setValue(PennantAppUtil.formateAmount(current, formatter));
-		decimalbox.setParent(row);
-
-		decimalbox = getDecimalbox();
-		decimalbox.setValue(getVariance(original, current));
-		decimalbox.setParent(row);
-
-		setRemarksBox(row, "LIABILITY");
-		row.setParent(rows_Sampling);
-
-		Map<String, List<ExtendedFieldData>> collaterals;
-		for (CollateralSetup coll : sampling.getCollSetupList()) {
-			String collateralType = coll.getCollateralType();
-			String collateralRef = coll.getCollateralRef();
-
-			long originallinkId = samplingService.getCollateralLinkId(collateralRef, sampling.getId(), "");
-			long sanpLinkId = samplingService.getCollateralLinkId(collateralRef, sampling.getId(), "_snap");
-
-			if (sanpLinkId > 0) {
-				collaterals = samplingService.getCollateralFields(collateralType, String.valueOf(originallinkId),
-						String.valueOf(sanpLinkId));
-			} else {
-				collaterals = samplingService.getCollateralFields(collateralType, String.valueOf(originallinkId),
-						collateralRef);
-			}
-			String caption = String.format("%s - %s", collateralRef, collateralType);
-
-			row = new Row();
-			cell = new Cell();
-			cell.setColspan(5);
-			label = new Label(caption);
-			label.setStyle("font-weight:bold;color: #ff4500;");
-			cell.appendChild(label);
-			cell.setParent(row);
-			row.setParent(rows_Sampling);
-
-			for (Entry<String, List<ExtendedFieldData>> field : collaterals.entrySet()) {
+			// Render collateral Caption
+			if (StringUtils.isNotEmpty(sd.getCaption())) {
 				row = new Row();
 				row.setParent(rows_Sampling);
-
-				List<ExtendedFieldData> list = field.getValue();
-				ExtendedFieldData originalField = list.get(0);
-				ExtendedFieldData currentField = list.get(1);
-
-				String fieldType = currentField.getFieldType();
-
-				label = new Label();
-				label.setValue(originalField.getFieldLabel());
-				label.setParent(row);
-
-				switch (fieldType) {
-				case ExtendedFieldConstants.FIELDTYPE_TEXT:
-				case ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT:
-					textbox = getTextbox();
-					textbox.setValue(getStringValue(originalField));
-					textbox.setParent(row);
-
-					textbox = getTextbox();
-					textbox.setParent(row);
-					textbox.setValue(getStringValue(currentField));
-
-					textbox = getTextbox();
-					textbox.setParent(row);
-					setRemarksBox(row, collateralRef.concat("-").concat(currentField.getFieldName()));
-					break;
-				case ExtendedFieldConstants.FIELDTYPE_UPPERTEXT:
-					textbox = getTextbox();
-					textbox.setParent(row);
-					textbox.setValue(getStringValue(currentField).toUpperCase());
-
-					textbox = getTextbox();
-					textbox.setParent(row);
-					textbox.setValue(getStringValue(currentField).toUpperCase());
-
-					textbox = getTextbox();
-					textbox.setParent(row);
-					setRemarksBox(row, collateralRef.concat("-").concat(currentField.getFieldName()));
-					break;
-				case ExtendedFieldConstants.FIELDTYPE_ACTRATE:
-				case ExtendedFieldConstants.FIELDTYPE_DECIMAL:
-				case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
-				case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
-					decimalbox = getDecimalbox(originalField);
-					decimalbox.setParent(row);
-					decimalbox.setValue(PennantAppUtil.formateAmount(getDecimalValue(originalField), formatter));
-
-					decimalbox = getDecimalbox(currentField);
-					decimalbox.setParent(row);
-					decimalbox.setValue(PennantAppUtil.formateAmount(getDecimalValue(currentField), formatter));
-
-					decimalbox = getDecimalbox(currentField);
-					decimalbox.setParent(row);
-					decimalbox.setValue(getVariance(getDecimalValue(originalField), getDecimalValue(currentField)));
-					setRemarksBox(row, collateralRef.concat("-").concat(currentField.getFieldName()));
-
-					break;
-				case ExtendedFieldConstants.FIELDTYPE_INT:
-					intbox = getIntbox();
-					intbox.setParent(row);
-					intbox.setValue(getIntValue(originalField));
-
-					intbox = getIntbox();
-					intbox.setParent(row);
-					intbox.setValue(getIntValue(currentField));
-
-					intbox = getIntbox();
-					intbox.setParent(row);
-					intbox.setValue(getVariance(getIntValue(originalField), getIntValue(currentField)));
-					setRemarksBox(row, collateralRef.concat("-").concat(currentField.getFieldName()));
-					break;
-
-				case ExtendedFieldConstants.FIELDTYPE_LONG:
-					longbox = getLongbox();
-					longbox.setParent(row);
-					longbox.setValue(getLongValue(originalField));
-
-					longbox = getLongbox();
-					longbox.setParent(row);
-					longbox.setValue(getLongValue(currentField));
-
-					longbox = getLongbox();
-					longbox.setParent(row);
-					longbox.setValue(getVariance(getLongValue(originalField), getLongValue(currentField)));
-					setRemarksBox(row, collateralRef.concat("-").concat(currentField.getFieldName()));
-					break;
-				}
+				cell = new Cell();
+				cell.setColspan(5);
+				label = new Label(sd.getCaption());
+				label.setStyle("font-weight:bold;color: #ff4500;");
+				label.setParent(cell);
+				cell.setParent(row);
+				continue;
 			}
 
+			row = new Row();
+			row.setParent(rows_Sampling);
+
+			label = new Label();
+			label.setValue(sd.getParameter());
+			label.setParent(row);
+
+			if (sd.isAlignLeft()) {
+				textbox = getTextbox();
+				textbox.setValue(sd.getBranchCam());
+				textbox.setParent(row);
+
+				textbox = getTextbox();
+				textbox.setValue(sd.getCreditCam());
+				textbox.setParent(row);
+
+				textbox = getTextbox();
+				textbox.setValue(sd.getVariance());
+				textbox.setParent(row);
+
+			} else {
+				textbox = getRightAlignedTextbox();
+				textbox.setValue(sd.getBranchCam());
+				textbox.setParent(row);
+
+				textbox = getRightAlignedTextbox();
+				textbox.setValue(sd.getCreditCam());
+				textbox.setParent(row);
+
+				textbox = getRightAlignedTextbox();
+				textbox.setValue(sd.getVariance());
+				textbox.setParent(row);
+			}
+			setRemarksBox(row, sd.getRemarksId());
 		}
-
-		original = sampling.getOriginalLoanEligibility();
-		current = sampling.getLoanEligibility();
-
-		if (original == null) {
-			original = BigDecimal.ZERO;
-		}
-
-		if (current == null) {
-			current = BigDecimal.ZERO;
-		}
-
-		row = new Row();
-		label = new Label();
-		label.setValue(Labels.getLabel("label_FinSampling_FinalRcmdAmt.value"));
-		label.setParent(row);
-
-		decimalbox = getDecimalbox();
-		decimalbox.setValue(PennantAppUtil.formateAmount(original, formatter));
-		decimalbox.setParent(row);
-
-		decimalbox = getDecimalbox();
-		decimalbox.setValue(PennantAppUtil.formateAmount(current, formatter));
-		decimalbox.setParent(row);
-
-		decimalbox = getDecimalbox();
-		decimalbox.setValue(getVariance(original, current));
-		decimalbox.setParent(row);
-
-		setRemarksBox(row, "RECOMMENDEDAMTREMARKS");
-		row.setParent(rows_Sampling);
 
 	}
 
@@ -612,72 +358,17 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		remarks.add(fieldName);
 	}
 
+	private Textbox getRightAlignedTextbox() {
+		Textbox textbox = getTextbox();
+		textbox.setStyle("text-align:right;");
+		return textbox;
+	}
+
 	private Textbox getTextbox() {
 		Textbox textbox = new Textbox();
 		textbox.setReadonly(true);
 		textbox.setWidth("120px");
-
 		return textbox;
-	}
-
-	private Decimalbox getDecimalbox() {
-		Decimalbox decimalbox = new Decimalbox();
-		decimalbox.setScale(formatter);
-		decimalbox.setWidth("120px");
-		decimalbox.setReadonly(true);
-		decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-		decimalbox.setScale(formatter);
-		return decimalbox;
-	}
-
-	private Decimalbox getDecimalbox(ExtendedFieldData original) {
-		Decimalbox decimalbox = new Decimalbox();
-		decimalbox.setReadonly(true);
-		decimalbox.setWidth("120px");
-
-		// Format Setting based on Field Type
-		if (StringUtils.equals(original.getFieldType(), ExtendedFieldConstants.FIELDTYPE_ACTRATE)) {
-			decimalbox.setFormat(PennantApplicationUtil.getRateFormate(formatter));
-		} else if (StringUtils.equals(original.getFieldType(), ExtendedFieldConstants.FIELDTYPE_PERCENTAGE)) {
-			decimalbox.setFormat(PennantConstants.percentageFormate2);
-		} else if (StringUtils.equals(original.getFieldType(), ExtendedFieldConstants.FIELDTYPE_DECIMAL)) {
-			decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-		} else if (StringUtils.equals(original.getFieldType(), ExtendedFieldConstants.FIELDTYPE_AMOUNT)) {
-			decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-		}
-
-		decimalbox.setScale(formatter);
-
-		return decimalbox;
-	}
-
-	private CurrencyBox getCurrencybox() {
-		CurrencyBox currencyBox = new CurrencyBox();
-		currencyBox.setReadonly(true);
-		currencyBox.setWidth("120px");
-
-		currencyBox.setFormat(PennantApplicationUtil.getAmountFormate(sampling.getCcyeditfield()));
-		currencyBox.setScale(sampling.getCcyeditfield());
-
-		return currencyBox;
-	}
-
-	private Intbox getIntbox() {
-		Intbox intbox = new Intbox();
-		intbox.setReadonly(true);
-		intbox.setWidth("120px");
-		intbox.setStyle("text-align:right;");
-
-		return intbox;
-	}
-
-	private Longbox getLongbox() {
-		Longbox longbox = new Longbox();
-		longbox.setReadonly(true);
-		longbox.setWidth("120px");
-		longbox.setStyle("text-align:right;");
-
-		return longbox;
 	}
 
 	/**
@@ -831,9 +522,6 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		this.samplingResubmitReason.setConstraint("");
 		this.samplingFinalRcmdAmt.setConstraint("");
 
-		// ((Textbox) row_income.getChildren().get(4)).setConstraint("");
-		// ((Textbox) row_Obligation.getChildren().get(4)).setConstraint("");
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -848,9 +536,6 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		this.samplingRemarks.setErrorMessage("");
 		this.samplingResubmitReason.setErrorMessage("");
 		this.samplingFinalRcmdAmt.setErrorMessage("");
-
-		// ((Textbox) row_income.getChildren().get(4)).setErrorMessage("");
-		// ((Textbox) row_Obligation.getChildren().get(4)).setErrorMessage("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -883,8 +568,6 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		}
 
 		setRemarksConstraint(this.samplingRemarks);
-		// setRemarksConstraint((Textbox) row_income.getChildren().get(4));
-		// setRemarksConstraint((Textbox) row_Obligation.getChildren().get(4));
 
 		logger.debug(Literal.LEAVING);
 	}

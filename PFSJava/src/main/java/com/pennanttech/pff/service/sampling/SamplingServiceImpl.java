@@ -521,13 +521,13 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 		BigDecimal custTotalIncome = sampling.getTotalIncome();
 		BigDecimal custTotalExpense = sampling.getTotalLiability();
-		
+
 		fieldsandvalues.put("custCtgCode", sampling.getCustCategory());
 		fieldsandvalues.put("custTotalIncome", custTotalIncome);
 		fieldsandvalues.put("custTotalExpense", custTotalExpense);
 		fieldsandvalues.put("finProfitRate", sampling.getInterestRate());
 		fieldsandvalues.put("noOfTerms", sampling.getTenure());
-		
+
 		fieldsandvalues.put("Total_Co_Applicants_Income", BigDecimal.ZERO);
 		fieldsandvalues.put("Co_Applicants_Obligation_External", BigDecimal.ZERO);
 		fieldsandvalues.put("Co_Applicants_Obligation_Internal", BigDecimal.ZERO);
@@ -1361,6 +1361,8 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 						original.setLinkId(samplingDAO.getIncomeSnapLinkId(sampling.getId(), original.getCustId()));
 						original.setId(0);
 						incomeDetailDAO.deletebyLinkId(original.getLinkId(), "");
+						original.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						original.setLastMntBy(sampling.getLastMntBy());
 						incomeDetailDAO.save(original, "");
 					}
 
@@ -1373,12 +1375,16 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			currentNew.setId(0);
 			customerIncomeDAO.setLinkId(currentNew);
 			incomeDetailDAO.deletebyLinkId(currentNew.getLinkId(), "");
+			currentNew.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			currentNew.setLastMntBy(sampling.getLastMntBy());
 			incomeDetailDAO.save(currentNew, "");
 		}
 		for (CustomerIncome originalNew : originalNewList) {
 			originalNew.setLinkId(samplingDAO.getIncomeSnapLinkId(sampling.getId(), originalNew.getCustId()));
 			originalNew.setId(0);
 			incomeDetailDAO.deletebyLinkId(originalNew.getLinkId(), "");
+			originalNew.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			originalNew.setLastMntBy(sampling.getLastMntBy());
 			incomeDetailDAO.save(originalNew, "");
 		}
 	}
