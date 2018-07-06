@@ -27,7 +27,7 @@
 		</sql>
 	</changeSet>
 
-	<!-- <changeSet id="1.0" author="DurgaPrasad G">
+	<changeSet id="1.0" author="DurgaPrasad G">
 		<createTable tableName="LegalDetails">
 			<column name="LegalId" type="bigint"/>
 			<column name="LegalReference" type="varchar(20)" />
@@ -2928,8 +2928,7 @@
 			<column name="LastMntBy">1000</column>
 			<column name="Version">0</column>
 		</insert>
-	</changeSet> -->
-	
+	</changeSet> 
 	
 	<changeSet id="88" author="DurgaPrasad G">
 		<createView viewName="LegalDetails_AView" replaceIfExists="true">
