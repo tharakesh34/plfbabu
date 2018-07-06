@@ -472,6 +472,11 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 		return getPartnerBankDAO().getPartnerBranchModesId(id);
 	}
 
+	@Override
+	public String getBankCodeById(long partnerBankId) {
+		return partnerBankDAO.getBankCodeById(partnerBankId);
+	}
+	
 	public FinAdvancePaymentsDAO getFinAdvancePaymentsDAO() {
 		return finAdvancePaymentsDAO;
 	}

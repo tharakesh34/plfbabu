@@ -74,6 +74,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -99,7 +100,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private DisbursementPostings	disbursementPostings;
 	@Autowired
 	private DocumentDetailsDAO		documentDetailsDAO;
-	private FinCovenantTypeDAO      finCovenantTypeDAO;
+	private FinCovenantTypeDAO		finCovenantTypeDAO;
+	private PartnerBankService		partnerBankService;
 
 	public PayOrderIssueServiceImpl() {
 		super();
@@ -578,6 +580,48 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			}
 		}
 		
+		boolean noValidation = isnoValidationUserAction(payOrderIssueHeader.getRecordStatus());
+		if (!noValidation) {
+			List<FinAdvancePayments> advpayments = payOrderIssueHeader.getFinAdvancePaymentsList();
+			String tableType = null;
+			if (payOrderIssueHeader.isLoanApproved()) {
+				tableType = TableType.MAIN_TAB.getSuffix();
+			} else {
+				tableType = TableType.MAIN_TAB.getSuffix();
+			}
+			List<FinanceDisbursement> finDisbursementDetails = financeDisbursementDAO
+					.getFinanceDisbursementDetails(payOrderIssueHeader.getFinReference(), tableType, false);
+
+			for (FinAdvancePayments finAdvancePay : advpayments) {
+				if (!isDeleteRecord(finAdvancePay)) {
+					for (FinanceDisbursement finDisbursmentDetail : finDisbursementDetails) {
+						if (finAdvancePay.getDisbSeq() == finDisbursmentDetail.getDisbSeq()
+								&& finAdvancePay.getLlDate() != null && DateUtility
+										.compare(finDisbursmentDetail.getDisbDate(), finAdvancePay.getLlDate()) != 0) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "65032", errParm, valueParm),
+									usrLanguage));
+						}
+					}
+					
+					String partnerBankBankcode = partnerBankService.getBankCodeById(finAdvancePay.getPartnerBankID());
+					
+					if (!StringUtils.equals(finAdvancePay.getBranchBankCode(), partnerBankBankcode)) {
+						if (StringUtils.equals(finAdvancePay.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IFT)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "65033", errParm, valueParm), usrLanguage));
+						}
+					} else if (!StringUtils.equals(finAdvancePay.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IFT)) {
+						String[] errParam = new String[1];
+						errParam[0]=finAdvancePay.getPaymentType();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "65034", errParam, valueParm), usrLanguage));
+					}
+				}
+			}
+
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !payOrderIssueHeader.isWorkflow()) {
@@ -696,6 +740,27 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			beneficiaryDAO.save(beneficiary, "");
 		}
 	}
+	
+	private boolean isDeleteRecord(FinAdvancePayments aFinAdvancePayments) {
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, aFinAdvancePayments.getRecordType())
+				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, aFinAdvancePayments.getRecordType())
+				|| StringUtils.equals(DisbursementConstants.STATUS_CANCEL, aFinAdvancePayments.getStatus())
+				|| StringUtils.equals(DisbursementConstants.STATUS_REJECTED, aFinAdvancePayments.getStatus())) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isnoValidationUserAction(String userAction) {
+		boolean noValidation = false;
+		if (userAction != null) {
+			if (userAction.equalsIgnoreCase("Cancel") || userAction.contains("Reject")
+					|| userAction.contains("Resubmit") || userAction.contains("Decline")) {
+				noValidation = true;
+			}
+		}
+		return noValidation;
+	}
 
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
@@ -727,6 +792,10 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
 		this.disbursementPostings = disbursementPostings;
+	}
+
+	public void setPartnerBankService(PartnerBankService partnerBankService) {
+		this.partnerBankService = partnerBankService;
 	}
 
 }

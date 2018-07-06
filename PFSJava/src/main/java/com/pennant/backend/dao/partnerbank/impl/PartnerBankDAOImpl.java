@@ -496,4 +496,24 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		return recordCount > 0 ? true : false;
 	}
 
+	@Override
+	public String getBankCodeById(long partnerBankId) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PartnerBankId", partnerBankId);
+
+		StringBuffer selectSql = new StringBuffer();
+		selectSql.append("SELECT BankCode FROM PartnerBanks");
+		selectSql.append(" WHERE PartnerBankId= :PartnerBankId");
+		logger.debug(Literal.SQL + selectSql.toString());
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug(Literal.EXCEPTION, dae);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
 }

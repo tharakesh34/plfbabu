@@ -31,7 +31,7 @@ public abstract class AbstarctDisbursementRequest extends AbstractInterface impl
 	protected final Logger	logger	= Logger.getLogger(getClass());
 		
 	public enum DisbursementTypes {
-		IMPS, RTGS, NEFT, DD, CHEQUE, I;
+		IMPS, RTGS, NEFT, DD, CHEQUE, I, IFT;
 	}
 
 	public AbstarctDisbursementRequest() {

@@ -5386,6 +5386,7 @@
 		<property name="payOrderIssueHeaderDAO" ref="payOrderIssueHeaderDAO" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="partnerBankService" ref="partnerBankService" />
 	</bean>
 
 	<!--============ Fin Fee Details ============== -->
@@ -5518,6 +5519,7 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
+		<property name="partnerBankService" ref="partnerBankService" />
 	</bean>
 
 

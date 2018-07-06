@@ -70,6 +70,7 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
+import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -90,6 +91,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private FinAdvancePaymentsDAO	finAdvancePaymentsDAO;
 	private PayOrderIssueHeaderDAO	payOrderIssueHeaderDAO;
 	private LimitCheckDetails		limitCheckDetails;
+	private PartnerBankService		partnerBankService;
 
 	public FinAdvancePaymentsServiceImpl() {
 		super();
@@ -430,7 +432,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		//validation related to Scheduled Disbursement date And Disbursement date should be same.
 		boolean noValidation = isnoValidationUserAction(financeDetail.getUserAction());
 		if (!noValidation && !isDeleteRecord(finAdvancePay) && !finAdvancePay.ispOIssued()) {
-			List<FinanceDisbursement> finDisbursementDetails = financeDetail.getFinScheduleData().getDisbursementDetails();
+			List<FinanceDisbursement> finDisbursementDetails = financeDetail.getFinScheduleData()
+					.getDisbursementDetails();
 			for (FinanceDisbursement finDisbursmentDetail : finDisbursementDetails) {
 				if (finAdvancePay.getDisbSeq() == finDisbursmentDetail.getDisbSeq() && finAdvancePay.getLlDate() != null
 						&& DateUtility.compare(finDisbursmentDetail.getDisbDate(), finAdvancePay.getLlDate()) != 0) {
@@ -438,6 +441,20 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 							new ErrorDetail(PennantConstants.KEY_FIELD, "65032", errParm, valueParm), usrLanguage));
 				}
 			}
+			String partnerBankBankcode = partnerBankService.getBankCodeById(finAdvancePay.getPartnerBankID());
+			
+			if (!StringUtils.equals(finAdvancePay.getBranchBankCode(), partnerBankBankcode)) {
+				if (StringUtils.equals(finAdvancePay.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IFT)) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "65033", errParm, valueParm), usrLanguage));
+				}
+			} else if (!StringUtils.equals(finAdvancePay.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IFT)) {
+				String[] errParam = new String[1];
+				errParam[0]=finAdvancePay.getPaymentType();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "65034", errParam, valueParm), usrLanguage));
+			}
+
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -783,6 +800,10 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	@Override
 	public int getCountByFinReference(String finReference) {
 		return finAdvancePaymentsDAO.getCountByFinReference(finReference);
+	}
+
+	public void setPartnerBankService(PartnerBankService partnerBankService) {
+		this.partnerBankService = partnerBankService;
 	}
 
 }

@@ -3344,6 +3344,7 @@ public class PennantStaticListUtil {
 		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_RTGS,Labels.getLabel("label_PaymentType_RTGS")));
 		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CHEQUE,Labels.getLabel("label_PaymentType_CHEQUE")));
 		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_DD,Labels.getLabel("label_PaymentType_DD")));
+		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IFT, Labels.getLabel("label_PaymentType_IFT")));
 		
 		dmsDocumentStatus.add(new ValueLabel(DmsDocumentConstants.DMS_DOCUMENT_STATUS_SUCCESS,Labels.getLabel("label_DmsDocumentStatus_Success")));
 		dmsDocumentStatus.add(new ValueLabel(DmsDocumentConstants.DMS_DOCUMENT_STATUS_PROCESSING,Labels.getLabel("label_DmsDocumentStatus_Processing")));

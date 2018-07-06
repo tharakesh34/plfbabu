@@ -69,4 +69,12 @@ public interface PartnerBankService {
 	boolean getPartnerCodeExist(String partnerBankCodeValue, String partnerBankCode);
 
 	List<PartnerBranchModes> getPartnerBranchModesId(long id);
+
+	/**
+	 * Method for get the BankCode of the PartnerBank based on Id.
+	 * 
+	 * @param partnerBankId
+	 * @return bankCode
+	 */
+	String getBankCodeById(long partnerBankId);
 }
