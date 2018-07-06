@@ -340,9 +340,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		this.samplingDate.setValue(DateUtil.format(sampling.getCreatedOn(), DateFormat.SHORT_DATE));
 		
 		if ("F".equals(sampling.getFinGrcRateType())) {
-			this.roi.setValue(PennantAppUtil.amountFormate(sampling.getRepaySpecialRate(), ccyFormatter));
+			this.roi.setValue(PennantApplicationUtil.formatRate(sampling.getRepaySpecialRate().doubleValue(), 2));
 		} else {
-			this.roi.setValue(PennantAppUtil.amountFormate(sampling.getRepayProfitRate(), ccyFormatter));
+			this.roi.setValue(PennantApplicationUtil.formatRate(sampling.getRepayMinRate().doubleValue(), 2));
 		}
 		
 		this.finAmtReq.setValue(PennantAppUtil.formateAmount(sampling.getLoanAmountRequested(), ccyFormatter));
@@ -445,9 +445,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	}
 	
 	public void onClick$userActivityLog(Event event) throws Exception {
-		logger.debug("Entering" +event.toString());
 		doUserActivityLog();
-		logger.debug("Leaving" +event.toString());
 	}
 	
 	private void doUserActivityLog() throws Exception {
@@ -936,6 +934,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("queryDetail", this.sampling.getQueryDetail());
 		map.put("sampling", this.sampling);
+		map.put("enquiry", false);
 		Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/FinQueryDetailList.zul",
 				getTabpanel("QUERYMODULE"), map);
 		logger.debug(Literal.LEAVING);

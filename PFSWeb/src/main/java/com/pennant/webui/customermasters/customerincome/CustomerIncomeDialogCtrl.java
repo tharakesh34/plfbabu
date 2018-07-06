@@ -362,9 +362,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -373,9 +371,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -385,9 +381,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_CustomerIncomeDialog);
-		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -397,9 +391,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -408,9 +400,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving" + event.toString());
 	}
 
 	/**

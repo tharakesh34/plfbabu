@@ -42,4 +42,6 @@ public interface SamplingService {
 
 	long getCollateralLinkId(String collateralRef, long id, String string);
 
+	void saveOnReSubmit(Sampling sampling);
+
 }

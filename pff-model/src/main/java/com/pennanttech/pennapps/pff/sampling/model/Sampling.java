@@ -64,8 +64,9 @@ public class Sampling extends AbstractWorkflowEntity {
 	private String branchCode;
 	private String branchDesc;
 	private String finGrcRateType;
-	private BigDecimal repaySpecialRate = BigDecimal.ZERO;
+	private BigDecimal repaySpecialRate;
 	private BigDecimal repayProfitRate;
+	private BigDecimal repayMinRate;
 	private int numberOfTerms;
 	private String finccy;
 	private int ccyeditfield;
@@ -129,6 +130,7 @@ public class Sampling extends AbstractWorkflowEntity {
 		excludeFields.add("branchCode");
 		excludeFields.add("branchDesc");
 		excludeFields.add("repayProfitRate");
+		excludeFields.add("repayMinRate");
 		excludeFields.add("customerDetails");
 		excludeFields.add("customers");
 		excludeFields.add("numberOfTerms");
@@ -391,6 +393,14 @@ public class Sampling extends AbstractWorkflowEntity {
 
 	public void setRepayProfitRate(BigDecimal repayProfitRate) {
 		this.repayProfitRate = repayProfitRate;
+	}
+	
+	public BigDecimal getRepayMinRate() {
+		return repayMinRate == null ? BigDecimal.ZERO : repayMinRate;
+	}
+
+	public void setRepayMinRate(BigDecimal repayMinRate) {
+		this.repayMinRate = repayMinRate;
 	}
 
 	public int getNumberOfTerms() {

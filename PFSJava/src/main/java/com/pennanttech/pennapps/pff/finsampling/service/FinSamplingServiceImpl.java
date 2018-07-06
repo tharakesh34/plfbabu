@@ -22,7 +22,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.finsampling.dao.FinSamplingDAO;
-import com.pennanttech.pennapps.pff.sampling.dao.SamplingDAO;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.sampling.model.SamplingDetails;
 import com.pennanttech.pff.core.TableType;
@@ -34,8 +33,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 
 	@Autowired
 	private FinSamplingDAO finSamplingDAO;
-	@Autowired
-	private SamplingDAO samplingDAO;
+	
 	@Autowired
 	private SamplingService samplingService;
 
@@ -44,23 +42,21 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 		logger.debug(Literal.ENTERING);
 		Sampling sampling = financeDetail.getSampling();
 		Sampling samplingRemarks = new Sampling();
+		
 		BeanUtils.copyProperties(sampling, samplingRemarks);
 		String[] fields = PennantJavaUtil.getFieldDetails(sampling, sampling.getExcludeFields());
+		
 		finSamplingDAO.updateSampling(sampling, TableType.MAIN_TAB);
-		if (sampling.getDecision() == Decision.RESUBMIT.getKey()
-				&& !samplingService.isExist(sampling.getKeyReference(), "_Temp")) {
-			samplingDAO.save(sampling, TableType.TEMP_TAB);
-
-			for (CollateralSetup collateralSetup : sampling.getCollSetupList()) {
-				finSamplingDAO.saveCollateral(sampling.getId(), collateralSetup.getCollateralType());
-			}
+		
+		if (sampling.getDecision() == Decision.RESUBMIT.getKey() && !samplingService.isExist(sampling.getKeyReference(), "_Temp")) {
+			
+			samplingService.saveOnReSubmit(sampling);
 
 		} else if (sampling.getDecision() == Decision.CREDITCAM.getKey() && !financeDetail.isActionSave()) {
 			samplingService.saveSnap(sampling);
 		}
 
 		finSamplingDAO.saveOrUpdateRemarks(samplingRemarks, TableType.MAIN_TAB);
-		// finSamplingDAO.updateCollateralRemarks(sampling, TableType.MAIN_TAB);
 		logger.debug(Literal.LEAVING);
 		return new AuditDetail(auditTranType, 1, fields[0], fields[1], sampling.getBefImage(), sampling);
 	}

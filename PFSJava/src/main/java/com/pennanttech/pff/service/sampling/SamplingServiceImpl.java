@@ -94,6 +94,12 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	public void save(Sampling sampling) {
 		String[] fields = PennantJavaUtil.getFieldDetails(sampling, sampling.getExcludeFields());
 
+		setWorkflowDetails(sampling);
+
+		samplingDAO.save(sampling, TableType.TEMP_TAB);
+	}
+
+	private void setWorkflowDetails(Sampling sampling) {
 		String workflowType = ModuleUtil.getWorkflowType("Sampling");
 
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workflowType);
@@ -109,8 +115,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		sampling.setNextRoleCode(workFlowDetails.getFirstTaskOwner());
 		sampling.setTaskId(engine.getUserTaskId(sampling.getRoleCode()));
 		sampling.setNextTaskId(engine.getUserTaskId(sampling.getNextRoleCode()) + ";");
-
-		samplingDAO.save(sampling, TableType.TEMP_TAB);
 	}
 
 	@Override
@@ -1497,4 +1501,23 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	public long getCollateralLinkId(String collateralRef, long id, String type) {
 		return samplingDAO.getCollateralLinkId(collateralRef, id, type);
 	}
+
+	@Override
+	public void saveOnReSubmit(Sampling sampling) {
+		setWorkflowDetails(sampling);
+		sampling.setRecordStatus(PennantConstants.RCD_STATUS_SUBMITTED);
+		sampling.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+		
+		samplingDAO.save(sampling, TableType.TEMP_TAB);
+		
+		samplingDAO.saveIncomes(sampling.getId());
+		samplingDAO.saveLiabilities(sampling.getId());
+				
+		samplingDAO.updateIncomes(sampling);
+		samplingDAO.updateLiabilities(sampling);
+		
+		for (CollateralSetup collateralSetup : sampling.getCollSetupList()) {
+			samplingDAO.saveCollateral(sampling.getId(), collateralSetup.getCollateralType());
+		}
+	}	
 }

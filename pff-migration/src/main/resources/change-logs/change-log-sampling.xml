@@ -2486,4 +2486,75 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="21.0" author="murthy.y">
+		<createView viewName="sampling_tview" replaceIfExists="true">
+			select s.id, s.keyreference, s.createdby, s.createdon, s.tenure, s.interestRate, s.foirEligibility, s.emi, s.loanEligibility, s.irrEligibility, s.totalIncome, s.totalLiability,
+			s.remarks, s.samplingon, s.decision, s.recommendedamount,
+			s.decisionon, s.resubmitreason, r.code resubmitreasoncode, r.description resubmitreasondesc,
+			ft.fintype, ft.fintypedesc, ft.finGrcRateType, fm.numberofterms, fm.repayspecialrate, fm.repayprofitrate, fm.rpyminrate repayMinRate, fm.finccy, ccy.ccyeditfield,
+            lb.branchcode, lb.branchdesc,
+			cu.custid, cu.custcif, cu.custshrtname, cu.custctgcode custcategory,           
+			s.version, s.lastmntby, s.lastmnton, s.recordstatus, s.rolecode, s.nextrolecode, s.taskid, s.nexttaskid, s.recordtype, s.workflowid
+			from sampling_temp s 
+			inner join financemain_temp fm on fm.finreference = s.keyreference
+            inner join rmtcurrencies ccy on ccy.ccycode = fm.finccy
+			inner join customers cu on cu.custid = fm.custid
+			inner join rmtfinancetypes ft on ft.fintype = fm.fintype
+			left join rmtbranches lb on lb.branchcode = fm.finbranch
+			left join reasons r on r.id = s.resubmitreason
+		</createView>
+		</changeSet>
+	<changeSet id="21.1" author="murthy.y">
+		<createView viewName="sampling_view" replaceIfExists="true">
+			select s.id, s.keyreference, s.createdby, s.createdon, s.tenure, s.interestRate, s.foirEligibility, s.emi, s.loanEligibility, s.irrEligibility, s.totalIncome, s.totalLiability,
+			s.remarks, s.samplingon, s.decision, s.recommendedamount,
+			s.decisionon, s.resubmitreason, r.code resubmitreasoncode, r.description resubmitreasondesc,
+			ft.fintype, ft.fintypedesc, ft.finGrcRateType, fm.numberofterms, fm.repayspecialrate, fm.repayprofitrate, fm.rpyminrate repayMinRate, fm.finccy, ccy.ccyeditfield,
+            lb.branchcode, lb.branchdesc,
+			cu.custid, cu.custcif, cu.custshrtname, cu.custctgcode custcategory,           
+			s.version, s.lastmntby, s.lastmnton, s.recordstatus, s.rolecode, s.nextrolecode, s.taskid, s.nexttaskid, s.recordtype, s.workflowid
+			from sampling_temp s 
+			inner join financemain_temp fm on fm.finreference = s.keyreference
+            inner join rmtcurrencies ccy on ccy.ccycode = fm.finccy
+			inner join customers cu on cu.custid = fm.custid
+			inner join rmtfinancetypes ft on ft.fintype = fm.fintype
+			left join rmtbranches lb on lb.branchcode = fm.finbranch
+			left join reasons r on r.id = s.resubmitreason
+			union all
+			select s.id, s.keyreference, s.createdby, s.createdon, s.tenure, s.interestRate, s.foirEligibility, s.emi, s.loanEligibility, s.irrEligibility, s.totalIncome, s.totalLiability,
+			s.remarks, s.samplingon, s.decision, s.recommendedamount,
+			s.decisionon, s.resubmitreason, r.code resubmitreasoncode, r.description resubmitreasondesc,
+			ft.fintype, ft.fintypedesc, ft.finGrcRateType, fm.numberofterms, fm.repayspecialrate, fm.repayprofitrate, fm.rpyminrate repayMinRate, fm.finccy, ccy.ccyeditfield,
+            lb.branchcode, lb.branchdesc, 
+			cu.custid, cu.custcif, cu.custshrtname, cu.custctgcode custcategory,
+			s.version, s.lastmntby, s.lastmnton, s.recordstatus, s.rolecode, s.nextrolecode, s.taskid, s.nexttaskid, s.recordtype, s.workflowid
+			from sampling s 
+			inner join financemain_view fm on fm.finreference = s.keyreference
+            inner join rmtcurrencies ccy on ccy.ccycode = fm.finccy
+			inner join customers cu on cu.custid = fm.custid
+			inner join rmtfinancetypes ft on ft.fintype = fm.fintype
+			left join rmtbranches lb on lb.branchcode = fm.finbranch
+			left join reasons r on r.id = s.resubmitreason
+			where not exists (select 1 from sampling_temp where id = s.id)
+		</createView>
+		</changeSet>
+	<changeSet id="21.2" author="murthy.y">
+		<createView viewName="sampling_aview" replaceIfExists="true">
+			select s.id, s.keyreference, s.createdby, s.createdon, s.tenure, s.interestRate, s.foirEligibility, s.emi, s.loanEligibility, s.irrEligibility, s.totalIncome, s.totalLiability,
+			s.remarks, s.samplingon, s.decision, s.recommendedamount,
+			s.decisionon, s.resubmitreason,  r.code resubmitreasoncode, r.description resubmitreasondesc,
+			ft.fintype, ft.fintypedesc, ft.finGrcRateType, fm.numberofterms, fm.repayspecialrate, fm.repayprofitrate, fm.rpyminrate repayMinRate, fm.finccy, ccy.ccyeditfield,
+			fs.calculatedrate, lb.branchcode, lb.branchdesc, 
+			cu.custid, cu.custcif, cu.custshrtname, cu.custctgcode custcategory,
+			s.version, s.lastmntby, s.lastmnton, s.recordstatus, s.rolecode, s.nextrolecode, s.taskid, s.nexttaskid, s.recordtype, s.workflowid
+			from sampling s 
+			inner join financemain_view fm on fm.finreference = s.keyreference
+			inner join rmtcurrencies ccy on ccy.ccycode = fm.finccy
+			inner join finscheduledetails_view fs on fs.finreference = fm.finreference and fs.schdate = fm.finstartdate
+			inner join customers cu on cu.custid = fm.custid
+			inner join rmtfinancetypes ft on ft.fintype = fm.fintype
+			left join rmtbranches lb on lb.branchcode = fm.finbranch
+			left join reasons r on r.id = s.resubmitreason
+		</createView>
+	</changeSet>
 </databaseChangeLog>

@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -801,6 +802,111 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		}
 
 		return linkid;
+	}
+
+	@Override
+	public void saveIncomes(long samplingId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("insert into income_details_temp select * from income_details");
+		sql.append(" where linkid in  (select linkid from link_sampling_incomes where samplingid = :samplingid)");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("samplingid", samplingId);
+		try {
+			jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+	}
+	
+	@Override
+	public void updateIncomes(Sampling sampling) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" update income_details_temp");
+		sql.append(" set lastmntby=:lastMntBy, lastmnton=:lastMntOn, recordStatus=:recordStatus, ");
+		sql.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode, taskid=:taskId, nexttaskid=:nextTaskId,");
+		sql.append(" recordtype=:recordType, workflowid=:workflowId");
+		sql.append(" where linkid in  (select linkid from link_sampling_incomes where samplingid = :id)");
+
+		try {
+			jdbcTemplate.update(sql.toString(), new BeanPropertySqlParameterSource(sampling));
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+	}
+	
+	@Override
+	public void saveLiabilities(long samplingId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("insert into external_liabilities_temp select * from external_liabilities");
+		sql.append(" where linkid in  (select linkid from link_sampling_incomes where samplingid = :samplingid)");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("samplingid", samplingId);
+		try {
+			jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+	}
+	
+	@Override
+	public void updateLiabilities(Sampling sampling) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" update external_liabilities_temp");
+		sql.append(" set lastmntby=:lastMntBy, lastmnton=:lastMntOn, recordStatus=:recordStatus, ");
+		sql.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode, taskid=:taskId, nexttaskid=:nextTaskId,");
+		sql.append(" recordtype=:recordType, workflowid=:workflowId");
+		sql.append(" where linkid in  (select linkid from link_sampling_incomes where samplingid = :id)");
+
+		try {
+			jdbcTemplate.update(sql.toString(), new BeanPropertySqlParameterSource(sampling));
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+	}
+	
+	@Override
+	public void saveCollateral(long samplingId, String collateralType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		List<String> linkIds = getLinkIds(samplingId);
+		StringBuilder sql = new StringBuilder("insert into verification_");
+		sql.append(StringUtils.trimToEmpty(collateralType));
+		sql.append("_tv_temp");
+		sql.append(" select * from verification_");
+		sql.append(StringUtils.trimToEmpty(collateralType));
+		sql.append("_tv  Where reference in(:linkIds)");
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("linkIds",linkIds);
+		try {
+			jdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private List<String> getLinkIds(long samplingId) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("select linkId from link_sampling_collaterals  where samplingId=:samplingId");
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("samplingId", samplingId);
+
+		try {
+			return jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
 	}
 	
 }

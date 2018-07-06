@@ -246,6 +246,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	 * Close the the window.
 	 */
 	protected void closeWindow() {
+		deAllocateAuthorities(pageRightName);
 		window.onClose();
 	}
 				

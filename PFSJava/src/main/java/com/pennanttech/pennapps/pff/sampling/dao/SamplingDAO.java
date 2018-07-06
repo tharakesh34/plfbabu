@@ -67,5 +67,15 @@ public interface SamplingDAO {
 	long getLinkId(long samplingId, String tableName);
 	
 	long getCollateralSnapLinkId(long samplingId, String collateralRef);
+	
+	void saveIncomes(long samplingId);
+
+	void saveLiabilities(long samplingId);
+
+	void saveCollateral(long samplingId, String collateralType);
+
+	void updateLiabilities(Sampling sampling);
+
+	void updateIncomes(Sampling sampling);
 
 }

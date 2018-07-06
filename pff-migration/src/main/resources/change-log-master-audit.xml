@@ -81,11 +81,12 @@
 	<include file="change-logs/change-log-4.7.15-audit.xml" />
 	<include file="change-logs/change-log-4.7.7-audit.xml" />
 	<include file="change-logs/change-log-4.7.15-audit.xml" />
-	<include file="change-logs/change-log-4.7.16-audit.xml" /> -->
+	<include file="change-logs/change-log-4.7.16-audit.xml" />
 	<include file="change-logs/change-log-GSTCoreChanges-audit.xml" />
 	<include file="change-logs/change-log-verification-fi-audit.xml" />
 	<include file="change-logs/change-log-verification-tv-audit.xml" />
 	<include file="change-logs/change-log-verification-lv-audit.xml" />
 	<include file="change-logs/change-log-verification-rcu-audit.xml" />
-	<include file="change-logs/change-log-4.7.17-audit.xml" />
+	<include file="change-logs/change-log-4.7.17-audit.xml" /> -->
+	<include file="change-logs/change-log-customer-extliability-enhancement-audit.xml" />
 </databaseChangeLog>
