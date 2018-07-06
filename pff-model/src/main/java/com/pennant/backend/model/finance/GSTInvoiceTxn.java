@@ -50,7 +50,7 @@ import com.pennant.backend.model.Entity;
 public class GSTInvoiceTxn implements Entity {
 
 	private long invoiceId = Long.MIN_VALUE;
-	private long transactionID;
+	private long transactionID = 0;
 	private String invoiceNo;
 	private Date invoiceDate;
 	private BigDecimal invoice_Amt = BigDecimal.ZERO;

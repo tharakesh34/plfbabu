@@ -1049,7 +1049,7 @@ public class RepaymentProcessUtil {
 	 * @param financeDetail
 	 * @return
 	 */
-	public Map<String, BigDecimal> getTaxPercentages(FinanceDetail financeDetail) {
+	private Map<String, BigDecimal> getTaxPercentages(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
 		// Map Preparation for Executing GST rules
