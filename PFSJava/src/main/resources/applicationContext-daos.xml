@@ -5809,6 +5809,13 @@
 		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
+		
+		<!-- GST Invoice Changes -->
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->
