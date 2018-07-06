@@ -72,6 +72,10 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 		BigDecimal current;
 		SamplingDetails sd;
 		Sampling sampling = samplingService.getSampling(finReference, type);
+		
+		if(sampling==null){
+			return null;
+		}
 		int formatter = sampling.getCcyeditfield();
 		List<SamplingDetails> sdList = sampling.getSamplingDetailsList();
 
