@@ -318,9 +318,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		this.custIncomeType.setMandatoryStyle(true);
 		this.custIncomeType.setTextBoxWidth(110);
 		this.custIncomeType.setModuleName("IncomeExpense");
-		this.custIncomeType.setValueColumn("IncomeTypeDesc");
-		this.custIncomeType.setDescColumn("lovDescCategoryName");
-		this.custIncomeType.setValidateColumns(new String[] { "IncomeTypeDesc" });
+		this.custIncomeType.setValueColumn("IncomeTypeCode");
+		this.custIncomeType.setDescColumn("IncomeTypeDesc");
+		this.custIncomeType.setValidateColumns(new String[] { "IncomeTypeCode" });
 		
 		this.custIncome.setMandatory(true);
 		this.custIncome.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
