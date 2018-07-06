@@ -2526,7 +2526,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			 */
 
 			if (financeMain.isSamplingRequired() && !financeDetail.isActionSave()
-					&& samplingService.isExist(financeDetail.getFinScheduleData().getFinReference(), "_view")) {
+					&& !samplingService.isExist(financeDetail.getFinScheduleData().getFinReference(), "_view")) {
 				Sampling sampling = new Sampling();
 				sampling.setKeyReference(financeMain.getFinReference());
 				sampling.setLastMntBy(financeMain.getLastMntBy());
