@@ -228,7 +228,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 				isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 			}
 			
-			if (getCustomerDialogCtrl() != null) {
+			if (getCustomerDialogCtrl() != null && !isFinanceProcess ) {
 				workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 			}
 			

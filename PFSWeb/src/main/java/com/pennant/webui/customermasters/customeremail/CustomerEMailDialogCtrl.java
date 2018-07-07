@@ -222,7 +222,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 				}
 			}
 			
-			if (getCustomerDialogCtrl() != null) {
+			if (getCustomerDialogCtrl() != null && !isFinanceProcess) {
 				workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 			}
 			

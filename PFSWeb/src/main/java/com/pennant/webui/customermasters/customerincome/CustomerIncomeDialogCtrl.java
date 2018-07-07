@@ -244,7 +244,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			}
 		}
 		
-		if (getCustomerDialogCtrl() != null) {
+		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getFinancedetail()==null) {
 			workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
 		

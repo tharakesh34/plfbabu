@@ -248,7 +248,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 		}
 		
-		if (getCustomerDialogCtrl() != null) {
+		if (getCustomerDialogCtrl() != null && !isFinanceProcess) {
 			workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
 		
