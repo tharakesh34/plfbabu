@@ -181,12 +181,11 @@ public class ExtendedFieldDetailsService {
 
 		Map<String, Object> fieldMap = extendedFieldRenderDAO.getCollateralMap(reference, tableName, "");
 		resultList = getResultMap(fieldDetailsList, fieldMap);
-		
+
 		logger.debug(Literal.LEAVING);
 		return resultList;
 	}
 
-	
 	public Map<String, Object> getCollateralsMap(String tableName, String reference) {
 		logger.debug(Literal.ENTERING);
 		Map<String, Object> fieldMap = new HashMap<>();
@@ -209,7 +208,7 @@ public class ExtendedFieldDetailsService {
 		}
 		return extendedFieldRenderDAO.getCollateralMap(reference, tableName, "");
 	}
-	
+
 	private Map<String, ExtendedFieldData> getResultMap(List<ExtendedFieldDetail> fieldDetailsList,
 			Map<String, Object> map) {
 		Map<String, ExtendedFieldData> resultMap = new HashMap<>();
@@ -872,7 +871,7 @@ public class ExtendedFieldDetailsService {
 
 			if (updateRecord) {
 				if (approveRec) {
-					
+
 					// Handle on approve after resubmit(for got to add collaterals on initial approve)
 					if (extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(),
 							extendedFieldRender.getSeqNo(), tableName + type.getSuffix())) {
@@ -880,10 +879,13 @@ public class ExtendedFieldDetailsService {
 								extendedFieldRender.getSeqNo(), extendedFieldRender.getMapValues(), type.getSuffix(),
 								tableName.toString());
 					} else {
-						extendedFieldRenderDAO.save(extendedFieldRender.getMapValues(), type.getSuffix(), tableName.toString());
-						deleteRecord = true;
+						extendedFieldRenderDAO.save(extendedFieldRender.getMapValues(), type.getSuffix(),
+								tableName.toString());
 					}
 				}
+
+				extendedFieldRenderDAO.update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
+						extendedFieldRender.getMapValues(), type.getSuffix(), tableName.toString());
 			}
 
 			if (deleteRecord) {
@@ -900,6 +902,8 @@ public class ExtendedFieldDetailsService {
 			extendedFieldRender.setBefImage(extendedFieldRender);
 			deatils.get(i).setExtended(true);
 			deatils.get(i).setModelData(extendedFieldRender);
+			
+			System.out.println("");
 		}
 		logger.debug(Literal.LEAVING);
 		return deatils;
@@ -1117,18 +1121,18 @@ public class ExtendedFieldDetailsService {
 
 			if (!render.isWorkflow()) {// With out Work flow only new records
 				if (befExtRender != null) { // Record Already Exists in the
-											// table then error
+												// table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (render.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																						// records
+																							// records
 																						// type
 																						// is
 																						// new
 					if (befExtRender != null || tempRender != null) { // if
-																		// records
+																			// records
 																		// already
 																		// exists
 																		// in
@@ -1147,10 +1151,10 @@ public class ExtendedFieldDetailsService {
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!render.isWorkflow()) { // With out Work flow for update and
-										// delete
+											// delete
 
 				if (befExtRender == null) { // if records not exists in the main
-											// table
+												// table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
@@ -1168,7 +1172,7 @@ public class ExtendedFieldDetailsService {
 			} else {
 
 				if (tempRender == null) { // if records not exists in the Work
-											// flow table
+												// flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}

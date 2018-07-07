@@ -78,10 +78,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		sql.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode,");
 		sql.append(" taskid=:taskId, nexttaskid=:nextTaskId, recordtype=:recordType, workflowid=:workflowId");
 		sql.append(" where id = :Id ");
-		if (!type.endsWith("_Temp")) {
-			sql.append("and Version= :Version-1");
-		}
-
+		
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custExtLiability);
 		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);

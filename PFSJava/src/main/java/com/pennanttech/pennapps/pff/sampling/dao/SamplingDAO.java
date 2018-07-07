@@ -78,4 +78,6 @@ public interface SamplingDAO {
 
 	void updateIncomes(Sampling sampling);
 
+	void updateCollaterals(Sampling sampling, String collateralType);
+
 }

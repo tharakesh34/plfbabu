@@ -559,7 +559,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		source.addValue("reference", reference);
 		try {
 			renderMap = this.jdbcTemplate.queryForMap(sql.toString(), source);
-		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.ENTERING, e);
 			renderMap = new HashMap<>();
 		}
@@ -833,10 +833,42 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	}
 	
 	@Override
+	public void updateCollaterals(Sampling sampling, String collateralType) {
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("update verification_");
+		sql.append(StringUtils.trimToEmpty(collateralType));
+		sql.append("_tv_temp");
+		sql.append(" set lastmntby=:lastMntBy, lastmnton=:lastMntOn, recordStatus=:recordStatus, ");
+		sql.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode, taskid=:taskId, nexttaskid=:nextTaskId,");
+		sql.append(" recordtype=:recordType, workflowid=:workflowId");
+		sql.append(" where reference in  (:reference)");
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("lastMntBy", sampling.getLastMntBy());
+		source.addValue("lastMntOn", sampling.getLastMntOn());
+		source.addValue("recordStatus", sampling.getRecordStatus());
+		source.addValue("roleCode", sampling.getRoleCode());
+		source.addValue("nextRoleCode", sampling.getNextRoleCode());
+		source.addValue("taskId", sampling.getTaskId());
+		source.addValue("nextTaskId", sampling.getNextTaskId());
+		source.addValue("nextTaskId", sampling.getNextTaskId());
+		source.addValue("recordType", sampling.getRecordType());
+		source.addValue("workflowId", sampling.getWorkflowId());
+		source.addValue("reference", getLinkIds(sampling.getId()));
+
+		try {
+			jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+	}
+	
+	@Override
 	public void saveLiabilities(long samplingId) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into external_liabilities_temp select * from external_liabilities");
-		sql.append(" where linkid in  (select linkid from link_sampling_incomes where samplingid = :samplingid)");
+		sql.append(" where linkid in  (select linkid from link_sampling_liabilities where samplingid = :samplingid)");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("samplingid", samplingId);
@@ -854,7 +886,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append(" set lastmntby=:lastMntBy, lastmnton=:lastMntOn, recordStatus=:recordStatus, ");
 		sql.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode, taskid=:taskId, nexttaskid=:nextTaskId,");
 		sql.append(" recordtype=:recordType, workflowid=:workflowId");
-		sql.append(" where linkid in  (select linkid from link_sampling_incomes where samplingid = :id)");
+		sql.append(" where linkid in  (select linkid from link_sampling_liabilities where samplingid = :id)");
 
 		try {
 			jdbcTemplate.update(sql.toString(), new BeanPropertySqlParameterSource(sampling));
@@ -878,7 +910,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("linkIds",linkIds);
+		paramSource.addValue("linkIds", linkIds);
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {

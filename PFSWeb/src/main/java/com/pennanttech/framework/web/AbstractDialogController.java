@@ -60,7 +60,11 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 				this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel, this.btnClose, this.btnNotes);
 				
 		if (arguments.containsKey("enqiryModule")) {
-			this.enqiryModule = (Boolean) arguments.get("enqiryModule");
+			if (arguments.get("enqiryModule") instanceof Boolean) {
+				this.enqiryModule = (Boolean) arguments.get("enqiryModule");
+			} else if (StringUtils.equalsIgnoreCase((String) arguments.get("enqiryModule"), "Y")) {
+				this.enqiryModule = true;
+			}
 		}
 		
 		if(arguments.containsKey("moduleCode")) {

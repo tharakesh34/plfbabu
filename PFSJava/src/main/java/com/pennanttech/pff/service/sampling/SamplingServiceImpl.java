@@ -4,10 +4,12 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -346,6 +348,11 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				sampling.getBefImage(), sampling));
+		
+		int auditSeq =1;
+		for (AuditDetail auditDetail : auditDetailList) {
+			auditDetail.setAuditSeq(auditSeq++);
+		}
 
 		auditHeader.setAuditDetails(auditDetailList);
 		auditHeaderDAO.addAudit(auditHeader);
@@ -1049,6 +1056,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		if (sampling.getExtFieldRenderList() != null) {
 			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService.setExtendedFieldsAuditData(
 					new ArrayList(sampling.getExtFieldRenderList().values()), auditTranType, method));
+			
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
@@ -1512,8 +1520,15 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		samplingDAO.updateIncomes(sampling);
 		samplingDAO.updateLiabilities(sampling);
 		
+		Set<String> collateral = new HashSet<>();
+		String collateralType;
 		for (CollateralSetup collateralSetup : sampling.getCollSetupList()) {
-			samplingDAO.saveCollateral(sampling.getId(), collateralSetup.getCollateralType());
+			collateralType = collateralSetup.getCollateralType();
+			if (!collateral.contains(collateralType)) {
+				samplingDAO.saveCollateral(sampling.getId(), collateralType);
+				samplingDAO.updateCollaterals(sampling, collateralType);
+				collateral.add(collateralType);
+			}
 		}
 	}	
 }

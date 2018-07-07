@@ -22,7 +22,7 @@
 						<button id="btnSampling"
 							label="Sampling Details"
 							tooltiptext="${c:l('btnSampling.tooltiptext')}"
-							sclass="z-toolbarbutton" />
+							sclass="z-toolbarbutton" autodisable="btnSampling"/>
 					</toolbar>
 				</hbox>
 			</div>
