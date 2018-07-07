@@ -169,6 +169,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		map.put("sampling", inquiryObject);
 		map.put("LOAN_ORG", true);
+		map.put("enqiryModule", true);
 		// call the zul-file with the parameters packed in a map
 		try {
 			Executions.createComponents("/WEB-INF/pages/Sampling/SamplingDialog.zul", null, map);

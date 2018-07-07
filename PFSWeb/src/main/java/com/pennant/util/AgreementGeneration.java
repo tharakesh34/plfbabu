@@ -188,6 +188,9 @@ import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
+import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
+import com.pennanttech.pennapps.pff.sampling.model.Sampling;
+import com.pennanttech.pennapps.pff.sampling.model.SamplingDetails;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -231,6 +234,8 @@ public class AgreementGeneration implements Serializable {
 	private QueryDetailService queryDetailService;
 	@Autowired
 	private PSLDetailService pSLDetailService;
+	@Autowired
+	private FinSamplingService finSamplingService;
 	
 	private List<ValueLabel> listLandHolding=PennantStaticListUtil.getYesNo();
 	private List<ValueLabel> subCategoryList=PennantStaticListUtil.getSubCategoryList();
@@ -1252,6 +1257,33 @@ public class AgreementGeneration implements Serializable {
 					agreement.setPslWeakerSectionName(StringUtils.trimToEmpty(pslDetail.getWeakerSectionName()));
 				}
 				logger.debug("End of PSL Details in Agreements");
+			}
+			
+			if(aggModuleDetails.contains(PennantConstants.AGG_SMPMODL)){
+				Sampling sampling = finSamplingService.getSamplingDetails(finRef, "_aview");
+				List<SamplingDetails> samplingDetailsList = sampling.getSamplingDetailsList();
+				if(CollectionUtils.isNotEmpty(samplingDetailsList)){
+					agreement.setSmplDetails(samplingDetailsList);
+				}else{
+					agreement.getSmplDetails().add(new SamplingDetails());
+				}
+				agreement.setSmplTolerance(StringUtils.trimToEmpty(sampling.getSamplingTolerance()));
+				agreement.setSmplDecision("");
+
+				try {
+					com.pennanttech.pff.sampling.Decision decision = com.pennanttech.pff.sampling.Decision
+							.getType(sampling.getDecision());
+
+					if (decision.getKey() != 0) {
+						agreement.setSmplDecision(decision.getValue());
+					}
+
+				} catch (Exception e) {
+				}
+				agreement.setSmplTolerance(StringUtils.trimToEmpty(sampling.getSamplingTolerance()));
+				agreement.setSmplRecommendedAmount(PennantAppUtil.amountFormate(sampling.getRecommendedAmount(), formatter));
+				agreement.setSmplRemarks(StringUtils.trimToEmpty(sampling.getRemarks()));
+				agreement.setSmplResubmitReasonDesc(StringUtils.trimToEmpty(sampling.getResubmitReasonDesc()));
 			}
 			
 		} catch (Exception e) {

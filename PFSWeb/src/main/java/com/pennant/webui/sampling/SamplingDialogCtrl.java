@@ -179,7 +179,6 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 			if (arguments.get("LOAN_ORG") != null) {
 				fromLoanOrg = true;
-				enqiryModule =true;
 			}
 			
 			if (this.sampling == null) {
@@ -229,7 +228,6 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
-
 		
 		  this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNew"));
 		  this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnEdit"));
@@ -461,9 +459,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		map.put("label_SamplingDialog_samplingDate.value", this.sampling.getCreatedOn());
 		
 		if ("F".equals(sampling.getFinGrcRateType())) {
-			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepaySpecialRate().doubleValue(), ccyFormatter));
+			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepaySpecialRate().doubleValue(), 2));
 		} else {
-			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepayProfitRate().doubleValue(), ccyFormatter));
+			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepayMinRate().doubleValue(), 2));
 		}
 		
 		map.put("moduleCode", "FinanceMain");
@@ -575,6 +573,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				map.put("coApplicants", coApplicantCustomers);
 				map.put("ccyFormatter", ccyFormatter);
 				map.put("roleCode", getRole());
+				map.put("enqiryModule", enqiryModule);
 				try {
 					Executions.createComponents(
 							"/WEB-INF/pages/CustomerMasters/CustomerIncome/CustomerIncomeDialog.zul", null, map);
@@ -605,6 +604,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				map.put("coApplicants", coApplicantCustomers);
 				map.put("isFinanceProcess", false);
 				map.put("roleCode", getRole());
+				map.put("enqiryModule", enqiryModule);
 				// call the zul-file with the parameters packed in a map
 				try {
 					Executions.createComponents(
@@ -791,6 +791,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		map.put("isNotFinanceProcess", true);
 		map.put("ccyFormatter",ccyFormatter);
 		map.put("enquiry", true);
+		map.put("enqiryModule", enqiryModule);
+		map.put("enqModule", enqiryModule);
 		map.put("moduleName", CollateralConstants.SAMPLING_MODULE);
 		return map;
 	}
@@ -810,7 +812,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		if ("F".equals(sampling.getFinGrcRateType())) {
 			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepaySpecialRate().doubleValue(), 2));
 		} else {
-			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepayProfitRate().doubleValue(), 2));
+			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepayMinRate().doubleValue(), 2));
 		}
 		
 		return arrayList;
@@ -847,6 +849,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		map.put("coApplicants", coApplicantCustomers);
 		map.put("ccyFormatter", ccyFormatter);
 		map.put("roleCode", getRole());
+		map.put("enqiryModule", enqiryModule);
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerIncome/CustomerIncomeDialog.zul", null,
 					map);
@@ -873,6 +876,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		map.put("coApplicants", coApplicantCustomers);
 		map.put("newRecord", "true");
 		map.put("roleCode", getRole());
+		map.put("enqiryModule", enqiryModule);
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerExtLiabilityDialog.zul", null,
 					map);
@@ -891,8 +895,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getSampling().getDocuments());
 		map.put("module", DocumentCategories.SAMPLING.getKey());
-		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
-				getTabpanel("DOCUMENTDETAIL"), map);
+		map.put("enqiryModule", enqiryModule);
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul", getTabpanel("DOCUMENTDETAIL"), map);
 		logger.debug(Literal.LEAVING);
 
 	}
@@ -905,7 +909,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		createTab("CUSTOMERDETAIL", true);
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("customerDetails", getSampling().getCustomerDetails());
-		map.put("moduleType",PennantConstants.MODULETYPE_ENQ);
+		map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",
 				getTabpanel("CUSTOMERDETAIL"), map);
 		logger.debug(Literal.LEAVING);

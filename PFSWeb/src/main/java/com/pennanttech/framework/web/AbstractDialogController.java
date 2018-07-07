@@ -58,14 +58,14 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		/* create the Button Controller. Disable not used buttons during working */
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), "button_"+pageRightName+"_", true, this.btnNew,
 				this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel, this.btnClose, this.btnNotes);
-		
-		if (arguments.get("enqiryModule") == null || arguments.get("moduleCode") == null ) {
-			logger.warn("enqiryModule or moduleCode is not configured as default arguments at the module "+ getClass());
-			return;
+				
+		if (arguments.containsKey("enqiryModule")) {
+			this.enqiryModule = (Boolean) arguments.get("enqiryModule");
 		}
 		
-		this.enqiryModule = (Boolean) arguments.get("enqiryModule");
-		this.moduleCode = (String) arguments.get("moduleCode");
+		if(arguments.containsKey("moduleCode")) {
+			this.moduleCode = (String) arguments.get("moduleCode");
+		}
 	}
 	
 

@@ -871,8 +871,19 @@ public class ExtendedFieldDetailsService {
 			}
 
 			if (updateRecord) {
-				extendedFieldRenderDAO.update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-						extendedFieldRender.getMapValues(), type.getSuffix(), tableName.toString());
+				if (approveRec) {
+					
+					// Handle on approve after resubmit(for got to add collaterals on initial approve)
+					if (extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(),
+							extendedFieldRender.getSeqNo(), tableName + type.getSuffix())) {
+						extendedFieldRenderDAO.update(extendedFieldRender.getReference(),
+								extendedFieldRender.getSeqNo(), extendedFieldRender.getMapValues(), type.getSuffix(),
+								tableName.toString());
+					} else {
+						extendedFieldRenderDAO.save(extendedFieldRender.getMapValues(), type.getSuffix(), tableName.toString());
+						deleteRecord = true;
+					}
+				}
 			}
 
 			if (deleteRecord) {

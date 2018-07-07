@@ -238,7 +238,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 				setNewRecord(false);
 			}
 			this.customerIncome.setWorkflowId(0);
-			if (arguments.containsKey("roleCode")) {
+			if (arguments.containsKey("roleCode") && !enqiryModule) {
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerIncomeDialog");
 			}
@@ -270,7 +270,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 				setNewRecord(false);
 			}
 			this.customerIncome.setWorkflowId(0);
-			if (arguments.containsKey("roleCode")) {
+			if (arguments.containsKey("roleCode") && !enqiryModule) {
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, pageRightName);
 			}
@@ -279,10 +279,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		doLoadWorkFlow(this.customerIncome.isWorkflow(),
 				this.customerIncome.getWorkflowId(), this.customerIncome.getNextTaskId());
 
-		/* set components visible dependent of the users rights */
-		doCheckRights();
-		
-		if (isWorkFlowEnabled()) {
+		if (isWorkFlowEnabled() && !enqiryModule) {
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), pageRightName);
 		}
@@ -296,7 +293,10 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		} else {
 			setCustomerIncomeListCtrl(null);
 		}
-
+		
+		/* set components visible dependent of the users rights */
+		doCheckRights();
+		
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getCustomerIncome());
@@ -836,12 +836,17 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		logger.debug("Leaving");
 	}
 
-	public boolean isReadOnly(String componentName){
+	public boolean isReadOnly(String componentName) {
+
+		if (enqiryModule) {
+			return true;
+		}
+
 		boolean isCustomerWorkflow = false;
-		if(getCustomerDialogCtrl() != null){
+		if (getCustomerDialogCtrl() != null) {
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
-		if (isWorkFlowEnabled() || isCustomerWorkflow){
+		if (isWorkFlowEnabled() || isCustomerWorkflow) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;

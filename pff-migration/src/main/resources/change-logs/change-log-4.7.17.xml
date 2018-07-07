@@ -9253,6 +9253,14 @@ UNION ALL
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 		</sql>
 	</changeSet>
-
+	<changeSet id="203" author="murthy.y">
+		<comment>correcting the spelling mistage for RB Field Details</comment>
+		<sql>
+			<![CDATA[
+				update RBFIELDDETAILS set rbflddesc = 'Customer Obligation External' where rbflddesc = ' Customer Oblication External';
+				update RBFIELDDETAILS set rbflddesc = 'Customer Obligation External' where rbflddesc = 'Customer Oblication External';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	

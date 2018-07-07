@@ -196,7 +196,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select coalesce(sum(instalmentamount), 0) from external_liabilities");
-		sql.append(" where linkid in  (select linkid from link_sampling_incomes where samplingid = :id)");
+		sql.append(" where linkid in  (select linkid from link_sampling_liabilities where samplingid = :id)");
 		logger.debug(Literal.SQL + sql.toString());
 		
 		BigDecimal emiSum = BigDecimal.ZERO;

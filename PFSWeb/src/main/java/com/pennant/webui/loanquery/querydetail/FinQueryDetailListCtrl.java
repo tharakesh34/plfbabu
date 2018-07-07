@@ -188,7 +188,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		//registerButton(button_FinQueryDetailList_NewQueryDetail, "button_FinQueryDetailList_NewQueryDetail", true);
 		this.button_FinQueryDetailList_NewQueryDetail.setVisible(true);
 
-		if (isEnquiry()) {
+		if (isEnquiry() || enqiryModule) {
 			this.button_FinQueryDetailList_NewQueryDetail.setVisible(false);
 		}
 		

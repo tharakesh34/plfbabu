@@ -43,10 +43,14 @@
 
 package com.pennant.backend.model.finance;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.pennanttech.pennapps.pff.sampling.model.Sampling;
+import com.pennanttech.pennapps.pff.sampling.model.SamplingDetails;
 
 public class AgreementDetail {
 
@@ -7003,5 +7007,60 @@ private String custAccount ="";
 
 	public void setPslEligibleAmount(String pslEligibleAmount) {
 		this.pslEligibleAmount = pslEligibleAmount;
+	}
+	
+	private String smplTolerance;
+	private String smplDecision;
+	private String smplResubmitReasonDesc;
+	private String smplRecommendedAmount;
+	private String smplRemarks;
+	List<SamplingDetails> smplDetails = new ArrayList<>();
+
+	public String getSmplTolerance() {
+		return smplTolerance;
+	}
+
+	public void setSmplTolerance(String smplTolerance) {
+		this.smplTolerance = smplTolerance;
+	}
+
+	public String getSmplDecision() {
+		return smplDecision;
+	}
+
+	public void setSmplDecision(String smplDecision) {
+		this.smplDecision = smplDecision;
+	}
+
+	public String getSmplResubmitReasonDesc() {
+		return smplResubmitReasonDesc;
+	}
+
+	public void setSmplResubmitReasonDesc(String smplResubmitReasonDesc) {
+		this.smplResubmitReasonDesc = smplResubmitReasonDesc;
+	}
+
+	public String getSmplRecommendedAmount() {
+		return smplRecommendedAmount;
+	}
+
+	public void setSmplRecommendedAmount(String smplRecommendedAmount) {
+		this.smplRecommendedAmount = smplRecommendedAmount;
+	}
+
+	public String getSmplRemarks() {
+		return smplRemarks;
+	}
+
+	public void setSmplRemarks(String smplRemarks) {
+		this.smplRemarks = smplRemarks;
+	}
+
+	public List<SamplingDetails> getSmplDetails() {
+		return smplDetails;
+	}
+
+	public void setSmplDetails(List<SamplingDetails> smplDetails) {
+		this.smplDetails = smplDetails;
 	}
 }

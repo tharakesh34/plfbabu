@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -128,7 +130,6 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 		sdList.add(sd);
 
 		for (CollateralSetup coll : sampling.getCollSetupList()) {
-			sd = new SamplingDetails();
 			Map<String, List<ExtendedFieldData>> collaterals;
 			String collateralType = coll.getCollateralType();
 			String collateralRef = coll.getCollateralRef();
@@ -142,8 +143,13 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 				collaterals = samplingService.getCollateralFields(collateralType, String.valueOf(originallinkId),
 						collateralRef);
 			}
-			sd.setCaption(String.format("%s - %s", collateralRef, collateralType));
-			sdList.add(sd);
+			
+			if (MapUtils.isNotEmpty(collaterals)) {
+				sd = new SamplingDetails();
+				sd.setCaption(String.format("%s - %s", collateralRef, collateralType));
+				sdList.add(sd);
+			}
+			
 
 			for (Entry<String, List<ExtendedFieldData>> field : collaterals.entrySet()) {
 				List<ExtendedFieldData> list = field.getValue();

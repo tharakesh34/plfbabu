@@ -528,7 +528,9 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	}
 
 	public boolean isReadOnly(String componentName) {
-		if (isWorkFlowEnabled()) {
+		if (enqiryModule) {
+			return true;
+		} else if (isWorkFlowEnabled()) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;

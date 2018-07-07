@@ -272,8 +272,9 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 				if (arguments.containsKey("coApplicants")) {
 					coApplicants = (Set<String>) arguments.get("coApplicants");
 				}
+				
 				this.externalLiability.setWorkflowId(0);
-				if (arguments.containsKey("roleCode")) {
+				if (arguments.containsKey("roleCode") && !enqiryModule) {
 					userRole = arguments.get("roleCode").toString();
 					getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerExtLiabilityDialog");
 				}
@@ -283,15 +284,18 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			if (arguments.containsKey("isFinanceProcess")) {
 				isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 			}
+			
 			doLoadWorkFlow(this.externalLiability.isWorkflow(), this.externalLiability.getWorkflowId(),
 					this.externalLiability.getNextTaskId());
-			/* set components visible dependent of the users rights */
-			doCheckRights();
-
-			if (isWorkFlowEnabled()) {
+			
+			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerExtLiabilityDialog");
 			}
+			
+			
+			/* set components visible dependent of the users rights */
+			doCheckRights();
 
 			// set Field Properties
 			doSetFieldProperties();
@@ -432,8 +436,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities(this.pageRightName, userRole);
-
+		
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerExtLiabilityDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerExtLiabilityDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerExtLiabilityDialog_btnDelete"));
@@ -1208,10 +1211,14 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	}
 
 	public boolean isReadOnly(String componentName) {
+		if (enqiryModule) {
+			return true;
+		}
+		
 		boolean isCustomerWorkflow = false;
 		if (getCustomerDialogCtrl() != null) {
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
-		}else if(getSamplingDialogCtrl()!=null){
+		} else if (getSamplingDialogCtrl() != null) {
 			isCustomerWorkflow = getSamplingDialogCtrl().getSampling().isWorkflow();
 		}
 		if (isWorkFlowEnabled() || isCustomerWorkflow) {

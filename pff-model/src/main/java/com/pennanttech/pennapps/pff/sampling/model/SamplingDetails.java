@@ -4,17 +4,19 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 public class SamplingDetails implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String parameter;
-	private String branchCam;
-	private String creditCam;
-	private String variance;
-	private String remarks;
-	private String caption;
-	private String remarksId;
+	private String parameter = StringUtils.EMPTY;
+	private String branchCam = StringUtils.EMPTY;
+	private String creditCam = StringUtils.EMPTY;
+	private String variance = StringUtils.EMPTY;
+	private String remarks = StringUtils.EMPTY;
+	private String caption = StringUtils.EMPTY;
+	private String remarksId = StringUtils.EMPTY;
 	private boolean alignLeft;
 
 	public SamplingDetails() {
