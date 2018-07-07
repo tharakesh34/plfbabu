@@ -15361,7 +15361,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if(pSLDetailDialogCtrl!=null){
 			detail.getCustomerEligibilityCheck().setExtendedFields(pSLDetailDialogCtrl.getRules());
 		}else{
-			detail.getCustomerEligibilityCheck().addExtendedField("ASL_ELIGABLE_AMOUNT", 0);
+			detail.getCustomerEligibilityCheck().addExtendedField("ASL_ELIGABLE_AMOUNT", detail.getPslDetail().getEligibleAmount());
 		}
 
 		// FOIR  (Total Obligation /Total Income)*100
