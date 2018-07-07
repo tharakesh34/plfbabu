@@ -64,6 +64,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.model.TaskOwners;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 	private static Logger logger = Logger.getLogger(TaskOwnersDAOImpl.class);
@@ -146,14 +147,17 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 		for (TaskOwners taskOwner : taskOwners) {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taskOwner);
 			if(taskOwner.isNewRecord()){
-				StringBuilder  insertSql = 	new StringBuilder(" INSERT INTO Task_Owners " );
+/*				StringBuilder  insertSql = 	new StringBuilder(" INSERT INTO Task_Owners " );
 				insertSql.append(" (Reference, RoleCode, ActualOwner, CurrentOwner, Processed)");
 				insertSql.append(" Values(  :Reference, :RoleCode, :ActualOwner, :CurrentOwner, :Processed)");
 				logger.debug("insertSql: " + insertSql.toString());
 
 				this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+*/				
+				syncRecord(taskOwner);
+				
 			}else {
-				logger.debug("Entering");
+				logger.debug("Update");
 				StringBuilder updateSql = 	new StringBuilder(" UPDATE Task_Owners SET Processed=:Processed,");
 				updateSql.append(" CurrentOwner=:CurrentOwner,ActualOwner=:ActualOwner" );
 				updateSql.append(" WHERE Reference=:Reference AND RoleCode=:RoleCode");
@@ -167,6 +171,37 @@ public class TaskOwnersDAOImpl implements TaskOwnersDAO {
 		}
 		logger.debug("Leaving");
 	}
+	
+	private void syncRecord(TaskOwners taskOwner){
+		logger.debug(Literal.ENTERING);
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From Task_Owners");
+		selectSql.append(" Where Reference=:Reference AND RoleCode=:RoleCode AND ActualOwner=:ActualOwner");
+		logger.debug("SelectSQL: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taskOwner);
+		int count =0;
+		try {
+			count= this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		}catch (EmptyResultDataAccessException e) {
+		}
+		
+		if(count==0){
+			logger.debug("Insert");
+			StringBuilder  insertSql = 	new StringBuilder(" INSERT INTO Task_Owners " );
+			insertSql.append(" (Reference, RoleCode, ActualOwner, CurrentOwner, Processed)");
+			insertSql.append(" Values(  :Reference, :RoleCode, :ActualOwner, :CurrentOwner, :Processed)");
+			logger.debug("insertSql: " + insertSql.toString());
+			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		}else{
+			logger.debug("Update");
+			StringBuilder updateSql = 	new StringBuilder(" UPDATE Task_Owners SET Processed=:Processed,");
+			updateSql.append(" CurrentOwner=:CurrentOwner " );
+			updateSql.append(" WHERE Reference=:Reference AND RoleCode=:RoleCode AND ActualOwner=:ActualOwner");
+			logger.debug("updateSql: " + updateSql.toString());
+			this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
 	
 	@Override
 	public void updateList(List<TaskOwners> taskOwners) {
