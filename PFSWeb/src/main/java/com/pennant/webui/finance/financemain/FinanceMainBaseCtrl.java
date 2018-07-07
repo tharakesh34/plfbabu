@@ -12470,6 +12470,24 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	/**
+	 * Method to validate PSL details
+	 * 
+	 * @return
+	 * @throws ParseException
+	 * @throws InterruptedException
+	 */
+	public boolean doPSLDetailsValidation() throws ParseException, InterruptedException {
+		logger.debug("Entering");
+		// Extended Field validations
+		Tab pslDetailsTab = getTab(AssetConstants.UNIQUE_ID_PSL_DETAILS);
+		if ((pslDetailsTab != null && pslDetailsTab.isVisible()) && pSLDetailDialogCtrl != null) {
+			pSLDetailDialogCtrl.doSave(getFinanceDetail(), pslDetailsTab, false);
+		}
+		logger.debug("Leaving");
+		return true;
+	}
+
+	/**
 	 * Method to set user details values to asset objects
 	 * 
 	 * @param aFinanceDetail

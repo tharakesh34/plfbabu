@@ -393,6 +393,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 				custValidated = (Boolean) getFinanceMainDialogCtrl().getClass().getMethod("doCustomerValidation").invoke(getFinanceMainDialogCtrl());
 				setFinanceDetail((FinanceDetail) getFinanceMainDialogCtrl().getClass().getMethod("getFinanceDetail").invoke(getFinanceMainDialogCtrl()));
 				custValidated = (Boolean) getFinanceMainDialogCtrl().getClass().getMethod("doExtendedDetailsValidation").invoke(getFinanceMainDialogCtrl());
+				custValidated = (Boolean) getFinanceMainDialogCtrl().getClass().getMethod("doPSLDetailsValidation").invoke(getFinanceMainDialogCtrl());
 			} catch (Exception e) {
 				if(e.getCause().getClass().equals(WrongValuesException.class)){
 					throw e;	
