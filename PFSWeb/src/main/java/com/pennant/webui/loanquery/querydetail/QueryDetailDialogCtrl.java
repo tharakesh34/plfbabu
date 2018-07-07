@@ -330,11 +330,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		this.qryCategory.setValueColumn("Code");
 		this.qryCategory.setDescColumn("Description");
 		this.qryCategory.setValidateColumns(new String[] { "Code" });
-		this.custDocType.setMandatoryStyle(true);
-		this.custDocType.setTextBoxWidth(250);
-		this.custDocType.setModuleName("CustDocumentType");
-		this.custDocType.setValueColumn("DocTypeCode");
-		this.custDocType.setDescColumn("DocTypeDesc");
+		this.custDocType.setProperties("CustDocumentType", "DocTypeCode", "DocTypeDesc", false, 25);
 		this.custDocType.setValidateColumns(new String[] { "DocTypeCode" });
 		// this.qryNotes.setMaxlength(2000);
 		this.assignedRole.setMaxlength(100);
