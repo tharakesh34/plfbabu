@@ -930,7 +930,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 					aCustomerIncome.setRecordType(PennantConstants.RCD_ADD);
 				}else{
 					tranType = PennantConstants.TRAN_UPD;
-					if(workflow) {
+					if (workflow && getCustomerDialogCtrl().getFinancedetail()==null && StringUtils.isBlank(aCustomerIncome.getRecordType())) {
 						aCustomerIncome.setNewRecord(true);
 					}
 				}

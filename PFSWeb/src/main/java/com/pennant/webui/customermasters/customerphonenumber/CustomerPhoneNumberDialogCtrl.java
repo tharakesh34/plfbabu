@@ -847,7 +847,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 					aCustomerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
-					if (workflow) {
+					if (workflow && !isFinanceProcess && StringUtils.isBlank(aCustomerPhoneNumber.getRecordType())) {
 						aCustomerPhoneNumber.setNewRecord(true);
 					}
 				}

@@ -858,7 +858,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 					aCustomerEMail.setRecordType(PennantConstants.RCD_ADD);
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
-					if(workflow) {
+					if (workflow && !isFinanceProcess && StringUtils.isBlank(aCustomerEMail.getRecordType())) {
 						aCustomerEMail.setNewRecord(true);
 					}
 				}

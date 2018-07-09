@@ -1141,7 +1141,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 					aCustomerAddres.setRecordType(PennantConstants.RCD_ADD);
 				}else{
 					tranType = PennantConstants.TRAN_UPD;
-					if(workflow){
+					if (workflow && !isFinanceProcess && StringUtils.isBlank(aCustomerAddres.getRecordType())) {
 						aCustomerAddres.setNewRecord(true);
 					}
 				}
