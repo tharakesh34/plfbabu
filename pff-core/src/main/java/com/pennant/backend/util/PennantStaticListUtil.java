@@ -958,6 +958,7 @@ public class PennantStaticListUtil {
 			enquiryTypes.add(new ValueLabel("COVENQ", Labels.getLabel("label_CovenantEnquiry")));
 			enquiryTypes.add(new ValueLabel("FEEENQ", Labels.getLabel("label_FinFeeEnquiry")));
 			enquiryTypes.add(new ValueLabel("EXPENQ", Labels.getLabel("label_ExpenseEnquiry")));
+			enquiryTypes.add(new ValueLabel("SAMENQ", Labels.getLabel("label_SamplingEnquiry")));
 			
 			if (ImplementationConstants.DDA_ALLOWED) {
 				enquiryTypes.add(new ValueLabel("DDAENQ", Labels.getLabel("label_DDAEnquiry")));
