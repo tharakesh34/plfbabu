@@ -25,9 +25,10 @@ import com.pennant.backend.model.ValueLabel;
  */
 public enum Decision {
 	SELECT(0, Labels.getLabel("Combo.Select")),
-	CREDITCAM(1, Labels.getLabel("label_Sampling_ComboBox_1")),
-	BRANCHCAM(2, Labels.getLabel("label_Sampling_ComboBox_2")),
-	RESUBMIT(3, Labels.getLabel("label_Sampling_ComboBox_3"));
+	CREDITCAM(1, Labels.getLabel("label_Sampling_Decision_1")),
+	BRANCHCAM(2, Labels.getLabel("label_Sampling_Decision_2")),
+	RESUBMIT(3, Labels.getLabel("label_Sampling_Decision_3")),
+	REJECT(4, Labels.getLabel("label_Sampling_Decision_4"));
 
 	private final Integer key;
 	private final String value;

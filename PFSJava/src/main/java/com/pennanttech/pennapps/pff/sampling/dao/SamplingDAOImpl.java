@@ -478,9 +478,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	@Override
 	public Map<String, String> getEligibilityRules() {
 		Map<String, String> rules = new HashMap<>();
-		rules.put(Sampling.RULE_CODE_EMI,
-				"1/((1-(1/Math.pow((1+(finProfitRate/1200)),noOfTerms)))*1200/finProfitRate)");
-
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append("select rulecode, sqlrule from rules where rulemodule=:rulemodule and rulecode in (:rulecode)");
 		logger.trace(Literal.SQL + sql.toString());

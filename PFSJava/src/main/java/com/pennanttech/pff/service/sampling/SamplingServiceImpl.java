@@ -564,7 +564,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		}
 		sampling.setIrrEligibility(amount);
 
-		amount = BigDecimal.ZERO;
+		/*amount = BigDecimal.ZERO;
 		ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_EMI);
 		if (ruleCode != null) {
 			object = excuteRule(ruleCode, sampling.getFinccy(), fieldsandvalues);
@@ -572,7 +572,38 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		if (object != null) {
 			amount = (BigDecimal) object;
 		}
-		sampling.setEmi(amount);
+		sampling.setEmi(amount);*/
+		
+		BigDecimal loanEligibilityAmount = BigDecimal.ZERO;
+		BigDecimal requestedAmount = sampling.getLoanAmountRequested();
+		
+		if (sampling.getFoirEligibility().compareTo(sampling.getIrrEligibility()) == -1) {
+			loanEligibilityAmount = sampling.getFoirEligibility();
+		} else {
+			loanEligibilityAmount =sampling.getIrrEligibility();
+		}
+
+		if (requestedAmount.compareTo(loanEligibilityAmount) == -1) {
+			loanEligibilityAmount = requestedAmount;
+		}
+
+		if (loanEligibilityAmount == BigDecimal.ZERO) {
+			loanEligibilityAmount = requestedAmount;
+		}
+		
+		sampling.setLoanEligibility(loanEligibilityAmount);	
+		
+		BigDecimal rate = sampling.getInterestRate();
+		int frqequency = 12;
+		int noOfTerms = sampling.getTenure();
+		BigDecimal principle = loanEligibilityAmount;
+		
+		BigDecimal r = rate.divide(new BigDecimal(100).multiply(new BigDecimal(frqequency)), 10,
+				BigDecimal.ROUND_HALF_DOWN);
+		BigDecimal nTimesOfr = (r.add(BigDecimal.ONE)).pow(noOfTerms);
+		BigDecimal numerator = principle.multiply(nTimesOfr).multiply(r);
+		BigDecimal denominator = nTimesOfr.subtract(BigDecimal.ONE);
+		sampling.setEmi(numerator.divide(denominator, 10, BigDecimal.ROUND_HALF_DOWN));		
 	}
 
 	private Object excuteRule(String foirRule, String finCcy, HashMap<String, Object> fieldsandvalues) {

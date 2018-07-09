@@ -109,7 +109,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	public static final String REQ_LOAN_AMOUNT_EXTEND_FIELD = "CUSTREQLOANAMOUNT";
 	public static final String RULE_CODE_FOIRAMT = "FOIRAMT";
 	public static final String RULE_CODE_IIRMAX = "IIRMAX";
-	public static final String RULE_CODE_EMI = "EMI";
+	public static final String RULE_CODE_EMI = "PMT1LAKH";
 
 	public Sampling() {
 		super();

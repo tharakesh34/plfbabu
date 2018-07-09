@@ -223,6 +223,22 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.ENTERING);
 
 		this.loanTenure.setMaxlength(3);
+		
+		this.foirEligiblity.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.foirEligiblity.setScale(ccyFormatter);
+		
+		this.finAmtReq.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.finAmtReq.setScale(ccyFormatter);
+		
+		this.emiPerLakh.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.emiPerLakh.setScale(ccyFormatter);
+		
+		this.iirEligibility.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.iirEligibility.setScale(ccyFormatter);
+		
+		this.loanEligibility.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.loanEligibility.setScale(ccyFormatter);
+			
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -342,15 +358,16 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		this.samplingDate.setValue(DateUtil.format(sampling.getCreatedOn(), DateFormat.SHORT_DATE));
 		
 		if ("F".equals(sampling.getFinGrcRateType())) {
-			this.roi.setValue(PennantApplicationUtil.formatRate(sampling.getRepaySpecialRate().doubleValue(), ccyFormatter));
+			this.roi.setValue(PennantApplicationUtil.formatRate(sampling.getRepaySpecialRate().doubleValue(), 2));
 		} else {
-			this.roi.setValue(PennantApplicationUtil.formatRate(sampling.getRepayProfitRate().doubleValue(), ccyFormatter));
+			this.roi.setValue(PennantApplicationUtil.formatRate(sampling.getRepayMinRate().doubleValue(), 2));
 		}
 		
-		this.finAmtReq.setValue(PennantAppUtil.formateAmount(sampling.getLoanAmountRequested(), ccyFormatter));
 		this.loanTenure.setValue(sampling.getTenure());
 		this.interestRate.setValue(PennantApplicationUtil.formatRate(sampling.getInterestRate().doubleValue(), 2));
 		
+		setEligibilityAmounts(sampling);
+				
 		calculateEligibility(false);
 
 		this.recordStatus.setValue(sampling.getRecordStatus());
@@ -365,6 +382,14 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		logger.debug(Literal.LEAVING);
 
+	}
+
+	private void setEligibilityAmounts(Sampling sampling) {
+		this.finAmtReq.setValue(PennantAppUtil.formateAmount(sampling.getLoanAmountRequested(), ccyFormatter));
+		this.foirEligiblity.setValue(PennantAppUtil.formateAmount(sampling.getFoirEligibility(), ccyFormatter));
+		this.emiPerLakh.setValue(PennantAppUtil.formateAmount(sampling.getEmi(), ccyFormatter));
+		this.iirEligibility.setValue(PennantAppUtil.formateAmount(sampling.getIrrEligibility(), ccyFormatter));
+		this.loanEligibility.setValue(PennantAppUtil.formateAmount(sampling.getLoanEligibility(), ccyFormatter));
 	}
 
 	private void doFillCollaterals(List<CollateralSetup> collSetupList) {
@@ -467,7 +492,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		if ("F".equals(sampling.getFinGrcRateType())) {
 			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepaySpecialRate().doubleValue(), 2));
 		} else {
-			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepayProfitRate().doubleValue(), 2));
+			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepayMinRate().doubleValue(), 2));
 		}
 		
 		map.put("moduleCode", "FinanceMain");
@@ -533,6 +558,10 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	}
 
 	private void calculateEligibility(boolean onChange) {
+		if(loanTenure.isDisabled() || interestRate.isDisabled()) {
+			return;
+		}
+		
 		final Sampling aSampling = new Sampling();
 		BeanUtils.copyProperties(this.sampling, aSampling);
 
@@ -544,24 +573,14 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		aSampling.setTenure(this.loanTenure.getValue());
 		aSampling.setInterestRate(this.interestRate.getValue());
 		
-		this.samplingService.calculateEligilibity(aSampling);
-		
-		this.foirEligiblity.setValue(aSampling.getFoirEligibility());
-		this.emiPerLakh.setValue(aSampling.getEmi());
-		this.iirEligibility.setValue(aSampling.getIrrEligibility());
-		
-		BigDecimal loanEligibilityAmount = BigDecimal.ZERO;
-		BigDecimal requestedAmount = aSampling.getLoanAmountRequested();
-
-		if (aSampling.getFoirEligibility().compareTo(aSampling.getIrrEligibility()) == -1) {
-			loanEligibilityAmount = aSampling.getFoirEligibility();
+		if ((aSampling.getTenure() != null && aSampling.getTenure() > 0) && (aSampling.getInterestRate() != null
+				&& BigDecimal.ZERO.compareTo(aSampling.getInterestRate()) != 0)) {
+			this.samplingService.calculateEligilibity(aSampling);
+			setEligibilityAmounts(aSampling);
 		}
-
-		if (requestedAmount.compareTo(loanEligibilityAmount) == -1) {
-			loanEligibilityAmount = requestedAmount;
-		}
-
-		this.loanEligibility.setValue(loanEligibilityAmount);
+		
+		
+		
 	}
 
 	public void onCustomerIncomeItemDoubleClicked(Event event) throws Exception {
@@ -817,9 +836,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		arrayList.add(7, DateUtil.format(this.sampling.getCreatedOn(), DateFormat.SHORT_DATE));
 		
 		if ("F".equals(sampling.getFinGrcRateType())) {
-			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepaySpecialRate().doubleValue(), ccyFormatter));
+			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepaySpecialRate().doubleValue(), 2));
 		} else {
-			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepayProfitRate().doubleValue(), ccyFormatter));
+			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepayMinRate().doubleValue(), 2));
 		}
 		
 		return arrayList;
