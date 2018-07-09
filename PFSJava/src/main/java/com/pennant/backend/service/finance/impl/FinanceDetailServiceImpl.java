@@ -5727,13 +5727,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
+		// Additional validations for CovanentTypes
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		if (!isWIF) {
 			auditHeader = getAuditDetails(auditHeader, method);
+			errorDetails = covValidations(auditHeader);
 		}
 
-		// Additional validations for CovanentTypes
 		// =======================================
-		List<ErrorDetail> errorDetails = covValidations(auditHeader);
 		if (errorDetails != null) {
 			errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
 			auditHeader.setErrorList(errorDetails);
