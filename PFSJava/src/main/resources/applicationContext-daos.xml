@@ -5812,10 +5812,7 @@
 		
 		<!-- GST Invoice Changes -->
 		<property name="financeDetailService" ref="financeDetailService" />
-		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
-		<property name="finFeeDetailService" ref="finFeeDetailService" />
-		<property name="customerDetailsService" ref="customerDetailsService" />
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->
@@ -6601,10 +6598,7 @@
 		<property name="postingsDAO" ref="postingsDAO" />
 		
 		<!-- GST Invoice Changes -->
-		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
-		<property name="finFeeDetailService" ref="finFeeDetailService" />
-		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<!--============ Finance Repayment Details ============== -->
@@ -11388,6 +11382,11 @@
        <property name="gstInvoiceTxnDAO" ref="gstInvoiceTxnDAO" />
        <property name="entityService" ref="entityService" />
        <property name="provinceService" ref="provinceService" />
+       <!-- GST Invoice Changes -->
+		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="ruleDAO" ref="ruleDAO" />
    </bean>
    
    <!-- Finance IRR Details -->
