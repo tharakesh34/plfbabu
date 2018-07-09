@@ -7,6 +7,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 
 public class SamplingListModelItemRenderer implements ListitemRenderer<Sampling>, Serializable{
@@ -29,7 +30,7 @@ public class SamplingListModelItemRenderer implements ListitemRenderer<Sampling>
 		lc.setParent(item);
 		lc=new Listcell(sampling.getRecordStatus());
 		lc.setParent(item);
-		lc=new Listcell(sampling.getRecordType());
+		lc=new Listcell(PennantJavaUtil.getLabel(sampling.getRecordType()));
 		lc.setParent(item);
 		
 		item.setAttribute("data", sampling);

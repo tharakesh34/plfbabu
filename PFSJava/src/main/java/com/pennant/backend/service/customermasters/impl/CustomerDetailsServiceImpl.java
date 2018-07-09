@@ -4734,7 +4734,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				customerIncome.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
-			if ("saveOrUpdate".equals(method) && (isRcdType)) {
+			if (("saveOrUpdate".equals(method) || "Validate".equals(method)) && (isRcdType)) {
 				customerIncome.setNewRecord(true);
 			}
 
@@ -5201,7 +5201,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				liability.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
-			if ("saveOrUpdate".equals(method) && (isRcdType)) {
+			if (("saveOrUpdate".equals(method) || "Validate".equals(method)) && (isRcdType)) {
 				liability.setNewRecord(true);
 			}
 

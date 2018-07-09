@@ -51,6 +51,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -88,6 +89,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinMainReportData;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -124,6 +126,7 @@ import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -181,6 +184,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinanceDeviationsService		deviationDetailsService;
 	private FinFeeDetailService				finFeeDetailService;
 	private UploadHeaderService				uploadHeaderService;
+	@Autowired
+	private FinSamplingService 				finSamplingService;
 
 	private List<ValueLabel>	         enquiryList	        = PennantStaticListUtil.getEnquiryTypes();
 	private List<ValueLabel>	         mandateList	        = PennantStaticListUtil.getMandateTypeList();
@@ -589,6 +594,17 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				logger.error("Exception", e);
 			}
 			logger.debug("Leaving");
+		} else if ("SAMENQ".equals(this.enquiryType)) {
+
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_SamplingEnquiry.value"));
+			FinanceDetail financeDetail = new FinanceDetail();
+			financeDetail.setSampling(finSamplingService.getSamplingDetails(this.finReference, "_aview"));
+
+			map.put("financeDetail", financeDetail);
+			map.put("finReference", this.finReference);
+			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
+			map.put("enqiryModule", true);
+			path = "/WEB-INF/pages/Finance/FinanceMain/Sampling/FinSamplingDialog.zul";
 		}
 		if (StringUtils.isNotEmpty(path)) {
 

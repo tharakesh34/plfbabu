@@ -1344,9 +1344,6 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 					aCustomerExtLiability.setRecordType(PennantConstants.RCD_ADD);
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
-					if (workflow && !isFinanceProcess && StringUtils.isBlank(aCustomerExtLiability.getRecordType())) {
-						aCustomerExtLiability.setNewRecord(true);
-					}
 				}
 
 				if (StringUtils.isBlank(aCustomerExtLiability.getRecordType())) {

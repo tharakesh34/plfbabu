@@ -80,6 +80,7 @@ import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -268,7 +269,9 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			this.window_documentDetailDialog.setHeight(this.borderLayoutHeight - 80 + "px");
 
 			if (VerificationType.FI.getValue().equals(moduleName) || VerificationType.TV.getValue().equals(moduleName)
-					|| VerificationType.LV.getValue().equals(moduleName) || VerificationType.RCU.getValue().equals(moduleName)) {
+					|| VerificationType.LV.getValue().equals(moduleName)
+					|| VerificationType.RCU.getValue().equals(moduleName)
+					|| CollateralConstants.SAMPLING_MODULE.equals(moduleName)) {
 				this.btnNew_DocumentDetails.setVisible(isEditable);
 			}
 

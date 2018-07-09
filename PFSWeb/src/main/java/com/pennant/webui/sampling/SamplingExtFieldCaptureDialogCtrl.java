@@ -62,7 +62,10 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 			}
 
 			doLoadWorkFlow(this.sampling.isWorkflow(), this.sampling.getWorkflowId(), this.sampling.getNextTaskId());
-
+			if (arguments.get("enqiryModule") != null) {
+				enqiryModule = (boolean) arguments.get("enqiryModule");
+			}
+			
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				//this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
@@ -156,6 +159,7 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 				sampling.getBefImage().setExtendedFieldRender(extendedFieldRender);
 			}
 			extendedFieldCtrl.setCcyFormat(2);
+			extendedFieldCtrl.setReadOnly(this.enqiryModule);
 			extendedFieldCtrl.setReadOnly(isReadOnly("SamplingDialog_CollateralExtFields"));
 			extendedFieldCtrl.setWindow(this.window_SamplingExtendedFieldDialog);
 			extendedFieldCtrl.render();

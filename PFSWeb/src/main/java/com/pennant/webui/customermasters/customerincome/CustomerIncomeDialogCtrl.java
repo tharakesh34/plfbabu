@@ -804,6 +804,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		this.custID.setReadonly(isReadOnly("CustomerIncomeDialog_custID"));
 		this.custIncome.setReadonly(isReadOnly("CustomerIncomeDialog_custIncome"));
 		this.margin.setReadonly(isReadOnly("CustomerIncomeDialog_custIncome"));
+		if(row_custType.isVisible()){
+			this.custType.setDisabled(isReadOnly("CustomerIncomeDialog_custIncome"));
+		}
 		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -845,6 +848,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		boolean isCustomerWorkflow = false;
 		if (getCustomerDialogCtrl() != null) {
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		} else if (getSamplingDialogCtrl() != null) {
+			isCustomerWorkflow = getSamplingDialogCtrl().getSampling().isWorkflow();
 		}
 		if (isWorkFlowEnabled() || isCustomerWorkflow) {
 			return getUserWorkspace().isReadOnly(componentName);
@@ -930,9 +935,6 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 					aCustomerIncome.setRecordType(PennantConstants.RCD_ADD);
 				}else{
 					tranType = PennantConstants.TRAN_UPD;
-					if (workflow && getCustomerDialogCtrl().getFinancedetail()==null && StringUtils.isBlank(aCustomerIncome.getRecordType())) {
-						aCustomerIncome.setNewRecord(true);
-					}
 				}
 
 				if(StringUtils.isBlank(aCustomerIncome.getRecordType())){

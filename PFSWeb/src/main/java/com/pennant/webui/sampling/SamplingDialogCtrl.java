@@ -177,8 +177,13 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				this.samplingListCtrl = (SamplingListCtrl) arguments.get("samplingListCtrl");
 			}
 
+			if (arguments.get("enqiryModule") != null) {
+				enqiryModule =(boolean) arguments.get("enqiryModule");
+			}
+			
 			if (arguments.get("LOAN_ORG") != null) {
 				fromLoanOrg = true;
+				enqiryModule =true;
 			}
 			
 			if (this.sampling == null) {
@@ -231,7 +236,6 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		
 		  this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNew"));
 		  this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnEdit"));
-		  this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnDelete"));
 		  this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnSave"));
 		  this.btnNew_CustomerIncome.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNewIncomeDetails"));
 		  this.btnNew_Obligation.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNewObligationDetails"));
@@ -338,9 +342,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		this.samplingDate.setValue(DateUtil.format(sampling.getCreatedOn(), DateFormat.SHORT_DATE));
 		
 		if ("F".equals(sampling.getFinGrcRateType())) {
-			this.roi.setValue(PennantApplicationUtil.formatRate(sampling.getRepaySpecialRate().doubleValue(), 2));
+			this.roi.setValue(PennantApplicationUtil.formatRate(sampling.getRepaySpecialRate().doubleValue(), ccyFormatter));
 		} else {
-			this.roi.setValue(PennantApplicationUtil.formatRate(sampling.getRepayMinRate().doubleValue(), 2));
+			this.roi.setValue(PennantApplicationUtil.formatRate(sampling.getRepayProfitRate().doubleValue(), ccyFormatter));
 		}
 		
 		this.finAmtReq.setValue(PennantAppUtil.formateAmount(sampling.getLoanAmountRequested(), ccyFormatter));
@@ -357,7 +361,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
           appendCoApplicantDetailTab();
 
-	      appendQueryModuleTab();
+	      //appendQueryModuleTab();
 
 		logger.debug(Literal.LEAVING);
 
@@ -443,7 +447,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	}
 	
 	public void onClick$userActivityLog(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
 		doUserActivityLog();
+		logger.debug(Literal.LEAVING);
 	}
 	
 	private void doUserActivityLog() throws Exception {
@@ -461,7 +467,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		if ("F".equals(sampling.getFinGrcRateType())) {
 			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepaySpecialRate().doubleValue(), 2));
 		} else {
-			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepayMinRate().doubleValue(), 2));
+			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepayProfitRate().doubleValue(), 2));
 		}
 		
 		map.put("moduleCode", "FinanceMain");
@@ -790,7 +796,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	  	map.put("finHeaderList", getHeaderBasicDetails());
 		map.put("isNotFinanceProcess", true);
 		map.put("ccyFormatter",ccyFormatter);
-		map.put("enquiry", true);
+		map.put("enquiry", this.enqiryModule);
+		map.put("isEditable", !this.enqiryModule);
 		map.put("enqiryModule", enqiryModule);
 		map.put("enqModule", enqiryModule);
 		map.put("moduleName", CollateralConstants.SAMPLING_MODULE);
@@ -810,9 +817,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		arrayList.add(7, DateUtil.format(this.sampling.getCreatedOn(), DateFormat.SHORT_DATE));
 		
 		if ("F".equals(sampling.getFinGrcRateType())) {
-			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepaySpecialRate().doubleValue(), 2));
+			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepaySpecialRate().doubleValue(), ccyFormatter));
 		} else {
-			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepayMinRate().doubleValue(), 2));
+			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepayProfitRate().doubleValue(), ccyFormatter));
 		}
 		
 		return arrayList;
@@ -925,6 +932,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("financeMain", finScheduleData.getFinanceMain());
 		map.put("isFinanceProcess", false);
+		map.put("enquiry", true);
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/JointAccountDetailDialog.zul",
 				getTabpanel("COAPPLICANT"), map);
 		logger.debug(Literal.LEAVING);
@@ -940,7 +948,6 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("queryDetail", this.sampling.getQueryDetail());
 		map.put("sampling", this.sampling);
-		map.put("enquiry", false);
 		Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/FinQueryDetailList.zul",
 				getTabpanel("QUERYMODULE"), map);
 		logger.debug(Literal.LEAVING);
@@ -1238,6 +1245,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				map.put("samplingDialogCtrl", this);
 				map.put("roleCode", getRole());
 				map.put("extFieldRenderList", extFieldRenderList);
+				map.put("enqiryModule", enqiryModule);
 				try {
 					Executions.createComponents("/WEB-INF/pages/Sampling/SamplingExtFieldCaptureDialog.zul", null, map);
 				} catch (Exception e) {

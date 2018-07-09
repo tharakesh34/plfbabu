@@ -3926,6 +3926,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_QUERY_MGMT);
 		}
 		if (onLoadProcess) {
+			map.put("moduleName", PennantConstants.QUERY_ORIGINATION);
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/FinQueryDetailList.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_QUERY_MGMT), map);
 		}

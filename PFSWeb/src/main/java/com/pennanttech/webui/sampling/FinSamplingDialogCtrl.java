@@ -103,11 +103,20 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_FinSamplingDialog);
-		appendFinBasicDetails(arguments.get("finHeaderList"));
+		if (arguments.containsKey("finHeaderList") && arguments.get("finHeaderList") != null) {
+			appendFinBasicDetails(arguments.get("finHeaderList"));
+		}
 		this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
-		((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).setFinSamplingDialogCtrl(this);
-
+		if (arguments.containsKey("financeMainBaseCtrl") && arguments.get("financeMainBaseCtrl") != null) {
+			((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).setFinSamplingDialogCtrl(this);
+		}
 		this.sampling = financeDetail.getSampling();
+		
+		if (arguments.get("enqiryModule") != null) {
+			enqiryModule = (Boolean) arguments.get("enqiryModule");
+			finBasicdetails.setVisible(false);
+		}
+		
 		if (this.sampling == null) {
 
 			// this.sampling = new Sampling();
@@ -123,9 +132,6 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			return;
 
 		}
-		if (arguments.get("enqiryModule") != null) {
-			enqiryModule = (Boolean) arguments.get("enqiryModule");
-		}
 
 		doSetFieldProperties();
 		doShowDialog();
@@ -136,7 +142,35 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	private void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 		renderList();
+		doReadOnly();
 		doWriteBeanToComponents(this.sampling);
+		logger.debug(Literal.LEAVING);
+	}
+	
+	
+	/**
+	 * Set the components to ReadOnly. <br>
+	 */
+	public void doReadOnly() {
+		logger.debug(Literal.ENTERING);
+
+		if (enqiryModule) {
+			this.samplingTolerance.setReadonly(true);
+			this.samplingDecision.setDisabled(true);
+			this.samplingRemarks.setReadonly(true);
+			this.samplingResubmitReason.setReadonly(true);
+			this.samplingFinalRcmdAmt.setReadonly(true);
+		}
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(true);
+			}
+			this.recordStatus.setValue("");
+			if (!enqiryModule) {
+				this.userAction.setSelectedIndex(0);
+			}
+
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -169,7 +203,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		map.put("sampling", inquiryObject);
 		map.put("LOAN_ORG", true);
-		map.put("enqiryModule", true);
+		map.put("enqiryModule", this.enqiryModule);
 		// call the zul-file with the parameters packed in a map
 		try {
 			Executions.createComponents("/WEB-INF/pages/Sampling/SamplingDialog.zul", null, map);
@@ -345,6 +379,10 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		fieldName = fieldName.toUpperCase();
 		Textbox textbox = getTextbox();
 		textbox.setReadonly(false);
+		
+		if (this.enqiryModule) {
+			textbox.setReadonly(true);
+		}
 
 		textbox.setId(fieldName);
 		textbox.setParent(row);

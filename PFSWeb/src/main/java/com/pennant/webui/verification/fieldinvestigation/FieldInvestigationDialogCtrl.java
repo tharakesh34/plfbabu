@@ -243,6 +243,8 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.FISRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
 
+		this.agentCode.setMaxlength(8);
+		this.agentName.setMaxlength(50);
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.summaryRemarks.setMaxlength(500);
 		setStatusDetails();
@@ -375,7 +377,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	}
 
 	public void onFulfill$reason(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Object dataObject = reason.getObject();
 		if (dataObject instanceof String || dataObject == null) {
 			this.reason.setValue("");
@@ -387,7 +389,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 				this.reason.setAttribute("ReasonId", details.getId());
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -513,14 +515,15 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	 * Method for Rendering Document Details Data in finance
 	 */
 	private void appendDocumentDetailTab() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		createTab("DOCUMENTDETAIL", true);
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getFieldInvestigation().getDocuments());
 		map.put("module", DocumentCategories.VERIFICATION_FI.getKey());
+		map.put("enqModule", this.enqiryModule);
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
 				getTabpanel("DOCUMENTDETAIL"), map);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private String getTabID(String id) {
@@ -555,7 +558,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	 * @param tabVisible
 	 */
 	public void createTab(String moduleID, boolean tabVisible) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String tabName = Labels.getLabel("tab_label_" + moduleID);
 		Tab tab = new Tab(tabName);
 		tab.setId(getTabID(moduleID));
@@ -567,7 +570,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight("100%");
 		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -576,7 +579,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	 * @param verification
 	 */
 	public void doWriteComponentsToBean(FieldInvestigation fi) {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 
@@ -682,7 +685,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	 *            The entity that need to be render.
 	 */
 	public void doShowDialog(FieldInvestigation fieldInvestigation) {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (fieldInvestigation.isNew()) {
 			this.btnCtrl.setInitNew();
@@ -729,7 +732,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	 * @param event
 	 */
 	public void onClick$btnSearchCustomerDetails(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
 
@@ -741,7 +744,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
 		}
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -749,7 +752,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	 * 
 	 **/
 	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		doRemoveValidation();
 
@@ -769,14 +772,14 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			}
 			throw new WrongValuesException(wvea);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (this.verificationDate.isVisible() && !this.verificationDate.isReadonly()) {
 			this.verificationDate.setConstraint(
@@ -815,7 +818,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		this.agentCode.setConstraint("");
 		this.agentName.setConstraint("");
@@ -832,7 +835,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	 */
 	@Override
 	protected void doClearMessage() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -843,7 +846,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final FieldInvestigation entity = new FieldInvestigation();
 		BeanUtils.copyProperties(this.fieldInvestigation, entity);
@@ -885,7 +888,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (this.fieldInvestigation.isNewRecord()) {
 			this.btnCancel.setVisible(false);
