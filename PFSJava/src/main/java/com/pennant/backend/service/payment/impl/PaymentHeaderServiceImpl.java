@@ -653,7 +653,11 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				HashMap<String, Object> eventMapping=aeEvent.getDataMap();
 				for (PaymentDetail paymentDetail : paymentHeader.getPaymentDetailList()) {
 					if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
-						eventMapping.put(paymentDetail.getFeeTypeCode()+"_P",paymentDetail.getAmount() );
+						BigDecimal payableAmount = BigDecimal.ZERO;
+						if(eventMapping.containsKey(paymentDetail.getFeeTypeCode()+"_P")){
+							payableAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode()+"_P");
+						}
+						eventMapping.put(paymentDetail.getFeeTypeCode()+"_P",payableAmount.add(paymentDetail.getAmount()));
 					} else if ("E".equals(paymentDetail.getAmountType())) {
 						excessAmount = excessAmount.add(paymentDetail.getAmount());
 					} else if ("A".equals(paymentDetail.getAmountType())) {
