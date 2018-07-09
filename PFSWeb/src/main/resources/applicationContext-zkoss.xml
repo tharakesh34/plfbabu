@@ -2876,6 +2876,7 @@
 		<property name="accrualService" ref="accrualService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 		<property name="manualAdviseService" ref="manualAdviseService" />
+		<property name="feeTypeService" ref="feeTypeService" />
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->

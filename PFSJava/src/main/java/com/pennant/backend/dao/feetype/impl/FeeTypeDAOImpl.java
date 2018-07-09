@@ -345,4 +345,62 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		return feeTypeId;
 	}
 	
+	/**
+	 * Fetch the Record FeeType details by FeeTypeCode field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return FeeType
+	 */
+	@Override
+	public FeeType getTaxDetailByCode(final String feeTypeCode) {
+		logger.debug("Entering");
+		
+		FeeType feeType = new FeeType();
+		feeType.setFeeTypeCode(feeTypeCode);
+		
+		StringBuilder selectSql = new StringBuilder(" Select TaxComponent, TaxApplicable, AmortzReq ");
+		selectSql.append(" From FeeTypes Where FeeTypeCode =:FeeTypeCode");
+
+		logger.debug("sql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
+		RowMapper<FeeType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeType.class);
+
+		try {
+			feeType = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			feeType = null;
+		}
+		
+		logger.debug("Leaving");
+		return feeType;
+	}
+	
+	@Override
+	public String getTaxCompByCode(String feeTypeCode) {
+		logger.debug("Entering");
+
+		String taxType = null;
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT TaxComponent From FeeTypes");
+		selectSql.append(" WHERE FeeTypeCode = :FeeTypeCode ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FeeTypeCode", feeTypeCode);
+
+		try {
+			taxType = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			taxType = null;
+		}
+
+		logger.debug("Leaving");
+		return taxType;
+	}
+	
 }

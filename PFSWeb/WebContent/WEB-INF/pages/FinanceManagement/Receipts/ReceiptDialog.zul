@@ -786,16 +786,22 @@
 											style="padding:0px;position:relative;">
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountType.label')}"
-												sort="false" width="40%" />
+												sort="false" hflex="min"/>
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AvailAmount.label')}"
-												align="right" sort="false" width="20%" />
+												align="right" sort="false" hflex="min" />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_GSTAmount.label')}"
+												align="right" sort="false" hflex="min" />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_TotalAmount.label')}"
+												align="right" sort="false" hflex="min" />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}"
-												align="right" sort="false" width="20%" />
+												align="right" sort="false" hflex="min" />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_BalanceAmount.label')}"
-												align="right" sort="false" width="20%" />
+												align="right" sort="false" hflex="min" />
 										</listhead>
 									</listbox>
 								</groupbox>
@@ -874,16 +880,28 @@
 											style="padding:0px;position:relative;">
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountRelatedTo.label')}"
-												sort="false" width="40%" />
+												sort="false" hflex="min" />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_DueAmountOriginal.label')}"
+												align="right" sort="false" hflex="min" />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_DueAmountGST.label')}"
+												align="right" sort="false" hflex="min"  />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_DueAmount.label')}"
-												align="right" sort="false" width="20%" />
+												align="right" sort="false" hflex="min" />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}"
-												align="right" sort="false" width="20%" />
+												align="right" sort="false" hflex="min" />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_AmountPaidOriginalNow.label')}"
+												align="right" sort="false" hflex="min"  />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_AmountPaidGSTNow.label')}"
+												align="right" sort="false" hflex="min"  />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountWaivedNow.label')}"
-												align="right" sort="false" width="20%" />
+												align="right" sort="false" hflex="min" />
 										</listhead>
 									</listbox>
 								</groupbox>
@@ -898,28 +916,28 @@
 											style="padding:0px;position:relative;">
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountRelatedTo.label')}"
-												sort="false" width="30%" />
+												sort="false" hflex="min" />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_DueAmountOriginal.label')}"
-												align="right" sort="false" width="10%" />
+												align="right" sort="false" hflex="min" />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_DueAmountGST.label')}"
-												align="right" sort="false" width="10%"  />
+												align="right" sort="false" hflex="min"  />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_DueAmount.label')}"
-												align="right" sort="false" width="20%" />
+												align="right" sort="false" hflex="min" />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}"
-												align="right" sort="false" width="20%" />
+												align="right" sort="false" hflex="min" />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountPaidOriginalNow.label')}"
-												align="right" sort="false" width="10%"  />
+												align="right" sort="false" hflex="min"  />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountPaidGSTNow.label')}"
-												align="right" sort="false" width="10%"  />
+												align="right" sort="false" hflex="min"  />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountWaivedNow.label')}"
-												align="right" sort="false" width="20%" />
+												align="right" sort="false" hflex="min" />
 										</listhead>
 									</listbox>
 								</groupbox>

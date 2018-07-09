@@ -9262,5 +9262,43 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="204" author="Siva">
+		<comment>Fee Type Changes for GST applicability on Bounce, LPP and LPI types</comment>
+		<sql>
+			DELETE FROM FEETYPES WHERE FEETYPECODE IN('BOUNCE', 'ODC', 'LPFT');
+			Insert into FEETYPES (FEETYPEID,FEETYPECODE,FEETYPEDESC,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,MANUALADVICE,ACCOUNTSETID,ADVISETYPE,HOSTFEETYPECODE,TAXCOMPONENT,AMORTZREQ,TAXAPPLICABLE) values ((SELECT MAX(FEETYPEID)+1 FROM FEETYPES),'BOUNCE','Bounce Charges',1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,0,0,0,'',null,0,0);
+			Insert into FEETYPES (FEETYPEID,FEETYPECODE,FEETYPEDESC,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,MANUALADVICE,ACCOUNTSETID,ADVISETYPE,HOSTFEETYPECODE,TAXCOMPONENT,AMORTZREQ,TAXAPPLICABLE) values ((SELECT MAX(FEETYPEID)+1 FROM FEETYPES),'ODC','Penalty Charges',1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,0,0,0,'',null,0,0);
+			Insert into FEETYPES (FEETYPEID,FEETYPECODE,FEETYPEDESC,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,MANUALADVICE,ACCOUNTSETID,ADVISETYPE,HOSTFEETYPECODE,TAXCOMPONENT,AMORTZREQ,TAXAPPLICABLE) values ((SELECT MAX(FEETYPEID)+1 FROM FEETYPES),'LPFT','Late Payment Interest',1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,0,0,0,'',null,0,0);
+			UPDATE SEQFEETYPES SET SEQNO  = (SELECT MAX(FEETYPEID) FROM FEETYPES);
+		</sql>
+	</changeSet>
+	<changeSet id="205" author="Siva">
+		<comment>Delete Bounce Tax Fields from SMT Parameters</comment>
+		<sql>
+			DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE IN ('BOUNCE_TAX_APPLICABLE', 'BOUNCE_TAX_TYPE');
+		</sql>
+	</changeSet>
+	<changeSet id="206" author="Siva">
+		<comment>GST Paid Fields for Penalty amounts</comment>
+		<addColumn tableName="FINREPAYSCHEDULEDETAIL">
+			<column name="PaidPenaltyCGST" type="decimal(18,0)" />
+			<column name="PaidPenaltySGST" type="decimal(18,0)" />
+			<column name="PaidPenaltyUGST" type="decimal(18,0)" />
+			<column name="PaidPenaltyIGST" type="decimal(18,0)" />
+		</addColumn>
+		<addColumn tableName="FINREPAYSCHEDULEDETAIL_TEMP">
+			<column name="PaidPenaltyCGST" type="decimal(18,0)" />
+			<column name="PaidPenaltySGST" type="decimal(18,0)" />
+			<column name="PaidPenaltyUGST" type="decimal(18,0)" />
+			<column name="PaidPenaltyIGST" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="207" author="Siva">
+		<comment>GST Paid Fields for Penalty amounts setting defaults</comment>
+		<sql>
+			UPDATE FINREPAYSCHEDULEDETAIL SET PaidPenaltyCGST = 0, PaidPenaltySGST = 0, PaidPenaltyUGST= 0, PaidPenaltyIGST= 0;
+			UPDATE FINREPAYSCHEDULEDETAIL_TEMP SET PaidPenaltyCGST = 0, PaidPenaltySGST = 0, PaidPenaltyUGST= 0, PaidPenaltyIGST= 0;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	

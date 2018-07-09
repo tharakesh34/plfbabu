@@ -360,4 +360,9 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 		
 		return feeTypeDAO.getFinFeeTypeIdByFeeType(feeTypeCode, "_View");
 	}
+
+	@Override
+	public String getTaxCompByCode(String feeTypeCode) {
+		return getFeeTypeDAO().getTaxCompByCode(feeTypeCode);
+	}
 }

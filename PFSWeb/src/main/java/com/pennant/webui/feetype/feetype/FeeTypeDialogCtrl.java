@@ -76,6 +76,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -129,6 +130,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected ExtendedCombobox			accountingSetID;
 	
 	protected Row						row2;
+	protected Row						row3;
 	protected Label						label_Active;
 	protected Hbox						hlayout_Active;
 	protected Space						space_Active;
@@ -518,7 +520,6 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		if(aFeeType.isNewRecord()){
 			this.amortzReq.setChecked(true);
 		}else{
-			
 			this.amortzReq.setChecked(aFeeType.isAmortzReq());
 		}
 		this.active.setChecked(aFeeType.isActive());
@@ -538,6 +539,21 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.active.setDisabled(true);
 		}
 		
+		if(StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE) ||
+				StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC) ||
+				StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)){
+			this.row1.setVisible(false);
+			this.row2.setVisible(false);
+			if(!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC)){
+				this.row3.setVisible(false);
+				//this.taxApplicable.setDisabled(true);
+			}
+			if(StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)){
+				this.taxApplicable.setDisabled(true);
+			}
+			this.active.setDisabled(true);
+			this.btnDelete.setVisible(false);
+		}
 		
 		this.recordStatus.setValue(aFeeType.getRecordStatus());
 		logger.debug("Leaving");

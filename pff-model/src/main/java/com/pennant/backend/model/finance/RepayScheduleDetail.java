@@ -99,6 +99,12 @@ public class RepayScheduleDetail {
 	private BigDecimal penaltyPayNow = BigDecimal.ZERO;
 	private BigDecimal maxWaiver = BigDecimal.ZERO;
 	private BigDecimal waivedAmt = BigDecimal.ZERO;
+
+	private BigDecimal paidPenaltyCGST = BigDecimal.ZERO;
+	private BigDecimal paidPenaltySGST = BigDecimal.ZERO;
+	private BigDecimal paidPenaltyUGST = BigDecimal.ZERO;
+	private BigDecimal paidPenaltyIGST = BigDecimal.ZERO;
+	
 	private String chargeType = "";
 	private long linkedTranId = 0;
 	private long repayID = 0;// Only setting from Repay Header
@@ -546,6 +552,38 @@ public class RepayScheduleDetail {
 
 	public void setTdsSchdPayNow(BigDecimal tdsSchdPayNow) {
 		this.tdsSchdPayNow = tdsSchdPayNow;
+	}
+
+	public BigDecimal getPaidPenaltyCGST() {
+		return paidPenaltyCGST;
+	}
+
+	public void setPaidPenaltyCGST(BigDecimal paidPenaltyCGST) {
+		this.paidPenaltyCGST = paidPenaltyCGST;
+	}
+
+	public BigDecimal getPaidPenaltySGST() {
+		return paidPenaltySGST;
+	}
+
+	public void setPaidPenaltySGST(BigDecimal paidPenaltySGST) {
+		this.paidPenaltySGST = paidPenaltySGST;
+	}
+
+	public BigDecimal getPaidPenaltyUGST() {
+		return paidPenaltyUGST;
+	}
+
+	public void setPaidPenaltyUGST(BigDecimal paidPenaltyUGST) {
+		this.paidPenaltyUGST = paidPenaltyUGST;
+	}
+
+	public BigDecimal getPaidPenaltyIGST() {
+		return paidPenaltyIGST;
+	}
+
+	public void setPaidPenaltyIGST(BigDecimal paidPenaltyIGST) {
+		this.paidPenaltyIGST = paidPenaltyIGST;
 	}
 	
 }

@@ -55,4 +55,5 @@ public interface FeeTypeService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	long getFinFeeTypeIdByFeeType(String feeTypeCode);
+	String getTaxCompByCode(String feeTypeCode);
 }
