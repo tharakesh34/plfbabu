@@ -100,8 +100,8 @@ public class SamplingListCtrl extends GFCBaseListCtrl<Sampling> {
 
 		registerField("id");
 		registerField("finTypeDesc");
-		registerField("custcif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
-		registerField("custshrtname", listheader_CustName, SortOrder.ASC, custName, sortOperator_CustName,
+		registerField("custCif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
+		registerField("custShrtName", listheader_CustName, SortOrder.ASC, custName, sortOperator_CustName,
 				Operators.STRING);
 		registerField("keyReference", listheader_LoanReference, SortOrder.ASC, loanReference,
 				sortOperator_LoanReference, Operators.STRING);
