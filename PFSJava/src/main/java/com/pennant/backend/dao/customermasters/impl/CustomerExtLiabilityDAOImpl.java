@@ -78,10 +78,9 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 			sql.append(" inner join (");
 			sql.append(" select custid, custcif, custshrtname from customers_temp");
 			sql.append(" union");
-			sql.append(" select custid,custcif,custshrtname from customers");
+			sql.append(" select custid,custcif,custshrtname from customers cu");
 			sql.append(" where not exists (select 1 from customers_temp where custid=cu.custid)");
-			sql.append(" )");
-			sql.append(" cu on cu.custid = cel.custid");
+			sql.append(" ) cu on cu.custid = cel.custid");
 			sql.append(" inner join bmtbankdetail lb on lb.bankcode = el.loanbank");
 			sql.append(" inner join otherbankfinancetype ft on ft.fintype = el.fintype");
 			sql.append(" left join loanpurposes lp on lp.loanpurposecode = el.loanpurpose");
