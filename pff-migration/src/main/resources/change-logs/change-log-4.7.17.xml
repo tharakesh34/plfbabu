@@ -9420,6 +9420,11 @@ UNION ALL
 	<changeSet id="212" author="Kesav">
 	<createSequence sequenceName="SeqDepositDetails" startValue="1" incrementBy="1"/>
 </changeSet>
-	
+	<changeSet id="213" author="vijaykumar.l">
+		<sql>
+		delete  from SMTPARAMETERS where sysparmcode='PSL_DATA_REQUIRED';
+  Insert into SMTPARAMETERS values ('PSL_DATA_REQUIRED','Psl  Data Visibility or Not ','String','1','N',1,0,null,null,'Psl  Data Required  for  Equitas only',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+		</sql>
+		</changeSet>
 </databaseChangeLog>
 	
