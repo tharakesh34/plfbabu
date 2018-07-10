@@ -9461,5 +9461,54 @@ UNION ALL
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="217" author="Kesav">
+		<createView viewName="DepositDetails_AView" replaceIfExists="true">
+			Select 		T1.DepositId, T1.DepositType, T1.BranchCode, T1.PartnerBankId, T1.DepositSlipNumber, T1.DepositDate, T1.TotalAmount, T1.PartialAmount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			            T2.PartnerBankCode, T2.PartnerBankName,
+			            T3.BranchDesc
+			From 		DepositDetails T1
+			Inner Join PartnerBanks T2 ON T2.PartnerBankId = T1.PartnerBankId
+			Inner Join RMTBranches T3 ON T3.BranchCode = T1.BranchCode			
+		</createView>
+	</changeSet>
+	
+	<changeSet id="218" author="Kesav">
+		<createView viewName="DepositDetails_TView" replaceIfExists="true">
+			Select 		T1.DepositId, T1.DepositType, T1.BranchCode, T1.PartnerBankId, T1.DepositSlipNumber, T1.DepositDate, T1.TotalAmount, T1.PartialAmount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			            T2.PartnerBankCode, T2.PartnerBankName,
+			            T3.BranchDesc
+			From 		DepositDetails_Temp T1
+			Inner Join PartnerBanks T2 ON T2.PartnerBankId = T1.PartnerBankId
+			Inner Join RMTBranches T3 ON T3.BranchCode = T1.BranchCode	
+		</createView>
+	</changeSet>
+	
+	<changeSet id="219" author="Kesav">
+		<createView viewName="DepositDetails_View" replaceIfExists="true">
+			Select 		T1.DepositId, T1.DepositType, T1.BranchCode, T1.PartnerBankId, T1.DepositSlipNumber, T1.DepositDate, T1.TotalAmount, T1.PartialAmount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+			            T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			            T2.PartnerBankCode, T2.PartnerBankName,
+			            T3.BranchDesc
+			From 		DepositDetails_Temp T1
+			Inner Join PartnerBanks T2 ON T2.PartnerBankId = T1.PartnerBankId
+			Inner Join RMTBranches T3 ON T3.BranchCode = T1.BranchCode
+			
+			Union All
+			
+			Select 		T1.DepositId, T1.DepositType, T1.BranchCode, T1.PartnerBankId, T1.DepositSlipNumber, T1.DepositDate, T1.TotalAmount, T1.PartialAmount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+			            T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			            T2.PartnerBankCode, T2.PartnerBankName,
+			            T3.BranchDesc
+			From 		DepositDetails T1
+			Inner Join PartnerBanks T2 ON T2.PartnerBankId = T1.PartnerBankId
+			Inner Join RMTBranches T3 ON T3.BranchCode = T1.BranchCode
+			WHERE NOT (EXISTS ( SELECT 1 FROM DepositDetails_Temp WHERE DepositDetails_Temp.DepositId = T1.DepositId))		
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
 	
