@@ -9300,5 +9300,126 @@ UNION ALL
 			UPDATE FINREPAYSCHEDULEDETAIL_TEMP SET PaidPenaltyCGST = 0, PaidPenaltySGST = 0, PaidPenaltyUGST= 0, PaidPenaltyIGST= 0;
 		</sql>
 	</changeSet>
+	
+	 <changeSet id="208" author="Kesav">
+		<createTable tableName="DepositDetails_Temp">
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="DepositType"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="BranchCode" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="PartnerBankId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="DepositSlipNumber"  type="varchar(20)" />	
+			<column name="DepositDate" type="datetime"/>
+			<column name="TotalAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PartialAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	 <changeSet id="209" author="Kesav">
+		<createTable tableName="DepositDetails">
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="DepositType"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="BranchCode" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="PartnerBankId" type="bigint" defaultValue="0" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="DepositSlipNumber"  type="varchar(20)" />	
+			<column name="DepositDate" type="datetime"/>
+			<column name="TotalAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PartialAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	 <changeSet id="210" author="Kesav">
+		<createTable tableName="CashDenominations_Temp">
+			<column name="SeqNo" type="int"/>
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="ModuleCode"  type="varchar(8)" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="Denomination"  type="varchar(8)" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="Count" type="decimal(10,0)" defaultValue="0"/>
+			<column name="Amount" type="decimal(10,0)" defaultValue="0"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="211" author="Kesav">
+		<createTable tableName="CashDenominations">
+			<column name="SeqNo" type="int" />
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="ModuleCode"  type="varchar(8)" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="Denomination"  type="varchar(8)" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="Count" type="decimal(10,0)" defaultValue="0"/>
+			<column name="Amount" type="decimal(10,0)" defaultValue="0"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="212" author="Kesav">
+	<createSequence sequenceName="SeqDepositDetails" startValue="1" incrementBy="1"/>
+</changeSet>
+	
 </databaseChangeLog>
 	
