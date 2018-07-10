@@ -2411,10 +2411,10 @@
 			inner join customers cu on cu.custid = cl.custid
 		</createView>
 	</changeSet>
-	<changeSet id="19" author="murthy.y">
+	<!-- <changeSet id="19" author="murthy.y">
 		<addUniqueConstraint tableName="sampling_temp" columnNames="keyReference"/>
 		<addUniqueConstraint tableName="sampling" columnNames="keyReference"/>
-	</changeSet> 
+	</changeSet>  -->
 		<changeSet id="20" author="lakshmi.n">
 		<sql>
 			<![CDATA[
@@ -2556,5 +2556,16 @@
 			left join rmtbranches lb on lb.branchcode = fm.finbranch
 			left join reasons r on r.id = s.resubmitreason
 		</createView>
+	</changeSet>
+	<changeSet id="22" author="lakshmi.n">
+	<sql>
+		<![CDATA[
+		delete from REPORTLIST Where Code = 'Sampling';
+		 INSERT INTO REPORTLIST  
+		 Values ('Sampling','Sampling',
+		 'listheader_CIF.label,listheader_CustName.label,listheader_LoanReference.label,listheader_LoanType.label',
+		 'custcif,custshrtname,keyReference,finType','String,String,String,String',' ','ReportList04','Sampling','Sampling',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		]]>
+	</sql>
 	</changeSet>
 </databaseChangeLog>
