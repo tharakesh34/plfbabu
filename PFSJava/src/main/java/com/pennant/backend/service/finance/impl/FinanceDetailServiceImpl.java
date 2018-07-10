@@ -5957,27 +5957,42 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							}
 						}
 						if (isOTCPayment) {
+							AuditDetail detail = new AuditDetail();
 							if (financeDetail.getCovenantTypeList() != null
 									&& financeDetail.getCovenantTypeList().size() > 0) {
 								for (FinCovenantType covenantType : financeDetail.getCovenantTypeList()) {
-									// validate the covenants against the
-									// document details
-									List<DocumentDetails> docList = getDocumentDetailsDAO().getDocumentDetailsByRef(
-											covenantType.getFinReference(), FinanceConstants.MODULE_NAME, "");
-									if (docList != null && docList.size() > 0) {
-										for (DocumentDetails documentDetails : docList) {
-											if (documentDetails.getDocCategory()
-													.equals(covenantType.getCovenantType())) {
-												isDocExist = true;
-											}
+									// validate the document is in the current uploaded list
+									for (DocumentDetails documentDetails : financeDetail.getDocumentDetailsList()) {
+										if (documentDetails.getDocCategory().equals(covenantType.getCovenantType())
+												&& !(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL,
+														documentDetails.getRecordType())
+														|| StringUtils.equals(PennantConstants.RECORD_TYPE_CAN,
+																documentDetails.getRecordType()))) {
+											isDocExist = true;
+											break;
 										}
 									}
-									if (!isDocExist && covenantType.isAlwOtc()) {
-										valueParm[1] = Labels.getLabel("label_FinCovenantTypeDialog_AlwOTC.value");
-										auditDetails.get(0).setErrorDetail(
-												ErrorUtil.getErrorDetail(new ErrorDetail("41101", valueParm)));
-										break;
 
+									if (!isDocExist) {
+										// validate the covenants against the document details
+										List<DocumentDetails> docList = getDocumentDetailsDAO().getDocumentDetailsByRef(
+												covenantType.getFinReference(), FinanceConstants.MODULE_NAME, "_View");
+										if (docList != null && docList.size() > 0) {
+											for (DocumentDetails documentDetails : docList) {
+												if (documentDetails.getDocCategory()
+														.equals(covenantType.getCovenantType())) {
+													isDocExist = true;
+												}
+											}
+										}
+										if (!isDocExist && covenantType.isAlwOtc()) {
+											valueParm[1] = Labels.getLabel("label_FinCovenantTypeDialog_AlwOTC.value");
+											detail.setErrorDetail(
+													ErrorUtil.getErrorDetail(new ErrorDetail("41101", valueParm)));
+											auditDetails.add(detail);
+											break;
+
+										}
 									}
 								}
 							}
