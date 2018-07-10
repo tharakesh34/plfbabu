@@ -376,7 +376,8 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 			this.subCategory.setDisabled(true);
 			this.endUse.setValue("");
 			this.purpose.setValue("");
-			fillComboBox(subCategory, "HF", subSectorList, "");
+			String excludeValues = ",MF,SF,OF,LL,TF,OL,SE,";
+			fillComboBox(subCategory, "HF", subCategoryList, excludeValues);
 			setPurpose();
 			this.label_SubCategory.setVisible(true);
 			this.weakerSection.setVisible(true);
