@@ -1109,7 +1109,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				lc.setParent(item);
 				item.setAttribute("data", "");
 				
-				sampling.setTotalLiability(totalOutStandingBal);
+				sampling.setTotalLiability(totalInstalmentAmount);
 				calculateEligibility(false);
 				
 				this.listBoxObligations.appendChild(item);

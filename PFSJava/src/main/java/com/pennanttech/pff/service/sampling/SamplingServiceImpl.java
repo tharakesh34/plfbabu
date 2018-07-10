@@ -596,7 +596,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		BigDecimal rate = sampling.getInterestRate();
 		int frqequency = 12;
 		int noOfTerms = sampling.getTenure();
-		BigDecimal principle = loanEligibilityAmount;
+		BigDecimal principle = new BigDecimal(100000);
 		
 		BigDecimal r = rate.divide(new BigDecimal(100).multiply(new BigDecimal(frqequency)), 10,
 				BigDecimal.ROUND_HALF_DOWN);
