@@ -9431,5 +9431,35 @@ UNION ALL
 		Insert into SMTparameters values('FutureNotAllowedDays_Disb','FutureNotAllowedDays_Disb','Int',1,'0',100,0,null,null,'FutureNotAllowedDays_Disb',1,3,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 		</sql>
 		</changeSet>
+		
+		<changeSet id="215" author="Siva">
+		<createTable tableName="ReceiptTaxDetail">
+			<column name="ReceiptSeqID" type="bigint">
+			<constraints primaryKey="true" primaryKeyName="PK_ReceiptSeqID" nullable="false" />
+			</column>
+			<column name="ReceiptID" type="bigint" />
+			<column name="TaxComponent" type="NVarchar(1)"/>
+			<column name="PaidCGST" type="decimal(18,0)"/>
+			<column name="PaidSGST" type="decimal(18,0)"/>
+			<column name="PaidUGST" type="decimal(18,0)"/>
+			<column name="PaidIGST" type="decimal(18,0)"/>
+			<column name="TotalGST" type="decimal(18,0)"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="216" author="Siva">
+		<createTable tableName="ReceiptTaxDetail_Temp">
+			<column name="ReceiptSeqID" type="bigint">
+			<constraints primaryKey="true" primaryKeyName="PK_ReceiptSeqID_Temp" nullable="false" />
+			</column>
+			<column name="ReceiptID" type="bigint" />
+			<column name="TaxComponent" type="NVarchar(1)"/>
+			<column name="PaidCGST" type="decimal(18,0)"/>
+			<column name="PaidSGST" type="decimal(18,0)"/>
+			<column name="PaidUGST" type="decimal(18,0)"/>
+			<column name="PaidIGST" type="decimal(18,0)"/>
+			<column name="TotalGST" type="decimal(18,0)"/>
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>
 	
