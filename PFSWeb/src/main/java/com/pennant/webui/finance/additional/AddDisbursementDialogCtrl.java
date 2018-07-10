@@ -1056,8 +1056,15 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						&& curSchd.getSchDate().compareTo(this.fromDate.getValue()) <= 0) {
 					continue;
 				}
-				
-				// If maturity Terms, not include in list
+				Date appDate = DateUtility.getAppDate();
+				int allowedDays = SysParamUtil.getValueAsInt("FutureNotAllowedDays_Disb");
+
+				if (allowedDays > 0) {
+					Date minValidDate = DateUtility.addDays(appDate, allowedDays);
+					if (DateUtility.compare(curSchd.getSchDate(), minValidDate) < 0) {
+						continue;
+					}
+				}				// If maturity Terms, not include in list
 				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) <= 0) {
 					continue;
 				}

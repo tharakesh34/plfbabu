@@ -9426,5 +9426,10 @@ UNION ALL
   Insert into SMTPARAMETERS values ('PSL_DATA_REQUIRED','Psl  Data Visibility or Not ','String','1','N',1,0,null,null,'Psl  Data Required  for  Equitas only',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 		</sql>
 		</changeSet>
+		<changeSet id="214" author="srikanth.m">
+		<sql>
+		Insert into SMTparameters values('FutureNotAllowedDays_Disb','FutureNotAllowedDays_Disb','Int',1,'0',100,0,null,null,'FutureNotAllowedDays_Disb',1,3,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		</sql>
+		</changeSet>
 </databaseChangeLog>
 	
