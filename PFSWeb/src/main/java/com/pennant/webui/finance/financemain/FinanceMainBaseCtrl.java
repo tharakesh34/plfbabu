@@ -4031,6 +4031,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendPslDetailsTab(boolean onLoad) throws InterruptedException {
 		logger.debug("Entering");
+		String value = "N";
+		try {
+			value = SysParamUtil.getValueAsString("PSL_DATA_REQUIRED");
+		} catch (Exception e) {
+		}
+
+		if (!StringUtils.equalsIgnoreCase(PennantConstants.YES, value)) {
+			getFinanceDetail().setPslDetail(null);
+			return;
+		}
+
 		try {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_PSL_DETAILS, true);
