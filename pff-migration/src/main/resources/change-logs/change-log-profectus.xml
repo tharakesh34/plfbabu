@@ -1017,6 +1017,22 @@
 			insert into errordetails values('PH0001','EN','E','Eligibility Method codes did not match in finance and collaterals.','','Approved','','','','','','0','','1000',0);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="43" author="Vinay">
+		<sql>
+			delete from errordetails where code='FUF001';
+			Insert into ERRORDETAILS values ('FUF001','EN','E','Fees not paid',null,'Approved',null,null,null,null,null,0,to_timestamp('2018-07-09 18:18:41.477354','null'),1000,0);
+			
+			delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_ForeclosureTerminationReport') and fieldid=2;
+			Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_ForeclosureTerminationReport'),2,'Prepayment Perc%','TXT','Prepayment Perc%','appPercentage',null,null,null,null,0,20,0,0,2,1,null,null,null,null,250,1,'%',4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			
+			delete from rbfieldDetails where rbfldname in ('coApplicantMaturityAge','guarantorMaturityAge','coApplicantAge','guarantorAge');
+			Insert into RBFIELDDETAILS  values ('ELGRULE','ELGRULE','coApplicantMaturityAge','Co Applicant Age @ Maturity','decimal',3,'1','1','','static,global,calvalue','');
+			Insert into RBFIELDDETAILS  values ('ELGRULE','ELGRULE','guarantorMaturityAge','Guarantor Age @ Maturity','decimal',3,'1','1','','static,global,calvalue','');
+			Insert into RBFIELDDETAILS  values ('ELGRULE','ELGRULE','coApplicantAge','Co Applicant Age ','decimal',3,'1','1',' ','static,global,calvalue','  ');
+			Insert into RBFIELDDETAILS  values ('ELGRULE','ELGRULE','guarantorAge','Guarantor Age ','decimal',3,'1','1',' ','static,global,calvalue','  ');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
