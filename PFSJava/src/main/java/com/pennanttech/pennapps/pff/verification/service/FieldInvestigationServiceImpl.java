@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -768,7 +769,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		fi.setLastMntOn(verification.getLastMntOn());
 		setWorkflowData(fi);
 
-		if (phoneNumbers != null) {
+		if (CollectionUtils.isNotEmpty(phoneNumbers)) {
 			Collections.sort(phoneNumbers, new PhonePriority());
 			fi.setContactNumber1((phoneNumbers.get(0)).getPhoneNumber());
 			if (phoneNumbers.size() > 1) {
