@@ -58,7 +58,9 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.model.applicationmaster.ReasonCategory;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
+import com.pennant.backend.model.applicationmaster.ReasonTypes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.applicationmaster.ReasonCodeService;
@@ -181,22 +183,54 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 		this.code.setMaxlength(8);
 		this.description.setMaxlength(200);
 
-		this.reasonTypeID.setMaxlength(8);
+		this.reasonTypeID.setMaxlength(10);
 		this.reasonTypeID.setMandatoryStyle(true);
 		this.reasonTypeID.setModuleName("ReasonTypes");
-		this.reasonTypeID.setValueColumn("Id");
-		this.reasonTypeID.setDescColumn("Code");
+		this.reasonTypeID.setValueColumn("Code");
+		this.reasonTypeID.setDescColumn("Description");
 		this.reasonTypeID.setValidateColumns(new String[] { "Code" });
 
 		this.reasonCategoryID.setMaxlength(8);
 		this.reasonCategoryID.setMandatoryStyle(true);
 		this.reasonCategoryID.setModuleName("ReasonCategory");
-		this.reasonCategoryID.setValueColumn("Id");
-		this.reasonCategoryID.setDescColumn("Code");
+		this.reasonCategoryID.setValueColumn("Code");
+		this.reasonCategoryID.setDescColumn("Description");
 		this.reasonCategoryID.setValidateColumns(new String[] { "Code" });
 
 		setStatusDetails();
 		
+		logger.debug(Literal.LEAVING);
+	}
+	
+	public void onFulfill$reasonTypeID(Event event) {
+		logger.debug(Literal.ENTERING);
+		Object dataObject = reasonTypeID.getObject();
+		if (dataObject instanceof String || dataObject == null) {
+			this.reasonTypeID.setValue("");
+			this.reasonTypeID.setDescription("");
+			this.reasonTypeID.setAttribute("ReasonTypeId", null);
+		} else {
+			ReasonTypes details = (ReasonTypes) dataObject;
+			if (details != null) {
+				this.reasonTypeID.setAttribute("ReasonTypeId", details.getId());
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	public void onFulfill$reasonCategoryID(Event event) {
+		logger.debug(Literal.ENTERING);
+		Object dataObject = reasonCategoryID.getObject();
+		if (dataObject instanceof String || dataObject == null) {
+			this.reasonCategoryID.setValue("");
+			this.reasonCategoryID.setDescription("");
+			this.reasonCategoryID.setAttribute("ReasonCategoryId", null);
+		} else {
+			ReasonCategory details = (ReasonCategory) dataObject;
+			if (details != null) {
+				this.reasonCategoryID.setAttribute("ReasonCategoryId", details.getId());
+			}
+		}
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -351,13 +385,26 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 			this.reasonTypeID.setDescription("");
 			this.reasonCategoryID.setValue("");
 			this.reasonTypeID.setValue("");
-		} else {
-			this.reasonCategoryID.setValue(String.valueOf(aReasonCode.getReasonCategoryID()));
-			this.reasonTypeID.setValue(String.valueOf(aReasonCode.getReasonTypeID()));
-			
-			this.reasonCategoryID.setDescription(String.valueOf(aReasonCode.getReasonCategoryCode()));
-			this.reasonTypeID.setDescription(String.valueOf(aReasonCode.getReasonTypeCode()));
+		} 
+		else {
+			// Reason Type
+			this.reasonTypeID.setValue(StringUtils.trimToEmpty((aReasonCode.getReasonTypeCode())),
+					StringUtils.trimToEmpty(aReasonCode.getReasonTypeDesc()));
+			if (aReasonCode.getReasonTypeID() != null) {
+				this.reasonTypeID.setAttribute("ReasonTypeId", aReasonCode.getReasonTypeID());
+			} else {
+				this.reasonTypeID.setAttribute("ReasonTypeId", null);
+			}
+			// Reason Category
+			this.reasonCategoryID.setValue(StringUtils.trimToEmpty((aReasonCode.getReasonCategoryCode())),
+					StringUtils.trimToEmpty(aReasonCode.getReasonCategoryDesc()));
+			if (aReasonCode.getReasonTypeID() != null) {
+				this.reasonCategoryID.setAttribute("ReasonCategoryId", aReasonCode.getReasonCategoryID());
+			} else {
+				this.reasonCategoryID.setAttribute("ReasonCategoryId", null);
+			}
 		}
+		
 		if (aReasonCode.isNew() || (aReasonCode.getRecordType() != null ? aReasonCode.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
@@ -382,21 +429,34 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 		
 		//Reason Type
 		try {
-			
-			aReasonCode.setReasonTypeID(Long.valueOf(this.reasonTypeID.getValue()));
-
+			aReasonCode.setReasonTypeCode(this.reasonTypeID.getValue());
+			aReasonCode.setReasonTypeDesc(this.reasonTypeID.getDescription());
+			this.reasonTypeID.getValidatedValue();
+			Object object = this.reasonTypeID.getAttribute("ReasonTypeId");
+			if (object != null) {
+				aReasonCode.setReasonTypeID((Long.parseLong(object.toString())));
+			} else {
+				aReasonCode.setReasonTypeID(null);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		//Reason Category
-		
-		
 		try {
-			aReasonCode.setReasonCategoryID(Long.valueOf(this.reasonCategoryID.getValue()));
-
+			aReasonCode.setReasonCategoryCode(this.reasonCategoryID.getValue());
+			aReasonCode.setReasonCategoryDesc(this.reasonCategoryID.getDescription());
+			this.reasonCategoryID.getValidatedValue();
+			Object object = this.reasonCategoryID.getAttribute("ReasonCategoryId");
+			if (object != null) {
+				aReasonCode.setReasonCategoryID((Long.parseLong(object.toString())));
+			} else {
+				aReasonCode.setReasonCategoryID(null);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		// Code
 		try {
 			aReasonCode.setCode(this.code.getValue());

@@ -65,10 +65,12 @@ public class ReasonCode extends AbstractWorkflowEntity  implements Entity {
 private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
-	private long reasonTypeID;
-	private long reasonCategoryID;
+	private Long reasonTypeID;
+	private Long reasonCategoryID;
 	private String reasonTypeCode;
 	private String reasonCategoryCode;
+	private String reasonTypeDesc;
+	private String reasonCategoryDesc;
     private String code;
     private String description;
     private boolean active;
@@ -98,6 +100,8 @@ private static final long serialVersionUID = 1L;
 		Set<String> excludeFields=new HashSet<String>();
 			excludeFields.add("reasonTypeCode");
 			excludeFields.add("reasonCategoryCode");
+			excludeFields.add("reasonTypeDesc");
+			excludeFields.add("reasonCategoryDesc");
 	return excludeFields;
 	}
 
@@ -130,6 +134,22 @@ private static final long serialVersionUID = 1L;
 
 	public void setReasonCategoryCode(String reasonCategoryCode) {
 		this.reasonCategoryCode = reasonCategoryCode;
+	}
+	
+	public String getReasonTypeDesc() {
+		return reasonTypeDesc;
+	}
+
+	public void setReasonTypeDesc(String reasonTypeDesc) {
+		this.reasonTypeDesc = reasonTypeDesc;
+	}
+
+	public String getReasonCategoryDesc() {
+		return reasonCategoryDesc;
+	}
+
+	public void setReasonCategoryDesc(String reasonCategoryDesc) {
+		this.reasonCategoryDesc = reasonCategoryDesc;
 	}
 
 	public String getDescription() {
@@ -181,19 +201,19 @@ private static final long serialVersionUID = 1L;
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
-	public long getReasonTypeID() {
+	public Long getReasonTypeID() {
 		return reasonTypeID;
 	}
 
-	public void setReasonTypeID(long reasonTypeID) {
+	public void setReasonTypeID(Long reasonTypeID) {
 		this.reasonTypeID = reasonTypeID;
 	}
 
-	public long getReasonCategoryID() {
+	public Long getReasonCategoryID() {
 		return reasonCategoryID;
 	}
 
-	public void setReasonCategoryID(long reasonCategoryID) {
+	public void setReasonCategoryID(Long reasonCategoryID) {
 		this.reasonCategoryID = reasonCategoryID;
 	}
 

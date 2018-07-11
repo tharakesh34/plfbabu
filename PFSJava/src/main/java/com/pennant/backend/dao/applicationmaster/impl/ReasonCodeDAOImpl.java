@@ -83,7 +83,7 @@ public class ReasonCodeDAOImpl extends BasisNextidDaoImpl<ReasonCode> implements
 		
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, reasonTypeID, reasonCategoryID, code, description, active, ");
+		sql.append(" id, reasonTypeID, reasonCategoryID, code, description, active, reasonCategoryDesc, reasonTypeDesc,");
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		
