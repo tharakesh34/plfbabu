@@ -99,9 +99,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InterfaceException
 	 */
-	public AEEvent recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date postDate, Date schDate, String finODFor,
-			Date movementDate, BigDecimal penaltyPaidNow, BigDecimal penaltyWaived, String chargeType,
-			AEEvent aeEvent, FinRepayQueueHeader rpyQueueHeader, boolean isFirstTimePay) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AEEvent recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date postDate, FinRepayQueue repayQueue,
+			Date movementDate, AEEvent aeEvent, FinRepayQueueHeader rpyQueueHeader, boolean isFirstTimePay) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		String finReference = financeMain.getFinReference();
@@ -133,11 +132,11 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			amountCodes = aeEvent.getAeAmountCodes();
 		}
 
-		amountCodes.setPenaltyPaid(penaltyPaidNow);
-		amountCodes.setPenaltyWaived(penaltyWaived);
+		amountCodes.setPenaltyPaid(repayQueue.getPenaltyPayNow());
+		amountCodes.setPenaltyWaived(repayQueue.getWaivedAmount());
         aeEvent.setPostRefId(rpyQueueHeader.getReceiptId());
         aeEvent.setPostingId(financeMain.getPostingId());
-		aeEvent.setSchdDate(schDate);
+		aeEvent.setSchdDate(repayQueue.getRpyDate());
 		aeEvent.setEOD(false);
 
 		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
@@ -147,6 +146,12 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		}
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		
+		// GST Field Details
+		dataMap.put("LPP_CGST_P", repayQueue.getPaidPenaltyCGST());
+		dataMap.put("LPP_SGST_P", repayQueue.getPaidPenaltySGST());
+		dataMap.put("LPP_UGST_P", repayQueue.getPaidPenaltyUGST());
+		dataMap.put("LPP_IGST_P", repayQueue.getPaidPenaltyIGST());
 		
 		if (rpyQueueHeader.getProfit().compareTo(BigDecimal.ZERO) == 0
 				&& rpyQueueHeader.getPrincipal().compareTo(BigDecimal.ZERO) == 0
@@ -182,12 +187,12 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			//Overdue Details Updation for Totals
 			FinODDetails detail = new FinODDetails();
 			detail.setFinReference(finReference);
-			detail.setFinODSchdDate(schDate);
-			detail.setFinODFor(finODFor);
+			detail.setFinODSchdDate(repayQueue.getRpyDate());
+			detail.setFinODFor(repayQueue.getFinRpyFor());
 			detail.setTotPenaltyAmt(BigDecimal.ZERO);
-			detail.setTotPenaltyPaid(penaltyPaidNow);
-			detail.setTotPenaltyBal((penaltyPaidNow.add(penaltyWaived)).negate());
-			detail.setTotWaived(penaltyWaived);
+			detail.setTotPenaltyPaid(repayQueue.getPenaltyPayNow());
+			detail.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount())).negate());
+			detail.setTotWaived(repayQueue.getWaivedAmount());
 			getFinODDetailsDAO().updateTotals(detail);
 
 		}

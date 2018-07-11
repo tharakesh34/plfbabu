@@ -714,7 +714,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			
 			FinFeeDetail finFeeDetail = null;
 			String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(getFinanceDetail(), branch);
+			String fromBranchCode = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
+			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,getFinanceDetail().getCustomerDetails(), 
+					getFinanceDetail().getFinanceTaxDetails(), branch);
 			
 			for (FinTypeFees finTypeFee : finTypeFeesList) {
 				
@@ -1539,7 +1541,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
 			String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(getFinanceDetail(), branch);
+			String fromBranchCode = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
+			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,getFinanceDetail().getCustomerDetails(), 
+					getFinanceDetail().getFinanceTaxDetails(), branch);
 			
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 				
@@ -1999,7 +2003,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		String finCcy = financeMain.getFinCcy();
 		int formatter = CurrencyUtil.getFormat(finCcy);
 		String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(getFinanceDetail(), branch);
+		String fromBranchCode = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
+		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,getFinanceDetail().getCustomerDetails(), 
+				getFinanceDetail().getFinanceTaxDetails(), branch);
 		
 		finFeeDetail.setWaivedAmount(PennantAppUtil.unFormateAmount(waiverBox.getValue(), formatter));
 		finFeeDetail.setPaidAmountOriginal(PennantAppUtil.unFormateAmount(paidBoxOriginal.getValue(), formatter));
@@ -2118,7 +2124,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			String finCcy = financeMain.getFinCcy();
 			int formatter = CurrencyUtil.getFormat(finCcy);
 			String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(getFinanceDetail(), branch);
+			String fromBranchCode = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
+			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,getFinanceDetail().getCustomerDetails(), 
+					getFinanceDetail().getFinanceTaxDetails(), branch);
 			
 			finFeeDetail.setActualAmountOriginal(PennantAppUtil.unFormateAmount(actualBox.getValue(), formatter));
 			
@@ -2672,7 +2680,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Entering");
 		
 		String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(getFinanceDetail(), branch);
+		String fromBranchCode = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
+		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,getFinanceDetail().getCustomerDetails(), 
+				getFinanceDetail().getFinanceTaxDetails(), branch);
 		
 		//Calculate Fee Rules
 		calculateFeeRules(finFeeDetailsList, finScheduleData);

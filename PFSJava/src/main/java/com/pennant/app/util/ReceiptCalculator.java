@@ -537,35 +537,110 @@ public class ReceiptCalculator implements Serializable {
 		// Fetching Actual Late Payments based on Value date passing
 		BigDecimal latePayPftBal = BigDecimal.ZERO;
 		BigDecimal penaltyBal = BigDecimal.ZERO;
-		if (DateUtility.compare(valueDate, DateUtility.getAppDate()) == 0) {
-			latePayPftBal = finODDetailsDAO.getTotalODPftBal(repayMain.getFinReference(), presentmentDates);
-			penaltyBal = finODDetailsDAO.getTotalPenaltyBal(repayMain.getFinReference(), presentmentDates);
-		} else {
+		BigDecimal penaltyGST = BigDecimal.ZERO;
+		Map<String, BigDecimal> taxPercmap = null;
 
-			Date reqMaxODDate = valueDate;
-			if (!ImplementationConstants.LPP_CALC_SOD) {
-				reqMaxODDate = DateUtility.addDays(valueDate, -1);
-			}
+		Date reqMaxODDate = valueDate;
+		if (!ImplementationConstants.LPP_CALC_SOD) {
+			reqMaxODDate = DateUtility.addDays(valueDate, -1);
+		}
 
-			// Calculate overdue Penalties
-			List<FinODDetails> overdueList = receiptService.getValueDatePenalties(finScheduleData,
-					receiptData.getTotReceiptAmount(), reqMaxODDate, null, true);
+		// Calculate overdue Penalties
+		List<FinODDetails> overdueList = receiptService.getValueDatePenalties(finScheduleData,
+				receiptData.getTotReceiptAmount(), reqMaxODDate, null, true);
 
-			// Calculating Actual Sum of Penalty Amount & Late Pay Interest
-			if (overdueList != null && !overdueList.isEmpty()) {
-				for (int i = 0; i < overdueList.size(); i++) {
-					FinODDetails finODDetail = overdueList.get(i);
-					if (finODDetail.getFinODSchdDate().compareTo(reqMaxODDate) > 0) {
-						continue;
-					}
-
-					// Not allowed Presentment/Freezing Period Schedule dates
-					if (presentmentDates.contains(finODDetail.getFinODSchdDate())) {
-						continue;
-					}
-					latePayPftBal = latePayPftBal.add(finODDetail.getLPIBal());
-					penaltyBal = penaltyBal.add(finODDetail.getTotPenaltyBal());
+		// Calculating Actual Sum of Penalty Amount & Late Pay Interest
+		if (overdueList != null && !overdueList.isEmpty()) {
+			
+			// Penalty Tax Details
+			FeeType feeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+			String taxType = null;
+			for (int i = 0; i < overdueList.size(); i++) {
+				FinODDetails finODDetail = overdueList.get(i);
+				if (finODDetail.getFinODSchdDate().compareTo(reqMaxODDate) > 0) {
+					continue;
 				}
+
+				// Not allowed Presentment/Freezing Period Schedule dates
+				if (presentmentDates.contains(finODDetail.getFinODSchdDate())) {
+					continue;
+				}
+				latePayPftBal = latePayPftBal.add(finODDetail.getLPIBal());
+				penaltyBal = penaltyBal.add(finODDetail.getTotPenaltyBal());
+				
+				if(feeType != null && feeType.isTaxApplicable() && finODDetail.getTotPenaltyBal().compareTo(BigDecimal.ZERO) > 0){
+					
+					// Calculate total GST percentage
+					if(taxPercmap == null){
+						taxPercmap = getTaxPercentages(receiptData.getFinanceDetail());
+					}
+					
+					BigDecimal cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
+					BigDecimal sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
+					BigDecimal ugstPerc = taxPercmap.get(RuleConstants.CODE_UGST);
+					BigDecimal igstPerc = taxPercmap.get(RuleConstants.CODE_IGST);
+					BigDecimal totalGSTPerc = cgstPerc.add(sgstPerc).add(ugstPerc).add(igstPerc);
+					
+					taxType = feeType.getTaxComponent();
+					if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+
+						if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
+							BigDecimal cgst =  (finODDetail.getTotPenaltyBal().multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+							cgst = CalculationUtil.roundAmount(cgst, roundingMode,roundingTarget);
+							penaltyGST = penaltyGST.add(cgst);
+						}
+						if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
+							BigDecimal sgst =  (finODDetail.getTotPenaltyBal().multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+							sgst = CalculationUtil.roundAmount(sgst, roundingMode,roundingTarget);
+							penaltyGST = penaltyGST.add(sgst);
+						}
+						if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
+							BigDecimal ugst =  (finODDetail.getTotPenaltyBal().multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+							ugst = CalculationUtil.roundAmount(ugst, roundingMode,roundingTarget);
+							penaltyGST = penaltyGST.add(ugst);
+						}
+						if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
+							BigDecimal igst =  (finODDetail.getTotPenaltyBal().multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+							igst = CalculationUtil.roundAmount(igst, roundingMode,roundingTarget);
+							penaltyGST = penaltyGST.add(igst);
+						}
+
+					}else if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
+
+						BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+						BigDecimal actualAmt = finODDetail.getTotPenaltyBal().divide(percentage, 9, RoundingMode.HALF_DOWN);
+						actualAmt = CalculationUtil.roundAmount(actualAmt, roundingMode, roundingTarget);
+						BigDecimal actTaxAmount = finODDetail.getTotPenaltyBal().subtract(actualAmt);
+
+						if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
+							BigDecimal cgst = (actTaxAmount.multiply(cgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+							cgst = CalculationUtil.roundAmount(cgst, roundingMode, roundingTarget);
+							penaltyGST = penaltyGST.add(cgst);
+						}
+						if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
+							BigDecimal sgst = (actTaxAmount.multiply(sgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+							sgst = CalculationUtil.roundAmount(sgst, roundingMode, roundingTarget);
+							penaltyGST = penaltyGST.add(sgst);
+						}
+						if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
+							BigDecimal ugst = (actTaxAmount.multiply(ugstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+							ugst = CalculationUtil.roundAmount(ugst, roundingMode, roundingTarget);
+							penaltyGST = penaltyGST.add(ugst);
+						}
+						if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
+							BigDecimal igst = (actTaxAmount.multiply(igstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+							igst = CalculationUtil.roundAmount(igst, roundingMode, roundingTarget);
+							penaltyGST = penaltyGST.add(igst);
+						}
+					}
+				}
+				
+			}
+			
+			if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_ODC + "_GST_E", penaltyGST);
+			}else if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
+				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_ODC + "_GST_I", penaltyGST);
 			}
 		}
 
@@ -575,84 +650,10 @@ public class ReceiptCalculator implements Serializable {
 		}
 
 		// Fetch Sum of Overdue Charges
-		Map<String, BigDecimal> taxPercmap = null;
 		if (penaltyBal.compareTo(BigDecimal.ZERO) > 0) {
 			receiptData.setPendingODC(penaltyBal);
 			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_ODC, penaltyBal);
 			
-			// Penalty Tax Details
-			FeeType feeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
-			if(feeType != null && feeType.isTaxApplicable()){
-				
-				// Calculate total GST percentage
-				taxPercmap = getTaxPercentages(receiptData.getFinanceDetail());
-				
-				BigDecimal cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
-				BigDecimal sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
-				BigDecimal ugstPerc = taxPercmap.get(RuleConstants.CODE_UGST);
-				BigDecimal igstPerc = taxPercmap.get(RuleConstants.CODE_IGST);
-				BigDecimal totalGSTPerc = cgstPerc.add(sgstPerc).add(ugstPerc).add(igstPerc);
-				
-				String taxType = feeType.getTaxComponent();
-				BigDecimal gstAmount = BigDecimal.ZERO;
-				if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
-
-					if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal cgst =  (penaltyBal.multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						cgst = CalculationUtil.roundAmount(cgst, roundingMode,roundingTarget);
-						gstAmount = gstAmount.add(cgst);
-					}
-					if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal sgst =  (penaltyBal.multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						sgst = CalculationUtil.roundAmount(sgst, roundingMode,roundingTarget);
-						gstAmount = gstAmount.add(sgst);
-					}
-					if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal ugst =  (penaltyBal.multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						ugst = CalculationUtil.roundAmount(ugst, roundingMode,roundingTarget);
-						gstAmount = gstAmount.add(ugst);
-					}
-					if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal igst =  (penaltyBal.multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-						igst = CalculationUtil.roundAmount(igst, roundingMode,roundingTarget);
-						gstAmount = gstAmount.add(igst);
-					}
-
-				}else if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
-
-					BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-					BigDecimal actualAmt = penaltyBal.divide(percentage, 9, RoundingMode.HALF_DOWN);
-					actualAmt = CalculationUtil.roundAmount(actualAmt, roundingMode, roundingTarget);
-					BigDecimal actTaxAmount = penaltyBal.subtract(actualAmt);
-
-					if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal cgst = (actTaxAmount.multiply(cgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-						cgst = CalculationUtil.roundAmount(cgst, roundingMode, roundingTarget);
-						gstAmount = gstAmount.add(cgst);
-					}
-					if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal sgst = (actTaxAmount.multiply(sgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-						sgst = CalculationUtil.roundAmount(sgst, roundingMode, roundingTarget);
-						gstAmount = gstAmount.add(sgst);
-					}
-					if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal ugst = (actTaxAmount.multiply(ugstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-						ugst = CalculationUtil.roundAmount(ugst, roundingMode, roundingTarget);
-						gstAmount = gstAmount.add(ugst);
-					}
-					if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
-						BigDecimal igst = (actTaxAmount.multiply(igstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-						igst = CalculationUtil.roundAmount(igst, roundingMode, roundingTarget);
-						gstAmount = gstAmount.add(igst);
-					}
-				}
-
-				if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
-					receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_ODC + "_GST_E", gstAmount);
-				}else if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
-					receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_ODC + "_GST_I", gstAmount);
-				}
-			}
 		}
 
 		// Fee Details
@@ -3677,7 +3678,9 @@ public class ReceiptCalculator implements Serializable {
 		}
 		
 		// Map Preparation for Executing GST rules
-		HashMap<String, Object> dataMap = finFeeDetailService.prepareGstMappingDetails(financeDetail, null);
+		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
+		HashMap<String, Object> dataMap = finFeeDetailService.prepareGstMappingDetails(fromBranchCode,financeDetail.getCustomerDetails(), 
+				financeDetail.getFinanceTaxDetails(), null);
 		
 		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
 		String finCcy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();

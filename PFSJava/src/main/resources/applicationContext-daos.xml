@@ -5664,6 +5664,7 @@
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="bankDetailService" ref="bankDetailService"/>
+		<property name="receiptTaxDetailDAO" ref="receiptTaxDetailDAO"/>
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -5690,6 +5691,13 @@
 	<bean id="finReceiptDetailDAO"
 		class="com.pennant.backend.dao.receipts.impl.FinReceiptDetailDAOImpl"
 		parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!--============ Receipt Tax Detail Details ============== -->
+
+	<bean id="receiptTaxDetailDAO"
+		class="com.pennant.backend.dao.receipts.impl.ReceiptTaxDetailDAOImpl" >
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
@@ -6596,6 +6604,7 @@
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="receiptTaxDetailDAO" ref="receiptTaxDetailDAO" />
 		
 		<!-- GST Invoice Changes -->
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
@@ -10154,6 +10163,11 @@
 		parent="basisNextidDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	
+	<bean id="paymentTaxDetailDAO"
+		class="com.pennant.backend.dao.payment.impl.PaymentTaxDetailDAOImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 
 	<bean id="paymentHeaderDAO"
 		class="com.pennant.backend.dao.payment.impl.PaymentHeaderDAOImpl"
@@ -10187,6 +10201,7 @@
 		<property name="paymentHeaderDAO" ref="paymentHeaderDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="paymentTaxDetailDAO" ref="paymentTaxDetailDAO" />
 	</bean>
 	<bean name="paymentDetailService"
 		class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl">
@@ -10195,6 +10210,7 @@
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="paymentInstructionDAO" ref="paymentInstructionDAO" />
+		<property name="paymentTaxDetailDAO" ref="paymentTaxDetailDAO" />
 	</bean>
 
 	<bean name="paymentInstructionService"

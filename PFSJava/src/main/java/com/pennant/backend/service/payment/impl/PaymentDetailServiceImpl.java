@@ -56,6 +56,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.payment.PaymentDetailDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
+import com.pennant.backend.dao.payment.PaymentTaxDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -85,6 +86,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	private PaymentInstructionDAO paymentInstructionDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
+	private PaymentTaxDetailDAO paymentTaxDetailDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -480,10 +482,24 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 				} else {
 					saveOrUpdate(paymentDetail);
 				}
+				
+				// Gst Details Saving
+				if(paymentDetail.getPaymentTaxDetail() != null){
+					paymentDetail.getPaymentTaxDetail().setPaymentID(paymentDetail.getPaymentId());
+					paymentDetail.getPaymentTaxDetail().setPaymentDetailID(paymentDetail.getPaymentDetailId());
+					getPaymentTaxDetailDAO().save(paymentDetail.getPaymentTaxDetail(), tableType);
+				}
 			}
 			if (updateRecord) {
 				getPaymentDetailDAO().update(paymentDetail, tableType);
 				saveOrUpdate(paymentDetail);
+				
+				// Gst Details Saving
+				if(paymentDetail.getPaymentTaxDetail() != null){
+					paymentDetail.getPaymentTaxDetail().setPaymentID(paymentDetail.getPaymentId());
+					paymentDetail.getPaymentTaxDetail().setPaymentDetailID(paymentDetail.getPaymentDetailId());
+					getPaymentTaxDetailDAO().save(paymentDetail.getPaymentTaxDetail(), tableType);
+				}
 			}
 			if (deleteRecord) {
 				getPaymentDetailDAO().delete(paymentDetail, tableType);
@@ -685,6 +701,14 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		logger.debug(Literal.ENTERING);
 		getPaymentInstructionDAO().updatePaymentInstrucionStatus(paymentInstruction, TableType.MAIN_TAB);
 		logger.debug(Literal.LEAVING);
+	}
+
+	public PaymentTaxDetailDAO getPaymentTaxDetailDAO() {
+		return paymentTaxDetailDAO;
+	}
+
+	public void setPaymentTaxDetailDAO(PaymentTaxDetailDAO paymentTaxDetailDAO) {
+		this.paymentTaxDetailDAO = paymentTaxDetailDAO;
 	}
 
 }

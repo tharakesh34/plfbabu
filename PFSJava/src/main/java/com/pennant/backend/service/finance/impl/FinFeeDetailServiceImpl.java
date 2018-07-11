@@ -76,6 +76,7 @@ import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -1030,7 +1031,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		String finCcy = financeMain.getFinCcy();
 		int formatter = CurrencyUtil.getFormat(finCcy);
 		
-		HashMap<String, Object> gstExecutionMap = prepareGstMappingDetails(financeDetail, branchCode);
+		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
+		HashMap<String, Object> gstExecutionMap = prepareGstMappingDetails(fromBranchCode,financeDetail.getCustomerDetails(), 
+				financeDetail.getFinanceTaxDetails(), branchCode);
+		
 		BigDecimal gstPercentage = actualGSTFees(finFeeDetail, finCcy, gstExecutionMap);
 		BigDecimal gstActual = BigDecimal.ZERO;
 		
@@ -1078,7 +1082,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String finCcy = financeMain.getFinCcy();
-		HashMap<String, Object> gstExecutionMap = prepareGstMappingDetails(financeDetail, branchCode);
+		
+		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
+		HashMap<String, Object> gstExecutionMap = prepareGstMappingDetails(fromBranchCode,financeDetail.getCustomerDetails(), 
+				financeDetail.getFinanceTaxDetails(), branchCode);
+		
 		BigDecimal gstPercentage = actualGSTFees(finFeeDetail, finCcy, gstExecutionMap);
 		BigDecimal gstActual = BigDecimal.ZERO;
 		int formatter = CurrencyUtil.getFormat(finCcy);
@@ -1443,16 +1451,14 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 	
 	@Override
-	public HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail, String branchCode) {
+	public HashMap<String, Object> prepareGstMappingDetails(String fromBranchCode,CustomerDetails customerDetails,FinanceTaxDetail taxDetail, String branchCode) {
 		
 		HashMap<String, Object> gstExecutionMap = new HashMap<>();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		String fromBranchCode = financeMain.getFinBranch();
 		boolean gstExempted = false;
 		
-		if (financeDetail.getCustomerDetails() != null) {
+		if (customerDetails != null) {
 			if (fromBranchCode == null) {
-				fromBranchCode = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+				fromBranchCode = customerDetails.getCustomer().getCustDftBranch();
 			}
 			
 			Branch fromBranch = this.branchService.getApprovedBranchById(fromBranchCode);
@@ -1466,17 +1472,16 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			
 			String toStateCode = "";
 			String toCountryCode = "";
-			FinanceTaxDetail finTaxDetail = financeDetail.getFinanceTaxDetails();
 			
-			if (finTaxDetail != null && StringUtils.isNotBlank(finTaxDetail.getApplicableFor()) 
-					&& !PennantConstants.List_Select.equals(finTaxDetail.getApplicableFor())
-					&& StringUtils.isNotBlank(finTaxDetail.getProvince())
-					&& StringUtils.isNotBlank(finTaxDetail.getCountry())) {
-				toStateCode = finTaxDetail.getProvince();
-				toCountryCode = finTaxDetail.getCountry();
-				gstExempted = finTaxDetail.isTaxExempted();
+			if (taxDetail != null && StringUtils.isNotBlank(taxDetail.getApplicableFor()) 
+					&& !PennantConstants.List_Select.equals(taxDetail.getApplicableFor())
+					&& StringUtils.isNotBlank(taxDetail.getProvince())
+					&& StringUtils.isNotBlank(taxDetail.getCountry())) {
+				toStateCode = taxDetail.getProvince();
+				toCountryCode = taxDetail.getCountry();
+				gstExempted = taxDetail.isTaxExempted();
 			} else {
-				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+				List<CustomerAddres> addressList = customerDetails.getAddressList();
 				if (CollectionUtils.isNotEmpty(addressList)) {
 					for (CustomerAddres customerAddres : addressList) {
 						if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
@@ -1513,15 +1518,14 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			
 			String toStateCode = "";
 			String toCountryCode = "";
-			FinanceTaxDetail finTaxDetail = financeDetail.getFinanceTaxDetails();
 			
-			if (finTaxDetail != null && StringUtils.isNotBlank(finTaxDetail.getApplicableFor()) 
-					&& !PennantConstants.List_Select.equals(finTaxDetail.getApplicableFor())
-					&& StringUtils.isNotBlank(finTaxDetail.getProvince())
-					&& StringUtils.isNotBlank(finTaxDetail.getCountry())) {
-				toStateCode = finTaxDetail.getProvince();
-				toCountryCode = finTaxDetail.getCountry();
-				gstExempted = finTaxDetail.isTaxExempted();
+			if (taxDetail != null && StringUtils.isNotBlank(taxDetail.getApplicableFor()) 
+					&& !PennantConstants.List_Select.equals(taxDetail.getApplicableFor())
+					&& StringUtils.isNotBlank(taxDetail.getProvince())
+					&& StringUtils.isNotBlank(taxDetail.getCountry())) {
+				toStateCode = taxDetail.getProvince();
+				toCountryCode = taxDetail.getCountry();
+				gstExempted = taxDetail.isTaxExempted();
 			}
 			
 			if (StringUtils.isBlank(toCountryCode) || StringUtils.isBlank(toStateCode)) {

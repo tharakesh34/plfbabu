@@ -10315,6 +10315,45 @@ UNION ALL
 	 	<renameColumn tableName="CashDenominations_Temp" oldColumnName="DepositId" newColumnName="MovementId"/>
 	 </changeSet>
 	 
+	 <changeSet id="232" author="Siva">
+		<createTable tableName="PaymentTaxDetail">
+			<column name="PaymentDetailID" type="bigint">
+			<constraints primaryKey="true" primaryKeyName="PK_PaymentDetailID" nullable="false" />
+			</column>
+			<column name="PaymentID" type="bigint" />
+			<column name="TaxComponent" type="NVarchar(1)"/>
+			<column name="PaidCGST" type="decimal(18,0)"/>
+			<column name="PaidSGST" type="decimal(18,0)"/>
+			<column name="PaidUGST" type="decimal(18,0)"/>
+			<column name="PaidIGST" type="decimal(18,0)"/>
+			<column name="TotalGST" type="decimal(18,0)"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="233" author="Siva">
+		<createTable tableName="PaymentTaxDetail_Temp">
+			<column name="PaymentDetailID" type="bigint">
+			<constraints primaryKey="true" primaryKeyName="PK_PaymentDetailID_Temp" nullable="false" />
+			</column>
+			<column name="PaymentID" type="bigint" />
+			<column name="TaxComponent" type="NVarchar(1)"/>
+			<column name="PaidCGST" type="decimal(18,0)"/>
+			<column name="PaidSGST" type="decimal(18,0)"/>
+			<column name="PaidUGST" type="decimal(18,0)"/>
+			<column name="PaidIGST" type="decimal(18,0)"/>
+			<column name="TotalGST" type="decimal(18,0)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="234" author="Siva">
+	<comment>LPP GST accounting Configuration parameters</comment>
+	<sql>
+		insert into BMTAMOUNTCODES values('LATEPAY',0,'LPP_CGST_P','Penalty charge CGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+		insert into BMTAMOUNTCODES values('LATEPAY',0,'LPP_SGST_P','Penalty charge SGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+		insert into BMTAMOUNTCODES values('LATEPAY',0,'LPP_IGST_P','Penalty charge IGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+		insert into BMTAMOUNTCODES values('LATEPAY',0,'LPP_UGST_P','Penalty charge UGST paid',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+	</sql>
+</changeSet>
+	 
 	 <changeSet id="232" author="Kesav">
 		<createView viewName="DepositDetails_AView" replaceIfExists="true">
 			Select 		T1.DepositId, T1.DepositType, T1.BranchCode, T1.ActualAmount, T1.TransactionAmount, T1.BalanceAmount,

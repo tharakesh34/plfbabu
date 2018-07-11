@@ -104,6 +104,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -1529,6 +1530,12 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		JdbcSearchObject<FeeType> searchObj = new JdbcSearchObject<FeeType>(FeeType.class);
 		searchObj.addTabelName("FeeTypes");
 		searchObj.addFilter(new Filter("Active", 1, Filter.OP_EQUAL));
+		
+		ArrayList<String> list = new ArrayList<>();
+		list.add(RepayConstants.ALLOCATION_BOUNCE);
+		list.add(RepayConstants.ALLOCATION_ODC);
+		list.add(RepayConstants.ALLOCATION_LPFT);
+		searchObj.addFilter(Filter.notIn("FeeTypeCode", list));
 
 		feeRulesList = this.pagedListService.getBySearchObject(searchObj);
 

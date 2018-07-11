@@ -73,6 +73,7 @@ import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
+import com.pennant.backend.dao.receipts.ReceiptTaxDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -105,6 +106,7 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.finance.ReceiptTaxDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -140,6 +142,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private FinExcessAmountDAO				finExcessAmountDAO;
 	private FinReceiptHeaderDAO				finReceiptHeaderDAO;
 	private FinReceiptDetailDAO				finReceiptDetailDAO;
+	private ReceiptTaxDetailDAO				receiptTaxDetailDAO;
 	private ReceiptAllocationDetailDAO		allocationDetailDAO;		
 	private ManualAdviseDAO					manualAdviseDAO;	
 	private RepaymentProcessUtil			repayProcessUtil;
@@ -169,8 +172,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Fetch Receipt Detail List
 		if(receiptHeader != null){
 			List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID, "_AView");
-			receiptHeader.setReceiptDetails(receiptDetailList);
 			
+			if(receiptDetailList != null && !receiptDetailList.isEmpty()){
+				for (FinReceiptDetail receiptDetail : receiptDetailList) {
+					if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+						ReceiptTaxDetail taxDetail = getReceiptTaxDetailDAO().getTaxDetailByID(receiptDetail.getReceiptSeqID(), "");
+						receiptDetail.setReceiptTaxDetail(taxDetail);
+					}
+				}
+			}
+			
+			receiptHeader.setReceiptDetails(receiptDetailList);
 			// Receipt Allocation Details
 			if(!isFeePayment){
 				receiptHeader.setAllocations(getAllocationDetailDAO().getAllocationsByReceiptID(receiptID, "_AView"));
@@ -295,6 +307,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				// Fetch Receipt Detail List
 				if(finReceiptHeader != null){
 					List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptData.getReceiptHeader().getReceiptID(), "_TView");
+					
+					if(receiptDetailList != null && !receiptDetailList.isEmpty()){
+						for (FinReceiptDetail receiptDetail : receiptDetailList) {
+							if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+								ReceiptTaxDetail taxDetail = getReceiptTaxDetailDAO().getTaxDetailByID(receiptDetail.getReceiptSeqID(), TableType.TEMP_TAB.getSuffix());
+								receiptDetail.setReceiptTaxDetail(taxDetail);
+							}
+						}
+					}
 
 					// Fetch Repay Headers List
 					List<FinRepayHeader> rpyHeaderList = getFinanceRepaymentsDAO().getFinRepayHeadersByRef(finReference, TableType.TEMP_TAB.getSuffix());
@@ -506,6 +527,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 				// Delete Save Receipt Detail List by Reference
 				getFinReceiptDetailDAO().deleteByReceiptID(receiptID, tableType);
+				
+				// Delete Saved Receipt Tax Detail List by ReceiptID
+				getReceiptTaxDetailDAO().deleteByReceiptID(receiptID, tableType);
 
 				// Delete and Save FinRepayHeader Detail list by Reference
 				getFinanceRepaymentsDAO().deleteByRef(finReference, tableType);
@@ -544,6 +568,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			long receiptSeqID = receiptDetail.getReceiptSeqID();
 			if(!receiptDetail.isDelRecord()){
 				receiptSeqID = getFinReceiptDetailDAO().save(receiptDetail, tableType);
+				
+				// Tax Details saving against Receipt
+				if(receiptDetail.getReceiptTaxDetail() != null){
+					receiptDetail.getReceiptTaxDetail().setReceiptSeqID(receiptSeqID);
+					receiptDetail.getReceiptTaxDetail().setReceiptID(receiptID);
+					getReceiptTaxDetailDAO().save(receiptDetail.getReceiptTaxDetail(), tableType);
+				}
 			}
 
 			// Excess Amount Reserve
@@ -590,13 +621,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 				// Payable Amount make utilization
 				ManualAdviseReserve payableReserve = getManualAdviseDAO().getPayableReserve(receiptSeqID, receiptDetail.getPayAgainstID());
+				
+				BigDecimal payableAmt = receiptDetail.getAmount();
+				if(receiptDetail.getReceiptTaxDetail() != null){
+					if(StringUtils.equals(receiptDetail.getReceiptTaxDetail().getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+						payableAmt = payableAmt.subtract(receiptDetail.getReceiptTaxDetail().getTotalGST());
+					}
+				}
+				
 				if(payableReserve == null){
-
+					
 					// Update Payable Amount in Reserve
-					getManualAdviseDAO().updatePayableReserve(receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
+					getManualAdviseDAO().updatePayableReserve(receiptDetail.getPayAgainstID(), payableAmt);
 
 					// Save Payable Reserve Log Amount
-					getManualAdviseDAO().savePayableReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
+					getManualAdviseDAO().savePayableReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), payableAmt);
 
 				}else{
 					//If Receipt details re-modified in process
@@ -610,8 +649,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						
 					}else{
 
-						if(receiptDetail.getAmount().compareTo(payableReserve.getReservedAmt()) != 0){
-							BigDecimal diffInReserve = receiptDetail.getAmount().subtract(payableReserve.getReservedAmt());
+						if(payableAmt.compareTo(payableReserve.getReservedAmt()) != 0){
+							BigDecimal diffInReserve = payableAmt.subtract(payableReserve.getReservedAmt());
 
 							// Update Reserve Amount in Manual Advise
 							getManualAdviseDAO().updatePayableReserve(receiptDetail.getPayAgainstID(), diffInReserve);
@@ -860,6 +899,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 					// Delete Reserved Log against Payable Advise ID and Receipt ID
 					getManualAdviseDAO().deletePayableReserve(receiptSeqID, receiptDetail.getPayAgainstID());
+					
 				}
 			}
 		}
@@ -869,6 +909,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if(advise != null){
 			getManualAdviseDAO().delete(advise, TableType.TEMP_TAB);
 		}
+
+		// Tax Details Deletion against Receipt ID
+		getReceiptTaxDetailDAO().deleteByReceiptID(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB);
 
 		// Delete Save Receipt Detail List by Reference
 		getFinReceiptDetailDAO().deleteByReceiptID(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB);
@@ -1157,6 +1200,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			// Delete and Save FinRepayHeader Detail list by Reference
 			getFinanceRepaymentsDAO().deleteByRef(finReference, TableType.TEMP_TAB);
+			
+			// Tax Details Deletion against Receipt ID
+			getReceiptTaxDetailDAO().deleteByReceiptID(receiptID, TableType.TEMP_TAB);
 
 			// Delete Save Receipt Detail List by Reference
 			getFinReceiptDetailDAO().deleteByReceiptID(receiptID, TableType.TEMP_TAB);
@@ -2781,6 +2827,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setBankDetailService(BankDetailService bankDetailService) {
 		this.bankDetailService = bankDetailService;
+	}
+
+	public ReceiptTaxDetailDAO getReceiptTaxDetailDAO() {
+		return receiptTaxDetailDAO;
+	}
+
+	public void setReceiptTaxDetailDAO(ReceiptTaxDetailDAO receiptTaxDetailDAO) {
+		this.receiptTaxDetailDAO = receiptTaxDetailDAO;
 	}
 
 }

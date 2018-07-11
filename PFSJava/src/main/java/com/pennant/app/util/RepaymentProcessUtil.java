@@ -36,6 +36,7 @@ import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
+import com.pennant.backend.dao.receipts.ReceiptTaxDetailDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
@@ -82,6 +83,7 @@ public class RepaymentProcessUtil {
 	private FinExcessAmountDAO			finExcessAmountDAO;
 	private FinReceiptHeaderDAO			finReceiptHeaderDAO;
 	private FinReceiptDetailDAO			finReceiptDetailDAO;
+	private ReceiptTaxDetailDAO			receiptTaxDetailDAO;
 	private FinanceRepaymentsDAO		financeRepaymentsDAO;
 
 	private FinLogEntryDetailDAO		finLogEntryDetailDAO;
@@ -496,6 +498,28 @@ public class RepaymentProcessUtil {
 					extDataMap.put(receiptDetail.getFeeTypeCode()+"_P", extDataMap.get(receiptDetail.getFeeTypeCode()+"_P").add(receiptDetail.getAmount()));
 				}else{
 					extDataMap.put(receiptDetail.getFeeTypeCode()+"_P", receiptDetail.getAmount());
+				}
+				if(receiptDetail.getReceiptTaxDetail() != null){
+					if(extDataMap.containsKey(receiptDetail.getFeeTypeCode()+"_CGST_P")){
+						extDataMap.put(receiptDetail.getFeeTypeCode()+"_CGST_P", extDataMap.get(receiptDetail.getFeeTypeCode()+"_CGST_P").add(receiptDetail.getReceiptTaxDetail().getPaidCGST()));
+					}else{
+						extDataMap.put(receiptDetail.getFeeTypeCode()+"_CGST_P", receiptDetail.getReceiptTaxDetail().getPaidCGST());
+					}
+					if(extDataMap.containsKey(receiptDetail.getFeeTypeCode()+"_SGST_P")){
+						extDataMap.put(receiptDetail.getFeeTypeCode()+"_SGST_P", extDataMap.get(receiptDetail.getFeeTypeCode()+"_SGST_P").add(receiptDetail.getReceiptTaxDetail().getPaidSGST()));
+					}else{
+						extDataMap.put(receiptDetail.getFeeTypeCode()+"_SGST_P", receiptDetail.getReceiptTaxDetail().getPaidSGST());
+					}
+					if(extDataMap.containsKey(receiptDetail.getFeeTypeCode()+"_UGST_P")){
+						extDataMap.put(receiptDetail.getFeeTypeCode()+"_UGST_P", extDataMap.get(receiptDetail.getFeeTypeCode()+"_UGST_P").add(receiptDetail.getReceiptTaxDetail().getPaidUGST()));
+					}else{
+						extDataMap.put(receiptDetail.getFeeTypeCode()+"_UGST_P", receiptDetail.getReceiptTaxDetail().getPaidUGST());
+					}
+					if(extDataMap.containsKey(receiptDetail.getFeeTypeCode()+"_IGST_P")){
+						extDataMap.put(receiptDetail.getFeeTypeCode()+"_IGST_P", extDataMap.get(receiptDetail.getFeeTypeCode()+"_IGST_P").add(receiptDetail.getReceiptTaxDetail().getPaidIGST()));
+					}else{
+						extDataMap.put(receiptDetail.getFeeTypeCode()+"_IGST_P", receiptDetail.getReceiptTaxDetail().getPaidIGST());
+					}
 				}
 			}
 
@@ -1150,7 +1174,22 @@ public class RepaymentProcessUtil {
 				if (payAgainstID != 0) {
 					
 					if(isApproval){
-						getManualAdviseDAO().updateUtilise(payAgainstID, receiptDetail.getAmount());
+						
+						BigDecimal payableAmt = receiptDetail.getAmount();
+						if(receiptDetail.getReceiptTaxDetail() != null){
+							if(StringUtils.equals(receiptDetail.getReceiptTaxDetail().getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+								payableAmt = payableAmt.subtract(receiptDetail.getReceiptTaxDetail().getTotalGST());
+							}
+						}
+						
+						getManualAdviseDAO().updateUtilise(payAgainstID, payableAmt);
+						
+						// Tax Details Deletion against Receipt Seq ID
+						if(receiptDetail.getReceiptTaxDetail() != null){
+							receiptDetail.getReceiptTaxDetail().setReceiptID(receiptID);
+							receiptDetail.getReceiptTaxDetail().setReceiptSeqID(receiptSeqID);
+							getReceiptTaxDetailDAO().save(receiptDetail.getReceiptTaxDetail(), TableType.MAIN_TAB);
+						}
 
 						// Delete Reserved Log against Advise and Receipt Seq ID
 						getManualAdviseDAO().deletePayableReserve(receiptSeqID, payAgainstID);
@@ -1161,8 +1200,8 @@ public class RepaymentProcessUtil {
 						movement.setReceiptID(receiptID);
 						movement.setReceiptSeqID(receiptSeqID);
 						movement.setMovementDate(DateUtility.getAppDate());
-						movement.setMovementAmount(receiptDetail.getAmount());
-						movement.setPaidAmount(receiptDetail.getAmount());
+						movement.setMovementAmount(payableAmt);
+						movement.setPaidAmount(payableAmt);
 						getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
 					}else{
 						// Payable Amount make utilization
@@ -1479,6 +1518,12 @@ public class RepaymentProcessUtil {
 					finRepayQueue.setWaivedAmount(repaySchdList.get(i).getWaivedAmt());
 					finRepayQueue.setPenaltyBal(repaySchdList.get(i).getPenaltyAmt().subtract(repaySchdList.get(i).getPenaltyPayNow()));
 					finRepayQueue.setChargeType(repaySchdList.get(i).getChargeType());
+					
+					// Penalty GST Details
+					finRepayQueue.setPaidPenaltyCGST(repaySchdList.get(i).getPaidPenaltyCGST());
+					finRepayQueue.setPaidPenaltySGST(repaySchdList.get(i).getPaidPenaltySGST());
+					finRepayQueue.setPaidPenaltyUGST(repaySchdList.get(i).getPaidPenaltyUGST());
+					finRepayQueue.setPaidPenaltyIGST(repaySchdList.get(i).getPaidPenaltyIGST());
 
 					// Total Repayments Calculation for Principal, Profit 
 					rpyQueueHeader.setPrincipal(rpyQueueHeader.getPrincipal().add(repaySchdList.get(i).getPrincipalSchdPayNow()));
@@ -1502,7 +1547,7 @@ public class RepaymentProcessUtil {
 					rpyQueueHeader.setInsWaived(rpyQueueHeader.getInsWaived().add(finRepayQueue.getSchdInsWaivedNow()));
 					rpyQueueHeader.setSuplRentWaived(rpyQueueHeader.getSuplRentWaived().add(finRepayQueue.getSchdSuplRentWaivedNow()));
 					rpyQueueHeader.setIncrCostWaived(rpyQueueHeader.getIncrCostWaived().add(finRepayQueue.getSchdIncrCostWaivedNow()));
-
+					
 					finRepayQueues.add(finRepayQueue);
 				}
 			}
@@ -1960,5 +2005,13 @@ public class RepaymentProcessUtil {
 
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
+	}
+
+	public ReceiptTaxDetailDAO getReceiptTaxDetailDAO() {
+		return receiptTaxDetailDAO;
+	}
+
+	public void setReceiptTaxDetailDAO(ReceiptTaxDetailDAO receiptTaxDetailDAO) {
+		this.receiptTaxDetailDAO = receiptTaxDetailDAO;
 	}
 }

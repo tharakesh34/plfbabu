@@ -68,6 +68,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -75,6 +76,7 @@ import com.pennant.webui.applicationmaster.irrcode.IRRCodeDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -197,6 +199,15 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 		this.feeTypeID.setValueColumn("FeeTypeCode");
 		this.feeTypeID.setDescColumn("FeeTypeDesc");
 		this.feeTypeID.setValidateColumns(new String[] { "FeeTypeCode" });
+		
+		ArrayList<String> list = new ArrayList<>();
+		list.add(RepayConstants.ALLOCATION_BOUNCE);
+		list.add(RepayConstants.ALLOCATION_ODC);
+		list.add(RepayConstants.ALLOCATION_LPFT);
+		
+		Filter[] filters = new Filter[1];
+		filters[0] = Filter.notIn("FeeTypeCode", list);
+		feeTypeID.setFilters(filters);
 	
 		this.feePercentage.setMaxlength(6);
 		this.feePercentage.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));

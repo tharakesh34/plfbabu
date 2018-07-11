@@ -74,6 +74,11 @@ public class FinRepayQueue {
 	private BigDecimal	waivedAmount			= BigDecimal.ZERO;
 	private BigDecimal	penaltyPayNow			= BigDecimal.ZERO;
 	private BigDecimal	penaltyBal				= BigDecimal.ZERO;
+	private BigDecimal	paidPenaltyCGST			= BigDecimal.ZERO;
+	private BigDecimal	paidPenaltySGST			= BigDecimal.ZERO;
+	private BigDecimal	paidPenaltyUGST			= BigDecimal.ZERO;
+	private BigDecimal	paidPenaltyIGST			= BigDecimal.ZERO;
+	
 	// late pay profit calculations
 	private BigDecimal	schdRate				= BigDecimal.ZERO;
 	private BigDecimal	latePayPftPayNow		= BigDecimal.ZERO;
@@ -554,6 +559,38 @@ public class FinRepayQueue {
 
 	public void setSchdTdsPayNow(BigDecimal schdTdsPayNow) {
 		this.schdTdsPayNow = schdTdsPayNow;
+	}
+
+	public BigDecimal getPaidPenaltyCGST() {
+		return paidPenaltyCGST;
+	}
+
+	public void setPaidPenaltyCGST(BigDecimal paidPenaltyCGST) {
+		this.paidPenaltyCGST = paidPenaltyCGST;
+	}
+
+	public BigDecimal getPaidPenaltySGST() {
+		return paidPenaltySGST;
+	}
+
+	public void setPaidPenaltySGST(BigDecimal paidPenaltySGST) {
+		this.paidPenaltySGST = paidPenaltySGST;
+	}
+
+	public BigDecimal getPaidPenaltyUGST() {
+		return paidPenaltyUGST;
+	}
+
+	public void setPaidPenaltyUGST(BigDecimal paidPenaltyUGST) {
+		this.paidPenaltyUGST = paidPenaltyUGST;
+	}
+
+	public BigDecimal getPaidPenaltyIGST() {
+		return paidPenaltyIGST;
+	}
+
+	public void setPaidPenaltyIGST(BigDecimal paidPenaltyIGST) {
+		this.paidPenaltyIGST = paidPenaltyIGST;
 	}
 	
 

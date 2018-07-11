@@ -329,7 +329,9 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		logger.debug(Literal.ENTERING);
 
 		// Map Preparation for Executing GST rules
-		HashMap<String, Object> dataMap = finFeeDetailService.prepareGstMappingDetails(financeDetail, null);
+		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
+		HashMap<String, Object> dataMap = finFeeDetailService.prepareGstMappingDetails(fromBranchCode,financeDetail.getCustomerDetails(), 
+				financeDetail.getFinanceTaxDetails(), null);
 
 		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
 		String finCcy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();

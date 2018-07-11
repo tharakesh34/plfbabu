@@ -83,6 +83,12 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 	private LoggedInUser userDetails;
 	private String feeTypeCode;
 	private String feeTypeDesc;
+	private boolean taxApplicable = false;
+	private String taxComponent;
+	
+	private PaymentTaxDetail paymentTaxDetail;
+	
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -104,6 +110,9 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("reserveAmount");
 		excludeFields.add("feeTypeDesc");
 		excludeFields.add("feeTypeCode");
+		excludeFields.add("taxApplicable");
+		excludeFields.add("taxComponent");
+		excludeFields.add("paymentTaxDetail");
 		return excludeFields;
 	}
 
@@ -229,6 +238,30 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setFeeTypeDesc(String feeTypeDesc) {
 		this.feeTypeDesc = feeTypeDesc;
+	}
+
+	public boolean isTaxApplicable() {
+		return taxApplicable;
+	}
+
+	public void setTaxApplicable(boolean taxApplicable) {
+		this.taxApplicable = taxApplicable;
+	}
+
+	public String getTaxComponent() {
+		return taxComponent;
+	}
+
+	public void setTaxComponent(String taxComponent) {
+		this.taxComponent = taxComponent;
+	}
+
+	public PaymentTaxDetail getPaymentTaxDetail() {
+		return paymentTaxDetail;
+	}
+
+	public void setPaymentTaxDetail(PaymentTaxDetail paymentTaxDetail) {
+		this.paymentTaxDetail = paymentTaxDetail;
 	}
 
 }

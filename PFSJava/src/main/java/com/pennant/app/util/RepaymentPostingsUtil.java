@@ -260,9 +260,8 @@ public class RepaymentPostingsUtil implements Serializable {
 			FinRepayQueue repayQueue = finRepayQueueList.get(i);
 			if (repayQueue.getRpyDate().compareTo(dateValueDate) < 0) {
 
-				aeEvent = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate, postDate, repayQueue.getRpyDate(), 
-						repayQueue.getFinRpyFor(), dateValueDate, repayQueue.getPenaltyPayNow(), repayQueue.getWaivedAmount(), 
-						repayQueue.getChargeType(), aeEvent, repayQueueHeader, count == 0);
+				aeEvent = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate, postDate, repayQueue,  
+						dateValueDate, aeEvent, repayQueueHeader, count == 0);
 
 				count = count +1;
 				if (!aeEvent.isPostingSucess()) {

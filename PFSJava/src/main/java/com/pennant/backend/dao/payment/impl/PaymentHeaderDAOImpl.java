@@ -252,7 +252,7 @@ public class PaymentHeaderDAOImpl extends BasisNextidDaoImpl<PaymentHeader> impl
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
-		sql.append("  SELECT FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName, FT.FinDivision FinPurpose,");
+		sql.append("  SELECT FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName, FT.FinDivision FinPurpose, FM.CalRoundingMode, FM.RoundingTarget,");
 		sql.append("  FM.FinBranch,FM.CustId, CU.CUSTCIF LovDescCustCif, CU.CUSTSHRTNAME LovDescCustShrtName, CURR.CCYCODE finCcy, ");
 		sql.append("  FM.FINSTARTDATE, FM.MATURITYDATE,DIV.EntityCode LOVDESCENTITYCODE  FROM FINANCEMAIN FM");
 		sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID");
@@ -315,7 +315,7 @@ public class PaymentHeaderDAOImpl extends BasisNextidDaoImpl<PaymentHeader> impl
 
 		sql = new StringBuilder();
 		sql.append(" select MA.adviseID, MA.finReference, MA.balanceAmt, MA.adviseType, MA.adviseAmount, MA.reservedAmt, ");
-		sql.append("ft.feetypecode,ft.FEETYPEDESC from MANUALADVISE MA inner join FEETYPES ft on MA.FEETYPEID=ft.FEETYPEID ");
+		sql.append("ft.feetypecode,ft.FEETYPEDESC, FT.TaxApplicable, FT.TaxComponent from MANUALADVISE MA inner join FEETYPES ft on MA.FEETYPEID=ft.FEETYPEID ");
 		sql.append("Where FinReference = :FinReference AND MA.AdviseType = :AdviseType order by MA.VALUEDATE  ");
 		logger.trace(Literal.SQL + sql.toString());
 

@@ -68,7 +68,9 @@ public class FeeDetailService {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		String branchCode = userDetails.getBranchCode();
-		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(financeDetail, branchCode);
+		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
+		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,financeDetail.getCustomerDetails(), 
+				financeDetail.getFinanceTaxDetails(), branchCode);
 		
 		// set FinType fees details
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
@@ -320,7 +322,9 @@ public class FeeDetailService {
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		String branchCode = userDetails.getBranchCode();
-		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(financeDetail, branchCode);
+		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
+		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,financeDetail.getCustomerDetails(), 
+				financeDetail.getFinanceTaxDetails(), branchCode);
 		
 		if (!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {
 			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent,
@@ -663,7 +667,9 @@ public class FeeDetailService {
 			FinFeeDetail finFeeDetail = null;
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			String branchCode = userDetails.getBranchCode();
-			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(financeDetail, branchCode);
+			String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
+			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,financeDetail.getCustomerDetails(), 
+					financeDetail.getFinanceTaxDetails(), branchCode);
 			for (FinTypeFees finTypeFee : finTypeFeesList) {
 				finFeeDetail = new FinFeeDetail();
 				finFeeDetail.setNewRecord(true);

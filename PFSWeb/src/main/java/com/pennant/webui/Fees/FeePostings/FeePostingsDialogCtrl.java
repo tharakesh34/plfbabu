@@ -106,6 +106,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -619,6 +620,15 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.feeTypeCode.setValueColumn("FeeTypeCode");
 		this.feeTypeCode.setDescColumn("FeeTypeDesc");
 		this.feeTypeCode.setValidateColumns(new String[] { "FeeTypeCode" });
+		
+		ArrayList<String> list = new ArrayList<>();
+		list.add(RepayConstants.ALLOCATION_BOUNCE);
+		list.add(RepayConstants.ALLOCATION_ODC);
+		list.add(RepayConstants.ALLOCATION_LPFT);
+		
+		Filter[] filters = new Filter[1];
+		filters[0] = Filter.notIn("FeeTypeCode", list);
+		feeTypeCode.setFilters(filters);
 
 		this.postingCcy.setMaxlength(LengthConstants.LEN_CURRENCY);
 		this.postingCcy.setMandatoryStyle(true);

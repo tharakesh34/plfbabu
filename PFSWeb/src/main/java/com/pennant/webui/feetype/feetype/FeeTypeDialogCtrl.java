@@ -546,7 +546,6 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.row2.setVisible(false);
 			if(!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC)){
 				this.row3.setVisible(false);
-				//this.taxApplicable.setDisabled(true);
 			}
 			if(StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)){
 				this.taxApplicable.setDisabled(true);

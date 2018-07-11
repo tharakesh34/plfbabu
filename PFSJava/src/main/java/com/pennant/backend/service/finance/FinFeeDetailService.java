@@ -49,12 +49,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 
 public interface FinFeeDetailService {
@@ -84,5 +86,6 @@ public interface FinFeeDetailService {
 	BigDecimal calculatePercentage(BigDecimal amount, BigDecimal gstPercentage, FinanceMain financeMain);
 	void processGSTCalForPercentage(FinFeeDetail finFeeDetail, BigDecimal calPercentageFee, FinanceDetail financeDetail, String branchCode);
 	void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail, HashMap<String, Object> gstExecutionMap);
-	HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail, String branchCode);
+	HashMap<String, Object> prepareGstMappingDetails(String fromBranchCode, CustomerDetails customerDetails,
+			FinanceTaxDetail taxDetail, String branchCode);
 }

@@ -60,6 +60,7 @@ public class FinReceiptDetail implements Entity {
 	private String						feeTypeDesc;
 	private boolean 					noReserve;
 	private String						receiptPurpose;
+	private ReceiptTaxDetail			receiptTaxDetail;
 	private List<FinRepayHeader>		repayHeaders	= new ArrayList<FinRepayHeader>(1);
 	private List<ManualAdviseMovements>	advMovements	= new ArrayList<ManualAdviseMovements>(1);
 	
@@ -391,6 +392,14 @@ public class FinReceiptDetail implements Entity {
 
 	public void setReceiptPurpose(String receiptPurpose) {
 		this.receiptPurpose = receiptPurpose;
+	}
+
+	public ReceiptTaxDetail getReceiptTaxDetail() {
+		return receiptTaxDetail;
+	}
+
+	public void setReceiptTaxDetail(ReceiptTaxDetail receiptTaxDetail) {
+		this.receiptTaxDetail = receiptTaxDetail;
 	}
 
 }
