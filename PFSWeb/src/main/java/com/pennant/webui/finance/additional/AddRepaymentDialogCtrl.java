@@ -373,6 +373,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			fillComboBox(this.cbSchdMthd, "", PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
 			this.cbSchdMthd.setDisabled(true);
 		}
+		
+		if(this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.SCHMTHD_PFTCAP)){
+			this.wIAmount.setMandatory(true);
+			this.wIAmount.setValue(BigDecimal.ZERO);
+		}
 
 		//Check if schedule header is null or not and set the recal type fields.
 		fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
@@ -585,7 +590,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 		try {
 			//allow zero for Re payment 
-			if (this.wIAmount.getActualValue().compareTo(BigDecimal.ZERO)>0) {
+			if (this.wIAmount.getActualValue().compareTo(BigDecimal.ZERO)>0 || 
+					this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.SCHMTHD_PFTCAP)) {
 				BigDecimal amount = PennantApplicationUtil.unFormateAmount(this.wIAmount.getValidateValue(), format);
 				
 				totalAlwRpyAmt = BigDecimal.ZERO;
@@ -916,6 +922,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void onChange$cbSchdMthd(Event event) {
 		logger.debug("Entering" + event.toString());
 		overrideCount = 0;
+		this.wIAmount.setMandatory(false);
 		if ((this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.SCHMTHD_PFT))
 				|| (this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.SCHMTHD_NOPAY))) {
 			this.wIAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy())));
@@ -923,6 +930,9 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} else {
 			this.wIAmount.setValue(BigDecimal.ZERO);
 			this.wIAmount.setDisabled(false);
+			if(this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.SCHMTHD_PFTCAP)){
+				this.wIAmount.setMandatory(true);
+			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1031,6 +1041,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		} else {
 			this.cbSchdMthd.setSelectedIndex(0);
+		}
+		
+		if(this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.SCHMTHD_PFTCAP)){
+			this.wIAmount.setMandatory(true);
+			this.wIAmount.setValue(BigDecimal.ZERO);
 		}
 		logger.debug("Leaving");
 	}
