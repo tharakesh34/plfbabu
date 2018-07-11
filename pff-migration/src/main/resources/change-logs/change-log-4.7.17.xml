@@ -10054,7 +10054,7 @@ UNION ALL
 			<column name="WorkflowId" type="bigint"  />
 		</createTable>
 	</changeSet>
-	<changeSet id="226_post" author="Jayant">
+	<changeSet id="226_post" author="Jayant" dbms="mssql">
 		<sql>
 			alter table DepositDetails add constraint df_depodtl_aa default 0 for ActualAmount;
 			alter table DepositDetails add constraint df_depodtl_ta default 0 for TransactionAmount;
@@ -10178,7 +10178,7 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="228_post" author="Jayant">
+	<changeSet id="228_post" author="Jayant" dbms="mssql">
 		<sql>
 			alter table DepositMovements_Temp add constraint df_depmov_t_ra default 0 for ReservedAmount;
 			alter table DepositMovements_Temp add constraint df_depmov_t_pbi default 0 for PartnerBankId;
@@ -10298,7 +10298,7 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="229_post" author="Jayant">
+	<changeSet id="229_post" author="Jayant" dbms="mssql">
 		<sql>
 			alter table DepositMovements add constraint df_depmov_ra default 0 for ReservedAmount;
 			alter table DepositMovements add constraint df_depmov_pbi default 0 for PartnerBankId;
