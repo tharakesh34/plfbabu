@@ -9301,7 +9301,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	 <changeSet id="208" author="Kesav">
+	 <changeSet id="208" author="Kesav" dbms="postgresql">
 		<createTable tableName="DepositDetails_Temp">
 			<column name="DepositId"  type="bigint" >
 				<constraints nullable="false" primaryKey="true"/>
@@ -9331,8 +9331,75 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
-	 <changeSet id="209" author="Kesav">
+	<changeSet id="208" author="Kesav" dbms="oracle">
+		<createTable tableName="DepositDetails_Temp">
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="DepositType"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="BranchCode" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="PartnerBankId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="DepositSlipNumber"  type="varchar(20)" />	
+			<column name="DepositDate" type="datetime"/>
+			<column name="TotalAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PartialAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="208" author="Kesav" dbms="mssql">
+		<createTable tableName="DepositDetails_Temp">
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="DepositType"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="BranchCode" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="PartnerBankId" type="bigint" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="DepositSlipNumber"  type="varchar(20)" />	
+			<column name="DepositDate" type="datetime"/>
+			<column name="TotalAmount" type="decimal(18,0)" />
+			<column name="PartialAmount" type="decimal(18,0)"/>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="208_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table DepositDetails_Temp add constraint df_depdtl_t_pbi default 0 for PartnerBankId;
+			alter table DepositDetails_Temp add constraint df_depdtl_t_ta default 0 for TotalAmount;
+			alter table DepositDetails_Temp add constraint df_depdtl_t_pa default 0 for PartialAmount;
+			alter table DepositDetails_Temp add constraint df_depdtl_t_ver default 0 for Version;
+		</sql>
+	</changeSet>
+	 <changeSet id="209" author="Kesav" dbms="postgresql">
 		<createTable tableName="DepositDetails">
 			<column name="DepositId"  type="bigint" >
 				<constraints nullable="false" primaryKey="true"/>
@@ -9362,8 +9429,75 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
-	 <changeSet id="210" author="Kesav">
+	<changeSet id="209" author="Kesav" dbms="oracle">
+		<createTable tableName="DepositDetails">
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="DepositType"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="BranchCode" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="PartnerBankId" type="bigint" defaultValue="0" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="DepositSlipNumber"  type="varchar(20)" />	
+			<column name="DepositDate" type="datetime"/>
+			<column name="TotalAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PartialAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="209" author="Kesav" dbms="mssql">
+		<createTable tableName="DepositDetails">
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="DepositType"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="BranchCode" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="PartnerBankId" type="bigint" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="DepositSlipNumber"  type="varchar(20)" />	
+			<column name="DepositDate" type="datetime"/>
+			<column name="TotalAmount" type="decimal(18,0)"/>
+			<column name="PartialAmount" type="decimal(18,0)"/>
+			<column name="Version" type="int"  />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="209_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table DepositDetails add constraint df_depodtl_pbi default 0 for PartnerBankId;
+			alter table DepositDetails add constraint df_depodtl_ta default 0 for TotalAmount;
+			alter table DepositDetails add constraint df_depodtl_pa default 0 for PartialAmount;
+			alter table DepositDetails add constraint df_depodtl_ver default 0 for Version;
+		</sql>
+	</changeSet>
+	 <changeSet id="210" author="Kesav" dbms="postgresql">
 		<createTable tableName="CashDenominations_Temp">
 			<column name="SeqNo" type="int"/>
 			<column name="DepositId"  type="bigint" >
@@ -9389,8 +9523,66 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
-	<changeSet id="211" author="Kesav">
+	<changeSet id="210" author="Kesav" dbms="oracle">
+		<createTable tableName="CashDenominations_Temp">
+			<column name="SeqNo" type="int"/>
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="ModuleCode"  type="varchar(8)" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="Denomination"  type="varchar(8)" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="Count" type="decimal(10,0)" defaultValue="0"/>
+			<column name="Amount" type="decimal(10,0)" defaultValue="0"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="210" author="Kesav" dbms="mssql">
+		<createTable tableName="CashDenominations_Temp">
+			<column name="SeqNo" type="int"/>
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="ModuleCode"  type="varchar(8)" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="Denomination"  type="varchar(8)" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="Count" type="decimal(10,0)" />
+			<column name="Amount" type="decimal(10,0)"/>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="210_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table CashDenominations_Temp add constraint df_cashdeno_t_count default 0 for Count;
+			alter table CashDenominations_Temp add constraint df_cashdeno_t_amount default 0 for Amount;
+			alter table CashDenominations_Temp add constraint df_cashdeno_t_ver default 0 for Version;
+		</sql>
+	</changeSet>
+	<changeSet id="211" author="Kesav" dbms="postgresql">
 		<createTable tableName="CashDenominations">
 			<column name="SeqNo" type="int" />
 			<column name="DepositId"  type="bigint" >
@@ -9416,7 +9608,65 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="211" author="Kesav" dbms="oracle">
+		<createTable tableName="CashDenominations">
+			<column name="SeqNo" type="int" />
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="ModuleCode"  type="varchar(8)" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="Denomination"  type="varchar(8)" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="Count" type="decimal(10,0)" defaultValue="0"/>
+			<column name="Amount" type="decimal(10,0)" defaultValue="0"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="211" author="Kesav" dbms="mssql">
+		<createTable tableName="CashDenominations">
+			<column name="SeqNo" type="int" />
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="ModuleCode"  type="varchar(8)" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="Denomination"  type="varchar(8)" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="Count" type="decimal(10,0)"/>
+			<column name="Amount" type="decimal(10,0)"/>
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="211_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table CashDenominations add constraint df_cashdeno_count default 0 for Count;
+			alter table CashDenominations add constraint df_cashdeno_amount default 0 for Amount;
+			alter table CashDenominations add constraint df_cashdeno_ver default 0 for Version;
+		</sql>
+	</changeSet>
 	<changeSet id="212" author="Kesav">
 	<createSequence sequenceName="SeqDepositDetails" startValue="1" incrementBy="1"/>
 </changeSet>
@@ -9599,7 +9849,7 @@ UNION ALL
 	</createView>
 </changeSet>
 
-	<changeSet id="224" author="Kesav">
+	<changeSet id="224" author="Kesav" dbms="postgresql">
 		<createTable tableName="DepositDetails_Temp">
 			<column name="DepositId"  type="bigint" >
 				<constraints nullable="false" primaryKey="true"/>
@@ -9631,12 +9881,84 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" defaultValue="0" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="224" author="Kesav" dbms="oracle">
+		<createTable tableName="DepositDetails_Temp">
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="DepositType"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="BranchCode" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="ActualAmount" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="TransactionAmount" type="decimal(18,0)" defaultValue="0" >
+				<constraints nullable="false"/>
+			</column>		
+			<column name="BalanceAmount" type="decimal(18,0)" defaultValue="0" >
+				<constraints nullable="false"/>
+			</column>		
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" defaultValue="0" />
+		</createTable>
+	</changeSet>
+	<changeSet id="224" author="Kesav" dbms="mssql">
+		<createTable tableName="DepositDetails_Temp">
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="DepositType"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="BranchCode" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="ActualAmount" type="bigint">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="TransactionAmount" type="decimal(18,0)" >
+				<constraints nullable="false"/>
+			</column>		
+			<column name="BalanceAmount" type="decimal(18,0)" >
+				<constraints nullable="false"/>
+			</column>		
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="225_post" author="Jayant">
+		<sql>
+			alter table DepositDetails_Temp add constraint df_depodtl_t_aa default 0 for ActualAmount;
+			alter table DepositDetails_Temp add constraint df_depodtl_t_ta default 0 for TransactionAmount;
+			alter table DepositDetails_Temp add constraint df_depodtl_t_ba default 0 for BalanceAmount;
+			alter table DepositDetails_Temp add constraint df_depodtl_t_ver default 0 for Version;
+			alter table DepositDetails_Temp add constraint df_depodtl_t_wid default 0 for WorkflowId;
+		</sql>
+	</changeSet>
 	<changeSet id="225" author="Kesav">
 		<addUniqueConstraint tableName="DepositDetails_Temp" columnNames="DepositType, BranchCode" constraintName="UK_DepositDetails_Temp"/>
 	</changeSet>
 	
-	<changeSet id="226" author="Kesav">
+	<changeSet id="226" author="Kesav" dbms="postgresql">
 		<createTable tableName="DepositDetails">
 			<column name="DepositId"  type="bigint" >
 				<constraints nullable="false" primaryKey="true"/>
@@ -9668,12 +9990,84 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" defaultValue="0" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="226" author="Kesav" dbms="oracle">
+		<createTable tableName="DepositDetails">
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="DepositType"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="BranchCode" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="ActualAmount" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="TransactionAmount" type="decimal(18,0)" defaultValue="0" >
+				<constraints nullable="false"/>
+			</column>		
+			<column name="BalanceAmount" type="decimal(18,0)" defaultValue="0" >
+				<constraints nullable="false"/>
+			</column>		
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" defaultValue="0" />
+		</createTable>
+	</changeSet>
+	<changeSet id="226" author="Kesav" dbms="mssql">
+		<createTable tableName="DepositDetails">
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="DepositType"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="BranchCode" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="ActualAmount" type="bigint">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="TransactionAmount" type="decimal(18,0)"  >
+				<constraints nullable="false"/>
+			</column>		
+			<column name="BalanceAmount" type="decimal(18,0)">
+				<constraints nullable="false"/>
+			</column>		
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint"  />
+		</createTable>
+	</changeSet>
+	<changeSet id="226_post" author="Jayant">
+		<sql>
+			alter table DepositDetails add constraint df_depodtl_aa default 0 for ActualAmount;
+			alter table DepositDetails add constraint df_depodtl_ta default 0 for TransactionAmount;
+			alter table DepositDetails add constraint df_depodtl_ba default 0 for BalanceAmount;
+			alter table DepositDetails add constraint df_depodtl_ver default 0 for Version;
+			alter table DepositDetails add constraint df_depodtl_wid default 0 for WorkflowId;
+		</sql>
+	</changeSet>
 	<changeSet id="227" author="Kesav">
 		<addUniqueConstraint tableName="DepositDetails" columnNames="DepositType, BranchCode" constraintName="UK_DepositDetails"/>
 	</changeSet>
 	
-	 <changeSet id="228" author="Kesav">
+	 <changeSet id="228" author="Kesav" dbms="postgresql">
 		<createTable tableName="DepositMovements_Temp">
 			<column name="MovementId"  type="bigint" >
 				<constraints nullable="false" primaryKey="true"/>
@@ -9710,8 +10104,90 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
-	 <changeSet id="229" author="Kesav">
+	<changeSet id="228" author="Kesav" dbms="oracle">
+		<createTable tableName="DepositMovements_Temp">
+			<column name="MovementId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="TransactionType"  type="varchar(1)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="ReservedAmount" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="PartnerBankId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="DepositSlipNumber"  type="varchar(20)" />	
+			<column name="TransactionDate" type="datetime"/>
+			<column name="ReceiptId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LinkedTranId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="228" author="Kesav" dbms="mssql">
+		<createTable tableName="DepositMovements_Temp">
+			<column name="MovementId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="TransactionType"  type="varchar(1)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="ReservedAmount" type="bigint" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="PartnerBankId" type="bigint" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="DepositSlipNumber"  type="varchar(20)" />	
+			<column name="TransactionDate" type="datetime"/>
+			<column name="ReceiptId" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="LinkedTranId" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Version" type="int"  />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="228_post" author="Jayant">
+		<sql>
+			alter table DepositMovements_Temp add constraint df_depmov_t_ra default 0 for ReservedAmount;
+			alter table DepositMovements_Temp add constraint df_depmov_t_pbi default 0 for PartnerBankId;
+			alter table DepositMovements_Temp add constraint df_depmov_t_ri default 0 for ReceiptId;
+			alter table DepositMovements_Temp add constraint df_depmov_t_lti default 0 for LinkedTranId;
+			alter table DepositMovements_Temp add constraint df_depmov_t_ver default 0 for Version;
+		</sql>
+	</changeSet>
+	 <changeSet id="229" author="Kesav" dbms="postgresql">
 		<createTable tableName="DepositMovements">
 			<column name="MovementId"  type="bigint" >
 				<constraints nullable="false" primaryKey="true"/>
@@ -9748,7 +10224,89 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="229" author="Kesav" dbms="oracle">
+		<createTable tableName="DepositMovements">
+			<column name="MovementId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="TransactionType"  type="varchar(1)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="ReservedAmount" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="PartnerBankId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="DepositSlipNumber"  type="varchar(20)" />	
+			<column name="TransactionDate" type="datetime"/>
+			<column name="ReceiptId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LinkedTranId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="229" author="Kesav" dbms="mssql">
+		<createTable tableName="DepositMovements">
+			<column name="MovementId"  type="bigint" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>			
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="TransactionType"  type="varchar(1)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="ReservedAmount" type="bigint" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="PartnerBankId" type="bigint" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="DepositSlipNumber"  type="varchar(20)" />	
+			<column name="TransactionDate" type="datetime"/>
+			<column name="ReceiptId" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="LinkedTranId" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="229_post" author="Jayant">
+		<sql>
+			alter table DepositMovements add constraint df_depmov_ra default 0 for ReservedAmount;
+			alter table DepositMovements add constraint df_depmov_pbi default 0 for PartnerBankId;
+			alter table DepositMovements add constraint df_depmov_ri default 0 for ReceiptId;
+			alter table DepositMovements add constraint df_depmov_lti default 0 for LinkedTranId;
+			alter table DepositMovements add constraint df_depmov_ver default 0 for Version;
+		</sql>
+	</changeSet>
 	<changeSet id="230" author="Kesav">
 	 	<renameColumn tableName="CashDenominations" oldColumnName="DepositId" newColumnName="MovementId"/>
 	 </changeSet>
