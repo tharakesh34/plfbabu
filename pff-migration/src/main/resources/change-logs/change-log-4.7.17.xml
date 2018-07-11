@@ -10354,5 +10354,9 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
+	<changeSet id="235" author="Kesav">
+		<createSequence sequenceName="SeqDepositMovements" startValue="1" incrementBy="1"/>
+	</changeSet>
+	
 </databaseChangeLog>
 	
