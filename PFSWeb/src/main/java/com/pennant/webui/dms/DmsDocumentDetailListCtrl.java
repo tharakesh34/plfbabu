@@ -59,7 +59,7 @@ public class DmsDocumentDetailListCtrl extends GFCBaseListCtrl<DMSDocumentDetail
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "DmsDocumentDetails";
-		super.pageRightName = "PaymentHeaderList";
+		super.pageRightName = "DmsDocumentDetailsList";
 		super.tableName = "dmsdocprocesslog";
 	}
 
