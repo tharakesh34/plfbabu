@@ -260,7 +260,7 @@ update adtCustomers set marginDeviation=0;
 			<column name="BranchCode" type="varchar(8)" >
 				<constraints nullable="false" />
 			</column>			
-			<column name="PartnerBankId" type="bigint" defaultValue="0" >
+			<column name="PartnerBankId" type="bigint" >
 				<constraints nullable="false"/>
 			</column>			
 			<column name="DepositSlipNumber"  type="varchar(20)" />	
