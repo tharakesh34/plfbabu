@@ -267,7 +267,7 @@ update adtCustomers set marginDeviation=0;
 			<column name="DepositDate" type="datetime"/>
 			<column name="TotalAmount" type="decimal(18,0)" />
 			<column name="PartialAmount" type="decimal(18,0)" />
-			<column name="Version" type="int" defaultValue="0" />
+			<column name="Version" type="int" />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
