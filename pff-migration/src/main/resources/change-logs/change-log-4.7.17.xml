@@ -9749,5 +9749,13 @@ UNION ALL
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="230" author="Kesav">
+	 	<renameColumn tableName="CashDenominations" oldColumnName="DepositId" newColumnName="MovementId"/>
+	 </changeSet>
+	 
+	 <changeSet id="231" author="Kesav">
+	 	<renameColumn tableName="CashDenominations_Temp" oldColumnName="DepositId" newColumnName="MovementId"/>
+	 </changeSet>
+	
 </databaseChangeLog>
 	
