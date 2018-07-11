@@ -437,10 +437,17 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 				jdbcSearchObject.addFilterOr(getSearchFilters(fieldString, searchText));
 			}
 
+			// Add the default sort on first TWO columns, if exists.
 			String[] lovFields = getModuleMapping().getLovFields();
-			if (lovFields != null && lovFields.length > 0) {
-				this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
-				this.jdbcSearchObject.addSort(lovFields[1].trim(), false);
+
+			if (lovFields != null) {
+				if (lovFields.length > 0) {
+					jdbcSearchObject.addSort(lovFields[0], false);
+				}
+
+				if (lovFields.length > 1) {
+					jdbcSearchObject.addSort(lovFields[1], false);
+				}
 			}
 
 			if (whereClause != null) {
