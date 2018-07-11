@@ -153,7 +153,7 @@ update adtCustomers set marginDeviation=0;
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="16" author="Kesav">
+	<changeSet id="16" author="Kesav" dbms="postgresql">
 		<createTable tableName="AdtDepositDetails">
 			<column name="AuditId" type="bigint">
 				<constraints nullable="false" />
@@ -195,12 +195,103 @@ update adtCustomers set marginDeviation=0;
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="16" author="Kesav" dbms="oracle">
+		<createTable tableName="AdtDepositDetails">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="DepositType"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="BranchCode" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="PartnerBankId" type="bigint" defaultValue="0" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="DepositSlipNumber"  type="varchar(20)" />	
+			<column name="DepositDate" type="datetime"/>
+			<column name="TotalAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PartialAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="16" author="Kesav" dbms="mssql">
+		<createTable tableName="AdtDepositDetails">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="DepositType"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="BranchCode" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>			
+			<column name="PartnerBankId" type="bigint" defaultValue="0" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="DepositSlipNumber"  type="varchar(20)" />	
+			<column name="DepositDate" type="datetime"/>
+			<column name="TotalAmount" type="decimal(18,0)" />
+			<column name="PartialAmount" type="decimal(18,0)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="16_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table AdtDepositDetails add constraint df_adtdepdtl_pbi default 0 for PartnerBankId;
+			alter table AdtDepositDetails add constraint df_adtdepdtl_ta default 0 for TotalAmount;
+			alter table AdtDepositDetails add constraint df_adtdepdtl_pa default 0 for PartialAmount;
+			alter table AdtDepositDetails add constraint df_adtdepdtl_ver default 0 for Version;
+		</sql>
+	</changeSet>
 	<changeSet id="17" author="Kesav">
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_AdtDepositDetails" tableName="AdtDepositDetails" />
 	</changeSet>
 	
-	<changeSet id="18" author="Kesav">
+	<changeSet id="18" author="Kesav" dbms="postgresql">
 		<createTable tableName="AdtCashDenominations">
 			<column name="AuditId" type="bigint">
 				<constraints nullable="false" />
@@ -238,7 +329,89 @@ update adtCustomers set marginDeviation=0;
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="18" author="Kesav" dbms="oracle">
+		<createTable tableName="AdtCashDenominations">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqNo" type="int" />
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="ModuleCode"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="Denomination"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="Count" type="decimal(10,0)" defaultValue="0"/>
+			<column name="Amount" type="decimal(10,0)" defaultValue="0"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="18" author="Kesav" dbms="mssql">
+		<createTable tableName="AdtCashDenominations">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqNo" type="int" />
+			<column name="DepositId"  type="bigint" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="ModuleCode"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="Denomination"  type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="Count" type="decimal(10,0)"/>
+			<column name="Amount" type="decimal(10,0)"/>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="18_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table AdtCashDenominations add constraint df_adtcadeno_count default 0 for Count;
+			alter table AdtCashDenominations add constraint df_adtcadeno_amoun default 0 for Amount;
+			alter table AdtCashDenominations add constraint df_adtcadeno_versi default 0 for Version;
+		</sql>
+	</changeSet>
 	<changeSet id="19" author="Kesav">
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_AdtCashDenominations" tableName="AdtCashDenominations" />
 	</changeSet>
