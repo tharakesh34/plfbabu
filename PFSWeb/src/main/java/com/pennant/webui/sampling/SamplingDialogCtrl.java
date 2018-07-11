@@ -936,6 +936,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("customerDetails", getSampling().getCustomerDetails());
 		map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
+		map.put("enqiryModule", true);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",
 				getTabpanel("CUSTOMERDETAIL"), map);
 		logger.debug(Literal.LEAVING);

@@ -218,7 +218,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 				setNewRecord(false);
 			}
 			this.customerIncome.setWorkflowId(0);
-			if(arguments.containsKey("roleCode")){
+			if(arguments.containsKey("roleCode") && !enqiryModule){
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerIncomeDialog");
 			}

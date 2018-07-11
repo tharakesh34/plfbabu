@@ -427,7 +427,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		doClearMessage();
 
 		// force validation, if on, than execute by component.getValue()
-		if (!recSave) {
+		if (recSave) {
 			doSetValidation();
 		}
 		// fill the Sampling object with the components data
@@ -496,21 +496,18 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 
-		try {
 			int decision = Integer.parseInt(getComboboxValue(this.samplingDecision).toString());
 			sampling.setDecision(decision);
-			if (decision == 0 && !this.recSave) {
-				throw new WrongValueException(this.samplingDecision,
-						Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
-			}
 			if (sampling.getDecision() == Decision.RESUBMIT.getKey()
 					&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)) {
 				throw new WrongValueException(this.samplingDecision,
 						"Sampling Resubmit is allowed only when user action is save");
 			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
+			if (decision == 0 && !this.recSave) {
+				throw new WrongValueException(this.samplingDecision,
+						Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
+			}
+		
 		try {
 			sampling.setRemarks(this.samplingRemarks.getValue());
 		} catch (WrongValueException we) {
