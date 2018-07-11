@@ -2761,7 +2761,7 @@ UNION ALL
 			<column name="UGST_AMT" type="decimal(18,0)"/>
 		</createTable>
 	</changeSet>
-	<changeSet id="127_Post" author="Jayant">
+	<changeSet id="127_Post" author="Jayant" dbms="mssql">
 		<sql>
 			alter table GST_Invoice_Txn_Details add constraint df_gst_invtxn_dtl_fa default 0 for FeeAmount;
 			alter table GST_Invoice_Txn_Details add constraint df_gst_invtxn_dtl_cr default 0 for CGST_RATE;
