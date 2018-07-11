@@ -1782,15 +1782,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Recommend & Comments Details Tab Addition
 		appendRecommendDetailTab(onLoad);
+		
+		//Extended Field Tab Addition
+		if(isTabVisible(StageTabConstants.ExtendedField)){
+			if (onLoad) {
+				appendExtendedFieldDetails(aFinanceDetail, moduleDefiner);
+			}
+		}
 
 		if (StringUtils.isEmpty(moduleDefiner)) {
 			//Sampling Approval Details
 			appendSamplingApprovalTab(onLoad);
-			if(isTabVisible(StageTabConstants.ExtendedField)){
-				if (onLoad) {
-					appendExtendedFieldDetails(aFinanceDetail, moduleDefiner);
-				}
-			}
 			//Query Mangement Tab 
 			if (isTabVisible(StageTabConstants.QueryMangement)) {
 				appendQueryMangementTab(false);
