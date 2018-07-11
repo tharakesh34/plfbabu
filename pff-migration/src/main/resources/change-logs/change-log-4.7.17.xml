@@ -9510,5 +9510,13 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
+	<changeSet id="220" author="Kesav">
+		<dropView viewName="DepositDetails_View"/>
+		<dropView viewName="DepositDetails_AView"/>
+		<dropView viewName="DepositDetails_TView"/>
+		<dropTable tableName="DepositDetails_Temp"/>
+		<dropTable tableName="DepositDetails"/>
+	</changeSet>
+	
 </databaseChangeLog>
 	
