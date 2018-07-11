@@ -10396,6 +10396,41 @@ UNION ALL
 	<changeSet id="235" author="Kesav">
 		<createSequence sequenceName="SeqDepositMovements" startValue="1" incrementBy="1"/>
 	</changeSet>
+	<changeSet id="237" author="lakshmi.n">
+		<createView viewName="Reasons_View" replaceIfExists="true">
+			SELECT T1.id,T1.reasontypeid, T1.reasoncategoryid, T1.code, T1.description,T1.active,T1.version,T1.lastmntby,T1.lastmnton,T1.recordstatus,
+		             T1.rolecode,T1.nextrolecode,T1.taskid,T1.nexttaskid,T1.recordtype,T1.workflowid,
+		             T2.code reasonCategoryCode,
+					 t2.description as reasonCategoryDesc,
+					 T3.code reasonTypeCode,
+					 t3.description as reasonTypeDesc
+		            FROM reasons_temp T1
+		    inner join reasoncategory T2 on T1.reasoncategoryid=T2.id 
+		    inner join reasontypes T3 on T1.reasontypeid=T3.id
+		    UNION ALL
+		    SELECT T1.id,T1.reasontypeid,T1.reasoncategoryid,T1.code,T1.description,T1.active,T1.version,T1.lastmntby,T1.lastmnton,T1.recordstatus,
+		             T1.rolecode,T1.nextrolecode,T1.taskid,T1.nexttaskid,T1.recordtype,T1.workflowid,
+		             T2.code reasonCategoryCode,
+					 T2.description as reasonCategoryDesc,
+					 T3.code reasonTypeCode,
+					 T3.description as reasonTypeDesc
+		             FROM reasons T1
+		   inner join reasoncategory T2 on T1.reasoncategoryid=T2.id 
+		   inner join reasontypes T3 on T1.reasontypeid=T3.id
+		   WHERE NOT (EXISTS ( SELECT 1 FROM reasons_temp WHERE id = T1.id))	
+	</createView>
+	</changeSet>
 	
+	<changeSet id="238" author="lakshmi.n">
+		<createView viewName="reasons_aview" replaceIfExists="true">
+			SELECT t1.id, t1.reasontypeid, t1.reasoncategoryid, t1.code, t1.description, t1.active, t1.version, t1.lastmntby, t1.lastmnton,
+		    t1.recordstatus, t1.rolecode, t1.nextrolecode, t1.taskid, t1.nexttaskid, t1.recordtype, t1.workflowid,
+		    t2.code AS reasoncategorycode, t2.description as reasonCategoryDesc,
+		    t3.code AS reasontypecode, t3.description as reasonTypeDesc
+		    FROM reasons t1
+		    JOIN reasoncategory t2 ON t1.reasoncategoryid = t2.id
+		    JOIN reasontypes t3 ON t1.reasontypeid = t3.id																											
+		</createView>
+	</changeSet>
 </databaseChangeLog>
 	
