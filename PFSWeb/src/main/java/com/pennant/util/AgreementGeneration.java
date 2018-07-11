@@ -1261,6 +1261,11 @@ public class AgreementGeneration implements Serializable {
 			
 			if(aggModuleDetails.contains(PennantConstants.AGG_SMPMODL)){
 				Sampling sampling = finSamplingService.getSamplingDetails(finRef, "_aview");
+				
+				if (sampling == null) {
+					sampling = new Sampling();
+				}
+				
 				List<SamplingDetails> samplingDetailsList = sampling.getSamplingDetailsList();
 				if(CollectionUtils.isNotEmpty(samplingDetailsList)){
 					agreement.setSmplDetails(samplingDetailsList);
