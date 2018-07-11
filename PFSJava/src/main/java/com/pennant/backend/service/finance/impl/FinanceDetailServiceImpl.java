@@ -5963,11 +5963,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 								for (FinCovenantType covenantType : financeDetail.getCovenantTypeList()) {
 									// validate the document is in the current uploaded list
 									for (DocumentDetails documentDetails : financeDetail.getDocumentDetailsList()) {
-										if (documentDetails.getDocCategory().equals(covenantType.getCovenantType())
-												&& !(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL,
-														documentDetails.getRecordType())
-														|| StringUtils.equals(PennantConstants.RECORD_TYPE_CAN,
-																documentDetails.getRecordType()))) {
+										if (documentDetails.getDocCategory().equals(covenantType.getCovenantType())) {
 											isDocExist = true;
 											break;
 										}
