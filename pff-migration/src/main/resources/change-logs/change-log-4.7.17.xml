@@ -9945,7 +9945,7 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="225_post" author="Jayant">
+	<changeSet id="225_post" author="Jayant" dbms="mssql">
 		<sql>
 			alter table DepositDetails_Temp add constraint df_depodtl_t_aa default 0 for ActualAmount;
 			alter table DepositDetails_Temp add constraint df_depodtl_t_ta default 0 for TransactionAmount;
