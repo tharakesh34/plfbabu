@@ -2382,9 +2382,6 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @return Tabpanel
 	 */
 	private Tabpanel getTabpanel(ExtendedFieldDetail container) {
-		if (tabHeight == 0) {
-			tabHeight = 150;
-		}
 		
 		Tabbox tabbox = (Tabbox) this.tabpanel.getFellowIfAny("Tab_ROOT_");
 		if (tabbox == null) {
@@ -2406,13 +2403,18 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			tabpanels = new Tabpanels();
 			tabpanels.setParent(tabbox);
 		}
-
+		//July 11 2018 Bug fix related to scrolling issue.
 		Tabpanel tabpanel = new Tabpanel();
 		tabpanel.setId(TABPANEL_ID + container.getFieldName());
-		int height = getDesktopHeight();
-		height = height - tabHeight;
 		tabpanel.setStyle("overflow:auto;border:none;");
-		tabpanel.setHeight(height+"px");
+		int height;
+		if (tabHeight == 0) {
+			tabHeight = 150;
+			height = getDesktopHeight() - tabHeight;
+		} else {
+			height = tabHeight;
+		}
+		tabpanel.setHeight(height + "px");
 		tabpanels.appendChild(tabpanel);
 		tabpanels.setParent(tabbox);
 		return tabpanel;
