@@ -76,7 +76,21 @@ update adtCustomers set marginDeviation=0;
 	</addColumn>
 </changeSet>
 
-<changeSet id="8" author="Vinay">
+<changeSet id="8" author="Vinay" dbms="mssql">
+	<comment> Update Newly added column Id with RowNumbers to preserve null error </comment>
+	<sql> 
+		update AdtFinLiabilityReq  set id=(Select cnt from (Select ROW_NUMBER() OVER(ORDER BY FINREFERENCE,FINEVENT)cnt,T2.* FROM AdtFinLiabilityReq T2)T3
+												 WHERE t3.auditid=AdtFinLiabilityReq.auditid);
+	</sql>
+</changeSet>
+<changeSet id="8" author="Vinay" dbms="oracle">
+	<comment> Update Newly added column Id with RowNumbers to preserve null error </comment>
+	<sql> 
+		update AdtFinLiabilityReq T1 set id=(Select cnt from (Select ROW_NUMBER() OVER(ORDER BY FINREFERENCE,FINEVENT)cnt,T2.* FROM AdtFinLiabilityReq T2)T3
+												 WHERE t3.auditid=T1.auditid);
+	</sql>
+</changeSet>
+<changeSet id="8" author="Vinay" dbms="postgresql">
 	<comment> Update Newly added column Id with RowNumbers to preserve null error </comment>
 	<sql> 
 		update AdtFinLiabilityReq T1 set id=(Select cnt from (Select ROW_NUMBER() OVER(ORDER BY FINREFERENCE,FINEVENT)cnt,T2.* FROM AdtFinLiabilityReq T2)T3
