@@ -9518,5 +9518,86 @@ UNION ALL
 		<dropTable tableName="DepositDetails"/>
 	</changeSet>
 	
+<changeSet id="221" author="Ganesh.p">
+	<comment>Error Message for PartnerBank and Disbusement bank are same but the Payment Type is not IFT</comment>
+	<sql>
+		delete from SMTparameters where SysParmCode='PRESENTMENT_EXTRACT_ALW_DAYS_FROM_APP_DATE';
+		INSERT INTO SMTparameters  VALUES ('PRESENTMENT_EXTRACT_ALW_DAYS_FROM_APP_DATE','Number of Future Days Allow in Presentment Extarction','int',1,'10',10,0,null,null,'Number of Future Days Allow in Presentment Extarction.',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+	</sql>
+</changeSet>
+
+<changeSet id="222" author="Ganesh.p">
+	<comment>Postion of fields are misplaced in changeset 44</comment>
+	<sql>
+		drop view finjointaccountdetails_view;
+	</sql>
+</changeSet>
+
+<changeSet id="223" author="Ganesh.p">
+	<comment>Previous changeset 44 version is placed in wrong position related BugFix</comment>
+	<createView viewName="finjointaccountdetails_view" replaceIfExists="true">
+	SELECT t1.jointaccountid,
+    t1.finreference,
+    t1.custcif,
+    t1.includerepay,
+    t1.repayaccountid,
+    t1.catofcoapplicant,
+    t1.authoritysignatory,
+    t1.sequence,
+	t1.includeIncome,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.usrlogin,
+    t2.usrfname,
+    t2.usrmname,
+    t2.usrlname,
+    t3.custshrtname AS lovdesccifname,
+    t3.custid
+   FROM finjointaccountdetails_temp t1
+     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+     JOIN customers t3 ON t1.custcif = t3.custcif
+UNION ALL
+ SELECT t1.jointaccountid,
+    t1.finreference,
+    t1.custcif,
+    t1.includerepay,
+    t1.repayaccountid,
+    t1.catofcoapplicant,
+    t1.authoritysignatory,
+    t1.sequence,
+    t1.includeIncome,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.usrlogin,
+    t2.usrfname,
+    t2.usrmname,
+    t2.usrlname,
+    t3.custshrtname AS lovdesccifname,
+    t3.custid
+   FROM finjointaccountdetails t1
+     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+     JOIN customers t3 ON t1.custcif = t3.custcif
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM finjointaccountdetails_temp
+          WHERE finjointaccountdetails_temp.jointaccountid = t1.jointaccountid))
+	</createView>
+</changeSet>
+	
 </databaseChangeLog>
 	
