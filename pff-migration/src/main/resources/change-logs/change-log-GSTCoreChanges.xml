@@ -3058,5 +3058,9 @@ UNION ALL
 			LEFT JOIN 	feetypes t3 ON t2.feetypeid = t3.feetypeid		
 		</createView>
 	</changeSet>
-	
+	<changeSet id="155" author="Kesav">
+		<sql>
+			update Seq_Gst_Invoice_Txn_Details set SeqNo = (select coalesce(max(Id),0) from gst_invoice_txn_details);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
