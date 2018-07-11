@@ -2429,7 +2429,7 @@ UNION ALL
 	<changeSet author="Kesav" id="119" dbms="mssql">
 		<sql>
 			update GST_INVOICE_TXN_bkp 
-			set INVOICEID = (Select SUBSTR(INVOICENO,INSTR(INVOICENO,'INV') + 3, LENGTH(INVOICENO)) 
+			set INVOICEID = (Select SUBSTRING(INVOICENO,CHARINDEX('INV',INVOICENO) + 3, LEN(INVOICENO)) 
 							 from 	GST_INVOICE_TXN_bkp t2
 							 where 	t2.INVOICENO = GST_INVOICE_TXN_bkp.INVOICENO);
 		</sql>
@@ -2439,7 +2439,7 @@ UNION ALL
 		<dropTable tableName="GST_Invoice_Txn" />
 	</changeSet>
 	
-	 <changeSet id="121" author="Kesava">
+	 <changeSet id="121" author="Kesava" dbms="postgresql">
 		<createTable tableName="GST_Invoice_Txn">
 			<column name="InvoiceId" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
@@ -2499,7 +2499,132 @@ UNION ALL
 			</column>
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="121" author="Kesava" dbms="oracle">
+		<createTable tableName="GST_Invoice_Txn">
+			<column name="InvoiceId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="InvoiceNo" type="varchar(50)"/>
+			<column name="TransactionID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="InvoiceDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Invoice_Amt" type="decimal(18,0)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="CompanyCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CompanyName" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_GSTIN" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_Address1" type="varchar(1000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_Address2" type="varchar(1000)"/>
+			<column name="Company_Address3" type="varchar(1000)"/>
+			<column name="Company_PINCode" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_State_Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_State_Name" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HSNNumber" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NatureService" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PanNumber" type="varchar(10)" />
+			<column name="LoanAccountNo" type="varchar(20)" />
+			<column name="CustomerID" type="varchar(20)" />	
+			<column name="CustomerName" type="varchar(150)"/>
+			<column name="CustomerGSTIN" type="varchar(100)"/>
+			<column name="CustomerStateCode" type="varchar(2)" />
+			<column name="CustomerStateName" type="varchar(50)" />
+			<column name="CustomerAddress" type="varchar(1000)" />
+			<column name="Invoice_Status" type="varchar(1)" defaultValue="I">
+				<constraints nullable="false" />
+			</column>
+			<column name="InvoiceType" type="varchar(1)" defaultValue="D">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="121" author="Kesava" dbms="mssql">
+		<createTable tableName="GST_Invoice_Txn">
+			<column name="InvoiceId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="InvoiceNo" type="varchar(50)"/>
+			<column name="TransactionID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="InvoiceDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Invoice_Amt" type="decimal(18,0)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="CompanyCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CompanyName" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_GSTIN" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_Address1" type="varchar(1000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_Address2" type="varchar(1000)"/>
+			<column name="Company_Address3" type="varchar(1000)"/>
+			<column name="Company_PINCode" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_State_Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_State_Name" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HSNNumber" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NatureService" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PanNumber" type="varchar(10)" />
+			<column name="LoanAccountNo" type="varchar(20)" />
+			<column name="CustomerID" type="varchar(20)" />	
+			<column name="CustomerName" type="varchar(150)"/>
+			<column name="CustomerGSTIN" type="varchar(100)"/>
+			<column name="CustomerStateCode" type="varchar(2)" />
+			<column name="CustomerStateName" type="varchar(50)" />
+			<column name="CustomerAddress" type="varchar(1000)" />
+			<column name="Invoice_Status" type="varchar(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="InvoiceType" type="varchar(1)" >
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="121_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table GST_Invoice_Txn add constraint df_gst_txn_IS default 'I' for Invoice_Status;
+			alter table GST_Invoice_Txn add constraint df_gst_txn_IT default 'D' for InvoiceType;
+		</sql>
+	</changeSet>
 	<changeSet author="Kesav" id="122">
 		<sql>
 			Insert 	into gst_invoice_txn (invoiceid,invoiceno,transactionid,invoicedate,invoice_amt,companycode,companyname,company_gstin,company_address1,
@@ -2557,7 +2682,7 @@ UNION ALL
 	<changeSet author="Kesav" id="125" dbms="mssql">
 		<sql>
 			update 	gst_invoice_txn_details_bkp 
-			set 	INVOICEID = (Select SUBSTR(INVOICENO,INSTR(INVOICENO,'INV')+3, LENGTH(INVOICENO)) 
+			set 	INVOICEID = (Select SUBSTRING(INVOICENO,CHARINDEX('INV',INVOICENO)+3, LEN(INVOICENO)) 
 								 from 	gst_invoice_txn_details_bkp t2
 								 where 	t2.INVOICENO = gst_invoice_txn_details_bkp.INVOICENO and t2.feecode = gst_invoice_txn_details_bkp.feecode);
 		</sql>
@@ -2567,7 +2692,7 @@ UNION ALL
 		<dropTable tableName="gst_invoice_txn_details" />
 	</changeSet>
 	
-	<changeSet id="127" author="Kesava">
+	<changeSet id="127" author="Kesava" dbms="oracle">
 		<createTable tableName="GST_Invoice_Txn_Details">
 			<column name="Id" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
@@ -2590,7 +2715,65 @@ UNION ALL
 			<column name="UGST_AMT" type="decimal(18,0)" defaultValue="0"/>
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="127" author="Kesava" dbms="postgresql">
+		<createTable tableName="GST_Invoice_Txn_Details">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="InvoiceId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="InvoiceNo" type="varchar(50)"/>
+			<column name="FeeCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="CGST_RATE" type="decimal(5,2)" defaultValue="0"/>
+			<column name="CGST_AMT" type="decimal(18,0)" defaultValue="0"/>
+			<column name="SGST_RATE" type="decimal(5,2)" defaultValue="0"/>
+			<column name="SGST_AMT" type="decimal(18,0)" defaultValue="0"/>
+			<column name="IGST_RATE" type="decimal(5,2)" defaultValue="0"/>
+			<column name="IGST_AMT" type="decimal(18,0)" defaultValue="0"/>
+			<column name="UGST_RATE" type="decimal(5,2)" defaultValue="0"/>
+			<column name="UGST_AMT" type="decimal(18,0)" defaultValue="0"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="127" author="Kesava" dbms="mssql">
+		<createTable tableName="GST_Invoice_Txn_Details">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="InvoiceId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="InvoiceNo" type="varchar(50)"/>
+			<column name="FeeCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeAmount" type="decimal(18,0)" />
+			<column name="CGST_RATE" type="decimal(5,2)" />
+			<column name="CGST_AMT" type="decimal(18,0)" />
+			<column name="SGST_RATE" type="decimal(5,2)" />
+			<column name="SGST_AMT" type="decimal(18,0)" />
+			<column name="IGST_RATE" type="decimal(5,2)" />
+			<column name="IGST_AMT" type="decimal(18,0)" />
+			<column name="UGST_RATE" type="decimal(5,2)" />
+			<column name="UGST_AMT" type="decimal(18,0)"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="127_Post" author="Jayant">
+		<sql>
+			alter table GST_Invoice_Txn_Details add constraint df_gst_invtxn_dtl_fa default 0 for FeeAmount;
+			alter table GST_Invoice_Txn_Details add constraint df_gst_invtxn_dtl_cr default 0 for CGST_RATE;
+			alter table GST_Invoice_Txn_Details add constraint df_gst_invtxn_dtl_ca default 0 for CGST_AMT;
+			alter table GST_Invoice_Txn_Details add constraint df_gst_invtxn_dtl_sr default 0 for SGST_RATE;
+			alter table GST_Invoice_Txn_Details add constraint df_gst_invtxn_dtl_sa default 0 for SGST_AMT;
+			alter table GST_Invoice_Txn_Details add constraint df_gst_invtxn_dtl_ir default 0 for IGST_RATE;
+			alter table GST_Invoice_Txn_Details add constraint df_gst_invtxn_dtl_ia default 0 for IGST_AMT;
+			alter table GST_Invoice_Txn_Details add constraint df_gst_invtxn_dtl_ur default 0 for UGST_RATE;
+			alter table GST_Invoice_Txn_Details add constraint df_gst_invtxn_dtl_ua default 0 for UGST_AMT;
+		</sql>
+	</changeSet>
 	<changeSet author="Kesav" id="128">
 		<sql>
 			Insert 	Into gst_invoice_txn_details (id,invoiceid,invoiceno,feecode,FeeAmount,cgst_rate,cgst_amt,sgst_rate,sgst_amt,igst_rate,igst_amt,ugst_rate,ugst_amt)
@@ -2757,7 +2940,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="152" author="Kesav">
+	<changeSet id="152" author="Kesav" dbms="oracle">
 		<sql>
 			Update 	GST_INVOICE_TXN_DETAILS T6 
 			Set 	FeeAmount = (
@@ -2769,6 +2952,71 @@ UNION ALL
 			    					and T1.Sgst_Amt = T5.NetSgst and T1.Ugst_amt = T5.NetUgst and T1.Igst_amt = T5.NetIgst
 			            Where 		T6.Id = T1.Id);
 		</sql>
+	</changeSet>
+	<changeSet id="152" author="Kesav" dbms="postgresql">
+		<sql>
+			Update 	GST_INVOICE_TXN_DETAILS T6 
+			Set 	FeeAmount = (
+			            Select 		T3.NetAmountOriginal from GST_INVOICE_TXN_DETAILS T1
+			            Inner JOIN 	GST_INVOICE_TXN T2 on T2.InvoiceId = T1.InvoiceId
+			            Inner JOIN 	FinFeeDetail T3 on T3.FinReference= T2.LoanAccountNo and T3.OriginationFee = 1
+			            inner Join 	FeeTypes T4 on T4.FeeTypeId = T3.FeetypeId and T1.FeeCode = T4.FeeTypeCode
+			            Inner Join 	FinTaxDetails T5 on T5.FeeId = T3.FeeId and T1.Cgst_Amt = T5.NetCgst 
+			    					and T1.Sgst_Amt = T5.NetSgst and T1.Ugst_amt = T5.NetUgst and T1.Igst_amt = T5.NetIgst
+			            Where 		T6.Id = T1.Id);
+		</sql>
+	</changeSet>
+	<changeSet id="152" author="Kesav" dbms="mssql">
+		<sql>
+			Update 	GST_INVOICE_TXN_DETAILS
+			Set 	FeeAmount = (
+			            Select 		T3.NetAmountOriginal from GST_INVOICE_TXN_DETAILS T1
+			            Inner JOIN 	GST_INVOICE_TXN T2 on T2.InvoiceId = T1.InvoiceId
+			            Inner JOIN 	FinFeeDetail T3 on T3.FinReference= T2.LoanAccountNo and T3.OriginationFee = 1
+			            inner Join 	FeeTypes T4 on T4.FeeTypeId = T3.FeetypeId and T1.FeeCode = T4.FeeTypeCode
+			            Inner Join 	FinTaxDetails T5 on T5.FeeId = T3.FeeId and T1.Cgst_Amt = T5.NetCgst 
+			    					and T1.Sgst_Amt = T5.NetSgst and T1.Ugst_amt = T5.NetUgst and T1.Igst_amt = T5.NetIgst
+			            Where 		GST_INVOICE_TXN_DETAILS.Id = T1.Id);
+		</sql>
+	</changeSet>
+	<changeSet id="153" author="Kesav">
+		<createView viewName="manualadvisemovements_Aview" replaceIfExists="true">
+			SELECT 		t1.movementid,
+						t1.adviseid,
+						t1.movementdate,
+						t1.movementamount,
+						t1.paidamount,
+						t1.waivedamount,
+						t1.status,
+						t1.receiptid,
+						t1.receiptseqid,
+						t3.feetypecode, COALESCE(t3.taxapplicable, 0) AS taxapplicable,
+						t3.taxcomponent, t1.PaidCgst, t1.PaidSgst, t1.PaidIgst, t1.PaidUgst
+			FROM 		manualadvisemovements t1
+			JOIN 		manualadvise t2 ON t1.adviseid = t2.adviseid
+			LEFT JOIN 	feetypes t3 ON t2.feetypeid = t3.feetypeid		
+		</createView>
+	</changeSet>
+		
+	<changeSet id="154" author="Kesav">
+		<comment> FeeTypeDesc column added</comment>
+		<createView viewName="manualadvisemovements_Aview" replaceIfExists="true">
+			SELECT 		t1.movementid,
+						t1.adviseid,
+						t1.movementdate,
+						t1.movementamount,
+						t1.paidamount,
+						t1.waivedamount,
+						t1.status,
+						t1.receiptid,
+						t1.receiptseqid,
+						t3.feetypecode, COALESCE(t3.taxapplicable, 0) AS taxapplicable,
+						t3.taxcomponent, t1.PaidCgst, t1.PaidSgst, t1.PaidIgst, t1.PaidUgst,
+						t3.FeeTypeDesc
+			FROM 		manualadvisemovements t1
+			JOIN 		manualadvise t2 ON t1.adviseid = t2.adviseid
+			LEFT JOIN 	feetypes t3 ON t2.feetypeid = t3.feetypeid		
+		</createView>
 	</changeSet>
 	
 	<changeSet id="153" author="Kesav">
