@@ -10432,5 +10432,183 @@ UNION ALL
 		    JOIN reasontypes t3 ON t1.reasontypeid = t3.id																											
 		</createView>
 	</changeSet>
+	<changeSet id="239" author="Kesav">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER');
+			Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'DEPOSITDETAILS_MAKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+			Delete from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'DEPOSITDETAILS_MAKER','WF Maker for Deposit Details', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'DepositDetailsDialog_BranchCode');
+			Delete from SecRights where RightName = 'DepositDetailsDialog_BranchCode';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'DepositDetailsDialog_BranchCode', 'DepositDetailsDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'DepositDetailsDialog_BranchCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'DEPOSITDETAILS_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'DepositDetailsDialog_RequestDate');
+			Delete from SecRights where RightName = 'DepositDetailsDialog_RequestDate';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'DepositDetailsDialog_RequestDate', 'DepositDetailsDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'DepositDetailsDialog_RequestDate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'DepositDetailsDialog_RequestAmount');
+			Delete from SecRights where RightName = 'DepositDetailsDialog_RequestAmount';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'DepositDetailsDialog_RequestAmount', 'DepositDetailsDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'DepositDetailsDialog_RequestAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'DepositDetailsDialog_TransactionAmount');
+			Delete from SecRights where RightName = 'DepositDetailsDialog_TransactionAmount';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'DepositDetailsDialog_TransactionAmount', 'DepositDetailsDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'DepositDetailsDialog_TransactionAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'DepositDetailsDialog_DepositSlipNumber');
+			Delete from SecRights where RightName = 'DepositDetailsDialog_DepositSlipNumber';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'DepositDetailsDialog_DepositSlipNumber', 'DepositDetailsDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'DepositDetailsDialog_DepositSlipNumber'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'DepositDetailsDialog_PartnerBankId');
+			Delete from SecRights where RightName = 'DepositDetailsDialog_PartnerBankId';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'DepositDetailsDialog_PartnerBankId', 'DepositDetailsDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'DepositDetailsDialog_PartnerBankId'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'DepositDetailsDialog_RequestType');
+			Delete from SecRights where RightName = 'DepositDetailsDialog_RequestType';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'DepositDetailsDialog_RequestType', 'DepositDetailsDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'DepositDetailsDialog_RequestType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'DepositDetailsDialog_Count');
+			Delete from SecRights where RightName = 'DepositDetailsDialog_Count';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'DepositDetailsDialog_Count', 'DepositDetailsDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'DepositDetailsDialog_Count'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'DepositDetailsDialog_Amount');
+			Delete from SecRights where RightName = 'DepositDetailsDialog_Amount';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'DepositDetailsDialog_Amount', 'DepositDetailsDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'DepositDetailsDialog_Amount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_DepositDetailsDialog_btnNew');
+			Delete from SecRights where RightName = 'button_DepositDetailsDialog_btnNew';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_DepositDetailsDialog_btnNew', 'DepositDetailsDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'button_DepositDetailsDialog_btnNew'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_DepositDetailsDialog_btnEdit');
+			Delete from SecRights where RightName = 'button_DepositDetailsDialog_btnEdit';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_DepositDetailsDialog_btnEdit', 'DepositDetailsDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'button_DepositDetailsDialog_btnEdit'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_DepositDetailsDialog_btnDelete');
+			Delete from SecRights where RightName = 'button_DepositDetailsDialog_btnDelete';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_DepositDetailsDialog_btnDelete', 'DepositDetailsDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'button_DepositDetailsDialog_btnDelete'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_DepositDetailsDialog_btnSave');
+			Delete from SecRights where RightName = 'button_DepositDetailsDialog_btnSave';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_DepositDetailsDialog_btnSave', 'DepositDetailsDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'button_DepositDetailsDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_FinanceManagement_DepositDetails');
+			Delete from SecRights where RightName = 'menuItem_FinanceManagement_DepositDetails';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_FinanceManagement_DepositDetails', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_FinanceManagement_DepositDetails'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_DepositDetailsList_NewDepositDetails');
+			Delete from SecRights where RightName = 'button_DepositDetailsList_NewDepositDetails';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_DepositDetailsList_NewDepositDetails', 'DepositDetailsList', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_MAKER'), (Select RightID from SecRights where RightName = 'button_DepositDetailsList_NewDepositDetails'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_APPROVER');
+			Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'DEPOSITDETAILS_APPROVER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER');
+			Delete from SecGroups where GrpCode = 'DEPOSITDETAILS_APPROVER';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'DEPOSITDETAILS_APPROVER','WF Approver for Deposit Details', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_APPROVER'), (Select RightID from SecRights where RightName = 'button_DepositDetailsDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'DEPOSITDETAILS_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_FinanceManagement_DepositDetails'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="240" author="Kesav">
+		<sql>
+			Delete from SMTPARAMETERS where SysParmCode = 'DEPOSIT_AMOUNT_EDIT';
+			Insert into SMTPARAMETERS values ('DEPOSIT_AMOUNT_EDIT','Deposit Amount change','String',1,'Y',1,0,null,null,'Deposit Amount change',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+	<changeSet id="241" author="Kesav">
+		<createView viewName="DepositMovements_AView" replaceIfExists="true">
+			Select 		T1.MovementId, T1.DepositId, T1.TransactionType, T1.ReservedAmount, T1.PartnerBankId, T1.DepositSlipNumber, T1.TransactionDate, T1.ReceiptId, T1.LinkedTranId,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			            T2.PartnerBankCode, T2.PartnerBankName            
+			From 		DepositMovements T1
+			Inner Join  PartnerBanks T2 ON T2.PartnerBankId = T1.PartnerBankId					
+		</createView>
+	</changeSet>
+	<changeSet id="242" author="Kesav">
+		<createView viewName="DepositMovements_TView" replaceIfExists="true">
+			Select 		T1.MovementId, T1.DepositId, T1.TransactionType, T1.ReservedAmount, T1.PartnerBankId, T1.DepositSlipNumber, T1.TransactionDate, T1.ReceiptId, T1.LinkedTranId,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			            T2.PartnerBankCode, T2.PartnerBankName            
+			From 		DepositMovements_Temp T1
+			Inner Join  PartnerBanks T2 ON T2.PartnerBankId = T1.PartnerBankId					
+		</createView>
+	</changeSet>
+	<changeSet id="243" author="Kesav">
+		<createView viewName="DepositMovements_View" replaceIfExists="true">
+			Select 		T1.MovementId, T1.DepositId, T1.TransactionType, T1.ReservedAmount, T1.PartnerBankId, T1.DepositSlipNumber, T1.TransactionDate, T1.ReceiptId, T1.LinkedTranId,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			            T2.PartnerBankCode, T2.PartnerBankName            
+			From 		DepositMovements_Temp T1
+			Inner Join  PartnerBanks T2 ON T2.PartnerBankId = T1.PartnerBankId
+			
+			Union All
+			
+			Select 		T1.MovementId, T1.DepositId, T1.TransactionType, T1.ReservedAmount, T1.PartnerBankId, T1.DepositSlipNumber, T1.TransactionDate, T1.ReceiptId, T1.LinkedTranId,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			            T2.PartnerBankCode, T2.PartnerBankName            
+			From 		DepositMovements T1
+			Inner Join  PartnerBanks T2 ON T2.PartnerBankId = T1.PartnerBankId
+			WHERE NOT  (EXISTS ( SELECT 1 FROM DepositMovements_Temp WHERE DepositMovements_Temp.MovementId = T1.MovementId))					
+		</createView>
+	</changeSet>
+	
+	<changeSet id="244" author="Kesav">
+		<createView viewName="CashDenominations_AView" replaceIfExists="true">
+			Select 		T1.MovementId, T1.SeqNo, T1.ModuleCode, T1.Denomination, T1.Count, T1.Amount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			From 		CashDenominations T1		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="245" author="Kesav">
+		<createView viewName="CashDenominations_TView" replaceIfExists="true">
+			Select 		T1.MovementId, T1.SeqNo, T1.ModuleCode, T1.Denomination, T1.Count, T1.Amount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			From 		CashDenominations_Temp T1		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="246" author="Kesav">
+		<createView viewName="CashDenominations_View" replaceIfExists="true">
+			Select 		T1.MovementId, T1.SeqNo, T1.ModuleCode, T1.Denomination, T1.Count, T1.Amount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			From 		CashDenominations_Temp T1
+			
+			Union All
+			
+			Select 		T1.MovementId, T1.SeqNo, T1.ModuleCode, T1.Denomination, T1.Count, T1.Amount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			From 		CashDenominations T1
+			WHERE NOT  (EXISTS (SELECT 1 FROM CashDenominations_Temp WHERE CashDenominations_Temp.MovementId = T1.MovementId And CashDenominations_Temp.SeqNo = T1.SeqNo And CashDenominations_Temp.ModuleCode = T1.ModuleCode))		
+		</createView>
+	</changeSet>
 </databaseChangeLog>
 	
