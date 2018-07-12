@@ -172,7 +172,8 @@ public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 			row_LoanTenure.setVisible(false);
 			row_ROI.setVisible(false);
 		}
-		if (!StringUtils.equals(getModuleName(), CollateralConstants.SAMPLING_MODULE)) {
+		if (!StringUtils.equals(getModuleName(), CollateralConstants.SAMPLING_MODULE)
+				&& !CollateralConstants.LEGAL_MODULE.equals(getModuleName())) {
 			this.colBasic_depositerCif.setValue(String.valueOf(finHeaderList.get(0)));
 			this.colBasic_colRef.setValue(String.valueOf(finHeaderList.get(1)));
 			this.colBasic_depositerName.setValue(String.valueOf(finHeaderList.get(2)));
