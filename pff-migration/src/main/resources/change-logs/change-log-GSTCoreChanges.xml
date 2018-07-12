@@ -3063,4 +3063,13 @@ UNION ALL
 			update Seq_Gst_Invoice_Txn_Details set SeqNo = (select coalesce(max(Id),0) from gst_invoice_txn_details);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="156" author="Kesav">
+		<createView viewName="GST_FinanceMain_View" replaceIfExists="true">
+			 Select 	Distinct T1.FinReference, T1.FinType 
+			 From 		FinanceMain T1
+			 Inner Join GST_Invoice_Txn T2 ON T2.LoanAccountNo = T1.FinReference
+		</createView>	
+	</changeSet>
+	
 </databaseChangeLog>
