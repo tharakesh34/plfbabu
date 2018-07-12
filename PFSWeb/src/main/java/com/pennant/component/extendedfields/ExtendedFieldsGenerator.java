@@ -387,11 +387,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				}
 			}
 			
-			//12/07/2018 Bug Fix related to currency box
-			if (component instanceof CurrencyBox) {
-				readOnlyComponent(!editable, component);
-				//2-Jul-2018 Bug Fix related to Rights Issue with fieldType Phone, MULTIEXTENDEDCOMBO, RadioGroup.
-			} else  if (component instanceof Hbox) {
+			//12Jul2018 Bug Fix Related To ExtendedFields CurrencyBox readonly.
+			if (StringUtils.equals(detail.getFieldType(), ExtendedFieldConstants.FIELDTYPE_PHONE)
+					&& component instanceof Hbox) {
 				Hbox phnBox = (Hbox) component;
 				List<Component> childs = phnBox.getChildren();
 				for (Component child : childs) {
