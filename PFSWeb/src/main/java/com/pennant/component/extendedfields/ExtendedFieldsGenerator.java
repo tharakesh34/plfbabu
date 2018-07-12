@@ -386,9 +386,12 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					});
 				}
 			}
-
-			//2-Jul-2018 Bug Fix related to Rights Issue with fieldType Phone, MULTIEXTENDEDCOMBO, RadioGroup.
-			if (component instanceof Hbox) {
+			
+			//12/07/2018 Bug Fix related to currency box
+			if (component instanceof CurrencyBox) {
+				readOnlyComponent(!editable, component);
+				//2-Jul-2018 Bug Fix related to Rights Issue with fieldType Phone, MULTIEXTENDEDCOMBO, RadioGroup.
+			} else  if (component instanceof Hbox) {
 				Hbox phnBox = (Hbox) component;
 				List<Component> childs = phnBox.getChildren();
 				for (Component child : childs) {
@@ -403,7 +406,6 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						radio.setDisabled(!editable);
 					}
 				}
-
 			} else {
 				readOnlyComponent(!editable, component);
 			}
@@ -1659,7 +1661,6 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		CurrencyBox currencyBox = new CurrencyBox();
 		currencyBox.setId(getComponentId(detail.getFieldName()));
 		currencyBox.setProperties(detail.isFieldMandatory(), getCcyFormat());
-		currencyBox.setReadonly(isReadOnly);
 
 		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
 				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
