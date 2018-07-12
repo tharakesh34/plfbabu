@@ -10621,5 +10621,104 @@ UNION ALL
 			WHERE NOT  (EXISTS (SELECT 1 FROM CashDenominations_Temp WHERE CashDenominations_Temp.MovementId = T1.MovementId And CashDenominations_Temp.SeqNo = T1.SeqNo And CashDenominations_Temp.ModuleCode = T1.ModuleCode))		
 		</createView>
 	</changeSet>
+	
+	<changeSet id="247" author="Manoj">
+	<comment>Adding new column for capturing reference in query management module</comment>
+		<addColumn tableName="querydetail_Temp">
+			<column name="Reference" type="varchar(20)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="248" author="Manoj">
+		<addColumn tableName="querydetail">
+			<column name="Reference" type="varchar(20)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="249" author="Manoj">
+		<createView viewName="querydetail_view" replaceIfExists="true">
+			 SELECT t1.finreference,
+		    t1.id,
+		    s1.usrlogin,
+		    t1.raisedon,
+		    b1.description,
+		    t1.qrynotes,
+		    t1.status,
+		    t1.raisedby,
+		    b1.code AS categorycode,
+		    b1.description AS categorydescription,
+		    t1.categoryid,
+		    t1.assignedrole,
+		    t1.notifyto,
+		    t1.responsnotes,
+		    t1.responseby,
+		    s2.usrlogin AS responseuser,
+		    t1.responseon,
+		    t1.closernotes,
+		    t1.closerby,
+		    s3.usrlogin AS closeruser,
+		    t1.closeron,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.module,
+		    t1.reference
+   	FROM querydetail t1
+     JOIN bmtquerycategories b1 ON t1.categoryid = b1.id
+     JOIN secusers s1 ON t1.raisedby = s1.usrid
+     LEFT JOIN secusers s2 ON t1.responseby = s2.usrid
+     LEFT JOIN secusers s3 ON t1.closerby = s3.usrid
+		</createView>
+	</changeSet>
+	
+	<changeSet id="250" author="Manoj">
+		<createView viewName="querydetail_aview" replaceIfExists="true">
+		SELECT t1.finreference,
+	    t1.id,
+	    s1.usrlogin,
+	    t1.raisedon,
+	    b1.description,
+	    t1.qrynotes,
+	    t1.status,
+	    t1.raisedby,
+	    b1.code AS categorycode,
+	    b1.description AS categorydescription,
+	    t1.categoryid,
+	    t1.assignedrole,
+	    t1.notifyto,
+	    t1.responsnotes,
+	    t1.responseby,
+	    s2.usrlogin AS responseuser,
+	    t1.responseon,
+	    t1.closernotes,
+	    t1.closerby,
+	    s3.usrlogin AS closeruser,
+	    t1.closeron,
+	    t1.version,
+	    t1.lastmntby,
+	    t1.lastmnton,
+	    t1.recordstatus,
+	    t1.rolecode,
+	    t1.nextrolecode,
+	    t1.taskid,
+	    t1.nexttaskid,
+	    t1.recordtype,
+	    t1.workflowid,
+	    t1.module,
+	    t1.reference
+   FROM querydetail t1
+     JOIN bmtquerycategories b1 ON t1.categoryid = b1.id
+     JOIN secusers s1 ON t1.raisedby = s1.usrid
+     LEFT JOIN secusers s2 ON t1.responseby = s2.usrid
+     LEFT JOIN secusers s3 ON t1.closerby = s3.usrid
+     </createView>
+		</changeSet>
 </databaseChangeLog>
 	
