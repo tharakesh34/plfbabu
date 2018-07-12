@@ -146,6 +146,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 */
 	protected Window window_QueryDetailDialog;
 	protected ExtendedCombobox finReference;
+	protected Textbox reference;
 	protected ExtendedCombobox qryCategory;
 	protected Space space_QryNotes;
 	protected Textbox qryNotes;
@@ -749,15 +750,19 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 		List<String> currentRole = new ArrayList<>();
 		if (financeMain != null) {
+			this.reference.setValue(financeMain.getFinReference());
 			this.finReference.setValue(financeMain.getFinReference());
 			currentRole.add(roleCode);
 		} else if (sampling != null) {
-			this.finReference.setValue(sampling.getKeyReference());
+			this.reference.setValue(sampling.getKeyReference());
+			//TODO fin reference for sampling
 			currentRole.add(roleCode);
 		} else if (legalDetail != null) {
-			this.finReference.setValue(legalDetail.getLegalReference());
+			this.reference.setValue(legalDetail.getLegalReference());
+			this.finReference.setValue(legalDetail.getLoanReference());
 			currentRole.add(roleCode);
 		} else {
+			this.reference.setValue(aQueryDetail.getReference());
 			this.finReference.setValue(aQueryDetail.getFinReference());
 		}
 		this.qryNotes.setValue(aQueryDetail.getQryNotes());
@@ -780,6 +785,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			this.qryCategory.setAttribute("mandateID", aQueryDetail.getCategoryCode());
 			this.qryCategory.setValue(aQueryDetail.getCategoryCode());
 			this.qryCategory.setDescription(aQueryDetail.getCategoryDescription());
+			this.module.setValue(aQueryDetail.getModule());
 		}
 		if (aQueryDetail.getDocumentDetailsList() != null && aQueryDetail.getDocumentDetailsList().size() > 0) {
 			doFillDocumentDetails(aQueryDetail.getDocumentDetailsList());
@@ -1031,6 +1037,13 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		// Finance Reference
 		try {
 			aQueryDetail.setFinReference(this.finReference.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		//  Reference
+		try {
+			aQueryDetail.setReference(this.reference.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

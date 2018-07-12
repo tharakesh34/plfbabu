@@ -90,6 +90,12 @@
 									<extendedcombobox id="finReference"
 										readonly="true" />
 								</row>
+								<row id="row10">
+									<label id="label_Reference"
+										value="${c:l('label_QueryDetailDialog_Reference.value')}" />
+									<textbox id="reference"
+									readonly="true"/>
+								</row>
 							</rows>
 						</grid>
 					</groupbox>

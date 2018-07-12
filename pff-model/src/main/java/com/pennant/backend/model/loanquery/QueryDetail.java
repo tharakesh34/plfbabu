@@ -107,6 +107,7 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	private String closerUser;
 	private String categoryDescription;
 	private String module;
+	private String reference;
 	private List<DocumentDetails> documentDetailsList = new ArrayList<>();
 
 	public boolean isNew() {
@@ -362,6 +363,14 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setModule(String module) {
 		this.module = module;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 
 }
