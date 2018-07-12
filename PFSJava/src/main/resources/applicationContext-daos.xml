@@ -5665,6 +5665,7 @@
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="bankDetailService" ref="bankDetailService"/>
 		<property name="receiptTaxDetailDAO" ref="receiptTaxDetailDAO"/>
+		<property name="feeTypeDAO" ref="feeTypeDAO"/>
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -5817,6 +5818,9 @@
 		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO"/>
+		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="engineExecution" ref="engineExecution" />
 		
 		<!-- GST Invoice Changes -->
 		<property name="financeDetailService" ref="financeDetailService" />

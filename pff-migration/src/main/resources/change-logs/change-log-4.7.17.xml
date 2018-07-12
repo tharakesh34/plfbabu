@@ -10432,6 +10432,17 @@ UNION ALL
 		    JOIN reasontypes t3 ON t1.reasontypeid = t3.id																											
 		</createView>
 	</changeSet>
+	
+	<changeSet id="239" author="Siva">
+		<sql>
+			insert into BMTAMOUNTCODES values('MANFEE',0,'bounceCharge','Bounce charge due',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('MANFEE',0,'bounceCharge_CGST','Bounce charge due CGST',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('MANFEE',0,'bounceCharge_SGST','Bounce charge due SGST',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('MANFEE',0,'bounceCharge_IGST','Bounce charge due IGST',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('MANFEE',0,'bounceCharge_UGST','Bounce charge due UGST',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+	
 	<changeSet id="239" author="Kesav">
 		<sql>
 			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);

@@ -475,7 +475,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.accountingSetID.setModuleName("AccountingSet");
 		this.accountingSetID.setValueColumn("EventCode");
 		this.accountingSetID.setDescColumn("lovDescEventCodeName");
-		this.accountingSetID.setValidateColumns(new String[] { "EventCode" });
+		this.accountingSetID.setValidateColumns(new String[] { "AccountSetCode", "AccountSetCodeName" });
 		this.accountingSetID.setMandatoryStyle(false);
 		
 		Filter filters[] = new Filter[1];
@@ -542,7 +542,10 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		if(StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE) ||
 				StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC) ||
 				StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)){
-			this.row1.setVisible(false);
+			
+			if(!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)){
+				this.row1.setVisible(false);
+			}
 			this.row2.setVisible(false);
 			if(!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC)){
 				this.row3.setVisible(false);

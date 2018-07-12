@@ -62,7 +62,6 @@ import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
@@ -146,7 +145,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private ReceiptAllocationDetailDAO		allocationDetailDAO;		
 	private ManualAdviseDAO					manualAdviseDAO;	
 	private RepaymentProcessUtil			repayProcessUtil;
-	private ReceiptCalculator				receiptCalculator;
 	private OverdraftScheduleDetailDAO		overdraftScheduleDetailDAO;
 	private LatePayMarkingService			latePayMarkingService;
 	private BankDetailService				bankDetailService;
@@ -1336,6 +1334,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
 		if (!aAuditHeader.isNextProcess()) {
+			logger.debug("Leaving");
 			return aAuditHeader;
 		}
 
@@ -1344,6 +1343,20 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptData rceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader receiptHeader = rceiptData.getReceiptHeader();
 		receiptHeader.setPostBranch(auditHeader.getAuditBranchCode());
+		
+		// Bounce Charge Due Postings
+		if(StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)){
+			ManualAdvise bounce = receiptHeader.getManualAdvise();
+			if (bounce != null && bounce.getAdviseAmount().compareTo(BigDecimal.ZERO) > 0) {
+				ArrayList<ErrorDetail> errorDetails = executeDueAccounting(rceiptData.getFinanceDetail(), receiptHeader.getBounceDate(), bounce.getAdviseAmount(),
+						auditHeader.getAuditBranchCode(), RepayConstants.ALLOCATION_BOUNCE);
+				if (errorDetails != null && !errorDetails.isEmpty()) {
+					auditHeader.setErrorMessage(errorDetails);
+					logger.debug("Leaving");
+					return auditHeader;
+				}
+			}
+		}
 
 		tranType = PennantConstants.TRAN_UPD;
 		receiptHeader.setRcdMaintainSts(null);
@@ -1917,7 +1930,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		finReceiptData.setReceiptHeader(receiptHeader);
-		finReceiptData = receiptCalculator.initiateReceipt(finReceiptData, financeDetail.getFinScheduleData(),
+		finReceiptData = getReceiptCalculator().initiateReceipt(finReceiptData, financeDetail.getFinScheduleData(),
 				receiptDetail.getReceivedDate(), receiptHeader.getReceiptPurpose(), isPresentment);
 
 		logger.debug("Leaving");
@@ -2801,10 +2814,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 	public void setRepayProcessUtil(RepaymentProcessUtil repayProcessUtil) {
 		this.repayProcessUtil = repayProcessUtil;
-	}
-
-	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
-		this.receiptCalculator = receiptCalculator;
 	}
 
 	public OverdraftScheduleDetailDAO getOverdraftScheduleDetailDAO() {

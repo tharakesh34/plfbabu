@@ -108,9 +108,9 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
-import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
+import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.FinanceConstants;
@@ -125,7 +125,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
-public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHeader> implements
+public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService implements
 		ReceiptCancellationService {
 	private static final Logger logger = Logger.getLogger(ReceiptCancellationServiceImpl.class);
 
@@ -381,7 +381,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		if(StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_FEEPAYMENT)){
 			errorCode = procFeeReceiptCancellation(receiptHeader);
 		}else{
-			errorCode = procReceiptCancellation(receiptHeader);
+			errorCode = procReceiptCancellation(receiptHeader, auditHeader.getAuditBranchCode());
 		}
 		if (StringUtils.isNotBlank(errorCode)) {
 			throw new InterfaceException("9999", errorCode);
@@ -631,7 +631,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		receiptHeader.setBounceDate(DateUtility.getAppDate());
 		
 		// Receipts Cancellation Process
-		String errorMsg = procReceiptCancellation(receiptHeader);
+		String errorMsg = procReceiptCancellation(receiptHeader, PennantConstants.APP_PHASE_EOD);
 		
 		if (StringUtils.trimToNull(errorMsg) == null) {
 
@@ -720,7 +720,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private String procReceiptCancellation(FinReceiptHeader receiptHeader) throws Exception {
+	private String procReceiptCancellation(FinReceiptHeader receiptHeader, String postBranch) throws Exception {
 		logger.debug("Entering");
 		
 		boolean alwSchdReversalByLog = false;
@@ -1157,6 +1157,22 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		} else {
 
 			if (receiptHeader.getManualAdvise() != null) {
+
+				// Bounce Charge Due Postings
+				if (receiptHeader.getManualAdvise().getAdviseAmount().compareTo(BigDecimal.ZERO) > 0) {
+
+					FinanceDetail financeDetail = new FinanceDetail();
+					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+
+					ArrayList<ErrorDetail> errorDetails = executeDueAccounting(financeDetail, receiptHeader.getBounceDate(), 
+							receiptHeader.getManualAdvise().getAdviseAmount(), postBranch, RepayConstants.ALLOCATION_BOUNCE);
+					if (errorDetails != null && !errorDetails.isEmpty()) {
+						ErrorDetail errorDetail = ErrorUtil.getErrorDetail(errorDetails.get(0));
+						logger.debug("Leaving");
+						return errorDetail.getMessage();
+					}
+				}
+
 				String adviseId = getManualAdviseDAO().save(receiptHeader.getManualAdvise(), TableType.MAIN_TAB);
 				receiptHeader.getManualAdvise().setAdviseID(Long.parseLong(adviseId));
 			}
@@ -1232,7 +1248,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 */
 	public List<RepayScheduleDetail> sortRpySchdDetails(List<RepayScheduleDetail> rpySchdList) {
 
-		if (rpySchdList != null && rpySchdList.size() > 0) {
+		if (rpySchdList != null && rpySchdList.size() > 1) {
 			Collections.sort(rpySchdList, new Comparator<RepayScheduleDetail>() {
 				@Override
 				public int compare(RepayScheduleDetail rpySchd1, RepayScheduleDetail rpySchd2) {

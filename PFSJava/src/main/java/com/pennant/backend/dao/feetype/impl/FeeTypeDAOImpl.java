@@ -361,7 +361,7 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		FeeType feeType = new FeeType();
 		feeType.setFeeTypeCode(feeTypeCode);
 		
-		StringBuilder selectSql = new StringBuilder(" Select TaxComponent, TaxApplicable, AmortzReq ");
+		StringBuilder selectSql = new StringBuilder(" Select TaxComponent, TaxApplicable, AmortzReq, AccountSetId ");
 		selectSql.append(" From FeeTypes Where FeeTypeCode =:FeeTypeCode");
 
 		logger.debug("sql: " + selectSql.toString());

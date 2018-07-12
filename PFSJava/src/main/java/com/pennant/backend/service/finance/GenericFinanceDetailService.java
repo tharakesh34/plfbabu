@@ -42,6 +42,7 @@ package com.pennant.backend.service.finance;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -66,11 +67,14 @@ import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.AccountProcessUtil;
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.OverDueRecoveryPostingsUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.SuspensePostingUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
@@ -86,6 +90,7 @@ import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.ext.ExtTablesDAO;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinCollateralsDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
@@ -132,6 +137,7 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
@@ -185,6 +191,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -287,6 +294,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	// Query Management
 	private QueryDetailService				queryDetailService;
+	
+	// Bounce Due Postings
+	private FeeTypeDAO						feeTypeDAO;
+	private ReceiptCalculator				receiptCalculator;
 	
 	public GenericFinanceDetailService() {
 		super();
@@ -2524,6 +2535,169 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		
 		return isFeeMatched;
 	}
+	
+	/**
+	 * Method for Processing each stage Accounting Entry details for particular Finance
+	 * 
+	 * @param auditHeader
+	 * @param list
+	 * @return
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 * @throws AccountNotFoundException
+	 */
+	protected ArrayList<ErrorDetail> executeDueAccounting(FinanceDetail financeDetail, Date valueDate, 
+			BigDecimal dueAmount, String postBranch, String accFor){
+		logger.debug("Entering");
+
+		List<Long> acSetIdList = null;
+		boolean taxApplicable = false;
+		String taxType = null;
+		if(StringUtils.equals(accFor, RepayConstants.ALLOCATION_BOUNCE)){
+			acSetIdList = new ArrayList<>();
+
+			// Bounce Tax Details
+			FeeType feeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_BOUNCE);
+			if(feeType == null || feeType.getAccountSetId() <= 0){
+				logger.debug("Leaving");
+				return null;				
+			}
+			acSetIdList.add(feeType.getAccountSetId());
+			taxApplicable = feeType.isTaxApplicable();
+			taxType = feeType.getTaxComponent();
+
+		}
+
+		// If NO Accounting Sets added against stage, no action to be done
+		if(acSetIdList == null || acSetIdList.isEmpty()){
+			logger.debug("Leaving");
+			return null;
+		}
+		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
+		AEEvent aeEvent = new AEEvent();
+		aeEvent.setAeAmountCodes(new AEAmountCodes());
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		aeEvent.setFinReference(finMain.getFinReference());
+		aeEvent.setCustID(finMain.getCustID());
+		aeEvent.setFinType(finMain.getFinType());
+		aeEvent.setBranch(finMain.getFinBranch());
+		aeEvent.setCcy(finMain.getFinCcy());
+		aeEvent.setPostingUserBranch(postBranch);
+		aeEvent.setValueDate(valueDate);
+		aeEvent.setPostDate(DateUtility.getAppDate());
+		aeEvent.setEntityCode(finMain.getLovDescEntityCode());
+		aeEvent.setEOD(false);
+
+		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
+		if (!phase.equals(PennantConstants.APP_PHASE_DAY)) {
+			aeEvent.setEOD(true);
+		}
+
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_MANFEE);
+		aeEvent.getAcSetIDList().addAll(acSetIdList);
+		amountCodes = aeEvent.getAeAmountCodes();
+		amountCodes.setFinType(finMain.getFinType());
+
+		String roundingMode = finMain.getCalRoundingMode();
+		int roundingTarget = finMain.getRoundingTarget();
+
+		HashMap<String, Object>	dataMap = aeEvent.getDataMap();
+		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
+		if(StringUtils.equals(accFor, RepayConstants.ALLOCATION_BOUNCE)){
+			dataMap.put("bounceCharge", dueAmount);
+			dataMap.put("bounceCharge_CGST", BigDecimal.ZERO);
+			dataMap.put("bounceCharge_SGST", BigDecimal.ZERO);
+			dataMap.put("bounceCharge_UGST", BigDecimal.ZERO);
+			dataMap.put("bounceCharge_IGST", BigDecimal.ZERO);
+
+			// Calculate total GST percentage
+			if(taxApplicable){
+				Map<String, BigDecimal> taxPercmap = getReceiptCalculator().getTaxPercentages(financeDetail);
+				BigDecimal cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
+				BigDecimal sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
+				BigDecimal ugstPerc = taxPercmap.get(RuleConstants.CODE_UGST);
+				BigDecimal igstPerc = taxPercmap.get(RuleConstants.CODE_IGST);
+				BigDecimal totalGSTPerc = cgstPerc.add(sgstPerc).add(ugstPerc).add(igstPerc);
+
+				if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+
+					if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
+						BigDecimal cgst =  (dueAmount.multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+						cgst = CalculationUtil.roundAmount(cgst, roundingMode,roundingTarget);
+						dataMap.put("bounceCharge_CGST", cgst);
+					}
+					if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
+						BigDecimal sgst =  (dueAmount.multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+						sgst = CalculationUtil.roundAmount(sgst, roundingMode,roundingTarget);
+						dataMap.put("bounceCharge_SGST", sgst);
+					}
+					if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
+						BigDecimal ugst =  (dueAmount.multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+						ugst = CalculationUtil.roundAmount(ugst, roundingMode,roundingTarget);
+						dataMap.put("bounceCharge_UGST", ugst);
+					}
+					if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
+						BigDecimal igst =  (dueAmount.multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+						igst = CalculationUtil.roundAmount(igst, roundingMode,roundingTarget);
+						dataMap.put("bounceCharge_IGST", igst);
+					}
+
+				}else if(StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)){
+
+					BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+					BigDecimal actualAmt = dueAmount.divide(percentage, 9, RoundingMode.HALF_DOWN);
+					actualAmt = CalculationUtil.roundAmount(actualAmt, roundingMode, roundingTarget);
+					BigDecimal actTaxAmount = dueAmount.subtract(actualAmt);
+
+					if(cgstPerc.compareTo(BigDecimal.ZERO) > 0){
+						BigDecimal cgst = (actTaxAmount.multiply(cgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+						cgst = CalculationUtil.roundAmount(cgst, roundingMode, roundingTarget);
+						dataMap.put("bounceCharge_CGST", cgst);
+					}
+					if(sgstPerc.compareTo(BigDecimal.ZERO) > 0){
+						BigDecimal sgst = (actTaxAmount.multiply(sgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+						sgst = CalculationUtil.roundAmount(sgst, roundingMode, roundingTarget);
+						dataMap.put("bounceCharge_SGST", sgst);
+					}
+					if(ugstPerc.compareTo(BigDecimal.ZERO) > 0){
+						BigDecimal ugst = (actTaxAmount.multiply(ugstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+						ugst = CalculationUtil.roundAmount(ugst, roundingMode, roundingTarget);
+						dataMap.put("bounceCharge_UGST", ugst);
+					}
+					if(igstPerc.compareTo(BigDecimal.ZERO) > 0){
+						BigDecimal igst = (actTaxAmount.multiply(igstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+						igst = CalculationUtil.roundAmount(igst, roundingMode, roundingTarget);
+						dataMap.put("bounceCharge_IGST", igst);
+					}
+				}
+			}
+		}
+		aeEvent.setDataMap(dataMap);
+
+		// Prepare Accounting Set of entries with valid account & Post amounts
+		//=======================================
+		try {
+			aeEvent.setDataMap(dataMap);
+			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+			errorDetails.add(new ErrorDetail("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
+					"Accounting Engine Failed to Create Postings:" + e.getMessage(), new String[] {}, new String[] {}));
+			logger.debug("Leaving");
+			return errorDetails;
+		}
+
+		// Prepared Postings execution 
+		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+
+		if(!aeEvent.isPostingSucess()){
+			throw new InterfaceException("9998", "Bounce charge due accounting postings failed.");
+		}
+
+		logger.debug("Leaving");
+		return null;
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -3138,5 +3312,21 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
+
+	public FeeTypeDAO getFeeTypeDAO() {
+		return feeTypeDAO;
+	}
+
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
+	}
+
+	public ReceiptCalculator getReceiptCalculator() {
+		return receiptCalculator;
+	}
+
+	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
+		this.receiptCalculator = receiptCalculator;
 	}
 }
