@@ -415,9 +415,11 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			}
 			this.finEvent.setList(PennantAppUtil.getServicingAccountingEvents());
 		}
-		
-		fillComboBox(this.calculationOn, aFinTypeFees.getCalculateOn(), PennantStaticListUtil.getFeeCalculatedOnList(), calOnExcludeFields);
+		if (!StringUtils.equals(aFinTypeFees.getFinEvent(), AccountEventConstants.ACCEVENT_EARLYSTL)) {
+			calOnExcludeFields = "," + PennantConstants.FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE + ",";
+		}
 
+		fillComboBox(this.calculationOn, aFinTypeFees.getCalculateOn(), PennantStaticListUtil.getFeeCalculatedOnList(),calOnExcludeFields);
 		if (StringUtils.equals(aFinTypeFees.getFinEvent(), AccountEventConstants.ACCEVENT_CMTDISB)) {
 			excluedeFields = getExcludeFields();
 		}
@@ -1073,8 +1075,11 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		}
 
 		fillComboBox(this.feeScheduleMethod, "", PennantStaticListUtil.getRemFeeSchdMethods(), excluedeFields);
-		fillComboBox(this.calculationOn, "", PennantStaticListUtil.getFeeCalculatedOnList(), calOnExcludeFields);
-
+		if (StringUtils.equals(finEventValue, AccountEventConstants.ACCEVENT_EARLYSTL)) {
+			fillComboBox(this.calculationOn, "", PennantStaticListUtil.getFeeCalculatedOnList(), calOnExcludeFields);
+		} else {
+			fillComboBox(this.calculationOn, "", PennantStaticListUtil.getFeeCalculatedOnList(),"," + PennantConstants.FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE + ",");
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 	

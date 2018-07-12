@@ -94,7 +94,7 @@
 									value="${c:l('label_FinTypeFeesDialog_CalculationType.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<combobox id="calculationType" readonly="true" />
+									<combobox id="calculationType" readonly="true"/>
 								</hbox>
 								<label id="label_FinTypeFeesDialog_RuleAmtPerc"
 									value="${c:l('label_FinTypeFeesDialog_RuleAmtPerc.value')}" />
@@ -110,7 +110,7 @@
 									value="${c:l('label_FinTypeFeesDialog_CalculationOn.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<combobox id="calculationOn" readonly="true" />
+									<combobox id="calculationOn" readonly="true"   width="170px"/>
 								</hbox>
 							</row>
 							<row id="row_FeeScheduleMethod">

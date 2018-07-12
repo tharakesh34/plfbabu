@@ -702,6 +702,7 @@ public class PennantConstants {
 	public static final String FEE_CALCULATEDON_LOANAMOUNT      = "LOANAM";
 	public static final String FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL = "OUTSPL";
 	public static final String FEE_CALCULATEDON_PAYAMOUNT = "PAYAMT";
+	public static final String FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE = "PRINCFU";
 	// Validation Groups
 	public static final String VLD_CRT_SCHD              	= "CRTSCHD";
 	public static final String VLD_CRT_LOAN					= "CRTLOAN";
