@@ -1492,7 +1492,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			//Check whether enquiry is visible or not.
-			if (isEnquiryVisible) {
+			if (isEnquiryVisible && StringUtils.isEmpty(moduleDefiner)) {
 				this.enquiryLabel.setValue("Enquiry");
 				this.enquiryCombobox.setVisible(true);
 				fillComboBox(this.enquiryCombobox, "", enquiryList, "");
