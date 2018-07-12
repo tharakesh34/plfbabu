@@ -1035,7 +1035,7 @@
 	
 	<changeSet id="45" author="Vinay">
 		<sql>
-			Alter table plf.disbursement_requests alter column disbursement_date TYPE  date;
+			Alter table disbursement_requests alter column disbursement_date TYPE  date;
 			
 			DELETE From DATA_ENGINE_COLUMN where TableId=(select id From DATA_ENGINE_TABLE where ConfigId=(select ID from DATA_ENGINE_CONFIG where Name='DISB_HDFC_EXPORT'));
 
