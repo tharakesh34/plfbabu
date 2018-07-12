@@ -80,6 +80,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -197,8 +198,9 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		this.partnerBank.setMaxlength(LengthConstants.LEN_MASTER_CODE);
 		this.partnerBank.setModuleName("PartnerBank");
 		this.partnerBank.setValueColumn("PartnerBankId");
+		this.partnerBank.setValueType(DataType.LONG);
 		this.partnerBank.setDescColumn("PartnerBankCode");
-		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+		this.partnerBank.setValidateColumns(new String[] { "PartnerBankId" });
 		this.partnerBank.setMandatoryStyle(true);
 		
 		Filter[] filters = null;
