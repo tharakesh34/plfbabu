@@ -261,11 +261,11 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 			this.groupboxWf.setVisible(false);
 			ArrayList<Object> finHeaderList = (ArrayList<Object>) arguments.get("finHeaderList");
 
-			if ("205".equals(String.valueOf(finHeaderList.get(0)))) {
-				this.gb_EndUseDetails.setVisible(true);
+			/*if ("205".equals(String.valueOf(finHeaderList.get(0)))) {
+				this.gb_EndUseDetails.setVisible(false);
 			} else {
 				this.gb_EndUseDetails.setVisible(false);
-			}
+			}*/
 			this.btnCancel.setVisible(false);
 			this.btnNotes.setVisible(false);
 			this.eligibiltyAmount.setReadonly(true);

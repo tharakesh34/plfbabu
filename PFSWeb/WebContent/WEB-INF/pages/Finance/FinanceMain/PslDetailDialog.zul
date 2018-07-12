@@ -152,7 +152,7 @@
 					</grid>
 				</groupbox>
 				
-				<groupbox id="gb_EndUseDetails" title="End Use" sclass="gb-dialog">>
+				<groupbox id="gb_EndUseDetails"  visible = "false" title="End Use" sclass="gb-dialog">>
 					<grid sclass="GridLayoutNoBorder"
 							fixedLayout="true" style="border:0px">
 							<columns>
