@@ -1183,7 +1183,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		doSetSegmentCode(aCustomer.getCustTypeCode());
 		aCustomer.getCustCtgCode();
-		doSetCustTypeFilters(aCustomer.getLovDescCustCtgType());
+		doSetCustTypeFilters(aCustomer.getCustCtgCode());
 		if (StringUtils.isEmpty(this.custSegment.getValue())
 				|| PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)) {
 			this.custSubSegment.setReadonly(true);
