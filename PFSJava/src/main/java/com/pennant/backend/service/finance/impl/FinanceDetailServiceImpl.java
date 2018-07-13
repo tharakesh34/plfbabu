@@ -2328,16 +2328,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// set Guaranteer Details Audit
 			// =======================================
 			if (financeDetail.getGurantorsDetailList() != null && !financeDetail.getGurantorsDetailList().isEmpty()) {
-				auditDetails.addAll(getGuarantorDetailService().saveOrUpdate(financeDetail.getGurantorsDetailList(),
-						tableType.getSuffix(), auditTranType));
+				//10-Jul-2018 BUG FIX related to TktNo:127415
+				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("Guarantors");
+				auditDetails.addAll(getGuarantorDetailService().processingGuarantorsList(details,tableType.getSuffix()));
 			}
 
 			// set JountAccount Details Audit
 			// =======================================
 			if (financeDetail.getJountAccountDetailList() != null
 					&& !financeDetail.getJountAccountDetailList().isEmpty()) {
-				auditDetails.addAll(getJointAccountDetailService()
-						.saveOrUpdate(financeDetail.getJountAccountDetailList(), tableType.getSuffix(), auditTranType));
+				//10-Jul-2018 BUG FIX related to TktNo:127415
+				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("JountAccountDetails");
+				auditDetails.addAll(getJointAccountDetailService().processingJointAccountDetail(details, tableType.getSuffix(), auditTranType));
 			}
 
 			// set Finance Collateral Details Audit
@@ -5805,16 +5807,20 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// =======================================
 			List<GuarantorDetail> gurantorsDetailList = financeDetail.getGurantorsDetailList();
 			if (gurantorsDetailList != null && !gurantorsDetailList.isEmpty()) {
-				auditDetails.addAll(getGuarantorDetailService().validate(gurantorsDetailList,
-						financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
+				//10-Jul-2018 BUG FIX related to TktNo:127415
+				List<AuditDetail> details = getGuarantorDetailService().validate(gurantorsDetailList, financeMain.getWorkflowId(), method, auditTranType, usrLanguage);
+				financeDetail.getAuditDetailMap().put("Guarantors", details);
+				auditDetails.addAll(details);
 			}
 
 			// Joint Account Details Validation
 			// =======================================
 			List<JointAccountDetail> jountAccountDetailList = financeDetail.getJountAccountDetailList();
 			if (jountAccountDetailList != null && !jountAccountDetailList.isEmpty()) {
-				auditDetails.addAll(getJointAccountDetailService().validate(jountAccountDetailList,
-						financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
+				//10-Jul-2018 BUG FIX related to TktNo:127415
+				List<AuditDetail> details = getJointAccountDetailService().validate(jountAccountDetailList, financeMain.getWorkflowId(), method, auditTranType, usrLanguage);
+				financeDetail.getAuditDetailMap().put("JountAccountDetails", details);
+				auditDetails.addAll(details);
 			}
 
 			FinanceTaxDetail taxDetail = financeDetail.getFinanceTaxDetails();

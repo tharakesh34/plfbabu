@@ -76,4 +76,7 @@ public interface GuarantorDetailService {
 	List<AuditDetail> validate(List<GuarantorDetail> guarantorDetailList, long workflowId, String method, String auditTranType, String  usrLanguage);
 	List<AuditDetail> delete(List<GuarantorDetail> guarantorDetailList, String tableType, String auditTranType);
 	String getWorstStaus(long custID);
+	
+	//10-Jul-2018 BUG FIX related to TktNo:127415
+	List<AuditDetail> processingGuarantorsList(List<AuditDetail> auditDetails, String type);
 }

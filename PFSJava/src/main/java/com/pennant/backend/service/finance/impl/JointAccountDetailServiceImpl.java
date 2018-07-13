@@ -77,6 +77,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * Service implementation for methods that depends on <b>JountAccountDetail</b>.<br>
@@ -504,6 +505,200 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		return auditDetail;
 	}
 
+	/**
+	 * Method For Preparing List of AuditDetails for JointAccountDetails
+	 * 
+	 * @param auditDetails
+	 * @param tableType
+	 * @param custId
+	 * @return
+	 */
+	public List<AuditDetail> processingJointAccountDetail(List<AuditDetail> auditDetails, String tableType, String auditTranType) {
+		logger.debug(Literal.ENTERING);
+
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+
+			JointAccountDetail JointAccountDetail = (JointAccountDetail) auditDetails.get(i).getModelData(); 
+			
+			if(JointAccountDetail.getCustomerDetails() != null&&JointAccountDetail.getCustomerDetails().getExtendedFieldRender() != null){
+				processingJointAccExtendedFields(JointAccountDetail, tableType, auditTranType);
+			}
+
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (tableType.equals("")) {
+				approveRec = true;
+				JointAccountDetail.setRoleCode("");
+				JointAccountDetail.setNextRoleCode("");
+				JointAccountDetail.setTaskId("");
+				JointAccountDetail.setNextTaskId("");
+			}
+			//guarantorDetail.setWorkflowId(0);
+
+			if (JointAccountDetail.getRecordType().equalsIgnoreCase(
+					PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (JointAccountDetail.isNewRecord()) {
+				saveRecord = true;
+				if (JointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					JointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (JointAccountDetail.getRecordType().equalsIgnoreCase(
+						PennantConstants.RCD_DEL)) {
+					JointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (JointAccountDetail.getRecordType().equalsIgnoreCase(
+						PennantConstants.RCD_UPD)) {
+					JointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+
+			} else if (JointAccountDetail.getRecordType().equalsIgnoreCase(
+					PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (JointAccountDetail.getRecordType().equalsIgnoreCase(
+					PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (JointAccountDetail.getRecordType().equalsIgnoreCase(
+					PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (JointAccountDetail.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			if (approveRec) {
+				rcdType = JointAccountDetail.getRecordType();
+				recordStatus = JointAccountDetail.getRecordStatus();
+				JointAccountDetail.setWorkflowId(0);
+				JointAccountDetail.setRecordType("");
+				JointAccountDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+
+			if (saveRecord) {
+				getJountAccountDetailDAO().save(JointAccountDetail, tableType);
+			}
+
+			if (updateRecord) {
+				getJountAccountDetailDAO().update(JointAccountDetail, tableType);
+			}
+
+			if (deleteRecord) {
+				getJountAccountDetailDAO().delete(JointAccountDetail, tableType);
+			}
+
+			if (approveRec) {
+				JointAccountDetail.setRecordType(rcdType);
+				JointAccountDetail.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(JointAccountDetail);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return auditDetails;
+	}
+	
+	private void processingJointAccExtendedFields(JointAccountDetail jointAccountDetail, String tableType, String auditTranType) {
+		logger.debug(Literal.ENTERING);
+		
+			boolean isSaveRecord = false;
+			ExtendedFieldHeader extendedFieldHeader = jointAccountDetail.getCustomerDetails().getExtendedFieldHeader();
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(extendedFieldHeader.getModuleName());
+			tableName.append("_");
+			tableName.append(extendedFieldHeader.getSubModuleName());
+			tableName.append("_ED");
+
+			ExtendedFieldRender extendedFieldRender = jointAccountDetail.getCustomerDetails().getExtendedFieldRender();
+			if (StringUtils.isEmpty(tableType)) {
+				extendedFieldRender.setRoleCode("");
+				extendedFieldRender.setNextRoleCode("");
+				extendedFieldRender.setTaskId("");
+				extendedFieldRender.setNextTaskId("");
+			}
+
+			// Table Name addition for Audit
+			extendedFieldRender.setTableName(tableName.toString());
+			extendedFieldRender.setWorkflowId(0);
+
+			// Add Common Fields
+			HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+			
+			String custCIF = jointAccountDetail.getCustCIF();
+			Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(custCIF, tableName.toString(), null);
+			
+			if (extFieldMap == null) {
+				isSaveRecord = true;
+			}
+			if (isSaveRecord) {
+				extendedFieldRender.setReference(custCIF);
+				mapValues.put("Reference", extendedFieldRender.getReference());
+				mapValues.put("SeqNo", extendedFieldRender.getSeqNo());
+			}
+
+			mapValues.put("Version", extendedFieldRender.getVersion());
+			mapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
+			mapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
+			mapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
+			mapValues.put("RoleCode", extendedFieldRender.getRoleCode());
+			mapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
+			mapValues.put("TaskId", extendedFieldRender.getTaskId());
+			mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
+			mapValues.put("RecordType", extendedFieldRender.getRecordType());
+			mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
+
+			// Audit Details Preparation
+			HashMap<String, Object> auditMapValues = (HashMap<String, Object>) extendedFieldRender
+					.getMapValues();
+			auditMapValues.put("Reference", extendedFieldRender.getReference());
+			auditMapValues.put("SeqNo", extendedFieldRender.getSeqNo());
+			auditMapValues.put("Version", extendedFieldRender.getVersion());
+			auditMapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
+			auditMapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
+			auditMapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
+			auditMapValues.put("RoleCode", extendedFieldRender.getRoleCode());
+			auditMapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
+			auditMapValues.put("TaskId", extendedFieldRender.getTaskId());
+			auditMapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
+			auditMapValues.put("RecordType", extendedFieldRender.getRecordType());
+			auditMapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
+			extendedFieldRender.setAuditMapValues(auditMapValues);
+
+			if (isSaveRecord) {
+				auditTranType = PennantConstants.TRAN_ADD;
+				extendedFieldRender.setRecordType("");
+				extendedFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				extendedFieldRenderDAO.save(extendedFieldRender.getMapValues(), "",
+						tableName.toString());
+			} else {
+				auditTranType = PennantConstants.TRAN_UPD;
+				extendedFieldRenderDAO.update(extendedFieldRender.getReference(),
+						extendedFieldRender.getSeqNo(), extendedFieldRender.getMapValues(), "",
+						tableName.toString());
+			}
+			/*if (StringUtils.isNotBlank(extendedFieldRender.getReference())) {
+				String[] extFields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
+				AuditDetail auditDetail = new AuditDetail(auditTranType, auditDetails.size()+1, extFields[0], extFields[1],
+						extendedFieldRender.getBefImage(), extendedFieldRender);
+				auditDetail.setExtended(true);
+				auditDetails.add(auditDetail);
+			}*/
+		
+			logger.debug(Literal.LEAVING);
+	}
+	
 	@Override
 	public List<AuditDetail> saveOrUpdate(List<JointAccountDetail> jointAcDetailList, String tableType,
 			String auditTranType) {
@@ -668,14 +863,12 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-
+		//10-Jul-2018 BUG FIX related to Audit issue  TktNo:126609
+		int auditSeq = 1;
 		for (JointAccountDetail jointAccountDetail : jointAccountDetails) {
 			getJountAccountDetailDAO().delete(jointAccountDetail, tableType);
-
-			String[] fields = PennantJavaUtil.getFieldDetails(jointAccountDetail,
-					jointAccountDetail.getExcludeFields());
-			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
-					jointAccountDetail.getBefImage(), jointAccountDetail));
+			String[] fields = PennantJavaUtil.getFieldDetails(jointAccountDetail, jointAccountDetail.getExcludeFields());
+			auditDetails.add(new  AuditDetail(auditTranType, auditSeq++, fields[0], fields[1], jointAccountDetail.getBefImage(), jointAccountDetail));
 		}
 
 		logger.debug("Leaving");

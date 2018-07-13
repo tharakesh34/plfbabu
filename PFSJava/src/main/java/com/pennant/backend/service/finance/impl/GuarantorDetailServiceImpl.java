@@ -585,12 +585,13 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-
+		//10-Jul-2018 BUG FIX related to Audit issue  TktNo:126609
+		int auditSeq = 1;
 		for (GuarantorDetail guarantorDetail : guarantorDetailList) {
 			getGuarantorDetailDAO().delete(guarantorDetail, tableType);
 			
 			String[] fields = PennantJavaUtil.getFieldDetails(guarantorDetail, guarantorDetail.getExcludeFields());
-			auditDetails.add(new  AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], guarantorDetail.getBefImage(), guarantorDetail));
+			auditDetails.add(new  AuditDetail(auditTranType, auditSeq++, fields[0], fields[1], guarantorDetail.getBefImage(), guarantorDetail));
 		}
 
 		logger.debug("Leaving");
@@ -875,5 +876,93 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		return auditDetails;
 	}
 
+	/**
+	 * Method For Preparing List of AuditDetails for GuarantorDetails
+	 * 
+	 * @param auditDetails
+	 * @param type
+	 * @param custId
+	 * @return
+	 */
+	public List<AuditDetail> processingGuarantorsList(List<AuditDetail> auditDetails, String type) {
+		logger.debug("Entering");
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+
+			GuarantorDetail guarantorDetail = (GuarantorDetail) auditDetails.get(i).getModelData();
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (type.equals("")) {
+				approveRec = true;
+				guarantorDetail.setRoleCode("");
+				guarantorDetail.setNextRoleCode("");
+				guarantorDetail.setTaskId("");
+				guarantorDetail.setNextTaskId("");
+			}
+			//guarantorDetail.setWorkflowId(0);
+			if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (guarantorDetail.isNewRecord()) {
+				saveRecord = true;
+				if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					guarantorDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					guarantorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					guarantorDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+
+			} else if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (guarantorDetail.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			if (approveRec) {
+				rcdType = guarantorDetail.getRecordType();
+				recordStatus = guarantorDetail.getRecordStatus();
+				guarantorDetail.setWorkflowId(0);
+				guarantorDetail.setRecordType("");
+				guarantorDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			if (saveRecord) {
+				getGuarantorDetailDAO().save(guarantorDetail, type);
+			}
+
+			if (updateRecord) {
+				getGuarantorDetailDAO().update(guarantorDetail, type);
+			}
+			if (deleteRecord) {
+				getGuarantorDetailDAO().delete(guarantorDetail, type);
+			}
+
+			if (approveRec) {
+				guarantorDetail.setRecordType(rcdType);
+				guarantorDetail.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(guarantorDetail);
+		}
+		logger.debug("Leaving");
+		return auditDetails;
+	}
 
 }

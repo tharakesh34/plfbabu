@@ -492,8 +492,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	private List<AuditDetail> setGuarantorDetailAuditData(FinanceDetail financeDetail, String auditTranType,
 			String method) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		GuarantorDetail guarantorDetail = new GuarantorDetail();
-		String[] fields = PennantJavaUtil.getFieldDetails(guarantorDetail, guarantorDetail.getExcludeFields());
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
 		for (int i = 0; i < financeDetail.getGurantorsDetailList().size(); i++) {
 			GuarantorDetail finGuarantorDetailList = financeDetail.getGurantorsDetailList().get(i);
@@ -502,7 +501,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				continue;
 			}
 
-			finGuarantorDetailList.setWorkflowId(guarantorDetail.getWorkflowId());
+			finGuarantorDetailList.setWorkflowId(financeMain.getWorkflowId());
 
 			boolean isRcdType = false;
 
@@ -511,7 +510,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				isRcdType = true;
 			} else if (finGuarantorDetailList.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 				finGuarantorDetailList.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				if (guarantorDetail.isWorkflow()) {
+				if (financeMain.isWorkflow()) {
 					isRcdType = true;
 				}
 			} else if (finGuarantorDetailList.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
@@ -533,8 +532,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				}
 			}
 
-			finGuarantorDetailList.setRecordStatus(guarantorDetail.getRecordStatus());
-			finGuarantorDetailList.setLastMntOn(guarantorDetail.getLastMntOn());
+			finGuarantorDetailList.setRecordStatus(financeMain.getRecordStatus());
+			finGuarantorDetailList.setLastMntOn(financeMain.getLastMntOn());
+
+			GuarantorDetail guarantorDetail = new GuarantorDetail();
+			String[] fields = PennantJavaUtil.getFieldDetails(guarantorDetail, guarantorDetail.getExcludeFields());
 
 			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finGuarantorDetailList
 					.getBefImage(), finGuarantorDetailList));
@@ -546,8 +548,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	private List<AuditDetail> setJointAccountDetailAuditData(FinanceDetail financeDetail, String auditTranType,
 			String method) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		JointAccountDetail jointAccountDetail = new JointAccountDetail();
-		String[] fields = PennantJavaUtil.getFieldDetails(jointAccountDetail, jointAccountDetail.getExcludeFields());
+
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
 		for (int i = 0; i < financeDetail.getJountAccountDetailList().size(); i++) {
 			JointAccountDetail jointAccount = financeDetail.getJountAccountDetailList().get(i);
@@ -556,7 +558,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				continue;
 			}
 
-			jointAccount.setWorkflowId(jointAccountDetail.getWorkflowId());
+			jointAccount.setWorkflowId(financeMain.getWorkflowId());
 
 			boolean isRcdType = false;
 
@@ -565,7 +567,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				isRcdType = true;
 			} else if (jointAccount.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 				jointAccount.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				if (jointAccountDetail.isWorkflow()) {
+				if (financeMain.isWorkflow()) {
 					isRcdType = true;
 				}
 			} else if (jointAccount.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
@@ -587,9 +589,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				}
 			}
 
-			jointAccount.setRecordStatus(jointAccountDetail.getRecordStatus());
-			jointAccount.setLastMntOn(jointAccountDetail.getLastMntOn());
-
+			jointAccount.setRecordStatus(financeMain.getRecordStatus());
+			jointAccount.setLastMntOn(financeMain.getLastMntOn());
+			JointAccountDetail jointAccountDetail = new JointAccountDetail();
+			String[] fields = PennantJavaUtil.getFieldDetails(jointAccountDetail,jointAccountDetail.getExcludeFields());
 			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], jointAccount.getBefImage(),
 					jointAccount));
 		}
@@ -998,23 +1001,21 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		if (financeDetail.getGurantorsDetailList() != null && !financeDetail.getGurantorsDetailList().isEmpty()) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("GuarantorDetails");
 			List<GuarantorDetail> guarantorDetail = new ArrayList<GuarantorDetail>();
-			;
 			for (int i = 0; i < details.size(); i++) {
 				GuarantorDetail guarantor = (GuarantorDetail) details.get(i).getModelData();
 				guarantorDetail.add(guarantor);
 			}
-			auditDetails.addAll(getGuarantorDetailService().delete(guarantorDetail, "_Temp", tranType));
+			auditDetailList.addAll(getGuarantorDetailService().delete(guarantorDetail, "_Temp", PennantConstants.TRAN_WF));
 		}
 		//JointAccount Details
 		if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("JointAccountDetails");
 			List<JointAccountDetail> jointAccountDetail = new ArrayList<JointAccountDetail>();
-			;
 			for (int i = 0; i < details.size(); i++) {
 				JointAccountDetail jointAcctDetail = (JointAccountDetail) details.get(i).getModelData();
 				jointAccountDetail.add(jointAcctDetail);
 			}
-			auditDetails.addAll(getJointAccountDetailService().delete(jointAccountDetail, "_Temp", tranType));
+			auditDetailList.addAll(getJointAccountDetailService().delete(jointAccountDetail, "_Temp", PennantConstants.TRAN_WF));
 		}
 
 		// Checklist Details delete
@@ -1544,6 +1545,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				recordStatus = guarantorDetail.getRecordStatus();
 				guarantorDetail.setRecordType("");
 				guarantorDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				//10-Jul-2018 BUG FIX related to Audit issue  TktNo:126609
+				if (!guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					guarantorDetail.setBefImage(getGuarantorDetailDAO().getGuarantorDetailById(guarantorDetail.getGuarantorId(), ""));
+				}
 			}
 			if (saveRecord) {
 				getGuarantorDetailDAO().save(guarantorDetail, type);
@@ -1643,6 +1648,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				recordStatus = jointAccountDetail.getRecordStatus();
 				jointAccountDetail.setRecordType("");
 				jointAccountDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				//10-Jul-2018 BUG FIX related to Audit issue  TktNo:126609
+				if (!jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					jointAccountDetail.setBefImage(getJountAccountDetailDAO().getJountAccountDetailById(jointAccountDetail.getJointAccountId(), ""));
+				}
 			}
 			if (saveRecord) {
 				getJountAccountDetailDAO().save(jointAccountDetail, type);
