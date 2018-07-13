@@ -53,7 +53,6 @@ public class CreditReviewSummaryEntryValidation {
 		if (creditReviewSummary.isWorkflow()){
 			tempCreditReviewSummary = getCreditReviewSummaryDAO().getCreditReviewSummaryById(creditReviewSummary.getSummaryId(),creditReviewSummary.getDetailId(),"_Temp");
 		}
-		
 		FinCreditReviewSummary befcreditReviewSummary= getCreditReviewSummaryDAO().getCreditReviewSummaryById(creditReviewSummary.getSummaryId(),creditReviewSummary.getDetailId(),"");
 		FinCreditReviewSummary oldCreditReviewSummary= creditReviewSummary.getBefImage();
 		
@@ -88,7 +87,7 @@ public class CreditReviewSummaryEntryValidation {
 			// for work flow process records or (Record to update or Delete with out work flow)
 			if (!creditReviewSummary.isWorkflow()){	// With out Work flow for update and delete
 
-				if (befcreditReviewSummary ==null){ // if records not exists in the main table
+				if (befcreditReviewSummary ==null ){ // if records not exists in the main table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
@@ -103,7 +102,7 @@ public class CreditReviewSummaryEntryValidation {
 
 			}else{
 
-				if (tempCreditReviewSummary==null ){ // if records not exists in the Work flow table 
+				if (tempCreditReviewSummary==null && befcreditReviewSummary !=null ){ // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
