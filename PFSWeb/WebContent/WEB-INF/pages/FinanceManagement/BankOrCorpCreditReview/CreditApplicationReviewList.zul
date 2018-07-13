@@ -34,6 +34,11 @@
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end"  sclass="toolbar-end">
+				<button
+						id="button_CreditApplicationReviewList_FileUploadCreditApplicationReview"
+						 label="${c:l('label_FileUpload')}"
+						autodisable="button_CreditApplicationReviewList_CreditApplicationReviewSearchDialog,print,button_CreditApplicationReviewList_FileUploadCreditApplicationReview,btnRefresh,help"
+						tooltiptext="${c:l('button_CreditApplicationReviewList_FileUploadCreditApplicationReview.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button
 						id="button_CreditApplicationReviewList_NewCreditApplicationReview"
 						 label="${c:l('label_New')}"
