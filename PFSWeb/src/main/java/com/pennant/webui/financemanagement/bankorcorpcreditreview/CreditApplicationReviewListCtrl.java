@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - Pennant Technologies
+\ * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -73,11 +73,11 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.model.CreditApplicationReviewListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/RulesFactory/FinCreditReviewDetails/CreditReviewDetailsList.zul
@@ -121,6 +121,8 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 	protected Listheader listheader_CreditCustShrtName;
 
 	protected Button button_CreditApplicationReviewList_NewCreditApplicationReview;
+	protected Button button_CreditApplicationReviewList_FileUploadCreditApplicationReview;
+	
 	protected Button button_CreditAppReviewList_CreditAppReviewSearch;
 
 	private transient CreditApplicationReviewService creditApplicationReviewService;
@@ -181,7 +183,7 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 		}
 
 		if (!isMaintinence) {
-			this.searchObject.addFilterEqual("Division", creditDivision);
+			//this.searchObject.addFilterEqual("Division", creditDivision);
 		}
 	}
 
@@ -198,6 +200,7 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 		setItemRender(new CreditApplicationReviewListModelItemRenderer());
 
 		// Register buttons and fields.
+		 registerButton(button_CreditApplicationReviewList_NewCreditApplicationReview, "button_CreditApplicationReviewList_NewCreditApplicationReview", true);
 
 		if (!isMaintinence) {
 			registerButton(button_CreditApplicationReviewList_NewCreditApplicationReview,
@@ -305,6 +308,48 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 					.createComponents(
 							"/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationRevSelectCategoryType.zul",
 							null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving" + event.toString());
+
+	}
+
+	/**
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 * @throws InterruptedException 
+	 */
+	public void onClick$button_CreditApplicationReviewList_FileUploadCreditApplicationReview(Event event) throws InterruptedException  {
+		logger.debug("Entering" + event.toString());
+		// create a new WIFFinanceMain object, We GET it from the backend.
+		final FinCreditReviewDetails aCreditReviewDetails = getCreditApplicationReviewService()
+				.getNewCreditReviewDetails();
+		aCreditReviewDetails.setNewRecord(true);
+		aCreditReviewDetails.setWorkflowId(getWorkFlowId());
+		aCreditReviewDetails.setDivision(creditDivision);
+
+		/*
+		 * we can call our SelectFinanceType ZUL-file with parameters. So we can call them with a object of the selected
+		 * FinanceMain. For handed over these parameter only a Map is accepted. So we put the FinanceMain object in a
+		 * HashMap.
+		 */
+		Map<String, Object> map = getDefaultArguments();
+		map.put("creditApplicationReviewDialogCtrl", new CreditApplicationReviewDialogCtrl());
+		map.put("corporateApplicationFinanceFileUploadDialogCtrl", new CorporateApplicationFinanceFileUploadDialogCtrl());
+		
+		// map.put("searchObject", this.searchObjCreditReviewDetails);
+		map.put("aCreditReviewDetails", aCreditReviewDetails);
+		map.put("creditApplicationReviewListCtrl", this);
+		//map.put("loanType", this.loanType.getValue());
+
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions
+					.createComponents(
+							"/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CorporateApplicationFinanceUploadDialog.zul",null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
