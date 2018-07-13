@@ -57,6 +57,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.LatePayMarkingService;
@@ -69,6 +70,7 @@ import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
+import com.pennant.backend.dao.receipts.DepositDetailsDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -86,6 +88,8 @@ import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.finance.DepositDetails;
+import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -151,6 +155,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private OverdraftScheduleDetailDAO		overdraftScheduleDetailDAO;
 	private LatePayMarkingService			latePayMarkingService;
 	private BankDetailService				bankDetailService;
+	private DepositDetailsDAO				depositDetailsDAO;
 	@Autowired
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
@@ -1339,9 +1344,72 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		} else {
 			getLimitCheckDetails().doProcessLimits(financeMain,	FinanceConstants.AMENDEMENT);
 		}
-
+		
+		//Save Deposit Details
+		saveDepositDetails(receiptHeader);
+		
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+	
+	public void saveDepositDetails(FinReceiptHeader receiptHeader) {
+		logger.debug("Entering");
+		
+		if (RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())) {
+			BigDecimal actualAmount = BigDecimal.ZERO;
+			long partnerBankId = 0;
+			
+			for (FinReceiptDetail finReceiptDetail : receiptHeader.getReceiptDetails()) {
+				if (RepayConstants.RECEIPTMODE_CASH.equals(finReceiptDetail.getPaymentType())) {
+					partnerBankId = finReceiptDetail.getFundingAc();
+					if (finReceiptDetail.getAmount() != null) {
+						actualAmount = actualAmount.add(finReceiptDetail.getAmount());
+					}
+				}
+			}
+			
+			if (actualAmount.compareTo(BigDecimal.ZERO) > 0) {
+				DepositDetails depositDetail = getDepositDetailsDAO().getDepositDetails(
+						AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_CASH, receiptHeader.getUserDetails().getBranchCode(), "");
+				if (depositDetail == null) {
+					depositDetail = new DepositDetails();
+					depositDetail.setActualAmount(actualAmount);
+					depositDetail.setTransactionAmount(BigDecimal.ZERO);
+					depositDetail.setReservedAmount(BigDecimal.ZERO);
+					depositDetail.setDepositType(AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_CASH);
+					depositDetail.setBranchCode(receiptHeader.getUserDetails().getBranchCode());
+					depositDetail.setVersion(1);
+					depositDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);;
+					depositDetail.setLastMntBy(receiptHeader.getLastMntBy());
+					depositDetail.setLastMntOn(receiptHeader.getLastMntOn());
+					depositDetail.setWorkflowId(0);
+					depositDetail.setNewRecord(true);
+					depositDetail.setDepositId(getDepositDetailsDAO().save(depositDetail, TableType.MAIN_TAB));
+				} else {
+					getDepositDetailsDAO().updateActualAmount(depositDetail.getDepositId(), actualAmount, "");
+				}
+				
+				DepositMovements depositMovements = new DepositMovements();
+				depositMovements = new DepositMovements();
+				depositMovements.setDepositId(depositDetail.getDepositId());
+				depositMovements.setTransactionType(PennantConstants.DEPOSIT_MOVEMENT_DEBIT);
+				depositMovements.setPartnerBankId(partnerBankId);
+				depositMovements.setReceiptId(receiptHeader.getReceiptID());
+				depositMovements.setVersion(1);
+				depositMovements.setNewRecord(true);
+				depositMovements.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);;
+				depositMovements.setRecordType(null);
+				depositMovements.setLastMntBy(receiptHeader.getLastMntBy());
+				depositMovements.setLastMntOn(receiptHeader.getLastMntOn());
+				depositMovements.setWorkflowId(0);
+				depositMovements.setTransactionDate(DateUtility.getSysDate());
+				depositDetail.setDepositMovements(depositMovements);
+				
+				getDepositDetailsDAO().saveDepositMovements(depositMovements, "");
+			}
+		}
+		
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -2906,6 +2974,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setReceiptTaxDetailDAO(ReceiptTaxDetailDAO receiptTaxDetailDAO) {
 		this.receiptTaxDetailDAO = receiptTaxDetailDAO;
+	}
+
+	public DepositDetailsDAO getDepositDetailsDAO() {
+		return depositDetailsDAO;
+	}
+
+	public void setDepositDetailsDAO(DepositDetailsDAO depositDetailsDAO) {
+		this.depositDetailsDAO = depositDetailsDAO;
 	}
 
 }

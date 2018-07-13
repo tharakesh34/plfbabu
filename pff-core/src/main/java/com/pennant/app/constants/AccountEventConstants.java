@@ -110,5 +110,11 @@ public class AccountEventConstants {
 	public static final String	ACCEVENT_FEEPAY			= "FEEPAY";
 	public static final String	ACCEVENT_MANFEE			= "MANFEE";
 	public static final String	ACCEVENT_PAYMTINS		= "PAYMTINS";
+	
+	//Deposit Details Events
+	public static final String	ACCEVENT_CASHTOBANK				= "C2B";
+	public static final String	ACCEVENT_DEPOSIT_TYPE_CASH  	= "CASH";
+	public static final String	ACCEVENT_DEPOSIT_TYPE_CHEQUE  	= "CHEQUE";
+	public static final String	ACCEVENT_DEPOSIT_TYPE_DD  		= "DD";
 
 }

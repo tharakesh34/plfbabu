@@ -210,9 +210,12 @@ import com.pennant.backend.model.finance.BulkRateChangeDetails;
 import com.pennant.backend.model.finance.BulkRateChangeHeader;
 import com.pennant.backend.model.finance.BundledProductsDetail;
 import com.pennant.backend.model.finance.CAFFacilityType;
+import com.pennant.backend.model.finance.CashDenomination;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
+import com.pennant.backend.model.finance.DepositDetails;
+import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.EtihadCreditBureauDetail;
 import com.pennant.backend.model.finance.FacilityType;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -2370,6 +2373,16 @@ public class PennantJavaUtil {
 		ModuleUtil.register("PSLDetail", new ModuleMapping("PSLDetail", FinAssetEvaluation.class,
 				new String[] { "PSLDetail", "PSLDetail_AView" }, masterWF, new String[] {
 						"FinReference", "CategoryCode" }, null, 300));
+		
+		//Deposit Details
+		ModuleUtil.register("DepositDetails", new ModuleMapping("DepositDetails", DepositDetails.class,
+						new String[] { "DepositDetails", "DepositDetails_AView" }, masterWF, new String[] { "BranchCode", "DepositType" }, null, 400));
+		//Deposit Movements
+		ModuleUtil.register("DepositMovements", new ModuleMapping("DepositMovements", DepositMovements.class,
+				new String[] { "DepositMovements", "DepositMovements_AView" }, null, new String[] { "PartnerBankId", "TransactionType" }, null, 400));
+		//CashDenominations
+		ModuleUtil.register("CashDenomination", new ModuleMapping("CashDenominations", CashDenomination.class,
+				new String[] { "CashDenominations", "CashDenominations_AView" }, null, new String[] { "ModuleCode" }, null, 400));
 
 	}
 

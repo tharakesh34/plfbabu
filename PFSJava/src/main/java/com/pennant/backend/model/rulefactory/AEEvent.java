@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.pennant.app.constants.AccountConstants;
+
 public class AEEvent {
 
 	private AEAmountCodes			aeAmountCodes;
@@ -54,6 +56,9 @@ public class AEEvent {
 	private boolean					uAmzExists = false;
 	
 	private String                  entityCode;
+	
+	//Cash Management
+	private String					postingType = AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_LOAN;
 
 	public AEEvent() {
 
@@ -365,6 +370,14 @@ public class AEEvent {
 
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
+	}
+
+	public String getPostingType() {
+		return postingType;
+	}
+
+	public void setPostingType(String postingType) {
+		this.postingType = postingType;
 	}
 
 

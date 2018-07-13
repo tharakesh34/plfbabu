@@ -5382,6 +5382,19 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="pSLDetailService" ref="pSLDetailService" />
 	</bean>
+	
+		<!--============ Deposit Details ============== -->
+
+	<bean id="depositDetailsListCtrl"
+		class="com.pennant.webui.financemanagement.receipts.DepositDetailsListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="branchService" ref="branchService" />
+		<property name="depositDetailsService" ref="depositDetailsService" />
+	</bean>
+
+	<bean id="depositDetailsDialogCtrl" class="com.pennant.webui.financemanagement.receipts.DepositDetailsDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="depositDetailsService" ref="depositDetailsService" />
+	</bean>
+	
 	<bean id="corporateApplicationFinanceFileUploadDialogCtrl"
 		class="com.pennant.webui.financemanagement.bankorcorpcreditreview.CorporateApplicationFinanceFileUploadDialogCtrl"
 		parent="basisCtrl" scope="prototype">

@@ -5669,6 +5669,9 @@
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		
+		<!-- Cash Management (Deposit Details)  -->
+		<property name="depositDetailsDAO" ref="depositDetailsDAO" />
 	</bean>
 
 	<!--============ Finance Excess Amounts Details ============== -->
@@ -11660,5 +11663,43 @@
 	</bean>
 	<bean id="defaultGstInvoiceGeneratorTarget" class="com.pennanttech.pff.external.gst.GSTInvoiceGeneratorServiceImpl">
 		<property name="gstInvoiceTxnDAO" ref="gstInvoiceTxnDAO" />
+	</bean>
+	
+	<!--============ Deposit Details ============== -->
+	<bean id="depositDetailsDAO" class="com.pennant.backend.dao.receipts.impl.DepositDetailsDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="cashDenominationDAO" class="com.pennant.backend.dao.receipts.impl.CashDenominationDAOImpl"  parent="basisCodeDAO">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="depositDetailsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="depositDetailsServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="depositDetailsServiceTarget" class="com.pennant.backend.service.finance.impl.DepositDetailsServiceImpl">
+		<property name="depositDetailsDAO" ref="depositDetailsDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="cashDenominationDAO" ref="cashDenominationDAO" />
+		<property name="cashManagementAccounting" ref="cashManagementAccounting" />
+	</bean>
+	
+	<bean id="cashManagementAccounting" class="com.pennant.backend.service.cashmanagement.impl.CashManagementAccounting"  >
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="partnerBankDAO" ref="partnerBankDAO" />
 	</bean>
 </beans>

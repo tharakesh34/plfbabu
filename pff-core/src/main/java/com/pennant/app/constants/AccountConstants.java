@@ -135,4 +135,8 @@ public class AccountConstants {
 	public static final String	EXTRACTION_TYPE_SUMMARY			= "SUM";
 	public static final String	EXTRACTION_TYPE_TRANSACTION		= "TRN";
 	public static final String	EXTRACTION_TYPE_NOTAPPLICABLE	= "NA";
+	
+	//Cash Management Constants
+	public static final String	ACCOUNT_EVENT_POSTINGTYPE_LOAN		= "LOAN";
+	public static final String	ACCOUNT_EVENT_POSTINGTYPE_BRANCH	= "BRANCH";
 }

@@ -257,6 +257,8 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> subSectorList;
 	private static ArrayList<ValueLabel> subCategoryGeneralList;
 	private static ArrayList<ValueLabel> finLVTCheckList;
+	private static ArrayList<ValueLabel> depositTypesList;
+	private static ArrayList<String> denominations;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -3554,5 +3556,34 @@ public class PennantStaticListUtil {
 			finLVTCheckList.add(new ValueLabel(PennantConstants.COLLATERAL_LTV_CHECK_FINAMT, Labels.getLabel("label_LTVCheck_FinAmt")));
 		}
 		return finLVTCheckList;
+	}
+	public static ArrayList<ValueLabel> getDepositTypesListList() {
+		if (depositTypesList == null) {
+			depositTypesList = new ArrayList<ValueLabel>();
+			depositTypesList.add(new ValueLabel(AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_CASH, Labels.getLabel("label_DepositType_Cash")));
+			depositTypesList.add(new ValueLabel(AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_CHEQUE, Labels.getLabel("label_DepositType_Cheque")));
+			depositTypesList.add(new ValueLabel(AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_DD, Labels.getLabel("label_DepositType_DD")));
+		}
+		return depositTypesList;
+	}
+	
+	public static ArrayList<String> getDenominations() {
+
+		if (denominations == null) {
+			denominations = new ArrayList<String>();
+			denominations.add("2000");
+			denominations.add("500");
+			denominations.add("200");
+			denominations.add("100");
+			denominations.add("50");
+			denominations.add("20");
+			denominations.add("10");
+			denominations.add("5");
+			denominations.add("2");
+			denominations.add("1");
+			denominations.add("Coins");
+		}
+		
+		return denominations;
 	}
 }

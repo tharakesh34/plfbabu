@@ -3,6 +3,8 @@ package com.pennant.backend.model.rulefactory;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
+import com.pennant.app.constants.AccountConstants;
+
 public class AEAmountCodes {
 	
 	private String 		finType;
@@ -139,6 +141,11 @@ public class AEAmountCodes {
 	private BigDecimal	addVasToFinance				= BigDecimal.ZERO;
 	private BigDecimal	vasFeeWaived				= BigDecimal.ZERO;
 	private BigDecimal	paidVasFee					= BigDecimal.ZERO;
+	
+	// Cash Management
+	private BigDecimal	transfer			= BigDecimal.ZERO;
+	private String		postingType			= AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_LOAN;
+	private String		userBranch			= "";
 
 	public AEAmountCodes() {
 		super();
@@ -1064,6 +1071,30 @@ public class AEAmountCodes {
 
 	public void setUnAccruedTds(BigDecimal unAccruedTds) {
 		this.unAccruedTds = unAccruedTds;
+	}
+
+	public BigDecimal getTransfer() {
+		return transfer;
+	}
+
+	public void setTransfer(BigDecimal transfer) {
+		this.transfer = transfer;
+	}
+
+	public String getPostingType() {
+		return postingType;
+	}
+
+	public void setPostingType(String postingType) {
+		this.postingType = postingType;
+	}
+
+	public String getUserBranch() {
+		return userBranch;
+	}
+
+	public void setUserBranch(String userBranch) {
+		this.userBranch = userBranch;
 	}
 	
 }

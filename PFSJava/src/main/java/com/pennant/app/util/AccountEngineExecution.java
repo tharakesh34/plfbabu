@@ -747,7 +747,12 @@ public class AccountEngineExecution implements Serializable {
 				returnDataSet.setPostCategory(AccountConstants.POSTING_CATEGORY_EOD);
 				returnDataSet.setCustAppDate(aeEvent.getCustAppDate());
 			}else{
-				returnDataSet.setCustAppDate(getCustomerDAO().getCustAppDate(aeEvent.getCustID()));
+				//TODO: Cash Management Change check it once
+				if (aeEvent.getCustID() <= 0) {
+					returnDataSet.setCustAppDate(returnDataSet.getPostDate());
+				} else {
+					returnDataSet.setCustAppDate(getCustomerDAO().getCustAppDate(aeEvent.getCustID()));
+				}
 			}
 
 			returnDataSets.add(returnDataSet);

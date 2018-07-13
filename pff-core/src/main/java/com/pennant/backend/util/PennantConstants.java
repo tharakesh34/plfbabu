@@ -57,7 +57,8 @@ public class PennantConstants {
 		SeqFinMaintainInstructions,SeqCustomerAddresses,SeqFinASSETTYPES,SeqReceiptAllocationDetail,SeqInterfaceMapping,
 		SeqMasterMapping,SeqUploadHeader,SeqChequeHeader,SeqChequeDetail,SeqFinTaxDetails,seqCollateralStructure, SeqFinExpenseDetails,
 		SeqFinExpenseMovements,SeqFinTypeExpense, SeqCaste, SeqReligion, SeqServiceTaskDetails, SeqManualDeviations,SeqProductDeviations,
-		SeqAuth_Limits,SeqAuth_Limit_Details,SeqPostingId,SeqBMTQueryCategories,SeqFinLiabilityReq,SeqReceiptNumber,SeqQUERYDETAIL
+		SeqAuth_Limits,SeqAuth_Limit_Details,SeqPostingId,SeqBMTQueryCategories,SeqFinLiabilityReq,SeqReceiptNumber,SeqQUERYDETAIL,
+		SeqDepositDetails, SeqDepositMovements
 	}
 
 	public static boolean CITY_FREETEXT = false;
@@ -770,7 +771,6 @@ public class PennantConstants {
 	
 	// Sampling Fields
 	public static final String SAMPLING_RESUBMIT_REASON = "SAMPLINGRR";
-
 	
 	//Query Management
 	public static final String QUERY_ORIGINATION = "Origination";
@@ -778,7 +778,6 @@ public class PennantConstants {
 	public static final String QUERY_LEGAL_VERIFICATION = "LEGAL";
 
 	public static final String OTHER_BANK = "OTHER";
-
 	
 	//GST Invoice Constants
 	public static final String				GST_INVOICE_TRANSACTION_TYPE_DEBIT		= "D";
@@ -789,4 +788,8 @@ public class PennantConstants {
 
 	public static final String COLLATERAL_LTV_CHECK_DISBAMT	= "LTVDISBAMT";		
 	public static final String COLLATERAL_LTV_CHECK_FINAMT	= "LTVFINAMT";	
+	
+	//Deposit Movement Transaction Types
+	public static final String				DEPOSIT_MOVEMENT_CREDIT					= "C";
+	public static final String				DEPOSIT_MOVEMENT_DEBIT					= "D";
 }

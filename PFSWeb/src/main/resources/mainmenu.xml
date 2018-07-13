@@ -605,6 +605,8 @@
 			<menuItem id="menu_Item_FeeReceiptCancellation"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=F"
 				rightName="menuItem_FinanceManagement_FeeReceiptCancellation" />
+			<menuItem id="menu_Item_DepositDetails"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/DepositDetailsList.zul" rightName="menuItem_FinanceManagement_DepositDetails"/>
 		</menu>
 		<menu id="menu_Category_LmsManualPostings">
 			<menuItem id="menu_Item_ManualAdvise"
