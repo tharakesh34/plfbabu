@@ -11121,5 +11121,26 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="274" author="Kesav">
+		<sql>
+			Delete from BMTAEEVENTS where AeEventCode = 'C2B';
+			insert into BMTAEEVENTS values('C2B','CASH TO BANK',1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0, 1, 0, 1);
+			
+			Delete from BMTAMOUNTCODES where AllowedEvent = 'C2B' And AmountCode = 'ae_transfer';
+			insert into BMTAMOUNTCODES values('C2B',0,'ae_transfer','CASH TO BANK',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+
+			Insert Into RMTACCOUNTINGSET Values ((Select Max(AccountSetId) + 1 from RMTACCOUNTINGSET), 'C2B', 'C2B', 'CASH TO BANK', 0, 0, 1, 1000, Current_TimeStamp, 'Approved', '', '', '', '', '', 0);
+			UPDATE seqRMTACCOUNTINGSET SET SEQNO = (Select Max(AccountSetId) from RMTACCOUNTINGSET);
+			
+			Insert Into RMTTRANSACTIONENTRY Values
+			((Select AccountSetId from RMTACCOUNTINGSET where EventCode = 'C2B'), '1', 'Citi Bank A/c','D', '0','CITIDDCOLL','1000','BUILD','GLCREATE','010','510', 'Result = ae_transfer;', null, ' ', 'D', 0, 0, 1, 0, Current_TimeStamp, 'Approved', '', '', '', '', '', 0, 'E', '0');
+			Insert Into RMTTRANSACTIONENTRY Values
+			((Select AccountSetId from RMTACCOUNTINGSET where EventCode = 'C2B'), '2', 'State Bank A/c','C', '0','13040152','1000','BUILD','GLCREATE','510','010', 'Result = ae_transfer;', null, ' ', 'D', 0, 0, 1, 0, Current_TimeStamp, 'Approved', '', '', '', '', '', 0, 'E', '0');
+			
+			Delete from SMTPARAMETERS where SysParmCode = 'GL_CM_GLHEAD_C2B';
+			Insert into SMTPARAMETERS  values ('GL_CM_GLHEAD_C2B','Gold Loan Cash Management','String',0,(Select AccountSetId from RMTAccountingSet where EVentCode = 'C2B'),10,0,null,null,'Cash To Bank Account set Id',1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 	
