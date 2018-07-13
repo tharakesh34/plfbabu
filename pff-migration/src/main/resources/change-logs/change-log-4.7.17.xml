@@ -10720,5 +10720,34 @@ UNION ALL
      LEFT JOIN secusers s3 ON t1.closerby = s3.usrid
      </createView>
 		</changeSet>
+		
+	<changeSet author="Kesav" id="251">
+		<comment> data type modified from bigint to decimal(18,0)</comment>
+		<modifyDataType tableName="DepositDetails" columnName="ActualAmount" newDataType="decimal(18,0)" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="252">
+		<comment> data type modified from bigint to decimal(18,0)</comment>
+		<modifyDataType tableName="DepositDetails_Temp" columnName="ActualAmount" newDataType="decimal(18,0)" />
+	</changeSet>
+	
+	<changeSet id="253" author="Kesav">
+		<comment> Column Name changed from BalanceAmount to ReservedAmount</comment>
+	 	<renameColumn tableName="DepositDetails_Temp" oldColumnName="BalanceAmount" newColumnName="ReservedAmount"/>
+	 </changeSet>
+	
+	<changeSet id="254" author="Kesav">
+		<comment> Column Name changed from BalanceAmount to ReservedAmount</comment>
+	 	<renameColumn tableName="DepositDetails" oldColumnName="BalanceAmount" newColumnName="ReservedAmount"/>
+	 </changeSet>
+	 
+	 <changeSet id="256" author="Kesav">
+		<dropColumn tableName="CashDenominations_temp" columnName="ModuleCode" />
+	</changeSet>
+	
+	 <changeSet id="257" author="Kesav">
+		<dropColumn tableName="CashDenominations" columnName="ModuleCode" />
+	</changeSet>
+	
 </databaseChangeLog>
 	
