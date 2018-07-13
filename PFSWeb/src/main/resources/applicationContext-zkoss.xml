@@ -5382,4 +5382,11 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="pSLDetailService" ref="pSLDetailService" />
 	</bean>
+	<bean id="corporateApplicationFinanceFileUploadDialogCtrl"
+		class="com.pennant.webui.financemanagement.bankorcorpcreditreview.CorporateApplicationFinanceFileUploadDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="finCreditRevSubCategoryService" ref="finCreditRevSubCategoryService" />
+		<property name="creditApplicationReviewService" ref="creditApplicationReviewService" />
+	</bean>
+
 </beans>
