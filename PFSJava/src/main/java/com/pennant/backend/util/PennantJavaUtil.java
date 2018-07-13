@@ -1274,6 +1274,15 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinCreditRevSubCategory", new ModuleMapping("FinCreditRevSubCategory",
 				FinCreditRevSubCategory.class, new String[] { "FinCreditRevSubCategory" }, masterWF , new String[] {
 						"SubCategoryCode", "SubCategoryDesc", "ItemRule" }, null, 600));
+		
+		
+		ModuleUtil.register("CorporateFinanceFileUpload", new ModuleMapping("CorporateFinanceFileUpload",
+				FinCreditRevSubCategory.class, new String[] { "FinCreditReviewDetails" }, masterWF , new String[] {
+						"DetailId", "AuditType", "AuditYear" }, null, 600));
+		
+		ModuleUtil.register("FinCreditReviewUpload", new ModuleMapping("FinCreditReviewUpload",
+				FinCreditReviewSummary.class, new String[] { "FinCreditReviewSummary" }, masterWF , new String[] {
+						"SummaryId", "SubCategoryId", "ItemValue" }, null, 600));
 
 		/************* Commitment *************/
 
