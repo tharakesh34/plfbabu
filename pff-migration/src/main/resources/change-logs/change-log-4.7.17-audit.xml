@@ -527,4 +527,17 @@ update adtCustomers set marginDeviation=0;
 	 	<renameColumn tableName="AdtCashDenominations" oldColumnName="DepositId" newColumnName="MovementId"/>
 	</changeSet>
 	
+	<changeSet author="Kesav" id="26">
+		<comment> data type modified from bigint to decimal(18,0)</comment>
+		<modifyDataType tableName="AdtDepositDetails" columnName="ActualAmount" newDataType="decimal(18,0)" />
+	</changeSet>
+	
+	<changeSet id="27" author="Kesav">
+		<comment> Column Name changed from BalanceAmount to ReservedAmount</comment>
+	 	<renameColumn tableName="AdtDepositDetails" oldColumnName="BalanceAmount" newColumnName="ReservedAmount"/>
+	 </changeSet>
+	 
+	 <changeSet id="28" author="Kesav">
+		<dropColumn tableName="AdtCashDenominations" columnName="ModuleCode" />
+	</changeSet>
 </databaseChangeLog>
