@@ -8,7 +8,7 @@ public class FinCreditRevSubCategory extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 3557119742009775415L;
 	private String subCategoryCode;
 	private long  categoryId;
-	private int subCategorySeque;
+	private String subCategorySeque;
 	private String subCategoryDesc;
 	private String subCategoryItemType;
 	private String itemsToCal;
@@ -70,10 +70,10 @@ public class FinCreditRevSubCategory extends AbstractWorkflowEntity {
 	public void setCategoryId(long categoryId) {
     	this.categoryId = categoryId;
     }
-	public int getSubCategorySeque() {
+	public String getSubCategorySeque() {
     	return subCategorySeque;
     }
-	public void setSubCategorySeque(int subCategorySeque) {
+	public void setSubCategorySeque(String subCategorySeque) {
     	this.subCategorySeque = subCategorySeque;
     }
 	public String getSubCategoryDesc() {
@@ -153,6 +153,11 @@ public class FinCreditRevSubCategory extends AbstractWorkflowEntity {
 	
 	public void setId (String id) {
 		this.subCategoryCode = id;
+	}
+
+	public void setSubCategorySeque(int sequence) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
