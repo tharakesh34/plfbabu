@@ -1357,7 +1357,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 					
-					liability = new CustomerExtLiability();
 					externalLiabilityDAO.delete(liability.getId(), tableType);
 				} else if (liability.isNewRecord()) {
 					auditTranType = PennantConstants.TRAN_ADD;

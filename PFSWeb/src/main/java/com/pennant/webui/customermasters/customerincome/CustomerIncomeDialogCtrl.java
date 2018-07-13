@@ -153,6 +153,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	private String finReference;
 	private Set<String> coApplicants;
 	private boolean workflow = false;
+	private boolean isFinanceProcess = false;
 
 	/**
 	 * default constructor.<br>
@@ -274,6 +275,10 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, pageRightName);
 			}
+		}
+		
+		if (arguments.containsKey("isFinanceProcess")) {
+			isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 		}
 
 		doLoadWorkFlow(this.customerIncome.isWorkflow(),
@@ -738,7 +743,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			if (StringUtils.isBlank(aCustomerIncome.getRecordType())) {
 				aCustomerIncome.setVersion(aCustomerIncome.getVersion() + 1);
 				aCustomerIncome.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if(getCustomerDialogCtrl() != null &&  getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()){
+				if(!isFinanceProcess && getCustomerDialogCtrl() != null &&  getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()){
 					aCustomerIncome.setNewRecord(true);	
 				}else{
 					tranType = PennantConstants.TRAN_DEL;
@@ -1002,12 +1007,12 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		String[] valueParm = new String[4];
 		String[] errParm = new String[4];
 
-		valueParm[0] = String.valueOf(aCustomerIncome.getId());
+		valueParm[0] = String.valueOf(aCustomerIncome.getCustCif());
 		valueParm[1] = aCustomerIncome.getIncomeType();
 		valueParm[2] = String.valueOf(aCustomerIncome.isJointCust());
 		valueParm[3] = aCustomerIncome.getCategory();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_CustomerIncomeDialog_CustIncomeCIF.value") + ":"+ valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_CustIncomeType") + ":"+valueParm[1];
 		errParm[2] = PennantJavaUtil.getLabel("label_JointCust") + ":"+valueParm[3];
 		errParm[3] = PennantJavaUtil.getLabel("label_CustIncomeCountry") + ":"+valueParm[2];
@@ -1026,10 +1031,11 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			for (int i = 0; i < custIncomeList.size(); i++) {
 				CustomerIncome customerIncome = custIncomeList.get(i);
 
-				if(aCustomerIncome.getIncomeType().equals(customerIncome.getIncomeType()) && 
-						(aCustomerIncome.getCategory().equals(customerIncome.getCategory()))&& 
-						(aCustomerIncome.isJointCust() == customerIncome.isJointCust())&& 
-						(aCustomerIncome.getIncomeExpense().equals(customerIncome.getIncomeExpense()))){ // Both Current and Existing list rating same
+				if ((aCustomerIncome.getCustId() == customerIncome.getCustId())
+						&& (aCustomerIncome.getIncomeType().equals(customerIncome.getIncomeType()))
+						&& (aCustomerIncome.getCategory().equals(customerIncome.getCategory()))
+						&& (aCustomerIncome.isJointCust() == customerIncome.isJointCust())
+						&& (aCustomerIncome.getIncomeExpense().equals(customerIncome.getIncomeExpense()))){ // Both Current and Existing list rating same
 
 					if(isNewRecord()){
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41008",errParm,valueParm), getUserWorkspace().getUserLanguage()));

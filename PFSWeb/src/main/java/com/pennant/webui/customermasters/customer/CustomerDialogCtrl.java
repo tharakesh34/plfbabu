@@ -4898,6 +4898,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		map.put("customerIncome", customerIncome);
 		map.put("customerDialogCtrl", this);
 		map.put("newRecord", "true");
+		map.put("isFinanceProcess", isFinanceProcess);
 		map.put("ccyFormatter", ccyFormatter);
 		map.put("roleCode", getRole());
 		try {
@@ -4923,6 +4924,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				map.put("customerIncome", customerIncome);
 				map.put("customerDialogCtrl", this);
 				map.put("ccyFormatter", ccyFormatter);
+				map.put("isFinanceProcess", isFinanceProcess);
 				map.put("roleCode", getRole());
 				map.put("moduleType", this.moduleType);
 				// call the zul-file with the parameters packed in a map
