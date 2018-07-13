@@ -649,6 +649,15 @@ public class ExtendedFieldDetailsService {
 					continue;
 				}
 				String tableName = getTableName(module, extendedFieldRender.getTypeCode(), event);
+
+				if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
+						&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
+					if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
+							tableName + type)) {
+						extendedFieldRender.setNewRecord(true);
+					}
+				}
+				
 				saveRecord = false;
 				updateRecord = false;
 				deleteRecord = false;
@@ -763,7 +772,6 @@ public class ExtendedFieldDetailsService {
 		boolean approveRec = false;
 
 		Map<String, ExtendedFieldHeader> extHeaderMap = sampling.getExtFieldHeaderList();
-		List<CollateralSetup> collList = sampling.getCollSetupList();
 		for (int i = 0; i < deatils.size(); i++) {
 			ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) deatils.get(i).getModelData();
 			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
@@ -779,10 +787,13 @@ public class ExtendedFieldDetailsService {
 			tableName.append(extHeader.getSubModuleName());
 			tableName.append("_tv");
 
-			/*
-			 * extendedFieldRender.setReference(String .valueOf(samplingDAO.getCollateralLinkId(sampling.getId(),
-			 * extendedFieldRender.getReference())));
-			 */
+			if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
+					&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
+				if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
+						tableName.toString() + type)) {
+					extendedFieldRender.setNewRecord(true);
+				}
+			}
 
 			if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
 					&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
