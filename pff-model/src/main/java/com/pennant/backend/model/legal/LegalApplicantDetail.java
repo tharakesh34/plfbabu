@@ -52,6 +52,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -67,6 +68,7 @@ public class LegalApplicantDetail extends AbstractWorkflowEntity implements Enti
 
 	private long legalApplicantId = Long.MIN_VALUE;
 	private long legalId = Long.MIN_VALUE;
+	private long customerId = Long.MIN_VALUE;
 	private int seqNum = 0;
 	private String legalReference;;
 	private String title;
@@ -78,6 +80,9 @@ public class LegalApplicantDetail extends AbstractWorkflowEntity implements Enti
 	private String iDTypeName;
 	private String iDNo;
 	private String remarks;
+	private Customer customer;
+	private boolean isDefault;
+	private String modtString;
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
@@ -106,6 +111,9 @@ public class LegalApplicantDetail extends AbstractWorkflowEntity implements Enti
 		excludeFields.add("iDTypeName");
 		excludeFields.add("legalReference");
 		excludeFields.add("seqNum");
+		excludeFields.add("customer");
+		excludeFields.add("isDefault");
+		excludeFields.add("modtString");
 		return excludeFields;
 	}
 
@@ -255,6 +263,38 @@ public class LegalApplicantDetail extends AbstractWorkflowEntity implements Enti
 
 	public void setSeqNum(int seqNum) {
 		this.seqNum = seqNum;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public boolean isDefault() {
+		return isDefault;
+	}
+
+	public void setDefault(boolean isDefault) {
+		this.isDefault = isDefault;
+	}
+
+	public long getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(long customerId) {
+		this.customerId = customerId;
+	}
+
+	public String getModtString() {
+		return modtString;
+	}
+
+	public void setModtString(String modtString) {
+		this.modtString = modtString;
 	}
 
 }

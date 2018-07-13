@@ -277,7 +277,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 		valueParm[0] = legalDetail.getLegalReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_LegalReference") + ": " + valueParm[0];
 
-		List<QueryDetail> list = getQueryDetailDAO().getQueryMgmtList(legalDetail.getLegalReference(), "_AView");
+		List<QueryDetail> list = getQueryDetailDAO().getQueryMgmtListByRef(legalDetail.getLegalReference(), "_AView");
 
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (QueryDetail queryDetail : list) {

@@ -163,6 +163,12 @@ public class  TemplateEngine {
   		stream.close();
  		return stream.toByteArray();
 	}
+	
+	public byte[] getDocumentByteData(int format) throws Exception {
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		document.save(stream, format);
+		return stream.toByteArray();
+	}
 
 	public void showDocument(Window window,String reportName, int format) throws Exception {
 		showDocument(window,reportName, format, false);

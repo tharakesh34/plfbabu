@@ -82,4 +82,6 @@ public interface CollateralSetupService {
 	List<CollateralMovement> getCollateralMovements(String collateralRef);
 
 	boolean isThirdPartyUsed(String collateralRef, long custId);
+
+	CollateralSetup getCollateralSetupForLegal(String collateralRef);
 }

@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.legal;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennanttech.pff.core.TableType;
@@ -80,5 +82,7 @@ public interface LegalDetailDAO extends BasicCrudDao<LegalDetail> {
 	void updateLegalDeatils(String reference, String collateralRef, boolean active);
 
 	boolean isExists(String finReference, TableType mainTab);
+
+	List<Long> getLegalIdListByFinRef(String finReference);
 
 }

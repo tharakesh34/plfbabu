@@ -222,6 +222,7 @@ import com.pennant.backend.model.finance.TATDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
+import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.limits.LimitDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -253,6 +254,7 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainExtService;
+import com.pennant.backend.service.legal.LegalDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.service.mail.MailTemplateService;
@@ -850,6 +852,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private InstallmentDueService installmentDueService;
 	private ShortMessageService shortMessageService;
 	private MailTemplateService mailTemplateService;
+	private LegalDetailService legalDetailService;
 
 	protected BigDecimal availCommitAmount = BigDecimal.ZERO;
 	protected Commitment commitment;
@@ -6755,6 +6758,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					extendedFieldCtrl.deAllocateAuthorities();
 				}
 				closeDialog();
+				
+				//Download Legal MODT Document
+				downLoadLegalDocument(aFinanceMain);
+				
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);
 				}
@@ -6934,6 +6941,82 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		return declaredFieldValues;
+	}
+
+	/*
+	 * Downloading the legal MODT document
+	 */
+	private void downLoadLegalDocument(FinanceMain aFinanceMain) {
+		logger.debug(Literal.ENTERING);
+		try {
+			if (PennantConstants.NO.equals(SysParamUtil.getValueAsString("ESFB_LEGAL_DETAIL_DOCUMENT_DOWNLOAD"))) {
+				return;
+			}
+			if (!aFinanceMain.isLegalRequired()) {
+				return;
+			}
+			String rolesList = SysParamUtil.getValueAsString("ESFB_LEGAL_DETAIL_MODT_RMDT_DOC_ROLES");
+			if (StringUtils.isEmpty(rolesList)) {
+				return;
+			}
+			boolean genarateDoc = false;
+			String[] roles = rolesList.split(",");
+			for (String role : roles) {
+				if (StringUtils.equalsIgnoreCase(role, getRole())) {
+					genarateDoc = true;
+					break;
+				}
+			}
+			if (!genarateDoc) {
+				return;
+			}
+			
+			aFinanceMain.setUserDetails(getUserWorkspace().getLoggedInUser());
+			List<LegalDetail> legalDEtailsLIst = getLegalDetailService().getApprovedLegalDetail(aFinanceMain);
+			if (CollectionUtils.isNotEmpty(legalDEtailsLIst)) {
+				for (LegalDetail legalDetail : legalDEtailsLIst) {
+					String template = "";
+					if (legalDetail.isModtDoc()) {
+						template = "Legal/MODT Draft";
+					} else {
+						template = "Legal/RMDT Draft";
+					}
+					String templateName = template.concat(PennantConstants.DOC_TYPE_WORD_EXT);
+					String fileName = template.concat(PennantConstants.DOC_TYPE_PDF_EXT);
+					TemplateEngine engine = new TemplateEngine("");
+					engine.setTemplate(templateName);
+					engine.loadTemplate();
+					engine.mergeFields(legalDetail);
+					Window window = new Window();
+					if (getFinanceMainListCtrl() != null) {
+						window = getFinanceMainListCtrl().window_FinanceMainList;
+					}
+					engine.showDocument(window, fileName, SaveFormat.PDF);
+					// Will save the data in one table for another menu option
+					// download
+					legalDetail.setDocImage(engine.getDocumentInByteArray(
+							template.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
+
+					DocumentDetails details = new DocumentDetails();
+					details.setDocModule(FinanceConstants.MODULE_NAME);
+					details.setDocCategory("LEG003");
+					details.setDoctype(PennantConstants.DOC_TYPE_PDF);
+					details.setDocName(fileName);
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					details.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+					details.setDocImage(legalDetail.getDocImage());
+					details.setReferenceId(legalDetail.getLoanReference());
+					getLegalDetailService().saveDocumentDetails(details);
+
+					engine.close();
+				}
+			}
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private boolean primaryValidations() {
@@ -17856,5 +17939,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setpSLDetailDialogCtrl(PSLDetailDialogCtrl pSLDetailDialogCtrl) {
 		this.pSLDetailDialogCtrl = pSLDetailDialogCtrl;
+	}
+
+	public LegalDetailService getLegalDetailService() {
+		return legalDetailService;
+	}
+
+	public void setLegalDetailService(LegalDetailService legalDetailService) {
+		this.legalDetailService = legalDetailService;
 	}
 }

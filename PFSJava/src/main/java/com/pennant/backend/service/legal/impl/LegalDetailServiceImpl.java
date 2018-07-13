@@ -51,23 +51,35 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
+import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.legal.LegalDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CoOwnerDetail;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.legal.LegalApplicantDetail;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.legal.LegalDocument;
@@ -75,19 +87,27 @@ import com.pennant.backend.model.legal.LegalECDetail;
 import com.pennant.backend.model.legal.LegalNote;
 import com.pennant.backend.model.legal.LegalPropertyDetail;
 import com.pennant.backend.model.legal.LegalPropertyTitle;
+import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.applicationmaster.BranchService;
+import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.legal.LegalDetailService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
-import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
 /**
@@ -104,6 +124,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	private CollateralAssignmentDAO collateralAssignmentDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinCovenantTypeDAO finCovenantTypeDAO;
+	private DocumentManagerDAO  documentManagerDAO;
 
 	private LegalApplicantDetailService legalApplicantDetailService;
 	private LegalPropertyDetailService legalPropertyDetailService;
@@ -112,6 +133,10 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	private LegalECDetailService legalECDetailService;
 	private LegalNoteService legalNoteService;
 	private QueryDetailService queryDetailService;
+	private CollateralSetupService collateralSetupService;
+	private CustomerDetailsService customerDetailsService;
+	private JointAccountDetailService jointAccountDetailService;
+	private BranchService branchService;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -422,35 +447,48 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 */
 	@Override
 	public LegalDetail getLegalDetail(long legalId) {
-		LegalDetail legalDetail = getLegalDetailDAO().getLegalDetail(legalId, "_View");
+		return getLegalDetails(legalId, "_View");
+	}
+
+	private LegalDetail getLegalDetails(long legalId, String tableType) {
+		LegalDetail legalDetail = getLegalDetailDAO().getLegalDetail(legalId, tableType);
 		if (legalDetail != null) {
 			//Applicant details
-			legalDetail.setApplicantDetailList(getLegalApplicantDetailService().getApplicantDetailsList(legalId, "_View"));
+			legalDetail.setApplicantDetailList(getLegalApplicantDetailService().getApplicantDetailsList(legalId, tableType));
 			
 			//Property details
-			legalDetail.setPropertyDetailList(getLegalPropertyDetailService().getPropertyDetailsList(legalId, "_View"));
+			legalDetail.setPropertyDetailList(getLegalPropertyDetailService().getPropertyDetailsList(legalId, tableType));
 			
 			//Document details
-			legalDetail.setDocumentList(getLegalDocumentService().getLegalDocumenttDetailsList(legalId, "_View"));
+			legalDetail.setDocumentList(getLegalDocumentService().getLegalDocumenttDetailsList(legalId, tableType));
 			
 			//Property Titles 
-			legalDetail.setPropertyTitleList(getLegalPropertyTitleService().getDetailsList(legalId, "_View"));
+			legalDetail.setPropertyTitleList(getLegalPropertyTitleService().getDetailsList(legalId, tableType));
 			
 			//Ecd Details  
-			legalDetail.setEcdDetailsList(getLegalECDetailService().getDetailsList(legalId, "_View"));
+			legalDetail.setEcdDetailsList(getLegalECDetailService().getDetailsList(legalId, tableType));
 			
 			//LegalNotes  
-			legalDetail.setLegalNotesList(getLegalNoteService().getDetailsList(legalId, "_View"));
+			legalDetail.setLegalNotesList(getLegalNoteService().getDetailsList(legalId, tableType));
 			
 			// Covenant Details
-			legalDetail.setCovenantTypeList(getFinCovenantTypeDAO().getFinCovenantTypeByFinRef(legalDetail.getLoanReference(), "_View", false));
+			legalDetail.setCovenantTypeList(getFinCovenantTypeDAO().getFinCovenantTypeByFinRef(legalDetail.getLoanReference(), tableType, false));
 
-			//Collateral Against Customer and document Details
-			CollateralSetup collateralSetup = getCollateralSetupDAO().getCollateralSetupByRef(legalDetail.getCollateralReference(), "_View");
+			// Collateral Against Customer, document Details and setup details
+			CollateralSetup collateralSetup = getCollateralSetupService().getCollateralSetupForLegal(legalDetail.getCollateralReference());
 			if (collateralSetup != null) {
-				legalDetail.setCustomer(getCustomerDAO().getCustomerByID(collateralSetup.getDepositorId(), "_View"));
-				legalDetail.setCollateralDocumentList(getDocumentDetailsDAO().getDocumentDetailsByRef(collateralSetup.getCollateralRef(),
-						CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View"));
+				legalDetail.setCollateralDocumentList(collateralSetup.getDocuments());
+
+				List<Customer> customersList = new ArrayList<>();
+				customersList.add(collateralSetup.getCustomerDetails().getCustomer());
+				List<CoOwnerDetail> coOwnerDetailsList = collateralSetup.getCoOwnerDetailList();
+				if (CollectionUtils.isNotEmpty(coOwnerDetailsList)) {
+					for (CoOwnerDetail coOwnerDetail : coOwnerDetailsList) {
+						CustomerDetails customerDetails = getCustomerDetailsService().getCustomerDetailsById(coOwnerDetail.getCustomerId(), false, "_View");
+						customersList.add(customerDetails.getCustomer());
+					}
+				}
+				legalDetail.setCustomerList(customersList);
 			}
 			
 			//Finance details
@@ -462,7 +500,18 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				legalDetail.setFinNextRoleCode(financeMain.getNextRoleCode());
 			}
 			
+			//Required for document generation
+			FinanceDetail financeDetail = new FinanceDetail();
+			FinScheduleData scheduleData = new FinScheduleData();
+			scheduleData.setFinanceMain(financeMain);
+			financeDetail.setFinScheduleData(scheduleData);
+			if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
+				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(financeMain.getCustID(), false, "_View"));
+			}
+			financeDetail.setJountAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(financeMain.getFinReference(), "_View"));
+			legalDetail.setFinanceDetail(financeDetail);
 		}
+		
 		return legalDetail;
 	}
 
@@ -980,9 +1029,9 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		
-		boolean IsExists = getLegalDetailDAO().isExists(financeMain.getFinReference(), TableType.TEMP_TAB);
+		boolean isExists = getLegalDetailDAO().isExists(financeMain.getFinReference(), TableType.TEMP_TAB);
 		
-		if (IsExists) {
+		if (isExists) {
 			AuditDetail auditDetail = auditHeader.getAuditDetail();
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 					new ErrorDetail(PennantConstants.KEY_FIELD, "LG001", null, null), auditHeader.getUsrLanguage()));
@@ -992,6 +1041,287 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		return auditHeader;
 	}
 
+	/*
+	 * Getting the all legal details against the loan reference
+	 */
+	@Override
+	public List<LegalDetail> getApprovedLegalDetail(FinanceMain aFinanceMain) throws Exception {
+		logger.debug(Literal.ENTERING);
+		
+		List<Long> idLIst = getLegalDetailDAO().getLegalIdListByFinRef(aFinanceMain.getFinReference());
+		List<LegalDetail> detailList = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(idLIst)) {
+			boolean modtDoc = true;
+			Branch branch =  getBranchService().getApprovedBranchById(aFinanceMain.getFinBranch());
+			String stateName = branch.getLovDescBranchProvinceName();
+			if ("DELHI".equalsIgnoreCase(stateName) || "PUNJAB".equalsIgnoreCase(stateName)
+					|| "HARYANA".equalsIgnoreCase(stateName) || "DELHI".equalsIgnoreCase(stateName)) {
+				modtDoc = false;
+			}
+
+			for (Long legalId : idLIst) {
+				LegalDetail legalDetail = getLegalDetails(legalId, TableType.MAIN_TAB.getSuffix());
+				if (legalDetail != null) {
+					legalDetail.setModtDoc(modtDoc);
+					legalDetail.setBranchDesc(aFinanceMain.getLovDescFinBranchName());
+					legalDetail.setUserDetails(aFinanceMain.getUserDetails());
+					detailList.add(formateMergeDetails(legalDetail, true));
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return detailList;
+	}
+	
+	/*
+	 * Formatting the details as per the marge fields
+	 */
+	@Override
+	public LegalDetail formatLegalDetails(LegalDetail legalDetail) throws Exception {
+		return formateMergeDetails(legalDetail, false);
+	}
+
+	private LegalDetail formateMergeDetails(LegalDetail legalDetail, boolean fromLoan) throws Exception {
+		logger.debug(Literal.ENTERING);
+		
+		legalDetail.setStrAppDate(DateUtility.getAppDate(DateFormat.SHORT_DATE));
+
+		List<LegalDocument> documentList = legalDetail.getDocumentList();
+		if (CollectionUtils.isNotEmpty(documentList)) {
+			int seqNum = 0;
+			for (LegalDocument legalDocument : documentList) {
+				if (legalDocument.getDocumentDate() != null) {
+					legalDocument.setDocumentDateStr(DateUtility.formatDate(legalDocument.getDocumentDate(),
+							DateFormat.SHORT_DATE.getPattern()));
+					legalDocument.setDocumentAcceptedName(PennantStaticListUtil.getlabelDesc(
+							legalDocument.getDocumentAccepted(), PennantStaticListUtil.getDocumentAcceptedList()));
+					seqNum = seqNum + 1;
+					legalDocument.setSeqNum(seqNum);
+				}
+			}
+		}
+
+		// Ec details
+		List<LegalECDetail> ecDetailsList = legalDetail.getEcdDetailsList();
+		if (CollectionUtils.isNotEmpty(ecDetailsList)) {
+			for (LegalECDetail legalECDetail : ecDetailsList) {
+				legalECDetail.setStrECDate(
+						DateUtility.formatDate(legalECDetail.getEcDate(), DateFormat.SHORT_DATE.getPattern()));
+			}
+		}
+		if (legalDetail.getPropertyDetailECDate() != null) {
+			legalDetail.setStrPropertyDetailECDate(
+					DateUtility.formatDate(legalDetail.getPropertyDetailECDate(), DateFormat.SHORT_DATE.getPattern()));
+		}
+
+		StringBuilder sb = null;
+		// Applicants
+		List<LegalApplicantDetail> applicantDetailsList = legalDetail.getApplicantDetailList();
+		sb = new StringBuilder();
+		if (CollectionUtils.isNotEmpty(applicantDetailsList)) {
+			int seqNum = 0;
+			for (LegalApplicantDetail detail : applicantDetailsList) {
+				if (StringUtils.trimToNull(detail.getPropertyOwnersName()) != null) {
+					if (sb.length() > 0) {
+						sb.append(", ");
+						if (StringUtils.trimToNull(detail.getTitleName()) != null) {
+							sb.append(detail.getTitleName());
+						}
+						sb.append(detail.getPropertyOwnersName());
+					} else {
+						if (StringUtils.trimToNull(detail.getTitleName()) != null) {
+							sb.append(detail.getTitleName());
+						}
+						sb.append(detail.getPropertyOwnersName());
+					}
+				}
+				if (fromLoan) {
+					seqNum = seqNum + 1;
+					detail.setSeqNum(seqNum);
+					StringBuilder modtString = new StringBuilder();
+					if (StringUtils.trimToNull(detail.getTitleName()) != null) {
+						modtString.append(detail.getTitleName());
+					}
+					modtString.append(detail.getPropertyOwnersName()).append(",");
+					if (StringUtils.trimToNull(detail.getIDTypeName()) != null) {
+						modtString.append(detail.getIDTypeName()).append("-");
+					}
+					modtString.append(detail.getIDNo()).append(", aged about ").append(detail.getAge()).append(" years");
+
+					/*
+					 * CustomerDetails customerDetails =
+					 * getCustomerDetailsService().getCustomerDetailsById(detail
+					 * .getCustomerId(), true, "_View"); //Customer High
+					 * Priority Mobile number if (customerDetails != null &&
+					 * CollectionUtils.isNotEmpty(customerDetails.
+					 * getCustomerPhoneNumList())) { for (CustomerPhoneNumber
+					 * phoneNumber : customerDetails.getCustomerPhoneNumList())
+					 * { if
+					 * (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)
+					 * == phoneNumber.getPhoneTypePriority()) {
+					 * modtString.append("Mobile No. ").append(phoneNumber.
+					 * getPhoneNumber()); break; } } } // Customer High Priority
+					 * Address number if (customerDetails != null &&
+					 * CollectionUtils.isNotEmpty(customerDetails.getAddressList
+					 * ())) { for (CustomerAddres addres :
+					 * customerDetails.getAddressList()) { if
+					 * (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)
+					 * == addres .getCustAddrPriority()) {
+					 * modtString.append(", is residing at "); if
+					 * (StringUtils.isNotBlank(addres.getCustAddrHNbr())) {
+					 * modtString.append(addres.getCustAddrHNbr()); } if
+					 * (StringUtils.isNotBlank(addres.getCustFlatNbr())) {
+					 * modtString.append(", ").append(addres.getCustFlatNbr());
+					 * } if (StringUtils.isNotBlank(addres.getCustAddrStreet()))
+					 * {
+					 * modtString.append(", ").append(addres.getCustAddrStreet()
+					 * ); } if
+					 * (StringUtils.isNotBlank(addres.getCustAddrLine1())) {
+					 * modtString.append(", ").append(addres.getCustAddrLine1())
+					 * ; } if
+					 * (StringUtils.isNotBlank(addres.getCustAddrLine2())) {
+					 * modtString.append(", ").append(addres.getCustAddrLine2())
+					 * ; } if
+					 * (StringUtils.isNotBlank(addres.getCustAddrLine3())) {
+					 * modtString.append(", ").append(addres.getCustAddrLine3())
+					 * ; } if
+					 * (StringUtils.isNotBlank(addres.getCustAddrLine4())) {
+					 * modtString.append(", ").append(addres.getCustAddrLine4())
+					 * ; } if
+					 * (StringUtils.isNotBlank(addres.getLovDescCustAddrCityName
+					 * ())) { modtString.append(", ").append(addres.
+					 * getLovDescCustAddrCityName()); }
+					 * 
+					 * if (StringUtils.isNotBlank(addres.
+					 * getLovDescCustAddrProvinceName())) {
+					 * modtString.append(", ").append(addres.
+					 * getLovDescCustAddrProvinceName()); } if
+					 * (StringUtils.isNotBlank(addres.getLovDescCustAddrCityName
+					 * ())) { modtString.append(", ").append(addres.
+					 * getLovDescCustAddrCityName()); } if
+					 * (StringUtils.isNotBlank(addres.getCustAddrZIP())) {
+					 * modtString.append(", ").append(addres.getCustAddrZIP());
+					 * } break; } } }
+					 */
+					modtString.append(", ").append(detail.getRemarks());
+					detail.setModtString(modtString.toString());
+				}
+			}
+			legalDetail.setListApplicantNames(sb.toString());
+		}
+
+		// ProperyOwners
+		List<LegalPropertyDetail> propertyDetailsList = legalDetail.getPropertyDetailList();
+		sb = new StringBuilder();
+		if (CollectionUtils.isNotEmpty(propertyDetailsList)) {
+			int seqNum = 0;
+			legalDetail.setRegistrationOffice(propertyDetailsList.get(0).getRegistrationOffice());
+			for (LegalPropertyDetail detail : propertyDetailsList) {
+				if (StringUtils.trimToNull(detail.getPropertyOwner()) != null) {
+					if (sb.length() > 0) {
+						sb.append(", ").append(detail.getPropertyOwner());
+					} else {
+						sb.append(detail.getPropertyOwner());
+					}
+				}
+				if (fromLoan) {
+					seqNum = seqNum + 1;
+					detail.setSeqNum(seqNum);
+				}
+			}
+			legalDetail.setListPropOwnerNames(sb.toString());
+		}
+
+		FinanceDetail financeDetail = legalDetail.getFinanceDetail();
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		legalDetail.setCustName(financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
+		legalDetail.setStrFinAmoun(
+				PennantApplicationUtil.amountFormate(finScheduleData.getFinanceMain().getFinAssetValue(),
+						CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy())));
+
+		String finAmountWords = NumberToEnglishWords.getAmountInText(
+				PennantApplicationUtil.formateAmount(finScheduleData.getFinanceMain().getFinAssetValue(),
+						CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy())),
+				finScheduleData.getFinanceMain().getFinCcy());
+		legalDetail.setFinAmountWords(finAmountWords);
+
+		// Co-applicants
+		List<JointAccountDetail> jointAccountDetails = financeDetail.getJountAccountDetailList();
+		sb = new StringBuilder();
+		if (CollectionUtils.isNotEmpty(jointAccountDetails)) {
+			for (JointAccountDetail detail : jointAccountDetails) {
+				if (StringUtils.trimToNull(detail.getLovDescCIFName()) != null) {
+					if (sb.length() > 0) {
+						sb.append(", ").append(detail.getLovDescCIFName());
+					} else {
+						sb.append(detail.getLovDescCIFName());
+					}
+				}
+			}
+			
+		}
+		if (sb.length() <= 0) {
+			legalDetail.setListCoApplicantNames("");
+		} else {
+			legalDetail.setListCoApplicantNames(sb.toString());
+		}
+
+		// User details
+		LoggedInUser userDetail = legalDetail.getUserDetails();
+		legalDetail.setUserName(userDetail.getFullName());
+		legalDetail.setDesgnation(userDetail.getDepartmentCode());
+		legalDetail.setEmpCode(userDetail.getStaffId());
+
+		if (!fromLoan) {
+			// Query details list
+			List<QueryDetail> querryList = getQueryDetailService()
+					.getQueryDetailsforAgreements(legalDetail.getLegalReference());
+			if (CollectionUtils.isEmpty(querryList)) {
+				querryList = new ArrayList<>();
+				QueryDetail queryDetail = new QueryDetail();
+				queryDetail.setQryNotes("");
+				querryList.add(queryDetail);
+			}
+			legalDetail.setQueryDetailsList(querryList);
+		}
+		logger.debug(Literal.LEAVING);
+		return legalDetail;
+	}
+	
+	// Saving Documents
+	@Override
+	public void saveDocumentDetails(DocumentDetails documentDetails) {
+		logger.debug(Literal.ENTERING);
+		documentDetails.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+		DocumentManager documentManager = new DocumentManager();
+		documentManager.setDocImage(documentDetails.getDocImage());
+		documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
+		 
+		DocumentDetails oldDocumentDetails = getDocumentDetailsDAO().getDocumentDetails(documentDetails.getReferenceId(), documentDetails.getDocCategory(),
+				documentDetails.getDocModule(), TableType.MAIN_TAB.getSuffix());
+		
+		if (oldDocumentDetails != null && oldDocumentDetails.getDocId() != Long.MIN_VALUE) {
+			documentDetails.setDocId(oldDocumentDetails.getDocId());
+			getDocumentDetailsDAO().update(documentDetails, TableType.MAIN_TAB.getSuffix());
+		} else {
+			getDocumentDetailsDAO().save(documentDetails, TableType.MAIN_TAB.getSuffix());
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	 /*
+	  * Getting the document details
+	  */
+	@Override
+	public List<DocumentDetails> getDocumentDetails(String reference, String module) {
+		return getDocumentDetailsDAO().getDocumentDetailsByRef(reference, module, "", TableType.MAIN_TAB.getSuffix());
+	}
+	
+	@Override
+	public DocumentDetails getDocDetailByDocId(long docId, String type, boolean readAttachment) {
+		return getDocumentDetailsDAO().getDocumentDetailsById(docId, type, readAttachment);
+	}
+	
 	public FinanceMainDAO getFinanceMainDAO() {
 		return financeMainDAO;
 	}
@@ -1014,5 +1344,45 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 	public void setQueryDetailService(QueryDetailService queryDetailService) {
 		this.queryDetailService = queryDetailService;
+	}
+
+	public CollateralSetupService getCollateralSetupService() {
+		return collateralSetupService;
+	}
+
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
+	}
+
+	public CustomerDetailsService getCustomerDetailsService() {
+		return customerDetailsService;
+	}
+
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	public JointAccountDetailService getJointAccountDetailService() {
+		return jointAccountDetailService;
+	}
+
+	public void setJointAccountDetailService(JointAccountDetailService jointAccountDetailService) {
+		this.jointAccountDetailService = jointAccountDetailService;
+	}
+
+	public BranchService getBranchService() {
+		return branchService;
+	}
+
+	public void setBranchService(BranchService branchService) {
+		this.branchService = branchService;
+	}
+
+	public DocumentManagerDAO getDocumentManagerDAO() {
+		return documentManagerDAO;
+	}
+
+	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
+		this.documentManagerDAO = documentManagerDAO;
 	}
 }

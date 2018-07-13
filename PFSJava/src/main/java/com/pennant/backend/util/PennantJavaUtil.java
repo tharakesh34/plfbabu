@@ -2334,7 +2334,7 @@ public class PennantJavaUtil {
 		
 		/*Legal Details*/
 		ModuleUtil.register("LegalDetail", new ModuleMapping("LegalDetail", LegalDetail.class, new String[] { "LegalDetails",
-		"LegalDetails_AView" }, LEGAL_DETAILS, new String[] {"LoanReference","CollaterialReference","Branch","LegalDate","SchedulelevelArea","LegalDecision"},null, 600));
+		"LegalDetails_AView" }, LEGAL_DETAILS, new String[] {"LegalReference","LoanReference","CollateralReference"},null, 600));
 		
 		ModuleUtil.register("LegalApplicantDetail", new ModuleMapping("LegalApplicantDetail", LegalApplicantDetail.class, new String[] { "LegalApplicantDetails",
 		"LegalApplicantDetails_AView" }, null, new String[] {"Title"},null, 600));

@@ -84,6 +84,8 @@
 							label="${c:l('Tab_LegalDetails_CoventsTab')}" />
 						<tab id="legalDecisionTab" 
 							label="${c:l('Tab_LegalDetails_LegalDecisionTab')}" />
+						<tab id="legalDocumentsTab" 
+							label="${c:l('Tab_LegalDetails_LegalDocumentsTab')}" visible="false"/>
 					</tabs>
 					<tabpanels>
 					
@@ -762,6 +764,71 @@
 											</row>
 										</rows>
 									</grid>
+								</groupbox>
+							</div>
+						</tabpanel>
+						
+						<!-- Legal Documents Details -->
+						<tabpanel id="legalDocumentsTabPanel"
+							style="overflow:auto">
+							<div>
+								<groupbox>
+									<grid sclass="GridLayoutNoBorder"
+										fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="220px" />
+											<column />
+											<column width="220px" />
+											<column />
+										</columns>
+										<rows>
+											<row height="24px">
+												<label
+													value="${c:l('label_LegalDetailDialog_LoanReference.value')}"
+													style="font-weight:bold;" />
+												<label
+													id="label_DocLoanReference" style="font-weight:bold;" />
+												<label
+													value="${c:l('label_LegalDetailDialog_CollateralReference.value')}"
+													style="font-weight:bold;" />
+												<label
+													id="label_DocCollateralRef" style="font-weight:bold;" />
+											</row>
+											<row height="24px">
+												<label
+													value="${c:l('label_LegalDetailDialog_LoanBranch.value')}"
+													style="font-weight:bold;" />
+												<label
+													id="label_DocLoanBranch" style="font-weight:bold;" />
+												<label
+													value="${c:l('label_LegalDetailDialog_Date.value')}"
+													style="font-weight:bold;" />
+												<label id="label_DocDate"
+													style="font-weight:bold;" />
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox>
+									<listbox id="listBoxGenaratedDocuments"
+										emptyMessage="${c:l('listbox.emptyMessage')}"
+										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+										height="100%" multiple="false" sizedByContent="true"
+										span="true">
+											<listhead sizable="false"
+												style="padding:0px;position:relative;">
+												<listheader 
+													label="${c:l('listheader_DocId.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_DocCategory.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_Doctype.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_DocName.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_ViewDoc.label')}" hflex="min" />
+											</listhead>
+									</listbox>
 								</groupbox>
 							</div>
 						</tabpanel>

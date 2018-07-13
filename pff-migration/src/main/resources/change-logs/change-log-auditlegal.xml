@@ -323,4 +323,10 @@
 			<column name="uploadDocumentType" type="varchar(10)"/>
 		</addColumn>
 	</changeSet>
+	
+		<changeSet id="14" author="DurgaPrasad G">
+		<addColumn tableName="AdtLegalApplicantDetails">
+			<column name="customerId" type="bigint"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

@@ -125,7 +125,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		}
 		if (legalDetail != null) {
 			this.searchObject.addFilterEqual("Module", PennantConstants.QUERY_LEGAL_VERIFICATION);
-			this.searchObject.addFilterEqual("FinReference", legalDetail.getLegalReference());
+			this.searchObject.addFilterEqual("Reference", legalDetail.getLegalReference());
 		}
 
 		if (sampling != null) {

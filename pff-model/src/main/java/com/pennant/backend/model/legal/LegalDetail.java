@@ -56,6 +56,8 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -91,8 +93,8 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private LegalDetail befImage;
 	private LoggedInUser userDetails;
 
-	private Customer customer;
 	private QueryDetail queryDetail = new QueryDetail();
+	private List<Customer> customerList = new ArrayList<>();
 	private List<DocumentDetails> collateralDocumentList = new ArrayList<>();
 	private List<LegalApplicantDetail> applicantDetailList = new ArrayList<>();
 	private List<LegalPropertyDetail> propertyDetailList = new ArrayList<>();
@@ -101,8 +103,26 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private List<LegalECDetail> ecdDetailsList = new ArrayList<>();
 	private List<LegalNote> legalNotesList = new ArrayList<>();
 	private List<FinCovenantType> covenantTypeList = new ArrayList<>();
-
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	
+	
+	// ------------ Document generation required fields---------//
+	private FinanceDetail financeDetail;
+	private String custName;
+	private List<JointAccountDetail> coApplicantList;
+	private List<QueryDetail> queryDetailsList;
+	private String userName;
+	private String desgnation;
+	private String empCode;
+	private String strFinAmoun;
+	private String finAmountWords;
+	private String strPropertyDetailECDate;
+	private String strAppDate;
+	private String listApplicantNames;
+	private String listCoApplicantNames;
+	private String listPropOwnerNames;
+	private String registrationOffice;
+	private boolean modtDoc = false;;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -111,7 +131,7 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("documentList");
 		excludeFields.add("finAmount");
 		excludeFields.add("finCcy");
-		excludeFields.add("customer");
+		excludeFields.add("customerList");
 		excludeFields.add("propertyTitleList");
 		excludeFields.add("ecdDetailsList");
 		excludeFields.add("legalNotesList");
@@ -122,6 +142,22 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("finNextRoleCode");
 		excludeFields.add("queryDetail");
 		excludeFields.add("docImage");
+		excludeFields.add("financeDetail");
+		excludeFields.add("custName");
+		excludeFields.add("coApplicantList");
+		excludeFields.add("queryDetailsList");
+		excludeFields.add("userName");
+		excludeFields.add("desgnation");
+		excludeFields.add("empCode");
+		excludeFields.add("strFinAmoun");
+		excludeFields.add("strPropertyDetailECDate");
+		excludeFields.add("strAppDate");
+		excludeFields.add("listApplicantNames");
+		excludeFields.add("listCoApplicantNames");
+		excludeFields.add("listPropOwnerNames");
+		excludeFields.add("finAmountWords");
+		excludeFields.add("registrationOffice");
+		excludeFields.add("modtDoc");
 		return excludeFields;
 	}
 
@@ -320,14 +356,6 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 		this.auditDetailMap = auditDetailMap;
 	}
 
-	public Customer getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
-
 	public List<LegalPropertyTitle> getPropertyTitleList() {
 		return propertyTitleList;
 	}
@@ -424,6 +452,140 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 		this.docImage = docImage;
 	}
 
-	 
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+
+	public String getCustName() {
+		return custName;
+	}
+
+	public void setCustName(String custName) {
+		this.custName = custName;
+	}
+
+	public List<JointAccountDetail> getCoApplicantList() {
+		return coApplicantList;
+	}
+
+	public void setCoApplicantList(List<JointAccountDetail> coApplicantList) {
+		this.coApplicantList = coApplicantList;
+	}
+
+	public List<QueryDetail> getQueryDetailsList() {
+		return queryDetailsList;
+	}
+
+	public void setQueryDetailsList(List<QueryDetail> queryDetailsList) {
+		this.queryDetailsList = queryDetailsList;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getDesgnation() {
+		return desgnation;
+	}
+
+	public void setDesgnation(String desgnation) {
+		this.desgnation = desgnation;
+	}
+
+	public String getEmpCode() {
+		return empCode;
+	}
+
+	public void setEmpCode(String empCode) {
+		this.empCode = empCode;
+	}
+
+	public String getStrFinAmoun() {
+		return strFinAmoun;
+	}
+
+	public void setStrFinAmoun(String strFinAmoun) {
+		this.strFinAmoun = strFinAmoun;
+	}
+
+	public String getStrPropertyDetailECDate() {
+		return strPropertyDetailECDate;
+	}
+
+	public void setStrPropertyDetailECDate(String strPropertyDetailECDate) {
+		this.strPropertyDetailECDate = strPropertyDetailECDate;
+	}
+
+	public String getStrAppDate() {
+		return strAppDate;
+	}
+
+	public void setStrAppDate(String strAppDate) {
+		this.strAppDate = strAppDate;
+	}
+
+	public String getListApplicantNames() {
+		return listApplicantNames;
+	}
+
+	public void setListApplicantNames(String listApplicantNames) {
+		this.listApplicantNames = listApplicantNames;
+	}
+
+	public String getListCoApplicantNames() {
+		return listCoApplicantNames;
+	}
+
+	public void setListCoApplicantNames(String listCoApplicantNames) {
+		this.listCoApplicantNames = listCoApplicantNames;
+	}
+
+	public String getListPropOwnerNames() {
+		return listPropOwnerNames;
+	}
+
+	public void setListPropOwnerNames(String listPropOwnerNames) {
+		this.listPropOwnerNames = listPropOwnerNames;
+	}
+
+	public String getFinAmountWords() {
+		return finAmountWords;
+	}
+
+	public void setFinAmountWords(String finAmountWords) {
+		this.finAmountWords = finAmountWords;
+	}
+
+	public boolean isModtDoc() {
+		return modtDoc;
+	}
+
+	public void setModtDoc(boolean modtDoc) {
+		this.modtDoc = modtDoc;
+	}
+
+	public List<Customer> getCustomerList() {
+		return customerList;
+	}
+
+	public void setCustomerList(List<Customer> customerList) {
+		this.customerList = customerList;
+	}
+
+	public String getRegistrationOffice() {
+		return registrationOffice;
+	}
+
+	public void setRegistrationOffice(String registrationOffice) {
+		this.registrationOffice = registrationOffice;
+	}
 
 }

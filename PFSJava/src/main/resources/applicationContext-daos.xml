@@ -11523,7 +11523,7 @@
 		</property>
 		<property name="transactionAttributes">
 			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
@@ -11549,6 +11549,11 @@
 		<property name="legalECDetailService" ref="legalECDetailService" />
 		<property name="legalNoteService" ref="legalNoteService" />
 		<property name="queryDetailService" ref="queryDetailService" />
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="collateralSetupService" ref="collateralSetupService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="jointAccountDetailService" ref="jointAccountDetailService" />
+		<property name="branchService" ref="branchService" />
 	</bean>
 
 	<!-- LegallApplicantDetail -->

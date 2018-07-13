@@ -43,7 +43,6 @@
 package com.pennant.webui.legal.legalapplicantdetail;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -155,11 +154,17 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 
 			this.setLegalDetailDialogCtrl((LegalDetailDialogCtrl) arguments.get("legalDetailDialogCtrl"));
 			setNewApplicantDetails(true);
+			
 			if (arguments.containsKey("newRecord")) {
 				setNewRecord(true);
 			} else {
 				setNewRecord(false);
 			}
+			
+			if (this.legalApplicantDetail.isDefault()) {
+				setNewRecord(true);
+			}
+			
 			if (arguments.containsKey("enquiry")) {
 				setEnquiry((boolean) arguments.get("enquiry"));
 			}  
@@ -349,22 +354,17 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	public void doWriteBeanToComponents(LegalApplicantDetail aLegalApplicantDetail) {
 		logger.debug(Literal.ENTERING);
 
-		if (isNewRecord() && getLegalDetailDialogCtrl().getLegalDetail().getCustomer() != null) {
-			Customer customer = getLegalDetailDialogCtrl().getLegalDetail().getCustomer();
-			this.title.setValue(customer.getCustSalutationCode());
-			this.title.setDescription(customer.getLovDescCustSalutationCodeName());
-			this.propertyOwnersName.setValue(customer.getCustShrtName());
-			this.age.setValue(getAge(customer.getCustDOB()));
+		if (isNewRecord() && aLegalApplicantDetail.getCustomer() != null) {
+			Customer customer = aLegalApplicantDetail.getCustomer();
 			if (customer.getCustDOB() != null) {
 				String dob = DateUtility.formatDate(customer.getCustDOB(), DateFormat.LONG_DATE.getPattern());
 				this.label_dob.setValue(dob);
 			}
-		} else {
-			this.title.setValue(aLegalApplicantDetail.getTitle());
-			this.title.setDescription(aLegalApplicantDetail.getTitleName());
-			this.propertyOwnersName.setValue(aLegalApplicantDetail.getPropertyOwnersName());
-			this.age.setValue(aLegalApplicantDetail.getAge());
 		}
+		this.title.setValue(aLegalApplicantDetail.getTitle());
+		this.title.setDescription(aLegalApplicantDetail.getTitleName());
+		this.propertyOwnersName.setValue(aLegalApplicantDetail.getPropertyOwnersName());
+		this.age.setValue(aLegalApplicantDetail.getAge());
 		
 		this.relationshipType.setValue(aLegalApplicantDetail.getRelationshipType());
 		this.iDType.setValue(aLegalApplicantDetail.getIDType());
@@ -381,19 +381,6 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 		logger.debug(Literal.LEAVING);
 	}
 	
-	private int getAge(Date dob) {
-		if (dob == null) {
-			return 0;
-		}
-		int years = 0;
-		Date appDate = DateUtility.getAppDate();
-		if (dob.compareTo(appDate) < 0) {
-			int months = DateUtility.getMonthsBetween(appDate, dob);
-			years = months / 12;
-		}
-		return years;
-	}
-
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -891,7 +878,10 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 				duplicateRecord = false;
 			}
 		}
-
+		
+		aLegalApplicantDetail.setDefault(false);
+		aLegalApplicantDetail.setCustomerId(this.legalApplicantDetail.getCustomer() == null ? Long.MIN_VALUE
+				: this.legalApplicantDetail.getCustomer().getCustID());
 		if (PennantConstants.TRAN_UPD.equals(tranType)) {
 			this.legalApplicantDetailsList.add(aLegalApplicantDetail);
 			recordAdded = true;

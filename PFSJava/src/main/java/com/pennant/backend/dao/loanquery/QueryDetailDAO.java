@@ -63,5 +63,7 @@ public interface QueryDetailDAO extends BasicCrudDao<QueryDetail> {
 	List<QueryDetail> getQueryMgmtList(String finReference, String type);
 	
 	List<QueryDetail> getQueryMgmtListForAgreements(String finReference, String type);
+
+	List<QueryDetail> getQueryMgmtListByRef(String reference, String type);
 	
 }

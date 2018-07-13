@@ -85,7 +85,7 @@ public class LegalApplicantDetailDAOImpl extends BasisNextidDaoImpl<LegalApplica
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" legalApplicantId, legalId, title, propertyOwnersName, age, relationshipType, ");
-		sql.append(" iDType, iDNo, remarks, ");
+		sql.append(" iDType, iDNo, remarks, customerId, ");
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		if (type.contains("View")) {
 			sql.append(" ,titleName,iDTypeName ");
@@ -119,7 +119,7 @@ public class LegalApplicantDetailDAOImpl extends BasisNextidDaoImpl<LegalApplica
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT legalApplicantId, legalId, title, propertyOwnersName, age, relationshipType, ");
-		sql.append(" iDType, iDNo, remarks, ");
+		sql.append(" iDType, iDNo, remarks, customerId,");
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		if (type.contains("View")) {
 			sql.append(" ,titleName,iDTypeName ");
@@ -153,11 +153,11 @@ public class LegalApplicantDetailDAOImpl extends BasisNextidDaoImpl<LegalApplica
 		StringBuilder sql =new StringBuilder(" insert into LEGALAPPLICANTDETAILS");
 		sql.append(tableType.getSuffix());
 		sql.append("(legalApplicantId, legalId, title, propertyOwnersName, age, relationshipType, ");
-		sql.append(" iDType, iDNo, remarks, ");
+		sql.append(" iDType, iDNo, remarks, customerId,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
 		sql.append(" :legalApplicantId, :legalId, :title, :propertyOwnersName, :age, :relationshipType, ");
-		sql.append(" :iDType, :iDNo, :remarks, ");
+		sql.append(" :iDType, :iDNo, :remarks, :customerId,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (legalApplicantDetail.getLegalApplicantId() == Long.MIN_VALUE) {
@@ -185,7 +185,7 @@ public class LegalApplicantDetailDAOImpl extends BasisNextidDaoImpl<LegalApplica
 		sql.append(tableType.getSuffix());
 		sql.append(" set title = :title, propertyOwnersName = :propertyOwnersName, ");
 		sql.append(" age = :age, relationshipType = :relationshipType, iDType = :iDType, ");
-		sql.append(" iDNo = :iDNo, remarks = :remarks, ");
+		sql.append(" iDNo = :iDNo, remarks = :remarks, customerId = :customerId,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

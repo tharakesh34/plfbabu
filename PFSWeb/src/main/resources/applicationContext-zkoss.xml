@@ -1836,6 +1836,7 @@
 		<property name="pdfParserCaller" ref="pdfParserCaller" />
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
 		<property name="collateralSetupService" ref="collateralSetupService" />
+		<property name="legalDetailService" ref="legalDetailService" />
 		
 	</bean>
 
@@ -5346,6 +5347,9 @@
 		<property name="financeWorkFlowDAO" ref="financeWorkFlowDAO" />
 		<property name="searchProcessor" ref="searchProcessor" />
 		<property name="eventManager" ref="eventManager" />
+		<property name="mailUtility" ref="mailUtility" />
+		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
+		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
 	</bean>
 	
 	<!-- LegalPropertyDetail -->

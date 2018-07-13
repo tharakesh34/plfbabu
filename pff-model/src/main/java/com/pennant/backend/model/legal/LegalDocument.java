@@ -94,6 +94,10 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 
+	// ----Merge fields ----//
+	private String documentDateStr;
+	private String documentAcceptedName;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -112,6 +116,8 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("legalReference");
 		excludeFields.add("docImage");
 		excludeFields.add("seqNum");
+		excludeFields.add("documentDateStr");
+		excludeFields.add("documentAcceptedName");
 		return excludeFields;
 	}
 
@@ -301,6 +307,22 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 
 	public void setSeqNum(int seqNum) {
 		this.seqNum = seqNum;
+	}
+
+	public String getDocumentDateStr() {
+		return documentDateStr;
+	}
+
+	public void setDocumentDateStr(String documentDateStr) {
+		this.documentDateStr = documentDateStr;
+	}
+
+	public String getDocumentAcceptedName() {
+		return documentAcceptedName;
+	}
+
+	public void setDocumentAcceptedName(String documentAcceptedName) {
+		this.documentAcceptedName = documentAcceptedName;
 	}
 
 }

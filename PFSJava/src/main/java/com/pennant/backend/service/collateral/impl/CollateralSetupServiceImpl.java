@@ -565,6 +565,47 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		logger.debug("Leaving");
 		return collateralSetup;
 	}
+	
+	/**
+	 * getCollateralDetailById fetch the details by using CollateralDetailDAO's
+	 * getCollateralDetailById method.
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return CollateralDetail
+	 */
+	@Override
+	public CollateralSetup getCollateralSetupForLegal(String collateralRef) {
+		logger.debug("Entering");
+
+		CollateralSetup collateralSetup = getCollateralSetupDAO().getCollateralSetupByRef(collateralRef, "_View");
+		if (collateralSetup != null) {
+
+			// Co-Owner Details
+			collateralSetup.setCoOwnerDetailList(getCoOwnerDetailDAO().getCoOwnerDetailByRef(collateralRef, "_View"));
+
+			// Third Party Details
+			collateralSetup.setCollateralThirdPartyList(
+					getCollateralThirdPartyDAO().getCollThirdPartyDetails(collateralRef, "_View"));
+			// Customer Details
+			collateralSetup.setCustomerDetails(getCustomerDetailsService()
+					.getCustomerDetailsById(collateralSetup.getDepositorId(), false, "_View"));
+
+			// Document Details
+			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(collateralRef,
+					CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+			if (collateralSetup.getDocuments() != null && !collateralSetup.getDocuments().isEmpty()) {
+				collateralSetup.getDocuments().addAll(documentList);
+			} else {
+				collateralSetup.setDocuments(documentList);
+			}
+		}
+
+		logger.debug("Leaving");
+		return collateralSetup;
+	}
 
 	/**
 	 * Method for Fetching Finance Reference Details List by using FinReference

@@ -1085,6 +1085,15 @@
 				rightName="menu_Item_DAILYDISBURSALREPORT"/> <menuItem id="menu_Item_TrialBalancesByDealTypeandCurrency" 
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_FinDeptReports_TrialBalancesByDealTypeandCurrency"/> -->
 		</menu>
+		
+		<menu id="menu_Category_Legal">
+			<menuItem id="menu_Item_LegalDetailAcknowledgementReport"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menuItem_Reports_LegalDetail_AcknowledgementReport" />
+			<menuItem id="menu_Item_LegalDetailDisbursementReport"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_LegalDetail_DisbursementReport" />
+		</menu>
 		<menu id="menu_Category_PastDueReports">
 			<menuItem id="menu_Item_DailyPastdue"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"

@@ -24,7 +24,7 @@
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-
+<!-- 
 	<changeSet id="1.0" author="DurgaPrasad G">
 		<createTable tableName="LegalDetails">
 			<column name="LegalId" type="bigint"/>
@@ -3032,5 +3032,132 @@
 			LEFT JOIN bmtdocumenttypes t2 ON t1.IDtype = t2.doctypecode
 			LEFT join BMTSalutations t3 on t3.salutationCode = t1.Title
 		</createView>
+	</changeSet> -->
+	
+	<changeSet id="95" author="DurgaPrasad G">
+		<sql>
+			DELETE FROM SMTPARAMETERS where SYSPARMCODE = 'ESFB_LEGAL_DETAIL_ALERT_NOTIFICATION';
+			INSERT INTO SMTPARAMETERS VALUES ('ESFB_LEGAL_DETAIL_ALERT_NOTIFICATION', 'Mail alert notificvation Required or Not(Y, N)', 'String', 1, 'Y', 1, 0, NULL, NULL,'Mail alert notificvation Required or Not(Y, N)', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	
+			DELETE FROM SMTPARAMETERS where SYSPARMCODE = 'ESFB_LEGAL_DETAIL_DOCUMENT_DOWNLOAD';
+			INSERT INTO SMTPARAMETERS VALUES ('ESFB_LEGAL_DETAIL_DOCUMENT_DOWNLOAD', 'Document doenload Required or Not(Y, N)', 'String', 1, 'Y', 1, 0, NULL, NULL,'Document doenload Required or Not(Y, N)', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="96" author="DurgaPrasad G">
+		<sql>
+			delete from DocumentCategory where code = 'LEGAL';
+			Insert Into DocumentCategory values ((Select Max(id) +1  from DocumentCategory),'LEGAL', 'Legal Investigation.');
+			
+			Delete from bmtdocumenttypes Where doctypecode = 'LEG001';
+			Insert Into bmtdocumenttypes values ('LEG001',0,1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,'Legal Investigation Preliminary Document.',0,0,0,(select id from documentcategory Where Code = 'LEGAL'),0,0,0,0);
+			Delete from bmtdocumenttypes Where doctypecode = 'LEG002';
+			Insert Into bmtdocumenttypes values ('LEG002',0,1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,'Legal Investigation Final Opinion Document.',0,0,0,(select id from documentcategory Where Code = 'LEGAL'),0,0,0,0);
+			Delete from bmtdocumenttypes Where doctypecode = 'LEG003';
+			Insert Into bmtdocumenttypes values ('LEG003',0,1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,'Legal Investigation MODT/RMDT Documents.',0,0,0,(select id from documentcategory Where Code = 'FINANCE'),0,0,0,0);
+	</sql>
+	</changeSet>
+	
+	<changeSet id="97" author="DurgaPrasad G">
+		<addColumn tableName="LegalApplicantDetails">
+			<column name="customerId" type="bigint"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="98" author="DurgaPrasad G">
+		<addColumn tableName="LegalApplicantDetails_Temp">
+			<column name="customerId" type="bigint"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="99" author="DurgaPrasad G">
+		<createView viewName="LegalApplicantDetails_View" replaceIfExists="true">
+			Select T1.LegalApplicantId, T1.LegalId, T1.Title, T1.PropertyOwnersName, T1.Age, T1.Relationshiptype, T1.IDtype, T1.IDNo, T1.Remarks,		
+						T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						t2.doctypedesc iDTypeName, t3.saluationDesc titleName, customerId
+			FROM    	LegalApplicantDetails_Temp T1 
+			LEFT JOIN bmtdocumenttypes t2 ON t1.IDtype = t2.doctypecode
+			LEFT join BMTSalutations t3 on t3.salutationCode = t1.Title
+			UNION ALL
+			Select T1.LegalApplicantId, T1.LegalId, T1.Title, T1.PropertyOwnersName, T1.Age, T1.Relationshiptype, T1.IDtype, T1.IDNo, T1.Remarks,		
+						T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						t2.doctypedesc iDTypeName, t3.saluationDesc titleName, customerId
+			FROM    	LegalApplicantDetails T1 
+			LEFT JOIN bmtdocumenttypes t2 ON t1.IDtype = t2.doctypecode
+			LEFT join BMTSalutations t3 on t3.salutationCode = t1.Title
+			WHERE     NOT EXISTS (SELECT 1 FROM LegalApplicantDetails_Temp WHERE LegalApplicantId = T1.LegalApplicantId)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="100" author="DurgaPrasad G">
+		<createView viewName="LegalApplicantDetails_AView" replaceIfExists="true">
+			Select T1.LegalApplicantId, T1.LegalId, T1.Title, T1.PropertyOwnersName, T1.Age, T1.Relationshiptype, T1.IDtype, T1.IDNo, T1.Remarks, 	
+			T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			t2.doctypedesc iDTypeName, t3.saluationDesc titleName, customerId
+			FROM    	LegalApplicantDetails T1 
+			LEFT JOIN bmtdocumenttypes t2 ON t1.IDtype = t2.doctypecode
+			LEFT join BMTSalutations t3 on t3.salutationCode = t1.Title
+		</createView>
+	</changeSet>
+	
+	<changeSet id="101" author="DurgaPrasad G">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);	
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
+			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(roleid) FROM SECROLES );	
+			UPDATE SEQSECOPERATIONS SET SEQNO= (SELECT MAX(oprid) FROM SECOPERATIONS);	
+			UPDATE SEQSecOperationRoles SET SEQNO= (SELECT MAX(OprRoleID) FROM SecOperationRoles);	
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_Reports_LegalDetail_AcknowledgementReport','LegalDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_LegalDetail_DisbursementReport','LegalDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LEGAL_DETAIL_REPORT', 'Legal Detail Report', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_DETAIL_REPORT') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_Reports_LegalDetail_AcknowledgementReport'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_DETAIL_REPORT') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_LegalDetail_DisbursementReport'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECROLES SELECT (select MAX(RoleID)+1 from SecRoles),1,'LEGAL_DETAIL_REPORT','Legal Detail Report','',0,1000,null,' ',' ',null,' ',' ',' ',0 FROM SeqSecRoles WHERE 0=0;
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_DETAIL_REPORT'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_DETAIL_REPORT'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SECOPERATIONS SELECT (SELECT MAX(OPRID)+1 FROM SECOPERATIONS), 'LEGAL_DETAIL_REPORTS_OPERATION', 'Legal Detail Reports operation.', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECOPERATIONS WHERE 0=0;
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='LEGAL_DETAIL_REPORTS_OPERATION'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_DETAIL_REPORT'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);	
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
+			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(roleid) FROM SECROLES );	
+			UPDATE SEQSECOPERATIONS SET SEQNO= (SELECT MAX(oprid) FROM SECOPERATIONS);	
+			UPDATE SEQSecOperationRoles SET SEQNO= (SELECT MAX(OprRoleID) FROM SecOperationRoles);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="102" author="Durgaprasad G">
+		<sql>
+			delete from REPORTFILTERFIELDS where reportid =(select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_LegalDetailAcknowledgementReport');
+			delete from REPORTFILTERFIELDS where reportid =(select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_LegalDetailDisbursementReport');
+			
+			delete from REPORTCONFIGURATION where menuitemcode='menu_Item_LegalDetailAcknowledgementReport';
+			delete from REPORTCONFIGURATION where menuitemcode='menu_Item_LegalDetailDisbursementReport';
+			
+			Insert into REPORTCONFIGURATION 
+			values ((select max(reportid)+1 from REPORTCONFIGURATION),'Legal Detail Acknowledgment Report','Legal Detail Acknowledgment Report',1,'DocumentAcknowledgmentLetter','dataSource',1,'menu_Item_LegalDetailAcknowledgementReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+			
+			Insert into REPORTCONFIGURATION 
+			values ((select max(reportid)+1 from REPORTCONFIGURATION),'Legal Detail Disbursment Report','Legal Detail Disbursment Report',1,'ListofDocumentscollectedafterDisb','dataSource',1,'menu_Item_LegalDetailDisbursementReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+			
+			Insert into REPORTFILTERFIELDS 
+			values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_LegalDetailAcknowledgementReport'),1,'Legal Reference','LOVSEARCH','Legal Reference','T.legalReference',null,'LegalDetail','getLegalReference','getLegalReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			
+			Insert into REPORTFILTERFIELDS 
+			values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_LegalDetailDisbursementReport'),1,'Legal Reference','LOVSEARCH','Legal Reference','T.legalReference',null,'LegalDetail','getLegalReference','getLegalReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			</sql>
+	</changeSet>
+	
+	<changeSet id="103" author="DurgaPrasad G">
+		<sql>
+			DELETE FROM SMTPARAMETERS where SYSPARMCODE = 'ESFB_LEGAL_DETAIL_MODT_RMDT_DOC_ROLES';
+			INSERT INTO SMTPARAMETERS VALUES ('ESFB_LEGAL_DETAIL_MODT_RMDT_DOC_ROLES', ' legal detail documents modt and rmdt genarated roles', 'String', 1, 'AHF_LEGAL_DI_VERIFICATION', 200, 0, NULL, NULL,' legal detail documents modt and rmdt genarated roles', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
 	</changeSet>
 	</databaseChangeLog>

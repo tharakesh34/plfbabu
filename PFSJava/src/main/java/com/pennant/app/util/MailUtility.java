@@ -497,6 +497,56 @@ public class MailUtility implements Serializable {
 	}
 	
 	/**
+	 * Method to send a Mail.
+	 * 
+	 * @param to
+	 * @param subject
+	 * @param emailContent
+	 * @param attachmentName
+	 * @param attachment
+	 * @throws Exception
+	 */
+	public void sendMail(String[] to, String subject, String emailContent, String attachmentName, byte[] attachment) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		Transport transport = null;
+		Session session = null;
+		try {
+			if (getOutgoingSession() == null) {
+				createOutgoingSession();
+			}
+			session = getOutgoingSession();
+
+			MimeMessage message = new MimeMessage(session);
+			MimeMessageHelper helper = new MimeMessageHelper(message, true);
+			helper.setFrom(new InternetAddress(getOutgoingUserName()));
+			helper.setSubject(subject);
+			helper.setText(emailContent, true);
+			helper.setTo(to);
+			helper.setSentDate(DateUtility.getSysDate());
+			if (attachment != null) {
+				helper.addAttachment(attachmentName, new ByteArrayResource(attachment));
+			}
+			transport = session.getTransport("smtp");
+			transport.connect();
+			transport.sendMessage(message, message.getAllRecipients());
+		} catch (NoSuchProviderException e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new Exception("Provider for the given protocol is not found. Mail sending failed...!");
+		} catch (MessagingException e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new Exception("Mail sending failed...");
+		} finally {
+			if (null != transport && transport.isConnected()) {
+				transport.close();
+			}
+			if (null != session) {
+				session = null;
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	/**
 	 * Method to send SMS
 	 * @param mailTemplate
 	 * @throws Exception

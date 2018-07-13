@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.legal.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -324,6 +326,22 @@ public class LegalDetailDAOImpl extends BasisNextidDaoImpl<LegalDetail> implemen
 		return count > 0 ? true : false;
 	}
 
+	
+
+	@Override
+	public List<Long> getLegalIdListByFinRef(String loanReference) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		StringBuilder selectSql = new StringBuilder("Select LegalId from LegalDetails");
+		selectSql.append(" Where loanReference = :loanReference ");
+		source.addValue("loanReference", loanReference);
+		logger.debug("selectSql: " + selectSql.toString());
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
+	}
+	
 	/**
 	 * Sets a new <code>JDBC Template</code> for the given data source.
 	 * 
