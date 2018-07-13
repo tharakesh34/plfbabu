@@ -349,7 +349,7 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 		try {
 			Executions
 					.createComponents(
-							"/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CorporateApplicationFinanceUploadDialog.zul",null, map);
+							"/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CorporateApplicationFinanceFileUploadDialog.zul",null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
