@@ -10749,5 +10749,36 @@ UNION ALL
 		<dropColumn tableName="CashDenominations" columnName="ModuleCode" />
 	</changeSet>
 	
+	<changeSet id="258" author="Kesav">
+		<createView viewName="CashDenominations_AView" replaceIfExists="true">
+			Select 		T1.MovementId, T1.SeqNo, T1.Denomination, T1.Count, T1.Amount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			From 		CashDenominations T1		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="259" author="Kesav">
+		<createView viewName="CashDenominations_TView" replaceIfExists="true">
+			Select 		T1.MovementId, T1.SeqNo, T1.Denomination, T1.Count, T1.Amount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			From 		CashDenominations_Temp T1		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="260" author="Kesav">
+		<createView viewName="CashDenominations_View" replaceIfExists="true">
+			Select 		T1.MovementId, T1.SeqNo, T1.Denomination, T1.Count, T1.Amount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			From 		CashDenominations_Temp T1
+			
+			Union All
+			
+			Select 		T1.MovementId, T1.SeqNo, T1.Denomination, T1.Count, T1.Amount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			From 		CashDenominations T1
+			WHERE NOT  (EXISTS (SELECT 1 FROM CashDenominations_Temp WHERE CashDenominations_Temp.MovementId = T1.MovementId And CashDenominations_Temp.SeqNo = T1.SeqNo))		
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
 	
