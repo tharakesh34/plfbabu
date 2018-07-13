@@ -53,15 +53,8 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	private String division;
 	private String document;
 	private List<Notes> notesList;
-
-	
 	private String description;
 	private BigDecimal item;
-	
-	private List<ExcelComponents> mapList;
-	
-	
-	
 	
 	
 	public String getDescription() {
@@ -78,16 +71,6 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 
 	public void setItem(BigDecimal item) {
 		this.item = item;
-	}
-
-	
-	
-	public List<ExcelComponents> getMapList() {
-		return mapList;
-	}
-
-	public void setMapList(List<ExcelComponents> mapList) {
-		this.mapList = mapList;
 	}
 
 	public String getDocument() {
