@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.aspose.pdf.Document;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -18,13 +19,15 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	private static final long serialVersionUID = 3557119742009775415L;
 	private long detailId  = Long.MIN_VALUE;
 	private String creditRevCode;
+	private String custCtgCode;
+
 	private long customerId;
 	private String auditYear;
 	private String bankName;
 	private String auditors;
     private boolean consolidated;
 	private String location;	
-	private BigDecimal conversionRate;
+	private BigDecimal conversionRate=BigDecimal.ZERO;
 	private Date auditedDate;
 	private boolean newRecord = false;
 	private String lovValue;
@@ -40,6 +43,7 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	private String lovDescCustShrtName;
 	private long 	noOfShares;
 	private BigDecimal marketPrice;
+	
 	private int auditPeriod;
 	private String auditType;
 	private boolean qualified;
@@ -47,9 +51,53 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	private String lovDescMaxAuditYear;
 	private String lovDescMinAuditYear;
 	private String division;
-	
+	private String document;
 	private List<Notes> notesList;
+
 	
+	private String description;
+	private BigDecimal item;
+	
+	private List<ExcelComponents> mapList;
+	
+	
+	
+	
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public BigDecimal getItem() {
+		return item;
+	}
+
+	public void setItem(BigDecimal item) {
+		this.item = item;
+	}
+
+	
+	
+	public List<ExcelComponents> getMapList() {
+		return mapList;
+	}
+
+	public void setMapList(List<ExcelComponents> mapList) {
+		this.mapList = mapList;
+	}
+
+	public String getDocument() {
+		return document;
+	}
+
+	public void setDocument(String document) {
+		this.document = document;
+	}
+
 	public String getLovDescCustCIF() {
     	return lovDescCustCIF;
     }
@@ -130,6 +178,13 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	public Date getAuditedDate() {
     	return auditedDate;
     }
+	public String getCustCtgCode() {
+		return custCtgCode;
+	}
+	
+	public void setCustCtgCode(String custCtgCode) {
+		this.custCtgCode = custCtgCode;
+	}
 	public void setAuditedDate(Date auditedDate) {
     	this.auditedDate = auditedDate;
     }
@@ -306,5 +361,20 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	public void setDivision(String division) {
 	    this.division = division;
     }
+
+	public void setConversionRate(String formatAmount) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setConsolidated(Object consolidated2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setMapList(HashMap<String, BigDecimal> excelBSmap) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
