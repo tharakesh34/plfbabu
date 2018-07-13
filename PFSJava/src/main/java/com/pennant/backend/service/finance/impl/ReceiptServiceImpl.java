@@ -55,6 +55,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -84,6 +85,7 @@ import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -111,6 +113,7 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
@@ -148,6 +151,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private OverdraftScheduleDetailDAO		overdraftScheduleDetailDAO;
 	private LatePayMarkingService			latePayMarkingService;
 	private BankDetailService				bankDetailService;
+	@Autowired
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -728,6 +733,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(rceiptData.getFinanceDetail(), tableType.getSuffix()));
 		}
 
+		// Extended field Details
+		if (rceiptData.getFinanceDetail().getExtendedFieldRender() != null) {
+			List<AuditDetail> details = rceiptData.getFinanceDetail().getAuditDetailMap().get("ExtendedFieldDetails");
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					rceiptData.getFinanceDetail().getExtendedFieldHeader(), tableType.getSuffix());
+			auditDetails.addAll(details);
+		}
+		
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
 				.getBefImage(), financeMain));
@@ -951,6 +964,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		//=======================================
 		auditDetails.addAll(
 				getCheckListDetailService().delete(receiptData.getFinanceDetail(), TableType.TEMP_TAB.getSuffix(), tranType));
+		
+		// Delete Extended field Render Details.
+		List<AuditDetail> extendedDetails = receiptData.getFinanceDetail().getAuditDetailMap().get("ExtendedFieldDetails");
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			auditDetails.addAll(extendedFieldDetailsService.delete(receiptData.getFinanceDetail().getExtendedFieldHeader(),
+					financeMain.getFinReference(), "_Temp", auditHeader.getAuditTranType(), extendedDetails));
+		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
@@ -1178,6 +1198,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					&& !rceiptData.getFinanceDetail().getFinanceCheckList().isEmpty()) {
 				auditDetails.addAll(getCheckListDetailService().doApprove(rceiptData.getFinanceDetail(), ""));
 			}
+			
+			//Extended Field Details
+			if (rceiptData.getFinanceDetail().getExtendedFieldRender() != null) {
+				List<AuditDetail> details = rceiptData.getFinanceDetail().getAuditDetailMap().get("ExtendedFieldDetails");
+				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+						rceiptData.getFinanceDetail().getExtendedFieldHeader(), "");
+				auditDetails.addAll(details);
+			}
 
 			// ScheduleDetails delete
 			//=======================================
@@ -1216,9 +1244,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			// Finance Main Deletion from temp
 			getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
+			
+			// Extended field Render Details Delete from temp.
+			List<AuditDetail> extendedDetails = rceiptData.getFinanceDetail().getAuditDetailMap()
+					.get("ExtendedFieldDetails");
+			if (extendedDetails != null && extendedDetails.size() > 0) {
+				tempAuditDetailList.addAll(extendedFieldDetailsService.delete(
+						rceiptData.getFinanceDetail().getExtendedFieldHeader(), financeMain.getFinReference(), "_Temp",
+						auditHeader.getAuditTranType(), extendedDetails));
+			}
 
 		}
-
+		
 		FinReceiptData tempRepayData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
 		FinanceMain tempfinanceMain = tempRepayData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -1573,10 +1610,28 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
+		
+		FinReceiptData repayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+		FinanceDetail financeDetail = repayData.getFinanceDetail();
+		FinanceMain financeMain = repayData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		String usrLanguage = financeMain.getUserDetails().getLanguage();
+		
+		// Extended field details Validation
+		if (financeDetail.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
+			ExtendedFieldHeader extHeader = financeDetail.getExtendedFieldHeader();
+			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+		
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
 
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
@@ -1799,6 +1854,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						financeDetail.getFinScheduleData().getFinFeeDetailList(), financeMain.getWorkflowId(),
 						method, auditTranType, auditHeader.getUsrLanguage(), false));
 			}
+		}
+		
+		// Extended Field Details
+		if (financeDetail.getExtendedFieldRender() != null) {
+			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
+					.setExtendedFieldsAuditData(financeDetail.getExtendedFieldRender(), auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
 		financeDetail.setAuditDetailMap(auditDetailMap);

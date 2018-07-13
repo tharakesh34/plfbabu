@@ -136,6 +136,7 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -3048,6 +3049,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						receiptDetail.setFundingAc(Long.valueOf(object.toString()));
 					}
 				}
+				// Extended Fields
+				if (data.getFinanceDetail().getExtendedFieldHeader() != null) {
+					data.getFinanceDetail().setExtendedFieldRender(extendedFieldCtrl.save());
+				}
+				
 			}
 
 			if (recReject || isValidateData(false)) {
@@ -3564,7 +3570,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			//Accounting Details Tab Addition
 			appendAccountingDetailTab();
 		}
-
+		
+        //Append Extended Field Detail Tab
+		appendExtendedFieldDetails(getFinanceDetail(), moduleDefiner);
+		
 		this.recordStatus.setValue(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus());
 
 		logger.debug("Leaving");
@@ -6182,7 +6191,31 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		afinanceMain.setUserDetails(getUserWorkspace().getLoggedInUser());
 		aRepayData.getFinanceDetail().getFinScheduleData().setFinanceMain(afinanceMain);
-
+		
+		if (aRepayData.getFinanceDetail().getExtendedFieldRender() != null) {
+			int seqNo = 0;
+			ExtendedFieldRender details = aRepayData.getFinanceDetail().getExtendedFieldRender();
+				details.setReference(afinanceMain.getFinReference());
+			details.setSeqNo(++seqNo);
+			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			details.setRecordStatus(afinanceMain.getRecordStatus());
+			details.setRecordType(afinanceMain.getRecordType());
+			details.setVersion(afinanceMain.getVersion());
+			details.setWorkflowId(afinanceMain.getWorkflowId());
+			details.setTaskId(taskId);
+			details.setNextTaskId(nextTaskId);
+			details.setRoleCode(getRole());
+			details.setNextRoleCode(nextRoleCode);
+			details.setNewRecord(afinanceMain.isNewRecord());
+			if (PennantConstants.RECORD_TYPE_DEL.equals(afinanceMain.getRecordType())) {
+				if (StringUtils.trimToNull(details.getRecordType()) == null) {
+					details.setRecordType(afinanceMain.getRecordType());
+					details.setNewRecord(true);
+				}
+			}
+		}
+		
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			afinanceMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());

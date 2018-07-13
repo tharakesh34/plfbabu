@@ -1899,6 +1899,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			extendedFieldCtrl.setReadOnly(/* isReadOnly("CustomerDialog_custFirstName") */false);
 			extendedFieldCtrl.setWindow(getMainWindow());
 			extendedFieldCtrl.setTabHeight(this.borderLayoutHeight - 100);
+			//for getting rights in ExtendeFieldGenerator these two fields required.
+			/*extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
+			extendedFieldCtrl.setUserRole(getRole());*/
 			extendedFieldCtrl.render();
 		} catch (Exception e) {
 			logger.error("Exception", e);
