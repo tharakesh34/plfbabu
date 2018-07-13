@@ -899,6 +899,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 					//reading Description and sequence ID For validating with Excel ID and Description
 					for (FinCreditRevSubCategory fcr : subcategories) {
 						desc.put(fcr.getSubCategoryDesc(), fcr.getSubCategoryDesc());
+						String.valueOf(fcr.getSubCategorySeque());
 						seqId.put(fcr.getSubCategorySeque(), fcr.getSubCategorySeque());
 					}
 
@@ -931,6 +932,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 
 					for (Object[] object : revData.getValue()) {
 						for (FinCreditRevSubCategory fcr : subcategories) {
+							String.valueOf(fcr.getSubCategorySeque());
 							if (StringUtils.equalsIgnoreCase(object[0].toString(), fcr.getSubCategorySeque())) {
 								FinCreditReviewSummary summary = new FinCreditReviewSummary();
 								summary.setNewRecord(true);
