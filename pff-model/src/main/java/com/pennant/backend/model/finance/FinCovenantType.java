@@ -80,6 +80,8 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	@XmlElement
 	private boolean alwOtc;
 	@XmlElement
+	private boolean internalUse;
+	@XmlElement
 	private int postponeDays;
 	private String module;
 
@@ -283,6 +285,14 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 
 	public void setModule(String module) {
 		this.module = module;
+	}
+
+	public boolean isInternalUse() {
+		return internalUse;
+	}
+
+	public void setInternalUse(boolean internalUse) {
+		this.internalUse = internalUse;
 	}
 
 }

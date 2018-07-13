@@ -540,4 +540,10 @@ update adtCustomers set marginDeviation=0;
 	 <changeSet id="28" author="Kesav">
 		<dropColumn tableName="AdtCashDenominations" columnName="ModuleCode" />
 	</changeSet>
+	
+	<changeSet id="29" author="Vinay">
+		<addColumn tableName="AdtFinCovenantType">
+			<column name="InternalUse" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

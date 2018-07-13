@@ -118,6 +118,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	// ###_ 0.2
 	protected Checkbox alwOtc;
 	protected Row  row_AlwOTC;
+	protected Checkbox internalUse;
 
 	protected Label label_postponeDays;
 	protected Hbox hbox_postponeDays;
@@ -456,6 +457,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		}
 		
 		this.description.setReadonly(isReadOnly("FinCovenantTypeDialog_description"));
+		this.internalUse.setDisabled(isReadOnly("FinCovenantTypeDialog_internalUse"));
 		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -629,7 +631,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.alwOtc.setDisabled(!aFinAdvnancePayments.isOtcFlag());			
 		}
 		
-		
+		this.internalUse.setChecked(aFinAdvnancePayments.isInternalUse());
 		doSetWaiverProp();
 		doSetOTCProp();
 		doSetPostponeProp();
@@ -700,6 +702,12 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		
 		try {
 			aFinCovenantType.setAlwOtc(this.alwOtc.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			aFinCovenantType.setInternalUse(this.internalUse.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
