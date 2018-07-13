@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CorporateCreditRevFinanceFileUploadDialog"
+		title="${c:l('window_CreditRevFinanceFileUploadDialog.title')}"
+		border="normal"
+		apply="${corporateApplicationFinanceFileUploadDialogCtrl}" width="50%"
+		height="70%" sizable="false"
+		style="border:0px; padding-left:5px; padding-right:5px;"
+		closable="true">
+		<borderlayout id="borderLayout_FinanceTypeList">
+
+			<center border="none" autoscroll="true">
+				<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+					style="border:0px">
+					<columns>
+						<column width="100px" />
+						<column width="150px" />
+						<column />
+					</columns>
+					<rows>
+						<row id="CustSelectionRow">
+							<space />
+							<label
+								id="label_CreditRevSelectCategory_Customer"
+								value="${c:l('label_CreditRevSelectCategory_CustomerType.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory"
+									visible="false" />
+								<hbox>
+									<radiogroup id="custType">
+										<radio id="custType_Existing"
+											label="Existing" selected="true" />
+										<radio id="custType_Prospect"
+											label="Prospect" />
+									</radiogroup>
+								</hbox>
+							</hbox>
+						</row>
+						<row id="customerRow">
+							<space />
+							<label
+								id="label_CreditRevSelectCategory_CustomerCIF"
+								value="${c:l('label_CreditRevSelectCategory_CustomerCIF.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<longbox id="custID" width="171px"
+									maxlength="26" visible="false" />
+								<textbox id="lovDescCustCIF"
+									width="150px" />
+								<button id="btnSearchCustCIF"
+									image="/images/icons/LOVSearch.png" />
+								<label id="custShrtName" />
+							</hbox>
+						</row>
+
+						<row id="auditPeriodRow">
+							<space />
+							<label
+								id="label_CreditRevSelectCategory_auditPeriodRow"
+								value="${c:l('label_CreditRevSelectCategory_auditPeriod.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<combobox id="auditPeriod"
+									width="150px" />
+							</hbox>
+						</row>
+
+						<row id="customerBankName">
+							<space />
+							<label
+								id="label_CreditApplicationReviewDialog_BankName"
+								value="${c:l('label_CreditApplicationReviewDialog_BankName.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<textbox id="bankName" width="150px" />
+							</hbox>
+						</row>
+
+
+						<row id="customerAuditors">
+							<space />
+							<label
+								id="label_CreditApplicationReviewDialog_Auditors"
+								value="${c:l('label_CreditApplicationReviewDialog_Auditors.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<textbox id="auditors" width="150px" />
+							</hbox>
+						</row>
+
+						<row id="customerConsolOrUnConsol">
+							<space />
+							<label
+								id="label_CreditApplicationReviewDialog_ConsolOrUnConsol"
+								value="${c:l('label_CreditApplicationReviewDialog_ConsolOrUnConsol.value')}" />
+							<hbox>
+								<radiogroup id="conSolOrUnConsol">
+									<radio label="Consolidated"
+										id="conSolidated" selected="true" value="Consolidated" />
+									<radio id="unConsolidated"
+										label="Un Consolidated" value="UnConsolidated" />
+								</radiogroup>
+							</hbox>
+						</row>
+
+						<row id="customerLocation">
+							<space />
+							<label
+								id="label_CreditApplicationReviewDialog_Location"
+								value="${c:l('label_CreditApplicationReviewDialog_Location.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<textbox id="location" width="150px" />
+							</hbox>
+						</row>
+
+						<row id="customerAuditedDate">
+							<space />
+							<label
+								id="label_CreditApplicationReviewDialog_AuditedDate"
+								value="${c:l('label_CreditApplicationReviewDialog_AuditedDate.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<datebox id="auditedDate" width="150px"
+									constraint="no future:" />
+							</hbox>
+						</row>
+
+						<row id="customerAuditType">
+							<space />
+							<label
+								id="label_CreditApplicationReviewDialog_AuditType"
+								value="${c:l('label_CreditApplicationReviewDialog_AuditType.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<combobox id="auditType" width="150px"
+									constraint="no future:" />
+							</hbox>
+						</row>
+
+						<row id="QualifiedUnQualified">
+							<space />
+							<label
+								id="label_CreditRevSelectCategory_QualifiedUnQualified"
+								value="${c:l('label_CreditRevSelectCategory_QualifiedUnQualified.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory"
+									visible="false" />
+								<hbox>
+									<radiogroup
+										id="qualifiedUnQualified">
+										<radio label="Qualified"
+											id="qualRadio" selected="true" value="Qual" />
+										<radio id="unQualRadio"
+											label="UnQualified" value="UnQual" />
+									</radiogroup>
+								</hbox>
+							</hbox>
+						</row>
+						<row id="customerCurrencyType">
+							<space />
+							<label
+								id="label_CreditApplicationReviewDialog_FinCcy"
+								value="${c:l('labelCreditApplicationReviewDialog_FinCcy.value')}" />
+							<hbox>
+								<extendedcombobox id="currencyType"
+									width="150px" />
+							</hbox>
+						</row>
+
+
+						<row visible="true">
+							<label id="label_DocumentRef"
+								value="${c:l('label_CreditRevSelectCategory_DocumentRef.value')}" />
+							<label
+								id="label_CreditRevSelectCategory_CorporateDoc"
+								value="${c:l('label_CreditRevSelectCategory_CorporateDoc.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<textbox id="documentName" width="250px"
+									readonly="true" />
+								<button upload="true"
+									label="${c:l('btBrowse_label')}" id="btnUploadDoc" hflex="1" />
+
+							</hbox>
+						</row>
+						<row>
+							<space />
+							<space />
+							<hbox>
+								<space spacing="2px" />
+								<hbox>
+									<space spacing="10px" />
+									<button id="btnProceed"
+										label="${c:l('label_SelectFinanceTypeDialog_btnProceed.value')}"
+										style="align:center"
+										tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnProceed.tooltiptext')}">
+									</button>
+								</hbox>
+							</hbox>
+						</row>
+					</rows>
+				</grid>
+			</center>
+		</borderlayout>
+	</window>
+</zk>
