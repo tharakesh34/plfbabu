@@ -950,14 +950,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 				tabs.add(financeReferenceDetail.getLovDescNamelov());
 			}
 		}
-
-		if (tabs.contains(FinanceConstants.PROCEDT_VERIFICATION_TV_INIT)
-				&& tabs.contains(FinanceConstants.PROCEDT_SAMPLING_INIT)) {
-			MessageUtil.showError("Either Technical or Sampling verification is allowed.");
-			tabCustLimitCheck.setSelected(true);
-			return true;
-		}
-
+		
 		return false;
 	}
 
@@ -968,14 +961,14 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		if (vrfType != null) {
 			type = vrfType.toString();
 		} else {
-			type = "Sampling";
+			type = "sampling";
 		}
 		// Get the Workflow details.
 		WorkFlowDetails workflow = WorkFlowUtil.getDetailsByType(financeReference.getWorkFlowType());
 		// Workflow Engine
 		WorkflowEngine engine = new WorkflowEngine(workflow.getWorkFlowXml());
 		String initStages[] = null;
-		String apprStages[] = null;
+		String apprStage = null;
 
 		// get the Initiation Stages and Approval Stage
 		for (Listitem initListItem : listBoxLimitService.getItems()) {
@@ -984,30 +977,27 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 				if (StringUtils.equals(financeReferenceDetail.getLovDescNamelov(), initId)) {
 					initStages = financeReferenceDetail.getMandInputInStage().split(",");
 				} else if (StringUtils.equals(financeReferenceDetail.getLovDescNamelov(), approvalId)) {
-					apprStages = financeReferenceDetail.getMandInputInStage().split(",");
+					apprStage = financeReferenceDetail.getMandInputInStage().replace(",", "");
 				}
 			}
 		}
 
 		// Check whether the Both Initiation and Approval Stages should be
 		// Mentioned.
-		if (initStages != null && apprStages != null) {
+		if (initStages != null && apprStage != null) {
 			for (String fiInitStage : initStages) {
 				String task = engine.getUserTaskId(fiInitStage);
-				
-				for (String apprStage : apprStages) {
 				String nextTask = engine.getUserTaskId(apprStage);
 
 				// Check whether the Approval Stage is a Successor to the Initiation Stage.
 				if (engine.compareTo(task, nextTask) != Flow.SUCCESSOR) {
 					MessageUtil.showError(type + " initiation stage must be predecessors to the " + type
-							+ " approval stage in miscellaneous Tab.");
+							+ " approval stage in miscellaneous tab.");
 					tabCustLimitCheck.setSelected(true);
 					return false;
 				}
 			}
-			}
-		} else if ((initStages != null && apprStages == null) || (initStages == null && apprStages != null)) {
+		} else if ((initStages != null && apprStage == null) || (initStages == null && apprStage != null)) {
 			MessageUtil.showError("Either both " + type + " initiation & " + type
 					+ " approval stages should be saved or none of them.");
 			tabCustLimitCheck.setSelected(true);

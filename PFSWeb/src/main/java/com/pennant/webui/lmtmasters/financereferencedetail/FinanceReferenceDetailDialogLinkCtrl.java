@@ -718,12 +718,6 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	private void hasSingleApprStage(FinanceReferenceDetail aFinanceReferenceDetail) {
 		//Verification Approval Event validations in Miscellaneous Tab
 		String reference = aFinanceReferenceDetail.getLovDescNamelov();
-		
-		if(FinanceConstants.PROCEDT_SAMPLING_APPR.equals(reference)) {
-			// Allow Sampling approval more than 1 role.
-			return;
-		}
-		
 		int length = getCheckedValues(listboxmandInputInStage).split(",").length;
 		if (aFinanceReferenceDetail.getFinRefType() == FinanceConstants.PROCEDT_LIMIT && length > 1) {
 			String[] message = new String[1];

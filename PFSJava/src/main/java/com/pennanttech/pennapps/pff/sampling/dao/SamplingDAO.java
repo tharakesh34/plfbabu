@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
+import com.pennanttech.pennapps.pff.sampling.model.SamplingCollateral;
 import com.pennanttech.pff.core.TableType;
 
 public interface SamplingDAO {
@@ -28,17 +28,19 @@ public interface SamplingDAO {
 
 	List<Customer> getCustomers(String keyreference, String type);
 
-	List<CollateralSetup> getCollaterals(String keyreference);
+	List<SamplingCollateral> getCollaterals(String keyreference, String collateralType);
 
 	Sampling getSampling(String keyReference, String type);
 
 	Map<String, String> getEligibilityRules();
 
-	List<CollateralSetup> getCollateralsBySamplingId(Long samplingId);
+	List<SamplingCollateral> getCollateralTypesBySamplingId(Long samplingId);
+	
+	List<SamplingCollateral> getCollateralsBySamplingId(List<String> linkIds, String collateralType);
 
 	ExtendedFieldRender getCollateralExtendedFields(String collReference, String tableName, String type);
 
-	Map<String, Object> getExtendedField(long samplingId, String reference, String tableName, String type);
+	Map<String, Object> getExtendedField(String linkId, int seqNo, String tableName, String type);
 
 	long getLinkId(Sampling sampling, String collRef, String inputSource);
 
@@ -58,7 +60,7 @@ public interface SamplingDAO {
 	
 	Map<String, Object> getRemarks(long samplingId);
 	
-	String getCollateralRef(Sampling sampling, String collRef, String inputSource);
+	String getCollateralRef(Sampling sampling, String collRef);
 
 	long getIncomeLinkIdByCustId(long custId, long samplinId);
 
@@ -79,5 +81,9 @@ public interface SamplingDAO {
 	void updateIncomes(Sampling sampling);
 
 	void updateCollaterals(Sampling sampling, String collateralType);
+
+	List<String> getCollateralTypes(String finReference);
+
+	List<String> getCollateralLinkIds(long samplingId);
 
 }

@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-public class SamplingDetails implements Serializable {
+public class SamplingDetail implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -19,7 +19,7 @@ public class SamplingDetails implements Serializable {
 	private String remarksId = StringUtils.EMPTY;
 	private boolean alignLeft;
 
-	public SamplingDetails() {
+	public SamplingDetail() {
 		super();
 	}
 

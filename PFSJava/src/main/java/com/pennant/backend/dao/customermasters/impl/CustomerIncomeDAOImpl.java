@@ -319,9 +319,9 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		query.append(" inner join");
 		query.append(" (select custid, finreference from financemain_view");
 		query.append(" union all");
-		query.append(" select jointaccountid custid, finreference from finjointaccountdetails_view) fm");
+		query.append(" select custid, finreference from finjointaccountdetails_view) fm");
 		query.append(" on fm.custid=ci.custid where fm.finreference = :finreference");
-
+		
 		logger.trace(Literal.SQL + query.toString());
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();

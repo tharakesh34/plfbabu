@@ -1,6 +1,5 @@
 package com.pennanttech.pff.dao.customer.income;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -12,9 +11,9 @@ public interface IncomeDetailDAO {
 
 	void delete(long id, String type);
 
-	BigDecimal getTotalIncomeByLinkId(long linkId);
+	List<CustomerIncome> getTotalIncomeByLinkId(long linkId);
 
-	BigDecimal getTotalIncomeByFinReference(String keyReference);
+	List<CustomerIncome> getTotalIncomeByFinReference(String keyReference);
 
 	List<CustomerIncome> getIncomes(long linkId);
 
@@ -22,5 +21,5 @@ public interface IncomeDetailDAO {
 
 	void deletebyLinkId(long linkId, String type);
 
-	BigDecimal getTotalIncomeBySamplingId(long id);
+	List<CustomerIncome> getTotalIncomeBySamplingId(long id);
 }

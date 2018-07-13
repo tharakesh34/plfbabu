@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -146,7 +145,7 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		source.addValue("Reference", reference);
 		
 		StringBuilder selectSql =  null;
-		if(StringUtils.startsWith(type, "_View")){
+		if(StringUtils.startsWithIgnoreCase(type, "_View")){
 			selectSql = new StringBuilder("Select * from (Select * from ");
 			selectSql.append(tableName);
 			selectSql.append("_Temp");
@@ -521,18 +520,50 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reference", reference);
 		try {
-			List<Map<String, Object>> list = this.jdbcTemplate.queryForList(sql.toString(), source);
-
-			if (CollectionUtils.isNotEmpty(list)) {
-				map.putAll(list.get(0));
-			}
+			logger.debug(Literal.LEAVING);
+			return this.jdbcTemplate.queryForMap(sql.toString(), source);
 		} catch (DataAccessException e) {
 			logger.error(Literal.ENTERING, e);
 			return map;
 		}
+	}
+	
+	@Override
+	public Map<String, Object> getCollateralMap(String reference, int seqNo, String tableName, String type) {
+		logger.debug(Literal.ENTERING);
+		Map<String, Object> map = new HashMap<>();
 
-		logger.debug(Literal.LEAVING);
-		return map;
+		type = type.toLowerCase();
 
+		StringBuilder sql = new StringBuilder();
+		if (StringUtils.startsWith(type, "_view")) {
+			sql.append("select * from (select * from ");
+			sql.append(tableName);
+			sql.append("_temp");
+			sql.append(" t1  union all select * from ");
+			sql.append(tableName);
+			sql.append(" t1  where not exists (select 1 from ");
+			sql.append(tableName);
+			sql.append("_temp");
+			sql.append(" where reference = t1.reference)) t ");
+		} else {
+			sql.append("select * from ");
+			sql.append(tableName);
+			sql.append(StringUtils.trimToEmpty(type));
+		}
+		sql.append(" where reference = :reference and seqno = :seqno");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("reference", reference);
+		source.addValue("seqno", seqNo);
+		try {
+			logger.debug(Literal.LEAVING);
+			return this.jdbcTemplate.queryForMap(sql.toString(), source);
+		} catch (DataAccessException e) {
+			logger.error(Literal.ENTERING, e);
+			return map;
+		}
 	}
 }

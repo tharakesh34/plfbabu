@@ -49,8 +49,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.pennanttech.pennapps.pff.sampling.model.Sampling;
-import com.pennanttech.pennapps.pff.sampling.model.SamplingDetails;
+import com.pennanttech.pennapps.pff.sampling.model.SamplingDetail;
 
 public class AgreementDetail {
 
@@ -7014,7 +7013,7 @@ private String custAccount ="";
 	private String smplResubmitReasonDesc;
 	private String smplRecommendedAmount;
 	private String smplRemarks;
-	List<SamplingDetails> smplDetails = new ArrayList<>();
+	List<SamplingDetail> smplDetails = new ArrayList<>();
 
 	public String getSmplTolerance() {
 		return smplTolerance;
@@ -7056,11 +7055,11 @@ private String custAccount ="";
 		this.smplRemarks = smplRemarks;
 	}
 
-	public List<SamplingDetails> getSmplDetails() {
+	public List<SamplingDetail> getSmplDetails() {
 		return smplDetails;
 	}
 
-	public void setSmplDetails(List<SamplingDetails> smplDetails) {
+	public void setSmplDetails(List<SamplingDetail> smplDetails) {
 		this.smplDetails = smplDetails;
 	}
 }

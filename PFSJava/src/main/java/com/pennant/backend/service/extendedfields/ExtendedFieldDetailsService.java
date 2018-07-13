@@ -7,11 +7,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,6 @@ import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -84,35 +85,6 @@ public class ExtendedFieldDetailsService {
 		return value;
 	}
 
-	public List<Map<String, ExtendedFieldData>> getExtendedFildValueLableMap(String tableName, String reference,
-			String tableType) {
-		logger.debug("Entering");
-
-		ExtendedFieldHeader fieldHeader = getExtendedFieldHeader(tableName);
-
-		if (fieldHeader == null) {
-			return null;
-		}
-
-		List<ExtendedFieldDetail> fieldDetailsList = fieldHeader.getExtendedFieldDetails();
-		if (fieldDetailsList != null && !fieldDetailsList.isEmpty()) {
-			return null;
-		}
-
-		List<Map<String, Object>> fiildValueMap = extendedFieldRenderDAO.getExtendedFieldMap(reference, tableName,
-				tableType);
-
-		List<Map<String, ExtendedFieldData>> resultList = new ArrayList<>();
-
-		if (fiildValueMap != null && !fiildValueMap.isEmpty()) {
-			for (Map<String, Object> map : fiildValueMap) {
-				resultList.add(getResultMap(fieldDetailsList, map));
-			}
-		}
-		logger.debug("Leaving");
-		return resultList;
-	}
-
 	public List<ExtendedFieldData> getExtendedFildValueLableList(String tableName, String reference, String tableType) {
 		logger.debug("Entering");
 
@@ -157,18 +129,32 @@ public class ExtendedFieldDetailsService {
 		return extendedFieldData;
 	}
 
-	public Map<String, ExtendedFieldData> getCollateralMap(String tableName, String reference) {
+	public Map<String, Object> getCollateralMap(String tableName, String reference) {
 		logger.debug(Literal.ENTERING);
+		Map<String, Object> finalMap = new HashMap<>();
 
+		Map<String, Object> originalMap = extendedFieldRenderDAO.getCollateralMap(reference, tableName, "");
+
+		if (MapUtils.isNotEmpty(originalMap)) {
+			for (Entry<String, Object> object : originalMap.entrySet()) {
+				finalMap.put(object.getKey().toLowerCase(), object.getValue());
+			}
+		}
+
+		return finalMap;
+	}
+	
+	public Map<String, ExtendedFieldData> getCollateralFields(String tableName, String reference) {
+		logger.debug(Literal.ENTERING);
 		Map<String, ExtendedFieldData> resultList = new HashMap<>();
-		ExtendedFieldHeader fieldHeader;
+		
 		String tempTableName = tableName;
 		if (tempTableName.startsWith("verification")) {
 			tempTableName = tempTableName.replace("verification", "collateral");
 			tempTableName = tempTableName.replace("tv", "ed");
 		}
 
-		fieldHeader = getExtendedFieldHeader(tempTableName);
+		ExtendedFieldHeader fieldHeader = getExtendedFieldHeader(tempTableName);
 
 		if (fieldHeader == null) {
 			return resultList;
@@ -179,50 +165,23 @@ public class ExtendedFieldDetailsService {
 			return resultList;
 		}
 
-		Map<String, Object> fieldMap = extendedFieldRenderDAO.getCollateralMap(reference, tableName, "");
-		resultList = getResultMap(fieldDetailsList, fieldMap);
-
-		logger.debug(Literal.LEAVING);
-		return resultList;
+		
+		return getResultMap(fieldDetailsList, getCollateralMap(tableName, reference));
 	}
 
-	public Map<String, Object> getCollateralsMap(String tableName, String reference) {
-		logger.debug(Literal.ENTERING);
-		Map<String, Object> fieldMap = new HashMap<>();
-		ExtendedFieldHeader fieldHeader;
-		String tempTableName = tableName;
-		if (tempTableName.startsWith("verification")) {
-			tempTableName = tempTableName.replace("verification", "collateral");
-			tempTableName = tempTableName.replace("tv", "ed");
-		}
-
-		fieldHeader = getExtendedFieldHeader(tempTableName);
-
-		if (fieldHeader == null) {
-			return fieldMap;
-		}
-
-		List<ExtendedFieldDetail> fieldDetailsList = fieldHeader.getExtendedFieldDetails();
-		if (CollectionUtils.isEmpty(fieldDetailsList)) {
-			return fieldMap;
-		}
-		return extendedFieldRenderDAO.getCollateralMap(reference, tableName, "");
-	}
-
-	private Map<String, ExtendedFieldData> getResultMap(List<ExtendedFieldDetail> fieldDetailsList,
-			Map<String, Object> map) {
+	private Map<String, ExtendedFieldData> getResultMap(List<ExtendedFieldDetail> fieldDetailsList, Map<String, Object> map) {
 		Map<String, ExtendedFieldData> resultMap = new HashMap<>();
 		ExtendedFieldData fieldData = null;
 
 		for (ExtendedFieldDetail detail : fieldDetailsList) {
-			if (map.containsKey(detail.getFieldName().toLowerCase())) {
+			String key = detail.getFieldName().toLowerCase();
+			if (map.containsKey(key)) {
 				fieldData = new ExtendedFieldData();
-				fieldData.setFieldValue(map.get(detail.getFieldName().toLowerCase()));
+				fieldData.setFieldValue(map.get(key));
 				fieldData.setFieldName(detail.getFieldName());
 				fieldData.setFieldType(detail.getFieldType());
 				fieldData.setFieldLabel(detail.getFieldLabel());
 				fieldData.setFieldPrec(detail.getFieldPrec());
-
 				resultMap.put(detail.getFieldName(), fieldData);
 			}
 		}
@@ -777,7 +736,10 @@ public class ExtendedFieldDetailsService {
 			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
 				continue;
 			}
-			String collRef = samplingDAO.getCollateralRef(sampling, extendedFieldRender.getReference(), "collaterals");
+			
+			String linkId = StringUtils.trimToEmpty(extendedFieldRender.getReference());
+			linkId = linkId.replaceAll("S", "");
+			String collRef = samplingDAO.getCollateralRef(sampling, linkId);
 
 			ExtendedFieldHeader extHeader = extHeaderMap.get(collRef);
 
@@ -860,7 +822,11 @@ public class ExtendedFieldDetailsService {
 			HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
 			if (saveRecord || updateRecord) {
 				if (saveRecord) {
-					mapValues.put("Reference", extendedFieldRender.getReference());
+					if(!StringUtils.startsWith(extendedFieldRender.getReference(), "S")) {
+						mapValues.put("Reference", "S".concat(extendedFieldRender.getReference()));
+					} else {
+						mapValues.put("Reference", extendedFieldRender.getReference());
+					}
 					mapValues.put("SeqNo", extendedFieldRender.getSeqNo());
 				}
 
@@ -1065,20 +1031,22 @@ public class ExtendedFieldDetailsService {
 		if (deatils != null && deatils.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			Map<String, ExtendedFieldHeader> extHeaderMap = sampling.getExtFieldHeaderList();
-			List<CollateralSetup> collList = sampling.getCollSetupList();
 			for (int i = 0; i < deatils.size(); i++) {
 				if (deatils.get(i) != null) {
 					ExtendedFieldRender render = (ExtendedFieldRender) deatils.get(i).getModelData();
-					String collRef = null;
-					collRef = samplingDAO.getCollateralRef(sampling, render.getReference(), "collaterals");
+					String linkId = StringUtils.trimToEmpty(render.getReference());
+					linkId = linkId.replaceAll("S", "");
+					
+					String collRef = samplingDAO.getCollateralRef(sampling, linkId);
 					ExtendedFieldHeader extHeader = extHeaderMap.get(collRef);
-					StringBuilder tableName = new StringBuilder();
-					tableName.append(moduleCode);
-					tableName.append("_");
-					tableName.append(extHeader.getSubModuleName());
-					tableName.append("_tv");
+					
+					StringBuilder table = new StringBuilder();
+					table.append(moduleCode);
+					table.append("_");
+					table.append(extHeader.getSubModuleName());
+					table.append("_tv");
 
-					AuditDetail auditDetail = validate(deatils.get(i), method, usrLanguage, tableName.toString());
+					AuditDetail auditDetail = validate(deatils.get(i), method, usrLanguage, table.toString().toLowerCase());
 					details.add(auditDetail);
 				}
 			}

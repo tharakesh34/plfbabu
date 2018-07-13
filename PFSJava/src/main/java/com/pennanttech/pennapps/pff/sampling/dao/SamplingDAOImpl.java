@@ -22,7 +22,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -31,6 +30,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
+import com.pennanttech.pennapps.pff.sampling.model.SamplingCollateral;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAOImpl;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl;
@@ -184,7 +184,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		return linkId;
 	}
 
-	public long getCollateralLinkId(String collateralreference, long samplingId,String type) {
+	public long getCollateralLinkId(String collateralreference, long samplingId, String type) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select coalesce(max(linkid), 0) from link_sampling_collaterals");
 		sql.append(type);
@@ -232,31 +232,25 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	}
 
 	@Override
-	public List<CollateralSetup> getCollateralsBySamplingId(Long samplingId) {
+	public List<SamplingCollateral> getCollateralTypesBySamplingId(Long samplingId) {
 		logger.debug(Literal.ENTERING);
-		List<CollateralSetup> collaterals = new ArrayList<>();
-
+		
 		StringBuilder sql = new StringBuilder();
-
-		sql.append(" select collateralReference collateralref, collateraltype ");
-		sql.append(" from link_sampling_collaterals s");
-		sql.append(" inner join (select distinct collateralref, collateraltype from collateralsetup_view)");
-		sql.append(" c on c.collateralref = s.collateralReference");
-		sql.append(" where samplingId = :samplingId ");
-
+		sql.append(" select cs.collateralref, cs.collateraltype, lsc.linkId from collateralsetup_view cs");
+		sql.append(" inner join link_sampling_collaterals lsc on lsc.collateralReference = cs.collateralref");
+		sql.append(" where lsc.samplingid = :samplingid");
 		logger.debug(Literal.SQL + sql.toString());
 
-		RowMapper<CollateralSetup> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollateralSetup.class);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("samplingId", samplingId);
-
+		paramSource.addValue("samplingid", samplingId);
+		RowMapper<SamplingCollateral> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SamplingCollateral.class);
 		try {
-			collaterals.addAll(this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper));
+			return this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
-		return collaterals;
+		return new ArrayList<>();
 	}
 
 	public void delete(Sampling sampling, TableType tableType) {
@@ -456,10 +450,9 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	}
 
 	@Override
-	public List<CollateralSetup> getCollaterals(String keyreference) {
+	public List<String> getCollateralTypes(String keyreference) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select depositorcif, depositorname, cs.collateralref, cs.collateralccy,");
-		sql.append(" collateraltype, collateraltypename, expirydate, nextreviewdate");
+		sql.append("select distinct collateraltype ");
 		sql.append(" from collateralassignment_view ca");
 		sql.append(" inner join collateralsetup_view cs on cs.collateralref = ca.collateralref");
 		sql.append(" where ca.reference = :keyreference");
@@ -468,8 +461,34 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("keyreference", keyreference);
 		try {
+			return jdbcTemplate.queryForList(sql.toString(), source, String.class);
+		} catch (DataAccessException e) {
+			return new ArrayList<>();
+		}
+	}
+	
+	@Override
+	public List<SamplingCollateral> getCollaterals(String keyreference, String collateralType) {
+		collateralType = collateralType.toLowerCase();
+		StringBuilder sql = new StringBuilder();
+		sql.append("select depositorcif, depositorname, cs.collateralref, tv.Seqno,");
+		sql.append(" collateraltype, collateraltypename");
+		sql.append(" from collateralassignment_view ca");
+		sql.append(" inner join collateralsetup_view cs on cs.collateralref = ca.collateralref");
+		sql.append(" left join (");
+		sql.append(" select reference, seqno from collateral_").append(collateralType).append("_ed");
+		sql.append(" union ");
+		sql.append(" select reference, seqno from collateral_").append(collateralType).append("_ed_temp");
+		sql.append(" ) tv on tv.reference = cs.collateralref");
+
+		sql.append(" where ca.reference = :keyreference");
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("keyreference", keyreference);
+		try {
 			return jdbcTemplate.query(sql.toString(), source,
-					ParameterizedBeanPropertyRowMapper.newInstance(CollateralSetup.class));
+					ParameterizedBeanPropertyRowMapper.newInstance(SamplingCollateral.class));
 		} catch (DataAccessException e) {
 			return new ArrayList<>();
 		}
@@ -525,7 +544,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		return extRender;
 	}
 
-	public Map<String, Object> getExtendedField(long linkId, String reference, String tableName, String type) {
+	public Map<String, Object> getExtendedField(String linkId, int seqNo, String tableName, String type) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> renderMap = null;
@@ -544,21 +563,21 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 			sql.append(" T  where not exists (select 1 from ");
 			sql.append(tableName);
 			sql.append("_temp");
-			sql.append(" where reference =T.reference)) T where T.reference = :linkid ");
+			sql.append(" where reference =T.reference)) T where T.reference = :linkid and seqno =:seqno order by seqno");
 		} else {
 			sql.append("select * from ");
 			sql.append(tableName);
 			sql.append(StringUtils.trimToEmpty(type));
-			sql.append(" where  reference = :reference order by seqno");
+			sql.append(" where  reference = :linkid  and seqno =:seqno order by seqno");
 		}
 		logger.trace(Literal.SQL + sql.toString());
 
-		source.addValue("linkid", String.valueOf(linkId));
-		source.addValue("reference", reference);
+		source.addValue("linkid", linkId);
+		source.addValue("seqno", seqNo);
 		try {
 			renderMap = this.jdbcTemplate.queryForMap(sql.toString(), source);
 		} catch (Exception e) {
-			logger.error(Literal.ENTERING, e);
+			logger.warn(e);
 			renderMap = new HashMap<>();
 		}
 
@@ -743,32 +762,17 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		logger.debug(Literal.LEAVING);
 		return map;
 	}
-	public String getCollateralRef(Sampling sampling, String linkId, String inputSource) {
+	public String getCollateralRef(Sampling sampling, String linkId) {
 		logger.debug(Literal.ENTERING);
 
-		String table = null;
-		if (inputSource.equals("income")) {
-			table = "link_sampling_incomes";
-		} else if (inputSource.equals("obligation")) {
-			table = "link_sampling_liabilities";
-		} else {
-			table = "link_sampling_collaterals";
-		}
-
 		StringBuilder sql = new StringBuilder();
-		sql.append("select collateralreference from ");
-		sql.append(table);
-		sql.append(" where samplingid = :id");
-		if (inputSource.equals("collaterals")) {
-			sql.append(" and linkid = :linkId");
-		}
+		sql.append("select distinct collateralreference from link_sampling_collaterals");
+		sql.append(" where samplingid = :id  and linkid = :linkId");
 
 		String collReference = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("id", sampling.getId());
-		if (linkId != null) {
-			source.addValue("linkId", Integer.parseInt(linkId));
-		}
+		source.addValue("linkId", Integer.parseInt(linkId));
 		try {
 			collReference = jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (DataAccessException e) {
@@ -853,7 +857,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		source.addValue("nextTaskId", sampling.getNextTaskId());
 		source.addValue("recordType", sampling.getRecordType());
 		source.addValue("workflowId", sampling.getWorkflowId());
-		source.addValue("reference", getLinkIds(sampling.getId()));
+		source.addValue("reference", getCollateralLinkIds(sampling.getId()));
 
 		try {
 			jdbcTemplate.update(sql.toString(), source);
@@ -898,7 +902,8 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
-		List<String> linkIds = getLinkIds(samplingId);
+		List<String> linkIds = getCollateralLinkIds(samplingId);
+				
 		StringBuilder sql = new StringBuilder("insert into verification_");
 		sql.append(StringUtils.trimToEmpty(collateralType));
 		sql.append("_tv_temp");
@@ -916,9 +921,12 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
-	private List<String> getLinkIds(long samplingId) {
+	
+	@Override
+	public List<String> getCollateralLinkIds(long samplingId) {
 		logger.debug(Literal.ENTERING);
+
+		List<String> list = new ArrayList<>();
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
@@ -930,8 +938,36 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		paramSource.addValue("samplingId", samplingId);
 
 		try {
-			return jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
+			list = jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
 		} catch (Exception e) {
+			return list;
+		}
+
+		List<String> mainList = new ArrayList<>();
+		for (String linkId : list) {
+			mainList.add("S".concat(linkId));
+		}
+
+		return mainList;
+	}
+
+	@Override
+	public List<SamplingCollateral> getCollateralsBySamplingId(List<String> linkIds, String collateralType) {
+		collateralType = collateralType.toLowerCase();
+		StringBuilder sql = new StringBuilder();
+		sql.append("select reference collateralref, Seqno, :collateralType collateralType");
+		sql.append(" from  verification_").append(collateralType).append("_tv");
+		sql.append(" where reference in(:reference)");
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("reference", linkIds);
+		source.addValue("collateralType", collateralType.toUpperCase());
+		ParameterizedBeanPropertyRowMapper.newInstance(SamplingCollateral.class);
+		try {
+			return jdbcTemplate.query(sql.toString(), source,
+					ParameterizedBeanPropertyRowMapper.newInstance(SamplingCollateral.class));
+		} catch (DataAccessException e) {
 			return new ArrayList<>();
 		}
 	}

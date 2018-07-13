@@ -41,7 +41,7 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 	private Map<String,ExtendedFieldRender> extFieldRenderList = new LinkedHashMap<>();	
 	@Autowired
 	private transient SamplingService samplingService;
-	protected long linkId = 0;
+	protected String sLinkId;
 	
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_SamplingExtendedFieldDialog(Event event) throws Exception {
@@ -111,17 +111,17 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 		try {
 			extendedFieldCtrl = new ExtendedFieldCtrl();
 			ExtendedFieldHeader extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(
-					CollateralConstants.MODULE_NAME, sampling.getCollateralSetup().getCollateralType(),ExtendedFieldConstants.EXTENDEDTYPE_TECHVALUATION);
+					CollateralConstants.MODULE_NAME, sampling.getCollateral().getCollateralType(), ExtendedFieldConstants.EXTENDEDTYPE_TECHVALUATION);
 
 			if (extendedFieldHeader == null) {
 				return;
 			}
 			// Extended Field Details
-			StringBuilder tableName = new StringBuilder();
-			tableName.append(CollateralConstants.VERIFICATION_MODULE);
-			tableName.append("_");
-			tableName.append(extendedFieldHeader.getSubModuleName());
-			tableName.append("_tv");
+			StringBuilder table = new StringBuilder();
+			table.append(CollateralConstants.VERIFICATION_MODULE);
+			table.append("_");
+			table.append(extendedFieldHeader.getSubModuleName());
+			table.append("_tv");
 
 			List<ExtendedFieldDetail> detailsList = extendedFieldHeader.getExtendedFieldDetails();
 			int fieldSize = 0;
@@ -134,21 +134,20 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 			}
 			ExtendedFieldRender extendedFieldRender  =null;
 			
-			linkId = samplingService.getCollateralLinkId(sampling.getId(), sampling.getCollateralSetup().getCollateralRef());
+			String CollateralRef = sampling.getCollateral().getCollateralRef();
+			long linkId = samplingService.getCollateralLinkId(sampling.getId(), CollateralRef);
+			sLinkId = "S".concat(String.valueOf(linkId));
 			
-			if (extFieldRenderList.containsKey(String.valueOf(linkId))) {
-				extendedFieldRender = extFieldRenderList.get(String.valueOf(linkId));
+			if (extFieldRenderList.containsKey(sLinkId)) {
+				extendedFieldRender = extFieldRenderList.get(sLinkId);
 			    extendedFieldCtrl.setExtendedFieldRender(extendedFieldRender);
-			} else if (extFieldRenderList.containsKey(sampling.getCollateralSetup().getCollateralRef())) {
-				extendedFieldRender = extFieldRenderList.get(sampling.getCollateralSetup().getCollateralRef());
+			} else if (extFieldRenderList.containsKey(CollateralRef)) {
+				extendedFieldRender = extFieldRenderList.get(CollateralRef);
 				extendedFieldCtrl.setExtendedFieldRender(extendedFieldRender);
 			} else {
-				extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(String.valueOf(linkId),
-						tableName.toString(), "_View");
+				extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(sLinkId, table.toString().toLowerCase(), "_view");
 			}
 			
-			/*extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(String.valueOf(linkId),
-					tableName.toString(), "_View");*/
 			extendedFieldCtrl.setTabpanel(samplingExtFieldsTabPanel);
 			extendedFieldCtrl.setTab(this.samplingExtFields);
 			sampling.setExtendedFieldHeader(extendedFieldHeader);
@@ -194,22 +193,18 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.ENTERING);
 		if (sampling.getExtendedFieldHeader() != null) {
 			try {
-				sampling.setExtendedFieldRender(extendedFieldCtrl.save());
+				ExtendedFieldRender fields =  extendedFieldCtrl.save();
+				fields.setSeqNo(sampling.getCollateral().getSeqNo());
+				sampling.setExtendedFieldRender(fields);
 			} catch (ParseException e) {
 				logger.debug(Literal.EXCEPTION);
 			}
 		}
 
-		if (!extFieldRenderList.containsKey(String.valueOf(linkId))) {
-
-			this.extFieldRenderList.put(String.valueOf(linkId),
-					sampling.getExtendedFieldRender());
+		if (!extFieldRenderList.containsKey(sLinkId)) {
+			this.extFieldRenderList.put(sLinkId, sampling.getExtendedFieldRender());
 		} else {
-			/*extFieldRenderList.remove(String.valueOf(linkId));
-			this.extFieldRenderList.put(sampling.getCollateralSetup().getCollateralRef(),
-					sampling.getExtendedFieldRender());*/
-		extFieldRenderList.replace(String.valueOf(linkId),
-					sampling.getExtendedFieldRender());
+			extFieldRenderList.replace(sLinkId, sampling.getExtendedFieldRender());
 		}
 		logger.debug(Literal.LEAVING);
 	}

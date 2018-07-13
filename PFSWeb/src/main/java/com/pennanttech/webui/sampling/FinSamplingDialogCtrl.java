@@ -50,7 +50,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
-import com.pennanttech.pennapps.pff.sampling.model.SamplingDetails;
+import com.pennanttech.pennapps.pff.sampling.model.SamplingDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.sampling.Decision;
 import com.pennanttech.pff.service.sampling.SamplingService;
@@ -321,7 +321,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		Label label;
 		Cell cell;
 
-		for (SamplingDetails sd : sampling.getSamplingDetailsList()) {
+		for (SamplingDetail sd : sampling.getSamplingDetailsList()) {
 
 			// Render collateral Caption
 			if (StringUtils.isNotEmpty(sd.getCaption())) {

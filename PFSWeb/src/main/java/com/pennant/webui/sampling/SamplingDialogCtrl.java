@@ -78,6 +78,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
+import com.pennanttech.pennapps.pff.sampling.model.SamplingCollateral;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.service.sampling.SamplingService;
 
@@ -85,7 +86,6 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(SamplingDialogCtrl.class);
 
-	
 	protected Window window_SamplingDialog;
 
 	protected Tab samplingDetailsTab;
@@ -135,16 +135,15 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	@Autowired
 	private transient CustomerAddresService customerAddresService;
 	@Autowired
-	private FinanceDetailService			financeDetailService;
+	private FinanceDetailService financeDetailService;
 	@Autowired
 	private transient CollateralSetupService collateralSetupService;
 	private Map<String, ExtendedFieldRender> extFieldRenderList;
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
 	private Set<String> primaryCustomer = new HashSet<>();
 	private Set<String> coApplicantCustomers = new HashSet<>();
-			
-	private boolean fromLoanOrg;
 
+	private boolean fromLoanOrg;
 
 	public SamplingDialogCtrl() {
 		super();
@@ -178,14 +177,14 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			}
 
 			if (arguments.get("enqiryModule") != null) {
-				enqiryModule =(boolean) arguments.get("enqiryModule");
+				enqiryModule = (boolean) arguments.get("enqiryModule");
 			}
-			
+
 			if (arguments.get("LOAN_ORG") != null) {
 				fromLoanOrg = true;
-				enqiryModule =true;
+				enqiryModule = true;
 			}
-			
+
 			if (this.sampling == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
@@ -223,22 +222,22 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.ENTERING);
 
 		this.loanTenure.setMaxlength(3);
-		
+
 		this.foirEligiblity.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.foirEligiblity.setScale(ccyFormatter);
-		
+
 		this.finAmtReq.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.finAmtReq.setScale(ccyFormatter);
-		
+
 		this.emiPerLakh.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.emiPerLakh.setScale(ccyFormatter);
-		
+
 		this.iirEligibility.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.iirEligibility.setScale(ccyFormatter);
-		
+
 		this.loanEligibility.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.loanEligibility.setScale(ccyFormatter);
-			
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -249,13 +248,15 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
-		
-		  this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNew"));
-		  this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnEdit"));
-		  this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnSave"));
-		  this.btnNew_CustomerIncome.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNewIncomeDetails"));
-		  this.btnNew_Obligation.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNewObligationDetails"));
-		 
+
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnEdit"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnSave"));
+		this.btnNew_CustomerIncome
+				.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNewIncomeDetails"));
+		this.btnNew_Obligation
+				.setVisible(getUserWorkspace().isAllowed("button_SamplingDialog_btnNewObligationDetails"));
+
 		this.btnCancel.setVisible(false);
 
 		logger.debug(Literal.LEAVING);
@@ -319,10 +320,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			this.btnCancel.setVisible(true);
 		}
 
-		
-		  readOnlyComponent(isReadOnly("SamplingDialog_LoanTenure"), this.loanTenure);
-		  readOnlyComponent(isReadOnly("SamplingDialog_InterestRate"), this.interestRate);
-		 
+		readOnlyComponent(isReadOnly("SamplingDialog_LoanTenure"), this.loanTenure);
+		readOnlyComponent(isReadOnly("SamplingDialog_InterestRate"), this.interestRate);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -345,7 +344,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.ENTERING);
 
 		doFillCustomers(sampling.getCustomers());
-		doFillCollaterals(sampling.getCollSetupList());
+		doFillCollaterals(sampling.getCollaterals());
 		doFillCustomerIncome(sampling.getCustomerIncomeList());
 		doFillCustomerExtLiabilityDetails(sampling.getCustomerExtLiabilityList());
 		doFillExtendedFileds(sampling.getExtFieldRenderList());
@@ -356,29 +355,29 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		this.loanAmtReq.setValue(PennantAppUtil.amountFormate(sampling.getLoanAmountRequested(), ccyFormatter));
 		this.tenure.setValue(String.valueOf(sampling.getNumberOfTerms()));
 		this.samplingDate.setValue(DateUtil.format(sampling.getCreatedOn(), DateFormat.SHORT_DATE));
-		
+
 		if ("F".equals(sampling.getFinGrcRateType())) {
 			this.roi.setValue(PennantApplicationUtil.formatRate(sampling.getRepaySpecialRate().doubleValue(), 2));
 		} else {
 			this.roi.setValue(PennantApplicationUtil.formatRate(sampling.getRepayMinRate().doubleValue(), 2));
 		}
-		
+
 		this.loanTenure.setValue(sampling.getTenure());
 		this.interestRate.setValue(PennantApplicationUtil.formatRate(sampling.getInterestRate().doubleValue(), 2));
-		
+
 		setEligibilityAmounts(sampling);
-				
+
 		calculateEligibility(false);
 
 		this.recordStatus.setValue(sampling.getRecordStatus());
 
-		  appendDocumentDetailTab();
+		appendDocumentDetailTab();
 
-		  appendCustomerDetailTab();
+		appendCustomerDetailTab();
 
-          appendCoApplicantDetailTab();
+		appendCoApplicantDetailTab();
 
-	      //appendQueryModuleTab();
+		//appendQueryModuleTab();
 
 		logger.debug(Literal.LEAVING);
 
@@ -392,19 +391,19 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		this.loanEligibility.setValue(PennantAppUtil.formateAmount(sampling.getLoanEligibility(), ccyFormatter));
 	}
 
-	private void doFillCollaterals(List<CollateralSetup> collSetupList) {
+	private void doFillCollaterals(List<SamplingCollateral> collSetupList) {
 		logger.debug(Literal.ENTERING);
 
 		if (CollectionUtils.isNotEmpty(collSetupList)) {
 
-			for (CollateralSetup collateralSetup : collSetupList) {
+			for (SamplingCollateral collateralSetup : collSetupList) {
 				Listitem item = new Listitem();
 
 				Listcell lc;
 
 				lc = new Listcell(collateralSetup.getDepositorCif());
 				lc.setParent(item);
-				
+
 				lc = new Listcell(collateralSetup.getCollateralRef());
 				Space space = new Space();
 				space.setSpacing("6px");
@@ -415,6 +414,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				lc.appendChild(collRef);
 				lc.setParent(item);
 				
+				lc = new Listcell(String.valueOf(collateralSetup.getSeqNo()));
+				lc.setParent(item);
+
 				lc = new Listcell(collateralSetup.getCollateralType());
 				lc.setParent(item);
 				item.setAttribute("data", collateralSetup);
@@ -459,10 +461,10 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 				lc = new Listcell(customer.getPhoneNumber());
 				lc.setParent(item);
-				
-				if(Integer.valueOf(customer.getCustTypeCode()) == 1){
+
+				if (Integer.valueOf(customer.getCustTypeCode()) == 1) {
 					primaryCustomer.add(customer.getCustCIF());
-				}else{
+				} else {
 					coApplicantCustomers.add(customer.getCustCIF());
 				}
 				this.listBoxCustomerDetails.appendChild(item);
@@ -470,49 +472,51 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		}
 	}
-	
+
 	public void onClick$userActivityLog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		doUserActivityLog();
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void doUserActivityLog() throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		Map<String, Object> map = new LinkedHashMap<>();
 
 		map.put("label_SamplingDialog_LoanNo.value", this.sampling.getKeyReference());
 		map.put("label_SamplingDialog_LoanType.value", this.sampling.getFinType());
 		map.put("label_SamplingDialog_Branch.value", sampling.getBranchCode());
-		map.put("label_SamplingDialog_LoanAmtReq.value",  this.sampling.getLoanAmountRequested());
+		map.put("label_SamplingDialog_LoanAmtReq.value", this.sampling.getLoanAmountRequested());
 		map.put("label_SamplingDialog_Tenure.value", this.sampling.getNumberOfTerms());
 		map.put("label_SamplingDialog_samplingDate.value", this.sampling.getCreatedOn());
-		
+
 		if ("F".equals(sampling.getFinGrcRateType())) {
-			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepaySpecialRate().doubleValue(), 2));
+			map.put("label_SamplingDialog_ROI.value",
+					PennantApplicationUtil.formatRate(this.sampling.getRepaySpecialRate().doubleValue(), 2));
 		} else {
-			map.put("label_SamplingDialog_ROI.value", PennantApplicationUtil.formatRate(this.sampling.getRepayMinRate().doubleValue(), 2));
+			map.put("label_SamplingDialog_ROI.value",
+					PennantApplicationUtil.formatRate(this.sampling.getRepayMinRate().doubleValue(), 2));
 		}
-		
+
 		map.put("moduleCode", "FinanceMain");
 
 		doShowActivityLog(this.sampling.getKeyReference(), map);
-		
+
 		logger.debug("Leaving ");
 	}
-	
+
 	/**
 	 * View The Collateral Details
 	 */
 	public void onClickCollateralReference(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
-		CollateralSetup collSetup = (CollateralSetup) event.getData();
+		SamplingCollateral collSetup = (SamplingCollateral) event.getData();
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		CollateralSetup collateralSetup = collateralSetupService
-				.getCollateralSetupByRef(collSetup.getCollateralRef(), "", true);
-		
+		CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(collSetup.getCollateralRef(),
+				"", true);
+
 		if (collateralSetup != null) {
 			map.put("collateralSetup", collateralSetup);
 			map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
@@ -526,7 +530,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	public void onClickViewAddress(ForwardEvent event) {
 		Customer customer = (Customer) event.getData();
 		CustomerAddres address;
-	
+
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			address = customerAddresService.getCustomerAddresById(customer.getCustID(), customer.getCustAddlVar1());
@@ -534,10 +538,10 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			address.setLovDescCustShrtName(sampling.getCustShrtName());
 			map.put("customerAddres", address);
 			map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
-			Window window = (Window) Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresDialog.zul", null,
-					map);
+			Window window = (Window) Executions.createComponents(
+					"/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresDialog.zul", null, map);
 			window.setMode(Window.MODAL);
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -558,10 +562,10 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	}
 
 	private void calculateEligibility(boolean onChange) {
-		if(loanTenure.isDisabled() || interestRate.isDisabled()) {
+		if (loanTenure.isDisabled() || interestRate.isDisabled()) {
 			return;
 		}
-		
+
 		final Sampling aSampling = new Sampling();
 		BeanUtils.copyProperties(this.sampling, aSampling);
 
@@ -569,24 +573,22 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			doSetValidation();
 			doWriteComponentsToBean(aSampling);
 		}
-		
+
 		aSampling.setTenure(this.loanTenure.getValue());
 		aSampling.setInterestRate(this.interestRate.getValue());
-		
+
 		if ((aSampling.getTenure() != null && aSampling.getTenure() > 0) && (aSampling.getInterestRate() != null
 				&& BigDecimal.ZERO.compareTo(aSampling.getInterestRate()) != 0)) {
 			this.samplingService.calculateEligilibity(aSampling);
 			setEligibilityAmounts(aSampling);
 		}
-		
-		
-		
+
 	}
 
 	public void onCustomerIncomeItemDoubleClicked(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		final Listitem item = this.listBoxCustomerIncomeDetails.getSelectedItem();
-		
+
 		if (item != null) {
 			final CustomerIncome customerIncome = (CustomerIncome) item.getAttribute("data");
 			if (isDeleteRecord(customerIncome.getRecordType())) {
@@ -678,9 +680,12 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.ENTERING);
 
 		if (!this.loanTenure.isReadonly()) {
-			/*throw new WrongValueException(this.loanTenure, Labels.getLabel("AMOUNT_NOT_NEGATIVE",
-					new String[] { Labels.getLabel("label_SamplingDialog_LoanTenure.value") }));*/
-			this.loanTenure.setConstraint(new PTNumberValidator(Labels.getLabel("label_SamplingDialog_LoanTenure.value"), true, false));
+			/*
+			 * throw new WrongValueException(this.loanTenure, Labels.getLabel("AMOUNT_NOT_NEGATIVE", new String[] {
+			 * Labels.getLabel("label_SamplingDialog_LoanTenure.value") }));
+			 */
+			this.loanTenure.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_SamplingDialog_LoanTenure.value"), true, false));
 		}
 
 		if (!this.interestRate.isReadonly()) {
@@ -709,12 +714,12 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		try {
 			BigDecimal interestRate = this.interestRate.getValue();
-			if(interestRate == null) {
+			if (interestRate == null) {
 				interestRate = BigDecimal.ZERO;
 			}
 
 			interestRate = PennantAppUtil.unFormateAmount(interestRate, ccyFormatter);
-			
+
 			sampling.setInterestRate(this.interestRate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -722,7 +727,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		try {
 			BigDecimal loanEligibility = this.loanEligibility.getValue();
-			if(loanEligibility == null) {
+			if (loanEligibility == null) {
 				loanEligibility = BigDecimal.ZERO;
 			}
 
@@ -731,10 +736,10 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			BigDecimal foirEligiblity = this.foirEligiblity.getValue();
-			if(foirEligiblity == null) {
+			if (foirEligiblity == null) {
 				foirEligiblity = BigDecimal.ZERO;
 			}
 
@@ -743,28 +748,28 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			BigDecimal iirEligibility = this.iirEligibility.getValue();
-			if(iirEligibility == null) {
+			if (iirEligibility == null) {
 				iirEligibility = BigDecimal.ZERO;
 			}
 
 			iirEligibility = PennantAppUtil.unFormateAmount(iirEligibility, ccyFormatter);
-			
+
 			sampling.setIrrEligibility(this.iirEligibility.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			BigDecimal emiPerLakh = this.emiPerLakh.getValue();
-			if(emiPerLakh == null) {
+			if (emiPerLakh == null) {
 				emiPerLakh = BigDecimal.ZERO;
 			}
 
 			emiPerLakh = PennantAppUtil.unFormateAmount(emiPerLakh, ccyFormatter);
-			
+
 			sampling.setEmi(emiPerLakh);
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -812,9 +817,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
-	  	map.put("finHeaderList", getHeaderBasicDetails());
+		map.put("finHeaderList", getHeaderBasicDetails());
 		map.put("isNotFinanceProcess", true);
-		map.put("ccyFormatter",ccyFormatter);
+		map.put("ccyFormatter", ccyFormatter);
 		map.put("enquiry", this.enqiryModule);
 		map.put("isEditable", !this.enqiryModule);
 		map.put("enqiryModule", enqiryModule);
@@ -822,28 +827,28 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		map.put("moduleName", CollateralConstants.SAMPLING_MODULE);
 		return map;
 	}
-	
+
 	private ArrayList<Object> getHeaderBasicDetails() {
 		ArrayList<Object> arrayList = new ArrayList<Object>();
-		
-	    arrayList.add(0, this.sampling.getKeyReference()); 
-	    arrayList.add(1, this.sampling.getFinType()); 
-	    arrayList.add(2, this.sampling.getFinTypeDesc()); 
+
+		arrayList.add(0, this.sampling.getKeyReference());
+		arrayList.add(1, this.sampling.getFinType());
+		arrayList.add(2, this.sampling.getFinTypeDesc());
 		arrayList.add(3, this.sampling.getBranchCode());
-		arrayList.add(4, this.sampling.getBranchDesc()); 
-		arrayList.add(5, this.sampling.getLoanAmountRequested()); 
+		arrayList.add(4, this.sampling.getBranchDesc());
+		arrayList.add(5, this.sampling.getLoanAmountRequested());
 		arrayList.add(6, this.sampling.getNumberOfTerms());
 		arrayList.add(7, DateUtil.format(this.sampling.getCreatedOn(), DateFormat.SHORT_DATE));
-		
+
 		if ("F".equals(sampling.getFinGrcRateType())) {
 			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepaySpecialRate().doubleValue(), 2));
 		} else {
 			arrayList.add(8, PennantApplicationUtil.formatRate(this.sampling.getRepayMinRate().doubleValue(), 2));
 		}
-		
+
 		return arrayList;
 	}
-	
+
 	public int getLiabilitySeq() {
 		int idNumber = 0;
 		if (getCustomerExtLiabilityDetailList() != null && !getCustomerExtLiabilityDetailList().isEmpty()) {
@@ -866,7 +871,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		income.setCustId(this.sampling.getCustId());
 		income.setCustCif(this.sampling.getCustCif());
 		income.setCustShrtName(this.sampling.getCustShrtName());
-		
+
 		final Map<String, Object> map = new HashMap<>();
 		map.put("customerIncome", income);
 		map.put("samplingDialogCtrl", this);
@@ -922,7 +927,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		map.put("documentDetails", getSampling().getDocuments());
 		map.put("module", DocumentCategories.SAMPLING.getKey());
 		map.put("enqiryModule", enqiryModule);
-		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul", getTabpanel("DOCUMENTDETAIL"), map);
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
+				getTabpanel("DOCUMENTDETAIL"), map);
 		logger.debug(Literal.LEAVING);
 
 	}
@@ -948,7 +954,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	protected void appendCoApplicantDetailTab() {
 		logger.debug(Literal.ENTERING);
 		createTab("COAPPLICANT", true);
-		FinScheduleData finScheduleData = financeDetailService.getFinSchDataById(this.sampling.getKeyReference(), "_View",true);
+		FinScheduleData finScheduleData = financeDetailService.getFinSchDataById(this.sampling.getKeyReference(),
+				"_View", true);
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("financeMain", finScheduleData.getFinanceMain());
 		map.put("isFinanceProcess", false);
@@ -1019,14 +1026,14 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 				lc = new Listcell(custExtLiability.getCustShrtName());
 				lc.setParent(item);
-				
-				if(primaryCustomer.contains(custExtLiability.getCustCif())){
+
+				if (primaryCustomer.contains(custExtLiability.getCustCif())) {
 					lc = new Listcell("Primary Customer");
-				}else{
+				} else {
 					lc = new Listcell("Co Applicant");
 				}
 				lc.setParent(item);
-				
+
 				if (custExtLiability.getFinDate() == null) {
 					lc = new Listcell();
 				} else {
@@ -1109,10 +1116,10 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				lc = new Listcell("");
 				lc.setParent(item);
 				item.setAttribute("data", "");
-				
+
 				sampling.setTotalLiability(totalInstalmentAmount);
 				calculateEligibility(false);
-				
+
 				this.listBoxObligations.appendChild(item);
 			}
 			setCustomerExtLiabilityDetailList(customerExtLiabilityDetails);
@@ -1163,40 +1170,40 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 						item = new Listitem();
 						cell = new Listcell(customerIncome.getCustCif());
 						cell.setParent(item);
-						
+
 						cell = new Listcell(customerIncome.getCustShrtName());
 						cell.setParent(item);
-						if(primaryCustomer.contains(customerIncome.getCustCif())){
+						if (primaryCustomer.contains(customerIncome.getCustCif())) {
 							cell = new Listcell("Primary Customer");
-						}else{
+						} else {
 							cell = new Listcell("Co Applicant");
 						}
 						cell.setParent(item);
-						
+
 						cell = new Listcell(customerIncome.getIncomeType());
 						cell.setParent(item);
-						
+
 						cell = new Listcell(customerIncome.getCategoryDesc());
 						cell.setParent(item);
-						
+
 						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), ccyFormatter));
 						cell.setStyle("text-align:right;");
 						cell.setParent(item);
-						
-						totalIncome=totalIncome.add(customerIncome.getIncome());
+
+						totalIncome = totalIncome.add(customerIncome.getIncome());
 						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getMargin(), ccyFormatter));
 						cell.setStyle("text-align:right;");
 						cell.setParent(item);
-						
+
 						BigDecimal calculatedAmount = customerIncome.getCalculatedAmount();
 						cell = new Listcell(PennantAppUtil.amountFormate(calculatedAmount, ccyFormatter));
 						cell.setStyle("text-align:right;");
 						cell.setParent(item);
-						
+
 						total = total.add(calculatedAmount);
 						cell = new Listcell(customerIncome.getRecordStatus());
 						cell.setParent(item);
-						
+
 						item.setAttribute("data", customerIncome);
 						ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerIncomeItemDoubleClicked");
 						this.listBoxCustomerIncomeDetails.appendChild(item);
@@ -1213,7 +1220,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			cell.setSpan(5);
 			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
 			cell.setParent(item);
-			
+
 			cell = new Listcell(PennantAppUtil.amountFormate(total, ccyFormatter));
 			cell.setSpan(2);
 			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
@@ -1223,7 +1230,6 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			cell.setParent(item);
 			this.listBoxCustomerIncomeDetails.appendChild(item);
 
-			
 			item = new Listitem();
 			cell = new Listcell("Net Income");
 			cell.setStyle("font-weight:bold;");
@@ -1232,7 +1238,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			cell.setSpan(5);
 			cell.setStyle("font-weight:bold; text-align:right;");
 			cell.setParent(item);
-			
+
 			cell = new Listcell(PennantAppUtil.amountFormate(total, ccyFormatter));
 			cell.setSpan(2);
 			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
@@ -1240,7 +1246,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			cell = new Listcell();
 			cell.setStyle("cursor:default");
 			cell.setParent(item);
-			
+
 			sampling.setTotalIncome(totIncome);
 			calculateEligibility(false);
 
@@ -1254,8 +1260,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		final Listitem item = this.listBoxCollaterals.getSelectedItem();
 		if (item != null) {
-			final CollateralSetup collateralSetup = (CollateralSetup) item.getAttribute("data");
-			this.sampling.setCollateralSetup(collateralSetup);
+			final SamplingCollateral collateralSetup = (SamplingCollateral) item.getAttribute("data");
+			this.sampling.setCollateral(collateralSetup);
 			if (isDeleteRecord(collateralSetup.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
@@ -1439,7 +1445,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-		
+
 		// Document Details Saving
 
 		if (documentDetailDialogCtrl != null) {
@@ -1533,7 +1539,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				for (Entry<String, ExtendedFieldRender> ext : extList.entrySet()) {
 					ExtendedFieldRender details = ext.getValue();
 					details.setReference(ext.getKey());
-					details.setSeqNo(1);
+					//details.setSeqNo(ext.get);
 					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					details.setRecordStatus(sampling.getRecordStatus());
@@ -1553,7 +1559,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 					}
 				}
 			}
-			
+
 			// Document Details
 			if (sampling.getDocuments() != null && !sampling.getDocuments().isEmpty()) {
 				for (DocumentDetails details : sampling.getDocuments()) {
@@ -1579,12 +1585,11 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 					}
 				}
 			}
-			
 
-			if (CollectionUtils.isNotEmpty(sampling.getCollSetupList())) {
-				List<CollateralSetup> collList = sampling.getCollSetupList();
+			if (CollectionUtils.isNotEmpty(sampling.getCollaterals())) {
+				List<SamplingCollateral> collList = sampling.getCollaterals();
 				Map<String, ExtendedFieldHeader> extFieldHeaderList = new HashMap<>();
-				for (CollateralSetup collateralSetup : collList) {
+				for (SamplingCollateral collateralSetup : collList) {
 
 					extendedFieldCtrl = new ExtendedFieldCtrl();
 					ExtendedFieldHeader extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(
@@ -1753,12 +1758,12 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		return new AuditHeader(getReference(), null, null, null, auditDetail, sampling.getUserDetails(),
 				getOverideMap());
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.sampling.getId());
 	}
-	
+
 	public Sampling getSampling() {
 		return sampling;
 	}
@@ -1790,7 +1795,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	public void setDocumentDetailDialogCtrl(DocumentDetailDialogCtrl documentDetailDialogCtrl) {
 		this.documentDetailDialogCtrl = documentDetailDialogCtrl;
 	}
-	
+
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return CustomerDialogCtrl;
 	}

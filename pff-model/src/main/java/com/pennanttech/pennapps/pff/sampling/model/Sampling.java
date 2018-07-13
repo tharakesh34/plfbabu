@@ -14,7 +14,6 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
@@ -54,7 +53,7 @@ public class Sampling extends AbstractWorkflowEntity {
 	private String custCategory;
 	private String resubmitReasonCode;
 	private String samplingTolerance;
-	private List<SamplingDetails> samplingDetailsList = new ArrayList<>();
+	private List<SamplingDetail> samplingDetailsList = new ArrayList<>();
 
 	private int custId;
 	private String custCif;
@@ -76,8 +75,8 @@ public class Sampling extends AbstractWorkflowEntity {
 
 	private List<CustomerIncome> customerIncomeList;
 	private List<CustomerExtLiability> customerExtLiabilityList;
-	private List<CollateralSetup> collSetupList = new LinkedList<>();
-	private CollateralSetup collateralSetup;
+	private List<SamplingCollateral> collaterals = new LinkedList<>();
+	private SamplingCollateral collateral;
 	private CustomerDetails customerDetails;
 	private ExtendedFieldHeader extendedFieldHeader;
 	private Map<String, ExtendedFieldHeader> extFieldHeaderList;
@@ -136,7 +135,8 @@ public class Sampling extends AbstractWorkflowEntity {
 		excludeFields.add("numberOfTerms");
 		excludeFields.add("extendedFieldHeader");
 		excludeFields.add("extendedFieldRender");
-		excludeFields.add("collateralSetup");
+		excludeFields.add("collateral");
+		excludeFields.add("collaterals");
 
 		excludeFields.add("incomeLinkId");
 		excludeFields.add("liabilityLinkId");
@@ -474,21 +474,41 @@ public class Sampling extends AbstractWorkflowEntity {
 	public void setCustomerExtLiabilityList(List<CustomerExtLiability> customerExtLiabilityList) {
 		this.customerExtLiabilityList = customerExtLiabilityList;
 	}
-
-	public List<CollateralSetup> getCollSetupList() {
-		return collSetupList;
+	
+	public List<SamplingCollateral> getCollaterals() {
+		return collaterals;
 	}
 
-	public void setCollSetupList(List<CollateralSetup> collSetupList) {
-		this.collSetupList = collSetupList;
+	public void setCollaterals(List<SamplingCollateral> collaterals) {
+		this.collaterals = collaterals;
 	}
 
-	public CollateralSetup getCollateralSetup() {
-		return collateralSetup;
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
-	public void setCollateralSetup(CollateralSetup collateralSetup) {
-		this.collateralSetup = collateralSetup;
+	public static String getReqLoanAmountExtendField() {
+		return REQ_LOAN_AMOUNT_EXTEND_FIELD;
+	}
+
+	public static String getRuleCodeFoiramt() {
+		return RULE_CODE_FOIRAMT;
+	}
+
+	public static String getRuleCodeIirmax() {
+		return RULE_CODE_IIRMAX;
+	}
+
+	public static String getRuleCodeEmi() {
+		return RULE_CODE_EMI;
+	}
+	
+	public SamplingCollateral getCollateral() {
+		return collateral;
+	}
+
+	public void setCollateral(SamplingCollateral collateral) {
+		this.collateral = collateral;
 	}
 
 	public CustomerDetails getCustomerDetails() {
@@ -691,11 +711,11 @@ public class Sampling extends AbstractWorkflowEntity {
 		this.queryDetail = queryDetail;
 	}
 
-	public List<SamplingDetails> getSamplingDetailsList() {
+	public List<SamplingDetail> getSamplingDetailsList() {
 		return samplingDetailsList;
 	}
 
-	public void setSamplingDetailsList(List<SamplingDetails> samplingDetailsList) {
+	public void setSamplingDetailsList(List<SamplingDetail> samplingDetailsList) {
 		this.samplingDetailsList = samplingDetailsList;
 	}
 

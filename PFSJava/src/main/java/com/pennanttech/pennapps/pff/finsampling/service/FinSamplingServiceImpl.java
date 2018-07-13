@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -24,7 +23,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.finsampling.dao.FinSamplingDAO;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
-import com.pennanttech.pennapps.pff.sampling.model.SamplingDetails;
+import com.pennanttech.pennapps.pff.sampling.model.SamplingCollateral;
+import com.pennanttech.pennapps.pff.sampling.model.SamplingDetail;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.sampling.Decision;
 import com.pennanttech.pff.service.sampling.SamplingService;
@@ -54,6 +54,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 			samplingService.saveOnReSubmit(sampling);
 
 		} else if (sampling.getDecision() == Decision.CREDITCAM.getKey() && !financeDetail.isActionSave()) {
+			sampling.setUserDetails(financeDetail.getUserDetails());
 			samplingService.saveSnap(sampling);
 		}
 
@@ -67,14 +68,14 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 		BigDecimal varaiance;
 		BigDecimal original;
 		BigDecimal current;
-		SamplingDetails sd;
+		SamplingDetail sd;
 		Sampling sampling = samplingService.getSampling(finReference, type);
 
 		if (sampling == null) {
 			return null;
 		}
 		int formatter = sampling.getCcyeditfield();
-		List<SamplingDetails> sdList = sampling.getSamplingDetailsList();
+		List<SamplingDetail> sdList = sampling.getSamplingDetailsList();
 
 		original = sampling.getOriginalTotalIncome();
 		current = sampling.getTotalIncome();
@@ -87,7 +88,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 			current = BigDecimal.ZERO;
 		}
 
-		sd = new SamplingDetails();
+		sd = new SamplingDetail();
 		sd.setParameter(Labels.getLabel("label_FinSampling_Income.value"));
 		sd.setBranchCam(PennantApplicationUtil.amountFormate(original, formatter));
 		sd.setCreditCam(PennantApplicationUtil.amountFormate(current, formatter));
@@ -119,7 +120,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 			current = BigDecimal.ZERO;
 		}
 
-		sd = new SamplingDetails();
+		sd = new SamplingDetail();
 		sd.setParameter(Labels.getLabel("label_FinSampling_Obligation.value"));
 		sd.setBranchCam(PennantApplicationUtil.amountFormate(original, formatter));
 		sd.setCreditCam(PennantApplicationUtil.amountFormate(current, formatter));
@@ -128,24 +129,28 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 		sd.setRemarksId("LIABILITY");
 		sdList.add(sd);
 
-		for (CollateralSetup coll : sampling.getCollSetupList()) {
+		for (SamplingCollateral coll : sampling.getCollaterals()) {
 			Map<String, List<ExtendedFieldData>> collaterals;
 			String collateralType = coll.getCollateralType();
 			String collateralRef = coll.getCollateralRef();
+			String sequence = String.valueOf(coll.getSeqNo());
 			long originallinkId = samplingService.getCollateralLinkId(collateralRef, sampling.getId(), "");
 			long sanpLinkId = samplingService.getCollateralLinkId(collateralRef, sampling.getId(), "_snap");
-
+			
+			String linkId;
+			String snaplinkIdStr;
 			if (sanpLinkId > 0) {
-				collaterals = samplingService.getCollateralFields(collateralType, String.valueOf(originallinkId),
-						String.valueOf(sanpLinkId));
+				linkId = String.valueOf(originallinkId);
+				snaplinkIdStr = String.valueOf(sanpLinkId);
+				collaterals = samplingService.getCollateralFields(collateralType, linkId, snaplinkIdStr);
 			} else {
-				collaterals = samplingService.getCollateralFields(collateralType, String.valueOf(originallinkId),
-						collateralRef);
+				linkId = "S".concat(String.valueOf(originallinkId));
+				collaterals = samplingService.getCollateralFields(collateralType, linkId, collateralRef);
 			}
 			
 			if (MapUtils.isNotEmpty(collaterals)) {
-				sd = new SamplingDetails();
-				sd.setCaption(String.format("%s - %s", collateralRef, collateralType));
+				sd = new SamplingDetail();
+				sd.setCaption(String.format("%s - %s - %s", collateralRef, collateralType, sequence));
 				sdList.add(sd);
 			}
 			
@@ -155,9 +160,9 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 				ExtendedFieldData originalField = list.get(0);
 				ExtendedFieldData currentField = list.get(1);
 				String fieldType = currentField.getFieldType();
-				String key = collateralRef.concat("-").concat(currentField.getFieldName());
+				String key = collateralRef.concat("_").concat(currentField.getFieldName()).concat("_").concat(sequence);
 
-				sd = new SamplingDetails();
+				sd = new SamplingDetail();
 				sd.setParameter(originalField.getFieldLabel());
 
 				switch (fieldType) {
@@ -206,7 +211,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 		if (current == null) {
 			current = BigDecimal.ZERO;
 		}
-		sd = new SamplingDetails();
+		sd = new SamplingDetail();
 		sd.setParameter(Labels.getLabel("label_FinSampling_FinalRcmdAmt.value"));
 		sd.setBranchCam(PennantApplicationUtil.amountFormate(original, formatter));
 		sd.setCreditCam(PennantApplicationUtil.amountFormate(current, formatter));

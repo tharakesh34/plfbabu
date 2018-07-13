@@ -281,6 +281,8 @@
 												id="listheader_CollateralReference"
 												label="${c:l('listheader_CollateralReference.label')}"/>
 											<listheader
+												label="Sequence"/>
+											<listheader
 												id="listheader_CollateralType"
 												label="${c:l('listheader_CollateralType.label')}"/>
 										</listhead>

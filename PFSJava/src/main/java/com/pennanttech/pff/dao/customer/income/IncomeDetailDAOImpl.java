@@ -176,56 +176,55 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 	}
 
 	@Override
-	public BigDecimal getTotalIncomeByLinkId(long linkId) {
+	public List<CustomerIncome> getTotalIncomeByLinkId(long linkId) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select coalesce(sum(income), 0) from income_details where linkid = :linkid");
+		sql.append("select income, margin, incomeexpense  from income_details where linkid = :linkid");
 		logger.debug(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("linkid", linkId);
-		BigDecimal totalIncome = BigDecimal.ZERO;
+		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+		
 		try {
-			totalIncome = this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, BigDecimal.class);
+			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
-			totalIncome = BigDecimal.ZERO;
 		}
 
 		logger.debug(Literal.LEAVING);
-		return totalIncome;
+		return new ArrayList<>();
 	}
 	
 	@Override
-	public BigDecimal getTotalIncomeBySamplingId(long samplingId) {
+	public List<CustomerIncome> getTotalIncomeBySamplingId(long samplingId) {
 		logger.debug(Literal.ENTERING);
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("select coalesce(sum(income), 0) from income_details");
+		sql.append("select income, margin, incomeexpense from income_details");
 		sql.append(" where linkid in  (select linkid from link_sampling_incomes where samplingid = :id)");
 		logger.debug(Literal.SQL + sql.toString());
 		
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("id", samplingId);
-		BigDecimal totalIncome = BigDecimal.ZERO;
+		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
 		try {
-			totalIncome = this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, BigDecimal.class);
+			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
-			totalIncome = BigDecimal.ZERO;
 		}
 		
 		logger.debug(Literal.LEAVING);
-		return totalIncome;
+		return new ArrayList<>();
 	}
 
 	@Override
-	public BigDecimal getTotalIncomeByFinReference(String keyReference) {
+	public List<CustomerIncome> getTotalIncomeByFinReference(String keyReference) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select coalesce(sum(income), 0) from income_details id");
+		sql.append(" select income, margin, incomeexpense from income_details id");
 		sql.append(" inner join link_cust_incomes ci on ci.linkid = id.linkid");
 		sql.append(" where custid in (select custid from (");
 		sql.append(" select custid, finreference from financemain_view");
@@ -237,16 +236,16 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("keyReference", keyReference);
-		BigDecimal totalIncome = BigDecimal.ZERO;
+		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+		
 		try {
-			totalIncome = this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, BigDecimal.class);
+			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
-			totalIncome = BigDecimal.ZERO;
 		}
 
 		logger.debug(Literal.LEAVING);
-		return totalIncome;
+		return new ArrayList<>();
 	}
 
 	@Override

@@ -190,7 +190,7 @@ import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
-import com.pennanttech.pennapps.pff.sampling.model.SamplingDetails;
+import com.pennanttech.pennapps.pff.sampling.model.SamplingDetail;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -1266,11 +1266,11 @@ public class AgreementGeneration implements Serializable {
 					sampling = new Sampling();
 				}
 				
-				List<SamplingDetails> samplingDetailsList = sampling.getSamplingDetailsList();
+				List<SamplingDetail> samplingDetailsList = sampling.getSamplingDetailsList();
 				if(CollectionUtils.isNotEmpty(samplingDetailsList)){
 					agreement.setSmplDetails(samplingDetailsList);
 				}else{
-					agreement.getSmplDetails().add(new SamplingDetails());
+					agreement.getSmplDetails().add(new SamplingDetail());
 				}
 				agreement.setSmplTolerance(StringUtils.trimToEmpty(sampling.getSamplingTolerance()));
 				agreement.setSmplDecision("");
