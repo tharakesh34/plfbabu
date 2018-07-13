@@ -575,4 +575,29 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 
 	}
 
+
+	@Override
+	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCustCtg(String custCtgCode, String categorydesc) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("creditrevcode", custCtgCode);
+		source.addValue("categorydesc", categorydesc);
+
+		StringBuilder selectSql = new StringBuilder("Select * ");
+		selectSql.append(" from fincreditrevsubcategory where categoryid = (select categoryid from fincreditrevcategory ");
+		selectSql.append(" Where creditrevcode = :creditrevcode and categorydesc = :categorydesc)");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditRevSubCategory.class);
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		}
+		return null;
+	}
+
 }
