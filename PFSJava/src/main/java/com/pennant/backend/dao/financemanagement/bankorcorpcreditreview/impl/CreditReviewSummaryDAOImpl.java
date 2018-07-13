@@ -246,6 +246,8 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 		return creditReviewSummary.getId();
 	}
 
+	
+
 	/**
 	 * This method updates the Record FinCreditReviewSummary or FinCreditReviewSummary.
 	 * if Record not updated then throws DataAccessException with  error  41004.
@@ -273,9 +275,8 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewSummary);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-
 		if (recordCount <= 0) {
-			throw new ConcurrencyException();
+			//throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -432,7 +433,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 		namedParameterMap.put("Audityear", year);
 		namedParameterMap.put("Category", category);
 		namedParameterMap.put("AuditPeriod", auditPeriod);
-
+	
 		List<FinCreditReviewSummary> listOfCreditReviewSummary = null;
 		StringBuilder selectSql = new StringBuilder(" select T1.SummaryId,T1.DetailId,T1.SubCategoryCode,T1.ItemValue, ");
 		selectSql.append(" T2.ConversionRate LovDescConversionRate,T2.bankName LovDescBankName ,T2.noOfShares lovDescNoOfShares,");
@@ -440,6 +441,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 		selectSql.append(" T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode," );
 		selectSql.append(" T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,");
 		selectSql.append(" T4.CategoryID lovDescCategoryId, T4.CategoryDesc lovDescCategoryDesc, T3.SubCategoryDesc lovDescSubCategoryDesc ");
+
 		selectSql.append(" from FinCreditReviewSummary"+type+" T1 ");
 		selectSql.append(" inner join finCreditReviewDetails"+type+" T2 on T1.detailId = T2.detailId ");
 		selectSql.append(" inner join FinCreditRevSubCategory T3 on T1.SubCategoryCode = t3.SubCategoryCode ");
@@ -495,4 +497,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 		logger.debug("Leaving");
 		return 	currency.getCcySpotRate();
 	}
+
+	
+
 }
