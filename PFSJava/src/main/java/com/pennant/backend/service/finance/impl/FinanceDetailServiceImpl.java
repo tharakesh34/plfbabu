@@ -4388,7 +4388,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks, engine);
 		List<ServiceTask> serviceTasks = engine.getServiceTasks(taskId, afinanceMain);
-
+		auditHeader.setProcessCompleted(false);
 		if (serviceTasks != null && !serviceTasks.isEmpty()) {
 			for (ServiceTask task : serviceTasks) {
 				auditHeader = execute(auditHeader, task, role, usrAction, engine);
