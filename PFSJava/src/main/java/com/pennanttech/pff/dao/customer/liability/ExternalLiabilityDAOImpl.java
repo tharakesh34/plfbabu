@@ -127,9 +127,8 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("linkid", linkId);
-		int recordCount = 0;
 		try {
-			recordCount = this.jdbcTemplate.update(sql.toString(), source);
+			this.jdbcTemplate.update(sql.toString(), source);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

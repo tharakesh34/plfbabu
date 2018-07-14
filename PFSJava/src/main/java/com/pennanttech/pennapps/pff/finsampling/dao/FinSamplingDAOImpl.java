@@ -80,6 +80,28 @@ public class FinSamplingDAOImpl extends SequenceDao<Sampling> implements FinSamp
 		return list;
 	}
 
-	
+	@Override
+	public boolean isSnapExist(long id) {
+		StringBuilder sql = new StringBuilder();	
+		sql.append("select count(*) from (");
+		sql.append("select samplingId from link_sampling_incomes_snap ");
+		sql.append("union all ");
+		sql.append("select samplingId from link_sampling_liabilities_snap ");
+		sql.append("union all ");
+		sql.append("select samplingId from link_sampling_collaterals_snap) t where samplingid=:samplingid");
 
+		int count = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("samplingid", id);
+		try {
+			count = jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+		}
+
+		if (count == 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 }

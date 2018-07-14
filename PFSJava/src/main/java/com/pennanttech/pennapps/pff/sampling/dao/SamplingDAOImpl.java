@@ -650,36 +650,50 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 
 		return linkid;
 	}
-
+		
 	@Override
-	public void setLiabilitySnapLinkId(CustomerExtLiability liability) {
+	public long getLiabilitySnapLinkId(long samplingId, long custId) {
 		logger.debug(Literal.ENTERING);
 
-		long linkId = liability.getLinkId();
+		long linkId = getLiabilitySnapLink(samplingId, custId);
 
 		if (linkId > 0) {
-			return;
-		}
-
-		linkId = getLiabilitySnapLinkId(liability.getCustId());
-
-		if (linkId > 0) {
-			liability.setLinkId(linkId);
-			return;
+			return linkId;
 		}
 
 		linkId = getNextValue(ExternalLiabilityDAOImpl.SEQUENCE_LINK);
 		StringBuilder sql = new StringBuilder();
-		sql.append("insert into link_sampling_liabilities_snap values(:custId, :linkId)");
+		sql.append("insert into link_sampling_liabilities_snap values(:samplingid, :custid, :linkid)");
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("custid", liability.getCustId());
+		source.addValue("samplingid", samplingId);
+		source.addValue("custid", custId);
 		source.addValue("linkid", linkId);
-
 		this.jdbcTemplate.update(sql.toString(), source);
+
+		return linkId;
 	}
 
+	private long getLiabilitySnapLink(long samplingId, long custId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select coalesce(max(linkid), 0) from link_sampling_liabilities_snap");
+		sql.append(" where samplingid = :samplingid and custid=:custid");
+
+		long linkid = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("samplingid", samplingId);
+		source.addValue("custid", custId);
+		try {
+			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (DataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return linkid;
+	}
+	
 	@Override
 	public long getCollateralSnapLinkId(long samplingId, String collateralRef) {
 		logger.debug(Literal.ENTERING);
@@ -704,22 +718,6 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		return linkId;
 	}
 	
-	private long getLiabilitySnapLinkId(long custId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("select coalesce(max(linkid), 0) from link_sampling_liabilities_snap where custid=:custid");
-
-		long linkid = 0;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("custid", custId);
-		try {
-			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (DataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		return linkid;
-	}
 
 	@Override
 	public BigDecimal getLoanEligibility(String finReference, String eligibilityRule) {
@@ -970,6 +968,25 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		} catch (DataAccessException e) {
 			return new ArrayList<>();
 		}
-	}
+	}	
 	
+	@Override
+	public int getNextLiabilitSeq(long linkId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select coalesce(max(seqno), 0)+1 from ");
+		sql.append("external_liabilities_view ");
+		sql.append("where linkId=:linkId");
+
+		int seqNo = 1;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("linkId", linkId);
+		try {
+			seqNo = jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return seqNo;
+	}
 }

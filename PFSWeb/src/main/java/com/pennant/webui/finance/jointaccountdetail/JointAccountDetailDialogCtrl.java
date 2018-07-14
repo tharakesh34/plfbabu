@@ -765,6 +765,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					this.btnSave.setVisible(false);
 					btnCancel.setVisible(false);
 					this.viewCustInfo.setVisible(false);
+					authoritySignatory.setDisabled(true);
+					includeIncome.setDisabled(true);
 				} else if (isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);

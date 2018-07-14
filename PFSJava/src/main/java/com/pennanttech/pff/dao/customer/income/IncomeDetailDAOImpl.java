@@ -111,12 +111,11 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		query.append(" where linkId = :linkId ");
 		logger.trace(Literal.SQL + query.toString());
 
-		int recordCount = 0;
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("linkId", linkId);
 
 		try {
-			recordCount = this.jdbcTemplate.update(query.toString(), parameterSource);
+			this.jdbcTemplate.update(query.toString(), parameterSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

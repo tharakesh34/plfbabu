@@ -50,6 +50,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -58,6 +59,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -138,6 +140,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	private FinanceDetailService financeDetailService;
 	@Autowired
 	private transient CollateralSetupService collateralSetupService;
+	@Autowired
+	private CustomerDetailsService customerDetailsService;
+	
 	private Map<String, ExtendedFieldRender> extFieldRenderList;
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
 	private Set<String> primaryCustomer = new HashSet<>();
@@ -373,7 +378,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		appendDocumentDetailTab();
 
-		appendCustomerDetailTab();
+		//appendCustomerDetailTab();
 
 		appendCoApplicantDetailTab();
 
@@ -438,6 +443,13 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				Listcell lc;
 
 				lc = new Listcell(customer.getCustCIF());
+				Space space = new Space();
+				space.setSpacing("6px");
+				Button collRef = new Button();
+				collRef.setImage("/images/icons/more.png");
+				collRef.addForward("onClick", self, "onClickCustomerId", customer);
+				lc.appendChild(space);
+				lc.appendChild(collRef);
 				lc.setParent(item);
 
 				lc = new Listcell(customer.getCustShrtName());
@@ -524,6 +536,27 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 					map);
 		}
 
+		logger.debug(Literal.LEAVING);
+	}
+	
+	
+	/**
+	 * View The Collateral Details
+	 */
+	public void onClickCustomerId(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+		Customer collSetup = (Customer) event.getData();
+		CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(collSetup.getCustID(), true,"_AView");
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("customerDetails", customerDetails);
+		map.put("newRecord", false);
+		map.put("isEnqProcess", true);
+		map.put("CustomerEnq", true);
+		map.put("enqiryModule", true);
+		map.put("enqModule", true);
+		map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
+		
 		logger.debug(Literal.LEAVING);
 	}
 

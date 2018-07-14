@@ -347,7 +347,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder query = new StringBuilder();
-		query.append("select * from customer_ext_liabilities_view cl");
+		query.append("select * from external_liabilities_view cl");
 		query.append(" inner join link_sampling_liabilities sl on sl.linkid = cl.linkid");
 		query.append(" where sl.samplingid = :samplingid");
 

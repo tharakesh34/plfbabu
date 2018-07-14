@@ -563,12 +563,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		}
 		sampling.setIrrEligibility(amount);
 
-		/*
-		 * amount = BigDecimal.ZERO; ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_EMI); if (ruleCode
-		 * != null) { object = excuteRule(ruleCode, sampling.getFinccy(), fieldsandvalues); } if (object != null) {
-		 * amount = (BigDecimal) object; } sampling.setEmi(amount);
-		 */
-
 		BigDecimal loanEligibilityAmount = BigDecimal.ZERO;
 		BigDecimal requestedAmount = sampling.getLoanAmountRequested();
 
@@ -1341,6 +1335,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 		String table = "verification_".concat(type.toLowerCase()).concat("_tv");
 		current = getCollateralMap(table, linkId);
+		
 		table = "collateral_".concat(type.toLowerCase()).concat("_ed");
 		original = getCollateralMap(table, snapLinkId);
 		
@@ -1405,114 +1400,108 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	@Override
 	public void saveSnap(Sampling sampling) {
 		saveIncomeSnap(sampling);
-		//saveLiabilitiesSnap(sampling);
+		saveLiabilitiesSnap(sampling);
 		saveCollateralsSnap(sampling);
 	}
 
 	private void saveIncomeSnap(Sampling sampling) {
 		List<CustomerIncome> originalList = customerIncomeDAO.getIncomesByFinReference(sampling.getKeyReference());
 		List<CustomerIncome> currentList = customerIncomeDAO.getIncomesBySamplingId(sampling.getId());
-
-		List<CustomerIncome> currentNewList = new ArrayList<>(currentList);
-		List<CustomerIncome> originalNewList = new ArrayList<>(originalList);
-		for (CustomerIncome current : currentList) {
-			for (CustomerIncome original : originalList) {
-				if (original.getCustId() == current.getCustId()
-						&& StringUtils.equals(original.getIncomeType(), current.getIncomeType())
-						&& StringUtils.equals(original.getIncomeExpense(), current.getIncomeExpense())
-						&& StringUtils.equals(original.getCategory(), current.getCategory())) {
-
-					current.setId(original.getId());
-					current.setLinkId(original.getLinkId());
-					current.setLastMntBy(sampling.getLastMntBy());
-					current.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					currentNewList.remove(current);
-					originalNewList.remove(original);
-
-					try {
-						incomeDetailDAO.update(current, "");
-						incomeDetailDAO.update(current, "_temp");
-					} catch (Exception e) {
-						logger.warn(e);
-					} finally {
-						original.setLinkId(samplingDAO.getIncomeSnapLinkId(sampling.getId(), original.getCustId()));
-						original.setId(0);
-						incomeDetailDAO.deletebyLinkId(original.getLinkId(), "");
-						original.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						original.setLastMntBy(sampling.getLastMntBy());
-						incomeDetailDAO.save(original, "");
-					}
-
-				}
-			}
-		}
-
-		for (CustomerIncome currentNew : currentNewList) {
-			currentNew.setLinkId(0);
-			currentNew.setId(0);
-			customerIncomeDAO.setLinkId(currentNew);
-			incomeDetailDAO.deletebyLinkId(currentNew.getLinkId(), "");
-			currentNew.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			currentNew.setLastMntBy(sampling.getLastMntBy());
-			incomeDetailDAO.save(currentNew, "");
+						
+		/**
+		 * Preparing income linkid's
+		 */
+		Set<Long> linkIds = new HashSet<>();
+		for (CustomerIncome income : originalList) {
+			linkIds.add(income.getLinkId());
 		}
 		
-		for (CustomerIncome originalNew : originalNewList) {
-			originalNew.setLinkId(samplingDAO.getIncomeSnapLinkId(sampling.getId(), originalNew.getCustId()));
-			originalNew.setId(0);
-			incomeDetailDAO.deletebyLinkId(originalNew.getLinkId(), "");
-			originalNew.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			originalNew.setLastMntBy(sampling.getLastMntBy());
-			incomeDetailDAO.save(originalNew, "");
+		/**
+		 * Deleting the incomes captured at customer/loan including co-applicant.
+		 */
+		for (Long linkid : linkIds) {
+			try {
+				incomeDetailDAO.deletebyLinkId(linkid, "");
+				incomeDetailDAO.deletebyLinkId(linkid, "_temp");
+			} catch (Exception e) {
+				// Ignore
+			}
 		}
+						
+		/**
+		 * Saving the incomes captured at sampling
+		 */
+		for (CustomerIncome income : currentList) {
+			income.setId(0);
+			income.setLinkId(0);
+			customerIncomeDAO.setLinkId(income);
+			income.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			income.setLastMntBy(sampling.getLastMntBy());
+			incomeDetailDAO.save(income, "");
+		}
+		
+		/**
+		 * Saving the incomes captured at customer/loan as snap
+		 */
+		for (CustomerIncome income : originalList) {
+			income.setId(0);
+			income.setLinkId(0);
+			income.setLinkId(samplingDAO.getIncomeSnapLinkId(sampling.getId(), income.getCustId()));
+			income.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			income.setLastMntBy(sampling.getLastMntBy());
+			incomeDetailDAO.save(income, "");
+		}
+		
+		System.out.println("");
 	}
 
 	private void saveLiabilitiesSnap(Sampling sampling) {
-		List<CustomerExtLiability> originalList = customerExtLiabilityDAO
-				.getLiabilityByFinReference(sampling.getKeyReference());
+		List<CustomerExtLiability> originalList = customerExtLiabilityDAO.getLiabilityByFinReference(sampling.getKeyReference());
 		List<CustomerExtLiability> currentList = customerExtLiabilityDAO.getLiabilityBySamplingId(sampling.getId());
-
-		List<CustomerExtLiability> currentNewList = new ArrayList<>(currentList);
-		List<CustomerExtLiability> originalNewList = new ArrayList<>(originalList);
-
-		for (CustomerExtLiability current : currentList) {
-			for (CustomerExtLiability original : originalList) {
-				if (current.getCustId() == original.getCustId() && current.getSeqNo() == original.getSeqNo()) {
-
-					current.setId(original.getId());
-					current.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					current.setLastMntBy(sampling.getLastMntBy());
-					currentNewList.remove(current);
-
-					try {
-						externalLiabilityDAO.update(current, "");
-						externalLiabilityDAO.update(current, "_temp");
-					} catch (Exception e) {
-						e.printStackTrace();
-					} finally {
-						samplingDAO.setLiabilitySnapLinkId(original);
-						original.setId(0);
-						externalLiabilityDAO.save(original, "");
-					}
-				}
+		
+		/**
+		 * Preparing Liabilities linkid's
+		 */
+		Set<Long> linkIds = new HashSet<>();
+		for (CustomerExtLiability liability : originalList) {
+			linkIds.add(liability.getLinkId());
+		}
+		
+		/**
+		 * Deleting the Liabilities captured at customer/loan including co-applicant.
+		 */
+		for (Long linkid : linkIds) {
+			try {
+				externalLiabilityDAO.deleteByLinkId(linkid, "");
+				externalLiabilityDAO.deleteByLinkId(linkid, "_temp");
+			} catch (Exception e) {
+				// Ignore
 			}
 		}
-
-		for (CustomerExtLiability currentNew : currentNewList) {
-			currentNew.setLinkId(0);
-			currentNew.setId(0);
-			currentNew.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			currentNew.setLastMntBy(sampling.getLastMntBy());
-			customerExtLiabilityDAO.setLinkId(currentNew);
-			externalLiabilityDAO.save(currentNew, "");
+						
+		/**
+		 * Saving the Liabilities captured at sampling
+		 */
+		for (CustomerExtLiability liability : currentList) {
+			liability.setId(0);
+			liability.setLinkId(0);
+			customerExtLiabilityDAO.setLinkId(liability);
+			liability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			liability.setLastMntBy(sampling.getLastMntBy());
+			externalLiabilityDAO.save(liability, "");
 		}
-		for (CustomerExtLiability originalNew : originalNewList) {
-			originalNew.setLinkId(samplingDAO.getLiabilityLinkId(sampling.getId(), originalNew.getCustId()));
-			originalNew.setId(0);
-			originalNew.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			originalNew.setLastMntBy(sampling.getLastMntBy());
-			customerExtLiabilityDAO.setLinkId(originalNew);
-			externalLiabilityDAO.save(originalNew, "");
+		
+		/**
+		 * Saving the Liabilities captured at customer/loan as snap
+		 */
+		for (CustomerExtLiability liability : originalList) {
+			liability.setId(0);
+			liability.setLinkId(0);
+			liability.setLinkId(samplingDAO.getLiabilitySnapLinkId(sampling.getId(), liability.getCustId()));
+			liability.setSeqNo(samplingDAO.getNextLiabilitSeq(liability.getLinkId()));
+			liability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			liability.setLastMntBy(sampling.getLastMntBy());
+			externalLiabilityDAO.save(liability, "");
 		}
 	}
 
@@ -1525,15 +1514,13 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 		for (SamplingCollateral collSetup : sampling.getCollaterals()) {
 			long linkId = samplingDAO.getCollateralLinkId(sampling.getId(), collSetup.getCollateralRef());
-		//	long originallinkId = getCollateralLinkId(collSetup.getCollateralRef(), sampling.getId(), "_snap");
-			String slinkId;
+			String slinkId = "S".concat(String.valueOf(linkId));
 			
-			String tableName = "verification_".concat(collSetup.getCollateralType().toLowerCase()).concat("_tv");
-			slinkId = "S".concat(String.valueOf(linkId));
-			current = getCollateralMap(tableName, slinkId);
+			String table = "verification_".concat(collSetup.getCollateralType().toLowerCase()).concat("_tv");
+			current = getCollateralMap(table, slinkId);
 			
-			tableName = "collateral_".concat(collSetup.getCollateralType().toLowerCase()).concat("_ed");
-			original = extendedFieldDetailsService.getCollateralMap(tableName, collSetup.getCollateralRef());
+			table = "collateral_".concat(collSetup.getCollateralType().toLowerCase()).concat("_ed");
+			original = extendedFieldDetailsService.getCollateralMap(table, collSetup.getCollateralRef());
 
 			newOriginalTemp = new HashMap<>(original);
 			newOriginal = new HashMap<>(original);
@@ -1551,8 +1538,8 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				newOriginalTemp.remove("reference");	
 				newOriginalTemp.put("lastmnton", new Timestamp(System.currentTimeMillis()));
 				newOriginalTemp.put("lastmntby", sampling.getLastMntBy());
-				extendedFieldRenderDAO.update(referece, (Integer) seqNo, newOriginalTemp, "", tableName);
-				extendedFieldRenderDAO.update(referece, (Integer) seqNo, newOriginalTemp, "_temp", tableName);
+				extendedFieldRenderDAO.update(referece, (Integer) seqNo, newOriginalTemp, "", table);
+				extendedFieldRenderDAO.update(referece, (Integer) seqNo, newOriginalTemp, "_temp", table);
 			} catch (Exception e) {
 				logger.warn(e);
 			} finally {
@@ -1560,8 +1547,9 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				newOriginal.put("lastmnton", new Timestamp(System.currentTimeMillis()));
 				newOriginal.put("lastmntby", sampling.getLastMntBy());
 				newOriginal.put("reference", sanpLinkId);
-				extendedFieldRenderDAO.delete(String.valueOf(sanpLinkId), seqNo, "", tableName);
-				extendedFieldRenderDAO.save(newOriginal, "", tableName);
+				newOriginal.put("seqno", seqNo);
+				extendedFieldRenderDAO.delete(String.valueOf(sanpLinkId), seqNo, "", table);
+				extendedFieldRenderDAO.save(newOriginal, "", table);
 			}
 		}
 	}

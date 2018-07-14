@@ -45,9 +45,7 @@ public interface SamplingDAO {
 	long getLinkId(Sampling sampling, String collRef, String inputSource);
 
 	boolean isExist(String finReference,String type);
-
-	void setLiabilitySnapLinkId(CustomerExtLiability customerIncome);
-
+	
 	long getIncomeLinkId(long id, long custId);
 
 	long getLiabilityLinkId(long id, long custId);
@@ -65,6 +63,8 @@ public interface SamplingDAO {
 	long getIncomeLinkIdByCustId(long custId, long samplinId);
 
 	long getIncomeSnapLinkId(long samplingId, long custId);
+	
+	long getLiabilitySnapLinkId(long samplingId, long custId);
 
 	long getLinkId(long samplingId, String tableName);
 	
@@ -86,4 +86,5 @@ public interface SamplingDAO {
 
 	List<String> getCollateralLinkIds(long samplingId);
 
+	int getNextLiabilitSeq(long linkId);
 }

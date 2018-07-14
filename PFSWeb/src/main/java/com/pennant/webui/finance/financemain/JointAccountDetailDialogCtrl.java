@@ -429,7 +429,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			listitem.appendChild(listcell);
 			listcell = new Listcell(jountAccountDetail.getRecordType());
 			listitem.appendChild(listcell);
-			listcell = new Listcell(jountAccountDetail.getRecordStatus());
+			listcell = new Listcell(jountAccountDetail.getWorstStatus());
 			listitem.appendChild(listcell);
 			listitem.setAttribute("data", jountAccountDetail);
 			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onFinJointItemDoubleClicked");
@@ -624,7 +624,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			listitem.appendChild(listcell);
 			listcell = new Listcell(guarantorDetail.getRecordType());
 			listitem.appendChild(listcell);
-			listcell = new Listcell(guarantorDetail.getRecordStatus());
+			listcell = new Listcell(guarantorDetail.getWorstStatus());
 			listitem.appendChild(listcell);
 			listcell = new Listcell(guarantorDetail.getMobileNo());
 			listitem.appendChild(listcell);

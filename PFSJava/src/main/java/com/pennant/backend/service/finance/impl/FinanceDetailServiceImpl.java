@@ -610,9 +610,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Cheque Header and Cheque Details getting
 		financeDetail.setChequeHeader(finChequeHeaderService.getChequeHeaderByRef(finReference));
-
-		financeDetail.setSampling(
-				finSamplingService.getSamplingDetails(financeDetail.getFinScheduleData().getFinReference(), "_aview"));
+		
+		if (financeDetail.isSamplingApprover()) {
+			financeDetail.setSampling(finSamplingService
+					.getSamplingDetails(financeDetail.getFinScheduleData().getFinReference(), "_aview"));
+		}
 
 		//PSL details
 		financeDetail.setPslDetail(pSLDetailService.getPSLDetail((finReference)));

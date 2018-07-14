@@ -20,6 +20,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.finsampling.dao.FinSamplingDAO;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
@@ -42,17 +43,20 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 	public AuditDetail saveOrUpdate(FinanceDetail financeDetail, String auditTranType) {
 		logger.debug(Literal.ENTERING);
 		Sampling sampling = financeDetail.getSampling();
-		Sampling samplingRemarks = new Sampling();
 		
-		BeanUtils.copyProperties(sampling, samplingRemarks);
 		String[] fields = PennantJavaUtil.getFieldDetails(sampling, sampling.getExcludeFields());
+		if (finSamplingDAO.isSnapExist(sampling.getId())) {
+			logger.warn("", new AppException("Snap avilable for sampling details, further updatation not allowed."));
+			return new AuditDetail(auditTranType, 1, fields[0], fields[1], sampling.getBefImage(), sampling);
+		}
+				
+		Sampling samplingRemarks = new Sampling();		
+		BeanUtils.copyProperties(sampling, samplingRemarks);
 		
 		finSamplingDAO.updateSampling(sampling, TableType.MAIN_TAB);
 		
-		if (sampling.getDecision() == Decision.RESUBMIT.getKey() && !samplingService.isExist(sampling.getKeyReference(), "_Temp")) {
-			
+		if (sampling.getDecision() == Decision.RESUBMIT.getKey() && !samplingService.isExist(sampling.getKeyReference(), "_temp")) {
 			samplingService.saveOnReSubmit(sampling);
-
 		} else if (sampling.getDecision() == Decision.CREDITCAM.getKey() && !financeDetail.isActionSave()) {
 			sampling.setUserDetails(financeDetail.getUserDetails());
 			samplingService.saveSnap(sampling);
@@ -137,14 +141,12 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 			long originallinkId = samplingService.getCollateralLinkId(collateralRef, sampling.getId(), "");
 			long sanpLinkId = samplingService.getCollateralLinkId(collateralRef, sampling.getId(), "_snap");
 			
-			String linkId;
+			String linkId = "S".concat(String.valueOf(originallinkId));
 			String snaplinkIdStr;
 			if (sanpLinkId > 0) {
-				linkId = String.valueOf(originallinkId);
 				snaplinkIdStr = String.valueOf(sanpLinkId);
 				collaterals = samplingService.getCollateralFields(collateralType, linkId, snaplinkIdStr);
 			} else {
-				linkId = "S".concat(String.valueOf(originallinkId));
 				collaterals = samplingService.getCollateralFields(collateralType, linkId, collateralRef);
 			}
 			
