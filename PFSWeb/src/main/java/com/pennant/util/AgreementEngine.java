@@ -32,8 +32,8 @@ import com.pennant.app.util.PathUtil;
 import com.pennant.document.generator.HandleHtmlMergeField;
 import com.pennant.document.generator.Template;
 
-public class  TemplateEngine {
-	
+public class AgreementEngine {
+
 	protected String templateSite;
 	protected File templateDirectory;
 	protected File documentDirectory;
@@ -42,15 +42,15 @@ public class  TemplateEngine {
 	protected DocumentBuilder builder;
 	protected String documentPath;
 	private Document masterDocument;
-	private static final Logger logger = Logger.getLogger(TemplateEngine.class);
-	
-	public TemplateEngine() throws Exception {
+	private static final Logger logger = Logger.getLogger(AgreementEngine.class);
+
+	public AgreementEngine() throws Exception {
 		loadLicence();
 		String templatePath = getTemplatePath("");
 		setDocumentSite(templatePath);
 	}
-	
-	public TemplateEngine(String assetCode) throws Exception {
+
+	public AgreementEngine(String assetCode) throws Exception {
 		logger.debug("Entering ");
 		loadLicence();
 		String templatePath = getTemplatePath(assetCode);
@@ -58,26 +58,25 @@ public class  TemplateEngine {
 		setDocumentSite(templatePath);
 		logger.debug("Leaving");
 	}
-	
-	public String getTemplatePath(String assetCode){
-		
+
+	public String getTemplatePath(String assetCode) {
+
 		String templatePath = "";
 		/**
-		 * Disabling the assetCode functionality as assetCode is no longer considered in loan process.
-		 * As discussed with Raju. This functionality is moved to collateral and associated at customer side.
+		 * Disabling the assetCode functionality as assetCode is no longer considered in loan process. As discussed with
+		 * Raju. This functionality is moved to collateral and associated at customer side.
 		 * 
 		 */
-		/*if(StringUtils.isBlank(assetCode)){
-			templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
-		}else{
-			templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS)+"/"+assetCode;
-		}*/
+		/*
+		 * if(StringUtils.isBlank(assetCode)){ templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS); }else{
+		 * templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS)+"/"+assetCode; }
+		 */
 		templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
-		logger.debug("Template Path:"+templatePath);
+		logger.debug("Template Path:" + templatePath);
 		return templatePath;
 	}
 
-	public TemplateEngine(String templateSite, String documentSite) throws Exception {
+	public AgreementEngine(String templateSite, String documentSite) throws Exception {
 		this();
 		setTemplateSite(templateSite);
 		setDocumentSite(documentSite);
@@ -117,11 +116,11 @@ public class  TemplateEngine {
 		return documentPath;
 	}
 
-	public String  saveDocument(String name) throws Exception {
+	public String saveDocument(String name) throws Exception {
 		return saveDocument(name, false);
 	}
 
-	public void showDocument(Window window,String reportName , int format , boolean saved) throws Exception {
+	public void showDocument(Window window, String reportName, int format, boolean saved) throws Exception {
 		logger.debug("Entering ");
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
@@ -139,10 +138,10 @@ public class  TemplateEngine {
 			document.save(stream, format);
 		}
 
-		if((SaveFormat.DOCX) == format){
+		if ((SaveFormat.DOCX) == format) {
 			Filedownload.save(new AMedia(reportName, "msword", "application/msword", stream.toByteArray()));
-		}else{
-			
+		} else {
+
 			Map<String, Object> arg = new HashMap<String, Object>();
 			arg.put("reportBuffer", stream.toByteArray());
 			arg.put("parentWindow", window);
@@ -156,22 +155,22 @@ public class  TemplateEngine {
 		stream = null;
 		logger.debug("Leaving");
 	}
-	
-	public byte[] getDocumentInByteArray(String reportName, int format) throws Exception{
+
+	public byte[] getDocumentInByteArray(String reportName, int format) throws Exception {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		document.save(stream, format);
-  		stream.close();
- 		return stream.toByteArray();
+		stream.close();
+		return stream.toByteArray();
 	}
-	
+
 	public byte[] getDocumentByteData(int format) throws Exception {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		document.save(stream, format);
 		return stream.toByteArray();
 	}
 
-	public void showDocument(Window window,String reportName, int format) throws Exception {
-		showDocument(window,reportName, format, false);
+	public void showDocument(Window window, String reportName, int format) throws Exception {
+		showDocument(window, reportName, format, false);
 	}
 
 	public void mapField(String documentFieldName, String sourceFieldName) {
@@ -195,8 +194,7 @@ public class  TemplateEngine {
 		document.getMailMerge().execute(fields, values);
 	}
 
-	public void mergeFields(ArrayList<String> fields, ArrayList<Object> values)
-	throws Exception {
+	public void mergeFields(ArrayList<String> fields, ArrayList<Object> values) throws Exception {
 		String[] fieldNames = new String[fields.size()];
 
 		mergeFields(fields.toArray(fieldNames), values.toArray());
@@ -212,8 +210,7 @@ public class  TemplateEngine {
 		mergeFields(fields, values);
 	}
 
-	public void mergeFields(ArrayList<String> fields, Object bean)
-	throws Exception {
+	public void mergeFields(ArrayList<String> fields, Object bean) throws Exception {
 		String[] fieldNames = new String[fields.size()];
 
 		mergeFields(fields.toArray(fieldNames), bean);
@@ -238,16 +235,17 @@ public class  TemplateEngine {
 				if (value != null) {
 					if (value instanceof Collection<?>) {
 						DataCollection collection = null;
-					
-						collection = new DataCollection((Collection<?>) value,field);
-						
+
+						collection = new DataCollection((Collection<?>) value, field);
+
 						document.getMailMerge().setMergeDuplicateRegions(true);
 						document.getMailMerge().executeWithRegions(collection);
 
 						collection = null;
 					} else if (value instanceof Map<?, ?>) {
-						Map<?, ?> valueMap= (Map<?, ?>) value;
-						document.getMailMerge().execute(valueMap.keySet().stream().toArray(String[]::new), valueMap.values().toArray());
+						Map<?, ?> valueMap = (Map<?, ?>) value;
+						document.getMailMerge().execute(valueMap.keySet().stream().toArray(String[]::new),
+								valueMap.values().toArray());
 					} else {
 						fields.add(field);
 						values.add(value);
@@ -265,13 +263,13 @@ public class  TemplateEngine {
 		template = null;
 		documentDirectory = null;
 		templateDirectory = null;
-		masterDocument=null;
+		masterDocument = null;
 	}
 
 	protected void loadLicence() throws Exception {
-		
+
 		License license = new License();
-		InputStream stream = TemplateEngine.class.getResourceAsStream("/Aspose.Words.lic");
+		InputStream stream = AgreementEngine.class.getResourceAsStream("/Aspose.Words.lic");
 		license.setLicense(stream);
 
 		stream.close();
@@ -370,8 +368,7 @@ public class  TemplateEngine {
 				if ("byte[]".equals(typeName)) {
 					builder.insertImage((byte[]) item, 50, 50);
 				} else if ("Timestamp".equals(typeName)) {
-					builder.write(new SimpleDateFormat("MMMM d, yyyy")
-					.format((Timestamp) item));
+					builder.write(new SimpleDateFormat("MMMM d, yyyy").format((Timestamp) item));
 				} else {
 					builder.write(item.toString());
 				}
@@ -382,15 +379,13 @@ public class  TemplateEngine {
 
 		builder.endTable();
 	}
-	
 
 	public void appendToMasterDocument() throws Exception {
 		document.updateFields();
-		masterDocument.appendDocument(document,
-				ImportFormatMode.USE_DESTINATION_STYLES);
+		masterDocument.appendDocument(document, ImportFormatMode.USE_DESTINATION_STYLES);
 		document = new Document(template.getPath());
 	}
-	
+
 	public Document getMasterDocument() {
 		return masterDocument;
 	}

@@ -195,7 +195,7 @@ import com.pennant.fusioncharts.ChartUtil;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.TemplateEngine;
+import com.pennant.util.AgreementEngine;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -7271,7 +7271,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			String reportName = "Receipt";
 			String templatePath = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/";
 			String templateName = reportName + PennantConstants.DOC_TYPE_WORD_EXT;
-			TemplateEngine engine = new TemplateEngine(templatePath, templatePath);
+			AgreementEngine engine = new AgreementEngine(templatePath, templatePath);
 			engine.setTemplate(templateName);
 			engine.loadTemplate();
 			reportName = "Receipt_"+this.finReference.getValue()+"_"+getReceiptHeader().getReceiptID();

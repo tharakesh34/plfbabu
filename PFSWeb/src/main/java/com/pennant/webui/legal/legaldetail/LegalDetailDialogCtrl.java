@@ -116,7 +116,7 @@ import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.TemplateEngine;
+import com.pennant.util.AgreementEngine;
 import com.pennant.webui.finance.financemain.FinCovenantTypeListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -2518,7 +2518,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		legalDetail = legalDetailService.formatLegalDetails(legalDetail);
 		String fileName = template.concat(PennantConstants.DOC_TYPE_PDF_EXT);
-		TemplateEngine engine = new TemplateEngine("");
+		AgreementEngine engine = new AgreementEngine("");
 		engine.setTemplate(templateName);
 		engine.loadTemplate();
 		engine.mergeFields(legalDetail);

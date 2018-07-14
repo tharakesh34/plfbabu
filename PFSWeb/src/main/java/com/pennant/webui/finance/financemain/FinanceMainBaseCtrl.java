@@ -285,7 +285,7 @@ import com.pennant.core.EventManager.Notify;
 import com.pennant.util.AgreementGeneration;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.TemplateEngine;
+import com.pennant.util.AgreementEngine;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -6984,7 +6984,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 					String templateName = template.concat(PennantConstants.DOC_TYPE_WORD_EXT);
 					String fileName = template.concat(PennantConstants.DOC_TYPE_PDF_EXT);
-					TemplateEngine engine = new TemplateEngine("");
+					AgreementEngine engine = new AgreementEngine("");
 					engine.setTemplate(templateName);
 					engine.loadTemplate();
 					engine.mergeFields(legalDetail);
@@ -7063,7 +7063,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		for (FinanceReferenceDetail financeReferenceDetail : getFinanceDetail().getAggrementList()) {
 			if (StringUtils.equals(financeReferenceDetail.getLovDescCodelov(), PennantConstants.CASDOC)) {
 
-				TemplateEngine engine = new TemplateEngine(
+				AgreementEngine engine = new AgreementEngine(
 						getFinanceDetail().getFinScheduleData().getFinanceMain().getFinPurpose());
 				engine.setTemplate("CreditAssessmentSheet" + PennantConstants.DOC_TYPE_WORD_EXT);
 				engine.loadTemplate();

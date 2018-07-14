@@ -50,7 +50,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.TemplateEngine;
+import com.pennant.util.AgreementEngine;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
@@ -1907,7 +1907,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			InterruptedException {
 		try {
 			String templatePath = PathUtil.getPath(PathUtil.MMA_AGREEMENTS);
-			TemplateEngine engine = new TemplateEngine(templatePath,
+			AgreementEngine engine = new AgreementEngine(templatePath,
 					templatePath);
 			String refNo = aAgreementDetail.getCustCIF();
 			String reportName = refNo + "_" + agreementType;

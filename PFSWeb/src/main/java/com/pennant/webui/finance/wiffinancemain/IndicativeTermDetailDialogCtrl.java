@@ -99,7 +99,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.component.PTCKeditor;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.TemplateEngine;
+import com.pennant.util.AgreementEngine;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -526,7 +526,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 				sheetName = finDivision+"_"+sheetName;
 			}
 			
-			TemplateEngine engine = new TemplateEngine(sheetName);
+			AgreementEngine engine = new AgreementEngine(sheetName);
 			String refNo =  detail.getFinScheduleData().getFinanceMain().getFinReference();
 			String reportName = refNo + "_TermSheet.docx";
 			engine.setTemplate("");

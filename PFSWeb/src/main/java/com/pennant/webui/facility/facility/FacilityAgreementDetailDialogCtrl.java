@@ -106,7 +106,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.TemplateEngine;
+import com.pennant.util.AgreementEngine;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -322,7 +322,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 				custid = getFacility().getCustID();
 				String templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
 				
-				TemplateEngine engine = new TemplateEngine(templatePath, templatePath);
+				AgreementEngine engine = new AgreementEngine(templatePath, templatePath);
 				engine.setTemplate(data.getLovDescAggReportName());
 				engine.loadTemplate();
 				String aggName=StringUtils.trimToEmpty(data.getLovDescNamelov());

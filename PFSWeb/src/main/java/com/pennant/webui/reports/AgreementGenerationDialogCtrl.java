@@ -35,7 +35,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.util.TemplateEngine;
+import com.pennant.util.AgreementEngine;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -334,7 +334,7 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 		
 		String agreement= PennantConstants.AGREEMENT_GEN;
 		String templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
-		TemplateEngine engine = new TemplateEngine(templatePath, templatePath);
+		AgreementEngine engine = new AgreementEngine(templatePath, templatePath);
 		String refNo = agreementGeneration.getCustCIF();
 		String reportName = refNo + "_"+agreement;
 		engine.setTemplate(agreement);

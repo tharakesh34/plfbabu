@@ -260,7 +260,7 @@ public class AgreementGeneration implements Serializable {
 			throws Exception {
 		logger.debug(" Entering ");
 
-		TemplateEngine engine = new TemplateEngine(finPurpose);
+		AgreementEngine engine = new AgreementEngine(finPurpose);
 		engine.setTemplate(aggrementName);
 		engine.loadTemplate();
 		engine.mergeFields(agreementDetail);
@@ -330,7 +330,7 @@ public class AgreementGeneration implements Serializable {
 
 			if (list != null && !list.isEmpty()) {
 
-				TemplateEngine engine = new TemplateEngine(finPurpose);
+				AgreementEngine engine = new AgreementEngine(finPurpose);
 				engine.setTemplate(data.getLovDescAggReportName());
 
 				ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
@@ -388,7 +388,7 @@ public class AgreementGeneration implements Serializable {
 			if (list != null && !list.isEmpty()) {
 
 				String finReference = list.get(0).getFinRef();
-				TemplateEngine engine = new TemplateEngine(finPurpose);
+				AgreementEngine engine = new AgreementEngine(finPurpose);
 				engine.setTemplate(data.getLovDescAggReportName());
 				engine.loadTemplate();
 
@@ -2967,7 +2967,7 @@ public class AgreementGeneration implements Serializable {
 	 * @param detail
 	 * @return
 	 */
-	public void setExtendedMasterDescription(FinanceDetail detail, TemplateEngine engine) {
+	public void setExtendedMasterDescription(FinanceDetail detail, AgreementEngine engine) {
 		logger.debug(" Entering ");
 		try {
 			ExtendedFieldHeader header = detail.getExtendedFieldHeader();
@@ -3039,7 +3039,7 @@ public class AgreementGeneration implements Serializable {
 		logger.debug(" Leaving ");
 	}
 	
-	public void setFeeDetails(FinanceDetail detail, TemplateEngine engine) throws Exception {
+	public void setFeeDetails(FinanceDetail detail, AgreementEngine engine) throws Exception {
 		List<FinFeeDetail> feelist = detail.getFinScheduleData().getFinFeeDetailList();
 		String finCcy = detail.getFinScheduleData().getFinanceMain().getFinCcy();
 		Map<String, String> map = new HashMap<>();

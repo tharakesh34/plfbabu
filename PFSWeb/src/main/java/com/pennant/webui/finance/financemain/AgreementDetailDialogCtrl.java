@@ -77,7 +77,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.AgreementGeneration;
-import com.pennant.util.TemplateEngine;
+import com.pennant.util.AgreementEngine;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
@@ -419,7 +419,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 							//aggPath = main.getFinPurpose();
 							templateName = data.getLovDescAggReportName();
 						}
-						TemplateEngine engine = new TemplateEngine(aggPath);
+						AgreementEngine engine = new AgreementEngine(aggPath);
 						engine.setTemplate(templateName);
 						engine.loadTemplate();
 						
@@ -460,7 +460,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 					aggPath =  "";
 					templateName = data.getLovDescAggReportName();
 				}
-				TemplateEngine engine = new TemplateEngine(aggPath);
+				AgreementEngine engine = new AgreementEngine(aggPath);
 				engine.setTemplate(templateName);
 				engine.loadTemplate();
 
