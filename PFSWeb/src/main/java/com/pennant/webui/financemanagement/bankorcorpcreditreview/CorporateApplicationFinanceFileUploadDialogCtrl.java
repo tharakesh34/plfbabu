@@ -387,14 +387,12 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	public void onCheck$custType(Event event) {
 		if (this.custType.getSelectedItem() != null) {
 			if (this.custType.getSelectedIndex() == 0) {
-				this.customerCategoryRow.setVisible(false);
 				this.lovDescCustCIF.setVisible(true);
 				this.lovDescCustCIF.setValue("");
 				this.custShrtName.setValue("");
 			} else {
 				this.lovDescCustCIF.setValue("");
-				this.customerCategoryRow.setVisible(true);
-				//this.btnSearchCustCIF.setVisible(false);
+				this.btnSearchCustCIF.setVisible(true);
 			}
 		}
 	}
