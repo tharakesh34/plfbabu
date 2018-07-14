@@ -968,7 +968,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		// Workflow Engine
 		WorkflowEngine engine = new WorkflowEngine(workflow.getWorkFlowXml());
 		String initStages[] = null;
-		String apprStage = null;
+		String apprStages[] = null;
 
 		// get the Initiation Stages and Approval Stage
 		for (Listitem initListItem : listBoxLimitService.getItems()) {
@@ -977,27 +977,30 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 				if (StringUtils.equals(financeReferenceDetail.getLovDescNamelov(), initId)) {
 					initStages = financeReferenceDetail.getMandInputInStage().split(",");
 				} else if (StringUtils.equals(financeReferenceDetail.getLovDescNamelov(), approvalId)) {
-					apprStage = financeReferenceDetail.getMandInputInStage().replace(",", "");
+					apprStages = financeReferenceDetail.getMandInputInStage().split(",");
 				}
 			}
 		}
 
 		// Check whether the Both Initiation and Approval Stages should be
 		// Mentioned.
-		if (initStages != null && apprStage != null) {
+		if (initStages != null && apprStages != null) {
 			for (String fiInitStage : initStages) {
 				String task = engine.getUserTaskId(fiInitStage);
+				
+				for (String apprStage : apprStages) {
 				String nextTask = engine.getUserTaskId(apprStage);
 
 				// Check whether the Approval Stage is a Successor to the Initiation Stage.
 				if (engine.compareTo(task, nextTask) != Flow.SUCCESSOR) {
 					MessageUtil.showError(type + " initiation stage must be predecessors to the " + type
-							+ " approval stage in miscellaneous tab.");
+							+ " approval stage in miscellaneous Tab.");
 					tabCustLimitCheck.setSelected(true);
 					return false;
 				}
 			}
-		} else if ((initStages != null && apprStage == null) || (initStages == null && apprStage != null)) {
+			}
+		} else if ((initStages != null && apprStages == null) || (initStages == null && apprStages != null)) {
 			MessageUtil.showError("Either both " + type + " initiation & " + type
 					+ " approval stages should be saved or none of them.");
 			tabCustLimitCheck.setSelected(true);
