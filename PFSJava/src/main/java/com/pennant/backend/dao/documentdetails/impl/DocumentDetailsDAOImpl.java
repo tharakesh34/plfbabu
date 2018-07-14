@@ -63,6 +63,7 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>documentDetails model</b> class.<br>
@@ -136,6 +137,33 @@ public class DocumentDetailsDAOImpl extends BasisNextidDaoImpl<DocumentDetails> 
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
+	}
+	 
+	/*
+	 * Deleting the records based on the String referenceId, String docCategory,
+	 * String docModule
+	 */
+	@Override
+	public void deleteList(String referenceId, String docCategory, String docModule, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		DocumentDetails documentDetails = new DocumentDetails();
+		documentDetails.setReferenceId(referenceId);
+		documentDetails.setDocCategory(docCategory);
+		documentDetails.setDocModule(docModule);
+
+		StringBuilder deleteSql = new StringBuilder("Delete From DocumentDetails");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where ReferenceId =:ReferenceId AND DocCategory =:DocCategory AND DocModule =:DocModule");
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
+		try {
+			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/**

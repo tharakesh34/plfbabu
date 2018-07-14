@@ -6974,6 +6974,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceMain.setUserDetails(getUserWorkspace().getLoggedInUser());
 			List<LegalDetail> legalDEtailsLIst = getLegalDetailService().getApprovedLegalDetail(aFinanceMain);
 			if (CollectionUtils.isNotEmpty(legalDEtailsLIst)) {
+				List<DocumentDetails> documentsList =  new ArrayList<>();
 				for (LegalDetail legalDetail : legalDEtailsLIst) {
 					String template = "";
 					if (legalDetail.isModtDoc()) {
@@ -7008,10 +7009,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
 					details.setDocImage(legalDetail.getDocImage());
 					details.setReferenceId(legalDetail.getLoanReference());
-					getLegalDetailService().saveDocumentDetails(details);
-
+					documentsList.add(details);
 					engine.close();
 				}
+				getLegalDetailService().saveDocumentDetails(documentsList);
 			}
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);

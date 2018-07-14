@@ -1309,6 +1309,27 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		logger.debug(Literal.LEAVING);
 	}
 	
+	// Saving Documents List
+	@Override
+	public void saveDocumentDetails(List<DocumentDetails> documentsList) {
+		logger.debug(Literal.ENTERING);
+		
+		if (CollectionUtils.isEmpty(documentsList)) {
+			return;
+		}
+		DocumentDetails documentDetails = documentsList.get(0);
+		getDocumentDetailsDAO().deleteList(documentDetails.getReferenceId(), documentDetails.getDocCategory(),
+				documentDetails.getDocModule(), TableType.MAIN_TAB.getSuffix());
+		for (DocumentDetails details : documentsList) {
+			DocumentManager documentManager = new DocumentManager();
+			documentManager.setDocImage(details.getDocImage());
+			details.setDocRefId(getDocumentManagerDAO().save(documentManager));
+			getDocumentDetailsDAO().save(details, TableType.MAIN_TAB.getSuffix());
+		}
+		
+		logger.debug(Literal.LEAVING);
+	}
+	
 	 /*
 	  * Getting the document details
 	  */

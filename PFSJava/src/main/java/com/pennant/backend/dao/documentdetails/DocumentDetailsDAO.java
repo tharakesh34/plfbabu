@@ -30,4 +30,6 @@ public interface DocumentDetailsDAO {
 	DocumentDetails getDocumentDetails(String ref, String category, String module, String type);
 
 	DocumentDetails getDocumentDetails(long id, String type);
+
+	void deleteList(String referenceId, String docCategory, String docModule, String type);
 }

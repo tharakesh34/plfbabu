@@ -77,4 +77,6 @@ public interface LegalDetailService {
 	List<DocumentDetails> getDocumentDetails(String reference, String module);
 
 	DocumentDetails getDocDetailByDocId(long docId, String string, boolean readAttachment);
+
+	void saveDocumentDetails(List<DocumentDetails> documentsList);
 }
