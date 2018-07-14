@@ -111,6 +111,10 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.util.Constraint.PTNumberValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -120,95 +124,92 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl<Customer> {
-	private static final long							serialVersionUID					= 3257569537441008225L;
-	private static final Logger							logger								= Logger
-			.getLogger(CorporateApplicationFinanceFileUploadDialogCtrl.class);
+	private static final long serialVersionUID = 3257569537441008225L;
+	private static final Logger logger = Logger.getLogger(CorporateApplicationFinanceFileUploadDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUL-file are getting autoWired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window									window_CorporateCreditRevFinanceFileUploadDialog;									// autoWired
-	protected Borderlayout								borderLayout_FinanceTypeList;														// autoWired
-	protected Radiogroup								custType;
-	protected Radio										custType_Existing;
-	protected Radio										custType_Prospect;
-	protected Row										customerRow;
-	protected Longbox									custID;
-	protected Textbox									lovDescCustCIF;
-	protected Button									btnSearchCustCIF;
-	protected Label										custShrtName;
-	protected org.zkoss.zul.Row							auditYearRow;
-	protected Intbox									auditYear;
-	protected org.zkoss.zul.Row							customerCategoryRow;
-	protected Combobox									custCategory;
-	protected Radiogroup								qualifiedUnQualified;																// autowire
-	protected Radio										qualRadio;																			// autowire
-	protected Radio										unQualRadio;																		// autowire
-	protected Textbox									lovDescFinCcyName;																	// autowire
-	protected Row										auditPeriodRow;
-	protected Combobox									auditPeriod;
-	protected Textbox									bankName;
-	protected Textbox									auditors;
-	protected Textbox									location;
-	protected Datebox									auditedDate;
-	protected Combobox									auditType;
-	protected ExtendedCombobox							currencyType;
-	protected Decimalbox								conversionRate;
-	protected Textbox									documentName;
-	protected Button									btnUploadDoc;
-	protected Textbox									document;																			// autowired
-	protected Radiogroup								conSolOrUnConsol;																	// autowired
-	protected Radio										conSolidated;																		// autowired
-	protected Radio										unConsolidated;
-	public List<CustomerDocument>						customerDocumentList				= new ArrayList<CustomerDocument>();			// autowired
-	protected Textbox									auditedYear;																		// autowired
-	private String										errorMsg							= null;
-	private ExcelFileImport								fileImport							= null;
-	private Media										media;
-	protected Textbox									txtFileName;
-	protected Grid										statusGrid;
-	public List<Notes>									notesList							= new ArrayList<Notes>();
-	protected Label										label_CreditApplicationReviewDialog_BankName;										// autowired
+	protected Window window_CorporateCreditRevFinanceFileUploadDialog; // autoWired
+	protected Borderlayout borderLayout_FinanceTypeList; // autoWired
+	protected Radiogroup custType;
+	protected Radio custType_Existing;
+	protected Radio custType_Prospect;
+	protected Row customerRow;
+	protected Longbox custID;
+	protected Textbox lovDescCustCIF;
+	protected Button btnSearchCustCIF;
+	protected Label custShrtName;
+	protected org.zkoss.zul.Row auditYearRow;
+	protected Intbox auditYear;
+	protected org.zkoss.zul.Row customerCategoryRow;
+	protected Combobox custCategory;
+	protected Radiogroup qualifiedUnQualified; // autowire
+	protected Radio qualRadio; // autowire
+	protected Radio unQualRadio; // autowire
+	protected Textbox lovDescFinCcyName; // autowire
+	protected Row auditPeriodRow;
+	protected Combobox auditPeriod;
+	protected Textbox bankName;
+	protected Textbox auditors;
+	protected Textbox location;
+	protected Datebox auditedDate;
+	protected Combobox auditType;
+	protected ExtendedCombobox currencyType;
+	protected Decimalbox conversionRate;
+	protected Textbox documentName;
+	protected Button btnUploadDoc;
+	protected Textbox document; // autowired
+	protected Radiogroup conSolOrUnConsol; // autowired
+	protected Radio conSolidated; // autowired
+	protected Radio unConsolidated;
+	public List<CustomerDocument> customerDocumentList = new ArrayList<CustomerDocument>(); // autowired
+	protected Textbox auditedYear; // autowired
+	private String errorMsg = null;
+	private ExcelFileImport fileImport = null;
+	private Media media;
+	protected Textbox txtFileName;
+	protected Grid statusGrid;
+	public List<Notes> notesList = new ArrayList<Notes>();
+	protected Label label_CreditApplicationReviewDialog_BankName; // autowired
 
 	@SuppressWarnings("unused")
-	private transient CreditApplicationReviewDialogCtrl	creditApplicationReviewDialogCtrl;
-	private transient CreditApplicationReviewListCtrl	creditApplicationReviewListCtrl;
-	private transient FinCreditReviewDetails			creditReviewDetail;
-	private transient boolean							validationOn;
-	private Customer									customer;
-	private CreditApplicationReviewService				creditApplicationReviewService;
-	private FinCreditRevSubCategoryService				finCreditRevSubCategoryService;
-	private FinCreditReviewDetails						creditReviewDetails;
-	public List<FinCreditRevSubCategory>				listOfFinCreditRevSubCategory		= null;
-	protected ExtendedCombobox							custCIF;																			// autowired// overhanded per param
-	protected Listitem									duplicateItem;
-	protected Grid										grid_Basicdetails;																	// autoWired
-	protected Space										space_BankName;																		// autowired
-	protected Groupbox									gb_basicDetails;																	// autowire
+	private transient CreditApplicationReviewDialogCtrl creditApplicationReviewDialogCtrl;
+	private transient CreditApplicationReviewListCtrl creditApplicationReviewListCtrl;
+	private transient FinCreditReviewDetails creditReviewDetail;
+	private transient boolean validationOn;
+	private Customer customer;
+	private CreditApplicationReviewService creditApplicationReviewService;
+	private FinCreditRevSubCategoryService finCreditRevSubCategoryService;
+	private FinCreditReviewDetails creditReviewDetails;
+	public List<FinCreditRevSubCategory> listOfFinCreditRevSubCategory = null;
+	protected ExtendedCombobox custCIF; // autowired// overhanded per param
+	protected Listitem duplicateItem;
+	protected Grid grid_Basicdetails; // autoWired
+	protected Space space_BankName; // autowired
+	protected Groupbox gb_basicDetails; // autowire
 
-	public List<FinCreditRevSubCategory>				modifiedFinCreditRevSubCategoryList	= new ArrayList<FinCreditRevSubCategory>();
-	public List<CreditReviewSubCtgDetails>				creditReviewSubCtgDetailsList		= new ArrayList<CreditReviewSubCtgDetails>();
-	private WIFCustomer									wifcustomer							= new WIFCustomer();
-	int													currentYear							= DateUtility
-			.getYear(DateUtility.getAppDate());
-	private List<FinCreditReviewDetails>				finCreditReviewDetailsList			= null;
-	List<Filter>										filterList							= null;
-	private MailUtil									mailUtil;
-	protected JdbcSearchObject<Customer>				newSearchObject;
-	CreditReviewMainCtgDetails							creditReviewMainCtgDetails			= new CreditReviewMainCtgDetails();
-	int													currFormatter						= SysParamUtil
-			.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
-	String												amtFormat							= PennantApplicationUtil
-			.getAmountFormate(currFormatter);
+	public List<FinCreditRevSubCategory> modifiedFinCreditRevSubCategoryList = new ArrayList<FinCreditRevSubCategory>();
+	public List<CreditReviewSubCtgDetails> creditReviewSubCtgDetailsList = new ArrayList<CreditReviewSubCtgDetails>();
+	private WIFCustomer wifcustomer = new WIFCustomer();
+	int currentYear = DateUtility.getYear(DateUtility.getAppDate());
+	private List<FinCreditReviewDetails> finCreditReviewDetailsList = null;
+	List<Filter> filterList = null;
+	private MailUtil mailUtil;
+	protected JdbcSearchObject<Customer> newSearchObject;
+	CreditReviewMainCtgDetails creditReviewMainCtgDetails = new CreditReviewMainCtgDetails();
+	int currFormatter = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
+	String amtFormat = PennantApplicationUtil.getAmountFormate(currFormatter);
 
-	Date												date								= DateUtility.getAppDate();
-	static boolean										isError								= false;
+	Date date = DateUtility.getAppDate();
+	static boolean isError = false;
 
-	Map<String, FinCreditReviewDetails>					map									= new HashMap<>();
-	Set<String>											plYearData							= null;
-	Set<String>											bsYearData							= null;
-	ByteArrayInputStream								inputStream							= null;
+	Map<String, FinCreditReviewDetails> map = new HashMap<>();
+	Set<String> plYearData = null;
+	Set<String> bsYearData = null;
+	ByteArrayInputStream inputStream = null;
 
 	/**
 	 * default constructor.<br>
@@ -218,8 +219,9 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	}
 
 	/**
-	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
-	 * selected FinanceType object in a Map.
+	 * Before binding the data and calling the List window we check, if the
+	 * ZUL-file is called with a parameter for a selected FinanceType object in
+	 * a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -417,6 +419,10 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		logger.debug("Entering" + event.toString());
 		FinCreditReviewDetails aCreditReviewDetails = new FinCreditReviewDetails();
 		BeanUtils.copyProperties(this.creditReviewDetail, aCreditReviewDetails);
+		// *************************************************************
+		// force validation, if on, than execute by component.getValue()
+		// *************************************************************
+		doSetValidation();
 		doWriteComponentsToBean(aCreditReviewDetails);
 		excelSave();
 		this.window_CorporateCreditRevFinanceFileUploadDialog.onClose();
@@ -424,7 +430,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		logger.debug("Leaving" + event.toString());
 	}
 
-	//set the workflow details
+	// set the workflow details
 	private void workFlowDetails(FinCreditReviewDetails aCreditReviewDetails) {
 		logger.debug(Literal.ENTERING);
 		aCreditReviewDetails.setWorkflowId(this.creditReviewDetail.getWorkflowId());
@@ -472,15 +478,17 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		logger.debug(Literal.LEAVING);
 	}
 
-	//for getting creditApplication review dialog 
+	// for getting creditApplication review dialog
 	public void getCreditApplicationRevDialog() {
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("creditReviewDetails", creditReviewDetail);
 		/*
-		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
-		 * listBox ListModel. This is fine for synchronizing the data in the CreditReviewDetailsListbox from the dialog
-		 * when we do a delete, edit or insert a FinCreditReviewDetails.
+		 * we can additionally handed over the listBox or the controller self,
+		 * so we have in the dialog access to the listBox ListModel. This is
+		 * fine for synchronizing the data in the CreditReviewDetailsListbox
+		 * from the dialog when we do a delete, edit or insert a
+		 * FinCreditReviewDetails.
 		 */
 		map.put("creditApplicationReviewListCtrl", creditApplicationReviewListCtrl);
 
@@ -501,8 +509,9 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		getCreditApplicationReviewListCtrl().search();
 	}
 
-	//method for uploading documnet and setting path to textbox and validation for Excel file
-	//accepts only excel (XLS,XLSX) file formats only
+	// method for uploading documnet and setting path to textbox and validation
+	// for Excel file
+	// accepts only excel (XLS,XLSX) file formats only
 	public void onUpload$btnUploadDoc(UploadEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -707,7 +716,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 						}
 					}
 				}
-				//read the excel data from the 4th column
+				// read the excel data from the 4th column
 				for (int k = 0; k < row.getLastCellNum(); k++) {
 					if (k < 4) {
 						continue;
@@ -723,7 +732,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 				}
 				continue;
 			}
-			//reading headers from excel file
+			// reading headers from excel file
 			for (int i = 4; i <= headerRow.getLastCellNum(); i++) {
 				cell = headerRow.getCell(i);
 				if (cell == null) {
@@ -769,7 +778,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		return yearDataMap;
 	}
 
-	//set audit year read from excel file
+	// set audit year read from excel file
 	private String getYear(String year) {
 		logger.debug(Literal.ENTERING);
 		String[] array = StringUtils.split(year, ".");
@@ -786,7 +795,8 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
 	 * 
 	 * @param aCreditReviewDetails
 	 * @throws Exception
@@ -861,7 +871,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		} else {
 
 			for (Entry<String, Map<String, List<Object[]>>> item : data.entrySet()) {
-				//reading the sheets
+				// reading the sheets
 				String categorydesc = item.getKey();
 
 				if ("P&L".equalsIgnoreCase(categorydesc)) {
@@ -869,7 +879,8 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 				} else if ("BS".equalsIgnoreCase(categorydesc)) {
 					categorydesc = "Balance Sheet";
 				}
-				//get sheetNames and categoryCode from data base for validating with Excel file
+				// get sheetNames and categoryCode from data base for validating
+				// with Excel file
 				List<FinCreditRevSubCategory> subcategories = creditApplicationReviewService
 						.getFinCreditRevSubCategoryByCustCtg(customer.getCustCtgCode(), categorydesc);
 
@@ -880,7 +891,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 					} else {
 						map = new HashMap<String, FinCreditReviewDetails>();
 					}
-					//set the Bean
+					// set the Bean
 					if (detail == null) {
 						detail = new FinCreditReviewDetails();
 						detail.setCreditRevCode(customer.getCustCtgCode());
@@ -890,11 +901,12 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 						map.put(revData.getKey(), detail);
 					}
 
-					//for validation excel file in content level
+					// for validation excel file in content level
 					Map<String, String> desc = new HashMap<String, String>();
 					Map<String, String> seqId = new HashMap<>();
 
-					//reading Description and sequence ID For validating with Excel ID and Description
+					// reading Description and sequence ID For validating with
+					// Excel ID and Description
 					for (FinCreditRevSubCategory fcr : subcategories) {
 						desc.put(fcr.getSubCategoryDesc(), fcr.getSubCategoryDesc());
 						String.valueOf(fcr.getSubCategorySeque());
@@ -911,14 +923,14 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 							dbDesc = object[2].toString();
 
 						}
-						//validation for description
+						// validation for description
 						if (!(desc.containsKey(dbDesc))) {
 							MessageUtil.showMessage(dbDesc + "Invalid Description");
 							data.clear();
 							documentName.setValue("");
 							return;
 						}
-						//validation for ID
+						// validation for ID
 						if (!seqId.containsKey(object[0].toString())) {
 							MessageUtil.showError(object[0].toString() + "Invalid sequence Id");
 							data.clear();
@@ -955,7 +967,8 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		logger.debug(Literal.LEAVING);
 	}
 
-	// if uploaded file is sucessfully validated then call this method for saving the data
+	// if uploaded file is sucessfully validated then call this method for
+	// saving the data
 	public void excelSave() {
 		logger.debug(Literal.ENTERING);
 		for (FinCreditReviewDetails reviewDetails : map.values()) {
@@ -1013,7 +1026,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 				wveList.add(wve);
 			}
 		}
-		//auditPeriod validation
+		// auditPeriod validation
 
 		if (!"#".equals(StringUtils.trimToEmpty(this.auditPeriod.getSelectedItem().getValue().toString()))) {
 			aCreditReviewDetails
@@ -1042,7 +1055,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 				aCreditReviewDetails.setLovDescCustCtgCode(category);
 			}
 		}
-		//AuditType validation
+		// AuditType validation
 
 		if (!"#".equals(StringUtils.trimToEmpty(this.auditType.getSelectedItem().getValue().toString()))) {
 			aCreditReviewDetails.setAuditType(this.auditType.getSelectedItem().getValue().toString());
@@ -1206,6 +1219,44 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		this.currencyType.setConstraint("");
 		logger.debug(Literal.LEAVING);
 
+	}
+
+	/**
+	 * Sets the Validation by setting the accordingly constraints to the fields.
+	 */
+	private void doSetValidation() {
+		logger.debug("Entering");
+		setValidationOn(true);
+
+		if (!this.location.isReadonly()) {
+			this.location.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CreditApplicationReviewDialog_Location.value"), null, true));
+		}
+		if (!this.bankName.isReadonly()) {
+			this.bankName.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CreditApplicationReviewDialog_BankName.value"), null, true));
+		}
+		if (!this.conversionRate.isReadonly()) {
+			this.conversionRate.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CreditApplicationReviewDialog_ConversionRate.value"), 9, true, false, 9999));
+		}
+		if (!this.auditedYear.isReadonly()) {
+			this.auditedYear.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CreditApplicationReviewDialog_AuditedYear.value"), null, true));
+		}
+		if (!this.auditors.isReadonly()) {
+			this.auditors.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CreditApplicationReviewDialog_Auditors.value"), null, true));
+		}
+		if (!this.auditedDate.isReadonly()) {
+			this.auditedDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_CreditApplicationReviewDialog_AuditedDate.value"), true, null, true, true));
+		}
+		if (!this.auditPeriod.isReadonly()) {
+			this.auditPeriod.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_CreditApplicationReviewDialog_auditPeriod.value"), true, false));
+		}
+		logger.debug("Leaving");
 	}
 
 	/**
