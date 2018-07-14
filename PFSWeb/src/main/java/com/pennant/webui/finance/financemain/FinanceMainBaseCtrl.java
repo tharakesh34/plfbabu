@@ -6962,7 +6962,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			boolean genarateDoc = false;
 			String[] roles = rolesList.split(",");
 			for (String role : roles) {
-				if (StringUtils.equalsIgnoreCase(role, getRole())) {
+				if (StringUtils.equalsIgnoreCase(role, aFinanceMain.getNextRoleCode())) {
 					genarateDoc = true;
 					break;
 				}

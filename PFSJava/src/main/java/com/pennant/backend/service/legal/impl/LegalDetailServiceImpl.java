@@ -472,7 +472,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			legalDetail.setLegalNotesList(getLegalNoteService().getDetailsList(legalId, tableType));
 			
 			// Covenant Details
-			legalDetail.setCovenantTypeList(getFinCovenantTypeDAO().getFinCovenantTypeByFinRef(legalDetail.getLoanReference(), tableType, false));
+			legalDetail.setCovenantTypeList(getFinCovenantTypeDAO().getFinCovenantTypeByFinRef(legalDetail.getLoanReference(), "_View", false));
 
 			// Collateral Against Customer, document Details and setup details
 			CollateralSetup collateralSetup = getCollateralSetupService().getCollateralSetupForLegal(legalDetail.getCollateralReference());
@@ -505,10 +505,12 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			FinScheduleData scheduleData = new FinScheduleData();
 			scheduleData.setFinanceMain(financeMain);
 			financeDetail.setFinScheduleData(scheduleData);
-			if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
+			if (financeMain != null && financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
 				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(financeMain.getCustID(), false, "_View"));
 			}
-			financeDetail.setJountAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(financeMain.getFinReference(), "_View"));
+			if (financeMain != null){
+				financeDetail.setJountAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(financeMain.getFinReference(), "_View"));
+			}
 			legalDetail.setFinanceDetail(financeDetail);
 		}
 		
@@ -1055,7 +1057,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			Branch branch =  getBranchService().getApprovedBranchById(aFinanceMain.getFinBranch());
 			String stateName = branch.getLovDescBranchProvinceName();
 			if ("DELHI".equalsIgnoreCase(stateName) || "PUNJAB".equalsIgnoreCase(stateName)
-					|| "HARYANA".equalsIgnoreCase(stateName) || "DELHI".equalsIgnoreCase(stateName)) {
+					|| "HARYANA".equalsIgnoreCase(stateName) || "RAJASTHAN".equalsIgnoreCase(stateName)) {
 				modtDoc = false;
 			}
 

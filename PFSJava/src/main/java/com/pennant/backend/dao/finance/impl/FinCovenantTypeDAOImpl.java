@@ -163,13 +163,16 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		finCovenantType.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate, CategoryCode,AlwOtc,");
-		if(isEnquiry){
+		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,AlwOtc,");
+		if (isEnquiry) {
 			selectSql.append(" CovenantTypeDesc,DocReceivedDate,");
-		}else{
-			if (StringUtils.trimToEmpty(type).contains("View")){
+		} else {
+			if (StringUtils.trimToEmpty(type).contains("View")) {
 				selectSql.append(" CovenantTypeDesc,MandRoleDesc,pddFlag,otcFlag,");
 			}
+		}
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(" CategoryCode,");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From FinCovenantType");
@@ -471,13 +474,16 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		finCovenantType.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,CategoryCode,");
-		if(isEnquiry){
+		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,");
+		if (isEnquiry) {
 			selectSql.append(" CovenantTypeDesc,DocReceivedDate,");
-		}else{
-			if (StringUtils.trimToEmpty(type).contains("View")){
-				selectSql.append(" CovenantTypeDesc,MandRoleDesc,");
+		} else {
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				selectSql.append(" CovenantTypeDesc, MandRoleDesc,");
 			}
+		}
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(" CategoryCode,");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From FinCovenantType");
