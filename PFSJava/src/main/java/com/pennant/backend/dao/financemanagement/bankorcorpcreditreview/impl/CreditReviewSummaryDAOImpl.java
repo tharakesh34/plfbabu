@@ -275,9 +275,6 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewSummary);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-		if (recordCount <= 0) {
-			//throw new ConcurrencyException();
-		}
 		logger.debug("Leaving");
 	}
 
