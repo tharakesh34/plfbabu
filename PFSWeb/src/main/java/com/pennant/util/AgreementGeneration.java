@@ -953,7 +953,10 @@ public class AgreementGeneration implements Serializable {
 			}
 			if(CollectionUtils.isEmpty(agreement.getCovenants())){
 				agreement.getCovenants().add(agreement.new Covenant());
+			}else{
+				agreement.getCovenants().add(agreement.new Covenant());
 			}
+			
 			
 			//TODO:: Need to get collateral Setup, Need details from collateral setup team.
 			// --------------------Collateral Details
@@ -1756,6 +1759,7 @@ public class AgreementGeneration implements Serializable {
 				covenant.setStatus(new String());
 				covenant.setTargetDate(new String());
 			}
+			covenant.setInternalUse(String.valueOf(covenantType.isInternalUse()));
 			agreement.getCovenants().add(covenant);
 		});
 	}

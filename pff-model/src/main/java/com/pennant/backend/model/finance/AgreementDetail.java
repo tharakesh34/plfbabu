@@ -5461,6 +5461,7 @@ private String custAccount ="";
 		private String remarks ="";
 		private String targetDate ="";
 		private String status ="";
+		private String internalUse;
 		
 		public Covenant() {
 		}
@@ -5511,6 +5512,14 @@ private String custAccount ="";
 
 		public void setTargetDate(String targetDate) {
 			this.targetDate = targetDate;
+		}
+
+		public String getInternalUse() {
+			return internalUse;
+		}
+
+		public void setInternalUse(String internalUse) {
+			this.internalUse = internalUse;
 		}
 	}
 	

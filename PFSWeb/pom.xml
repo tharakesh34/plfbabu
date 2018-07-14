@@ -208,21 +208,15 @@
 			<version>2.3.16</version>
 		</dependency>
 		<dependency>
-   				 <groupId>com.googlecode.json-simple</groupId>
-    			<artifactId>json-simple</artifactId>
-    			<version>1.1</version>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1</version>
 		</dependency>
 
 		<!-- Aspose -->
 		<dependency>
-			<groupId>com.pennant.aspose</groupId>
-			<artifactId>Aspose.Words.jdk16</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.pennant.document.generator</groupId>
-			<artifactId>pas-dte</artifactId>
-			<version>1.0.2</version>
+			<groupId>com.pennanttech.pennapps</groupId>
+			<artifactId>document-generator</artifactId>
 		</dependency>
 
 		<!-- CSS Theme -->
@@ -230,7 +224,7 @@
 			<groupId>com.pennant.css.theme</groupId>
 			<artifactId>atlantic</artifactId>
 			<version>${atlantic.version}</version>
-						<exclusions>
+			<exclusions>
 				<exclusion>
 					<groupId>bouncycastle</groupId>
 					<artifactId>bcprov-jdk14</artifactId>
