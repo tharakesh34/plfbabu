@@ -733,11 +733,12 @@ public class ExtendedFieldDetailsService {
 		Map<String, ExtendedFieldHeader> extHeaderMap = sampling.getExtFieldHeaderList();
 		for (int i = 0; i < deatils.size(); i++) {
 			ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) deatils.get(i).getModelData();
+			String reference = extendedFieldRender.getReference();
 			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
 				continue;
 			}
 			
-			String linkId = StringUtils.trimToEmpty(extendedFieldRender.getReference());
+			String linkId = StringUtils.trimToEmpty(reference);
 			linkId = linkId.replaceAll("S", "");
 			String collRef = samplingDAO.getCollateralRef(sampling, linkId);
 
@@ -751,19 +752,12 @@ public class ExtendedFieldDetailsService {
 
 			if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
 					&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
-				if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-						tableName.toString() + type)) {
+				if (!extendedFieldRenderDAO.isExists(reference, extendedFieldRender.getSeqNo(),
+						tableName.toString() + type.getSuffix())) {
 					extendedFieldRender.setNewRecord(true);
 				}
 			}
 
-			if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
-					&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
-				if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-						tableName + type.getSuffix())) {
-					extendedFieldRender.setNewRecord(true);
-				}
-			}
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -822,10 +816,10 @@ public class ExtendedFieldDetailsService {
 			HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
 			if (saveRecord || updateRecord) {
 				if (saveRecord) {
-					if(!StringUtils.startsWith(extendedFieldRender.getReference(), "S")) {
-						mapValues.put("Reference", "S".concat(extendedFieldRender.getReference()));
+					if(!StringUtils.startsWith(reference, "S")) {
+						mapValues.put("Reference", "S".concat(reference));
 					} else {
-						mapValues.put("Reference", extendedFieldRender.getReference());
+						mapValues.put("Reference", reference);
 					}
 					mapValues.put("SeqNo", extendedFieldRender.getSeqNo());
 				}
@@ -850,9 +844,9 @@ public class ExtendedFieldDetailsService {
 				if (approveRec) {
 
 					// Handle on approve after resubmit(for got to add collaterals on initial approve)
-					if (extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(),
+					if (extendedFieldRenderDAO.isExists(reference,
 							extendedFieldRender.getSeqNo(), tableName + type.getSuffix())) {
-						extendedFieldRenderDAO.update(extendedFieldRender.getReference(),
+						extendedFieldRenderDAO.update(reference,
 								extendedFieldRender.getSeqNo(), extendedFieldRender.getMapValues(), type.getSuffix(),
 								tableName.toString());
 					} else {
@@ -861,12 +855,12 @@ public class ExtendedFieldDetailsService {
 					}
 				}
 
-				extendedFieldRenderDAO.update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
+				extendedFieldRenderDAO.update(reference, extendedFieldRender.getSeqNo(),
 						extendedFieldRender.getMapValues(), type.getSuffix(), tableName.toString());
 			}
 
 			if (deleteRecord) {
-				extendedFieldRenderDAO.delete(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
+				extendedFieldRenderDAO.delete(reference, extendedFieldRender.getSeqNo(),
 						type.getSuffix(), tableName.toString());
 			}
 			if (approveRec) {
@@ -1061,14 +1055,15 @@ public class ExtendedFieldDetailsService {
 		logger.debug(Literal.ENTERING);
 
 		ExtendedFieldRender render = (ExtendedFieldRender) auditDetail.getModelData();
-		ExtendedFieldRender tempRender = null;
+		String reference = render.getReference();
+ 		ExtendedFieldRender tempRender = null;
 
 		if (render.isWorkflow()) {
-			tempRender = extendedFieldRenderDAO.getExtendedFieldDetails(render.getReference(), render.getSeqNo(),
+			tempRender = extendedFieldRenderDAO.getExtendedFieldDetails(reference, render.getSeqNo(),
 					tableName, "_Temp");
 		}
 
-		ExtendedFieldRender befExtRender = extendedFieldRenderDAO.getExtendedFieldDetails(render.getReference(),
+		ExtendedFieldRender befExtRender = extendedFieldRenderDAO.getExtendedFieldDetails(reference,
 				render.getSeqNo(), tableName, "");
 		ExtendedFieldRender oldExRender = render.getBefImage();
 

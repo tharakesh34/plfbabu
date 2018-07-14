@@ -701,7 +701,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 						field.setMapValues(extFieldMap);
 						renderList.add(field);
 
-						extFieldRender.put(field.getReference(), field);
+						extFieldRender.put(field.getReference().concat("-").concat(String.valueOf(field.getSeqNo())), field);
 					}
 				}
 				temp.setExtFieldRenderList(extFieldRender);
@@ -1122,7 +1122,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
-		// FI Document Details
+		// Sampling Document Details
 		if (sampling.getDocuments() != null && sampling.getDocuments().size() > 0) {
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(sampling, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));

@@ -1,6 +1,5 @@
 package com.pennanttech.pff.dao.customer.income;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 

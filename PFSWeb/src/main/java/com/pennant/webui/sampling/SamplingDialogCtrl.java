@@ -1538,8 +1538,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				Map<String, ExtendedFieldRender> extList = sampling.getExtFieldRenderList();
 				for (Entry<String, ExtendedFieldRender> ext : extList.entrySet()) {
 					ExtendedFieldRender details = ext.getValue();
-					details.setReference(ext.getKey());
-					//details.setSeqNo(ext.get);
+					details.setReference(ext.getKey().substring( 0, ext.getKey().indexOf("-")));
 					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					details.setRecordStatus(sampling.getRecordStatus());

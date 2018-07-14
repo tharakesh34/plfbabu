@@ -135,17 +135,20 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 			ExtendedFieldRender extendedFieldRender  =null;
 			
 			String CollateralRef = sampling.getCollateral().getCollateralRef();
+			int seqNo = sampling.getCollateral().getSeqNo();
 			long linkId = samplingService.getCollateralLinkId(sampling.getId(), CollateralRef);
 			sLinkId = "S".concat(String.valueOf(linkId));
 			
-			if (extFieldRenderList.containsKey(sLinkId)) {
-				extendedFieldRender = extFieldRenderList.get(sLinkId);
-			    extendedFieldCtrl.setExtendedFieldRender(extendedFieldRender);
+			if (extFieldRenderList.containsKey(sLinkId.concat("-").concat(String.valueOf(seqNo)))) {
+				extendedFieldRender = extFieldRenderList.get(sLinkId.concat("-").concat(String.valueOf(seqNo)));
+					extendedFieldCtrl.setExtendedFieldRender(extendedFieldRender);
 			} else if (extFieldRenderList.containsKey(CollateralRef)) {
 				extendedFieldRender = extFieldRenderList.get(CollateralRef);
-				extendedFieldCtrl.setExtendedFieldRender(extendedFieldRender);
+				if (extendedFieldRender.getSeqNo() == seqNo) {
+					extendedFieldCtrl.setExtendedFieldRender(extendedFieldRender);
+				}
 			} else {
-				extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(sLinkId, table.toString().toLowerCase(), "_view");
+				extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(sLinkId.concat("-").concat(String.valueOf(seqNo)), table.toString().toLowerCase(), "_view");
 			}
 			
 			extendedFieldCtrl.setTabpanel(samplingExtFieldsTabPanel);
@@ -200,11 +203,11 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 				logger.debug(Literal.EXCEPTION);
 			}
 		}
-
-		if (!extFieldRenderList.containsKey(sLinkId)) {
-			this.extFieldRenderList.put(sLinkId, sampling.getExtendedFieldRender());
-		} else {
-			extFieldRenderList.replace(sLinkId, sampling.getExtendedFieldRender());
+		int seqNo=sampling.getCollateral().getSeqNo();
+		if (!extFieldRenderList.containsKey(sLinkId.concat("-").concat(String.valueOf(seqNo)))) {
+			this.extFieldRenderList.put(sLinkId.concat("-").concat(String.valueOf(seqNo)), sampling.getExtendedFieldRender());
+		} else if(extFieldRenderList.containsKey(sLinkId.concat("-").concat(String.valueOf(seqNo)))){
+			extFieldRenderList.replace(sLinkId.concat("-").concat(String.valueOf(seqNo)), sampling.getExtendedFieldRender());
 		}
 		logger.debug(Literal.LEAVING);
 	}

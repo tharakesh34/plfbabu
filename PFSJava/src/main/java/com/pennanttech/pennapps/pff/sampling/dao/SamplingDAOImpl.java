@@ -475,7 +475,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append(" collateraltype, collateraltypename");
 		sql.append(" from collateralassignment_view ca");
 		sql.append(" inner join collateralsetup_view cs on cs.collateralref = ca.collateralref");
-		sql.append(" left join (");
+		sql.append(" inner join (");
 		sql.append(" select reference, seqno from collateral_").append(collateralType).append("_ed");
 		sql.append(" union ");
 		sql.append(" select reference, seqno from collateral_").append(collateralType).append("_ed_temp");
