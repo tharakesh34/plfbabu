@@ -171,6 +171,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 				case ExtendedFieldConstants.FIELDTYPE_TEXT:
 				case ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT:
 				case ExtendedFieldConstants.FIELDTYPE_UPPERTEXT:
+				case ExtendedFieldConstants.FIELDTYPE_STATICCOMBO:
 					sd.setBranchCam(getStringValue(originalField));
 					sd.setCreditCam(getStringValue(currentField));
 					sd.setVariance("");

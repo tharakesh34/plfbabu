@@ -592,7 +592,10 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		BigDecimal nTimesOfr = (r.add(BigDecimal.ONE)).pow(noOfTerms);
 		BigDecimal numerator = principle.multiply(nTimesOfr).multiply(r);
 		BigDecimal denominator = nTimesOfr.subtract(BigDecimal.ONE);
-		sampling.setEmi(numerator.divide(denominator, 10, BigDecimal.ROUND_HALF_DOWN));
+		
+		BigDecimal emi = numerator.divide(denominator, 10, BigDecimal.ROUND_HALF_DOWN);
+		emi = emi.multiply(new BigDecimal(100));
+		sampling.setEmi(emi);
 	}
 
 	private Object excuteRule(String foirRule, String finCcy, HashMap<String, Object> fieldsandvalues) {
@@ -1451,8 +1454,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			income.setLastMntBy(sampling.getLastMntBy());
 			incomeDetailDAO.save(income, "");
 		}
-		
-		System.out.println("");
 	}
 
 	private void saveLiabilitiesSnap(Sampling sampling) {

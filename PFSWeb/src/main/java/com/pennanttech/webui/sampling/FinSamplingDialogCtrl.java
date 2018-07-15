@@ -406,7 +406,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	private Textbox getTextbox() {
 		Textbox textbox = new Textbox();
 		textbox.setReadonly(true);
-		textbox.setWidth("120px");
+		textbox.setWidth("180px");
 		return textbox;
 	}
 
