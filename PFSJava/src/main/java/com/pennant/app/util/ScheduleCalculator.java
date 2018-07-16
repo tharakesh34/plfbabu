@@ -3226,7 +3226,8 @@ public class ScheduleCalculator {
 							RoundingMode.HALF_DOWN);
 					feeAmount = feeAmount.add(calFeeAmount);
 				} else {
-					feeAmount = feeAmount.add(fee.getActualAmount().subtract(fee.getWaivedAmount()));
+					//FIXME: PV 16JUL18 commented to avoid fee inclusion excluded fees for XIRR
+					//feeAmount = feeAmount.add(fee.getActualAmount().subtract(fee.getWaivedAmount()));
 				}
 			}
 		}
