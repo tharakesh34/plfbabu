@@ -189,7 +189,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	protected Listitem duplicateItem;
 	protected Grid grid_Basicdetails; // autoWired
 	protected Space space_BankName; // autowired
-	protected Groupbox gb_basicDetails; // autowire
+	protected Groupbox gb_basicDetails; // autowired
 
 	public List<FinCreditRevSubCategory> modifiedFinCreditRevSubCategoryList = new ArrayList<FinCreditRevSubCategory>();
 	public List<CreditReviewSubCtgDetails> creditReviewSubCtgDetailsList = new ArrayList<CreditReviewSubCtgDetails>();
@@ -422,7 +422,6 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		// *************************************************************
 		// force validation, if on, than execute by component.getValue()
 		// *************************************************************
-		doSetValidation();
 		doWriteComponentsToBean(aCreditReviewDetails);
 		excelSave();
 		this.window_CorporateCreditRevFinanceFileUploadDialog.onClose();
@@ -1221,43 +1220,6 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 
 	}
 
-	/**
-	 * Sets the Validation by setting the accordingly constraints to the fields.
-	 */
-	private void doSetValidation() {
-		logger.debug("Entering");
-		setValidationOn(true);
-
-		if (!this.location.isReadonly()) {
-			this.location.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CreditApplicationReviewDialog_Location.value"), null, true));
-		}
-		if (!this.bankName.isReadonly()) {
-			this.bankName.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CreditApplicationReviewDialog_BankName.value"), null, true));
-		}
-		if (!this.conversionRate.isReadonly()) {
-			this.conversionRate.setConstraint(new PTDecimalValidator(
-					Labels.getLabel("label_CreditApplicationReviewDialog_ConversionRate.value"), 9, true, false, 9999));
-		}
-		if (!this.auditedYear.isReadonly()) {
-			this.auditedYear.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CreditApplicationReviewDialog_AuditedYear.value"), null, true));
-		}
-		if (!this.auditors.isReadonly()) {
-			this.auditors.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CreditApplicationReviewDialog_Auditors.value"), null, true));
-		}
-		if (!this.auditedDate.isReadonly()) {
-			this.auditedDate.setConstraint(new PTDateValidator(
-					Labels.getLabel("label_CreditApplicationReviewDialog_AuditedDate.value"), true, null, true, true));
-		}
-		if (!this.auditPeriod.isReadonly()) {
-			this.auditPeriod.setConstraint(new PTNumberValidator(
-					Labels.getLabel("label_CreditApplicationReviewDialog_auditPeriod.value"), true, false));
-		}
-		logger.debug("Leaving");
-	}
 
 	/**
 	 * Get Audit Header Details
