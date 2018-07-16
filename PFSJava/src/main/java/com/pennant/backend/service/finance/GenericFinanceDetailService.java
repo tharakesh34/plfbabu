@@ -491,7 +491,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				isRcdType = true;
 			} else if (collateralAssignment.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				collateralAssignment.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType = true;
+				// Bug fix 16 july 2018 at collaterlal list item in delete
+				// isRcdType = true;
 			}
 
 			if ("saveOrUpdate".equals(method) && (isRcdType)) {
