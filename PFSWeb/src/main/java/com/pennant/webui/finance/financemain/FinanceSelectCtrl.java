@@ -1775,8 +1775,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			
 			// Schedule Date verification, As Installment date crossed or not
 			List<FinanceScheduleDetail> schdList = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
+			FinanceScheduleDetail bpiSchedule=null;
 			for (int i = 1; i < schdList.size(); i++) {
 				FinanceScheduleDetail curSchd = schdList.get(i);
+				if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
+					bpiSchedule=curSchd;
+					continue;
+				}
+
 				if(curSchd.getSchDate().compareTo(DateUtility.getAppDate()) <= 0){
 					
 					ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(
@@ -1798,8 +1804,19 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				List<FinanceRepayments> listFinanceRepayments = new ArrayList<FinanceRepayments>();
 				listFinanceRepayments = getFinanceDetailService().getFinanceRepaymentsByFinRef(aFinanceMain.getFinReference(), false);
 				if (listFinanceRepayments != null && listFinanceRepayments.size() > 0) {
-					MessageUtil.showError("Repayments done on this Finance. Cannot Proceed Further");
-					return;
+					boolean onlyBPIPayment=true;
+					//check for the BPI payment
+					if (bpiSchedule!=null) {
+						for (FinanceRepayments financeRepayments : listFinanceRepayments) {
+							if (financeRepayments.getFinSchdDate().compareTo(bpiSchedule.getSchDate())!=0) {
+								onlyBPIPayment=false;
+							}
+						}
+					}
+					if (!onlyBPIPayment) {
+						MessageUtil.showError("Repayments done on this Finance. Cannot Proceed Further");
+						return;
+					}
 				}
 			}
 			
