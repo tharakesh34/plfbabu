@@ -489,6 +489,7 @@ public class AgreementDetail {
 	private String profitRateType ="";														//Profit Rate Type
 	private String tenor ="";
 	private String netRefRateLoan ="";
+	private String repayBaseRateVal = "";
 	
 	//TODO::Added as part of Comments
 	private String graceAvailable ="";
@@ -741,6 +742,14 @@ public class AgreementDetail {
 	public void setHomeCountry(String homeCountry) {
 		this.homeCountry = homeCountry;
 	}*/
+
+	public String getRepayBaseRateVal() {
+		return repayBaseRateVal;
+	}
+
+	public void setRepayBaseRateVal(String repayBaseRateVal) {
+		this.repayBaseRateVal = repayBaseRateVal;
+	}
 
 	public String getFinMinRate() {
 		return finMinRate;

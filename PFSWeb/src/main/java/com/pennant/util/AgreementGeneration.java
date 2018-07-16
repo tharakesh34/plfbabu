@@ -2514,6 +2514,9 @@ public class AgreementGeneration implements Serializable {
 			if(null!=main.getRepayBaseRate()){
 				agreement.setRepayBaseRate(main.getRepayBaseRate());
 			}
+			if(null!=main.getRepayBaseRateVal()){
+				agreement.setRepayBaseRateVal(PennantApplicationUtil.formatRate(main.getRepayBaseRateVal().doubleValue(), 2));
+			}
 			agreement.setFinAmtPertg(PennantApplicationUtil.amountFormate(
 					main.getFinAmount().multiply(new BigDecimal(125))
 							.divide(new BigDecimal(100), RoundingMode.HALF_DOWN), formatter));
