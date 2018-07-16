@@ -115,7 +115,7 @@
 								<hbox>
 									<space spacing="2px" />
 									<decimalbox id="margin"
-										maxlength="5" width="200px" />
+										maxlength="6" width="200px" />
 								</hbox>
 							</row>
 							<row>
