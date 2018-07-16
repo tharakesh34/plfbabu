@@ -880,7 +880,6 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	}
 
 	
-	@SuppressWarnings("unchecked")
 	private boolean validateFeeAccounting(){
 		List<FinanceReferenceDetail> finReferenceDetails = new ArrayList<FinanceReferenceDetail>();
 		if(this.listBoxAccounts.getItems() != null && !this.listBoxAccounts.getItems().isEmpty()){
@@ -910,7 +909,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		List<FinTypeFees> finTypeFeesList =  getFinanceReferenceDetailService().getFinTypeFeesList(this.finType.getValue(), getEventCodes(true), "_AView", FinanceConstants.MODULEID_FINTYPE);
 		
 		if(finTypeFeesList != null && !finTypeFeesList.isEmpty()){
-			Comparator<FinTypeFees> beanComp = new BeanComparator("finEvent");
+			Comparator<FinTypeFees> beanComp = new BeanComparator<FinTypeFees>("finEvent");
 			Collections.sort(finTypeFeesList, beanComp);
 			Map<String,String> finTypeFeeMap = new HashMap<String,String>();
 			for (FinTypeFees finTypeFeeTemp : finTypeFeesList) {

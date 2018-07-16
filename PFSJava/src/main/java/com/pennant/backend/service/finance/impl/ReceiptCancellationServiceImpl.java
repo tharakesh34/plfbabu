@@ -106,6 +106,7 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -608,7 +609,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		FinReceiptDetail finReceiptDetail = null;
 		if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
 			for (FinReceiptDetail item : receiptHeader.getReceiptDetails()) {
-				if (item.getPaymentType().equals(RepayConstants.PAYTYPE_PRESENTMENT)) {
+				if (item.getPaymentType().equals(RepayConstants.RECEIPTMODE_PRESENTMENT)) {
 					finReceiptDetail = item;
 					break;
 				}
@@ -776,9 +777,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				FinReceiptDetail receiptDetail = receiptDetails.get(i);
 
 				if (isBounceProcess
-						&& (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)
-								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) 
-								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE))) {
+						&& (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
+								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV) 
+								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE))) {
 					continue;
 				}
 
@@ -1164,12 +1165,11 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					FinanceDetail financeDetail = new FinanceDetail();
 					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 
-					ArrayList<ErrorDetail> errorDetails = executeDueAccounting(financeDetail, receiptHeader.getBounceDate(), 
+					AEEvent aeEvent = executeDueAccounting(financeDetail, receiptHeader.getBounceDate(), 
 							receiptHeader.getManualAdvise().getAdviseAmount(), postBranch, RepayConstants.ALLOCATION_BOUNCE);
-					if (errorDetails != null && !errorDetails.isEmpty()) {
-						ErrorDetail errorDetail = ErrorUtil.getErrorDetail(errorDetails.get(0));
+					if (aeEvent != null && StringUtils.isNotEmpty(aeEvent.getErrorMessage())) {
 						logger.debug("Leaving");
-						return errorDetail.getMessage();
+						return aeEvent.getErrorMessage();
 					}
 				}
 
@@ -1189,13 +1189,13 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					// Receipt Reversal for Excess or Payable
 					if (!isBounceProcess) {
 						
-						if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)
-								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+						if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
+								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)){
 							
 							// Excess utilize Reversals
 							getFinExcessAmountDAO().updateExcessAmount(receiptDetail.getPayAgainstID(), "U", receiptDetail.getAmount().negate());
 							
-						}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+						}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 							
 							// Payable Utilize reversals
 							getManualAdviseDAO().reverseUtilise(receiptDetail.getPayAgainstID(), receiptDetail.getAmount());

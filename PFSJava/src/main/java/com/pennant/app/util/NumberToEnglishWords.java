@@ -338,8 +338,7 @@ public class NumberToEnglishWords {
 	 */
 	public static <T> Map<Object,List<T>>  getSubListMapGroupingByField(List<T> childRecordsList,String sortField,String compareMethod){
 		Map<Object,List<T>> groupRecordsMap=new HashMap<Object,List<T>>();
-		@SuppressWarnings("unchecked")
-		Comparator<Object> comp = new BeanComparator(sortField);
+		Comparator<Object> comp = new BeanComparator<Object>(sortField);
 		List<T> aGroupedObjectsList=new ArrayList<T>();
 		int size=childRecordsList.size();
 		try {

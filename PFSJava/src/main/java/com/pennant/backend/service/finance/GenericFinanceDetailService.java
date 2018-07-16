@@ -69,6 +69,7 @@ import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.OverDueRecoveryPostingsUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
@@ -2547,7 +2548,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws IllegalAccessException 
 	 * @throws AccountNotFoundException
 	 */
-	protected ArrayList<ErrorDetail> executeDueAccounting(FinanceDetail financeDetail, Date valueDate, 
+	protected AEEvent executeDueAccounting(FinanceDetail financeDetail, Date valueDate, 
 			BigDecimal dueAmount, String postBranch, String accFor){
 		logger.debug("Entering");
 
@@ -2682,11 +2683,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-			errorDetails.add(new ErrorDetail("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
-					"Accounting Engine Failed to Create Postings:" + e.getMessage(), new String[] {}, new String[] {}));
-			logger.debug("Leaving");
-			return errorDetails;
+			aeEvent.setErrorMessage(ErrorUtil.getErrorDetail(new ErrorDetail("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
+					"Accounting Engine Failed to Create Postings:" + e.getMessage(), new String[] {}, new String[] {})).getMessage());
+			return aeEvent;
 		}
 
 		// Prepared Postings execution 
@@ -2697,7 +2696,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		logger.debug("Leaving");
-		return null;
+		return aeEvent;
 	}
 
 	// ******************************************************//

@@ -981,11 +981,11 @@ public class RepaymentPostingsUtil implements Serializable {
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
 				
-				if(StringUtils.equals(payType, RepayConstants.PAYTYPE_EXCESS)){
+				if(StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EXCESS)){
 					payType = "EX_";
-				}else if(StringUtils.equals(payType, RepayConstants.PAYTYPE_EMIINADV)){
+				}else if(StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EMIINADV)){
 					payType = "EA_";
-				}else if(StringUtils.equals(payType, RepayConstants.PAYTYPE_PAYABLE)){
+				}else if(StringUtils.equals(payType, RepayConstants.RECEIPTMODE_PAYABLE)){
 					payType = "PA_";
 				}else{
 					payType = "PB_";

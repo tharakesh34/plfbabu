@@ -2422,7 +2422,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			CurrencyBox emiAdvance = (CurrencyBox) this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EMIINADV);
 
 			if(excessMap.containsKey(RepayConstants.EXAMOUNTTYPE_EMIINADV)){
-				receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EMIINADV, 
+				receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.RECEIPTMODE_EMIINADV, 
 						excessMap.get(RepayConstants.EXAMOUNTTYPE_EMIINADV).getExcessID());
 			}
 			if(emiAdvance.getActualValue().compareTo(BigDecimal.ZERO) > 0){
@@ -2431,7 +2431,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 				receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 				receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-				receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
+				receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV);
 				receiptDetail.setPayAgainstID(excessMap.get(RepayConstants.EXAMOUNTTYPE_EMIINADV).getExcessID());
 				receiptDetail.setAmount(PennantApplicationUtil.unFormateAmount(emiAdvance.getActualValue(), finFormatter));
 				receiptDetail.setValueDate(this.valueDate.getValue());
@@ -2458,7 +2458,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			FinReceiptDetail receiptDetail = null;
 			if(excessMap.containsKey(RepayConstants.EXAMOUNTTYPE_EXCESS)){
-				receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EXCESS, 
+				receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.RECEIPTMODE_EXCESS, 
 						excessMap.get(RepayConstants.EXAMOUNTTYPE_EXCESS).getExcessID());
 			}
 			if(excessAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0){
@@ -2467,7 +2467,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 				receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 				receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-				receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EXCESS);
+				receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_EXCESS);
 				receiptDetail.setPayAgainstID(excessMap.get(RepayConstants.EXAMOUNTTYPE_EXCESS).getExcessID());
 				receiptDetail.setAmount(PennantApplicationUtil.unFormateAmount(excessAmount.getActualValue(), finFormatter));
 				receiptDetail.setValueDate(this.valueDate.getValue());
@@ -2499,7 +2499,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				CurrencyBox payableAmount = (CurrencyBox) this.listBoxExcess.getFellowIfAny(item.getId().replaceAll("Item", "Amount"));
 				long payableAdviseID = Long.valueOf(payableAmount.getId().substring(payableAmount.getId().indexOf("_")+1));
 				FinReceiptDetail receiptDetail = null;
-				receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_PAYABLE, payableAdviseID);
+				receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.RECEIPTMODE_PAYABLE, payableAdviseID);
 				if(payableAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0){
 					if(receiptDetail == null){
 						receiptDetail = new FinReceiptDetail();
@@ -2508,7 +2508,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					ManualAdvise payableAdv = payableMap.get(payableAdviseID);
 					receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 					receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-					receiptDetail.setPaymentType(RepayConstants.PAYTYPE_PAYABLE);
+					receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_PAYABLE);
 					receiptDetail.setPayAgainstID(payableAdv.getAdviseID());
 					receiptDetail.setAmount(PennantApplicationUtil.unFormateAmount(payableAmount.getActualValue(), finFormatter));
 					receiptDetail.setValueDate(this.valueDate.getValue());
@@ -3356,9 +3356,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){
 			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
 				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
-				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) && 
-						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) &&
-						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS) && 
+						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV) &&
+						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 					valueDate = receiptDetail.getReceivedDate();
 				}
 			}
@@ -3449,14 +3449,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){
 			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
 				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
-				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 					receiptAmountsMap.put(receiptDetail.getPaymentType()+"_"+receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
 				}else{
 					receiptAmountsMap.put(receiptDetail.getPaymentType(), receiptDetail.getAmount());
 				}
-				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) && 
-						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) &&
-						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS) && 
+						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV) &&
+						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 					this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(receiptDetail.getAmount(), finFormatter));
 					this.favourNo.setValue(receiptDetail.getFavourNumber());
 					this.valueDate.setValue(receiptDetail.getValueDate());
@@ -3641,11 +3641,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			BigDecimal paidAmount = BigDecimal.ZERO;
 			if(StringUtils.equals(excessAmtType, RepayConstants.EXAMOUNTTYPE_EXCESS) && 
-					receiptAmountsMap.containsKey(RepayConstants.PAYTYPE_EXCESS)){
-				paidAmount = receiptAmountsMap.get(RepayConstants.PAYTYPE_EXCESS);
+					receiptAmountsMap.containsKey(RepayConstants.RECEIPTMODE_EXCESS)){
+				paidAmount = receiptAmountsMap.get(RepayConstants.RECEIPTMODE_EXCESS);
 			}else if(StringUtils.equals(excessAmtType, RepayConstants.EXAMOUNTTYPE_EMIINADV) && 
-					receiptAmountsMap.containsKey(RepayConstants.PAYTYPE_EMIINADV)){
-				paidAmount = receiptAmountsMap.get(RepayConstants.PAYTYPE_EMIINADV);
+					receiptAmountsMap.containsKey(RepayConstants.RECEIPTMODE_EMIINADV)){
+				paidAmount = receiptAmountsMap.get(RepayConstants.RECEIPTMODE_EMIINADV);
 			}
 
 			lc = new Listcell();
@@ -3818,8 +3818,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			lc.setParent(item);
 
 			BigDecimal paidAmount = BigDecimal.ZERO;
-			if(receiptAmountsMap.containsKey(RepayConstants.PAYTYPE_PAYABLE+"_"+payableAdvise.getAdviseID())){
-				paidAmount = receiptAmountsMap.get(RepayConstants.PAYTYPE_PAYABLE+"_"+payableAdvise.getAdviseID());
+			if(receiptAmountsMap.containsKey(RepayConstants.RECEIPTMODE_PAYABLE+"_"+payableAdvise.getAdviseID())){
+				paidAmount = receiptAmountsMap.get(RepayConstants.RECEIPTMODE_PAYABLE+"_"+payableAdvise.getAdviseID());
 			}
 
 			lc = new Listcell();
@@ -5324,11 +5324,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 			
 			totPayable = totPayable.add(receiptDetail.getAmount());
-			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 				extDataMap.put("PA_ReceiptAmount", totPayable);
-			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)){
+			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)){
 				extDataMap.put("EX_ReceiptAmount", receiptDetail.getAmount());
-			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)){
 				extDataMap.put("EA_ReceiptAmount", receiptDetail.getAmount());
 			}else{
 				extDataMap.put("PB_ReceiptAmount", receiptDetail.getAmount());
@@ -5339,7 +5339,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			addZeroifNotContains(extDataMap, "EA_ReceiptAmount");
 			addZeroifNotContains(extDataMap, "PB_ReceiptAmount");
 
-			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 				if(extDataMap.containsKey(receiptDetail.getFeeTypeCode()+"_P")){
 					extDataMap.put(receiptDetail.getFeeTypeCode()+"_P", extDataMap.get(receiptDetail.getFeeTypeCode()+"_P").add(receiptDetail.getAmount()));
 				}else{
@@ -5380,7 +5380,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				
 				amountCodes.setPenaltyPaid(BigDecimal.ZERO);
 				amountCodes.setPenaltyWaived(BigDecimal.ZERO);
-				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 					if(StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent()) || 
 							StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent()) ||
 							StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())){
@@ -5402,7 +5402,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						}else{
 							if(rcptSize > rcpt+1){
 								FinReceiptDetail nxtRcp = receiptDetails.get(rcpt+1);
-								if(StringUtils.equals(nxtRcp.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+								if(StringUtils.equals(nxtRcp.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 									if(nxtRcp.getRepayHeaders() != null && !nxtRcp.getRepayHeaders().isEmpty()){
 										FinRepayHeader nxtRcpH = nxtRcp.getRepayHeaders().get(0);
 										if(StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, nxtRcpH.getFinEvent()) || 
@@ -6000,11 +6000,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", finFeeDetail.getNetAmount());
 				
-				if(StringUtils.equals(payType, RepayConstants.PAYTYPE_EXCESS)){
+				if(StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EXCESS)){
 					payType = "EX_";
-				}else if(StringUtils.equals(payType, RepayConstants.PAYTYPE_EMIINADV)){
+				}else if(StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EMIINADV)){
 					payType = "EA_";
-				}else if(StringUtils.equals(payType, RepayConstants.PAYTYPE_PAYABLE)){
+				}else if(StringUtils.equals(payType, RepayConstants.RECEIPTMODE_PAYABLE)){
 					payType = "PA_";
 				}else{
 					payType = "PB_";

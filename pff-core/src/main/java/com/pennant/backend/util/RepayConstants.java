@@ -75,6 +75,7 @@ public class RepayConstants {
 	public static final String	EXCESSADJUSTTO_PARTPAY 	= "S";
 	
 	// Receipt Modes
+	// 1. Screen Display Modes 
 	public static final String	RECEIPTMODE_CASH		= "CASH";
 	public static final String	RECEIPTMODE_CHEQUE		= "CHEQUE";
 	public static final String	RECEIPTMODE_DD			= "DD";
@@ -83,6 +84,10 @@ public class RepayConstants {
 	public static final String	RECEIPTMODE_IMPS		= "IMPS";
 	public static final String	RECEIPTMODE_EXCESS		= "EXCESS";
 	public static final String  RECEIPTMODE_ESCROW		= "ESCROW";
+	// 2. Back-end Process Receipt Modes
+	public static final String	RECEIPTMODE_EMIINADV	= "EMIINADV";
+	public static final String	RECEIPTMODE_PAYABLE		= "PAYABLE";
+	public static final String	RECEIPTMODE_PRESENTMENT	= "PRESENT";
 	
 	// Allocation Methods
 	public static final String	ALLOCATIONTYPE_AUTO		= "A";
@@ -109,16 +114,7 @@ public class RepayConstants {
 	public static final String	RECEIPTTO_CUSTOMER		= "C";
 	
 	// Receipt Payment Type
-	public static final String	PAYTYPE_CASH			= "CASH";
-	public static final String	PAYTYPE_CHEQUE			= "CHEQUE";
-	public static final String	PAYTYPE_DD				= "DD";
-	public static final String	PAYTYPE_NEFT			= "NEFT";
-	public static final String	PAYTYPE_RTGS			= "RTGS";
-	public static final String	PAYTYPE_IMPS			= "IMPS";
-	public static final String	PAYTYPE_EXCESS			= "EXCESS";
-	public static final String	PAYTYPE_EMIINADV		= "EMIINADV";
-	public static final String	PAYTYPE_PAYABLE			= "PAYABLE";
-	public static final String	PAYTYPE_PRESENTMENT		= "PRESENT";
+
 	
 	// Presentment Exclude Reasons
 	public static final int PEXC_EMIINCLUDE = 0;

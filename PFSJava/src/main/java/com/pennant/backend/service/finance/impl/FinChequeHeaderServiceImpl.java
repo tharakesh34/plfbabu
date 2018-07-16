@@ -626,7 +626,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 				String rcdType = "";
 				Object object = ((AuditDetail) list.get(i)).getModelData();
 				try {
-					rcdType = rcdType = object.getClass().getMethod("getRecordType").invoke(object).toString();
+					rcdType = object.getClass().getMethod("getRecordType").invoke(object).toString();
 					if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(rcdType)) {
 						transType = PennantConstants.TRAN_ADD;
 					} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(rcdType)

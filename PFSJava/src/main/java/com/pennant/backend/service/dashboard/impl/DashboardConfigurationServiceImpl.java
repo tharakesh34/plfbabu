@@ -547,8 +547,7 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 			,List<ChartSetElement> childElementsList){
 
 		logger.debug("Entering");
-		@SuppressWarnings("unchecked")
-		Comparator<Object> comp = new BeanComparator("reference");
+		Comparator<Object> comp = new BeanComparator<Object>("reference");
 		Collections.sort(childElementsList,comp);
 		List<ChartSetElement> aSetElementsList=new ArrayList<ChartSetElement>();
 

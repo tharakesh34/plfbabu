@@ -455,11 +455,10 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * This method displays Assigned groups in Assigned groups panel by calling
 	 * doFillListbox()
 	 */
-	@SuppressWarnings("unchecked")
 	public void doShowAssignedGroups() {
 		logger.debug("Entering ");
 		this.listbox_AssignedGroups.getItems().clear();
-		Comparator<SecurityGroup> comp = new BeanComparator("grpCode");
+		Comparator<SecurityGroup> comp = new BeanComparator<SecurityGroup>("grpCode");
 		Collections.sort(assignedGroupsList, comp);
 		for (int i = 0; i < assignedGroupsList.size(); i++) {
 			SecurityGroup aSecurityGroup = assignedGroupsList.get(i);
@@ -476,13 +475,12 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * This method displays UnAssigned groups in UnAssigned groups panel by
 	 * calling doFillListbox()
 	 */
-	@SuppressWarnings("unchecked")
 	public void doShowUnAssignedGroups() {
 		logger.debug("Entering");
 		this.listbox_UnAssignedGroups.getItems().clear();
 		unAssignedGroupsList = new ArrayList<SecurityGroup>(
 				tempUnAsgnGroupsMap.values());
-		Comparator<SecurityGroup> comp = new BeanComparator("grpCode");
+		Comparator<SecurityGroup> comp = new BeanComparator<SecurityGroup>("grpCode");
 		Collections.sort(unAssignedGroupsList, comp);
 		for (int i = 0; i < unAssignedGroupsList.size(); i++) {
 			SecurityGroup aSecurityGroup = unAssignedGroupsList.get(i);
@@ -524,7 +522,6 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * 
 	 * @throws InterruptedException
 	 */
-	@SuppressWarnings("unchecked")
 	public void doShowGroupRights(ForwardEvent event)
 			throws InterruptedException {
 
@@ -542,7 +539,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		this.listbox_GroupsRights.getItems().clear();
 		List<SecurityGroupRights> groupRightsList = getSecurityRoleGroupsService()
 				.getSecurityGroupRightsByGrpId(securityGroup);
-		Comparator<SecurityGroupRights> comp = new BeanComparator(
+		Comparator<SecurityGroupRights> comp = new BeanComparator<SecurityGroupRights>(
 				"lovDescRightName");
 		Collections.sort(groupRightsList, comp);
 		for (int i = 0; i < groupRightsList.size(); i++) {

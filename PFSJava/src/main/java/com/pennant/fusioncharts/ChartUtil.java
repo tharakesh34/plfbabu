@@ -84,12 +84,11 @@ public class ChartUtil {
 			} 
 			setElement.append("</categories>");
 			setElement.append("\n");
-			@SuppressWarnings("unchecked")
 			/*Sort the list by series then each set of series form 
 			<dataset seriesName="series1 "><set value="1"><set value="2"> </dataSet>
 			<dataset seriesName="series2 "><set value="1"><set value="2"> </dataSet>
 			 */
-			Comparator<Object> comp = new BeanComparator("series");
+			Comparator<Object> comp = new BeanComparator<Object>("series");
 			Collections.sort(setElements, comp);
 			int setElementCount=0;
 			for (int i = 0; i <   setElements.size(); i++) {

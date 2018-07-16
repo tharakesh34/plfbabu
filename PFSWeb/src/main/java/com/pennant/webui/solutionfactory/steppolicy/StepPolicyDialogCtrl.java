@@ -500,13 +500,12 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	 * 
 	 * @param stepPolicyDetailList
 	 */
-	@SuppressWarnings("unchecked")
 	public void doFillStepPolicyDetails(List<StepPolicyDetail> stepPolicyDetails) {
 		logger.debug("Entering");
 		this.listBoxStepPolicyDetail.getItems().clear();
 		setStepPolicyDetailList(stepPolicyDetails);
 		if(stepPolicyDetails != null && !stepPolicyDetails.isEmpty()){
-			Comparator<Object> comp = new BeanComparator("stepNumber");
+			Comparator<Object> comp = new BeanComparator<Object>("stepNumber");
 			Collections.sort(stepPolicyDetails,comp);
 			this.noOfSteps.setValue(stepPolicyDetails.size());
 			for (StepPolicyDetail stepPolicyDetail : stepPolicyDetails) {

@@ -479,11 +479,10 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * This method fills expense details list 
 	 * @param expenseDetails
 	 */
-	@SuppressWarnings("unchecked")
 	public void doFillScoringSlab(List<ScoringSlab> scoringSlabList){
 		logger.debug("Entering ");
 		this.setScoringSlabList(scoringSlabList);
-		Comparator<Object> comp = new BeanComparator("scoringSlab");
+		Comparator<Object> comp = new BeanComparator<Object>("scoringSlab");
 		Collections.sort(scoringSlabList,comp);
 		this.pagingScorSlabDetailsList.setDetailed(true);
 		getScoringGroup().setScoringSlabList(scoringSlabList);

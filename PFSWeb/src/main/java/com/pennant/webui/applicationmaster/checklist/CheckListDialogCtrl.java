@@ -1103,10 +1103,9 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	 * This method fills expense details list 
 	 * @param expenseDetails
 	 */
-	@SuppressWarnings("unchecked")
 	public void doFillCheckListDetailsList(List<CheckListDetail> checkListDetailList){
 		logger.debug("Entering ");
-		Comparator<Object> comp = new BeanComparator("ansDesc");
+		Comparator<Object> comp = new BeanComparator<Object>("ansDesc");
 		Collections.sort(checkListDetailList,comp);
 		//FIXME should checked better to remove the paging 
 		this.pagingChkListDetailsList.setPageSize(100);

@@ -308,6 +308,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	 * 
 	 * @throws Exception
 	 */
+	@SuppressWarnings("resource")
 	private void downloadGstTrnDetails(List<TaxDownload> list) throws Exception {
 		logger.debug(Literal.ENTERING);
 

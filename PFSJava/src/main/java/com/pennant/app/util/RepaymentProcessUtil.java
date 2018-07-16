@@ -478,11 +478,11 @@ public class RepaymentProcessUtil {
 			}
 			
 			totPayable = totPayable.add(receiptDetail.getAmount());
-			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 				extDataMap.put("PA_ReceiptAmount", totPayable);
-			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)){
+			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)){
 				extDataMap.put("EX_ReceiptAmount", receiptDetail.getAmount());
-			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)){
 				extDataMap.put("EA_ReceiptAmount", receiptDetail.getAmount());
 			}else{
 				extDataMap.put("PB_ReceiptAmount", receiptDetail.getAmount());
@@ -493,7 +493,7 @@ public class RepaymentProcessUtil {
 			addZeroifNotContains(extDataMap, "EA_ReceiptAmount");
 			addZeroifNotContains(extDataMap, "PB_ReceiptAmount");
 			
-			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 				if(extDataMap.containsKey(receiptDetail.getFeeTypeCode()+"_P")){
 					extDataMap.put(receiptDetail.getFeeTypeCode()+"_P", extDataMap.get(receiptDetail.getFeeTypeCode()+"_P").add(receiptDetail.getAmount()));
 				}else{
@@ -538,7 +538,7 @@ public class RepaymentProcessUtil {
 					extDataMap.clear();
 				}
 								
-				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 					if(StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent()) || 
 							StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent()) ||
 							StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())){
@@ -560,7 +560,7 @@ public class RepaymentProcessUtil {
 						}else{
 							if(rcptSize > rcpt+1){
 								FinReceiptDetail nxtRcp = receiptDetailList.get(rcpt+1);
-								if(StringUtils.equals(nxtRcp.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+								if(StringUtils.equals(nxtRcp.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 									if(nxtRcp.getRepayHeaders() != null && !nxtRcp.getRepayHeaders().isEmpty()){
 										FinRepayHeader nxtRcpH = nxtRcp.getRepayHeaders().get(0);
 										if(StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, nxtRcpH.getFinEvent()) || 
@@ -656,7 +656,7 @@ public class RepaymentProcessUtil {
 						repayHeader.setLinkedTranId(aeEvent.getLinkedTranId());
 						repayHeader.setValueDate(postDate);
 						
-						if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE) && 
+						if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE) && 
 								receiptDetail.getPayAgainstID() != 0 && receiptDetail.getPayAgainstID() != Long.MIN_VALUE) {
 							getFinExcessAmountDAO().updateExcessBal(receiptDetail.getPayAgainstID(),
 									repayHeader.getRepayAmount());
@@ -983,11 +983,11 @@ public class RepaymentProcessUtil {
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", finFeeDetail.getNetAmount());
 				
-				if(StringUtils.equals(payType, RepayConstants.PAYTYPE_EXCESS)){
+				if(StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EXCESS)){
 					payType = "EX_";
-				}else if(StringUtils.equals(payType, RepayConstants.PAYTYPE_EMIINADV)){
+				}else if(StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EMIINADV)){
 					payType = "EA_";
-				}else if(StringUtils.equals(payType, RepayConstants.PAYTYPE_PAYABLE)){
+				}else if(StringUtils.equals(payType, RepayConstants.RECEIPTMODE_PAYABLE)){
 					payType = "PA_";
 				}else{
 					payType = "PB_";
@@ -1122,8 +1122,8 @@ public class RepaymentProcessUtil {
 			long receiptSeqID = getFinReceiptDetailDAO().save(receiptDetail, TableType.MAIN_TAB);
 
 			// Excess Amounts
-			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)
-					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)) {
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
+					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)) {
 
 				long payAgainstID = receiptDetail.getPayAgainstID();
 
@@ -1166,7 +1166,7 @@ public class RepaymentProcessUtil {
 			}
 			
 			// Payable Advise Amounts
-			if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)) {
+			if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
 
 				long payAgainstID = receiptDetail.getPayAgainstID();
 

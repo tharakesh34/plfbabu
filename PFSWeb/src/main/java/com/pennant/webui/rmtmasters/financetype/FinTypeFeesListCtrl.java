@@ -311,7 +311,6 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 		logger.debug("Leaving");
 	}
 	
-	@SuppressWarnings("unchecked")
 	private List<FinTypeFees> sortFeesByFeeOrder(List<FinTypeFees> finTypeFeesList) {
 		List<FinTypeFees> sortedList = new ArrayList<FinTypeFees>();
 		Map<String, List<FinTypeFees>> feesMap = new HashMap<String, List<FinTypeFees>>();
@@ -327,7 +326,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 		
 		for (String eventCode : feesMap.keySet()) {
 			List<FinTypeFees> eventList = feesMap.get(eventCode);
-			Comparator<FinTypeFees> beanComp = new BeanComparator("feeOrder");
+			Comparator<FinTypeFees> beanComp = new BeanComparator<FinTypeFees>("feeOrder");
 			Collections.sort(eventList, beanComp);
 			sortedList.addAll(eventList);
 		}

@@ -139,7 +139,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		header.setReceiptAmount(advanceAmt.add(presentmentAmt));
 		header.setEffectSchdMethod(PennantConstants.List_Select);
-		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
+		header.setReceiptMode(RepayConstants.RECEIPTMODE_PRESENTMENT);
 		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
 		header.setLogSchInPresentment(true);
 		header.setPostBranch("EOD");//FIXME
@@ -160,7 +160,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 			receiptDetail = new FinReceiptDetail();
 			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-			receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
+			receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV);
 			receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
 			receiptDetail.setAmount(advanceAmt);
 			receiptDetail.setValueDate(schDate);
@@ -176,7 +176,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 			receiptDetail = new FinReceiptDetail();
 			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-			receiptDetail.setPaymentType(RepayConstants.PAYTYPE_PRESENTMENT);
+			receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_PRESENTMENT);
 			receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
 			receiptDetail.setAmount(presentmentAmt);
 			receiptDetail.setValueDate(schDate);

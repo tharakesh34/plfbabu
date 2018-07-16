@@ -306,7 +306,6 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	 * Method for Filling Step Policy Details
 	 * @param finStepPolicyDetails
 	 */
-	@SuppressWarnings("unchecked")
 	public void doFillStepDetais(List<FinanceStepPolicyDetail> finStepPolicyDetails){
 		logger.debug("Entering ");
 
@@ -322,7 +321,7 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		this.listBoxStepdetails.getItems().clear();
 		if(finStepPolicyDetails != null){
 			
-			Comparator<Object> comp = new BeanComparator("stepNo");
+			Comparator<Object> comp = new BeanComparator<Object>("stepNo");
 			Collections.sort(finStepPolicyDetails,comp);
 			setFinStepPoliciesList(finStepPolicyDetails);
 			

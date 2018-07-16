@@ -163,6 +163,8 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 												totDocumentDetailsList.addAll(riskContainmentUnit.getDocuments());
 											}
 											break;
+										default:
+											break;
 										}
 									}
 								}

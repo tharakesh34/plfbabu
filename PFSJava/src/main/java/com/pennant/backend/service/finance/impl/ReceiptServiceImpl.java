@@ -116,6 +116,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -183,7 +184,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			
 			if(receiptDetailList != null && !receiptDetailList.isEmpty()){
 				for (FinReceiptDetail receiptDetail : receiptDetailList) {
-					if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+					if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 						ReceiptTaxDetail taxDetail = getReceiptTaxDetailDAO().getTaxDetailByID(receiptDetail.getReceiptSeqID(), "");
 						receiptDetail.setReceiptTaxDetail(taxDetail);
 					}
@@ -318,7 +319,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					
 					if(receiptDetailList != null && !receiptDetailList.isEmpty()){
 						for (FinReceiptDetail receiptDetail : receiptDetailList) {
-							if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+							if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 								ReceiptTaxDetail taxDetail = getReceiptTaxDetailDAO().getTaxDetailByID(receiptDetail.getReceiptSeqID(), TableType.TEMP_TAB.getSuffix());
 								receiptDetail.setReceiptTaxDetail(taxDetail);
 							}
@@ -586,8 +587,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			// Excess Amount Reserve
-			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) ||
-					StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS) ||
+					StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)){
 
 				// Excess Amount make utilization
 				FinExcessAmountReserve exReserve = getFinExcessAmountDAO().getExcessReserve(receiptSeqID, receiptDetail.getPayAgainstID());
@@ -625,7 +626,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			// Payable Amount Reserve
-			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 
 				// Payable Amount make utilization
 				ManualAdviseReserve payableReserve = getManualAdviseDAO().getPayableReserve(receiptSeqID, receiptDetail.getPayAgainstID());
@@ -888,8 +889,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			long receiptSeqID = receiptDetail.getReceiptSeqID();
 
 			// Excess Amount Reserve
-			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) ||
-					StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS) ||
+					StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)){
 
 				// Excess Amount make utilization
 				FinExcessAmountReserve exReserve = getFinExcessAmountDAO().getExcessReserve(receiptSeqID, receiptDetail.getPayAgainstID());
@@ -904,7 +905,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			// Payable Amount Reserve
-			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 
 				// Payable Amount make utilization
 				ManualAdviseReserve payableReserve = getManualAdviseDAO().getPayableReserve(receiptSeqID, receiptDetail.getPayAgainstID());
@@ -1453,10 +1454,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if(StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)){
 			ManualAdvise bounce = receiptHeader.getManualAdvise();
 			if (bounce != null && bounce.getAdviseAmount().compareTo(BigDecimal.ZERO) > 0) {
-				ArrayList<ErrorDetail> errorDetails = executeDueAccounting(rceiptData.getFinanceDetail(), receiptHeader.getBounceDate(), bounce.getAdviseAmount(),
+				AEEvent aeEvent = executeDueAccounting(rceiptData.getFinanceDetail(), receiptHeader.getBounceDate(), bounce.getAdviseAmount(),
 						auditHeader.getAuditBranchCode(), RepayConstants.ALLOCATION_BOUNCE);
-				if (errorDetails != null && !errorDetails.isEmpty()) {
-					auditHeader.setErrorMessage(errorDetails);
+				if (aeEvent != null && StringUtils.isNotEmpty(aeEvent.getErrorMessage())) {
+					ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+					errorDetails.add(new ErrorDetail("Accounting Engine", PennantConstants.ERR_UNDEF, "E",aeEvent.getErrorMessage(), new String[] {}, new String[] {}));
 					logger.debug("Leaving");
 					return auditHeader;
 				}
@@ -1812,7 +1814,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			Date receivedDate = DateUtility.getAppDate();
 			for (FinReceiptDetail receiptDetail : ReceiptDetailList) {
 				if (StringUtils.equals(repayData.getReceiptHeader().getReceiptMode(), receiptDetail.getPaymentType())) {
-					if (RepayConstants.PAYTYPE_PRESENTMENT.equals(receiptDetail.getPaymentType())) {
+					if (RepayConstants.RECEIPTMODE_PRESENTMENT.equals(receiptDetail.getPaymentType())) {
 						isPresentment = true;
 					}
 					receivedDate = receiptDetail.getReceivedDate();

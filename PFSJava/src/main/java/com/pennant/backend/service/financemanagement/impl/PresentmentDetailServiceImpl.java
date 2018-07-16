@@ -459,7 +459,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			receiptHeader.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
 			receiptHeader.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 			receiptHeader.setReceiptAmount(detail.getPresentmentAmt());
-			receiptHeader.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
+			receiptHeader.setReceiptMode(RepayConstants.RECEIPTMODE_PRESENTMENT);
 			receiptHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			receiptHeader.setNewRecord(true);
 			receiptHeader.setLastMntBy(userDetails.getUserId());
@@ -471,7 +471,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			finReceiptDetail.setReceivedDate(detail.getSchDate());
 			finReceiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			finReceiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-			finReceiptDetail.setPaymentType(RepayConstants.PAYTYPE_PRESENTMENT);
+			finReceiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_PRESENTMENT);
 			finReceiptDetail.setAmount(detail.getPresentmentAmt());
 			finReceiptDetail.setPartnerBankAc(header.getPartnerAcctNumber());
 			finReceiptDetail.setPartnerBankAcType(header.getPartnerAcctType());

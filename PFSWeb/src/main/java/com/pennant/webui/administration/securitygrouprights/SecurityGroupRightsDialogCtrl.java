@@ -366,13 +366,13 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	 * This method do the following 
 	 *  1) Gets assigned rights list by calling SecurityGroupRightsService's getRightsByGroupId()method
 	 *  2) render all the list by calling doFillListbox()
-	 */	@SuppressWarnings("unchecked")
+	 */	
 	 public void doShowAssignedRightsList(){
 
 		 logger.debug("Entering");
 		 this.listbox_AssignedRights.getItems().clear();
 		 SecurityRight secRight = new SecurityRight();
-		 Comparator<SecurityRight> comp = new BeanComparator("rightName");
+		 Comparator<SecurityRight> comp = new BeanComparator<SecurityRight>("rightName");
 		 Collections.sort(assignedRights, comp);
 		 for(int i=0;i<assignedRights.size();i++){
 			 secRight=(SecurityRight)assignedRights.get(i);
@@ -387,7 +387,6 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	  *  1) Gets unassigned rights list by calling SecurityGroupRightsService's getRightsByGroupId()method
 	  *  2) render all the list by calling doFillListbox()
 	  */
-	 @SuppressWarnings("unchecked")
 	 public void doShowUnAssignedRightsList(){
 
 		 logger.debug("Entering ");
@@ -397,7 +396,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 
 
 		 SecurityRight secRight=new SecurityRight();
-		 Comparator<SecurityRight> comp = new BeanComparator("rightName");
+		 Comparator<SecurityRight> comp = new BeanComparator<SecurityRight>("rightName");
 		 Collections.sort(unAssignedRights, comp);
 		 for(int i=0;i<unAssignedRights.size();i++){
 			 secRight=(SecurityRight)unAssignedRights.get(i);

@@ -681,7 +681,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 				try {
 
 					//ChequeHeaderModule module = (ChequeHeaderModule) ((AuditDetail)list.get(i)).getModelData();			
-					rcdType = rcdType = object.getClass().getMethod("getRecordType").invoke(object).toString();
+					rcdType = object.getClass().getMethod("getRecordType").invoke(object).toString();
 
 					if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(rcdType)) {
 						transType = PennantConstants.TRAN_ADD;

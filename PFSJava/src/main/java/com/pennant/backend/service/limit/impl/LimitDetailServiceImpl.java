@@ -988,6 +988,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			System.out.println("----> START EXTENDED FINANCE UPLOAD  --------> :: "
 					+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 			POIFSFileSystem finFileSystem = new POIFSFileSystem(finInput);
+			@SuppressWarnings("resource")
 			HSSFWorkbook finWorkBook = new HSSFWorkbook(finFileSystem);
 			HSSFSheet finSheet = finWorkBook.getSheetAt(0);
 			@SuppressWarnings("rawtypes")
