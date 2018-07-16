@@ -374,6 +374,6 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 
 	@Override
 	public BaseRate getBaseRateByDate(String repayBaseRate, String finCcy, Date bREffDate) {
-		return getBaseRateByDate(repayBaseRate, finCcy, bREffDate);
+		return getBaseRateDAO().getBaseRateByDate(repayBaseRate, finCcy, bREffDate);
 	}
 }
