@@ -3072,4 +3072,16 @@ UNION ALL
 		</createView>	
 	</changeSet>
 	
+	<changeSet id="157" author="Kesav">
+		<sql>
+			delete from REPORTFILTERFIELDS where reportid=(select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_GST_InvoiceReport') and fieldid=5;
+
+			Insert into REPORTFILTERFIELDS 
+			values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_GST_InvoiceReport'),5,'Invoice Type','STATICLIST','Invoice Type','T.invoicetype','getInvoiceTypes',null,null,null,0,0,0,0,5,1,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+			update reportfilterfields set mandatory=0 
+			where reportid=(select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_GST_InvoiceReport') and fieldid=2;
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
