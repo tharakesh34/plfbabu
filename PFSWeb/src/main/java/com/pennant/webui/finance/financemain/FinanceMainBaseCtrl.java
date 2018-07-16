@@ -172,6 +172,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
+import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
@@ -243,6 +244,7 @@ import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
+import com.pennant.backend.service.applicationmaster.BaseRateService;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.commitment.CommitmentService;
@@ -853,6 +855,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private ShortMessageService shortMessageService;
 	private MailTemplateService mailTemplateService;
 	private LegalDetailService legalDetailService;
+	private BaseRateService baseRateService;
 
 	protected BigDecimal availCommitAmount = BigDecimal.ZERO;
 	protected Commitment commitment;
@@ -10706,6 +10709,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				aFinanceMain.setRepayBaseRate(null);
 			} else {
 				aFinanceMain.setRepayBaseRate(this.repayRate.getBaseValue());
+				
+				BaseRate baseRate = getBaseRateService().getBaseRateByDate(aFinanceMain.getRepayBaseRate(),
+						aFinanceMain.getFinCcy(), aFinanceMain.getFinStartDate());
+				if(baseRate != null){
+					aFinanceMain.setRepayBaseRateVal(baseRate.getBRRate());
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -17948,5 +17957,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setLegalDetailService(LegalDetailService legalDetailService) {
 		this.legalDetailService = legalDetailService;
+	}
+
+	public BaseRateService getBaseRateService() {
+		return baseRateService;
+	}
+
+	public void setBaseRateService(BaseRateService baseRateService) {
+		this.baseRateService = baseRateService;
 	}
 }

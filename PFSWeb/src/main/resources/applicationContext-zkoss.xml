@@ -1837,6 +1837,7 @@
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="legalDetailService" ref="legalDetailService" />
+		<property name="baseRateService" ref="baseRateService" />
 		
 	</bean>
 

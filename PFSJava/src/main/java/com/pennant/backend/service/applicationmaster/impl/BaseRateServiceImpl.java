@@ -371,4 +371,9 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
+
+	@Override
+	public BaseRate getBaseRateByDate(String repayBaseRate, String finCcy, Date bREffDate) {
+		return getBaseRateByDate(repayBaseRate, finCcy, bREffDate);
+	}
 }

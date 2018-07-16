@@ -286,6 +286,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal repayProfitRate = BigDecimal.ZERO;
 	@XmlElement
 	private String repayBaseRate;
+	private BigDecimal repayBaseRateVal = BigDecimal.ZERO;
 	@XmlElement
 	private String repaySpecialRate;
 	@XmlElement
@@ -802,6 +803,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("guidedValue");
 		excludeFields.add("totalExposure");
 		excludeFields.add("employeeNameDesc");
+		
+		// Repay Base Rate value for Agreements
+		excludeFields.add("repayBaseRateVal");
 		
 		return excludeFields;
 	}
@@ -3739,6 +3743,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setGrcMaxAmount(BigDecimal grcMaxAmount) {
 		this.grcMaxAmount = grcMaxAmount;
+	}
+
+	public BigDecimal getRepayBaseRateVal() {
+		return repayBaseRateVal;
+	}
+
+	public void setRepayBaseRateVal(BigDecimal repayBaseRateVal) {
+		this.repayBaseRateVal = repayBaseRateVal;
 	}
 
 }

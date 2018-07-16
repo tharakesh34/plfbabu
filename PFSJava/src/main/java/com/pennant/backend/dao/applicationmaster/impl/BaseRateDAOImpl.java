@@ -309,6 +309,43 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		logger.debug("Leaving");
 		return baseRates;
 	}
+	
+	/**
+	 * Method for fetching Base Rate with Max Effective date from requested  date
+	 * @param bRType
+	 * @param currency
+	 * @param bREffDate
+	 * @return
+	 */
+	@Override
+	public BaseRate getBaseRateByDate(String bRType, String currency, Date bREffDate) {
+		logger.debug("Entering");
+		BaseRate baseRate = new BaseRate();
+		baseRate.setBRType(bRType);
+		baseRate.setCurrency(currency);
+		baseRate.setBREffDate(bREffDate);
+
+		StringBuilder selectSql = new StringBuilder("select BRTYPE, BREFFDATE, BRRATE ");
+		selectSql.append(" FROM RMTBaseRates");
+		selectSql.append(" Where brtype = :BRType AND Currency = :Currency ");
+		selectSql.append(" AND breffdate >= (select max(BREffDate) from RMTBASERATES ");
+		selectSql.append(" Where brtype = :BRType AND Currency = :Currency AND breffdate <= :BREffDate)");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
+		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
+		
+		try {
+			baseRate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+					beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			baseRate = null;
+		} 
+		
+		logger.debug("Leaving");
+		return baseRate;
+	}
 
 	/**
 	 * To get base rate value using base rate code and effective date is less

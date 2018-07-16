@@ -60,5 +60,6 @@ public interface BaseRateService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	boolean getBaseRateListById(String bRType,String currency, Date bREffDate);
+	BaseRate getBaseRateByDate(String repayBaseRate, String finCcy, Date bREffDate);
 
 }
