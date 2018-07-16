@@ -303,6 +303,8 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		Map<String, Object> mapdata = null;
 		try {
 			response = sendRequest(builder.toString());
+			logger.debug("Cibil TUEF Response: " + response);
+			appplicationdata.put("CibilResponse", response);
 			jsonObject = new JSONObject();
 			 responseDetails = new CibilResponseDetails();
 			if (response.startsWith("ERRR")) {
@@ -337,7 +339,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 			}
 
 			appplicationdata.put(InterfaceConstants.RSN_CODE, error);
-			doInterfaceLogging(reference, builder.toString(), response, null, error, reqSentOn,
+			doInterfaceLogging(reference, builder.toString(), response, "999", error, reqSentOn,
 					InterfaceConstants.STATUS_FAILED);
 		}
 		return mapdata;
@@ -1177,6 +1179,9 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		iLogDetail.setErrorCode(errorCode);
 		if (errorDesc != null && errorDesc.length() > 200) {
 			iLogDetail.setErrorDesc(errorDesc.substring(0, 190));
+		} else {
+			iLogDetail.setErrorDesc(errorDesc);
+
 		}
 
 		logInterfaceDetails(iLogDetail);
