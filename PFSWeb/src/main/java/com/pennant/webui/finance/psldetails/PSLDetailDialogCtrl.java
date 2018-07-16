@@ -845,7 +845,8 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 				subCategory.setDisabled(true);
 			}
 		} else if("HF".equals(aPSLDetail.getCategoryCode())){
-			fillComboBox(this.subCategory, aPSLDetail.getSubCategory(), subSectorList, "");
+			String excludeValues = ",MF,SF,OF,LL,TF,OL,SC,";
+			fillComboBox(subCategory, aPSLDetail.getSubCategory(), subCategoryList, excludeValues);
 			if("HF".equals(aPSLDetail.getSubCategory())) {
 				subCategory.setDisabled(true);
 			}
