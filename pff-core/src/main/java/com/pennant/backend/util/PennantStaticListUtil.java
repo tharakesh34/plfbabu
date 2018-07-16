@@ -259,6 +259,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> finLVTCheckList;
 	private static ArrayList<ValueLabel> depositTypesList;
 	private static ArrayList<String> denominations;
+	private static ArrayList<ValueLabel> invoiceTypes;	//GST Invoice Types (Cr/Dr)
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -3585,5 +3586,14 @@ public class PennantStaticListUtil {
 		}
 		
 		return denominations;
+	}
+	
+	public static ArrayList<ValueLabel> getInvoiceTypes() {
+		if (invoiceTypes == null) {
+			invoiceTypes = new ArrayList<ValueLabel>();
+			invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, Labels.getLabel("Invoice_Type_Debit")));
+			invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, Labels.getLabel("Invoice_Type_Credit")));
+		}
+		return invoiceTypes;
 	}
 }
