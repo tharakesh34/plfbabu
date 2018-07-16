@@ -132,7 +132,7 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		logger.debug("Entering");
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,AlwOtc, ");
+		selectSql.append("Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,AlwOtc, InternalUse,");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append("CovenantTypeDesc,");
 		}
@@ -163,16 +163,13 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		finCovenantType.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,AlwOtc,");
-		if (isEnquiry) {
+		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate, CategoryCode,AlwOtc, InternalUse,");
+		if(isEnquiry){
 			selectSql.append(" CovenantTypeDesc,DocReceivedDate,");
-		} else {
-			if (StringUtils.trimToEmpty(type).contains("View")) {
+		}else{
+			if (StringUtils.trimToEmpty(type).contains("View")){
 				selectSql.append(" CovenantTypeDesc,MandRoleDesc,pddFlag,otcFlag,");
 			}
-		}
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" CategoryCode,");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From FinCovenantType");
@@ -244,10 +241,10 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		
 		insertSql.append(" Insert Into FinCovenantType");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, CovenantType , Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,AlwOtc," );
+		insertSql.append(" (FinReference, CovenantType , Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,AlwOtc, InternalUse," );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values( :FinReference, :CovenantType , :Description, :MandRole, :AlwWaiver,:AlwPostpone, :PostponeDays, :ReceivableDate, :AlwOtc,");
+		insertSql.append(" Values( :FinReference, :CovenantType , :Description, :MandRole, :AlwWaiver,:AlwPostpone, :PostponeDays, :ReceivableDate, :AlwOtc, :InternalUse,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
@@ -279,7 +276,7 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		StringBuilder	updateSql =new StringBuilder("Update FinCovenantType");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
 		updateSql.append("  Set Description = :Description,");
-		updateSql.append("  MandRole = :MandRole, AlwWaiver = :AlwWaiver, AlwPostpone = :AlwPostpone, PostponeDays = :PostponeDays, ReceivableDate =:ReceivableDate, AlwOtc =:AlwOtc,");
+		updateSql.append("  MandRole = :MandRole, AlwWaiver = :AlwWaiver, AlwPostpone = :AlwPostpone, PostponeDays = :PostponeDays, ReceivableDate =:ReceivableDate, AlwOtc =:AlwOtc, InternalUse = :InternalUse,");
 		updateSql.append("  Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append("  Where FinReference = :FinReference and CovenantType = :CovenantType");
 		
@@ -393,10 +390,10 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		
 		insertSql.append(" Insert Into FinCovenantType");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (FinReference, CovenantType , Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate," );
+		insertSql.append(" (FinReference, CovenantType , Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,InternalUse," );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values( :FinReference, :CovenantType , :Description, :MandRole, :AlwWaiver,:AlwPostpone, :PostponeDays, :ReceivableDate,");
+		insertSql.append(" Values( :FinReference, :CovenantType , :Description, :MandRole, :AlwWaiver,:AlwPostpone, :PostponeDays, :ReceivableDate, :InternalUse,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
@@ -416,7 +413,7 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		StringBuilder	updateSql =new StringBuilder("Update FinCovenantType");
 		updateSql.append(tableType.getSuffix());
 		updateSql.append("  Set Description = :Description,");
-		updateSql.append("  MandRole = :MandRole, AlwWaiver = :AlwWaiver, AlwPostpone = :AlwPostpone, PostponeDays = :PostponeDays, ReceivableDate =:ReceivableDate,");
+		updateSql.append("  MandRole = :MandRole, AlwWaiver = :AlwWaiver, AlwPostpone = :AlwPostpone, PostponeDays = :PostponeDays, ReceivableDate =:ReceivableDate, InternalUse = :InternalUse,");
 		updateSql.append("  Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append("  Where FinReference = :FinReference and CovenantType = :CovenantType");
 		
@@ -441,7 +438,7 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		aFinCovenantType.setFinReference(finReference);
 		aFinCovenantType.setCovenantType(covenantType);
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate, ");
+		selectSql.append("Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,InternalUse, ");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append("CovenantTypeDesc,");
 		}
@@ -474,16 +471,13 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		finCovenantType.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,");
-		if (isEnquiry) {
+		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,CategoryCode,InternalUse,");
+		if(isEnquiry){
 			selectSql.append(" CovenantTypeDesc,DocReceivedDate,");
-		} else {
-			if (StringUtils.trimToEmpty(type).contains("View")) {
-				selectSql.append(" CovenantTypeDesc, MandRoleDesc,");
+		}else{
+			if (StringUtils.trimToEmpty(type).contains("View")){
+				selectSql.append(" CovenantTypeDesc,MandRoleDesc,");
 			}
-		}
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" CategoryCode,");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From FinCovenantType");
