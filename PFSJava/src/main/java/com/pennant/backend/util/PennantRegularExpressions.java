@@ -186,6 +186,8 @@ public class PennantRegularExpressions {
 	public static final String REGEX_BARCODE_NUMBER="REGEX_BARCODE_NUMBER";
 	public static final String REGEX_SPECIAL_REGX="REGEX_SPECIAL_REGX";
 	
+	public static final String	REGEX_LOOK_UP_VALUE="REGEX_LOOK_UP_VALUE";
+	
 	private static Map<String, String> regexMapper = new HashMap<String, String>() {
 		private static final long serialVersionUID = -3549857310897774789L;
 
