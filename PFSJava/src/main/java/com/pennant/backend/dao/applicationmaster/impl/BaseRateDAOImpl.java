@@ -328,7 +328,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		StringBuilder selectSql = new StringBuilder("select BRTYPE, BREFFDATE, BRRATE ");
 		selectSql.append(" FROM RMTBaseRates");
 		selectSql.append(" Where brtype = :BRType AND Currency = :Currency ");
-		selectSql.append(" AND breffdate >= (select max(BREffDate) from RMTBASERATES ");
+		selectSql.append(" AND breffdate = (select max(BREffDate) from RMTBASERATES ");
 		selectSql.append(" Where brtype = :BRType AND Currency = :Currency AND breffdate <= :BREffDate)");
 		
 		logger.debug("selectSql: " + selectSql.toString());
