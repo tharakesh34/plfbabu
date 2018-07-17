@@ -51,6 +51,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String		rcdMaintainSts;
 	
 	private String	remarks;
+	private boolean depositProcess = false;	// added for Cash Management 
 	private boolean newRecord;
 	private String lovValue;
 	private FinReceiptHeader befImage;
@@ -462,6 +463,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setRcdMaintainSts(String rcdMaintainSts) {
 		this.rcdMaintainSts = rcdMaintainSts;
+	}
+
+	public boolean isDepositProcess() {
+		return depositProcess;
+	}
+
+	public void setDepositProcess(boolean depositProcess) {
+		this.depositProcess = depositProcess;
 	}
 
 }
