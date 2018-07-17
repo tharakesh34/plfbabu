@@ -637,6 +637,9 @@ public class RepaymentPostingsUtil implements Serializable {
 			aeEvent.setTransOrder(overdueEvent.getTransOrder());
 		}
 		
+		amountCodes.setUserBranch(rpyQueueHeader.getPostBranch());
+		amountCodes.setPaymentType(rpyQueueHeader.getPayType());
+		
 		// Profit Change Amount Setting
 		if(rpyQueueHeader.isPftChgAccReq()){
 			BigDecimal pftchg = amountCodes.getPft().subtract(totPftSchdOld);

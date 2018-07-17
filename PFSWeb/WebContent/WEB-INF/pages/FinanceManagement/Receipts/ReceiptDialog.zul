@@ -748,16 +748,6 @@
 													value="${c:l('label_ReceiptDialog_FundingAccount.value')}" />
 												<extendedcombobox
 													id="fundingAccount" />
-												<label
-													id="label_ReceiptDialog_ReceivedDate"
-													value="${c:l('label_ReceiptDialog_ReceivedDate.value')}" />
-												<hbox
-													id="hbox_ReceiptDialog_ReceivedDate">
-													<space spacing="2px"
-														sclass="mandatory" />
-													<datebox
-														id="receivedDate" width="100px" />
-												</hbox>
 											</row>
 											<row id="row_remarks"
 												visible="false">
@@ -770,6 +760,16 @@
 														spacing="2px" />
 													<uppercasebox
 														id="paymentRef" width="180px" />
+												</hbox>
+												<label
+													id="label_ReceiptDialog_ReceivedDate"
+													value="${c:l('label_ReceiptDialog_ReceivedDate.value')}" />
+												<hbox
+													id="hbox_ReceiptDialog_ReceivedDate">
+													<space spacing="2px"
+														sclass="mandatory" />
+													<datebox
+														id="receivedDate" width="100px" />
 												</hbox>
 											</row>
 										</rows>

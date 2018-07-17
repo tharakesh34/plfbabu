@@ -146,6 +146,7 @@ public class AEAmountCodes {
 	private BigDecimal	transfer			= BigDecimal.ZERO;
 	private String		postingType			= AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_LOAN;
 	private String		userBranch			= "";
+	private String		paymentType				= "";
 
 	public AEAmountCodes() {
 		super();
@@ -1095,6 +1096,14 @@ public class AEAmountCodes {
 
 	public void setUserBranch(String userBranch) {
 		this.userBranch = userBranch;
+	}
+
+	public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
 	}
 	
 }

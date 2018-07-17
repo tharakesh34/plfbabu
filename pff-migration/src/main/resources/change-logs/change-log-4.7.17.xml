@@ -11141,6 +11141,15 @@ UNION ALL
 			Insert into SMTPARAMETERS  values ('GL_CM_GLHEAD_C2B','Gold Loan Cash Management','String',0,(Select AccountSetId from RMTAccountingSet where EVentCode = 'C2B'),10,0,null,null,'Cash To Bank Account set Id',1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
+
+	<changeSet id="275" author="Siva">
+		<sql>
+			delete FROM RBFIELDDETAILS WHERE RBEVENT = 'SUBHEAD' and rbfldname='ae_paymentType' and rbmodule='SUBHEAD';
+			delete FROM RBFIELDDETAILS WHERE RBEVENT = 'SUBHEAD' and rbfldname='ae_userBranch' and rbmodule='SUBHEAD';
+			Insert into RBFIELDDETAILS values ('SUBHEAD','SUBHEAD','ae_paymentType','Payment	Type','nvarchar',8,'1','1','paymentType','static,global',null);
+			Insert into RBFIELDDETAILS Values ('SUBHEAD','SUBHEAD','ae_userBranch', 'User Branch','nvarchar',50, 1,1, ' ','static,global', ' ');
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
 	

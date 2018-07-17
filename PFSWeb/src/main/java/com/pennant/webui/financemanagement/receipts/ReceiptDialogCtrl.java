@@ -1744,6 +1744,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.caption_receiptDetail.setLabel(this.receiptMode.getSelectedItem().getLabel());
 			this.receiptAmount.setMandatory(true);
 			readOnlyComponent(isReadOnly("ReceiptDialog_receiptAmount"), this.receiptAmount);
+			readOnlyComponent(isReadOnly("ReceiptDialog_fundingAccount"), this.fundingAccount);
 
 			Filter fundingAcFilters[] = new Filter[4];
 			fundingAcFilters[0] = new Filter("Purpose", RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL);
@@ -1796,6 +1797,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
 				this.row_PaymentRef.setVisible(false);
+				this.row_fundingAcNo.setVisible(false);
+				readOnlyComponent(true, this.fundingAccount);
 
 				if(isUserAction){
 					this.receivedDate.setValue(DateUtility.getAppDate());
@@ -2637,9 +2640,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			receiptDetail.setPaymentRef(this.paymentRef.getValue());
 			receiptDetail.setTransactionRef(this.transactionRef.getValue());
 			receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
-			
-			Object object = this.fundingAccount.getAttribute("fundingAccID");
-			receiptDetail.setFundingAc(Long.valueOf(object.toString()));
+		
+			if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, receiptDetail.getPaymentType())){
+				Object object = this.fundingAccount.getAttribute("fundingAccID");
+				receiptDetail.setFundingAc(Long.valueOf(object.toString()));
+			}
 			
 			receiptDetail.setReceivedDate(this.receivedDate.getValue());
 			receiptDetail.setDelRecord(false);// Internal Purpose
@@ -3045,8 +3050,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
 						receiptDetail.setReceivedDate(this.receivedDate.getValue());
 						
-						Object object = this.fundingAccount.getAttribute("fundingAccID");
-						receiptDetail.setFundingAc(Long.valueOf(object.toString()));
+						if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, receiptDetail.getPaymentType())){
+							Object object = this.fundingAccount.getAttribute("fundingAccID");
+							receiptDetail.setFundingAc(Long.valueOf(object.toString()));
+						}
 					}
 				}
 				// Extended Fields
@@ -3470,8 +3477,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					this.chequeAcNo.setValue(receiptDetail.getChequeAcNo());
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
 					
-					this.fundingAccount.setAttribute("fundingAccID", receiptDetail.getFundingAc());
-					this.fundingAccount.setValue(receiptDetail.getFundingAcCode(), StringUtils.trimToEmpty(receiptDetail.getFundingAcDesc()));
+					if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, receiptDetail.getPaymentType())){
+						this.fundingAccount.setAttribute("fundingAccID", receiptDetail.getFundingAc());
+						this.fundingAccount.setValue(receiptDetail.getFundingAcCode(), StringUtils.trimToEmpty(receiptDetail.getFundingAcDesc()));
+					}
 				}
 			}
 		}
@@ -5380,6 +5389,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				
 				amountCodes.setPenaltyPaid(BigDecimal.ZERO);
 				amountCodes.setPenaltyWaived(BigDecimal.ZERO);
+				amountCodes.setPaymentType(receiptDetail.getPaymentType());
+				amountCodes.setUserBranch(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
 					if(StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent()) || 
 							StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent()) ||
@@ -5917,6 +5928,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
 				amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
+				amountCodes.setPaymentType(receiptDetail.getPaymentType());
+				amountCodes.setUserBranch(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 				aeEvent.getAcSetIDList().clear();
 				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), 

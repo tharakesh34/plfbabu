@@ -1861,6 +1861,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		FinanceDetail financeDetail = null;
 		Date valueDate = DateUtility.getAppDate();
 		String receiptNumber = null;
+		BigDecimal cashAmount = BigDecimal.ZERO;
 		if (auditHeader.getAuditDetail().getModelData() instanceof FinanceDetail) {
 			financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		} else if (auditHeader.getAuditDetail().getModelData() instanceof LiabilityRequest) {
@@ -1879,6 +1880,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 							!StringUtils.equals(receiptHeader.getReceiptMode(), RepayConstants.RECEIPTMODE_EXCESS)){
 						valueDate = detail.getReceivedDate();
 						receiptNumber = detail.getPaymentRef();
+					}
+					
+					if(StringUtils.equals(detail.getPaymentType(), RepayConstants.RECEIPTMODE_CASH)){
+						cashAmount = detail.getAmount();
 					}
 				}
 			}
@@ -1928,6 +1933,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		aeEvent.setModuleDefiner(financeDetail.getModuleDefiner());
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 		aeEvent.setPostDate(DateUtility.getAppDate());
+		
+		if(cashAmount.compareTo(BigDecimal.ZERO) > 0){
+			amountCodes.setPaymentType(RepayConstants.RECEIPTMODE_CASH);
+		}
+		amountCodes.setUserBranch(auditHeader.getAuditBranchCode());
 		
 		HashMap<String, Object>	dataMap = aeEvent.getDataMap();
 		dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);

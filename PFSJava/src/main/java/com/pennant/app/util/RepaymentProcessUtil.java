@@ -622,6 +622,9 @@ public class RepaymentProcessUtil {
 						amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 						amountCodes.setToExcessAmt(BigDecimal.ZERO);
 						amountCodes.setToEmiAdvance(BigDecimal.ZERO);
+						amountCodes.setPaymentType(receiptDetail.getPaymentType());
+						amountCodes.setUserBranch(receiptHeader.getPostBranch());
+						
 						if(StringUtils.equals(repayHeader.getFinEvent(), RepayConstants.EXCESSADJUSTTO_EXCESS)){
 							amountCodes.setToExcessAmt(repayHeader.getRepayAmount());
 						}else {
