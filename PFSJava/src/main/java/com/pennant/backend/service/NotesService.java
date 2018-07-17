@@ -49,6 +49,8 @@ import com.pennant.backend.model.Notes;
 
 public interface NotesService {
 	List<Notes> getNotesList(Notes notes, boolean isNotes);
+	
+	List<Notes> getNotesForAgreements(Notes notes);
 
 	List<Notes> getNotesListByRole(Notes notes, boolean isNotes, String[] roleCodes);
 

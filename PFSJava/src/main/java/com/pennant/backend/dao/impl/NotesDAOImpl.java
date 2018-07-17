@@ -92,6 +92,23 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
+	public List<Notes> getNotesForAgreements(Notes notes){
+		logger.debug("Entering");
+		StringBuilder   selectSql = new StringBuilder(" Select NoteId, ModuleName, Reference, " );
+		selectSql.append(" RemarkType, AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, " );
+		selectSql.append(" T2.UsrLogin, T2.UsrFName , T2.UsrMName , T2.UsrLName From Notes T1 "); 
+		selectSql.append(" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy ");
+		selectSql.append(" Where Reference = :Reference and ModuleName = :ModuleName " );
+		selectSql.append(" AND RemarkType IN('N', 'I', 'R', 'C') " );
+		selectSql.append(" ORDER BY InputDate Asc ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
+		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+	
 	@Override
 	public List<Notes> getNotesListByRole(Notes notes, boolean isNotes, String[] roleCodes){
 		logger.debug("Entering");

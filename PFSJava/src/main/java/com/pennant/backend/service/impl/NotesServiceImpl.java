@@ -82,7 +82,12 @@ public class NotesServiceImpl implements NotesService {
 	@Override
 	public List<Notes> getNotesList(Notes notes, boolean isNotes) {
 		return getNotesDAO().getNotesList(notes, isNotes);
-	}	
+	}
+	
+	@Override
+	public List<Notes> getNotesForAgreements(Notes notes) {
+		return getNotesDAO().getNotesForAgreements(notes);
+	}
 	
 	@Override
 	public List<Notes> getNotesListByRole(Notes notes, boolean isNotes,String[] roleCodes) {

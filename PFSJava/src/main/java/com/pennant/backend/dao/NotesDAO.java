@@ -48,6 +48,8 @@ import com.pennant.backend.model.Notes;
 
 public interface NotesDAO {
 	List<Notes> getNotesList(Notes notes, boolean isNotes);
+	
+	List<Notes> getNotesForAgreements(Notes notes);
 
 	/**
 	 * Get the list of notes for the specified record in ascending order.

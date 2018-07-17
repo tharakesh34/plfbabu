@@ -2641,11 +2641,7 @@ public class AgreementGeneration implements Serializable {
 			Notes note = new Notes();
 			note.setModuleName(PennantConstants.NOTES_MODULE_FINANCEMAIN);
 			note.setReference(finreference);
-			List<Notes> list = getNotesService().getNotesList(note, false);
-			List<Notes> notesList = getNotesService().getNotesList(note, true);
-			if(CollectionUtils.isNotEmpty(notesList)){
-				list.addAll(notesList);
-			}
+			List<Notes> list = getNotesService().getNotesForAgreements(note);
 			if (list != null && !list.isEmpty()) {
 				agreement.setRecommendations(new ArrayList<AgreementDetail.Recommendation>(list.size()));
 				for (Notes notes : list) {
