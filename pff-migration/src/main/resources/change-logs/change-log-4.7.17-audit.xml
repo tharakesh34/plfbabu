@@ -546,4 +546,17 @@ update adtCustomers set marginDeviation=0;
 			<column name="InternalUse" type="boolean" defaultValue="0"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="30" author="Kesav">
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="DepositProcess" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="31" author="Kesav">
+		<sql>
+			Update AdtFinReceiptHeader set DepositProcess = 0 where DepositProcess is null;
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

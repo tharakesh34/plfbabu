@@ -11151,5 +11151,21 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="276" author="Kesav">
+		<addColumn tableName="FinReceiptHeader">
+			<column name="DepositProcess" type="boolean" defaultValue="0"/>
+		</addColumn>
+		<addColumn tableName="FinReceiptHeader_Temp">
+			<column name="DepositProcess" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="277" author="Kesav">
+		<sql>
+			Update FinReceiptHeader set DepositProcess = 0 where DepositProcess is null;
+			Update FinReceiptHeader_Temp set DepositProcess = 0 where DepositProcess is null;
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 	
