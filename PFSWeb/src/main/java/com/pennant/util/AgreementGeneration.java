@@ -1515,16 +1515,23 @@ public class AgreementGeneration implements Serializable {
 		Map<String, Object> mapValues = detail.getCustomerDetails().getExtendedFieldRender().getMapValues();
 		for (String key : mapValues.keySet()) {
 			ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
+			ExtendedFieldDetail extendedFieldDetail=null;
 			if(null!= detail.getCustomerDetails().getExtendedFieldHeader() && CollectionUtils.isNotEmpty(detail.getCustomerDetails().getExtendedFieldHeader().getExtendedFieldDetails())){
 				List<ExtendedFieldDetail> extendedFieldDetails = detail.getCustomerDetails().getExtendedFieldHeader().getExtendedFieldDetails();
 				List<ExtendedFieldDetail> requiredExtendedFields = extendedFieldDetails.stream().filter(efd -> StringUtils.equalsIgnoreCase(key, efd.getFieldName())).collect(Collectors.toList());
 				if(CollectionUtils.isNotEmpty(requiredExtendedFields)){
-					extendedDetail.setFieldLabel(StringUtils.trimToEmpty(requiredExtendedFields.get(0).getFieldLabel()));
+					extendedFieldDetail=requiredExtendedFields.get(0);
+					extendedDetail.setFieldLabel(StringUtils.trimToEmpty(extendedFieldDetail.getFieldLabel()));
 				}
 			}
 			extendedDetail.setKey(StringUtils.trimToEmpty(key));
 			if (null != mapValues.get(key)) {
-				extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
+				if(StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())){
+					extendedDetail.setValue(PennantAppUtil.formateAmount((BigDecimal) mapValues.get(key), CurrencyUtil.getFormat("")).toString());
+				}else{
+					extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
+				}
+				
 			} else {
 				extendedDetail.setValue(StringUtils.EMPTY);
 			}
@@ -1539,17 +1546,25 @@ public class AgreementGeneration implements Serializable {
 		Map<String, Object> mapValues = detail.getExtendedFieldRender().getMapValues();
 		for (String key : mapValues.keySet()) {
 			ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
+			ExtendedFieldDetail extendedFieldDetail=null;
 			if(null!= detail.getExtendedFieldHeader() && CollectionUtils.isNotEmpty(detail.getExtendedFieldHeader().getExtendedFieldDetails())){
 				List<ExtendedFieldDetail> extendedFieldDetails = detail.getExtendedFieldHeader().getExtendedFieldDetails();
 				List<ExtendedFieldDetail> requiredExtendedFields = extendedFieldDetails.stream().filter(efd -> StringUtils.equalsIgnoreCase(key, efd.getFieldName())).collect(Collectors.toList());
 				if(CollectionUtils.isNotEmpty(requiredExtendedFields)){
-					extendedDetail.setFieldLabel(StringUtils.trimToEmpty(requiredExtendedFields.get(0).getFieldLabel()));
+					extendedFieldDetail=requiredExtendedFields.get(0);
+					extendedDetail.setFieldLabel(StringUtils.trimToEmpty(extendedFieldDetail.getFieldLabel()));
 				}
 			}
 			
 			extendedDetail.setKey(StringUtils.trimToEmpty(key));
 			if (null != mapValues.get(key)) {
 				extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
+
+				if(StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())){
+					extendedDetail.setValue(PennantAppUtil.formateAmount((BigDecimal) mapValues.get(key), CurrencyUtil.getFormat("")).toString());
+				}else{
+					extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
+				}
 			} else {
 				extendedDetail.setValue(StringUtils.EMPTY);
 			}
@@ -1682,7 +1697,7 @@ public class AgreementGeneration implements Serializable {
 						appIncDetail.setCustName(StringUtils.trimToEmpty(customerIncome.getCustShrtName()));
 						appIncDetail.setIncomeCategory(StringUtils.trimToEmpty(customerIncome.getCategoryDesc()));
 						appIncDetail.setIncomeType(StringUtils.trimToEmpty(customerIncome.getIncomeTypeDesc()));
-						appIncDetail.setAmt(PennantAppUtil.amountFormate(customerIncome.getIncome(), formatter));
+						appIncDetail.setAmt(PennantAppUtil.amountFormate(customerIncome.getCalculatedAmount(), formatter));
 						agreement.getAppIncDetails().add(appIncDetail);
 					}else if(customerIncome.getIncomeExpense().equalsIgnoreCase("EXPENSE")){
 						AppExpDetail appExpDetail = agreement.new AppExpDetail();
@@ -1690,7 +1705,7 @@ public class AgreementGeneration implements Serializable {
 						appExpDetail.setApplicantType(StringUtils.trimToEmpty(applicantType));
 						appExpDetail.setExpenseCategory(StringUtils.trimToEmpty(customerIncome.getCategoryDesc()));
 						appExpDetail.setExpenseType(StringUtils.trimToEmpty(customerIncome.getIncomeTypeDesc()));
-						appExpDetail.setAmt(PennantAppUtil.amountFormate(customerIncome.getIncome(), formatter));
+						appExpDetail.setAmt(PennantAppUtil.amountFormate(customerIncome.getCalculatedAmount(), formatter));
 						agreement.getAppExpDetails().add(appExpDetail);
 					}
 					
@@ -2249,19 +2264,25 @@ public class AgreementGeneration implements Serializable {
 									Map<String, Object> mapValues = extendedFieldRender.getMapValues();
 									for (String key : mapValues.keySet()) {
 										ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
-										
+										ExtendedFieldDetail extendedFieldDetail=null;
 										if(null!= collateralSetup.getCollateralStructure() && null!= collateralSetup.getCollateralStructure().getExtendedFieldHeader() 
 												&& CollectionUtils.isNotEmpty(collateralSetup.getCollateralStructure().getExtendedFieldHeader().getExtendedFieldDetails())){
 											List<ExtendedFieldDetail> extendedFieldDetails = collateralSetup.getCollateralStructure().getExtendedFieldHeader().getExtendedFieldDetails();
 											List<ExtendedFieldDetail> requiredExtendedFields = extendedFieldDetails.stream().filter(efd -> StringUtils.equalsIgnoreCase(key, efd.getFieldName())).collect(Collectors.toList());
 											if(CollectionUtils.isNotEmpty(requiredExtendedFields)){
-												extendedDetail.setFieldLabel(StringUtils.trimToEmpty(requiredExtendedFields.get(0).getFieldLabel()));
+												extendedFieldDetail=requiredExtendedFields.get(0);
+												extendedDetail.setFieldLabel(StringUtils.trimToEmpty(extendedFieldDetail.getFieldLabel()));
 											}
 										}
 										
 										extendedDetail.setKey(StringUtils.trimToEmpty(key));
 										if (null != mapValues.get(key)) {
 											extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
+											if(StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())){
+												extendedDetail.setValue(PennantAppUtil.formateAmount((BigDecimal) mapValues.get(key), CurrencyUtil.getFormat("")).toString());
+											}else{
+												extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
+											}
 										} else {
 											extendedDetail.setValue(StringUtils.EMPTY);
 										}
