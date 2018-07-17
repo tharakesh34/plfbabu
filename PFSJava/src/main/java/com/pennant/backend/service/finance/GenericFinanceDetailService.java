@@ -3289,6 +3289,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
 	}
+	
+	public GSTInvoiceTxnService getGstInvoiceTxnService() {
+		return gstInvoiceTxnService;
+	}
 
 	public FinIRRDetailsDAO getFinIRRDetailsDAO() {
 		return finIRRDetailsDAO;
