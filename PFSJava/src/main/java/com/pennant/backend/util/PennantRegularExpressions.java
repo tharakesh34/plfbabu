@@ -46,6 +46,8 @@ package com.pennant.backend.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.pennanttech.pennapps.core.App;
+
 /**
  * This stores all constants required for running the application
  */
@@ -249,13 +251,18 @@ public class PennantRegularExpressions {
 			put(REGEX_GSTIN, "[A-Za-z0-9]{2}[A-Za-z]{5}\\d{4}[A-Za-z]{1}[A-z0-9]{3}");
 			put(REGEX_ACC_HOLDER_NAME, "^[A-Za-z]+[A-Za-z0-9.\\&\\(\\)\\-\\s]*");
 			put(REGEX_FAVOURING_NAME, "^[A-Za-z]+[A-Za-z0-9.\\&\\(\\)\\-\\/\\'\\s]*");
+			put(REGEX_LOOK_UP_VALUE,"^[A-Za-z0-9\\!\\@\\$\\%\\&\\#\\%\\/\\^]*");
 			put(REGEX_BARCODE_NUMBER,"[0-9]{9}[A-Za-z0-9\\!\\@\\$\\%\\&\\#\\%\\/\\^]*");
 			put(REGEX_SPECIAL_REGX,"^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\/\\,\\+\\-\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s\\_]*");
+
 		}
 	};
 
 
 	public static String getRegexMapper(String regConstant) {
+		if(App.getRegex(regConstant)!=null){
+			return App.getRegex(regConstant);	
+		}
 		return regexMapper.get(regConstant);
 	}
 
