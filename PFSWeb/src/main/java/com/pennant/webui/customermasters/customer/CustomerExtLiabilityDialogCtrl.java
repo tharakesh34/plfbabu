@@ -583,12 +583,16 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			this.custID.setValue(liability.getCustId());
 		}
 		
+		List<ValueLabel> customerTypes = new ArrayList<>();
 		if (row_custType.isVisible()) {
-			List<ValueLabel> customerTypes = new ArrayList<>();
 			customerTypes.add(new ValueLabel("1", "Primary Customer"));
 			customerTypes.add(new ValueLabel("2", "Co-Applicant Customer"));
 			fillComboBox(this.custType, liability.getCustType() == 0 ? customerTypes.get(0).getValue()
 					: String.valueOf(liability.getCustType()), customerTypes, "");
+		}
+		
+		if(row_custType.isVisible() && coApplicants.contains(liability.getCustCif())){
+			this.custType.setValue(customerTypes.get(1).getLabel());
 		}
 		
 		this.liabilitySeq.setValue(liability.getSeqNo());
@@ -800,7 +804,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		setExternalLiability(aLiability);
 		logger.debug("Leaving");
 	}
-
+	
 	public void onChange$custType(Event event) {
 		logger.debug(Literal.ENTERING);
 		// this.reason.setErrorMessage("");
@@ -811,17 +815,39 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void setLiabilitySeq() {
+		logger.debug(Literal.ENTERING);
+		if (getSamplingDialogCtrl() != null && getSamplingDialogCtrl().getCustomerExtLiabilityDetailList() != null
+				&& getSamplingDialogCtrl().getCustomerExtLiabilityDetailList().size() > 0) {
+			
+			List<CustomerExtLiability> custExtLiabilityList = getSamplingDialogCtrl().getCustomerExtLiabilityDetailList();
+			int idNumber = 0;
+			for (CustomerExtLiability customerExtLiability : custExtLiabilityList) {
+				if (customerExtLiability.getCustCif().equals(this.custCIF.getValue())) {
+					int tempId = customerExtLiability.getSeqNo();
+					if (tempId > idNumber) {
+						idNumber = tempId;
+					}
+				}
+			}
+			this.liabilitySeq.setValue(++idNumber);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	private void visibleComponent(Integer type) {
 		 CustomerExtLiability extLiability = this.externalLiability.getBefImage();
 		if (type == 2) {
 			this.custCIF.setValue("");
 			this.custShrtName.setValue("");
 			this.btnSearchPRCustid.setVisible(true);
+			this.liabilitySeq.setValue(0);
 		} else {
 			this.custCIF.setValue(extLiability.getCustCif() == null ? "" : extLiability.getCustCif().trim());
 			this.custShrtName
 					.setValue(extLiability.getCustShrtName() == null ? "" : extLiability.getCustShrtName().trim());
 			this.btnSearchPRCustid.setVisible(false);
+			this.liabilitySeq.setValue(this.externalLiability.getSeqNo());
 		}
 	}
 	
@@ -1139,14 +1165,14 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			} else {
 				this.btnSearchPRCustid.setVisible(true);
 			}
-
+			this.custType.setDisabled(isReadOnly("CustomerExtLiabilityDialog_BankName"));
 		} else {
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
+			this.custType.setDisabled(true);
 		}
 		this.custID.setReadonly(true);
 		this.custCIF.setReadonly(true);
-		this.custType.setDisabled(isReadOnly("CustomerExtLiabilityDialog_BankName"));
 		this.bankName.setReadonly(isReadOnly("CustomerExtLiabilityDialog_BankName"));
 		this.finDate.setDisabled(isReadOnly("CustomerExtLiabilityDialog_finDate"));
 		this.finStatus.setReadonly(isReadOnly("CustomerExtLiabilityDialog_finStatus"));
@@ -1419,7 +1445,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			for (int i = 0; i < custExtLiabilityList.size(); i++) {
 				CustomerExtLiability customerExtLiability = custExtLiabilityList.get(i);
 
-				if (aCustomerExtLiability.getSeqNo()== customerExtLiability.getSeqNo()) { 
+				if (aCustomerExtLiability.getSeqNo() == customerExtLiability.getSeqNo()
+						&& aCustomerExtLiability.getCustId() == customerExtLiability.getCustId()) { 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
@@ -1507,6 +1534,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.custCIF.setValue(aCustomer.getCustCIF().trim());
 		this.custShrtName.setValue(aCustomer.getCustShrtName());
 		this.newSearchObject = newSearchObject;
+		setLiabilitySeq();
 		logger.debug("Leaving");
 	}
 

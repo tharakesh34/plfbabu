@@ -886,9 +886,11 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		int idNumber = 0;
 		if (getCustomerExtLiabilityDetailList() != null && !getCustomerExtLiabilityDetailList().isEmpty()) {
 			for (CustomerExtLiability customerExtLiability : getCustomerExtLiabilityDetailList()) {
-				int tempId = customerExtLiability.getSeqNo();
-				if (tempId > idNumber) {
-					idNumber = tempId;
+				if (customerExtLiability.getCustCif().equals(sampling.getCustCif())) {
+					int tempId = customerExtLiability.getSeqNo();
+					if (tempId > idNumber) {
+						idNumber = tempId;
+					}
 				}
 			}
 		}

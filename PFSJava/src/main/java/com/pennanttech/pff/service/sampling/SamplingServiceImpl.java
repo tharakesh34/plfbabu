@@ -935,7 +935,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			}
 
 			liability.setWorkflowId(0);
-			liability.setCustId(custId);
 
 			if (liability.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;

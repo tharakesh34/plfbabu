@@ -455,14 +455,16 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			this.custID.setValue(aCustomerIncome.getCustId());	
 		}
 		
+		List<ValueLabel> customerTypes = new ArrayList<>();
 		if(row_custType.isVisible()){
-			List<ValueLabel> customerTypes = new ArrayList<>();
 			customerTypes.add(new ValueLabel("1", "Primary Customer"));
 			customerTypes.add(new ValueLabel("2", "Co-Applicant Customer"));
 			fillComboBox(this.custType, aCustomerIncome.getCustType() == 0?customerTypes.get(0).getValue():String.valueOf(aCustomerIncome.getCustType()), customerTypes, "");
 		}
 		
-		//aCustomerIncome.getCustType() == 0?String.valueOf(customerTypes.get(0)):String.valueOf(aCustomerIncome.getCustType())
+		if(row_custType.isVisible() && coApplicants.contains(aCustomerIncome.getCustCif())){
+			this.custType.setValue(customerTypes.get(1).getLabel());
+		}
 		
 		this.custIncomeType.setValue(aCustomerIncome.getIncomeType()==null?"":aCustomerIncome.getIncomeType());
 		this.custIncome.setValue(PennantAppUtil.formateAmount(aCustomerIncome.getIncome(), ccyFormatter));
@@ -798,20 +800,19 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			}
 			this.custIncomeType.setReadonly(isReadOnly("CustomerIncomeDialog_custIncomeType"));
 			this.jointCust.setDisabled(isReadOnly("CustomerIncomeDialog_custIncomeType"));
+			this.custType.setDisabled(isReadOnly("CustomerIncomeDialog_custIncome"));
 		}else{
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
 			this.custIncomeType.setReadonly(true);
 			this.jointCust.setDisabled(true);
+			this.custType.setDisabled(true);
 		}
 
 		this.custCIF.setReadonly(true);
 		this.custID.setReadonly(isReadOnly("CustomerIncomeDialog_custID"));
 		this.custIncome.setReadonly(isReadOnly("CustomerIncomeDialog_custIncome"));
 		this.margin.setReadonly(isReadOnly("CustomerIncomeDialog_custIncome"));
-		if(row_custType.isVisible()){
-			this.custType.setDisabled(isReadOnly("CustomerIncomeDialog_custIncome"));
-		}
 		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
