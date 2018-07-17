@@ -1462,6 +1462,30 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					logger.debug("Leaving");
 					return auditHeader;
 				}
+				
+				// GST Invoice Preparation
+				if (aeEvent != null && getGstInvoiceTxnService() != null) {
+					long postingSeqId = aeEvent.getLinkedTranId();
+					ManualAdviseMovements adviseMovements = new ManualAdviseMovements();
+					ManualAdvise advise = receiptHeader.getManualAdvise();
+					adviseMovements.setFeeTypeCode(advise.getFeeTypeCode());
+					adviseMovements.setFeeTypeDesc(advise.getFeeTypeDesc());
+					adviseMovements.setMovementAmount(advise.getAdviseAmount());
+					adviseMovements.setPaidCGST(advise.getPaidCGST());
+					adviseMovements.setPaidSGST(advise.getPaidSGST());
+					adviseMovements.setPaidIGST(advise.getPaidIGST());
+					adviseMovements.setPaidUGST(advise.getPaidUGST());
+					List<ManualAdviseMovements> advMovementsTemp = new ArrayList<ManualAdviseMovements>();
+					advMovementsTemp.add(adviseMovements);
+					FinanceDetail financeDetailTemp = rceiptData.getFinanceDetail();
+					String finReference = "";
+					if (financeDetailTemp == null) {
+						financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
+						finReference = financeDetailTemp.getFinScheduleData().getFinanceMain().getFinReference();
+					}
+					
+					getGstInvoiceTxnService().gstInvoicePreparation(postingSeqId, financeDetailTemp, null, advMovementsTemp, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference);
+				}
 			}
 		}
 

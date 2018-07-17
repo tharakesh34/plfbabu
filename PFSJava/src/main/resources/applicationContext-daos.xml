@@ -5669,9 +5669,10 @@
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
-		
 		<!-- Cash Management (Deposit Details)  -->
 		<property name="depositDetailsDAO" ref="depositDetailsDAO" />
+		<!-- GST Invoice Report -->
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
 
 	<!--============ Finance Excess Amounts Details ============== -->

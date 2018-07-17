@@ -1171,6 +1171,24 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						logger.debug("Leaving");
 						return aeEvent.getErrorMessage();
 					}
+					
+					// GST Invoice Preparation
+					if (aeEvent != null) {
+						long postingSeqId = aeEvent.getLinkedTranId();
+						ManualAdviseMovements adviseMovements = new ManualAdviseMovements();
+						ManualAdvise advise = receiptHeader.getManualAdvise();
+						adviseMovements.setFeeTypeCode(advise.getFeeTypeCode());
+						adviseMovements.setFeeTypeDesc(advise.getFeeTypeDesc());
+						adviseMovements.setMovementAmount(advise.getAdviseAmount());
+						adviseMovements.setPaidCGST(advise.getPaidCGST());
+						adviseMovements.setPaidSGST(advise.getPaidSGST());
+						adviseMovements.setPaidIGST(advise.getPaidIGST());
+						adviseMovements.setPaidUGST(advise.getPaidUGST());
+						List<ManualAdviseMovements> advMovementsTemp = new ArrayList<ManualAdviseMovements>();
+						advMovementsTemp.add(adviseMovements);
+						FinanceDetail  financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
+						this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetailTemp, null, advMovementsTemp, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference);
+					}
 				}
 
 				String adviseId = getManualAdviseDAO().save(receiptHeader.getManualAdvise(), TableType.MAIN_TAB);
