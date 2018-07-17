@@ -55,9 +55,9 @@
 									<label id="label_DepositDetailsList_DepositType" value="${c:l('label_DepositDetailsList_DepositType.value')}" />
 									<listbox id="sortOperator_DepositType" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 	   								<combobox id ="depositType" width="200px"/>
-									<label id="label_DepositDetailsList_BranchCode" value="${c:l('label_DepositDetailsList_BranchCode.value')}" />
-									<listbox id="sortOperator_BranchCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<extendedcombobox id="branchCode" maxlength="19" />
+									<label id="label_DepositDetailsList_BranchCode" value="${c:l('label_DepositDetailsList_BranchCode.value')}" visible="false"/>
+									<listbox id="sortOperator_BranchCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" visible="false" />
+									<extendedcombobox id="branchCode" maxlength="19" width="43px"/>
 								</row>
 								<row id="row_AlwWorkflow">
 									<label id="label_DepositDetailsList_RecordStatus" value="${c:l('label_DepositDetailsList_RecordStatus.value')}" />

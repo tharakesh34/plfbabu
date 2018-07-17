@@ -20,10 +20,11 @@ public interface DepositDetailsDAO {
 	
 	//Deposit Movements
 	DepositMovements getDepositMovementsByDepositId(long depositId, String type);
-	DepositMovements getDepositMovementsById(long depositId, long movementId, String type);
+	DepositMovements getDepositMovementsById(long movementId, String type);
 	long saveDepositMovements(DepositMovements depositMovements, String type);
 	void updateDepositMovements(DepositMovements depositMovements, String type);
 	void deleteDepositMovements(DepositMovements depositMovements, String type);
 	void deleteMovementsByDepositId(long depositId, String type);
 	void updateLinkedTranIdByMovementId(long movementId, long likedTranId, String type);
+	boolean isDuplicateKey(String depositSlipNumber, TableType tableType);
 }

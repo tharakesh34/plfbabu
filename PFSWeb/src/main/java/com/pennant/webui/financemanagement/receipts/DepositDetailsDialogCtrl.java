@@ -65,7 +65,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Space;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
@@ -83,7 +82,9 @@ import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.service.finance.DepositDetailsService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -117,7 +118,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	protected CurrencyBox						transactionAmount;
 	protected ExtendedCombobox					partnerBankId;
 	protected Datebox							transactionDate;
-	protected Textbox							depositSlipNumber;
+	protected Uppercasebox						depositSlipNumber;
 	protected Space								Space_depositSlipNumber;
 	protected Listbox							listBox_DenominationsList;
 
@@ -750,7 +751,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				BigDecimal calBoxValue = totalAmountBox.getValue();
 				if (calBoxValue == null || calBoxValue.compareTo(BigDecimal.ZERO) <= 0) {
 					throw new WrongValueException(totalAmountBox, Labels.getLabel("NUMBER_MINVALUE",
-							new String[] { Labels.getLabel("listheader_DenominationsList_Count.label"), "0" }));
+							new String[] { Labels.getLabel("listheader_DenominationsList_Amount.label"), "0" }));
 				}
 
 				BigDecimal totalAmountValue = BigDecimal.ZERO;
@@ -760,7 +761,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 				if (calBoxValue.compareTo(totalAmountValue) != 0) {
 					throw new WrongValueException(totalAmountBox, "Total Amount should be Equal to "
-							+ Labels.getLabel("label_DepositDetailsDialog_RequestAmount.value"));
+							+ Labels.getLabel("label_DepositDetailsDialog_TransactionAmount.value"));
 				}
 			} catch (WrongValueException wv) {
 				wve.add(wv);
@@ -827,7 +828,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 		if (!this.depositSlipNumber.isReadonly()) {
 			this.depositSlipNumber.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_DepositDetailsDialog_DepositSlipNumber.value"), null, true));
+					Labels.getLabel("label_DepositDetailsDialog_DepositSlipNumber.value"), PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		if (!this.depositType.isReadonly()) {

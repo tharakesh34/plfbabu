@@ -11701,6 +11701,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="cashDenominationDAO" ref="cashDenominationDAO" />
 		<property name="cashManagementAccounting" ref="cashManagementAccounting" />
+		<property name="postingsDAO" ref="postingsDAO" />
 	</bean>
 	
 	<bean id="cashManagementAccounting" class="com.pennant.backend.service.cashmanagement.impl.CashManagementAccounting"  >

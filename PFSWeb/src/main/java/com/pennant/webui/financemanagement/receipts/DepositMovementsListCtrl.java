@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  DepositDetailsListCtrl.java                                 *	  
+ * FileName    		:  DepositMovementsListCtrl.java                                 		*	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  06-03-2018    														*
+ * Creation Date    :  17-07-2018    														*
  *                                                                  						*
- * Modified Date    :  06-03-2018    														*
+ * Modified Date    :  17-07-2018    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 06-03-2018       PENNANT	                 0.1                                            * 
+ * 17-07-2018       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -45,28 +45,24 @@ package com.pennant.webui.financemanagement.receipts;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.backend.model.applicationmaster.Branch;
-import com.pennant.backend.model.finance.DepositDetails;
-import com.pennant.backend.service.applicationmaster.BranchService;
+import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.service.finance.DepositDetailsService;
-import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.webui.financemanagement.receipts.model.DepositDetailsListModelItemRenderer;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.webui.financemanagement.receipts.model.DepositMovementsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
@@ -75,56 +71,51 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/FinanceManagement/Receipts/DepositDetailsList.zul file.
+ * This is the controller class for the /WEB-INF/pages/FinanceManagement/Receipts/DepositMovementsList.zul file.
  * 
  */
-public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
+public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> {
 	private static final long				serialVersionUID	= 1L;
-	private static final Logger				logger				= Logger.getLogger(DepositDetailsListCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(DepositMovementsListCtrl.class);
 
-	protected Window						window_DepositDetailsList;
-	protected Borderlayout					borderLayout_DepositDetailsList;
-	protected Paging						pagingDepositDetailsList;
-	protected Listbox						listBoxDepositDetails;
+	protected Window						window_DepositMovementsList;
+	protected Borderlayout					borderLayout_DepositMovementsList;
+	protected Paging						pagingDepositMovementsList;
+	protected Listbox						listBoxDepositMovements;
 
 	// List headers
-	protected Listheader					listheader_DepositType;
-	protected Listheader					listheader_BranchCode;
+	protected Listheader					listheader_DepositSlipNumber;
+	protected Listheader					listheader_TransactionDate;
 
 	// checkRights
-	protected Button						button_DepositDetailsList_NewDepositDetails;
-	protected Button						button_DepositDetailsList_DepositDetailsSearch;
+	protected Button						button_DepositMovementsList_NewDepositMovements;
+	protected Button						button_DepositMovementsList_DepositMovementsSearch;
 
 	// Search Fields
-	protected Combobox						depositType;
-	protected ExtendedCombobox				branchCode;
+	protected Textbox						depositSlipNumber;
+	protected Datebox						transactionDate;
 
-	protected Listbox						sortOperator_DepositType;
-	protected Listbox						sortOperator_BranchCode;
+	protected Listbox						sortOperator_DepositSlipNumber;
+	protected Listbox						sortOperator_TransactionDate;
 
 	private transient DepositDetailsService	depositDetailsService;
-	private transient BranchService			branchService;
 	
 	/**
 	 * default constructor.<br>
 	 */
-	public DepositDetailsListCtrl() {
+	public DepositMovementsListCtrl() {
 		super();
 	}
 
 	@Override
 	protected void doSetProperties() {
-		super.moduleCode = "DepositDetails";
-		super.pageRightName = "DepositDetailsList";
-		super.tableName = "DepositDetails_AView";
-		super.queueTableName = "DepositDetails_View";
-		super.enquiryTableName = "DepositDetails_View";
+		super.moduleCode = "DepositMovements";
+		super.pageRightName = "DepositMovementsList";
+		super.tableName = "DepositMovements_AView";
+		super.queueTableName = "DepositMovements_AView";
+		super.enquiryTableName = "DepositMovements_View";
 		
-		this.branchCode.setModuleName("Branch");
-		this.branchCode.setValueColumn("BranchCode");
-		this.branchCode.setDescColumn("BranchDesc");
-		this.branchCode.setValidateColumns(new String[] { "BranchCode" });
-		readOnlyComponent(true, this.branchCode);
+		this.transactionDate.setFormat(PennantConstants.dateFormat);
 	}
 	
 	@Override
@@ -133,9 +124,8 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 		super.doAddFilters();
 		
 		Filter[] filters = new Filter[1];
-		filters[0]= new Filter("BranchCode", getUserWorkspace().getLoggedInUser().getBranchCode(), Filter.OP_EQUAL);
-		this.branchCode.setFilters(filters);
-		this.branchCode.setVisible(false);
+		filters[0]= new Filter("ReceiptId", 0, Filter.OP_EQUAL);
+		this.searchObject.addFilters(filters);
 		
 	}
 
@@ -145,29 +135,26 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_DepositDetailsList(Event event) {
+	public void onCreate$window_DepositMovementsList(Event event) {
 		logger.debug(Literal.ENTERING);
+		
 		// Set the page level components.
-		setPageComponents(window_DepositDetailsList, borderLayout_DepositDetailsList, listBoxDepositDetails, pagingDepositDetailsList);
-		setItemRender(new DepositDetailsListModelItemRenderer());
+		setPageComponents(window_DepositMovementsList, borderLayout_DepositMovementsList, listBoxDepositMovements, pagingDepositMovementsList);
+		setItemRender(new DepositMovementsListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_DepositDetailsList_DepositDetailsSearch);
-		registerButton(button_DepositDetailsList_NewDepositDetails, "button_DepositDetailsList_NewDepositDetails", true);
+		registerButton(button_DepositMovementsList_DepositMovementsSearch);
+		registerButton(button_DepositMovementsList_NewDepositMovements, "button_DepositMovementsList_NewDepositMovements", true);
 		
 		
-		registerField("depositType", listheader_DepositType, SortOrder.NONE, depositType, sortOperator_DepositType, Operators.STRING);
-		registerField("BranchCode", listheader_BranchCode, SortOrder.NONE, branchCode, sortOperator_BranchCode, Operators.STRING);
-		registerField("branchDesc");
-		registerField("DepositId");
-		
-		fillComboBox(depositType, "", PennantStaticListUtil.getDepositTypesListList(), "");
-		depositType.removeItemAt(0);
+		registerField("depositSlipNumber", listheader_DepositSlipNumber, SortOrder.NONE, depositSlipNumber, sortOperator_DepositSlipNumber, Operators.STRING);
+		registerField("TransactionDate", listheader_TransactionDate, SortOrder.NONE, transactionDate, sortOperator_TransactionDate, Operators.DATE);
+		registerField("MovementId");
 		
 		// Render the page and display the data.
 		doRenderPage();
 		search();
-		button_DepositDetailsList_NewDepositDetails.setVisible(false);
+		button_DepositMovementsList_NewDepositMovements.setVisible(false);
 	}
 
 	/**
@@ -176,7 +163,7 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$button_DepositDetailsList_DepositDetailsSearch(Event event) {
+	public void onClick$button_DepositMovementsList_DepositMovementsSearch(Event event) {
 		search();
 	}
 
@@ -188,42 +175,8 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
-		fillComboBox(depositType, AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_CASH, PennantStaticListUtil.getDepositTypesListList(), "");
-		
 		search();
 	}
-
-	/**
-	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
-	public void onClick$button_DepositDetailsList_NewDepositDetails(Event event) {
-		logger.debug(Literal.ENTERING);
-
-		String branchCode = getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode();
-		
-		Branch branch = this.branchService.getApprovedBranchById(branchCode);
-		
-		if (branch == null) {
-			MessageUtil.showError("Requested branch is not available.");
-			return;
-		} else {
-			// Create a new entity.
-			DepositDetails depositDetails = new DepositDetails();
-			depositDetails.setNewRecord(true);
-			depositDetails.setWorkflowId(getWorkFlowId());
-			depositDetails.setBranchCode(branch.getBranchCode());
-			depositDetails.setBranchDesc(branch.getBranchDesc());
-
-			// Display the dialog page.
-			doShowDialogPage(depositDetails);
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
 
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
@@ -233,36 +186,32 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 	 *            An event sent to the event handler of the component.
 	 */
 
-	public void onDepositDetailsItemDoubleClicked(Event event) {
+	public void onDepositMovementsItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		
 		// Get the selected record.
-		Listitem selectedItem = this.listBoxDepositDetails.getSelectedItem();
-		final long depositId = (long) selectedItem.getAttribute("depositId");
-		DepositDetails depositDetails = depositDetailsService.getDepositDetailsById(depositId);
+		Listitem selectedItem = this.listBoxDepositMovements.getSelectedItem();
+		final long movementId = (long) selectedItem.getAttribute("movementId");
+		DepositMovements depositMovements = depositDetailsService.getDepositMovementsById(movementId);
 
-		if (depositDetails == null) {
+		if (depositMovements == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
-		} else if (StringUtils.isBlank(depositDetails.getRecordType()) && depositDetails.getTransactionAmount().compareTo(depositDetails.getActualAmount()) >= 0 ) {
-			MessageUtil.showMessage(Labels.getLabel("info.DepositDetails_NoLimit"));
-			return;
-		} else {
-			StringBuffer whereCond= new StringBuffer();
-			whereCond.append("  AND  DepositId = ");
-			whereCond.append( depositDetails.getDepositId());
-			whereCond.append(" AND  version = ");
-			whereCond.append(depositDetails.getVersion());
-			
-			if (doCheckAuthority(depositDetails, whereCond.toString())) {
-				// Set the latest work-flow id for the new maintenance request.
-				if (isWorkFlowEnabled() && depositDetails.getWorkflowId() == 0) {
-					depositDetails.setWorkflowId(getWorkFlowId());
-				}
-				doShowDialogPage(depositDetails);
-			} else {
-				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+		} 
+		StringBuffer whereCond= new StringBuffer();
+		whereCond.append("  AND  MovementId = ");
+		whereCond.append( depositMovements.getMovementId());
+		whereCond.append(" AND  version = ");
+		whereCond.append(depositMovements.getVersion());
+		
+		if (doCheckAuthority(depositMovements, whereCond.toString())) {
+			// Set the latest work-flow id for the new maintenance request.
+			if (isWorkFlowEnabled() && depositMovements.getWorkflowId() == 0) {
+				depositMovements.setWorkflowId(getWorkFlowId());
 			}
+			doShowDialogPage(depositMovements);
+		} else {
+			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
 		
 		logger.debug(Literal.LEAVING);
@@ -271,18 +220,18 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param depositDetails
+	 * @param depositMovements
 	 *            The entity that need to be passed to the dialog.
 	 */
-	private void doShowDialogPage(DepositDetails depositDetails) {
+	private void doShowDialogPage(DepositMovements depositMovements) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("depositDetails", depositDetails);
-		arg.put("depositDetailsListCtrl", this);
+		arg.put("depositMovements", depositMovements);
+		arg.put("depositMovementsListCtrl", this);
 		
 		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/DepositDetailsDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/DepositMovementsDialog.zul", null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
@@ -327,14 +276,6 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 	 */
 	public void onCheck$fromWorkFlow(Event event) {
 		search();
-	}
-
-	public BranchService getBranchService() {
-		return branchService;
-	}
-
-	public void setBranchService(BranchService branchService) {
-		this.branchService = branchService;
 	}
 
 	public DepositDetailsService getDepositDetailsService() {

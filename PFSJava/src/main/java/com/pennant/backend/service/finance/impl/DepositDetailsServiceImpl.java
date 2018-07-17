@@ -53,12 +53,14 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.receipts.CashDenominationDAO;
 import com.pennant.backend.dao.receipts.DepositDetailsDAO;
+import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.CashDenomination;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.cashmanagement.impl.CashManagementAccounting;
 import com.pennant.backend.service.finance.DepositDetailsService;
@@ -75,6 +77,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	private DepositDetailsDAO			depositDetailsDAO;
 	private CashDenominationDAO			cashDenominationDAO;
 	private CashManagementAccounting	cashManagementAccounting;
+	private PostingsDAO 				postingsDAO;
 
 	public DepositDetailsServiceImpl() {
 		super();
@@ -114,6 +117,14 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 
 	public void setCashManagementAccounting(CashManagementAccounting cashManagementAccounting) {
 		this.cashManagementAccounting = cashManagementAccounting;
+	}
+	
+	public PostingsDAO getPostingsDAO() {
+		return postingsDAO;
+	}
+
+	public void setPostingsDAO(PostingsDAO postingsDAO) {
+		this.postingsDAO = postingsDAO;
 	}
 	
 	/**
@@ -691,7 +702,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		DepositDetails depositDetails = (DepositDetails) auditHeader.getAuditDetail().getModelData();
 		List<AuditDetail> auditDetails = null;
-
+		//Deposit Movements
 		if (depositDetails.getAuditDetailMap().get("DepositMovements") != null) {
 			auditDetails = depositDetails.getAuditDetailMap().get("DepositMovements");
 			for (AuditDetail auditDetail : auditDetails) {
@@ -701,6 +712,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 				}
 			}
 		}
+		//Cash Denominations
 		if (depositDetails.getAuditDetailMap().get("Denominations") != null) {
 			auditDetails = depositDetails.getAuditDetailMap().get("Denominations");
 			for (AuditDetail auditDetail : auditDetails) {
@@ -720,18 +732,18 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		logger.debug("Entering");
 		
 		// Get the model object.
-		/*DepositMovements depositMovements = (DepositMovements) auditDetail.getModelData();
-		long requestId = depositMovements.getProcessId();
+		DepositMovements depositMovements = (DepositMovements) auditDetail.getModelData();
+		String depositSlipNo = depositMovements.getDepositSlipNumber();
 		String[] parameters = new String[1];
-		parameters[0] = PennantJavaUtil.getLabel("label_BranchCode") + ": " + depositMovements.getDenomination();
+		parameters[0] = PennantJavaUtil.getLabel("label_DepositDetailsDialog_DepositSlipNumber.value") + ": " + depositMovements.getDepositSlipNumber();
 
 		// Check the unique keys.
 		if (depositMovements.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(depositMovements.getRecordType())
-				&& this.cashDenominationDAO.isDuplicateKey(requestId, depositMovements.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+				&& (PennantConstants.RECORD_TYPE_NEW.equals(depositMovements.getRecordType()) || PennantConstants.RCD_ADD.equals(depositMovements.getRecordType()))
+				&& this.depositDetailsDAO.isDuplicateKey(depositSlipNo, TableType.BOTH_TAB)) {
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
-		}*/
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
+		}
 		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 		
@@ -979,5 +991,38 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-
+	
+	@Override
+	public DepositMovements getDepositMovementsById(long movementId) {
+		
+		DepositMovements depositMovements = getDepositDetailsDAO().getDepositMovementsById(movementId, "_View");
+		
+		if (depositMovements != null) {
+			List<CashDenomination> denominationsList = getCashDenominationDAO().getCashDenominationList(movementId, "_View");
+			depositMovements.setDenominationList(denominationsList);
+		}
+		
+		return depositMovements;
+	}
+	
+	@Override
+	public DepositMovements getApprovedDepositMovementsById(long movementId) {
+		
+		DepositMovements depositMovements = getDepositDetailsDAO().getDepositMovementsById(movementId, "_AView");
+		
+		if (depositMovements != null) {
+			List<CashDenomination> denominationsList = getCashDenominationDAO().getCashDenominationList(movementId, "_AView");
+			depositMovements.setDenominationList(denominationsList);
+		}
+		
+		return depositMovements;
+	}
+	
+	/**
+	 * Method for fetching list of entries executed based on Linked Transaction ID
+	 */
+	@Override
+	public List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranid) {
+		return getPostingsDAO().getPostingsByLinkTransId(linkedTranid);
+	}
 }

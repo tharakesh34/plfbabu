@@ -342,11 +342,10 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 	 * @return Academic
 	 */
 	@Override
-	public DepositMovements getDepositMovementsById(long depositId, long movementId, String type) {
+	public DepositMovements getDepositMovementsById(long movementId, String type) {
 		logger.debug(Literal.ENTERING);
 		
 		DepositMovements depositMovements = new DepositMovements();
-		depositMovements.setDepositId(depositId);
 		depositMovements.setMovementId(movementId);
 		StringBuilder selectSql = new StringBuilder();
 		
@@ -357,7 +356,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM DepositMovements");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DepositId = :DepositId And MovementId = :MovementId");
+		selectSql.append(" Where MovementId = :MovementId");
 		
 		logger.trace(Literal.SQL + selectSql.toString());
 		
@@ -541,4 +540,39 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		return depositMovements;
 	}
 	
+	@Override
+	public boolean isDuplicateKey(String depositSlipNumber, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "DepositSlipNumber = :DepositSlipNumber";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("DepositMovements", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("DepositMovements_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "DepositMovements_Temp", "DepositMovements" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("DepositSlipNumber", depositSlipNumber);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
 }

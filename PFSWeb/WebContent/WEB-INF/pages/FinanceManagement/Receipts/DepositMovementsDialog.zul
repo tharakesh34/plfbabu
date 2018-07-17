@@ -5,11 +5,12 @@
 <zk xmlns="http://www.zkoss.org/2005/zul"
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_DepositDetailsDialog" border="normal" apply="${depositDetailsDialogCtrl}" width="100%" height="100%" sizable="false">
+	<window id="window_DepositMovementsDialog" border="normal" apply="${depositMovementsDialogCtrl}" width="100%" height="100%" sizable="false">
 
-		<borderlayout id="borderlayoutDepositDetails">
+		<borderlayout id="borderlayoutDepositMovements">
 			<north>
 				<div sclass="z-toolbar" style="padding:0">
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
@@ -45,7 +46,7 @@
 						<toolbar align="center"
 							sclass="toolbar-center">
 							<label
-								value="${c:l('window_DepositDetailsDialog.title')}"
+								value="${c:l('window_DepositMovementsDialog.title')}"
 								sclass="label-heading" />
 						</toolbar>
 						<!-- CRUD BUTTONS -->
@@ -62,7 +63,15 @@
 					</hbox>
 				</div>
 			</north>
-			<center border="none" autoscroll="true">
+			<center border="none">
+				<tabbox id="tabBoxIndexCenter" width="99%" height="100%">
+					<tabs id="tabsIndexCenter">
+						<tab id="receiptDetailsTab" label="${c:l('label_DepositMovementsDialog_DepositMovementDetails')}" />
+						<tab id="postingDetailsTab" label="${c:l('label_DepositMovementsDialog_PostingDetails')}" />
+					</tabs>
+					<tabpanels id="tabpanelsBoxIndexCenter">
+						<tabpanel style="overflow:auto"
+							ca:data-scrollable="true">
 				<groupbox id="gb_basicDetails" sclass="gb-dialog">
 					<tablelayout columns="2" width="100%">
 						<tablechildren width="50%">
@@ -72,43 +81,26 @@
 									<column width="35%" />
 								</columns>
 								<rows>
-									<row id="row0">
-										<label id="label_DepositType" value="${c:l('label_DepositDetailsDialog_DepositType.value')}" />
-										<hbox>
-											<space id="Space_DepositType"  sclass="mandatory" spacing="2px"/>			
-											<combobox id="depositType" width="100px" />
-										</hbox>
-									</row>
 									<row id="row1">
-										<label id="label_BranchCode" value="${c:l('label_DepositDetailsDialog_BranchCode.value')}" />
-										<extendedcombobox id="branchCode" />
-									</row>
-									<row id="row2">
-										<label id="label_ReservedAmount" value="${c:l('label_DepositDetailsDialog_ReservedAmount.value')}" />
-										<currencyBox id="reservedAmount" width="162px" />
-									</row>
-									<row id="row3">
-										<label id="label_TransactionAmount" value="${c:l('label_DepositDetailsDialog_TransactionAmount.value')}" />
+										<label id="label_TransactionAmount" value="${c:l('label_DepositMovementsDialog_TransactionAmount.value')}" />
 										<currencyBox id="transactionAmount" width="162px" />
 									</row>
-									<row id="row4">
-										<label id="label_PartnerBankId"
-											value="${c:l('label_DepositDetailsDialog_PartnerBankId.value')}" />
-										<extendedcombobox
-											id="partnerBankId" />
+									<row id="row2">
+										<label id="label_PartnerBankId" value="${c:l('label_DepositMovementsDialog_PartnerBankId.value')}" />
+										<extendedcombobox id="partnerBankId" />
 									</row>
-									<row id="row5">
-										<label id="label_TransactionDate" value="${c:l('label_DepositDetailsDialog_TransactionDate.value')}" />
+									<row id="row3">
+										<label id="label_TransactionDate" value="${c:l('label_DepositMovementsDialog_TransactionDate.value')}" />
 										<hbox>
-											<space id="Space_TransactionDate"  sclass="mandatory" spacing="2px"/>	
+											<space id="Space_TransactionDate" spacing="2px"/>	
 											<datebox id="transactionDate" width="100px" />
 										</hbox>
 									</row>
-									<row id="row6">
+									<row id="row4">
 										<label
-											id="label_DepositSlipNumber" value="${c:l('label_DepositDetailsDialog_DepositSlipNumber.value')}" />
+											id="label_DepositSlipNumber" value="${c:l('label_DepositMovementsDialog_DepositSlipNumber.value')}" />
 										<hbox>
-											<space id="Space_depositSlipNumber"  sclass="mandatory" spacing="2px"/>									
+											<space id="Space_depositSlipNumber"  spacing="2px"/>									
 											<uppercasebox id="depositSlipNumber" maxlength="50" width="162px" />
 										</hbox>
 									</row>
@@ -116,7 +108,7 @@
 							</grid>
 						</tablechildren>
 
-						<tablechildren>
+						<tablechildren id="tablechildren_CashDenominations">
 							<grid sclass="GridLayoutNoBorder"
 								fixedLayout="true" style="border:0px">
 								<columns>
@@ -124,7 +116,7 @@
 									<column width="35%" />
 								</columns>
 								<rows>
-									<row id="row7" >
+									<row id="row5" >
 											<cell colspan="2">
 												<listbox  
 													id="listBox_DenominationsList" fixedLayout="false"
@@ -155,6 +147,56 @@
 						</tablechildren>
 					</tablelayout>
 				</groupbox>
+				</tabpanel>
+						<tabpanel style="overflow:auto">
+							<groupbox>
+								<listbox id="listBoxPosting"
+									fixedLayout="true" sizedByContent="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" width="99%"
+									height="100%" multiple="false">
+									<listhead sizable="false">
+										<listheader
+											id="listheader_Acc_DebitOrCredit"
+											label="${c:l('listheader_Acc_DebitOrCredit.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_Acc_EntryDesc"
+											label="${c:l('listheader_Acc_EntryDesc.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Acc_TranCode"
+											label="${c:l('listheader_Acc_TranCode.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Acc_RevTranCode"
+											label="${c:l('listheader_Acc_RevTranCode.label')}"
+											sort="false" hflex="min" visible="false" />
+										<listheader
+											id="listheader_Acc_AccountType"
+											label="${c:l('listheader_Acc_AccountType.label')}"
+											sort="false" hflex="min" visible="false" />
+										<listheader
+											id="listheader_Acc_AccountNo"
+											label="${c:l('listheader_Acc_AccountNo.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Acc_AcCcy"
+											label="${c:l('listheader_Acc_AcCcy.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Acc_Amount"
+											label="${c:l('listheader_Acc_Amount.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Acc_Error"
+											label="${c:l('listheader_Acc_Error.label')}" sort="false"
+											hflex="min" />
+									</listhead>
+								</listbox>
+							</groupbox>
+						</tabpanel>
+					</tabpanels>
+					</tabbox>
 			</center>
 			<south id="south" sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">

@@ -5389,7 +5389,6 @@
 	</bean>
 	
 		<!--============ Deposit Details ============== -->
-
 	<bean id="depositDetailsListCtrl"
 		class="com.pennant.webui.financemanagement.receipts.DepositDetailsListCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="branchService" ref="branchService" />
@@ -5397,6 +5396,15 @@
 	</bean>
 
 	<bean id="depositDetailsDialogCtrl" class="com.pennant.webui.financemanagement.receipts.DepositDetailsDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="depositDetailsService" ref="depositDetailsService" />
+	</bean>
+	
+		<!--============ Deposit Movements Enquiry Details ============== -->
+	<bean id="depositMovementsListCtrl" class="com.pennant.webui.financemanagement.receipts.DepositMovementsListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="depositDetailsService" ref="depositDetailsService" />
+	</bean>
+
+	<bean id="depositMovementsDialogCtrl" class="com.pennant.webui.financemanagement.receipts.DepositMovementsDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="depositDetailsService" ref="depositDetailsService" />
 	</bean>
 	
