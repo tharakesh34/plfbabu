@@ -241,11 +241,11 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		StringBuilder sql = new StringBuilder("update DepositDetails");
 		sql.append(tableType.getSuffix());
 		
-		sql.append(" set DepositType = :DepositType, BranchCode = :BranchCode,");//ActualAmount = :ActualAmount
+		sql.append(" set DepositType = :DepositType, BranchCode = :BranchCode,");//
 		if ("_Temp".equalsIgnoreCase(tableType.getSuffix())) {
-			sql.append(" TransactionAmount = :TransactionAmount, ReservedAmount = :ReservedAmount,");
+			sql.append(" ReservedAmount = :ReservedAmount,");
 		} else {
-			sql.append(" TransactionAmount = TransactionAmount + :TransactionAmount, ReservedAmount = 0,");
+			sql.append(" TransactionAmount = TransactionAmount + :ReservedAmount, ReservedAmount = 0,");
 		}
 		sql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -351,7 +351,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		
 		selectSql.append(" Select MovementId, DepositId, TransactionType, ReservedAmount, PartnerBankId, DepositSlipNumber, TransactionDate, ReceiptId, LinkedTranId,");
 		if (type.contains("View")) {
-			selectSql.append(" PartnerBankCode, PartnerBankName,");
+			selectSql.append(" PartnerBankCode, PartnerBankName, BranchCode, BranchDesc,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM DepositMovements");
@@ -515,7 +515,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		
 		selectSql.append(" Select MovementId, DepositId, TransactionType, ReservedAmount, PartnerBankId, DepositSlipNumber, TransactionDate, ReceiptId, LinkedTranId,");
 		if (type.contains("View")) {
-			selectSql.append(" PartnerBankCode, PartnerBankName,");
+			selectSql.append(" PartnerBankCode, PartnerBankName, BranchCode, BranchDesc,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM DepositMovements");

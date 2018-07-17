@@ -150,6 +150,10 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 		registerField("depositSlipNumber", listheader_DepositSlipNumber, SortOrder.NONE, depositSlipNumber, sortOperator_DepositSlipNumber, Operators.STRING);
 		registerField("TransactionDate", listheader_TransactionDate, SortOrder.NONE, transactionDate, sortOperator_TransactionDate, Operators.DATE);
 		registerField("MovementId");
+		registerField("BranchCode");
+		registerField("BranchDesc");
+		registerField("PartnerBankName");
+		registerField("ReservedAmount");
 		
 		// Render the page and display the data.
 		doRenderPage();

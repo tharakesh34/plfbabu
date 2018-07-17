@@ -555,6 +555,14 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		DepositDetails depositDetails = new DepositDetails();
 		BeanUtils.copyProperties((DepositDetails) auditHeader.getAuditDetail().getModelData(), depositDetails);
 		
+		//generate Accounting
+		AEEvent aeEvent = null;
+		if (AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(depositDetails.getDepositType())) {
+			aeEvent = this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_CASHTOBANK, 
+					depositDetails.getUserDetails().getBranchCode(), depositDetails.getBranchCode(), 
+					depositDetails.getReservedAmount(), depositDetails.getDepositMovementsList().get(0).getPartnerBankId(), depositDetails.getId(), null);
+		}
+		
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(depositDetails.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(depositDetailsDAO.getDepositDetailsById(depositDetails.getDepositId(), ""));
 		}
@@ -583,6 +591,9 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			// DepositMovements List
 			if (CollectionUtils.isNotEmpty(depositDetails.getDepositMovementsList())) {
 				List<AuditDetail> movementsList = depositDetails.getAuditDetailMap().get("DepositMovements");
+				if (aeEvent != null && aeEvent.getLinkedTranId() > 0) {
+					((DepositMovements) movementsList.get(0).getModelData()).setLinkedTranId(aeEvent.getLinkedTranId());
+				}
 				movementsList = processMovementsList(movementsList, "", depositDetails.getDepositId());
 				auditDetails.addAll(movementsList);
 				
@@ -597,16 +608,6 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 						auditDetails.addAll(denominations);
 					}
 					break;	// We have only one movement, so we are breaking the loop
-				}
-			}
-			
-			//generate Accounting
-			if (AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(depositDetails.getDepositType())) {
-				AEEvent aeEvent = this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_CASHTOBANK, 
-						depositDetails.getUserDetails().getBranchCode(), depositDetails.getBranchCode(), 
-						depositDetails.getTransactionAmount(), partnerBankId, depositDetails.getId(), null);
-				if (aeEvent.getLinkedTranId() > 0) {
-					getDepositDetailsDAO().updateLinkedTranIdByMovementId(movementId, aeEvent.getLinkedTranId(), "");	//Update LinkedTranId
 				}
 			}
 		}

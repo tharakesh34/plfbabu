@@ -82,27 +82,27 @@
 								</columns>
 								<rows>
 									<row id="row1">
-										<label id="label_TransactionAmount" value="${c:l('label_DepositMovementsDialog_TransactionAmount.value')}" />
-										<currencyBox id="transactionAmount" width="162px" />
-									</row>
-									<row id="row2">
 										<label id="label_PartnerBankId" value="${c:l('label_DepositMovementsDialog_PartnerBankId.value')}" />
 										<extendedcombobox id="partnerBankId" />
 									</row>
-									<row id="row3">
+									<row id="row2">
 										<label id="label_TransactionDate" value="${c:l('label_DepositMovementsDialog_TransactionDate.value')}" />
 										<hbox>
 											<space id="Space_TransactionDate" spacing="2px"/>	
 											<datebox id="transactionDate" width="100px" />
 										</hbox>
 									</row>
-									<row id="row4">
+									<row id="row3">
 										<label
 											id="label_DepositSlipNumber" value="${c:l('label_DepositMovementsDialog_DepositSlipNumber.value')}" />
 										<hbox>
 											<space id="Space_depositSlipNumber"  spacing="2px"/>									
 											<uppercasebox id="depositSlipNumber" maxlength="50" width="162px" />
 										</hbox>
+									</row>
+									<row id="row4">
+										<label id="label_TransactionAmount" value="${c:l('label_DepositMovementsDialog_TransactionAmount.value')}" />
+										<currencyBox id="transactionAmount" width="162px" />
 									</row>
 								</rows>
 							</grid>

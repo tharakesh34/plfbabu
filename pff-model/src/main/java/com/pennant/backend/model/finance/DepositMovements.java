@@ -29,6 +29,10 @@ public class DepositMovements extends AbstractWorkflowEntity implements Entity {
 	private long linkedTranId = 0;
 	private boolean newRecord = false;
 	private DepositMovements befImage;
+	
+	private String branchCode;
+	private String branchDesc;
+	
 	@XmlTransient
 	private LoggedInUser userDetails;
 	
@@ -52,6 +56,8 @@ public class DepositMovements extends AbstractWorkflowEntity implements Entity {
 
 		excludeFields.add("partnerBankCode");
 		excludeFields.add("partnerBankName");
+		excludeFields.add("branchCode");
+		excludeFields.add("branchDesc");
 
 		return excludeFields;
 	}
@@ -189,5 +195,21 @@ public class DepositMovements extends AbstractWorkflowEntity implements Entity {
 
 	public void setPartnerBankName(String partnerBankName) {
 		this.partnerBankName = partnerBankName;
+	}
+
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
+	}
+
+	public String getBranchDesc() {
+		return branchDesc;
+	}
+
+	public void setBranchDesc(String branchDesc) {
+		this.branchDesc = branchDesc;
 	}
 }

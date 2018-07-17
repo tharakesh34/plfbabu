@@ -114,7 +114,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	protected Window							window_DepositDetailsDialog;
 	protected Combobox							depositType;
 	protected ExtendedCombobox					branchCode;
-	protected CurrencyBox						reservedAmount;
+	protected CurrencyBox						availableAmount;
 	protected CurrencyBox						transactionAmount;
 	protected ExtendedCombobox					partnerBankId;
 	protected Datebox							transactionDate;
@@ -207,10 +207,10 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 		this.transactionDate.setFormat(PennantConstants.dateFormat);
 
-		this.reservedAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
-		this.reservedAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.reservedAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
-		this.reservedAmount.setScale(PennantConstants.defaultCCYDecPos);
+		this.availableAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
+		this.availableAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
+		this.availableAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.availableAmount.setScale(PennantConstants.defaultCCYDecPos);
 
 		this.transactionAmount.setProperties(true, PennantConstants.defaultCCYDecPos);
 		this.transactionAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
@@ -544,7 +544,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		DepositMovements depositMovements = aDepositDetails.getDepositMovements();
 
 		if (depositMovements == null) {
-			this.transactionDate.setValue(DateUtility.getSysDate());
+			this.transactionDate.setValue(DateUtility.getAppDate());
 			depositMovements = new DepositMovements();
 			depositMovements.setRecordType(PennantConstants.RCD_ADD);
 			depositMovements.setTransactionType(PennantConstants.DEPOSIT_MOVEMENT_DEBIT);
@@ -553,10 +553,11 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			aDepositDetails.setDepositMovements(depositMovements);
 			BigDecimal availableAmount = aDepositDetails.getActualAmount().subtract(aDepositDetails.getTransactionAmount());
 			this.transactionAmount.setValue(PennantApplicationUtil.formateAmount(availableAmount, PennantConstants.defaultCCYDecPos));
-			this.reservedAmount.setValue(PennantApplicationUtil.formateAmount(availableAmount, PennantConstants.defaultCCYDecPos));
+			this.availableAmount.setValue(PennantApplicationUtil.formateAmount(availableAmount, PennantConstants.defaultCCYDecPos));
 		} else {
-			this.reservedAmount.setValue(PennantApplicationUtil.formateAmount(aDepositDetails.getReservedAmount(), PennantConstants.defaultCCYDecPos));
-			this.transactionAmount.setValue(PennantApplicationUtil.formateAmount(aDepositDetails.getTransactionAmount(), PennantConstants.defaultCCYDecPos));
+			BigDecimal availableAmount = aDepositDetails.getActualAmount().subtract(aDepositDetails.getTransactionAmount());
+			this.availableAmount.setValue(PennantApplicationUtil.formateAmount(availableAmount, PennantConstants.defaultCCYDecPos));
+			this.transactionAmount.setValue(PennantApplicationUtil.formateAmount(aDepositDetails.getReservedAmount(), PennantConstants.defaultCCYDecPos));
 			this.partnerBankId.setValue(String.valueOf(depositMovements.getPartnerBankId()), depositMovements.getPartnerBankName());
 			this.transactionDate.setValue(depositMovements.getTransactionDate());
 			this.depositSlipNumber.setValue(depositMovements.getDepositSlipNumber());
@@ -628,24 +629,22 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		}
 		//Reserved Amount
 		try {
-			aDepositDetails.setReservedAmount(PennantAppUtil.unFormateAmount(this.reservedAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
+			aDepositDetails.setReservedAmount(PennantAppUtil.unFormateAmount(this.transactionAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
+			depositMovements.setReservedAmount(PennantAppUtil.unFormateAmount(this.transactionAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Transaction Amount
 		try {
-			double tranAmount = this.transactionAmount.getValidateValue().doubleValue();
-			double resvAmount = this.reservedAmount.getValidateValue().doubleValue();
+			double reservedAmount = this.transactionAmount.getValidateValue().doubleValue();
+			double availableAmount = this.availableAmount.getValidateValue().doubleValue();
 			
-			if (tranAmount == 0 && resvAmount == 0) {
-			} else if (resvAmount < tranAmount) {
+			if (reservedAmount == 0 && availableAmount == 0) {
+			} else if (availableAmount < reservedAmount) {
 				throw new WrongValueException(this.transactionAmount,
-						Labels.getLabel("label_DepositDetailsDialog_TransactionAmount.value")
-						+ " should be less than or equal to " + Labels.getLabel("label_DepositDetailsDialog_ReservedAmount.value"));
+						Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER", new String[]{Labels.getLabel("label_DepositDetailsDialog_TransactionAmount.value"),
+								Labels.getLabel("label_DepositDetailsDialog_ReservedAmount.value")}));
 			}
-			
-			aDepositDetails.setTransactionAmount(PennantAppUtil.unFormateAmount(this.transactionAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
-			depositMovements.setReservedAmount(PennantAppUtil.unFormateAmount(this.transactionAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -784,13 +783,13 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
-			this.reservedAmount.focus();
+			this.availableAmount.focus();
 		} else {
 			if (isWorkFlowEnabled()) {
 				if (StringUtils.isNotBlank(depositDetails.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
-				this.reservedAmount.focus();
+				this.availableAmount.focus();
 				doEdit();
 			} else {
 				this.btnCtrl.setInitEdit();
@@ -836,8 +835,8 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 					Labels.getLabel("label_DepositDetailsDialog_DepositType.value")));
 		}
 
-		if (!this.reservedAmount.isReadonly()) {
-			this.reservedAmount.setConstraint(
+		if (!this.availableAmount.isReadonly()) {
+			this.availableAmount.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("label_DepositDetailsDialog_ReservedAmount.value"),
 							PennantConstants.defaultCCYDecPos, true, false, 0));
 		}
@@ -869,7 +868,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		this.branchCode.setConstraint("");
 		this.depositType.setConstraint("");
 		this.transactionDate.setConstraint("");
-		this.reservedAmount.setConstraint("");
+		this.availableAmount.setConstraint("");
 		this.transactionAmount.setConstraint("");
 		this.depositSlipNumber.setConstraint("");
 		this.partnerBankId.setConstraint("");
@@ -907,7 +906,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		this.branchCode.setErrorMessage("");
 		this.depositType.setErrorMessage("");
 		this.transactionDate.setErrorMessage("");
-		this.reservedAmount.setErrorMessage("");
+		this.availableAmount.setErrorMessage("");
 		this.transactionAmount.setErrorMessage("");
 		this.depositSlipNumber.setErrorMessage("");
 		this.partnerBankId.setErrorMessage("");
@@ -978,7 +977,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		readOnlyComponent(isReadOnly("DepositDetailsDialog_RequestDate"), this.transactionDate);
 		//readOnlyComponent(isReadOnly("DepositDetailsDialog_RequestAmount"), this.reservedAmount);
 		//readOnlyComponent(isReadOnly("DepositDetailsDialog_RequestType"), this.depositType);
-		readOnlyComponent(true, this.reservedAmount);
+		readOnlyComponent(true, this.availableAmount);
 		readOnlyComponent(true, this.depositType);
 
 		String editable = SysParamUtil.getValueAsString("DEPOSIT_AMOUNT_EDIT");
@@ -1022,7 +1021,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		readOnlyComponent(true, this.branchCode);
 		readOnlyComponent(true, this.depositType);
 		readOnlyComponent(true, this.transactionDate);
-		readOnlyComponent(true, this.reservedAmount);
+		readOnlyComponent(true, this.availableAmount);
 		readOnlyComponent(true, this.transactionAmount);
 		readOnlyComponent(true, this.depositSlipNumber);
 		readOnlyComponent(true, this.partnerBankId);
@@ -1052,7 +1051,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		this.branchCode.setValue("", "");
 		this.depositType.setSelectedIndex(0);
 		this.transactionDate.setText("");
-		this.reservedAmount.setValue("");
+		this.availableAmount.setValue("");
 		this.transactionAmount.setValue("");
 		this.depositSlipNumber.setValue("");
 		this.partnerBankId.setValue("", "");

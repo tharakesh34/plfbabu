@@ -160,6 +160,9 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 		registerField("BranchCode", listheader_BranchCode, SortOrder.NONE, branchCode, sortOperator_BranchCode, Operators.STRING);
 		registerField("branchDesc");
 		registerField("DepositId");
+		registerField("ActualAmount");
+		registerField("TransactionAmount");
+		registerField("ReservedAmount");
 		
 		fillComboBox(depositType, "", PennantStaticListUtil.getDepositTypesListList(), "");
 		depositType.removeItemAt(0);

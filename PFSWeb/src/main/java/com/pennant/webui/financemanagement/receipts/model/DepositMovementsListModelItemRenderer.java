@@ -52,7 +52,9 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.DepositMovements;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -71,10 +73,23 @@ public class DepositMovementsListModelItemRenderer implements ListitemRenderer<D
 		Listcell lc;
 		
 		//Deposit Slip Number
+		lc = new Listcell(depositMovements.getBranchCode() + " - " + depositMovements.getBranchDesc());
+		lc.setParent(item);
+		
+		//Deposit Slip Number
 		lc = new Listcell(depositMovements.getDepositSlipNumber());
 		lc.setParent(item);
 		//Deposit Date
 		lc = new Listcell(DateUtility.formatToLongDate(depositMovements.getTransactionDate()));
+		lc.setParent(item);
+		
+		//Partner Bank
+		lc = new Listcell(depositMovements.getPartnerBankName());
+		lc.setParent(item);
+		
+		//Amount
+		lc = new Listcell(PennantAppUtil.amountFormate(depositMovements.getReservedAmount(), PennantConstants.defaultCCYDecPos));
+		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		
 		//Record Status
