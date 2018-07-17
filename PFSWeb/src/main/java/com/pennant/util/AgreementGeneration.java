@@ -1295,6 +1295,7 @@ public class AgreementGeneration implements Serializable {
 			}
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(e);
 		}
 		logger.debug("Leaving");
@@ -1526,7 +1527,7 @@ public class AgreementGeneration implements Serializable {
 			}
 			extendedDetail.setKey(StringUtils.trimToEmpty(key));
 			if (null != mapValues.get(key)) {
-				if(StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())){
+				if(extendedFieldDetail!=null && StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())){
 					extendedDetail.setValue(PennantAppUtil.formateAmount((BigDecimal) mapValues.get(key), CurrencyUtil.getFormat("")).toString());
 				}else{
 					extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
@@ -1560,7 +1561,7 @@ public class AgreementGeneration implements Serializable {
 			if (null != mapValues.get(key)) {
 				extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
 
-				if(StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())){
+				if(extendedFieldDetail!=null && StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())){
 					extendedDetail.setValue(PennantAppUtil.formateAmount((BigDecimal) mapValues.get(key), CurrencyUtil.getFormat("")).toString());
 				}else{
 					extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
@@ -2278,7 +2279,7 @@ public class AgreementGeneration implements Serializable {
 										extendedDetail.setKey(StringUtils.trimToEmpty(key));
 										if (null != mapValues.get(key)) {
 											extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
-											if(StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())){
+											if(extendedFieldDetail!=null && StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())){
 												extendedDetail.setValue(PennantAppUtil.formateAmount((BigDecimal) mapValues.get(key), CurrencyUtil.getFormat("")).toString());
 											}else{
 												extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
