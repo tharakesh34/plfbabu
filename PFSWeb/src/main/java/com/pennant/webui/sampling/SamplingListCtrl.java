@@ -74,6 +74,9 @@ public class SamplingListCtrl extends GFCBaseListCtrl<Sampling> {
 		super.queueTableName = "sampling_Tview";
 		super.enquiryTableName = "sampling_view";
 		this.module = getArgument("module");
+		if ("ENQ".equals(this.module)) {
+			super.queueTableName = "sampling_view";
+		}
 	}
 
 	/**
