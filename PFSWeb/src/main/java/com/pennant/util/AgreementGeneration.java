@@ -1514,6 +1514,7 @@ public class AgreementGeneration implements Serializable {
 
 	private AgreementDetail populateCustomerExtendedDetails(FinanceDetail detail, AgreementDetail agreement) {
 		Map<String, Object> mapValues = detail.getCustomerDetails().getExtendedFieldRender().getMapValues();
+		int formater = CurrencyUtil.getFormat(detail.getFinScheduleData().getFinanceMain().getFinCcy());
 		for (String key : mapValues.keySet()) {
 			ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
 			ExtendedFieldDetail extendedFieldDetail=null;
@@ -1528,7 +1529,7 @@ public class AgreementGeneration implements Serializable {
 			extendedDetail.setKey(StringUtils.trimToEmpty(key));
 			if (null != mapValues.get(key)) {
 				if(extendedFieldDetail!=null && StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())){
-					extendedDetail.setValue(PennantAppUtil.formateAmount((BigDecimal) mapValues.get(key), CurrencyUtil.getFormat("")).toString());
+					extendedDetail.setValue(PennantAppUtil.amountFormate((BigDecimal) mapValues.get(key), formater));
 				}else{
 					extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
 				}
@@ -1545,6 +1546,7 @@ public class AgreementGeneration implements Serializable {
 
 	private AgreementDetail populateExtendedDetails(FinanceDetail detail, AgreementDetail agreement) {
 		Map<String, Object> mapValues = detail.getExtendedFieldRender().getMapValues();
+		int formater = CurrencyUtil.getFormat(detail.getFinScheduleData().getFinanceMain().getFinCcy());
 		for (String key : mapValues.keySet()) {
 			ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
 			ExtendedFieldDetail extendedFieldDetail=null;
@@ -1562,7 +1564,7 @@ public class AgreementGeneration implements Serializable {
 				extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
 
 				if(extendedFieldDetail!=null && StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())){
-					extendedDetail.setValue(PennantAppUtil.formateAmount((BigDecimal) mapValues.get(key), CurrencyUtil.getFormat("")).toString());
+					extendedDetail.setValue(PennantAppUtil.amountFormate((BigDecimal) mapValues.get(key), formater));
 				}else{
 					extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
 				}
@@ -2260,6 +2262,7 @@ public class AgreementGeneration implements Serializable {
 						}
 						
 						if(CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())){
+							int colCcyFormat = CurrencyUtil.getFormat(collateralSetup.getCollateralCcy());
 							for (ExtendedFieldRender extendedFieldRender : collateralSetup.getExtendedFieldRenderList()) {
 								if(null!=extendedFieldRender&&MapUtils.isNotEmpty(extendedFieldRender.getMapValues())){
 									Map<String, Object> mapValues = extendedFieldRender.getMapValues();
@@ -2280,7 +2283,7 @@ public class AgreementGeneration implements Serializable {
 										if (null != mapValues.get(key)) {
 											extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
 											if(extendedFieldDetail!=null && StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())){
-												extendedDetail.setValue(PennantAppUtil.formateAmount((BigDecimal) mapValues.get(key), CurrencyUtil.getFormat("")).toString());
+												extendedDetail.setValue(PennantAppUtil.amountFormate((BigDecimal) mapValues.get(key), colCcyFormat));
 											}else{
 												extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
 											}
