@@ -80,7 +80,6 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
-import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.DDAProcessData;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
@@ -116,12 +115,10 @@ import com.pennant.backend.service.finance.ScoringDetailService;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
-import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
@@ -200,8 +197,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient Object 			 childWindowDialogCtrl = null;
 	private boolean fromApproved;
 	private boolean childDialog;
-	private ExtendedFieldCtrl extendedFieldCtrl= null;;
-	private ExtendedFieldHeader extendedFieldHeader= null;;
 	/**
 	 * default constructor.<br>
 	 */
@@ -256,10 +251,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.setvASRecordingDialogCtrl((VASRecordingDialogCtrl) arguments
 						.get("VASRecordingDialog"));
 			}
-			extendedFieldCtrl = new ExtendedFieldCtrl();
-			String productName = getFinanceEnquiry().getLovDescProductCodeName();
-			extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(ExtendedFieldConstants.MODULE_LOAN, productName, enquiryType);
-
 			// Method for recall Enquiries
 			doFillDialogWindow();
 		} catch (Exception e) {
@@ -565,7 +556,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("feeDetails", feeDetails);
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/FeeEnquiryDialog.zul";
-
 		} else if ("EXPENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ExpenseEnquiry.value"));
@@ -579,20 +569,12 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ExpenseEnquiryDialog.zul";
 		} else if ("LOANEXTDET".equals(this.enquiryType)) {
 			logger.debug("Entering");
-			try {
-				if (extendedFieldHeader!=null) {
-					this.label_window_FinEnqHeaderDialog.setValue(extendedFieldHeader.getTabHeading());
-					extendedFieldCtrl.getExtendedFieldRender(getFinanceEnquiry().getFinReference());
-					extendedFieldCtrl.createEnquiryTab(tabPanel_dialogWindow);
-					extendedFieldCtrl.setCcyFormat(CurrencyUtil.getFormat(getFinanceEnquiry().getFinCcy()));
-					extendedFieldCtrl.setReadOnly(true);
-					int rowsHeight = this.grid_BasicDetails.getRows().getVisibleItemCount() * 20;
-					extendedFieldCtrl.setTabHeight(this.borderLayoutHeight-rowsHeight);
-					extendedFieldCtrl.render();
-				}
-			} catch (Exception e) {
-				logger.error("Exception", e);
-			}
+			
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ExtendedFieldsEnquiry"));
+			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
+			map.put("finaceEnquiry", getFinanceEnquiry());
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ExtendedFieldsEnquiryDialog.zul";
+			
 			logger.debug("Leaving");
 		} else if ("SAMENQ".equals(this.enquiryType)) {
 
@@ -671,18 +653,10 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				if ("FINMANDENQ".equals(value) && !mandate) {
 					continue;
 				}
-				
-				if ("LOANEXTDET".equals(value) && extendedFieldHeader==null) {
-					continue;
-				}
-				
 				if(!("ASSENQ".equalsIgnoreCase(value) && "NOTAPP".equalsIgnoreCase(StringUtils.trimToEmpty(assetCode)))){
 					menuitem = new Menuitem();
 					menuitem.setImage("/images/icons/Old/arrow_blue_right_16x16.gif");
 					String label = enquiry.getLabel();
-					if ("LOANEXTDET".equals(value) && extendedFieldHeader!=null) {
-						label=StringUtils.trimToEmpty(extendedFieldHeader.getTabHeading());
-					}
 					menuitem.setLabel(label);
 					menuitem.setValue(value);
 					menuitem.setStyle("font-weight:bold;");
@@ -718,9 +692,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			doFillDialogWindow();
 			doFillFilterList();
 			String label = enquiry.getLabel();
-			if ("LOANEXTDET".equals(this.enquiryType) && extendedFieldHeader!=null) {
-				label=extendedFieldHeader.getTabHeading();
-			}
 			this.menu_filter.setLabel(label);
 		}
 	}

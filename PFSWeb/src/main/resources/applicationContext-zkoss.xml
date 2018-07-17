@@ -3345,6 +3345,9 @@
 		<property name="financeDetailService" ref="financeDetailService" /> 
 		<property name="securityRoleService" ref="securityRoleService" />
 	</bean>
+	
+	<bean id="extendedFieldsEnquiryDialogCtrl" class="com.pennant.webui.finance.enquiry.ExtendedFieldsEnquiryDialogCtrl"
+		parent="basisListCtrl" scope="prototype" />
 
 
 	<!--============ Provision Movement Details ============== -->

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.script.ScriptException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
@@ -465,6 +466,65 @@ public class ExtendedFieldCtrl {
 		}
 		this.extendedFieldRender = extendedFieldRender;
 		return extendedFieldRender;
+	}
+	
+	/**
+	 * Method Getting the extended field render details
+	 * 
+	 * @param String
+	 *            reference
+	 * @param String
+	 *            tableName
+	 **/
+	public List<ExtendedFieldRender> getExtendedFieldRenderList(String reference, String tableName, String type) {
+
+		List<ExtendedFieldRender> renderList = new ArrayList<>();
+		List<Map<String, Object>> extendedMapValues = extendedFieldRenderDAO.getExtendedFieldMap(reference, tableName, type);
+
+		if (CollectionUtils.isEmpty(extendedMapValues)) {
+			return renderList;
+		}
+
+		for (Map<String, Object> extFieldMap : extendedMapValues) {
+			ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
+			if (extFieldMap != null) {
+				extendedFieldRender.setReference(String.valueOf(extFieldMap.get("Reference")));
+				extFieldMap.remove("Reference");
+				extendedFieldRender.setSeqNo(Integer.valueOf(String.valueOf(extFieldMap.get("SeqNo"))));
+				extFieldMap.remove("SeqNo");
+				extendedFieldRender.setVersion(Integer.valueOf(String.valueOf(extFieldMap.get("Version"))));
+				extFieldMap.remove("Version");
+				extendedFieldRender.setLastMntOn((Timestamp) extFieldMap.get("LastMntOn"));
+				extFieldMap.remove("LastMntOn");
+				extendedFieldRender.setLastMntBy(Long.valueOf(String.valueOf(extFieldMap.get("LastMntBy"))));
+				extFieldMap.remove("LastMntBy");
+				extendedFieldRender.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
+								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				extFieldMap.remove("RecordStatus");
+				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
+						? "" : String.valueOf(extFieldMap.get("RoleCode")));
+				extFieldMap.remove("RoleCode");
+				extendedFieldRender.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
+								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
+				extFieldMap.remove("NextRoleCode");
+				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
+						: String.valueOf(extFieldMap.get("TaskId")));
+				extFieldMap.remove("TaskId");
+				extendedFieldRender
+						.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+								: String.valueOf(extFieldMap.get("NextTaskId")));
+				extFieldMap.remove("NextTaskId");
+				extendedFieldRender
+						.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RecordType")));
+				extFieldMap.remove("RecordType");
+				extendedFieldRender.setWorkflowId(Long.valueOf(String.valueOf(extFieldMap.get("WorkflowId"))));
+				extFieldMap.remove("WorkflowId");
+				extendedFieldRender.setMapValues(extFieldMap);
+				renderList.add(extendedFieldRender);
+			}
+		}
+		return renderList;
 	}
 	
 	/**
