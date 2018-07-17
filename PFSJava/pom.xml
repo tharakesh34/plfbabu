@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>4.7.14-SNAPSHOT</version>
+		<version>4.9.0</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
@@ -202,7 +202,7 @@
 		<dependency>
 			<groupId>${pff.groupId}</groupId>
 			<artifactId>pff-interface-bajaj</artifactId>
-			<version>${project.version}</version>
+			<version>4.7.14-SNAPSHOT</version>
 		</dependency>
 		
 		<dependency>
