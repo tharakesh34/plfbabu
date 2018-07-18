@@ -194,9 +194,9 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 		sql.append(" ) VALUES (");
 		sql.append(String.valueOf(auditHeader.getId()));
 		sql.append(", '");
-		if(App.DATABASE == Database.SQL_SERVER){
+		if (App.DATABASE == Database.SQL_SERVER || App.DATABASE == Database.POSTGRES) {
 			sql.append(auditHeader.getAuditDate());
-		}else{
+		} else {
 			sql.append(DateUtility.format(auditHeader.getAuditDate(), PennantConstants.DBDateTimeFormat));
 		}
 		sql.append("',");
