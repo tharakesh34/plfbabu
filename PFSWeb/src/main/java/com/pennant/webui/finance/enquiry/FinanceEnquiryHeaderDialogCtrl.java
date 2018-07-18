@@ -75,6 +75,8 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -103,6 +105,7 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.AgreementDetailService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
@@ -197,6 +200,12 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient Object 			 childWindowDialogCtrl = null;
 	private boolean fromApproved;
 	private boolean childDialog;
+	@Autowired
+	private CustomerDetailsService			customerDetailsService;
+	@Autowired
+	private DocumentDetailsDAO				documentDetailsDAO;
+	@Autowired
+	private CollateralAssignmentDAO			collateralAssignmentDAO;
 	/**
 	 * default constructor.<br>
 	 */
@@ -587,6 +596,26 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
 			map.put("enqiryModule", true);
 			path = "/WEB-INF/pages/Finance/FinanceMain/Sampling/FinSamplingDialog.zul";
+		} else if ("VERENQ".equals(this.enquiryType)) {
+
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_VerificationEnquiry.value"));
+			FinanceDetail financeDetail = new FinanceDetail();
+			financeDetail.getFinScheduleData().setFinReference(this.finReference);
+			if (enquiry.getCustID() != 0 && enquiry.getCustID() != Long.MIN_VALUE) {
+				financeDetail.setCustomerDetails(customerDetailsService.getCustomerDetailsById(enquiry.getCustID(), true, "_AView"));
+			}
+			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(this.finReference,
+					FinanceConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_TView");
+			if (financeDetail.getDocumentDetailsList() != null && !financeDetail.getDocumentDetailsList().isEmpty()) {
+				financeDetail.getDocumentDetailsList().addAll(documentList);
+			} else {
+				financeDetail.setDocumentDetailsList(documentList);
+			}
+			financeDetail.setCollateralAssignmentList(collateralAssignmentDAO
+					.getCollateralAssignmentByFinRef(this.finReference, FinanceConstants.MODULE_NAME, "_TView"));
+			map.put("financeDetail", financeDetail);
+			map.put("enqiryModule", true);
+			path = "/WEB-INF/pages/Verification/FieldInvestigation/VerificationEnquiryDialog.zul";
 		}
 		if (StringUtils.isNotEmpty(path)) {
 

@@ -15,11 +15,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
+import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -29,6 +31,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 @Component(value = "verificationEnquiryDialogCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -36,7 +39,7 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 	private static final Logger logger = LogManager.getLogger(VerificationEnquiryDialogCtrl.class);
 	private static final long serialVersionUID = -7291043288227495026L;
 	protected Window window_VerificationEnquiry;
-
+    protected Toolbar toolbarHeading;
 	protected Tabs tabsIndexCenter;
 	protected Tab fiDetailTab;
 	protected Tab tvDetailTab;
@@ -53,9 +56,11 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private FinanceDetail financeDetail;
 	private ArrayList<Object> finHeaderList;
+	protected Button verificationBtnClose;
 	protected Combobox enquiryCombobox;
 	@Autowired
 	private VerificationService verificationService;
+	String finReference = null;
 
 	/**
 	 * default constructor.<br>
@@ -70,7 +75,17 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		finHeaderList = (ArrayList<Object>) arguments.get("finHeaderList");
 		financeDetail = (FinanceDetail) arguments.get("financeDetail");
-		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
+		
+		if (financeDetail != null && finHeaderList != null) {
+			finReference = String.valueOf(finHeaderList.get(3));
+		}else{
+			finReference = financeDetail.getFinScheduleData().getFinReference();
+		}
+		
+		if (arguments.containsKey("financeMainBaseCtrl")) {
+				financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
+		}
+		
 		enquiryCombobox = (Combobox) arguments.get("enuiryCombobox");
 		
 		fiDetailTabPanel.setHeight(getDesktopHeight()-10+"px");
@@ -86,7 +101,12 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 		try {
 			visibleTabs();
-			setDialog(DialogType.MODAL);
+			if (financeMainDialogCtrl != null) {
+				setDialog(DialogType.MODAL);
+			} else {
+				verificationBtnClose.setVisible(false);
+				toolbarHeading.setVisible(false);
+			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			this.window_VerificationEnquiry.onClose();
@@ -97,7 +117,6 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected void visibleTabs() {
 		logger.debug(Literal.ENTERING);
 		boolean isSelected = false;
-		String finReference = String.valueOf(finHeaderList.get(3));
 		FinanceDetail temp = new FinanceDetail();
 		
 		if (StringUtils.isBlank(finReference)) {
@@ -106,11 +125,18 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 			BeanUtils.copyProperties(financeDetail, temp);
 		}
 		
-		verificationTypes = verificationService.getVerificationTypes(finReference);
+		verificationTypes = verificationService.getVerificationTypes(this.finReference);
+		if (verificationTypes.isEmpty() && financeMainDialogCtrl == null) {
+			window_VerificationEnquiry.onClose();
+			MessageUtil.showMessage("Verifications are not availble");
+		}
+		
 		Map<String, Object> map = new HashMap<>();
 		map.put("finHeaderList", finHeaderList);
 		map.put("financeDetail", temp);
-		map.put("financeMainBaseCtrl", financeMainDialogCtrl);
+		if (financeMainDialogCtrl != null) {
+			map.put("financeMainBaseCtrl", financeMainDialogCtrl);
+		}
 		map.put("enqiryModule", true);
 		try {
 			for (Integer verificationType : verificationTypes) {
@@ -161,7 +187,9 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	public void onClick$verificationBtnClose(Event event) {
 		logger.debug(Literal.ENTERING);
-		this.enquiryCombobox.setSelectedIndex(0);
+		if (enquiryCombobox != null) {
+			this.enquiryCombobox.setSelectedIndex(0);
+		}
 		window_VerificationEnquiry.onClose();
 		logger.debug(Literal.LEAVING);
 	}

@@ -139,8 +139,9 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		// Set the page level components.
 		setPageComponents(window_LVerificationDialog);
 
-		appendFinBasicDetails(arguments.get("finHeaderList"));
-
+		if (arguments.get("finHeaderList") != null) {
+			appendFinBasicDetails(arguments.get("finHeaderList"));
+		}
 		this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		this.verification = financeDetail.getLvVerification();
 		if (verification == null) {
@@ -149,8 +150,12 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		}
 		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
 
-		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
-
+		if (arguments.containsKey("financeMainBaseCtrl")) {
+				financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
+		}else{
+			finBasicdetails.setVisible(false);
+		}
+		
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
@@ -167,8 +172,9 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	private void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 
-		financeMainDialogCtrl.setLVerificationCtrl(this);
-
+		if (financeMainDialogCtrl != null) {
+			financeMainDialogCtrl.setLVerificationCtrl(this);
+		}
 		//render Initiation and Waiver Lists
 		renderLVInitiationList();
 		renderLVWaiverList();

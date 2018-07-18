@@ -116,9 +116,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_TVerificationDialog);
-
-		appendFinBasicDetails(arguments.get("finHeaderList"));
-
+		if (arguments.get("finHeaderList") != null) {
+			appendFinBasicDetails(arguments.get("finHeaderList"));
+		}
 		this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		this.verification = financeDetail.getTvVerification();
 		if (this.verification == null) {
@@ -127,7 +127,11 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
 
-		((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).settVerificationDialogCtrl(this);
+		if (arguments.containsKey("financeMainBaseCtrl")) {
+				((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).settVerificationDialogCtrl(this);
+		}else{
+			finBasicdetails.setVisible(false);
+		}
 
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");

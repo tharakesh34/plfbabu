@@ -90,7 +90,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected Listheader listheader_RCUVerification_ReInitRemarks;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
-	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private Verification verification;
 	private FinanceDetail financeDetail;
 
@@ -131,9 +130,10 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_RCUVerificationDialog);
-
-		appendFinBasicDetails(arguments.get("finHeaderList"));
-
+		
+		if (arguments.get("finHeaderList") != null) {
+			appendFinBasicDetails(arguments.get("finHeaderList"));
+		}
 		this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		this.verification = financeDetail.getRcuVerification();
 		if (this.verification == null) {
@@ -142,8 +142,11 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
 
-		financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
-		financeMainDialogCtrl.setRcuVerificationDialogCtrl(this);
+		if (arguments.containsKey("financeMainBaseCtrl")) {
+				((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).setRcuVerificationDialogCtrl(this);
+		}else{
+			finBasicdetails.setVisible(false);
+		}
 
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");

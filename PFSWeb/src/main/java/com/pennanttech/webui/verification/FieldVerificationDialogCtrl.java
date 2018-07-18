@@ -129,8 +129,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		// Set the page level components.
 		setPageComponents(window_FIVerificationDialog);
 
-		appendFinBasicDetails(arguments.get("finHeaderList"));
-
+		if (arguments.get("finHeaderList") != null) {
+			appendFinBasicDetails(arguments.get("finHeaderList"));
+		}
 		this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		this.verification = financeDetail.getFiVerification();
 		if (this.verification == null) {
@@ -138,8 +139,12 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			this.financeDetail.setFiVerification(this.verification);
 		}
 		this.verification.setKeyReference(financeDetail.getFinScheduleData().getFinReference());
-
-		((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).setFieldVerificationDialogCtrl(this);
+		
+		if (arguments.containsKey("financeMainBaseCtrl")) {
+				((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).setFieldVerificationDialogCtrl(this);
+		}else{
+			finBasicdetails.setVisible(false);
+		}
 
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");

@@ -11,7 +11,7 @@
 				<div sclass="z-toolbar" style="padding:0">
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 						<toolbar/>
-						<toolbar align="center" sclass="toolbar-center">
+						<toolbar align="center" sclass="toolbar-center" id="toolbarHeading">
 							<label value="${c:l('menu_Category_Verification_Enquiry')}" sclass="label-heading" />
 						</toolbar>
 						<toolbar align="end" sclass="toolbar-end">
