@@ -103,12 +103,12 @@
 										</hbox>
 									</row>
 									<row id="row5">
-										<label id="label_ReservedAmount" value="${c:l('label_DepositDetailsDialog_ReservedAmount.value')}" />
+										<label id="label_AvailableAmount" value="${c:l('label_DepositDetailsDialog_AvailableAmount.value')}" />
 										<currencyBox id="availableAmount" width="162px" />
 									</row>
 									<row id="row6">
-										<label id="label_TransactionAmount" value="${c:l('label_DepositDetailsDialog_TransactionAmount.value')}" />
-										<currencyBox id="transactionAmount" width="162px" />
+										<label id="label_ReservedAmount" value="${c:l('label_DepositDetailsDialog_ReservedAmount.value')}" />
+										<currencyBox id="reservedAmount" width="162px" />
 									</row>
 								</rows>
 							</grid>
