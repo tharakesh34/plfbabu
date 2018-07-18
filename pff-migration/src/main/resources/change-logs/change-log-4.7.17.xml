@@ -11617,5 +11617,65 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
+	<changeSet id="285" author="Kesav">
+		<createTable tableName="DepositCheques_Temp">
+			<column name="Id"  type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_DepositCheques_Temp_Id" nullable="false" />
+			</column>			
+			<column name="MovementId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="ReceiptId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ReceiptMode" type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="Amount" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" defaultValue="0" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="286" author="Kesav">
+		<createTable tableName="DepositCheques">
+			<column name="Id"  type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_DepositCheques_Id" nullable="false" />
+			</column>			
+			<column name="MovementId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="ReceiptId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ReceiptMode" type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="Amount" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" defaultValue="0" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>
 	

@@ -559,4 +559,46 @@ update adtCustomers set marginDeviation=0;
 		</sql>
 	</changeSet>
 	
+	<changeSet id="32" author="Kesav">
+		<createTable tableName="AdtDepositCheques">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>			
+			<column name="MovementId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="ReceiptId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ReceiptMode" type="varchar(8)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Amount" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" defaultValue="0" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>
