@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -87,6 +88,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
+
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MailUtil;
@@ -111,10 +113,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.Constraint.PTDateValidator;
-import com.pennant.util.Constraint.PTDecimalValidator;
-import com.pennant.util.Constraint.PTNumberValidator;
-import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -398,6 +396,28 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 			}
 		}
 	}
+	
+	public void onUploadDocumentValidation(){
+		FinCreditReviewDetails aCreditReviewDetails=new FinCreditReviewDetails();
+		List<WrongValueException> wveList = new ArrayList<WrongValueException>();
+		try {
+			if ((this.documentName.getValue() == null || StringUtils.isEmpty(this.documentName.getValue()))) {
+				throw new WrongValueException(this.documentName, Labels.getLabel("MUST_BE_UPLOADED",
+						new String[] { Labels.getLabel("label_CreditRevSelectCategory_CorporateDoc.value") }));
+			}
+			aCreditReviewDetails.setDocument(this.documentName.getValue());
+		} catch (WrongValueException wve) {
+			wveList.add(wve);
+		}
+		if (wveList.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wveList.size()];
+			for (int i = 0; i < wveList.size(); i++) {
+				wvea[i] = (WrongValueException) wveList.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+
+	}
 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
@@ -423,6 +443,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		// force validation, if on, than execute by component.getValue()
 		// *************************************************************
 		doWriteComponentsToBean(aCreditReviewDetails);
+		onUploadDocumentValidation();
 		excelSave();
 		this.window_CorporateCreditRevFinanceFileUploadDialog.onClose();
 		refreshList();
@@ -513,7 +534,9 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	// accepts only excel (XLS,XLSX) file formats only
 	public void onUpload$btnUploadDoc(UploadEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
-
+		FinCreditReviewDetails aCreditReviewDetails = new FinCreditReviewDetails();
+		BeanUtils.copyProperties(this.creditReviewDetail, aCreditReviewDetails);
+		doWriteComponentsToBean(aCreditReviewDetails);
 		this.fileImport = null;
 		this.errorMsg = null;
 		media = event.getMedia();
@@ -529,13 +552,12 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 				String filePath = SysParamUtil.getValueAsString("UPLOAD_FILEPATH");
 				this.documentName.setText(fileName);
 				this.documentName.setValue(fileName);
-
 				this.fileImport = new ExcelFileImport(media, filePath);
 
 			}
-			FinCreditReviewDetails aCreditReviewDetails = new FinCreditReviewDetails();
-			BeanUtils.copyProperties(this.creditReviewDetail, aCreditReviewDetails);
-			doWriteComponentsToBean(aCreditReviewDetails);
+			
+			/*BeanUtils.copyProperties(this.creditReviewDetail, aCreditReviewDetails);
+			doWriteComponentsToBean(aCreditReviewDetails);*/
 			setListDetails();
 		} catch (Exception e) {
 			this.errorMsg = e.getMessage();
@@ -1180,14 +1202,18 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		} catch (WrongValueException wve) {
 			wveList.add(wve);
 		}
-		try {
-			if ((this.documentName.getValue() == null || StringUtils.isEmpty(this.documentName.getValue()))) {
-				throw new WrongValueException(this.documentName, Labels.getLabel("MUST_BE_UPLOADED",
-						new String[] { Labels.getLabel("label_CreditRevSelectCategory_CorporateDoc.value") }));
+		for (int i = 0; i < wveList.size(); i++) {
+		if(wveList.isEmpty()){
+			try {
+				if ((this.documentName.getValue() == null || StringUtils.isEmpty(this.documentName.getValue()))) {
+					throw new WrongValueException(this.documentName, Labels.getLabel("MUST_BE_UPLOADED",
+							new String[] { Labels.getLabel("label_CreditRevSelectCategory_CorporateDoc.value") }));
+				}
+				aCreditReviewDetails.setDocument(this.documentName.getValue());
+			} catch (WrongValueException wve) {
+				wveList.add(wve);
 			}
-			aCreditReviewDetails.setDocument(this.documentName.getValue());
-		} catch (WrongValueException wve) {
-			wveList.add(wve);
+		}
 		}
 
 		doRemoveValidation();
@@ -1216,10 +1242,10 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		this.auditType.setConstraint("");
 		this.auditedDate.setConstraint("");
 		this.currencyType.setConstraint("");
+		this.documentName.setConstraint("");
 		logger.debug(Literal.LEAVING);
 
 	}
-
 
 	/**
 	 * Get Audit Header Details
