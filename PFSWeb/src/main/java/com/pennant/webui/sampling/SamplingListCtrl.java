@@ -74,9 +74,6 @@ public class SamplingListCtrl extends GFCBaseListCtrl<Sampling> {
 		super.queueTableName = "sampling_Tview";
 		super.enquiryTableName = "sampling_view";
 		this.module = getArgument("module");
-		if ("ENQ".equals(this.module)) {
-			super.queueTableName = "sampling_view";
-		}
 	}
 
 	/**
@@ -113,6 +110,10 @@ public class SamplingListCtrl extends GFCBaseListCtrl<Sampling> {
 
 		// Render the page and display the data.
 		doRenderPage();
+		if(enqiryModule){
+			workFlowFrom.setVisible(false);
+			fromWorkFlow.setChecked(true);
+		}
 		search();
 	}
 

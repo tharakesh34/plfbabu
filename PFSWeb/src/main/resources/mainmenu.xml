@@ -904,8 +904,9 @@
 				zulNavigation="/WEB-INF/pages/Verification/RiskContainmentUnit/RiskContainmentUnitList.zul?module=ENQ"
 				rightName="menuItem_Verification_RiskContainmentUnit_Enquiry" /> 
 		</menu>
+		//Sampling Enquiry
 		<menuItem id="menu_Item_Sampling_Enquiry"
-				zulNavigation="/WEB-INF/pages/Sampling/SamplingList.zul?module=ENQ" rightName="menuItem_Sampling_Enquiry" /> 
+				zulNavigation="/WEB-INF/pages/Sampling/SamplingList.zul?enqiryModule=Y" rightName="menuItem_Sampling_Enquiry" /> 
 				
 		<menu id="menu_Category_BulkProcessingEnquiry">
 			<menuItem id="menu_Item_PresentmentHeaderEnquiry"
