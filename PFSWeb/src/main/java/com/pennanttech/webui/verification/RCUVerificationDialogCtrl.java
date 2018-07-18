@@ -1441,7 +1441,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		doClearMessage();
-		doSetValidation();
+		if(!recSave){
+			doSetValidation();
+		}
 
 		ArrayList<WrongValueException> wve = doWriteComponentsToBean();
 

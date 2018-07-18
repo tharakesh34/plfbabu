@@ -721,7 +721,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		}
 		// Extended Field validations
 		if (lv.getExtendedFieldHeader() != null) {
-			lv.setExtendedFieldRender(extendedFieldCtrl.save());
+			lv.setExtendedFieldRender(extendedFieldCtrl.save(true));
 		}
 
 		try {

@@ -3058,7 +3058,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 				// Extended Fields
 				if (data.getFinanceDetail().getExtendedFieldHeader() != null) {
-					data.getFinanceDetail().setExtendedFieldRender(extendedFieldCtrl.save());
+					data.getFinanceDetail().setExtendedFieldRender(extendedFieldCtrl.save(!recSave));
 				}
 				
 			}
@@ -4798,7 +4798,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		if(!StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_EXCESS)){
-			if(!this.fundingAccount.isReadonly()){
+			if(!this.fundingAccount.isReadonly() && this.row_fundingAcNo.isVisible()){
 				this.fundingAccount.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_FundingAccount.value"), null, true));
 			}
 

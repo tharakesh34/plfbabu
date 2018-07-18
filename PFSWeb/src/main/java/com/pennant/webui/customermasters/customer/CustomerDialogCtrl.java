@@ -1822,7 +1822,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		// Extended Field validations
 		extendedFieldCtrl.setParentTab(custTab);
 		if (aCustomerDetails.getExtendedFieldHeader() != null) {
-			aCustomerDetails.setExtendedFieldRender(extendedFieldCtrl.save());
+			aCustomerDetails.setExtendedFieldRender(extendedFieldCtrl.save(true));
 		}
 
 		// Set KYC details

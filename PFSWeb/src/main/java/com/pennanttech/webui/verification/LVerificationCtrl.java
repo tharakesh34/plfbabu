@@ -1137,7 +1137,9 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		this.recSave = recSave;
 		this.userAction = userAction;
 		doClearMessage();
-		doSetValidation();
+		if(!recSave){
+			doSetValidation();
+		}
 
 		ArrayList<WrongValueException> wve = doWriteComponentsToBean();
 

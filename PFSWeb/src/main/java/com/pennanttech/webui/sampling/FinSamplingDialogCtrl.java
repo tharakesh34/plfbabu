@@ -427,7 +427,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		doClearMessage();
 
 		// force validation, if on, than execute by component.getValue()
-		if (recSave) {
+		if (!recSave) {
 			doSetValidation();
 		}
 		// fill the Sampling object with the components data

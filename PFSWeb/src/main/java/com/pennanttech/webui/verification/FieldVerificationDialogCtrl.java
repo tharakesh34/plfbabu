@@ -1142,7 +1142,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.recSave = recSave;
 		List<Verification> list = new ArrayList<>();
 		doClearMessage();
-		doSetValidation();
+		if(!recSave){
+			doSetValidation();
+		}
 
 		List<WrongValueException> wve = doWriteComponentsToBean();
 

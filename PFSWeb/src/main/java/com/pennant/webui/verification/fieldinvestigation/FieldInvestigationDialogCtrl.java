@@ -605,7 +605,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		// Extended Field validations
 		if (fi.getExtendedFieldHeader() != null) {
 			try {
-				fi.setExtendedFieldRender(extendedFieldCtrl.save());
+				fi.setExtendedFieldRender(extendedFieldCtrl.save(true));
 			} catch (ParseException e) {
 				logger.debug(Literal.EXCEPTION);
 			}

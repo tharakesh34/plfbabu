@@ -2114,7 +2114,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// Extended Fields
 		if (aFinanceDetail.getExtendedFieldHeader() != null) {
-			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save());
+			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(true));
 		}
 
 		// Document Details Saving

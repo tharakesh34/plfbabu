@@ -1108,7 +1108,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.recSave = recSave;
 		this.userAction = userAction;
 		doClearMessage();
-		doSetValidation();
+		if(!recSave){
+			doSetValidation();
+		}
 
 		List<WrongValueException> wve = doWriteComponentsToBean();
 

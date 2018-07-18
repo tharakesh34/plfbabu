@@ -196,7 +196,7 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.ENTERING);
 		if (sampling.getExtendedFieldHeader() != null) {
 			try {
-				ExtendedFieldRender fields =  extendedFieldCtrl.save();
+				ExtendedFieldRender fields =  extendedFieldCtrl.save(true);
 				fields.setSeqNo(sampling.getCollateral().getSeqNo());
 				sampling.setExtendedFieldRender(fields);
 			} catch (ParseException e) {

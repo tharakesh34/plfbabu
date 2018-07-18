@@ -145,7 +145,7 @@ public class ExtendedFieldCtrl {
 	 * 
 	 * @return ExtendedFieldRender extendedFieldRender
 	 */
-	public ExtendedFieldRender save() throws ParseException {
+	public ExtendedFieldRender save(boolean validationReq) throws ParseException {
 
 		if (this.extendedFieldHeader == null) {
 			return null;
@@ -155,12 +155,19 @@ public class ExtendedFieldCtrl {
 		if (this.parentTab != null) {
 			generator.setParentTab(parentTab);
 		}
-		map = generator.doSave(this.extendedFieldHeader.getExtendedFieldDetails(), this.isReadOnly);
+		
+		// If Validation Required is false, then No need to fetch data with applying constraints
+		boolean makeReadOnly = this.isReadOnly;
+		if(!validationReq){
+			makeReadOnly = true;
+		}
+
+		map = generator.doSave(this.extendedFieldHeader.getExtendedFieldDetails(), makeReadOnly);
 		this.extendedFieldRender.setMapValues(map);
 		this.extendedFieldRender.setTypeCode(this.extendedFieldHeader.getSubModuleName());
 
 		// Post Validations for the Extended fields
-		if (!isReadOnly) {
+		if (!makeReadOnly) {
 			if (StringUtils.trimToNull(extendedFieldHeader.getPostValidation()) != null) {
 				ScriptErrors postValidationErrors = scriptValidationService.getPostValidationErrors(extendedFieldHeader.getPostValidation(), map);
 				showErrorDetails(postValidationErrors);

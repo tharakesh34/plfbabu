@@ -644,7 +644,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 
 		// Extended Field validations
 		if (tv.getExtendedFieldHeader() != null) {
-			tv.setExtendedFieldRender(extendedFieldCtrl.save());
+			tv.setExtendedFieldRender(extendedFieldCtrl.save(true));
 		}
 
 		try {

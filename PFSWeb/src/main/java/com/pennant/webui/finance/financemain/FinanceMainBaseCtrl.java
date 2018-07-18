@@ -5925,7 +5925,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		
 		// Extended Field validations
 		if (aFinanceDetail.getExtendedFieldHeader() != null) {
-			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save());
+			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(!recSave));
 		}
 
 		//Save Contributor List Details
@@ -12570,7 +12570,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 		// Extended Field validations
 		if (getFinanceDetail().getExtendedFieldHeader() != null) {
-			getFinanceDetail().setExtendedFieldRender(extendedFieldCtrl.save());
+			getFinanceDetail().setExtendedFieldRender(extendedFieldCtrl.save(true));
 		}
 		logger.debug("Leaving");
 		return true;
