@@ -42,6 +42,7 @@ package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -206,6 +207,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean dataFetchComplete = false;
 	private String userAction;
 	private BigDecimal score = BigDecimal.ZERO;
+	private Date valueDate;
 	
 	//Additional Fields
 	//**********************************************************************
@@ -1094,6 +1096,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setPslDetail(PSLDetail pslDetail) {
 		this.pslDetail = pslDetail;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
 	}
 	
 }

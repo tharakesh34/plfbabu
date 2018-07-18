@@ -7230,6 +7230,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					getFinFeeDetailListCtrl().setEventCode(eventCode);
 					getFinFeeDetailListCtrl().setReceiptsProcess(isReceiptsProcess);
 					financeDetail.getFinScheduleData().setFeeEvent(eventCode);
+					this.receivedDate.setConstraint("");
+					this.receivedDate.setErrorMessage("");
+					financeDetail.setValueDate(this.receivedDate.getValue());
 					getFinFeeDetailListCtrl().doWriteBeanToComponents(financeDetail);
 				}
 			}
