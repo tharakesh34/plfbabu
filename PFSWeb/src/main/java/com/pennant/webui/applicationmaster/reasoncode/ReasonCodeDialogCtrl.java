@@ -190,7 +190,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 		this.reasonTypeID.setDescColumn("Description");
 		this.reasonTypeID.setValidateColumns(new String[] { "Code" });
 
-		this.reasonCategoryID.setMaxlength(8);
+		this.reasonCategoryID.setMaxlength(10);
 		this.reasonCategoryID.setMandatoryStyle(true);
 		this.reasonCategoryID.setModuleName("ReasonCategory");
 		this.reasonCategoryID.setValueColumn("Code");
