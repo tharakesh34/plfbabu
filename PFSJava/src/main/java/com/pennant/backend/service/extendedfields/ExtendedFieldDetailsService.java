@@ -245,7 +245,10 @@ public class ExtendedFieldDetailsService {
 
 		for (int i = 0; i < details.size(); i++) {
 			ExtendedFieldRender extendedFieldRender = details.get(i);
-			auditDetails.add(setExtendedFieldAuditData(extendedFieldRender, tranType, method, i + 1));
+			AuditDetail auditDetail = setExtendedFieldAuditData(extendedFieldRender, tranType, method, i + 1);
+			if (auditDetail != null) {
+				auditDetails.add(auditDetail);
+			}
 		}
 
 		logger.debug("Leaving");
@@ -257,8 +260,14 @@ public class ExtendedFieldDetailsService {
 		logger.debug(Literal.ENTERING);
 		int auditSeq = 1;
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		auditDetails.add(setExtendedFieldAuditData(extendedFieldRender, tranType, method, auditSeq));
-
+		
+		
+		AuditDetail auditDetail  = setExtendedFieldAuditData(extendedFieldRender, tranType, method, auditSeq);
+		if (auditDetail == null) {
+			return auditDetails;
+		}
+		
+		auditDetails.add(auditDetail);
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}

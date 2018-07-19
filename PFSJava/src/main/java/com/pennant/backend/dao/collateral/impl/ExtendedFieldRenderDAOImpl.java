@@ -84,7 +84,7 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 			sql.append(" t1  where not exists (select 1 from ");
 			sql.append(tableName);
 			sql.append("_temp");
-			sql.append(" where reference = t1.reference)) t where t.reference = :reference ");
+			sql.append(" where reference = t1.reference and seqno = t1.seqno)) t where t.reference = :reference ");
 		} else {
 			sql.append("select * from ");
 			sql.append(tableName);
