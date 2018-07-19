@@ -21,8 +21,9 @@ import jxl.read.biff.BiffException;
 
 public class LoadConfigTest {
 	final String[] CONFIG_LOCATIONS = new String[] { "applicationContext-core-interface.xml",
-			"applicationContext-db.xml", "applicationContext-daos.xml", "applicationContext-test-suite.xml",
-			"interfaceContext-core.xml", "interfaceContext.xml", "extensionContext.xml", "eod-batch-config-service.xml" };
+			"applicationContext-db.xml", "applicationContext-daos.xml", "applicationContext-txn.xml",
+			"applicationContext-test-suite.xml", "interfaceContext-core.xml", "interfaceContext.xml",
+			"extensionContext.xml", "eod-batch-config-service.xml" };
 	static ApplicationContext context;
 
 	@BeforeSuite
