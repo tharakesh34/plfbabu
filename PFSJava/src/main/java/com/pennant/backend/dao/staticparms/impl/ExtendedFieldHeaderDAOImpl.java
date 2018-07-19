@@ -63,6 +63,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 
@@ -122,14 +123,19 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	/**
 	 * Fetch by Module and Submodule names
 	 */
-	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(final String moduleName, String subModuleName,String event, String type) {
+	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String moduleName, String subModuleName, String event,
+			String type) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = null;
-
 		source = new MapSqlParameterSource();
-		source.addValue("ModuleName", moduleName.toUpperCase());
-		source.addValue("SubModuleName", subModuleName.toUpperCase());
+
+		if (App.DATABASE == Database.ORACLE) {
+			moduleName = moduleName.toUpperCase();
+			subModuleName = subModuleName.toUpperCase();
+		}
+		source.addValue("ModuleName", moduleName);
+		source.addValue("SubModuleName", subModuleName);
 		 
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,");
 		selectSql.append(" SubModuleName,Event, TabHeading, NumberOfColumns, ");
