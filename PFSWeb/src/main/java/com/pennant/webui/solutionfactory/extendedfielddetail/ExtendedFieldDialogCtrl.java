@@ -653,6 +653,11 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 			map.put("subModuleDesc", getExtendedFieldHeader().getSubModuleName());
 			//### 08-05-2018 End Development Iteam 81
 			// call the zul-file with the parameters packed in a map
+			
+			if(!extendedFieldDetail.isVisible()){
+				MessageUtil.showMessage(Labels.getLabel("info.ExtendedDetail_not_editable"));
+				return;
+			}
 			try {
 				Executions.createComponents(
 						"/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldDetailDialog.zul",

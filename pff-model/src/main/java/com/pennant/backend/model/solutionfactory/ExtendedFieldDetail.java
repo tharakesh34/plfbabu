@@ -120,6 +120,8 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 	private boolean allowInRule=false;
 	@XmlTransient
 	private String scriptlet;
+	private boolean visible=true;
+
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -353,5 +355,13 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 
 	public void setScriptlet(String scriptlet) {
 		this.scriptlet = scriptlet;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 }

@@ -304,6 +304,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			boolean isReadOnly, boolean newRecord, int i) throws ParseException {
 		logger.debug(Literal.ENTERING);
 
+		
+		if (!detail.isVisible()) {
+			return;
+		}
+		
 		if (rowWidth == 0) {
 			rowWidth = 220;//default
 		}
