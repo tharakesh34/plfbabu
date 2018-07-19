@@ -550,6 +550,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		}
 		if (object != null) {
 			amount = (BigDecimal) object;
+			amount = amount.multiply(new BigDecimal(100));
 		}
 		sampling.setFoirEligibility(amount);
 
@@ -560,6 +561,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		}
 		if (object != null) {
 			amount = (BigDecimal) object;
+			amount = amount.multiply(new BigDecimal(100));
 		}
 		sampling.setIrrEligibility(amount);
 
