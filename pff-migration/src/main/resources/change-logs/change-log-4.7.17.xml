@@ -11617,7 +11617,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
-	<changeSet id="285" author="Kesav">
+	<changeSet id="285" author="Kesav" dbms="postgresql,oracle">
 		<createTable tableName="DepositCheques_Temp">
 			<column name="Id"  type="bigint">
 				<constraints primaryKey="true" primaryKeyName="PK_DepositCheques_Temp_Id" nullable="false" />
@@ -11646,8 +11646,45 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" defaultValue="0" />
 		</createTable>
 	</changeSet>
-	
-	<changeSet id="286" author="Kesav">
+	<changeSet id="285" author="Kesav" dbms="mssql">
+		<createTable tableName="DepositCheques_Temp">
+			<column name="Id"  type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_DepositCheques_Temp_Id" nullable="false" />
+			</column>			
+			<column name="MovementId" type="bigint" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="ReceiptId" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="ReceiptMode" type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="Amount" type="decimal(18,0)" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="285_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table DepositCheques_Temp add constraint df_depocheq_t_movid default 0 for MovementId;
+			alter table DepositCheques_Temp add constraint df_depocheq_t_recid default 0 for ReceiptId;
+			alter table DepositCheques_Temp add constraint df_depocheq_t_amt default 0 for Amount;
+			alter table DepositCheques_Temp add constraint df_depocheq_t_ver default 0 for Version;
+			alter table DepositCheques_Temp add constraint df_depocheq_t_wrfid default 0 for WorkflowId;
+		</sql>
+	</changeSet>
+	<changeSet id="286" author="Kesav" dbms="postgresql,oracle">
 		<createTable tableName="DepositCheques">
 			<column name="Id"  type="bigint">
 				<constraints primaryKey="true" primaryKeyName="PK_DepositCheques_Id" nullable="false" />
@@ -11676,7 +11713,44 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" defaultValue="0" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="286" author="Kesav" dbms="mssql">
+		<createTable tableName="DepositCheques">
+			<column name="Id"  type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_DepositCheques_Id" nullable="false" />
+			</column>			
+			<column name="MovementId" type="bigint" >
+				<constraints nullable="false"/>
+			</column>			
+			<column name="ReceiptId" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ReceiptMode" type="varchar(8)" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="Amount" type="decimal(18,0)">
+				<constraints nullable="false"/>
+			</column>			
+			<column name="Version" type="int"  />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="286_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table DepositCheques add constraint df_depocheq_movid default 0 for MovementId;
+			alter table DepositCheques add constraint df_depocheq_recid default 0 for ReceiptId;
+			alter table DepositCheques add constraint df_depocheq_amt default 0 for Amount;
+			alter table DepositCheques add constraint df_depocheq_ver default 0 for Version;
+			alter table DepositCheques add constraint df_depocheq_wrfid default 0 for WorkflowId;
+		</sql>
+	</changeSet>
 	<changeSet id="287" author="Kesav">
 		<createView viewName="DepositCheques_AView" replaceIfExists="true">
 			Select 		T1.Id, T1.MovementId, T1.ReceiptId, T1.ReceiptMode, T1.Amount,
