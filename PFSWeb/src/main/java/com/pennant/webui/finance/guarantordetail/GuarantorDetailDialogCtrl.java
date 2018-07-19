@@ -777,7 +777,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.guranteePercentage.setFormat(PennantConstants.rateFormate2);
 		this.guranteePercentage.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.guranteePercentage.setScale(2);
-		this.mobileNo.setMaxlength(10);
+		this.mobileNo.setMaxlength(13);
 		this.emailId.setMaxlength(200);
 		this.remarks.setMaxlength(500);
 		this.guarantorProofName.setMaxlength(500);
