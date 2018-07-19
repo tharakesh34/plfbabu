@@ -81,6 +81,7 @@ import com.pennant.util.AgreementEngine;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -440,7 +441,16 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 					}
 				}
 			} catch (Exception e) {
-				MessageUtil.showError(e);
+				if (e instanceof IllegalArgumentException && (e.getMessage().equals("Document site does not exist.")
+						|| e.getMessage().equals("Template site does not exist.")
+						|| e.getMessage().equals("Template does not exist."))) {
+					//throw new Exception("Template does not exists.Please configure Template.");
+					AppException exception=new AppException("Template does not exists.Please configure Template.");
+					MessageUtil.showError(exception);
+				}else{
+					MessageUtil.showError(e);
+				}
+				
 			}
 		}else {
 
