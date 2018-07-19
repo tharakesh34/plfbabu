@@ -9860,6 +9860,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode,financeDetail.getCustomerDetails(), 
 				financeDetail.getFinanceTaxDetails(), branchCode);
 	}
+	
+	@Override
+	public List<FinanceScheduleDetail> getFinScheduleList(String finReference) {
+		return getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(finReference);
+	}
 
 	public ReasonDetailDAO getReasonDetailDAO() {
 		return reasonDetailDAO;

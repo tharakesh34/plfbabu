@@ -182,6 +182,7 @@ public interface FinanceDetailService {
 	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranid);
 	FinScheduleData getFinSchDataForReceipt(String finReference, String type);
 	List<FinanceStepPolicyDetail> getFinStepPolicyDetails(String finReference, String type, boolean isWIF);
+	List<FinanceScheduleDetail> getFinScheduleList(String finReference);
 	
 	// EOD Process Checking
 	int getProgressCountByCust(long custID);

@@ -2903,6 +2903,19 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			for (FinanceScheduleDetail schd : schdList) {
 				if(DateUtility.compare(valueDate, schd.getSchDate()) == 0){
 					calculatedAmt = schd.getClosingBalance();
+					if(calculatedAmt.compareTo(BigDecimal.ZERO) == 0){
+						List<FinanceScheduleDetail> apdSchdList = getFinanceDetailService().getFinScheduleList(finScheduleData.getFinanceMain().getFinReference());
+						for (FinanceScheduleDetail curSchd : apdSchdList) {
+							if(DateUtility.compare(valueDate, curSchd.getSchDate()) == 0){
+								calculatedAmt = curSchd.getClosingBalance();
+							}
+							if(DateUtility.compare(valueDate, curSchd.getSchDate()) <= 0){
+								break;
+							}
+							calculatedAmt = curSchd.getClosingBalance();
+						}
+						break;
+					}
 				}
 				if(DateUtility.compare(valueDate, schd.getSchDate()) <= 0){
 					break;
