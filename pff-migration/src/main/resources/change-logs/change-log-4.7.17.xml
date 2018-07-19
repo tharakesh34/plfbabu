@@ -11740,5 +11740,76 @@ UNION ALL
 		<createSequence sequenceName="SeqDepositCheques" startValue="1" incrementBy="1"/>
 	</changeSet>
 	
+		<changeSet id="291" author="Kesav">
+		<createView viewName="DepositCheques_AView" replaceIfExists="true">
+			Select 		T1.Id, T1.MovementId, T1.ReceiptId, T1.ReceiptMode, T1.Amount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+                        T2.Receiptpurpose, 
+                        T3.FavourNumber, T3.ReceivedDate, T3.FundingAc, T3.Remarks,
+                        T4.FinReference, 
+                        T5.CustShrtName,
+                        T6.PartnerBankCode, T6.PartnerBankName
+			From 		DepositCheques T1	
+            Inner Join 	finreceiptheader_Temp T2 On T2.ReceiptId = T1.ReceiptId
+            Inner Join 	finreceiptdetail_Temp T3 On T3.ReceiptId = T1.ReceiptId
+            Inner Join 	financemain T4 ON T2.reference = T4.finreference
+            Inner JOIN 	customers T5 ON T4.custid = T5.custid
+            Inner JoIN  PartnerBanks T6 ON T6.PartnerBankId = T3.FundingAc
+		</createView>
+	</changeSet>
+	
+	<changeSet id="292" author="Kesav">
+		<createView viewName="DepositCheques_TView" replaceIfExists="true">
+			Select 		T1.Id, T1.MovementId, T1.ReceiptId, T1.ReceiptMode, T1.Amount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+                        T2.Receiptpurpose, 
+                        T3.FavourNumber, T3.ReceivedDate, T3.FundingAc, T3.Remarks,
+                        T4.FinReference, 
+                        T5.CustShrtName,
+                        T6.PartnerBankCode, T6.PartnerBankName
+			From 		DepositCheques_Temp T1
+            Inner Join 	finreceiptheader_Temp T2 On T2.ReceiptId = T1.ReceiptId
+            Inner Join 	finreceiptdetail_Temp T3 On T3.ReceiptId = T1.ReceiptId
+            Inner Join 	financemain T4 ON T2.reference = T4.finreference
+            Inner JOIN 	customers T5 ON T4.custid = T5.custid
+            Inner JoIN  PartnerBanks T6 ON T6.PartnerBankId = T3.FundingAc
+		</createView>
+	</changeSet>
+	
+	<changeSet id="293" author="Kesav">
+		<createView viewName="DepositCheques_View" replaceIfExists="true">
+			Select 		T1.Id, T1.MovementId, T1.ReceiptId, T1.ReceiptMode, T1.Amount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+                        T2.Receiptpurpose, 
+                        T3.FavourNumber, T3.ReceivedDate, T3.FundingAc, T3.Remarks,
+                        T4.FinReference, 
+                        T5.CustShrtName,
+                        T6.PartnerBankCode, T6.PartnerBankName
+			From 		DepositCheques_Temp T1
+            Inner Join 	finreceiptheader_Temp T2 On T2.ReceiptId = T1.ReceiptId
+            Inner Join 	finreceiptdetail_Temp T3 On T3.ReceiptId = T1.ReceiptId
+            Inner Join 	financemain T4 ON T2.reference = T4.finreference
+            Inner JOIN 	customers T5 ON T4.custid = T5.custid
+            Inner JoIN  PartnerBanks T6 ON T6.PartnerBankId = T3.FundingAc
+			
+			Union All
+			
+			Select 		T1.Id, T1.MovementId, T1.ReceiptId, T1.ReceiptMode, T1.Amount,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+                        T2.Receiptpurpose, 
+                        T3.FavourNumber, T3.ReceivedDate, T3.FundingAc, T3.Remarks,
+                        T4.FinReference, 
+                        T5.CustShrtName,
+                        T6.PartnerBankCode, T6.PartnerBankName
+			From 		DepositCheques T1	
+            Inner Join 	finreceiptheader_Temp T2 On T2.ReceiptId = T1.ReceiptId
+            Inner Join 	finreceiptdetail_Temp T3 On T3.ReceiptId = T1.ReceiptId
+            Inner Join 	financemain T4 ON T2.reference = T4.finreference
+            Inner JOIN 	customers T5 ON T4.custid = T5.custid
+            Inner JoIN  PartnerBanks T6 ON T6.PartnerBankId = T3.FundingAc
+			WHERE NOT  (EXISTS ( SELECT 1 FROM DepositCheques_Temp WHERE DepositCheques_Temp.Id = T1.Id))		
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
 	
