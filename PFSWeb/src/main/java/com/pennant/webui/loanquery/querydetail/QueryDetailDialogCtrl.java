@@ -909,10 +909,11 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			}
 
 			if (queryDetail.getDocumentDetailsList() != null) {
+				Map<String,byte[]> attchments= new HashMap<>();
 				for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
-					mailTemplate.setLovDescAttachmentName(documentDetails.getDocName());
-					mailTemplate.setLovDescEmailAttachment(documentDetails.getDocImage());
+					attchments.put(documentDetails.getDocName(), documentDetails.getDocImage());
 				}
+				mailTemplate.setAttchments(attchments);
 			}
 
 			if (mailTemplate.isEmailTemplate()

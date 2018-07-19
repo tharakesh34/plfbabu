@@ -5,7 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.mail.BodyPart;
 import javax.mail.Flags;
@@ -209,9 +211,15 @@ public class MailUtility implements Serializable {
 			helper.setText(mailTemplate.getLovDescFormattedContent(), true);
 			helper.setTo(mailTemplate.getLovDescMailId());
 			helper.setSentDate(DateUtility.getSysDate());
-			if(mailTemplate.getLovDescEmailAttachment() != null){
-				helper.addAttachment(mailTemplate.getLovDescAttachmentName(), new ByteArrayResource(mailTemplate.getLovDescEmailAttachment()));
+			
+			Map<String,byte[]> attachments= mailTemplate.getAttchments();
+			Set<String> names = attachments.keySet();
+			for (String docName : names) {
+				if (attachments.get(docName) != null) {
+					helper.addAttachment(docName, new ByteArrayResource(attachments.get(docName)));
+				}
 			}
+			
 			
 			logger.debug("Number of Mails Sending :: "+ mailTemplate.getLovDescMailId().length);
 			transport = session.getTransport("smtp");

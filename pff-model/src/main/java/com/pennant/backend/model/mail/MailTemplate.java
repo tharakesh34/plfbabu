@@ -43,7 +43,9 @@
 
 package com.pennant.backend.model.mail;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -85,6 +87,7 @@ public class MailTemplate extends AbstractWorkflowEntity implements Entity {
 	private String[] lovDescMailId;
 	private String lovDescSMSContent;
 	private List<String> lovDescMobileNumbers;
+	private Map<String,byte[]> attchments = new HashMap<>();
 	
 
 	public boolean isNew() {
@@ -272,21 +275,6 @@ public class MailTemplate extends AbstractWorkflowEntity implements Entity {
 		this.lovDescMailId = lovDescMailId;
 	}
 
-	public byte[] getLovDescEmailAttachment() {
-    	return lovDescEmailAttachment;
-    }
-
-	public void setLovDescEmailAttachment(byte[] emailAttachment) {
-    	this.lovDescEmailAttachment = emailAttachment;
-    }
-
-	public String getLovDescAttachmentName() {
-    	return lovDescAttachmentName;
-    }
-
-	public void setLovDescAttachmentName(String attachmentName) {
-    	this.lovDescAttachmentName = attachmentName;
-    }
 
 	public String getLovDescSMSContent() {
 		return lovDescSMSContent;
@@ -302,6 +290,14 @@ public class MailTemplate extends AbstractWorkflowEntity implements Entity {
 
 	public void setLovDescMobileNumbers(List<String> lovDescMobileNumbers) {
 		this.lovDescMobileNumbers = lovDescMobileNumbers;
+	}
+
+	public Map<String,byte[]> getAttchments() {
+		return attchments;
+	}
+
+	public void setAttchments(Map<String,byte[]> attchments) {
+		this.attchments = attchments;
 	}
 	
 }

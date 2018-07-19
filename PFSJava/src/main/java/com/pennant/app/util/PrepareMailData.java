@@ -64,18 +64,20 @@ public class PrepareMailData implements Serializable {
 
 					// Mail Attachment
 					if (mailData.getMailAttachmentName() != null) {
-						mailTemplate.setLovDescAttachmentName(mailData.getMailAttachmentName());
+						Map<String,byte[]> attchments= new HashMap<>();
+
 						
 						connection = getDataSource().getConnection();
 						boolean attachment =  getReportUtil().generateExcelReport(PathUtil.MAIL_ATTACHMENT_REPORT, mailData.getMailAttachmentName(), "",
 								false, "", connection,appDate);
+						byte[] data = null;
 						if (attachment) {
 							attachmentPath = new File(PathUtil.getPath(PathUtil.MAIL_ATTACHMENT_REPORT) + mailData.getMailAttachmentName());
-							byte[] data = FileUtils.readFileToByteArray(attachmentPath);
-							mailTemplate.setLovDescEmailAttachment(data);
+							 data = FileUtils.readFileToByteArray(attachmentPath);
 						}
+						attchments.put(mailData.getMailAttachmentName(), data);
+						mailTemplate.setAttchments(attchments);
 					}
-
 					getMailUtility().sendMail(mailTemplate);
 				}
 			}

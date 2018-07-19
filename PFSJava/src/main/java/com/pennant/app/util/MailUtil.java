@@ -192,18 +192,19 @@ public class MailUtil extends MailUtility {
 					// Getting the Attached Documents
 					String ruleResString = (String) getRuleExecutionUtil().executeRule(
 							notifications.getRuleAttachment(), fieldsAndValues, null, RuleReturnType.STRING);
+					Map<String,byte[]> attchment= new HashMap<>();
 					if (StringUtils.isNotEmpty(ruleResString)) {
 						String[] documentCtgList = (ruleResString).split(",");
 						for (String docCtg : documentCtgList) {
 							if (documentslist != null) {
 								for (DocumentDetails documentDetails : documentslist) {
 									if (docCtg.equals(documentDetails.getDocCategory())) {
-										mailTemplate.setLovDescAttachmentName(documentDetails.getDocName());
-										mailTemplate.setLovDescEmailAttachment(documentDetails.getDocImage());
+										attchment.put(documentDetails.getDocName(), documentDetails.getDocImage());
 									}
 								}
 							}
 						}
+						mailTemplate.setAttchments(attchment);
 					}
 
 					if (mailTemplate.isEmailTemplate()
@@ -310,15 +311,16 @@ public class MailUtil extends MailUtility {
 					// Getting the Attached Documents
 					ruleResString = (String) ruleExecutionUtil.executeRule(notifications.getRuleAttachment(),
 							fieldsAndValues, null, RuleReturnType.STRING);
+					Map<String,byte[]> attchments= new HashMap<>();
 					if (StringUtils.isNotEmpty(ruleResString)) {
 						if (documentslist != null) {
 							for (DocumentDetails documentDetails : documentslist) {
 								if (ruleResString.equals(documentDetails.getDocCategory())) {
-									mailTemplate.setLovDescAttachmentName(documentDetails.getDocName());
-									mailTemplate.setLovDescEmailAttachment(documentDetails.getDocImage());
+									attchments.put(documentDetails.getDocName(), documentDetails.getDocImage());
 								}
 							}
 						}
+						mailTemplate.setAttchments(attchments);
 					}
 
 					if (mailTemplate.isEmailTemplate()
@@ -418,13 +420,13 @@ public class MailUtil extends MailUtility {
 					
 					// Getting the Attached Documents
 					String ruleResString = (String) this.ruleExecutionUtil.executeRule(notifications.getRuleAttachment(), fieldsAndValues, null, RuleReturnType.STRING);
+					Map<String,byte[]> attchments= new HashMap<>();
 					if (StringUtils.isNotEmpty(ruleResString)) {
 						String[] documentCtgList = (ruleResString).split(",");
 						for (String docCtg : documentCtgList) {
 							if (documentslist != null) {
 								for (DocumentDetails documentDetails : documentslist) {
 									if (docCtg.equals(documentDetails.getDocCategory())) {
-										mailTemplate.setLovDescAttachmentName(documentDetails.getDocName());
 										byte[] docImg = documentDetails.getDocImage();
 										if (docImg == null && documentDetails.getDocRefId() != Long.MIN_VALUE) {
 											DocumentManager docManager = documentManagerDAO.getById(documentDetails.getDocRefId());
@@ -432,11 +434,12 @@ public class MailUtil extends MailUtility {
 												docImg = docManager.getDocImage();
 											}
 										}
-										mailTemplate.setLovDescEmailAttachment(docImg);
+										attchments.put(documentDetails.getDocName(), docImg);
 									}
 								}
 							}
 						}
+						mailTemplate.setAttchments(attchments);
 					}
 					
 					if (mailTemplate.isEmailTemplate()
@@ -1060,14 +1063,14 @@ public class MailUtil extends MailUtility {
 					// Getting the Attached Documents
 					String ruleResString = (String) this.ruleExecutionUtil.executeRule(
 							notifications.getRuleAttachment(), fieldsAndValues, null, RuleReturnType.STRING);
+					Map<String,byte[]> attchments= new HashMap<>();
 					if (StringUtils.isNotEmpty(ruleResString)) {
 						String[] documentCtgList = (ruleResString).split(",");
 						for (String docCtg : documentCtgList) {
 							if (documentslist != null) {
 								for (DocumentDetails documentDetails : documentslist) {
 									if (docCtg.equals(documentDetails.getDocCategory())) {
-										mailTemplate.setLovDescAttachmentName(documentDetails.getDocName());
-										mailTemplate.setLovDescEmailAttachment(documentDetails.getDocImage());
+										attchments.put(documentDetails.getDocName(), documentDetails.getDocImage());
 									}
 								}
 							}
