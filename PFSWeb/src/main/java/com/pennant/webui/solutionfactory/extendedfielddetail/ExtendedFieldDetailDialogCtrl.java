@@ -1366,7 +1366,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}
 		
 		boolean isMaintainRcd = false;
-		if(!getExtendedFieldDetail().isNewRecord() && StringUtils.isEmpty(getExtendedFieldDetail().getRecordType())){
+		if(!getExtendedFieldDetail().isNewRecord()){
 			this.fieldType.setDisabled(true);
 			this.fieldLength.setReadonly(true);
 			this.fieldPrec.setReadonly(true);
