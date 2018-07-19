@@ -60,7 +60,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.service.applicationmaster.BranchService;
@@ -136,7 +135,6 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 		filters[0]= new Filter("BranchCode", getUserWorkspace().getLoggedInUser().getBranchCode(), Filter.OP_EQUAL);
 		this.branchCode.setFilters(filters);
 		this.branchCode.setVisible(false);
-		
 	}
 
 	/**
@@ -171,6 +169,7 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 		doRenderPage();
 		search();
 		button_DepositDetailsList_NewDepositDetails.setVisible(false);
+		print.setVisible(false);
 	}
 
 	/**
@@ -191,8 +190,7 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
-		fillComboBox(depositType, AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_CASH, PennantStaticListUtil.getDepositTypesListList(), "");
-		
+		fillComboBox(depositType, "", PennantStaticListUtil.getDepositTypesListList(), "");
 		search();
 	}
 

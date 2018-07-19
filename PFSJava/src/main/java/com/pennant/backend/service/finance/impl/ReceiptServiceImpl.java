@@ -57,8 +57,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.CashManagementConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
@@ -1371,13 +1371,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			
 			if (actualAmount.compareTo(BigDecimal.ZERO) > 0) {
 				DepositDetails depositDetail = getDepositDetailsDAO().getDepositDetails(
-						AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_CASH, receiptHeader.getUserDetails().getBranchCode(), "");
+						CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH, receiptHeader.getUserDetails().getBranchCode(), "");
 				if (depositDetail == null) {
 					depositDetail = new DepositDetails();
 					depositDetail.setActualAmount(actualAmount);
 					depositDetail.setTransactionAmount(BigDecimal.ZERO);
 					depositDetail.setReservedAmount(BigDecimal.ZERO);
-					depositDetail.setDepositType(AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_CASH);
+					depositDetail.setDepositType(CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH);
 					depositDetail.setBranchCode(receiptHeader.getUserDetails().getBranchCode());
 					depositDetail.setVersion(1);
 					depositDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);;

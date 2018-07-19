@@ -37,6 +37,7 @@ public class DepositMovements extends AbstractWorkflowEntity implements Entity {
 	private LoggedInUser userDetails;
 	
 	private List<CashDenomination> denominationList = null;
+	private List<DepositCheques> depositChequesList = null;
 
 	public DepositMovements() {
 		super();
@@ -211,5 +212,13 @@ public class DepositMovements extends AbstractWorkflowEntity implements Entity {
 
 	public void setBranchDesc(String branchDesc) {
 		this.branchDesc = branchDesc;
+	}
+
+	public List<DepositCheques> getDepositChequesList() {
+		return depositChequesList;
+	}
+
+	public void setDepositChequesList(List<DepositCheques> depositChequesList) {
+		this.depositChequesList = depositChequesList;
 	}
 }

@@ -63,9 +63,11 @@
 				</div>
 			</north>
 			<center border="none" autoscroll="true">
+				<div>
+				
 				<groupbox id="gb_basicDetails" sclass="gb-dialog">
 					<tablelayout columns="2" width="100%">
-						<tablechildren width="50%">
+						<tablechildren id="tablechildren_BasicDetails" width="50%">
 							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 								<columns>
 									<column width="15%" />
@@ -114,7 +116,7 @@
 							</grid>
 						</tablechildren>
 
-						<tablechildren>
+						<tablechildren id="tablechildren_Cash">
 							<grid sclass="GridLayoutNoBorder"
 								fixedLayout="true" style="border:0px">
 								<columns>
@@ -153,6 +155,23 @@
 						</tablechildren>
 					</tablelayout>
 				</groupbox>
+				<groupbox id="groupBox_Cheque">
+					<listbox id="listBoxChequeOrDD" fixedLayout="true" sizedByContent="true" span="true"
+						emptyMessage="${c:l('listbox.emptyMessage')}" width="99%" height="100%" multiple="false">
+						<listhead sizable="false">
+							<listheader id="listheader_DepositDetails_Check" sort="false" hflex="min" />
+							<listheader id="listheader_DepositDetails_FinReference" label="${c:l('listheader_DepositDetails_FinReference.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_DepositDetails_CustomerName" label="${c:l('listheader_DepositDetails_CustomerName.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_DepositDetails_No" label="${c:l('listheader_DepositDetails_No.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_DepositDetails_Date" label="${c:l('listheader_DepositDetails_Date.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_DepositDetails_BankName" label="${c:l('listheader_DepositDetails_BankName.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_DepositDetails_Amount" label="${c:l('listheader_DepositDetails_Amount.label')}" sort="false" hflex="min" align="right"/>
+							<listheader id="listheader_DepositDetails_ReceiptPurpose" label="${c:l('listheader_DepositDetails_ReceiptPurpose.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_DepositDetails_Remarks" label="${c:l('listheader_DepositDetails_Remarks.label')}" sort="false" hflex="min" />
+						</listhead>
+					</listbox>
+				</groupbox>
+				</div>
 			</center>
 			<south id="south" sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">

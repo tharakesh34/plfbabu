@@ -241,7 +241,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		StringBuilder sql = new StringBuilder("update DepositDetails");
 		sql.append(tableType.getSuffix());
 		
-		sql.append(" set DepositType = :DepositType, BranchCode = :BranchCode,");//
+		sql.append(" set DepositType = :DepositType, BranchCode = :BranchCode,");
 		if ("_Temp".equalsIgnoreCase(tableType.getSuffix())) {
 			sql.append(" ReservedAmount = :ReservedAmount,");
 		} else {

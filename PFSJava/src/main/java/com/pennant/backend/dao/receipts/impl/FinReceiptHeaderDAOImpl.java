@@ -262,5 +262,24 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 
 		return count;
 	}
+	
+	@Override
+	public void updateDepositProcessByReceiptID(long receiptID, boolean depositProcess, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+		source.addValue("DepositProcess", depositProcess);
+
+		StringBuilder updateSql = new StringBuilder(" Update FinReceiptHeader");
+		updateSql.append(type);
+		updateSql.append(" Set DepositProcess = :DepositProcess ");
+		updateSql.append(" Where ReceiptID = :ReceiptID");
+
+		logger.debug("selectSql: " + updateSql.toString());
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		
+		logger.debug("Leaving");
+	}
 
 }

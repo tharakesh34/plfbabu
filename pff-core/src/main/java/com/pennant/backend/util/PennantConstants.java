@@ -58,7 +58,7 @@ public class PennantConstants {
 		SeqMasterMapping,SeqUploadHeader,SeqChequeHeader,SeqChequeDetail,SeqFinTaxDetails,seqCollateralStructure, SeqFinExpenseDetails,
 		SeqFinExpenseMovements,SeqFinTypeExpense, SeqCaste, SeqReligion, SeqServiceTaskDetails, SeqManualDeviations,SeqProductDeviations,
 		SeqAuth_Limits,SeqAuth_Limit_Details,SeqPostingId,SeqBMTQueryCategories,SeqFinLiabilityReq,SeqReceiptNumber,SeqQUERYDETAIL,
-		SeqDepositDetails, SeqDepositMovements
+		SeqDepositDetails, SeqDepositMovements, SeqDepositCheques
 	}
 
 	public static boolean CITY_FREETEXT = false;

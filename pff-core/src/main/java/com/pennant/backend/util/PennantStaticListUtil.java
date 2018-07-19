@@ -20,6 +20,7 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.CashManagementConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.Property;
@@ -3559,12 +3560,12 @@ public class PennantStaticListUtil {
 		}
 		return finLVTCheckList;
 	}
+	
 	public static ArrayList<ValueLabel> getDepositTypesListList() {
 		if (depositTypesList == null) {
 			depositTypesList = new ArrayList<ValueLabel>();
-			depositTypesList.add(new ValueLabel(AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_CASH, Labels.getLabel("label_DepositType_Cash")));
-			depositTypesList.add(new ValueLabel(AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_CHEQUE, Labels.getLabel("label_DepositType_Cheque")));
-			depositTypesList.add(new ValueLabel(AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_DD, Labels.getLabel("label_DepositType_DD")));
+			depositTypesList.add(new ValueLabel(CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH, Labels.getLabel("label_DepositType_Cash")));
+			depositTypesList.add(new ValueLabel(CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CHEQUE_DD, Labels.getLabel("label_DepositType_Cheque_DD")));
 		}
 		return depositTypesList;
 	}

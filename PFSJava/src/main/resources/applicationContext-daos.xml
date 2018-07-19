@@ -11678,6 +11678,9 @@
 	<bean id="cashDenominationDAO" class="com.pennant.backend.dao.receipts.impl.CashDenominationDAOImpl"  parent="basisCodeDAO">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	<bean id="depositChequesDAO" class="com.pennant.backend.dao.receipts.impl.DepositChequesDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 
 	<bean id="depositDetailsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -11703,6 +11706,8 @@
 		<property name="cashDenominationDAO" ref="cashDenominationDAO" />
 		<property name="cashManagementAccounting" ref="cashManagementAccounting" />
 		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="depositChequesDAO" ref="depositChequesDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 	</bean>
 	
 	<bean id="cashManagementAccounting" class="com.pennant.backend.service.cashmanagement.impl.CashManagementAccounting"  >

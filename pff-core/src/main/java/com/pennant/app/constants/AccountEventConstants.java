@@ -113,8 +113,5 @@ public class AccountEventConstants {
 	
 	//Deposit Details Events
 	public static final String	ACCEVENT_CASHTOBANK				= "C2B";
-	public static final String	ACCEVENT_DEPOSIT_TYPE_CASH  	= "CASH";
-	public static final String	ACCEVENT_DEPOSIT_TYPE_CHEQUE  	= "CHEQUE";
-	public static final String	ACCEVENT_DEPOSIT_TYPE_DD  		= "DD";
-
+	public static final String	ACCEVENT_CHEQUETOBANK			= "CHQ2B";
 }

@@ -56,6 +56,7 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zkmax.zul.Tablechildren;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -66,7 +67,9 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.CashDenomination;
+import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -79,11 +82,10 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-	
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CashManagement/BranchCashToBankRequest/DepositDetailsDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/CashManagement/BranchCashToBankRequest/DepositDetailsDialog.zul
+ * file. <br>
  */
 public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
@@ -102,6 +104,8 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	protected Listbox							listBox_DenominationsList;
 	protected Listbox							listBoxPosting;
 	protected Tablechildren						tablechildren_CashDenominations;
+	protected Groupbox							groupBox_Cheque;
+	protected Listbox							listBoxChequeOrDD;
 
 	private DepositMovements					depositMovements;
 
@@ -334,7 +338,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 	private void doFillDenominationsList(List<CashDenomination> denominations) {
 		logger.debug(Literal.ENTERING);
-		
+
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		setCashDenominations(denominations);
 		boolean isReadOnly = true;
@@ -436,7 +440,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		lc.setParent(item);
 
 		this.listBox_DenominationsList.appendChild(item);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -488,42 +492,96 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	public void doWriteBeanToComponents(DepositMovements depositMovements) {
 		logger.debug(Literal.ENTERING);
 
-		this.transactionAmount.setValue(PennantApplicationUtil.formateAmount(depositMovements.getReservedAmount(), PennantConstants.defaultCCYDecPos));
-		this.partnerBankId.setValue(String.valueOf(depositMovements.getPartnerBankId()), depositMovements.getPartnerBankName());
+		this.transactionAmount.setValue(PennantApplicationUtil.formateAmount(depositMovements.getReservedAmount(),
+				PennantConstants.defaultCCYDecPos));
+		this.partnerBankId.setValue(String.valueOf(depositMovements.getPartnerBankId()),
+				depositMovements.getPartnerBankName());
 		this.transactionDate.setValue(depositMovements.getTransactionDate());
 		this.depositSlipNumber.setValue(depositMovements.getDepositSlipNumber());
-		
+
 		// Posting Details Rendering
 		if (depositMovements.getLinkedTranId() > 0) {
-			List<ReturnDataSet> postings = this.depositDetailsService.getPostingsByLinkTransId(depositMovements.getLinkedTranId());
+			List<ReturnDataSet> postings = this.depositDetailsService
+					.getPostingsByLinkTransId(depositMovements.getLinkedTranId());
 			doFillPostings(postings);
 			this.listBoxPosting.setHeight(getListBoxHeight(6));
 		}
-		
+
 		if (CollectionUtils.isNotEmpty(depositMovements.getDenominationList())) {
 			doFillDenominationsList(depositMovements.getDenominationList());
+			this.groupBox_Cheque.setVisible(false);
+			this.tablechildren_CashDenominations.setVisible(true);
 		} else {
-			//doFillDenominationsList(prepareCashDenominations(AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_CASH));
+			this.tablechildren_CashDenominations.setVisible(false);
+			this.groupBox_Cheque.setVisible(true);
+
+			doFillChequeDetails(depositMovements.getDepositChequesList());
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Method for Showing Posting Details which are going to be reversed
+	 * 
+	 * @param linkedTranId
+	 */
+	private void doFillChequeDetails(List<DepositCheques> depositChequesList) {
+		logger.debug("Entering");
+
+		if (CollectionUtils.isNotEmpty(depositChequesList)) {
+			Listitem item;
+			for (DepositCheques depositCheque : depositChequesList) {
+				item = new Listitem();
+				Listcell lc = null;
+
+				//FinReference
+				lc = new Listcell(depositCheque.getFinReference());
+				lc.setParent(item);
+				//Customer Name
+				lc = new Listcell(depositCheque.getCustShrtName());
+				lc.setParent(item);
+				//Cheque/DD No
+				lc = new Listcell(depositCheque.getFavourNumber());
+				lc.setParent(item);
+				//Cheque/DD Date
+				lc = new Listcell(DateUtility.formatToLongDate(depositCheque.getReceivedDate()));
+				lc.setParent(item);
+				//Bank Name
+				lc = new Listcell(depositCheque.getPartnerBankCode());
+				lc.setParent(item);
+				//Amount
+				lc = new Listcell(PennantAppUtil.amountFormate(depositCheque.getAmount(), PennantConstants.defaultCCYDecPos));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				//Receipt Purpose
+				lc = new Listcell(depositCheque.getReceiptpurpose());
+				lc.setParent(item);
+				lc = new Listcell(depositCheque.getRemarks());
+				lc.setParent(item);
+
+				this.listBoxChequeOrDD.appendChild(item);
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method for Showing Posting Details which are going to be reversed
+	 * 
 	 * @param linkedTranId
 	 */
 	private void doFillPostings(List<ReturnDataSet> postingList) {
 		logger.debug("Entering");
-		
-		if(postingList != null && !postingList.isEmpty()){
+
+		if (CollectionUtils.isNotEmpty(postingList)) {
 			Listitem item;
 			for (ReturnDataSet returnDataSet : postingList) {
 				item = new Listitem();
 				Listcell lc = new Listcell();
-				if(returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)){
+				if (AccountConstants.TRANTYPE_CREDIT.equals(returnDataSet.getDrOrCr())) {
 					lc = new Listcell(Labels.getLabel("common.Debit"));
-				}else if(returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_DEBIT)){
+				} else if (AccountConstants.TRANTYPE_DEBIT.equals(returnDataSet.getDrOrCr())) {
 					lc = new Listcell(Labels.getLabel("common.Credit"));
 				}
 				lc.setParent(item);
@@ -544,6 +602,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				lc.setParent(item);
 				lc = new Listcell("");
 				lc.setParent(item);
+				
 				this.listBoxPosting.appendChild(item);
 			}
 		}
@@ -601,12 +660,12 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-		
+
 		this.transactionDate.setErrorMessage("");
 		this.transactionAmount.setErrorMessage("");
 		this.depositSlipNumber.setErrorMessage("");
 		this.partnerBankId.setErrorMessage("");
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 

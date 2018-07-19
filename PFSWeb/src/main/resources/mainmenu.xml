@@ -888,7 +888,7 @@
 				rightName="menuItem_Legal_LegalDetail_Enquiry" />
 			<!-- Deposit Movements -->
 			<menuItem id="menu_Item_DepositMovementsEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/DepositMovementsList.zul?enqiryModule=Y"
-				rightName="menuItem_Legal_LegalDetail_Enquiry" />
+				rightName="menuItem_DepositMovements_Enquiry" />
 		</menu>
 		<menu id="menu_Category_Verification_Enquiry">
 			<menuItem id="menu_Item_FieldInvestigation_Enquiry"

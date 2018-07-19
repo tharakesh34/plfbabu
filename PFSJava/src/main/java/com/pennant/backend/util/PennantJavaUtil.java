@@ -214,6 +214,7 @@ import com.pennant.backend.model.finance.CashDenomination;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
+import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.EtihadCreditBureauDetail;
@@ -2383,6 +2384,9 @@ public class PennantJavaUtil {
 		//CashDenominations
 		ModuleUtil.register("CashDenomination", new ModuleMapping("CashDenominations", CashDenomination.class,
 				new String[] { "CashDenominations", "CashDenominations_AView" }, null, new String[] { "ModuleCode" }, null, 400));
+		//DepositCheques
+		ModuleUtil.register("DepositCheques", new ModuleMapping("DepositCheques", DepositCheques.class,
+				new String[] { "DepositCheques", "DepositCheques_AView" }, null, new String[] { "ReceiptMode" }, null, 400));
 
 	}
 

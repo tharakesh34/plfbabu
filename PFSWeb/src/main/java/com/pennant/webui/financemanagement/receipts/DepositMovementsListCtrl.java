@@ -99,7 +99,7 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 	protected Listbox						sortOperator_TransactionDate;
 
 	private transient DepositDetailsService	depositDetailsService;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -114,19 +114,16 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 		super.tableName = "DepositMovements_AView";
 		super.queueTableName = "DepositMovements_AView";
 		super.enquiryTableName = "DepositMovements_View";
-		
+
 		this.transactionDate.setFormat(PennantConstants.dateFormat);
 	}
-	
+
 	@Override
 	protected void doAddFilters() {
-		
 		super.doAddFilters();
-		
 		Filter[] filters = new Filter[1];
-		filters[0]= new Filter("ReceiptId", 0, Filter.OP_EQUAL);
+		filters[0] = new Filter("ReceiptId", 0, Filter.OP_EQUAL);
 		this.searchObject.addFilters(filters);
-		
 	}
 
 	/**
@@ -137,7 +134,7 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 	 */
 	public void onCreate$window_DepositMovementsList(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Set the page level components.
 		setPageComponents(window_DepositMovementsList, borderLayout_DepositMovementsList, listBoxDepositMovements, pagingDepositMovementsList);
 		setItemRender(new DepositMovementsListModelItemRenderer());
@@ -145,8 +142,7 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 		// Register buttons and fields.
 		registerButton(button_DepositMovementsList_DepositMovementsSearch);
 		registerButton(button_DepositMovementsList_NewDepositMovements, "button_DepositMovementsList_NewDepositMovements", true);
-		
-		
+
 		registerField("depositSlipNumber", listheader_DepositSlipNumber, SortOrder.NONE, depositSlipNumber, sortOperator_DepositSlipNumber, Operators.STRING);
 		registerField("TransactionDate", listheader_TransactionDate, SortOrder.NONE, transactionDate, sortOperator_TransactionDate, Operators.DATE);
 		registerField("MovementId");
@@ -154,11 +150,12 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 		registerField("BranchDesc");
 		registerField("PartnerBankName");
 		registerField("ReservedAmount");
-		
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();
-		button_DepositMovementsList_NewDepositMovements.setVisible(false);
+		this.button_DepositMovementsList_NewDepositMovements.setVisible(false);
+		print.setVisible(false);
 	}
 
 	/**
@@ -192,22 +189,22 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 
 	public void onDepositMovementsItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxDepositMovements.getSelectedItem();
 		final long movementId = (long) selectedItem.getAttribute("movementId");
-		DepositMovements depositMovements = depositDetailsService.getDepositMovementsById(movementId);
+		DepositMovements depositMovements = depositDetailsService.getApprovedDepositMovementsById(movementId);
 
 		if (depositMovements == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
-		} 
-		StringBuffer whereCond= new StringBuffer();
+		}
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  MovementId = ");
-		whereCond.append( depositMovements.getMovementId());
+		whereCond.append(depositMovements.getMovementId());
 		whereCond.append(" AND  version = ");
 		whereCond.append(depositMovements.getVersion());
-		
+
 		if (doCheckAuthority(depositMovements, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && depositMovements.getWorkflowId() == 0) {
@@ -217,10 +214,10 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -233,7 +230,7 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("depositMovements", depositMovements);
 		arg.put("depositMovementsListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/DepositMovementsDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -263,7 +260,7 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

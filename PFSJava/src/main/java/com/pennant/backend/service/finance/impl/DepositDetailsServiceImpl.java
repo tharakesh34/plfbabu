@@ -49,14 +49,18 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.CashManagementConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.receipts.CashDenominationDAO;
+import com.pennant.backend.dao.receipts.DepositChequesDAO;
 import com.pennant.backend.dao.receipts.DepositDetailsDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.CashDenomination;
+import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -70,19 +74,20 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 
 public class DepositDetailsServiceImpl extends GenericService<DepositDetails> implements DepositDetailsService {
-	private static final Logger logger = Logger.getLogger(DepositDetailsServiceImpl.class);
+	private static final Logger			logger	= Logger.getLogger(DepositDetailsServiceImpl.class);
 
-	
 	private AuditHeaderDAO				auditHeaderDAO;
 	private DepositDetailsDAO			depositDetailsDAO;
 	private CashDenominationDAO			cashDenominationDAO;
 	private CashManagementAccounting	cashManagementAccounting;
-	private PostingsDAO 				postingsDAO;
+	private PostingsDAO					postingsDAO;
+	private DepositChequesDAO			depositChequesDAO;
+	private FinReceiptHeaderDAO			finReceiptHeaderDAO;
 
 	public DepositDetailsServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -94,7 +99,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-	
+
 	public DepositDetailsDAO getDepositDetailsDAO() {
 		return depositDetailsDAO;
 	}
@@ -118,7 +123,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	public void setCashManagementAccounting(CashManagementAccounting cashManagementAccounting) {
 		this.cashManagementAccounting = cashManagementAccounting;
 	}
-	
+
 	public PostingsDAO getPostingsDAO() {
 		return postingsDAO;
 	}
@@ -126,16 +131,29 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
 	}
-	
+
+	public DepositChequesDAO getDepositChequesDAO() {
+		return depositChequesDAO;
+	}
+
+	public void setDepositChequesDAO(DepositChequesDAO depositChequesDAO) {
+		this.depositChequesDAO = depositChequesDAO;
+	}
+
+	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {
+		return finReceiptHeaderDAO;
+	}
+
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTCastes/BMTCastes_Temp by using CasteDAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using CasteDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtBMTCastes by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table BMTCastes/BMTCastes_Temp by
+	 * using CasteDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by
+	 * using CasteDAO's update method 3) Audit the record in to AuditHeader and AdtBMTCastes by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -153,7 +171,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		DepositDetails depositDetails = (DepositDetails) auditHeader.getAuditDetail().getModelData();
 		TableType tableType = TableType.MAIN_TAB;
@@ -169,33 +187,44 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		} else {
 			getDepositDetailsDAO().update(depositDetails, tableType);
 		}
-		
+
 		// DepositMovements List
 		if (CollectionUtils.isNotEmpty(depositDetails.getDepositMovementsList())) {
 			List<AuditDetail> movementsList = depositDetails.getAuditDetailMap().get("DepositMovements");
 			movementsList = processMovementsList(movementsList, tableType.getSuffix(), depositDetails.getDepositId());
 			auditDetails.addAll(movementsList);
-			
+
 			// DenominationList
 			for (int i = 0; i < movementsList.size(); i++) {
 				DepositMovements movements = (DepositMovements) movementsList.get(i).getModelData();
+
 				if (CollectionUtils.isNotEmpty(movements.getDenominationList())) {
 					List<AuditDetail> denominations = depositDetails.getAuditDetailMap().get("Denominations");
-					denominations = processCashDenominationsList(denominations, tableType.getSuffix(), movements.getMovementId());
+					denominations = processCashDenominationsList(denominations, tableType.getSuffix(),
+							movements.getMovementId());
 					auditDetails.addAll(denominations);
 				}
-				break;	// We have only one movement, so we are breaking the loop
+
+				if (CollectionUtils.isNotEmpty(movements.getDepositChequesList())) {
+					List<AuditDetail> depositChequesAuditList = depositDetails.getAuditDetailMap()
+							.get("DepositCheques");
+					depositChequesAuditList = processDepositChequesList(depositChequesAuditList, tableType.getSuffix(),
+							movements.getMovementId());
+					auditDetails.addAll(depositChequesAuditList);
+				}
+
+				break; // We have only one movement, so we are breaking the loop
 			}
 		}
-				
+
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
 
 		return auditHeader;
 	}
-	
+
 	private List<AuditDetail> processMovementsList(List<AuditDetail> auditDetails, String type, long depositId) {
 		logger.debug("Entering");
 		boolean saveRecord = false;
@@ -247,7 +276,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 					updateRecord = true;
 				}
 			}
-			
+
 			if (approveRec) {
 				rcdType = depositMovement.getRecordType();
 				recordStatus = depositMovement.getRecordStatus();
@@ -269,13 +298,14 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			}
 			auditDetails.get(i).setModelData(depositMovement);
 		}
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditDetails;
 	}
-	
-	private List<AuditDetail> processCashDenominationsList(List<AuditDetail> auditDetails, String type, long movementId) {
+
+	private List<AuditDetail> processCashDenominationsList(List<AuditDetail> auditDetails, String type,
+			long movementId) {
 		logger.debug("Entering");
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -354,13 +384,93 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		return auditDetails;
 	}
 
+	private List<AuditDetail> processDepositChequesList(List<AuditDetail> auditDetails, String type, long movementId) {
+		logger.debug("Entering");
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+		for (int i = 0; i < auditDetails.size(); i++) {
+			DepositCheques depositCheques = (DepositCheques) auditDetails.get(i).getModelData();
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (StringUtils.isEmpty(type)) {
+				approveRec = true;
+				depositCheques.setRoleCode("");
+				depositCheques.setNextRoleCode("");
+				depositCheques.setTaskId("");
+				depositCheques.setNextTaskId("");
+				depositCheques.setWorkflowId(0);
+			}
+			depositCheques.setMovementId(movementId);
+			if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(depositCheques.getRecordType())) {
+				deleteRecord = true;
+			} else if (depositCheques.isNewRecord()) {
+				saveRecord = true;
+				if (PennantConstants.RCD_ADD.equalsIgnoreCase(depositCheques.getRecordType())) {
+					depositCheques.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (PennantConstants.RCD_DEL.equalsIgnoreCase(depositCheques.getRecordType())) {
+					depositCheques.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (PennantConstants.RCD_UPD.equalsIgnoreCase(depositCheques.getRecordType())) {
+					depositCheques.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+			} else if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(depositCheques.getRecordType())) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(depositCheques.getRecordType())) {
+				updateRecord = true;
+			} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(depositCheques.getRecordType())) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (depositCheques.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+
+			if (approveRec) {
+				rcdType = depositCheques.getRecordType();
+				recordStatus = depositCheques.getRecordStatus();
+				depositCheques.setRecordType("");
+				depositCheques.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			if (saveRecord) {
+				depositChequesDAO.save(depositCheques, type);
+				if (approveRec) {
+					finReceiptHeaderDAO.updateDepositProcessByReceiptID(depositCheques.getReceiptId(), false, "_Temp");
+				}
+			}
+			if (updateRecord) {
+				depositChequesDAO.update(depositCheques, type);
+			}
+			if (deleteRecord) {
+				depositChequesDAO.delete(depositCheques, type);
+			}
+			if (approveRec) {
+				depositCheques.setRecordType(rcdType);
+				depositCheques.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(depositCheques);
+		}
+
+		logger.debug("Leaving");
+
+		return auditDetails;
+	}
+
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTCastes by using CasteDAO's delete method with type
-	 * as Blank 3) Audit the record in to AuditHeader and AdtBMTCastes by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTCastes by using CasteDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtBMTCastes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -377,35 +487,45 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		}
 		DepositDetails depositDetails = (DepositDetails) auditHeader.getAuditDetail().getModelData();
 		getDepositDetailsDAO().delete(depositDetails, TableType.MAIN_TAB);
-		auditHeader.setAuditDetails(processChildsAudit(deleteChilds(depositDetails, "", auditHeader.getAuditTranType())));
+		auditHeader
+				.setAuditDetails(processChildsAudit(deleteChilds(depositDetails, "", auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditHeader;
 	}
-	
+
 	private List<AuditDetail> deleteChilds(DepositDetails depositDetails, String tableType, String auditTranType) {
 		logger.debug("Entering");
-		
+
 		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
 
 		// Fees
 		if (CollectionUtils.isNotEmpty(depositDetails.getDepositMovementsList())) {
-			auditDetailsList.addAll(deleteDepositMovements(depositDetails.getDepositMovementsList(), tableType, auditTranType, depositDetails.getDepositId()));
-			
+			auditDetailsList.addAll(deleteDepositMovements(depositDetails.getDepositMovementsList(), tableType,
+					auditTranType, depositDetails.getDepositId()));
+
 			for (DepositMovements movements : depositDetails.getDepositMovementsList()) {
+				//Denominations
 				if (CollectionUtils.isNotEmpty(movements.getDenominationList())) {
-					auditDetailsList.addAll(deleteCashDenomination(movements.getDenominationList(), tableType, auditTranType, movements.getMovementId()));
+					auditDetailsList.addAll(deleteCashDenomination(movements.getDenominationList(), tableType,
+							auditTranType, movements.getMovementId()));
 				}
-				break;	// We have only one movement, so we are breaking the loop
+				//Deposit Cheques
+				if (CollectionUtils.isNotEmpty(movements.getDepositChequesList())) {
+					auditDetailsList.addAll(deleteDepositCheques(movements.getDepositChequesList(), tableType,
+							auditTranType, movements.getMovementId()));
+				}
+				break; // We have only one movement, so we are breaking the loop
 			}
 		}
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditDetailsList;
 	}
+
 	private List<AuditDetail> processChildsAudit(List<AuditDetail> list) {
 		logger.debug("Entering");
 
@@ -424,6 +544,8 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 				rcdType = ((DepositMovements) object).getRecordType();
 			} else if (object instanceof CashDenomination) {
 				rcdType = ((CashDenomination) object).getRecordType();
+			} else if (object instanceof DepositCheques) {
+				rcdType = ((DepositCheques) object).getRecordType();
 			}
 
 			if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(rcdType)) {
@@ -439,41 +561,47 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		}
 
 		logger.debug("Leaving");
-		
+
 		return auditDetails;
 	}
-	
-	private List<AuditDetail> deleteDepositMovements(List<DepositMovements> denominationsList, String tableType, String auditTranType, long depositId) {
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		
-		if (denominationsList != null && !denominationsList.isEmpty()) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new DepositMovements(), new DepositMovements().getExcludeFields());
-			for (int i = 0; i < denominationsList.size(); i++) {
-				DepositMovements movement = denominationsList.get(i);
-				if (StringUtils.isNotEmpty(movement.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], movement.getBefImage(), movement));
-				}
-			}
-			
-			this.depositDetailsDAO.deleteMovementsByDepositId(depositId, tableType);
-		}
-		
-		return auditDetails;
-		
-	}
-	
-	private List<AuditDetail> deleteCashDenomination(List<CashDenomination> denominationsList, String tableType, String auditTranType, long movementId) {
+
+	private List<AuditDetail> deleteDepositMovements(List<DepositMovements> denominationsList, String tableType,
+			String auditTranType, long depositId) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		if (denominationsList != null && !denominationsList.isEmpty()) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new CashDenomination(), new CashDenomination().getExcludeFields());
+			String[] fields = PennantJavaUtil.getFieldDetails(new DepositMovements(),
+					new DepositMovements().getExcludeFields());
 			for (int i = 0; i < denominationsList.size(); i++) {
-				CashDenomination finTypeFees = denominationsList.get(i);
-				if (StringUtils.isNotEmpty(finTypeFees.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finTypeFees.getBefImage(), finTypeFees));
+				DepositMovements movement = denominationsList.get(i);
+				if (StringUtils.isNotEmpty(movement.getRecordType()) || StringUtils.isEmpty(tableType)) {
+					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], movement.getBefImage(),
+							movement));
 				}
 			}
-			
+
+			this.depositDetailsDAO.deleteMovementsByDepositId(depositId, tableType);
+		}
+
+		return auditDetails;
+
+	}
+
+	private List<AuditDetail> deleteCashDenomination(List<CashDenomination> denominationsList, String tableType,
+			String auditTranType, long movementId) {
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+		if (denominationsList != null && !denominationsList.isEmpty()) {
+			String[] fields = PennantJavaUtil.getFieldDetails(new CashDenomination(),
+					new CashDenomination().getExcludeFields());
+			for (int i = 0; i < denominationsList.size(); i++) {
+				CashDenomination denomination = denominationsList.get(i);
+				if (StringUtils.isNotEmpty(denomination.getRecordType()) || StringUtils.isEmpty(tableType)) {
+					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							denomination.getBefImage(), denomination));
+				}
+			}
+
 			this.cashDenominationDAO.deleteByMovementId(movementId, tableType);
 		}
 
@@ -481,9 +609,30 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 
 	}
 
+	private List<AuditDetail> deleteDepositCheques(List<DepositCheques> depositChequesList, String tableType,
+			String auditTranType, long movementId) {
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+		if (depositChequesList != null && !depositChequesList.isEmpty()) {
+			String[] fields = PennantJavaUtil.getFieldDetails(new DepositCheques(),
+					new DepositCheques().getExcludeFields());
+			for (int i = 0; i < depositChequesList.size(); i++) {
+				DepositCheques depositCheques = depositChequesList.get(i);
+				if (StringUtils.isNotEmpty(depositCheques.getRecordType()) || StringUtils.isEmpty(tableType)) {
+					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							depositCheques.getBefImage(), depositCheques));
+				}
+			}
+
+			this.depositChequesDAO.deleteByMovementId(movementId, tableType);
+		}
+
+		return auditDetails;
+
+	}
+
 	/**
-	 * getCasteById fetch the details by using CasteDAO's
-	 * getCasteById method.
+	 * getCasteById fetch the details by using CasteDAO's getCasteById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -494,12 +643,17 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	@Override
 	public DepositDetails getDepositDetailsById(long depositId) {
 		DepositDetails depositDetails = getDepositDetailsDAO().getDepositDetailsById(depositId, "_View");
-		
+
 		if (depositDetails != null && StringUtils.isNotBlank(depositDetails.getRecordType())) {
-			DepositMovements depositMovements = getDepositDetailsDAO().getDepositMovementsByDepositId(depositId, "_TView");
+			DepositMovements depositMovements = getDepositDetailsDAO().getDepositMovementsByDepositId(depositId,
+					"_TView");
 			if (depositMovements != null) {
-				List<CashDenomination> denominationsList = getCashDenominationDAO().getCashDenominationList(depositMovements.getMovementId(), "_TView");
+				List<CashDenomination> denominationsList = getCashDenominationDAO()
+						.getCashDenominationList(depositMovements.getMovementId(), "_TView");
 				depositMovements.setDenominationList(denominationsList);
+				List<DepositCheques> chequesList = getDepositChequesDAO()
+						.getDepositChequesList(depositMovements.getMovementId(), "_TView");
+				depositMovements.setDepositChequesList(chequesList);
 			}
 			depositDetails.setDepositMovements(depositMovements);
 		}
@@ -507,9 +661,8 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	}
 
 	/**
-	 * getApprovedCasteById fetch the details by using CasteDAO's
-	 * getCasteById method . with parameter id and type as blank. it
-	 * fetches the approved records from the BMTCastes.
+	 * getApprovedCasteById fetch the details by using CasteDAO's getCasteById method . with parameter id and type as
+	 * blank. it fetches the approved records from the BMTCastes.
 	 * 
 	 * @param id
 	 *            (String)
@@ -520,19 +673,14 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getCasteDAO().delete with parameters caste,"" b) NEW
-	 * Add new record in to main table by using getCasteDAO().save with
-	 * parameters caste,"" c) EDIT Update record in the main table by
-	 * using getCasteDAO().update with parameters caste,"" 3) Delete
-	 * the record from the workFlow table by using getCasteDAO().delete
-	 * with parameters caste,"_Temp" 4) Audit the record in to AuditHeader
-	 * and AdtBMTCastes by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and AdtBMTCastes by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getCasteDAO().delete with parameters
+	 * caste,"" b) NEW Add new record in to main table by using getCasteDAO().save with parameters caste,"" c) EDIT
+	 * Update record in the main table by using getCasteDAO().update with parameters caste,"" 3) Delete the record from
+	 * the workFlow table by using getCasteDAO().delete with parameters caste,"_Temp" 4) Audit the record in to
+	 * AuditHeader and AdtBMTCastes by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
+	 * to AuditHeader and AdtBMTCastes by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -554,19 +702,26 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		DepositDetails depositDetails = new DepositDetails();
 		BeanUtils.copyProperties((DepositDetails) auditHeader.getAuditDetail().getModelData(), depositDetails);
-		
+
 		//generate Accounting
 		AEEvent aeEvent = null;
-		if (AccountEventConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(depositDetails.getDepositType())) {
-			aeEvent = this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_CASHTOBANK, 
-					depositDetails.getUserDetails().getBranchCode(), depositDetails.getBranchCode(), 
-					depositDetails.getReservedAmount(), depositDetails.getDepositMovementsList().get(0).getPartnerBankId(), depositDetails.getId(), null);
+		if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(depositDetails.getDepositType())) {
+			aeEvent = this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_CASHTOBANK,
+					depositDetails.getUserDetails().getBranchCode(), depositDetails.getBranchCode(),
+					depositDetails.getReservedAmount(),
+					depositDetails.getDepositMovementsList().get(0).getPartnerBankId(), depositDetails.getId(), null);
+		} else if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CHEQUE_DD.equals(depositDetails.getDepositType())) {
+			aeEvent = this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_CHEQUETOBANK,
+					depositDetails.getUserDetails().getBranchCode(), depositDetails.getBranchCode(),
+					depositDetails.getReservedAmount(),
+					depositDetails.getDepositMovementsList().get(0).getPartnerBankId(), depositDetails.getId(), null);
 		}
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(depositDetails.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(depositDetailsDAO.getDepositDetailsById(depositDetails.getDepositId(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(depositDetailsDAO.getDepositDetailsById(depositDetails.getDepositId(), ""));
 		}
-		
+
 		if (PennantConstants.RECORD_TYPE_DEL.equals(depositDetails.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
 			auditDetails.addAll(processChildsAudit(deleteChilds(depositDetails, "", tranType)));
@@ -587,7 +742,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 				depositDetails.setRecordType("");
 				getDepositDetailsDAO().update(depositDetails, TableType.MAIN_TAB);
 			}
-			
+
 			// DepositMovements List
 			if (CollectionUtils.isNotEmpty(depositDetails.getDepositMovementsList())) {
 				List<AuditDetail> movementsList = depositDetails.getAuditDetailMap().get("DepositMovements");
@@ -596,7 +751,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 				}
 				movementsList = processMovementsList(movementsList, "", depositDetails.getDepositId());
 				auditDetails.addAll(movementsList);
-				
+
 				// DenominationList
 				for (int i = 0; i < movementsList.size(); i++) {
 					DepositMovements movements = (DepositMovements) movementsList.get(i).getModelData();
@@ -607,43 +762,49 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 						denominations = processCashDenominationsList(denominations, "", movements.getMovementId());
 						auditDetails.addAll(denominations);
 					}
-					break;	// We have only one movement, so we are breaking the loop
+					if (CollectionUtils.isNotEmpty(movements.getDepositChequesList())) {
+						List<AuditDetail> depositChequesAuditDetails = depositDetails.getAuditDetailMap()
+								.get("DepositCheques");
+						depositChequesAuditDetails = processDepositChequesList(depositChequesAuditDetails, "",
+								movements.getMovementId());
+						auditDetails.addAll(depositChequesAuditDetails);
+					}
+					break; // We have only one movement, so we are breaking the loop
 				}
 			}
 		}
-		
+
 		getDepositDetailsDAO().delete(depositDetails, TableType.TEMP_TAB);
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
 		// List
-		auditHeader.setAuditDetails(processChildsAudit(deleteChilds(depositDetails, "_Temp", auditHeader.getAuditTranType())));
-		
+		auditHeader.setAuditDetails(
+				processChildsAudit(deleteChilds(depositDetails, "_Temp", auditHeader.getAuditTranType())));
+
 		String[] fields = PennantJavaUtil.getFieldDetails(new DepositDetails(), depositDetails.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], depositDetails.getBefImage(), depositDetails));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				depositDetails.getBefImage(), depositDetails));
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(depositDetails);
-		
+
 		// List
 		auditHeader.setAuditDetails(processChildsAudit(auditDetails));
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditHeader;
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getCasteDAO().delete with parameters
-	 * caste,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTCastes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getCasteDAO().delete with parameters caste,"_Temp" 3) Audit the record in to AuditHeader
+	 * and AdtBMTCastes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -660,21 +821,20 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		DepositDetails depositDetails = (DepositDetails) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getDepositDetailsDAO().delete(depositDetails, TableType.TEMP_TAB);
-		
+
 		// List
-		auditHeader.setAuditDetails(processChildsAudit(deleteChilds(depositDetails, "_Temp", auditHeader.getAuditTranType())));
-		
+		auditHeader.setAuditDetails(
+				processChildsAudit(deleteChilds(depositDetails, "_Temp", auditHeader.getAuditTranType())));
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
-		
+
 		return auditHeader;
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -685,24 +845,25 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		
+
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		// List
 		auditHeader = prepareChildsAudit(auditHeader, method);
 		auditHeader.setErrorList(validateChilds(auditHeader, auditHeader.getUsrLanguage(), method));
-		
+
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	private List<ErrorDetail> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
 		logger.debug("Entering");
 
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		DepositDetails depositDetails = (DepositDetails) auditHeader.getAuditDetail().getModelData();
 		List<AuditDetail> auditDetails = null;
+
 		//Deposit Movements
 		if (depositDetails.getAuditDetailMap().get("DepositMovements") != null) {
 			auditDetails = depositDetails.getAuditDetailMap().get("DepositMovements");
@@ -713,6 +874,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 				}
 			}
 		}
+
 		//Cash Denominations
 		if (depositDetails.getAuditDetailMap().get("Denominations") != null) {
 			auditDetails = depositDetails.getAuditDetailMap().get("Denominations");
@@ -724,51 +886,88 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			}
 		}
 
+		//Deposit Cheques
+		if (depositDetails.getAuditDetailMap().get("DepositCheques") != null) {
+			auditDetails = depositDetails.getAuditDetailMap().get("DepositCheques");
+			for (AuditDetail auditDetail : auditDetails) {
+				List<ErrorDetail> details = validationDepositCheques(auditDetail, usrLanguage, method)
+						.getErrorDetails();
+				if (details != null) {
+					errorDetails.addAll(details);
+				}
+			}
+		}
+
 		logger.debug("Leaving");
 
 		return errorDetails;
 	}
-	
+
 	private AuditDetail validationMovements(AuditDetail auditDetail, String usrLanguage, String type) {
 		logger.debug("Entering");
-		
+
 		// Get the model object.
 		DepositMovements depositMovements = (DepositMovements) auditDetail.getModelData();
 		String depositSlipNo = depositMovements.getDepositSlipNumber();
 		String[] parameters = new String[1];
-		parameters[0] = PennantJavaUtil.getLabel("label_DepositDetailsDialog_DepositSlipNumber.value") + ": " + depositMovements.getDepositSlipNumber();
+		parameters[0] = PennantJavaUtil.getLabel("label_DepositDetailsDialog_DepositSlipNumber.value") + ": "
+				+ depositMovements.getDepositSlipNumber();
 
 		// Check the unique keys.
 		if (depositMovements.isNew()
-				&& (PennantConstants.RECORD_TYPE_NEW.equals(depositMovements.getRecordType()) || PennantConstants.RCD_ADD.equals(depositMovements.getRecordType()))
+				&& (PennantConstants.RECORD_TYPE_NEW.equals(depositMovements.getRecordType())
+						|| PennantConstants.RCD_ADD.equals(depositMovements.getRecordType()))
 				&& this.depositDetailsDAO.isDuplicateKey(depositSlipNo, TableType.BOTH_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
+
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
+
 	private AuditDetail validationDenominations(AuditDetail auditDetail, String usrLanguage, String type) {
 		logger.debug("Entering");
 
 		// Get the model object.
-		/*CashDenomination cashDenomination = (CashDenomination) auditDetail.getModelData();
-		long requestId = cashDenomination.getProcessId();
+		/*
+		 * CashDenomination cashDenomination = (CashDenomination) auditDetail.getModelData(); long requestId =
+		 * cashDenomination.getProcessId(); String[] parameters = new String[1]; parameters[0] =
+		 * PennantJavaUtil.getLabel("label_BranchCode") + ": " + cashDenomination.getDenomination();
+		 * 
+		 * // Check the unique keys. if (cashDenomination.isNew() &&
+		 * PennantConstants.RECORD_TYPE_NEW.equals(cashDenomination.getRecordType()) &&
+		 * this.cashDenominationDAO.isDuplicateKey(requestId, cashDenomination.isWorkflow() ? TableType.BOTH_TAB :
+		 * TableType.MAIN_TAB)) {
+		 * 
+		 * auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null)); }
+		 */
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug("Leaving");
+		return auditDetail;
+	}
+
+	private AuditDetail validationDepositCheques(AuditDetail auditDetail, String usrLanguage, String type) {
+		logger.debug("Entering");
+
+		// Get the model object.
+		DepositCheques depositCheques = (DepositCheques) auditDetail.getModelData();
 		String[] parameters = new String[1];
-		parameters[0] = PennantJavaUtil.getLabel("label_BranchCode") + ": " + cashDenomination.getDenomination();
+		parameters[0] = PennantJavaUtil.getLabel("label_Id") + ": " + depositCheques.getId();
 
 		// Check the unique keys.
-		if (cashDenomination.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(cashDenomination.getRecordType())
-				&& this.cashDenominationDAO.isDuplicateKey(requestId, cashDenomination.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (depositCheques.isNew()
+				&& (PennantConstants.RECORD_TYPE_NEW.equals(depositCheques.getRecordType())
+						|| PennantConstants.RCD_ADD.equals(depositCheques.getRecordType()))
+				&& this.depositChequesDAO.isDuplicateKey(depositCheques.getId(), TableType.BOTH_TAB)) {
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
-		}*/
-		
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");
@@ -817,7 +1016,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		
+
 		List<DepositMovements> depositMovementsList = depositDetails.getDepositMovementsList();
 		if (CollectionUtils.isNotEmpty(depositMovementsList)) {
 			for (DepositMovements depositMovement : depositMovementsList) {
@@ -830,7 +1029,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 				depositMovement.setNextRoleCode(depositDetails.getNextRoleCode());
 				depositMovement.setTaskId(depositDetails.getTaskId());
 				depositMovement.setNextTaskId(depositDetails.getNextTaskId());
-				
+
 				// Denominations
 				if (CollectionUtils.isNotEmpty(depositMovement.getDenominationList())) {
 					for (CashDenomination cashDenomination : depositMovement.getDenominationList()) {
@@ -844,14 +1043,35 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 						cashDenomination.setTaskId(depositDetails.getTaskId());
 						cashDenomination.setNextTaskId(depositDetails.getNextTaskId());
 					}
-					
-					auditDetailMap.put("Denominations", setCashDenominationsAuditData(depositMovement.getDenominationList(), auditTranType, method));
+
+					auditDetailMap.put("Denominations", setCashDenominationsAuditData(
+							depositMovement.getDenominationList(), auditTranType, method));
 					auditDetails.addAll(auditDetailMap.get("Denominations"));
 				}
-				
-				break;	// We have only one movement, so we are breaking the loop
+
+				// Deposit Cheques
+				if (CollectionUtils.isNotEmpty(depositMovement.getDepositChequesList())) {
+					for (DepositCheques depositCheque : depositMovement.getDepositChequesList()) {
+						depositCheque.setLastMntOn(depositDetails.getLastMntOn());
+						depositCheque.setLastMntBy(depositDetails.getLastMntBy());
+						depositCheque.setRecordStatus(depositDetails.getRecordStatus());
+						depositCheque.setUserDetails(depositDetails.getUserDetails());
+						depositCheque.setWorkflowId(depositDetails.getWorkflowId());
+						depositCheque.setRoleCode(depositDetails.getRoleCode());
+						depositCheque.setNextRoleCode(depositDetails.getNextRoleCode());
+						depositCheque.setTaskId(depositDetails.getTaskId());
+						depositCheque.setNextTaskId(depositDetails.getNextTaskId());
+					}
+
+					auditDetailMap.put("DepositCheques",
+							setDepositChequesAuditData(depositMovement.getDepositChequesList(), auditTranType, method));
+					auditDetails.addAll(auditDetailMap.get("DepositCheques"));
+				}
+
+				break; // We have only one movement, so we are breaking the loop
 			}
-			auditDetailMap.put("DepositMovements", setDepositMovementsAuditData(depositMovementsList, auditTranType, method));
+			auditDetailMap.put("DepositMovements",
+					setDepositMovementsAuditData(depositMovementsList, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DepositMovements"));
 		}
 
@@ -863,19 +1083,21 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 
 		return auditHeader;
 	}
-	
-	private List<AuditDetail> setDepositMovementsAuditData(List<DepositMovements> depositMovementsList, String auditTranType, String method) {
+
+	private List<AuditDetail> setDepositMovementsAuditData(List<DepositMovements> depositMovementsList,
+			String auditTranType, String method) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new DepositMovements(), new DepositMovements().getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new DepositMovements(),
+				new DepositMovements().getExcludeFields());
 		for (int i = 0; i < depositMovementsList.size(); i++) {
 			DepositMovements depositMovement = depositMovementsList.get(i);
 
 			//TODO for Cash Denominations Maintenance
-			/*if (StringUtils.isEmpty(depositMovement.getRecordType())) {
-				continue;
-			}*/
+			/*
+			 * if (StringUtils.isEmpty(depositMovement.getRecordType())) { continue; }
+			 */
 
 			boolean isRcdType = false;
 			if (PennantConstants.RCD_ADD.equalsIgnoreCase(depositMovement.getRecordType())) {
@@ -901,19 +1123,22 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 				}
 			}
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], depositMovement.getBefImage(), depositMovement));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], depositMovement.getBefImage(),
+					depositMovement));
 		}
 
 		logger.debug("Leaving");
 
 		return auditDetails;
 	}
-	
-	private List<AuditDetail> setCashDenominationsAuditData(List<CashDenomination> cashDenominationsList, String auditTranType, String method) {
+
+	private List<AuditDetail> setCashDenominationsAuditData(List<CashDenomination> cashDenominationsList,
+			String auditTranType, String method) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new CashDenomination(), new CashDenomination().getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new CashDenomination(),
+				new CashDenomination().getExcludeFields());
 		for (int i = 0; i < cashDenominationsList.size(); i++) {
 			CashDenomination cashDenomination = cashDenominationsList.get(i);
 
@@ -945,7 +1170,55 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 				}
 			}
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], cashDenomination.getBefImage(), cashDenomination));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], cashDenomination.getBefImage(),
+					cashDenomination));
+		}
+
+		logger.debug("Leaving");
+
+		return auditDetails;
+	}
+
+	private List<AuditDetail> setDepositChequesAuditData(List<DepositCheques> depositChequesList, String auditTranType,
+			String method) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		String[] fields = PennantJavaUtil.getFieldDetails(new DepositCheques(),
+				new DepositCheques().getExcludeFields());
+		for (int i = 0; i < depositChequesList.size(); i++) {
+			DepositCheques depositCheques = depositChequesList.get(i);
+
+			if (StringUtils.isEmpty(depositCheques.getRecordType())) {
+				continue;
+			}
+
+			boolean isRcdType = false;
+			if (PennantConstants.RCD_ADD.equalsIgnoreCase(depositCheques.getRecordType())) {
+				depositCheques.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (PennantConstants.RCD_UPD.equalsIgnoreCase(depositCheques.getRecordType())) {
+				depositCheques.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				isRcdType = true;
+			} else if (PennantConstants.RCD_DEL.equalsIgnoreCase(depositCheques.getRecordType())) {
+				depositCheques.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+			if ("saveOrUpdate".equals(method) && isRcdType) {
+				depositCheques.setNewRecord(true);
+			}
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(depositCheques.getRecordType())) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(depositCheques.getRecordType())
+						|| PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(depositCheques.getRecordType())) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], depositCheques.getBefImage(),
+					depositCheques));
 		}
 
 		logger.debug("Leaving");
@@ -954,10 +1227,9 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getCasteDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getCasteDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign the
+	 * to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -973,57 +1245,73 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		parameters[0] = PennantJavaUtil.getLabel("label_DepositId") + ": " + depositId;
 
 		// Check the unique keys.
-		if (depositDetails.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(depositDetails.getRecordType())
-				&& depositDetailsDAO.isDuplicateKey(depositId, depositDetails.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (depositDetails.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(depositDetails.getRecordType())
+				&& depositDetailsDAO.isDuplicateKey(depositId,
+						depositDetails.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
-		
-		/*if (StringUtils.trimToEmpty(depositDetails.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
-			boolean exist = this.customerDAO.isCasteExist(depositDetails.getCasteId(), "_View");
-			if (exist) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null), usrLanguage));
-			}
-		}*/
-		
+
+		/*
+		 * if (StringUtils.trimToEmpty(depositDetails.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
+		 * boolean exist = this.customerDAO.isCasteExist(depositDetails.getCasteId(), "_View"); if (exist) {
+		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006",
+		 * parameters, null), usrLanguage)); } }
+		 */
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
+
 	@Override
 	public DepositMovements getDepositMovementsById(long movementId) {
-		
+
 		DepositMovements depositMovements = getDepositDetailsDAO().getDepositMovementsById(movementId, "_View");
-		
+
 		if (depositMovements != null) {
-			List<CashDenomination> denominationsList = getCashDenominationDAO().getCashDenominationList(movementId, "_View");
+			List<CashDenomination> denominationsList = getCashDenominationDAO().getCashDenominationList(movementId,
+					"_View");
 			depositMovements.setDenominationList(denominationsList);
+
+			List<DepositCheques> chequesList = getDepositChequesDAO().getDepositChequesList(movementId, "_View");
+			depositMovements.setDepositChequesList(chequesList);
 		}
-		
+
 		return depositMovements;
 	}
-	
+
 	@Override
 	public DepositMovements getApprovedDepositMovementsById(long movementId) {
-		
+
 		DepositMovements depositMovements = getDepositDetailsDAO().getDepositMovementsById(movementId, "_AView");
-		
+
 		if (depositMovements != null) {
-			List<CashDenomination> denominationsList = getCashDenominationDAO().getCashDenominationList(movementId, "_AView");
+			List<CashDenomination> denominationsList = getCashDenominationDAO().getCashDenominationList(movementId,
+					"_AView");
 			depositMovements.setDenominationList(denominationsList);
+
+			List<DepositCheques> chequesList = getDepositChequesDAO().getDepositChequesList(movementId, "_AView");
+			depositMovements.setDepositChequesList(chequesList);
 		}
-		
+
 		return depositMovements;
 	}
-	
+
 	/**
 	 * Method for fetching list of entries executed based on Linked Transaction ID
 	 */
 	@Override
 	public List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranid) {
 		return getPostingsDAO().getPostingsByLinkTransId(linkedTranid);
+	}
+
+	/**
+	 * Method for fetching list of Deposit Cheques
+	 */
+	@Override
+	public List<DepositCheques> getDepositChequesList() {
+		return getDepositChequesDAO().getDepositChequesList();
 	}
 }
