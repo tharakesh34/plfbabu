@@ -109,6 +109,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -670,7 +671,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.manufacturer.setModuleName("VehicleDealer");
 		this.manufacturer.setValueColumn("DealerId");
 		this.manufacturer.setDescColumn("DealerName");
-		this.manufacturer.setValidateColumns(new String[] { "DealerId" });
+		this.manufacturer.setValueType(DataType.LONG);
+		// this.manufacturer.setValidateColumns(new String[] { "DealerId" });
 		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("DealerType", VASConsatnts.VASAGAINST_VASM, Filter.OP_EQUAL);
 		filters[1] = new Filter("Active", 1, Filter.OP_EQUAL);
