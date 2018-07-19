@@ -948,7 +948,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.postingDivision.setModuleName("DivisionDetail");
 		this.postingDivision.setValueColumn("DivisionCode");
 		this.postingDivision.setDescColumn("DivisionCodeDesc");
-		this.postingDivision.setValidateColumns(new String[] { "DivisionCodeDesc" });
+		this.postingDivision.setValidateColumns(new String[] { "DivisionCode" });
 
 		logger.debug("Leaving");
 	}
