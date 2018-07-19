@@ -534,7 +534,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 		fieldsandvalues.put("custCtgCode", sampling.getCustCategory());
 		fieldsandvalues.put("custTotalIncome", custTotalIncome);
-		fieldsandvalues.put("Customer_Obigation_External", custTotalExpense);
+		fieldsandvalues.put("Customer_Obligation_External", custTotalExpense);
 		fieldsandvalues.put("finProfitRate", sampling.getInterestRate());
 		fieldsandvalues.put("noOfTerms", sampling.getTenure());
 
