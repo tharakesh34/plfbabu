@@ -534,14 +534,13 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 		fieldsandvalues.put("custCtgCode", sampling.getCustCategory());
 		fieldsandvalues.put("custTotalIncome", custTotalIncome);
-		fieldsandvalues.put("custTotalExpense", custTotalExpense);
+		fieldsandvalues.put("Customer_Obigation_External", custTotalExpense);
 		fieldsandvalues.put("finProfitRate", sampling.getInterestRate());
 		fieldsandvalues.put("noOfTerms", sampling.getTenure());
 
 		fieldsandvalues.put("Total_Co_Applicants_Income", BigDecimal.ZERO);
 		fieldsandvalues.put("Co_Applicants_Obligation_External", BigDecimal.ZERO);
 		fieldsandvalues.put("Co_Applicants_Obligation_Internal", BigDecimal.ZERO);
-		fieldsandvalues.put("Customer_Obligation_External", BigDecimal.ZERO);
 		fieldsandvalues.put("Customer_Obligation_Internal", BigDecimal.ZERO);
 
 		ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_FOIRAMT);
