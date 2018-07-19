@@ -11990,5 +11990,29 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="298" author="Kesav">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_ENQUIRY');
+			Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'DEPOSITDETAILS_ENQUIRY') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+			Delete from SecGroups where GrpCode = 'DEPOSITDETAILS_ENQUIRY';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'DEPOSITDETAILS_ENQUIRY','WF Maker for Deposit Details Enquiry', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_DepositMovements_Enquiry');
+			Delete from SecRights where RightName = 'menuItem_DepositMovements_Enquiry';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_DepositMovements_Enquiry', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEPOSITDETAILS_ENQUIRY'), (Select RightID from SecRights where RightName = 'menuItem_DepositMovements_Enquiry'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'DEPOSITDETAILS_ENQUIRY'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);		
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
