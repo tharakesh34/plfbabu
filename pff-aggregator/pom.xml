@@ -76,7 +76,7 @@
 			<dependency>
   				<groupId>com.pennanttech.pennapps</groupId>
   				<artifactId>document-generator</artifactId>
-  				<version>1.4.1</version>
+  				<version>2.0.0</version>
 			</dependency>
 			
 			<!-- Logging Framework -->
