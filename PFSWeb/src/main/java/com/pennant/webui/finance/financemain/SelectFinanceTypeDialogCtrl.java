@@ -1321,8 +1321,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			if (cif != null) {
 				String msg = Labels.getLabel("label_SelectFinanceTypeDialog_ProspectExist",
-						new String[] { isRetailCustomer ? Labels.getLabel("label_CustCRCPR")
-								: Labels.getLabel("label_CustTradeLicenseNumber"), cif + ". \n" });
+						new String[] { isRetailCustomer ? Labels.getLabel(primaryIdLabel)
+								: Labels.getLabel(primaryIdLabel), cif + ". \n" });
 
 				// The user doesn't want to proceed with duplicate found.
 				if (MessageUtil.confirm(msg) != MessageUtil.YES) {
