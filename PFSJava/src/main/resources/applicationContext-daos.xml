@@ -4494,18 +4494,11 @@
 	</bean>
 
 	<!--============ Finance Scoring Details ============== -->
-
 	<bean id="financeScoreHeaderDAO" class="com.pennant.backend.dao.finance.impl.FinanceScoreHeaderDAOImpl" parent="sequenceDao"/>
 		
 
 	<!--============ Finance Posting Details ============== -->
-
-	<bean id="postingsDAO"
-		class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl"
-		parent="basisCodeDAO">
-		<property name="dataSource" ref="dataSource" />
-		<property name="nextidviewDAO" ref="nextidviewDAO" />
-	</bean>
+	<bean id="postingsDAO" class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl" parent="sequenceDao"/>
 
 	<!--============ Finance Stage Accounting Log Details ============== -->
 

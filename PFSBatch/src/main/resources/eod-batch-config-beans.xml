@@ -86,10 +86,7 @@
 	<!-- Postings Related Generic DAOs -->
 	<!-- ====================================================== -->
 	<!-- Postings -->
-	<bean id="postingsDAO" class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="dataSource" />
-		<property name="nextidviewDAO" ref="nextidviewDAO" />
-	</bean>
+	<bean id="postingsDAO" class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl" parent="sequenceDao"/>
 	<!-- System Parameter Details -->
 	<bean id="SysParamUtil " class="com.pennant.app.util.SysParamUtil">
 		<property name="systemParameterService" ref="systemParameterService" />
