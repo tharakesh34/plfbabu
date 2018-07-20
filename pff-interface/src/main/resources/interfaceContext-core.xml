@@ -37,5 +37,9 @@
 	</bean>
 	
 	<bean id="dmsAddDocJob" class="com.pennanttech.pff.schedule.jobs.DMSAddDocJob"/>
-	<bean id="dmsAddDocJobProcess" class="com.pennanttech.pff.process.DMSAddDocJobProcess"/>
+	<bean id="dmsAddDocJobProcess" class="com.pennanttech.pff.process.DMSAddDocJobProcess">
+		<property name="retryCount" value="${dms.document.retrycount}"/>
+		<property name="threadCount" value="${dms.thread.count}"/>
+		<property name="threadAwaitPeroid" value="${dms.thread.seconds.timeout}"/>
+	</bean>
 </beans>

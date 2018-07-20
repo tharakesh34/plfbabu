@@ -16,24 +16,28 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.DmsDocumentConstants;
 import com.pennanttech.model.dms.DMSDocumentDetails;
-import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.creditInformation.AbstractDMSIntegrationService;
 
 public class DMSAddDocJobProcess {
 	private static final Logger logger = Logger.getLogger(DMSAddDocJobProcess.class);
-	private static final int retryCount = Integer.valueOf(App.getProperty("dms.document.retrycount"));
-	private static final int dmsThreadCount = Integer.valueOf(App.getProperty("dms.thread.count"));
-	private static final int dmsThreadAwaitPeroid = Integer.valueOf(App.getProperty("dms.thread.seconds.timeout"));
+	private int retryCount;
+	private int threadCount;
+	private int threadAwaitPeroid;
+	
+	public DMSAddDocJobProcess() {
+		super();
+	}
+
 	@Autowired
 	private DMSIdentificationDAO identificationDAO;
-	@Autowired(required=false)
+	@Autowired(required = false)
 	private AbstractDMSIntegrationService abstractDMSIntegrationService;
-	
+
 	public void process() {
 		logger.debug(Literal.ENTERING);
 		List<DMSDocumentDetails> dmsDocRefList = identificationDAO.retrieveDMSDocumentReference();
-		ExecutorService executor = Executors.newFixedThreadPool(dmsThreadCount);
+		ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 		if (CollectionUtils.isNotEmpty(dmsDocRefList)) {
 			for (DMSDocumentDetails dmsDocumentDetails : dmsDocRefList) {
 				if (null != dmsDocumentDetails) {
@@ -45,17 +49,15 @@ public class DMSAddDocJobProcess {
 		}
 		executor.shutdown();
 		try {
-			executor.awaitTermination(dmsThreadAwaitPeroid, TimeUnit.SECONDS);
+			executor.awaitTermination(threadAwaitPeroid, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
-	private class DmsRunnable implements Runnable {
 
+	private class DmsRunnable implements Runnable {
 		private DMSIdentificationDAO identificationDAO;
 		private AbstractDMSIntegrationService abstractDMSIntegrationService;
 		private DMSDocumentDetails dmsDocumentDetails;
@@ -110,6 +112,17 @@ public class DMSAddDocJobProcess {
 				identificationDAO.processFailure(dmsDocumentDetails, retryCount);
 			}
 		}
+	}
 
+	public void setRetryCount(int retryCount) {
+		this.retryCount = retryCount;
+	}
+
+	public void setThreadCount(int threadCount) {
+		this.threadCount = threadCount;
+	}
+
+	public void setThreadAwaitPeroid(int threadAwaitPeroid) {
+		this.threadAwaitPeroid = threadAwaitPeroid;
 	}
 }
