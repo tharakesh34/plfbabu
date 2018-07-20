@@ -1903,6 +1903,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.allocationMethod.setErrorMessage("");
 		this.receiptPurpose.setConstraint("");
 		this.receiptPurpose.setErrorMessage("");
+		this.receivedDate.setConstraint("");
+		this.receivedDate.setErrorMessage("");
 		String allocateMthd = getComboboxValue(this.allocationMethod);
 		String tempReceiptPurpose = getComboboxValue(this.receiptPurpose);
 
