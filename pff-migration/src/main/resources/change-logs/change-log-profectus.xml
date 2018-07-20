@@ -1140,6 +1140,14 @@
 	<changeSet id="54" author="Jayant" dbms="postgresql">
 		<addForeignKeyConstraint constraintName="fk_bankbranches_city" referencedTableName="rmtprovincevscity" baseColumnNames="city" baseTableName="bankbranches" referencedColumnNames="pccity"/>
 	</changeSet>
+	
+	<changeSet id="55" author="Vinay">
+		<sql>
+			delete from SECGROUPRIGHTS where grpid in (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') and RIGHTID in (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerDialog_custCRCPR');
+			delete from SECGROUPRIGHTS where grpid in (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') and RIGHTID in (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerDialog_custCRCPR');
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 	
 	
