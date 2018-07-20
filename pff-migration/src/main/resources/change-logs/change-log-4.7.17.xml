@@ -12067,7 +12067,7 @@ UNION ALL
 	</changeSet>
 	
 	<changeSet id="301" author="Manoj">
-		<createView viewName="" replaceIfExists="true">
+		<createView viewName="extendedfielddetail_view" replaceIfExists="true">
 			 SELECT t1.moduleid,
     t1.fieldname,
     t2.modulename AS lovdescmodulename,
@@ -12145,6 +12145,13 @@ UNION ALL
            FROM extendedfielddetail_temp
           WHERE extendedfielddetail_temp.moduleid = t1.moduleid AND extendedfielddetail_temp.fieldname = t1.fieldname))
 		</createView>
+	</changeSet>
+	
+	<changeSet id="302" author="Manoj">
+		<sql>
+			update extendedfielddetail_temp set visible = 1;
+			update extendedfielddetail set visible = 1;
+		</sql>
 	</changeSet>
 </databaseChangeLog>
 	
