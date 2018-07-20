@@ -1128,6 +1128,18 @@
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 		</sql>
 	</changeSet>
+	<changeSet id="52" author="Jayant" dbms="postgresql">
+		<dropForeignKeyConstraint baseTableName="bankbranches" constraintName="fk_bankbranches_city"/>
+	</changeSet>
+	<changeSet id="53" author="Jayant" dbms="postgresql">
+		<sql>
+			update rmtprovincevscity set pccity=btrim(pccity);
+			update bankbranches set city = btrim(city);
+		</sql>
+	</changeSet>
+	<changeSet id="54" author="Jayant" dbms="postgresql">
+		<addForeignKeyConstraint constraintName="fk_bankbranches_city" referencedTableName="rmtprovincevscity" baseColumnNames="city" baseTableName="bankbranches" referencedColumnNames="pccity"/>
+	</changeSet>
 </databaseChangeLog>
 	
 	
