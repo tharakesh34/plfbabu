@@ -2,42 +2,30 @@ package com.pennant.backend.dao.limit.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.limit.LimitReferenceMappingDAO;
 import com.pennant.backend.model.limit.LimitReferenceMapping;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class LimitReferenceMappingDAOImpl extends BasisNextidDaoImpl<LimitReferenceMapping>
+public class LimitReferenceMappingDAOImpl extends SequenceDao<LimitReferenceMapping>
 		implements LimitReferenceMappingDAO {
 	private static Logger				logger	= Logger.getLogger(LimitReferenceMappingDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+	
 	public LimitReferenceMappingDAOImpl() {
 		super();
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+	
 
 	/**
 	 * This method insert new Records into LIMIT_DETAILS or LIMIT_DETAILS_Temp. it fetches the available Sequence form
@@ -58,7 +46,7 @@ public class LimitReferenceMappingDAOImpl extends BasisNextidDaoImpl<LimitRefere
 	public long save(LimitReferenceMapping limitReferenceMapping) {
 		logger.debug("Entering");
 		if (limitReferenceMapping.getId() == Long.MIN_VALUE) {
-			limitReferenceMapping.setId(getNextidviewDAO().getNextId("SeqLimitReferenceMapping"));
+			limitReferenceMapping.setId(getNextValue("SeqLimitReferenceMapping"));
 			logger.debug("get NextID:" + limitReferenceMapping.getId());
 		}
 
@@ -69,7 +57,7 @@ public class LimitReferenceMappingDAOImpl extends BasisNextidDaoImpl<LimitRefere
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitReferenceMapping);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return limitReferenceMapping.getId();
 	}
@@ -84,7 +72,7 @@ public class LimitReferenceMappingDAOImpl extends BasisNextidDaoImpl<LimitRefere
 
 		for (LimitReferenceMapping mapping : lmtReferenceMapping) {
 			if (mapping.getId() == Long.MIN_VALUE) {
-				mapping.setId(getNextidviewDAO().getNextId("SeqLimitReferenceMapping"));
+				mapping.setId(getNextValue("SeqLimitReferenceMapping"));
 				logger.debug("get NextID:" + mapping.getId());
 			}
 		}
@@ -96,7 +84,7 @@ public class LimitReferenceMappingDAOImpl extends BasisNextidDaoImpl<LimitRefere
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(lmtReferenceMapping.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -130,7 +118,7 @@ public class LimitReferenceMappingDAOImpl extends BasisNextidDaoImpl<LimitRefere
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.debug(e);
 
@@ -149,7 +137,7 @@ public class LimitReferenceMappingDAOImpl extends BasisNextidDaoImpl<LimitRefere
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+			this.jdbcTemplate.update(deleteSql.toString(), source);
 
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
@@ -168,7 +156,7 @@ public class LimitReferenceMappingDAOImpl extends BasisNextidDaoImpl<LimitRefere
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+			this.jdbcTemplate.update(deleteSql.toString(), source);
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 		}
@@ -205,7 +193,7 @@ public class LimitReferenceMappingDAOImpl extends BasisNextidDaoImpl<LimitRefere
 				.newInstance(LimitReferenceMapping.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -220,7 +208,7 @@ public class LimitReferenceMappingDAOImpl extends BasisNextidDaoImpl<LimitRefere
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 		} finally {

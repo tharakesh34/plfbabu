@@ -42,8 +42,6 @@
  */
 package com.pennant.backend.dao.payment.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -52,26 +50,24 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>PaymentInstruction</code> with set of CRUD operations.
+ * Data access layer implementation for <code>PaymentInstruction</code> with set
+ * of CRUD operations.
  */
-public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruction> implements PaymentInstructionDAO {
+public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> implements PaymentInstructionDAO {
 	private static Logger logger = Logger.getLogger(PaymentInstructionDAOImpl.class);
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public PaymentInstructionDAOImpl() {
 		super();
@@ -83,13 +79,17 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" paymentInstructionId, paymentId, paymentType, paymentAmount, remarks, partnerBankId, issuingBank, ");
+		sql.append(
+				" paymentInstructionId, paymentId, paymentType, paymentAmount, remarks, partnerBankId, issuingBank, ");
 		sql.append(" favourName, favourNumber, payableLoc, printingLoc, valueDate, postDate, status, transactionRef,");
-		sql.append(" bankBranchId, acctHolderName, accountNo, phoneCountryCode, phoneNumber, clearingdate, active, paymentCCy, ");
+		sql.append(
+				" bankBranchId, acctHolderName, accountNo, phoneCountryCode, phoneNumber, clearingdate, active, paymentCCy, ");
 		if (type.contains("View")) {
-			sql.append(" partnerBankCode, partnerBankName, bankBranchIFSC, bankBranchCode, issuingBankName, pCCityName, branchDesc, bankName, ");
+			sql.append(
+					" partnerBankCode, partnerBankName, bankBranchIFSC, bankBranchCode, issuingBankName, pCCityName, branchDesc, bankName, ");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From PaymentInstructions");
 		sql.append(type);
 		sql.append(" Where paymentInstructionId = :paymentInstructionId");
@@ -104,7 +104,7 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 		RowMapper<PaymentInstruction> rowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(PaymentInstruction.class);
 		try {
-			paymentInstruction = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			paymentInstruction = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			paymentInstruction = null;
@@ -119,15 +119,19 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT  paymentInstructionId, paymentId, paymentType, paymentAmount, remarks, partnerBankId, issuingBank,");
+		sql.append(
+				" SELECT  paymentInstructionId, paymentId, paymentType, paymentAmount, remarks, partnerBankId, issuingBank,");
 		sql.append(" favourName, favourNumber, payableLoc, printingLoc, valueDate, postDate, ");
-		sql.append(" bankBranchId, acctHolderName, accountNo, phoneCountryCode, phoneNumber, clearingdate, status, transactionRef, ");
+		sql.append(
+				" bankBranchId, acctHolderName, accountNo, phoneCountryCode, phoneNumber, clearingdate, status, transactionRef, ");
 		sql.append(" active, paymentCCy, ");
 		if (type.contains("View")) {
-			sql.append(" partnerBankCode, partnerBankName, bankBranchIFSC, bankBranchCode, issuingBankName, pCCityName, ");
+			sql.append(
+					" partnerBankCode, partnerBankName, bankBranchIFSC, bankBranchCode, issuingBankName, pCCityName, ");
 			sql.append(" branchDesc, bankName, partnerBankAc, partnerBankAcType, ");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From PaymentInstructions");
 		sql.append(type);
 		sql.append(" Where paymentId = :paymentId");
@@ -139,9 +143,10 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 		paymentInstruction.setPaymentId(paymentId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentInstruction);
-		RowMapper<PaymentInstruction> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentInstruction.class);
+		RowMapper<PaymentInstruction> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PaymentInstruction.class);
 		try {
-			paymentInstruction = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			paymentInstruction = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			paymentInstruction = null;
@@ -157,28 +162,33 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into PaymentInstructions");
 		sql.append(tableType.getSuffix());
-		sql.append(" (paymentInstructionId, paymentId, paymentType, paymentAmount, remarks, partnerBankId, issuingBank,");
+		sql.append(
+				" (paymentInstructionId, paymentId, paymentType, paymentAmount, remarks, partnerBankId, issuingBank,");
 		sql.append(" favourName, favourNumber, payableLoc, printingLoc, valueDate, postDate, ");
 		sql.append(" bankBranchId, acctHolderName, accountNo, phoneCountryCode, phoneNumber, clearingdate, status,");
 		sql.append(" active, paymentCCy, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :paymentInstructionId, :paymentId, :paymentType, :paymentAmount, :remarks, :partnerBankId, :issuingBank,");
+		sql.append(
+				" :paymentInstructionId, :paymentId, :paymentType, :paymentAmount, :remarks, :partnerBankId, :issuingBank,");
 		sql.append(" :favourName, :favourNumber, :payableLoc, :printingLoc, :valueDate, :postDate, ");
-		sql.append(" :bankBranchId, :acctHolderName, :accountNo, :phoneCountryCode, :phoneNumber, :clearingdate, :status,");
+		sql.append(
+				" :bankBranchId, :acctHolderName, :accountNo, :phoneCountryCode, :phoneNumber, :clearingdate, :status,");
 		sql.append(" :active, :paymentCCy, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the sequence number.
 		if (paymentInstruction.getPaymentInstructionId() <= 0) {
-			paymentInstruction.setPaymentInstructionId(getNextidviewDAO().getNextId("SeqAdvpayment"));
+			paymentInstruction.setPaymentInstructionId(getNextValue("SeqAdvpayment"));
 		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentInstruction);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -194,7 +204,8 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update PaymentInstructions");
 		sql.append(tableType.getSuffix());
-		sql.append("  set paymentId = :paymentId, paymentType = :paymentType, paymentAmount = :paymentAmount, issuingBank = :issuingBank,");
+		sql.append(
+				"  set paymentId = :paymentId, paymentType = :paymentType, paymentAmount = :paymentAmount, issuingBank = :issuingBank,");
 		sql.append(" remarks = :remarks, partnerBankId = :partnerBankId, favourName = :favourName, ");
 		sql.append(" favourNumber = :favourNumber, payableLoc = :payableLoc, printingLoc = :printingLoc, ");
 		sql.append(" valueDate = :valueDate, postDate = :postDate, bankBranchId = :bankBranchId, ");
@@ -210,7 +221,7 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentInstruction);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -234,7 +245,7 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -244,16 +255,6 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -281,7 +282,7 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("PaymentInstructionId", paymentInstructionId);
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 		boolean exists = false;
 		if (count > 0) {
 			exists = true;
@@ -307,11 +308,12 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 		paramMap.addValue("PAYMENTINSTRUCTIONID", paymentInstruction.getPaymentInstructionId());
 
 		logger.debug(Literal.SQL + sql);
-		this.namedParameterJdbcTemplate.update(sql.toString(), paramMap);
+		this.jdbcTemplate.update(sql.toString(), paramMap);
 	}
 
 	/**
-	 * Method for Fetching Count for Assigned partnerBankId to Different Finances/Commitments
+	 * Method for Fetching Count for Assigned partnerBankId to Different
+	 * Finances/Commitments
 	 */
 	@Override
 	public int getAssignedPartnerBankCount(long partnerBankId, String type) {
@@ -328,9 +330,9 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		try{
-			assignedCount	= this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			assignedCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
 			logger.info(e);
 			assignedCount = 0;
 		}

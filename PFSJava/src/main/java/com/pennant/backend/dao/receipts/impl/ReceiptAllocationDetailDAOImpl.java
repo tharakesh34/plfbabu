@@ -44,42 +44,29 @@ package com.pennant.backend.dao.receipts.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods implementation for the <b>Finance Repayments</b> class.<br>
  * 
  */
-public class ReceiptAllocationDetailDAOImpl extends BasisNextidDaoImpl<ReceiptAllocationDetail> implements ReceiptAllocationDetailDAO {
-	private static Logger	           logger	= Logger.getLogger(ReceiptAllocationDetailDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocationDetail>
+		implements ReceiptAllocationDetailDAO {
+	private static Logger logger = Logger.getLogger(ReceiptAllocationDetailDAOImpl.class);
 
 	public ReceiptAllocationDetailDAOImpl() {
 		super();
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -89,17 +76,20 @@ public class ReceiptAllocationDetailDAOImpl extends BasisNextidDaoImpl<ReceiptAl
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReceiptID", receiptID);
 
-		StringBuilder selectSql = new StringBuilder(" Select ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount ,PaidGST, WaivedAmount ");
+		StringBuilder selectSql = new StringBuilder(
+				" Select ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount ,PaidGST, WaivedAmount ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append( " ,TypeDesc ");
+			selectSql.append(" ,TypeDesc ");
 		}
 		selectSql.append(" From ReceiptAllocationDetail");
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" Where ReceiptID =:ReceiptID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReceiptAllocationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReceiptAllocationDetail.class);
-		List<ReceiptAllocationDetail> allocations = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		RowMapper<ReceiptAllocationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ReceiptAllocationDetail.class);
+		List<ReceiptAllocationDetail> allocations = this.jdbcTemplate.query(selectSql.toString(), source,
+				typeRowMapper);
 		logger.debug("Leaving");
 		return allocations;
 	}
@@ -116,7 +106,7 @@ public class ReceiptAllocationDetailDAOImpl extends BasisNextidDaoImpl<ReceiptAl
 		deleteSql.append(" where ReceiptID=:ReceiptID ");
 
 		logger.debug("selectSql: " + deleteSql.toString());
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
 	}
 
@@ -128,23 +118,22 @@ public class ReceiptAllocationDetailDAOImpl extends BasisNextidDaoImpl<ReceiptAl
 
 		for (ReceiptAllocationDetail receiptAllocationDetail : allocations) {
 			if (receiptAllocationDetail.getReceiptAllocationid() == Long.MIN_VALUE) {
-				receiptAllocationDetail
-						.setReceiptAllocationid(getNextidviewDAO().getNextId("SeqReceiptAllocationDetail"));
+				receiptAllocationDetail.setReceiptAllocationid(getNextValue("SeqReceiptAllocationDetail"));
 				logger.debug("get NextID:" + receiptAllocationDetail.getReceiptAllocationid());
 			}
 		}
-        insertSql.append("Insert Into ReceiptAllocationDetail");
+		insertSql.append("Insert Into ReceiptAllocationDetail");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , PaidGST, WaivedAmount)");
-		insertSql.append(" Values(:ReceiptAllocationid,:ReceiptID , :AllocationID , :AllocationType , :AllocationTo , :PaidAmount ,:PaidGST, :WaivedAmount)");
+		insertSql.append(
+				" (ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , PaidGST, WaivedAmount)");
+		insertSql.append(
+				" Values(:ReceiptAllocationid,:ReceiptID , :AllocationID , :AllocationType , :AllocationTo , :PaidAmount ,:PaidGST, :WaivedAmount)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(allocations.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
-	
-	
+
 }

@@ -104,10 +104,10 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);
 		try {
 			repaySeq = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
-        } catch (EmptyResultDataAccessException e) {
-        	logger.warn("Exception: ", e);
-        	repaySeq = 0;
-        }
+       } catch (EmptyResultDataAccessException e) {
+       	logger.warn("Exception: ", e);
+       	repaySeq = 0;
+       }
 
 		repaySeq = repaySeq + 1;
 		logger.debug("Leaving");
@@ -180,7 +180,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 			selectSql.append(" Where T1.FinReference = T2.FinReference) " );
 			selectSql.append(" AND T1.LinkedTranId != 0  ORDER BY T1.FinSchdDate DESC " );
 		}
- 
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);
 		RowMapper<FinanceRepayments> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceRepayments.class);
@@ -242,7 +242,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 	}
 
 	@Override
-    public void deleteRpyDetailbyLinkedTranId(long linkedTranId, String finReference) {
+   public void deleteRpyDetailbyLinkedTranId(long linkedTranId, String finReference) {
 		logger.debug("Entering");
 		
 		FinanceRepayments financeRepayments = new FinanceRepayments();
@@ -251,16 +251,16 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		
 		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayDetails");
 		deleteSql.append(" where LinkedTranId=:LinkedTranId AND FinReference =:FinReference ");
- 
+
 		logger.debug("selectSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);
 
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+   }
 
 	@Override
-    public void deleteRpyDetailbyMaxPostDate(Date finPostDate, String finReference) {
+   public void deleteRpyDetailbyMaxPostDate(Date finPostDate, String finReference) {
 		logger.debug("Entering");
 		
 		FinanceRepayments financeRepayments = new FinanceRepayments();
@@ -269,16 +269,16 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		
 		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayDetails");
 		deleteSql.append(" where FinPostDate=:FinPostDate AND FinReference=:FinReference ");
- 
+
 		logger.debug("selectSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);
 
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+   }
 
 	@Override
-    public FinRepayHeader getFinRepayHeader(String finReference, String type) {
+   public FinRepayHeader getFinRepayHeader(String finReference, String type) {
 		logger.debug("Entering");
 		
 		FinRepayHeader header = new FinRepayHeader();
@@ -308,7 +308,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 	}
 	
 	@Override
-    public FinRepayHeader getFinRepayHeader(String finReference, long linkedTranId, String type) {
+   public FinRepayHeader getFinRepayHeader(String finReference, long linkedTranId, String type) {
 		logger.debug("Entering");
 		
 		FinRepayHeader header = new FinRepayHeader();
@@ -334,7 +334,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 	}
 
 	@Override
-    public Long saveFinRepayHeader(FinRepayHeader finRepayHeader, String type) {
+   public Long saveFinRepayHeader(FinRepayHeader finRepayHeader, String type) {
 		logger.debug("Entering");
 		
 		if (finRepayHeader.getRepayID() == 0 || finRepayHeader.getRepayID() == Long.MIN_VALUE) {
@@ -357,10 +357,10 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 
 		logger.debug("Leaving");
 		return finRepayHeader.getRepayID();
-    }
+   }
 
 	@Override
-    public void updateFinRepayHeader(FinRepayHeader finRepayHeader, String type) {
+   public void updateFinRepayHeader(FinRepayHeader finRepayHeader, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update FinRepayHeader");
@@ -383,25 +383,25 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		}
 		
 		logger.debug("Leaving");
-    }
+   }
 
 	@Override
-    public void deleteFinRepayHeader(FinRepayHeader finRepayHeader, String type) {
+   public void deleteFinRepayHeader(FinRepayHeader finRepayHeader, String type) {
 		logger.debug("Entering");
 		
 		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayHeader");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" where FinReference=:FinReference ");
- 
+
 		logger.debug("selectSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finRepayHeader);
 
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+   }
 	
 	@Override
-    public void deleteFinRepayHeaderByTranId(String finReference, long linkedTranId, String type) {
+   public void deleteFinRepayHeaderByTranId(String finReference, long linkedTranId, String type) {
 		logger.debug("Entering");
 		
 		FinRepayHeader header = new FinRepayHeader();
@@ -411,17 +411,17 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayHeader");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" where FinReference=:FinReference AND LinkedTranId=:LinkedTranId ");
- 
+
 		logger.debug("selectSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
 
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+   }
 
 
 	@Override
-    public List<RepayScheduleDetail> getRpySchdList(String finReference, String type) {
+   public List<RepayScheduleDetail> getRpySchdList(String finReference, String type) {
 		logger.debug("Entering");
 		
 		RepayScheduleDetail scheduleDetail = new RepayScheduleDetail();
@@ -439,17 +439,17 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		selectSql.append(" From FinRepayScheduleDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" where FinReference=:FinReference ");
- 
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleDetail);
 		RowMapper<RepayScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RepayScheduleDetail.class);
 
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-    }
+   }
 
 	@Override
-    public void saveRpySchdList(List<RepayScheduleDetail> repaySchdList, String type) {
+   public void saveRpySchdList(List<RepayScheduleDetail> repaySchdList, String type) {
 		logger.debug("Entering");
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into FinRepayScheduleDetail");
@@ -478,10 +478,10 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
-    }
+   }
 
 	@Override
-    public void deleteRpySchdList(String finReference, String type) {
+   public void deleteRpySchdList(String finReference, String type) {
 		logger.debug("Entering");
 		
 		RepayScheduleDetail scheduleDetail = new RepayScheduleDetail();
@@ -490,16 +490,16 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayScheduleDetail");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" where FinReference=:FinReference ");
- 
+
 		logger.debug("selectSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleDetail);
 
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+   }
 	
 	@Override
-    public void deleteFinRepaySchListByTranId(String finReference,long linkedTranId, String type) {
+   public void deleteFinRepaySchListByTranId(String finReference,long linkedTranId, String type) {
 		logger.debug("Entering");
 		
 		RepayScheduleDetail scheduleDetail = new RepayScheduleDetail();
@@ -509,13 +509,13 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayScheduleDetail");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" where FinReference=:FinReference AND LinkedTranId=:LinkedTranId ");
- 
+
 		logger.debug("selectSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleDetail);
 
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+   }
 	
 	/**
 	 * Get Total Repayment Profit Amount till Date
@@ -536,10 +536,10 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		BigDecimal totalPftPaid = BigDecimal.ZERO;
 		try {
 			totalPftPaid = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
-        } catch (Exception e) {
-        	logger.warn("Exception: ", e);
-        	totalPftPaid = BigDecimal.ZERO;
-        }
+       } catch (Exception e) {
+       	logger.warn("Exception: ", e);
+       	totalPftPaid = BigDecimal.ZERO;
+       }
 
 		logger.debug("Leaving");
 		return totalPftPaid;
@@ -579,7 +579,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayHeader");
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" where FinReference=:FinReference ");
- 
+
 		logger.debug("selectSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
@@ -587,3 +587,4 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 	}
 
 }
+

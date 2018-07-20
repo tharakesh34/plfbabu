@@ -42,8 +42,6 @@
 */
 package com.pennant.backend.dao.pdc.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -51,27 +49,25 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>ChequeHeader</code> with set of CRUD operations.
+ * Data access layer implementation for <code>ChequeHeader</code> with set of
+ * CRUD operations.
  */
-public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements ChequeHeaderDAO {
-	private static Logger				logger	= Logger.getLogger(ChequeHeaderDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeHeaderDAO {
+	private static Logger logger = Logger.getLogger(ChequeHeaderDAOImpl.class);
 
 	public ChequeHeaderDAOImpl() {
 		super();
@@ -84,7 +80,8 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" headerID, finReference, noOfCheques, totalAmount, active, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From CHEQUEHEADER");
 		sql.append(type);
 		sql.append(" Where headerID = :headerID");
@@ -99,7 +96,7 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		RowMapper<ChequeHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeHeader.class);
 
 		try {
-			chequeHeader = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			chequeHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			chequeHeader = null;
@@ -108,20 +105,21 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		logger.debug(Literal.LEAVING);
 		return chequeHeader;
 	}
-	
+
 	@Override
-	public ChequeHeader getChequeHeader(String finReference,String type) {
+	public ChequeHeader getChequeHeader(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" headerID, finReference, noOfCheques, totalAmount, active, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From CHEQUEHEADER");
 		sql.append(type);
 		sql.append(" Where finReference = :finReference");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -132,7 +130,7 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		RowMapper<ChequeHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeHeader.class);
 
 		try {
-			chequeHeader = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			chequeHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			chequeHeader = null;
@@ -140,37 +138,38 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 
 		logger.debug(Literal.LEAVING);
 		return chequeHeader;
-	}		
-	
+	}
+
 	@Override
 	public ChequeHeader getChequeHeaderByRef(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" headerID, finReference, noOfCheques, totalAmount, active, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From CHEQUEHEADER");
 		sql.append(type);
 		sql.append(" Where finReference = :finReference");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		ChequeHeader chequeHeader = new ChequeHeader();
 		chequeHeader.setFinReference(finReference);
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeHeader);
 		RowMapper<ChequeHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeHeader.class);
-		
+
 		try {
-			chequeHeader = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			chequeHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			chequeHeader = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return chequeHeader;
 	}
@@ -190,7 +189,7 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		if (chequeHeader.getId() == Long.MIN_VALUE || chequeHeader.getId() == 0) {
-			chequeHeader.setId(getNextidviewDAO().getNextId("SeqChequeHeader"));
+			chequeHeader.setId(getNextValue("SeqChequeHeader"));
 			logger.debug("get NextID:" + chequeHeader.getId());
 		}
 		// Execute the SQL, binding the arguments.
@@ -198,7 +197,7 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeHeader);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -225,7 +224,7 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeHeader);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -250,7 +249,7 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -279,7 +278,7 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -318,7 +317,7 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		paramSource.addValue("headerID", headerID);
 		paramSource.addValue("finReference", finRef);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -327,16 +326,6 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 
 		logger.debug(Literal.LEAVING);
 		return exists;
-	}
-
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -350,7 +339,7 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 			parameters = new MapSqlParameterSource();
 			parameters.addValue("Finreference", finReference);
 
-			int count = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), parameters, Integer.class);
+			int count = this.jdbcTemplate.queryForObject(sql.toString(), parameters, Integer.class);
 			if (count > 0) {
 				return true;
 			}

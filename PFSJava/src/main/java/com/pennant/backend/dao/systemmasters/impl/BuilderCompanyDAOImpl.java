@@ -42,8 +42,6 @@
 */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -51,51 +49,50 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.systemmasters.BuilderCompanyDAO;
 import com.pennant.backend.model.systemmasters.BuilderCompany;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>BuilderCompany</code> with set of CRUD operations.
+ * Data access layer implementation for <code>BuilderCompany</code> with set of
+ * CRUD operations.
  */
-public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> implements BuilderCompanyDAO {
-	private static Logger				logger	= Logger.getLogger(BuilderCompanyDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implements BuilderCompanyDAO {
+	private static Logger logger = Logger.getLogger(BuilderCompanyDAOImpl.class);
 
 	public BuilderCompanyDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public BuilderCompany getBuilderCompany(long id,String type) {
+	public BuilderCompany getBuilderCompany(long id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, name, segmentation, groupId, ");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			sql.append("segmentationName, groupIdName,fieldCode,");
-		}	
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		}
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From BuilderCompany");
 		sql.append(type);
-		if(type.contains("View")){
-			sql.append(" Where id = :id AND FieldCode =:FieldCode");	
-		}else{
+		if (type.contains("View")) {
+			sql.append(" Where id = :id AND FieldCode =:FieldCode");
+		} else {
 			sql.append(" Where id = :id");
 		}
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -107,7 +104,7 @@ public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> im
 		RowMapper<BuilderCompany> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BuilderCompany.class);
 
 		try {
-			builderCompany = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			builderCompany = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			builderCompany = null;
@@ -115,10 +112,10 @@ public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> im
 
 		logger.debug(Literal.LEAVING);
 		return builderCompany;
-	}		
-	
+	}
+
 	@Override
-	public boolean isDuplicateKey(long id,String name, TableType tableType) {
+	public boolean isDuplicateKey(long id, String name, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -142,9 +139,9 @@ public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> im
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("id", id);
 		paramSource.addValue("name", name);
-		//paramSource.addValue("groupId", groupId);
-		
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		// paramSource.addValue("groupId", groupId);
+
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -154,45 +151,47 @@ public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> im
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public String save(BuilderCompany builderCompany,TableType tableType) {
+	public String save(BuilderCompany builderCompany, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into BuilderCompany");
+		StringBuilder sql = new StringBuilder(" insert into BuilderCompany");
 		sql.append(tableType.getSuffix());
 		sql.append(" (id, name, segmentation, groupId, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :id, :name, :segmentation, :groupId, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		// Get the identity sequence number.
 		if (builderCompany.getId() <= 0) {
-			builderCompany.setId(getNextidviewDAO().getNextId("SeqBuilderCompany"));
+			builderCompany.setId(getNextValue("SeqBuilderCompany"));
 		}
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(builderCompany);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(builderCompany.getId());
-	}	
+	}
 
 	@Override
-	public void update(BuilderCompany builderCompany,TableType tableType) {
+	public void update(BuilderCompany builderCompany, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update BuilderCompany" );
+		StringBuilder sql = new StringBuilder("update BuilderCompany");
 		sql.append(tableType.getSuffix());
 		sql.append("  set name = :name, segmentation = :segmentation, groupId = :groupId, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
@@ -200,18 +199,18 @@ public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> im
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(builderCompany);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -231,7 +230,7 @@ public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> im
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -242,16 +241,6 @@ public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> im
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -268,7 +257,7 @@ public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> im
 		source = new MapSqlParameterSource();
 		source.addValue("BuilderId", id);
 		try {
-			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
+			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -280,5 +269,5 @@ public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> im
 		}
 		return false;
 	}
- 
-}	
+
+}

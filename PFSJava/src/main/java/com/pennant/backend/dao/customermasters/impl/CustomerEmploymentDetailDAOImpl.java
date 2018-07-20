@@ -26,8 +26,6 @@ package com.pennant.backend.dao.customermasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -35,27 +33,24 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>CustomerEmploymentDetail model</b> class.<br>
  * 
  */
-public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<CustomerEmploymentDetail> implements
+public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploymentDetail> implements
 		CustomerEmploymentDetailDAO {
+private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOImpl.class);
 
-	private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+	
 
 	public CustomerEmploymentDetailDAOImpl() {
 		super();
@@ -95,7 +90,7 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 				.newInstance(CustomerEmploymentDetail.class);
 
 		try {
-			customerEmploymentDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			customerEmploymentDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -122,7 +117,7 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
 
 		try {
-			int custEmployment = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			int custEmployment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					Integer.class);
 			logger.debug("Leaving");
 			return custEmployment;
@@ -152,7 +147,7 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 				.newInstance(CustomerEmploymentDetail.class);
 
 		try {
-			customerEmploymentDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			customerEmploymentDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -162,14 +157,7 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		return customerEmploymentDetail;
 	}
 
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
+	
 	/**
 	 * This method Deletes the Record from the CustomerEmpDetails or CustomerEmpDetails_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Customer Employment Details by key CustID
@@ -196,7 +184,7 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -223,7 +211,7 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 	public long save(CustomerEmploymentDetail customerEmploymentDetail, String type) {
 		logger.debug("Entering");
 		if (customerEmploymentDetail.getCustEmpId() == Long.MIN_VALUE) {
-			customerEmploymentDetail.setCustEmpId(getNextidviewDAO().getNextId("SeqCustomerEmpDetails"));
+			customerEmploymentDetail.setCustEmpId(getNextValue("SeqCustomerEmpDetails"));
 			logger.debug("get NextID:" + customerEmploymentDetail.getCustEmpId());
 		}
 		StringBuilder insertSql = new StringBuilder();
@@ -241,7 +229,7 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return customerEmploymentDetail.getId();
@@ -283,7 +271,7 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -315,7 +303,7 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		RowMapper<CustomerEmploymentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(CustomerEmploymentDetail.class);
 
-		List<CustomerEmploymentDetail> custEmploymentDetails = this.namedParameterJdbcTemplate.query(
+		List<CustomerEmploymentDetail> custEmploymentDetails = this.jdbcTemplate.query(
 				selectSql.toString(), beanParameters, typeRowMapper);
 
 		logger.debug("Leaving");
@@ -334,7 +322,7 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		deleteSql.append(" Where CustID =:CustID ");
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -362,7 +350,7 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		logger.debug("insertSql: " + selectSql.toString());
 		int returnRcds = 0;
 		try{
-			returnRcds = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class); 
+			returnRcds = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class); 
 		} catch (Exception e) {
 			
 		}

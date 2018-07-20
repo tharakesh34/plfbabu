@@ -59,21 +59,20 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>CustomerBankInfo model</b> class.<br>
  * 
  */
-public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo> implements CustomerBankInfoDAO {
+public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> implements CustomerBankInfoDAO {
 
 	private static Logger logger = Logger.getLogger(CustomerBankInfoDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	
 
 	public CustomerBankInfoDAOImpl() {
 		super();
@@ -83,7 +82,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 	 * @param dataSource the dataSource to set
 	 */
 	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -121,7 +120,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 				CustomerBankInfo.class);
 
 		try{
-			customerBankInfo = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			customerBankInfo = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -158,7 +157,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerBankInfo.class);
 		
-		List<CustomerBankInfo> custBankInformation = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		List<CustomerBankInfo> custBankInformation = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		
 		logger.debug("Leaving");
 		return custBankInformation;
@@ -189,7 +188,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
 
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -221,7 +220,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -242,7 +241,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		logger.debug("Entering");
 
 		if (customerBankInfo.getBankId() == Long.MIN_VALUE) {
-			customerBankInfo.setBankId(getNextidviewDAO().getNextId("SeqCustomerBankInfo"));
+			customerBankInfo.setBankId(getNextValue("SeqCustomerBankInfo"));
 			logger.debug("get NextID:" + customerBankInfo.getBankId());
 		}
 		StringBuilder insertSql = new StringBuilder();
@@ -264,7 +263,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return customerBankInfo.getBankId();
@@ -307,7 +306,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -337,7 +336,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug(dae);
 			recordCount = 0;
@@ -366,7 +365,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug(dae);
 			recordCount = 0;
@@ -398,7 +397,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error(dae);
 			recordCount = 0;
@@ -426,7 +425,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
 		
 		try {
-			int bankRcdCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			int bankRcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 			logger.debug("Leaving");
 			return 	bankRcdCount;
 		} catch(Exception e) {
@@ -458,7 +457,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 				CustomerBankInfo.class);
 
 		try{
-			customerBankInfo = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			customerBankInfo = this.jdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -482,7 +481,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 	
 	@Override
@@ -506,6 +505,6 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerBankInfo.class);
 
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 }

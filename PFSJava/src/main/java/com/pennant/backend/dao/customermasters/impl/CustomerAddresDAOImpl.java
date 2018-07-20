@@ -44,8 +44,6 @@ package com.pennant.backend.dao.customermasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,25 +51,21 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>CustomerAddres model</b> class.<br>
  * 
  */
-public class CustomerAddresDAOImpl extends BasisNextidDaoImpl<CustomerAddres> implements CustomerAddresDAO {
+public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implements CustomerAddresDAO {
 	private static Logger logger = Logger.getLogger(CustomerAddresDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public CustomerAddresDAOImpl() {
 		super();
@@ -94,27 +88,26 @@ public class CustomerAddresDAOImpl extends BasisNextidDaoImpl<CustomerAddres> im
 		customerAddres.setCustAddrType(addType);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustAddressId, CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
-		selectSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince,CustAddrPriority," );
-		selectSql.append(" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict,");
-		if(type.contains("View")){
-			selectSql.append(" lovDescCustAddrTypeName, lovDescCustAddrCityName," );
-			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName," );
+		selectSql.append(" SELECT CustAddressId, CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
+		selectSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince,CustAddrPriority,");
+		selectSql.append(
+				" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict,");
+		if (type.contains("View")) {
+			selectSql.append(" lovDescCustAddrTypeName, lovDescCustAddrCityName,");
+			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" FROM CustomerAddresses");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustID = :custID AND CustAddrType = :custAddrType");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerAddres.class);
+		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
 
 		try {
-			customerAddres = this.namedParameterJdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);
+			customerAddres = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customerAddres = null;
@@ -123,7 +116,7 @@ public class CustomerAddresDAOImpl extends BasisNextidDaoImpl<CustomerAddres> im
 		return customerAddres;
 	}
 
-	/** 
+	/**
 	 * Method For getting List of Customer related Addresses for Customer
 	 */
 	public List<CustomerAddres> getCustomerAddresByCustomer(final long custId, String type) {
@@ -132,35 +125,28 @@ public class CustomerAddresDAOImpl extends BasisNextidDaoImpl<CustomerAddres> im
 		customerAddres.setId(custId);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
-		selectSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince,CustAddrPriority," );
-		selectSql.append(" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict,");
-		if(type.contains("View")){
-			selectSql.append(" lovDescCustAddrTypeName, lovDescCustAddrCityName," );
-			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName,lovDescCustAddrZip," );
+		selectSql.append(" SELECT  CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
+		selectSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince,CustAddrPriority,");
+		selectSql.append(
+				" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict,");
+		if (type.contains("View")) {
+			selectSql.append(" lovDescCustAddrTypeName, lovDescCustAddrCityName,");
+			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName,lovDescCustAddrZip,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" FROM CustomerAddresses");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustID = :custID ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerAddres.class);
+		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
 
-		List<CustomerAddres> customerAddresses = this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper); 
+		List<CustomerAddres> customerAddresses = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
 		logger.debug("Leaving");
 		return customerAddresses;
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -181,16 +167,16 @@ public class CustomerAddresDAOImpl extends BasisNextidDaoImpl<CustomerAddres> im
 	public void delete(CustomerAddres customerAddres, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append(" Delete From CustomerAddresses");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustID =:CustID AND CustAddrType =:custAddrType ");
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -202,22 +188,23 @@ public class CustomerAddresDAOImpl extends BasisNextidDaoImpl<CustomerAddres> im
 	}
 
 	/**
-	 * Method for Deletion of Customer Related List of CustomerAddress for the Customer
+	 * Method for Deletion of Customer Related List of CustomerAddress for the
+	 * Customer
 	 */
-	public void deleteByCustomer(final long customerId,String type) {
+	public void deleteByCustomer(final long customerId, String type) {
 		logger.debug("Entering");
-		
+
 		CustomerAddres customerAddres = new CustomerAddres();
 		customerAddres.setId(customerId);
-		
+
 		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append(" Delete From CustomerAddresses");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustID =:CustID");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -238,28 +225,33 @@ public class CustomerAddresDAOImpl extends BasisNextidDaoImpl<CustomerAddres> im
 	@Override
 	public long save(CustomerAddres customerAddres, String type) {
 		logger.debug("Entering");
-		
-       StringBuilder insertSql = new StringBuilder();
-	   	if (customerAddres.getCustAddressId() == Long.MIN_VALUE) {
-			customerAddres.setCustAddressId(getNextidviewDAO().getNextId("SeqCustomerAddresses"));
+
+		StringBuilder insertSql = new StringBuilder();
+		if (customerAddres.getCustAddressId() == Long.MIN_VALUE) {
+			customerAddres.setCustAddressId(getNextValue("SeqCustomerAddresses"));
 			logger.debug("get NextID:" + customerAddres.getCustAddressId());
 		}
 		insertSql.append("Insert Into CustomerAddresses");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustAddressId,CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
-		insertSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCountry, CustAddrProvince, CustAddrPriority," );
-		insertSql.append(" CustAddrCity, CustAddrZIP, CustAddrPhone,CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId," );
+		insertSql.append(" (CustAddressId,CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
+		insertSql.append(
+				" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCountry, CustAddrProvince, CustAddrPriority,");
+		insertSql.append(
+				" CustAddrCity, CustAddrZIP, CustAddrPhone,CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustAddressId,:CustID, :CustAddrType, :CustAddrHNbr, :CustFlatNbr, :CustAddrStreet,");
-		insertSql.append(" :CustAddrLine1, :CustAddrLine2, :CustPOBox, :CustAddrCountry, :CustAddrProvince, :CustAddrPriority,");
-		insertSql.append(" :CustAddrCity, :CustAddrZIP, :CustAddrPhone, :CustAddrFrom,:TypeOfResidence,:CustAddrLine3,:CustAddrLine4,:CustDistrict,");
+		insertSql
+				.append(" Values(:CustAddressId,:CustID, :CustAddrType, :CustAddrHNbr, :CustFlatNbr, :CustAddrStreet,");
+		insertSql.append(
+				" :CustAddrLine1, :CustAddrLine2, :CustPOBox, :CustAddrCountry, :CustAddrProvince, :CustAddrPriority,");
+		insertSql.append(
+				" :CustAddrCity, :CustAddrZIP, :CustAddrPhone, :CustAddrFrom,:TypeOfResidence,:CustAddrLine3,:CustAddrLine4,:CustDistrict,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return customerAddres.getId();
@@ -283,29 +275,31 @@ public class CustomerAddresDAOImpl extends BasisNextidDaoImpl<CustomerAddres> im
 	public void update(CustomerAddres customerAddres, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update CustomerAddresses");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustAddrHNbr = :CustAddrHNbr, CustFlatNbr = :CustFlatNbr," );
-		updateSql.append(" CustAddrStreet = :CustAddrStreet, CustAddrLine1 = :CustAddrLine1," );
-		updateSql.append(" CustAddrLine2 = :CustAddrLine2, CustPOBox = :CustPOBox," );
-		updateSql.append(" CustAddrCountry = :CustAddrCountry, CustAddrProvince = :CustAddrProvince, CustAddrPriority = :CustAddrPriority, " );
-		updateSql.append(" CustAddrCity = :CustAddrCity, CustAddrZIP = :CustAddrZIP," );
-		updateSql.append(" CustAddrPhone = :CustAddrPhone,TypeOfResidence = :TypeOfResidence,CustAddrLine3=:CustAddrLine3,CustAddrLine4=:CustAddrLine4,CustDistrict=:CustDistrict,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
+		updateSql.append(" Set CustAddrHNbr = :CustAddrHNbr, CustFlatNbr = :CustFlatNbr,");
+		updateSql.append(" CustAddrStreet = :CustAddrStreet, CustAddrLine1 = :CustAddrLine1,");
+		updateSql.append(" CustAddrLine2 = :CustAddrLine2, CustPOBox = :CustPOBox,");
+		updateSql.append(
+				" CustAddrCountry = :CustAddrCountry, CustAddrProvince = :CustAddrProvince, CustAddrPriority = :CustAddrPriority, ");
+		updateSql.append(" CustAddrCity = :CustAddrCity, CustAddrZIP = :CustAddrZIP,");
+		updateSql.append(
+				" CustAddrPhone = :CustAddrPhone,TypeOfResidence = :TypeOfResidence,CustAddrLine3=:CustAddrLine3,CustAddrLine4=:CustAddrLine4,CustDistrict=:CustDistrict,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType," );
+		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,");
 		updateSql.append(" WorkflowId = :WorkflowId ");
 		updateSql.append(" Where CustID =:CustID AND CustAddrType =:custAddrType");
 
 		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
-		
-		logger.debug("updateSql: "+ updateSql.toString());
+
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -314,7 +308,8 @@ public class CustomerAddresDAOImpl extends BasisNextidDaoImpl<CustomerAddres> im
 	}
 
 	/**
-	 * Method for get total number of records from BMTAddressTypes master table.<br>
+	 * Method for get total number of records from BMTAddressTypes master
+	 * table.<br>
 	 * 
 	 * @param addrType
 	 * 
@@ -323,30 +318,31 @@ public class CustomerAddresDAOImpl extends BasisNextidDaoImpl<CustomerAddres> im
 	@Override
 	public int getAddrTypeCount(String addrType) {
 		logger.debug("Entering");
-		
-		MapSqlParameterSource source=new MapSqlParameterSource();
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AddrTypeCode", addrType);
-		
+
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT COUNT(*) FROM BMTAddressTypes");
 		selectSql.append(" WHERE ");
 		selectSql.append("AddrTypeCode= :AddrTypeCode");
-		
+
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch(EmptyResultDataAccessException dae) {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			recordCount = 0;
 		}
 		logger.debug("Leaving");
-		
+
 		return recordCount;
 	}
-	
+
 	/**
-	 * Method for get total number of records from BMTAddressTypes master table.<br>
+	 * Method for get total number of records from BMTAddressTypes master
+	 * table.<br>
 	 * 
 	 * @param addrType
 	 * 
@@ -355,25 +351,25 @@ public class CustomerAddresDAOImpl extends BasisNextidDaoImpl<CustomerAddres> im
 	@Override
 	public int getcustAddressCount(String addrType) {
 		logger.debug("Entering");
-		
-		MapSqlParameterSource source=new MapSqlParameterSource();
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustAddrType", addrType);
-		
+
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT COUNT(*) FROM CustomerAddresses");
 		selectSql.append(" WHERE ");
 		selectSql.append("CustAddrType= :CustAddrType");
-		
+
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch(EmptyResultDataAccessException dae) {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			recordCount = 0;
 		}
 		logger.debug("Leaving");
-		
+
 		return recordCount;
 	}
 
@@ -394,35 +390,35 @@ public class CustomerAddresDAOImpl extends BasisNextidDaoImpl<CustomerAddres> im
 
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT Version FROM CustomerAddresses");
-		
+
 		selectSql.append(" WHERE CustId = :CustId AND CustAddrType = :CustAddrType");
 
 		logger.debug("insertSql: " + selectSql.toString());
-		
+
 		logger.debug("Leaving");
-		
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
-	
+
 	@Override
 	public boolean isServiceable(String pinCode) {
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("pinCode", pinCode);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT serviceable");
 		selectSql.append(" From PinCodes_View ");
 		selectSql.append(" Where pinCode=:pinCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		int rcdCount = 0;
 		try {
-			rcdCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			rcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			rcdCount = 0;
 		}
-		
+
 		logger.debug("Leaving");
 		return rcdCount > 0 ? true : false;
 	}

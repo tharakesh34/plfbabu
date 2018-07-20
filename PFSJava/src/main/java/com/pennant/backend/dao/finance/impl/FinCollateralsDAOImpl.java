@@ -26,36 +26,29 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinCollateralsDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>FinCollaterals model</b> class.<br>
  */
-public class FinCollateralsDAOImpl extends BasisNextidDaoImpl<FinCollaterals> implements FinCollateralsDAO {
+public class FinCollateralsDAOImpl extends SequenceDao<FinCollaterals> implements FinCollateralsDAO {
 	private static Logger logger = Logger.getLogger(FinCollateralsDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public FinCollateralsDAOImpl() {
 		super();
 	}
-	
 
 	/**
 	 * Fetch the Record FinCollaterals Detail details by key field
@@ -67,8 +60,7 @@ public class FinCollateralsDAOImpl extends BasisNextidDaoImpl<FinCollaterals> im
 	 * @return FinCollaterals
 	 */
 	@Override
-	public FinCollaterals getFinCollateralsById(final String finReference, final long id,
-	        String type) {
+	public FinCollaterals getFinCollateralsById(final String finReference, final long id, String type) {
 		logger.debug("Entering");
 
 		FinCollaterals finCollaterals = new FinCollaterals();
@@ -76,11 +68,9 @@ public class FinCollateralsDAOImpl extends BasisNextidDaoImpl<FinCollaterals> im
 		finCollaterals.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder(
-		        " Select FinReference, CollateralSeq, CollateralType, CustID, Reference, Ccy, Value, Coverage, TenorType, Tenor, ");
-		selectSql
-		        .append(" Rate, StartDate, MaturityDate, BankName, FirstChequeNo, LastChequeNo, Status, Remarks, ");
-		selectSql
-		        .append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
+				" Select FinReference, CollateralSeq, CollateralType, CustID, Reference, Ccy, Value, Coverage, TenorType, Tenor, ");
+		selectSql.append(" Rate, StartDate, MaturityDate, BankName, FirstChequeNo, LastChequeNo, Status, Remarks, ");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
 
 		selectSql.append(" From FinCollaterals");
@@ -90,12 +80,10 @@ public class FinCollateralsDAOImpl extends BasisNextidDaoImpl<FinCollaterals> im
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCollaterals);
-		RowMapper<FinCollaterals> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(FinCollaterals.class);
+		RowMapper<FinCollaterals> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCollaterals.class);
 
 		try {
-			finCollaterals = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
-			        beanParameters, typeRowMapper);
+			finCollaterals = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finCollaterals = null;
@@ -105,18 +93,10 @@ public class FinCollateralsDAOImpl extends BasisNextidDaoImpl<FinCollaterals> im
 	}
 
 	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
-	/**
-	 * This method Deletes the Record from the FinCollaterals or FinCollaterals_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete FinCollaterals by key FinReference
+	 * This method Deletes the Record from the FinCollaterals or
+	 * FinCollaterals_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete FinCollaterals by key
+	 * FinReference
 	 * 
 	 * @param FinCollaterals
 	 *            (FinCollaterals)
@@ -141,12 +121,13 @@ public class FinCollateralsDAOImpl extends BasisNextidDaoImpl<FinCollaterals> im
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCollaterals);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * This method insert new Records into FinCollaterals or FinCollaterals_Temp.
+	 * This method insert new Records into FinCollaterals or
+	 * FinCollaterals_Temp.
 	 * 
 	 * save FinCollaterals
 	 * 
@@ -164,39 +145,37 @@ public class FinCollateralsDAOImpl extends BasisNextidDaoImpl<FinCollaterals> im
 		logger.debug("Entering");
 
 		if (finCollaterals.getCollateralSeq() == Long.MIN_VALUE) {
-			finCollaterals.setCollateralSeq(getNextidviewDAO().getNextId("SeqCollateral"));
+			finCollaterals.setCollateralSeq(getNextValue("SeqCollateral"));
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into ");
 		insertSql.append(" FinCollaterals");
 
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql
-		        .append(" (FinReference, CollateralSeq, CollateralType, CustID, Reference, Ccy, Value, Coverage, TenorType, Tenor, ");
-		insertSql
-		        .append(" Rate, StartDate, MaturityDate, BankName, FirstChequeNo, LastChequeNo, Status, Remarks, ");
-		insertSql
-		        .append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
+		insertSql.append(
+				" (FinReference, CollateralSeq, CollateralType, CustID, Reference, Ccy, Value, Coverage, TenorType, Tenor, ");
+		insertSql.append(" Rate, StartDate, MaturityDate, BankName, FirstChequeNo, LastChequeNo, Status, Remarks, ");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
-		insertSql
-		        .append(" values (:FinReference, :CollateralSeq, :CollateralType, :CustID, :Reference, :Ccy, :Value, :Coverage, :TenorType, :Tenor, ");
-		insertSql
-		        .append(" :Rate, :StartDate, :MaturityDate, :BankName, :FirstChequeNo, :LastChequeNo, :Status, :Remarks, ");
-		insertSql
-		        .append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId,");
+		insertSql.append(
+				" values (:FinReference, :CollateralSeq, :CollateralType, :CustID, :Reference, :Ccy, :Value, :Coverage, :TenorType, :Tenor, ");
+		insertSql.append(
+				" :Rate, :StartDate, :MaturityDate, :BankName, :FirstChequeNo, :LastChequeNo, :Status, :Remarks, ");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId,");
 		insertSql.append(" :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCollaterals);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return finCollaterals.getId();
 	}
 
 	/**
-	 * This method updates the Record FinCollaterals or FinCollaterals_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update FinCollaterals by key FinReference and Version
+	 * This method updates the Record FinCollaterals or FinCollaterals_Temp. if
+	 * Record not updated then throws DataAccessException with error 41004.
+	 * update FinCollaterals by key FinReference and Version
 	 * 
 	 * @param FinCollaterals
 	 *            (FinCollaterals)
@@ -216,25 +195,22 @@ public class FinCollateralsDAOImpl extends BasisNextidDaoImpl<FinCollaterals> im
 		updateSql.append(" FinCollaterals");
 
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-		        .append(" Set CollateralType = :CollateralType,");
+		updateSql.append(" Set CollateralType = :CollateralType,");
 		updateSql.append(" CustID = :CustID, Reference = :Reference, Ccy = :Ccy,");
 		updateSql.append(" Value = :Value, Coverage = :Coverage, TenorType = :TenorType,");
 		updateSql.append(" Tenor = :Tenor, Rate = :Rate, StartDate = :StartDate,");
-		updateSql
-		        .append(" MaturityDate = :MaturityDate, BankName = :BankName, FirstChequeNo = :FirstChequeNo,");
+		updateSql.append(" MaturityDate = :MaturityDate, BankName = :BankName, FirstChequeNo = :FirstChequeNo,");
 		updateSql.append(" LastChequeNo = :LastChequeNo, Status = :Status, Remarks = :Remarks,");
 		updateSql.append(" Version= :Version , LastMntBy=:LastMntBy,");
 		updateSql.append(" LastMntOn= :LastMntOn, RecordStatus=:RecordStatus, RoleCode=:RoleCode,");
 		updateSql.append(" NextRoleCode= :NextRoleCode, TaskId= :TaskId,");
-		updateSql
-		        .append(" NextTaskId= :NextTaskId, RecordType= :RecordType, WorkflowId= :WorkflowId");
+		updateSql.append(" NextTaskId= :NextTaskId, RecordType= :RecordType, WorkflowId= :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference AND CollateralSeq = :CollateralSeq");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCollaterals);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -250,11 +226,9 @@ public class FinCollateralsDAOImpl extends BasisNextidDaoImpl<FinCollaterals> im
 		finCollaterals.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder(
-		        " Select FinReference, CollateralSeq, CollateralType, CustID, Reference, Ccy, Value, Coverage, TenorType, Tenor, ");
-		selectSql
-		        .append(" Rate, StartDate, MaturityDate, BankName, FirstChequeNo, LastChequeNo, Status, Remarks, ");
-		selectSql
-		        .append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
+				" Select FinReference, CollateralSeq, CollateralType, CustID, Reference, Ccy, Value, Coverage, TenorType, Tenor, ");
+		selectSql.append(" Rate, StartDate, MaturityDate, BankName, FirstChequeNo, LastChequeNo, Status, Remarks, ");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
 
 		selectSql.append(" From FinCollaterals");
@@ -264,12 +238,10 @@ public class FinCollateralsDAOImpl extends BasisNextidDaoImpl<FinCollaterals> im
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCollaterals);
-		RowMapper<FinCollaterals> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(FinCollaterals.class);
+		RowMapper<FinCollaterals> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCollaterals.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
-		        typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -284,10 +256,10 @@ public class FinCollateralsDAOImpl extends BasisNextidDaoImpl<FinCollaterals> im
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCollaterals);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public int getFinCollateralsByBank(String bankCode, String type) {
 		FinCollaterals finCollaterals = new FinCollaterals();
@@ -302,6 +274,6 @@ public class FinCollateralsDAOImpl extends BasisNextidDaoImpl<FinCollaterals> im
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCollaterals);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 }

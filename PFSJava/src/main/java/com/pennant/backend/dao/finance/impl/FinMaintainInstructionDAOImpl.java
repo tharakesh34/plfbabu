@@ -43,8 +43,6 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinMaintainInstructionDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -71,13 +68,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * set of CRUD operations.
  */
 
-public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintainInstruction>
+public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstruction>
 		implements FinMaintainInstructionDAO {
-
 	private static Logger logger = Logger.getLogger(FinMaintainInstructionDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public FinMaintainInstructionDAOImpl() {
 		super();
@@ -101,7 +94,8 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select FinMaintainId, FinReference, Event, ");
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
@@ -115,8 +109,8 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 				.newInstance(FinMaintainInstruction.class);
 
 		try {
-			finMaintainInstruction = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);
+			finMaintainInstruction = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finMaintainInstruction = null;
@@ -143,7 +137,8 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select FinMaintainId, FinReference, Event, ");
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
@@ -157,8 +152,8 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 				.newInstance(FinMaintainInstruction.class);
 
 		try {
-			finMaintainInstruction = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);
+			finMaintainInstruction = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finMaintainInstruction = null;
@@ -193,7 +188,7 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 		paramSource.addValue("Event", event);
 		paramSource.addValue("FinReference", finReference);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -212,13 +207,15 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 		StringBuilder sql = new StringBuilder("Insert into FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
 		sql.append(" (FinMaintainId, FinReference, Event,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(:FinMaintainId, :FinReference, :Event,");
-		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
 		if (finMaintainInstruction.getFinMaintainId() == Long.MIN_VALUE) {
-			finMaintainInstruction.setFinMaintainId(getNextidviewDAO().getNextId("SeqFinMaintainInstructions"));
+			finMaintainInstruction.setFinMaintainId(getNextValue("SeqFinMaintainInstructions"));
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -226,7 +223,7 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finMaintainInstruction);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -245,7 +242,8 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 		StringBuilder sql = new StringBuilder("update FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
 		sql.append(" set FinMaintainId = :FinMaintainId, FinReference = :FinReference, Event = :Event,");
-		sql.append(	" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		sql.append(
+				" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 
 		sql.append(" where FinMaintainId = :FinMaintainId");
@@ -254,7 +252,7 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finMaintainInstruction);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		int recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -282,7 +280,7 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+			recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -295,13 +293,4 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 }

@@ -44,8 +44,6 @@ package com.pennant.backend.dao.pdc.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -54,16 +52,15 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -72,10 +69,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>ChequeDetail</code> with set of
  * CRUD operations.
  */
-public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements ChequeDetailDAO {
+public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeDetailDAO {
 	private static Logger logger = Logger.getLogger(ChequeDetailDAOImpl.class);
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public ChequeDetailDAOImpl() {
 		super();
@@ -107,7 +102,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		RowMapper<ChequeDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeDetail.class);
 
 		try {
-			chequeDetail = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			chequeDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			chequeDetail = null;
@@ -143,7 +138,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeDetail);
 		RowMapper<ChequeDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeDetail.class);
-		return namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 
 	}
 
@@ -176,7 +171,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		paramSource.addValue("accountNo", accountNo);
 		paramSource.addValue("chequeSerialNo", String.valueOf(chequeSerialNo));
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -206,7 +201,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		if (chequeDetail.getId() == Long.MIN_VALUE || chequeDetail.getId() == 0) {
-			chequeDetail.setId(getNextidviewDAO().getNextId("SeqChequeDetail"));
+			chequeDetail.setId(getNextValue("SeqChequeDetail"));
 			logger.debug("get NextID:" + chequeDetail.getId());
 		}
 		// Execute the SQL, binding the arguments.
@@ -214,7 +209,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeDetail);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -245,7 +240,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeDetail);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -270,7 +265,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -298,7 +293,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -327,18 +322,8 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(chequeDetail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -348,13 +333,14 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		MapSqlParameterSource source = null;
 		try {
 			sql = new StringBuilder();
-			sql.append("update CHEQUEDETAIL Set Chequestatus = :Chequestatus  where ChequeDetailsId = :ChequeDetailsId ");
+			sql.append(
+					"update CHEQUEDETAIL Set Chequestatus = :Chequestatus  where ChequeDetailsId = :ChequeDetailsId ");
 			logger.trace(Literal.SQL + sql.toString());
 
 			source = new MapSqlParameterSource();
 			source.addValue("Chequestatus", chequestatus);
 			source.addValue("ChequeDetailsId", chequeDetailsId);
-			namedParameterJdbcTemplate.update(sql.toString(), source);
+			jdbcTemplate.update(sql.toString(), source);
 		} finally {
 			source = null;
 			sql = null;

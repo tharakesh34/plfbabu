@@ -44,8 +44,6 @@ package com.pennant.backend.dao.rmtmasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -54,47 +52,46 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>FinTypePartnerBank</code> with set of CRUD operations.
+ * Data access layer implementation for <code>FinTypePartnerBank</code> with set
+ * of CRUD operations.
  */
-public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartnerBank> implements FinTypePartnerBankDAO {
-	private static Logger				logger	= Logger.getLogger(FinTypePartnerBankDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> implements FinTypePartnerBankDAO {
+	private static Logger logger = Logger.getLogger(FinTypePartnerBankDAOImpl.class);
 
 	public FinTypePartnerBankDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public FinTypePartnerBank getFinTypePartnerBank(String finType, long iD,String type) {
+	public FinTypePartnerBank getFinTypePartnerBank(String finType, long iD, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" iD, finType, purpose, paymentMode, partnerBankID, ");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			sql.append("PartnerBankName, PartnerBankCode,");
-		}	
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		}
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FinTypePartnerBanks");
 		sql.append(type);
 		sql.append(" Where iD = :iD and FinType = :FinType");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -103,10 +100,11 @@ public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartner
 		finTypePartnerBank.setFinType(finType);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finTypePartnerBank);
-		RowMapper<FinTypePartnerBank> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypePartnerBank.class);
+		RowMapper<FinTypePartnerBank> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinTypePartnerBank.class);
 
 		try {
-			finTypePartnerBank = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			finTypePartnerBank = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			finTypePartnerBank = null;
@@ -114,8 +112,8 @@ public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartner
 
 		logger.debug(Literal.LEAVING);
 		return finTypePartnerBank;
-	}		
-	
+	}
+
 	@Override
 	public List<FinTypePartnerBank> getFinTypePartnerBank(String finType, String type) {
 		logger.debug(Literal.ENTERING);
@@ -128,8 +126,7 @@ public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartner
 		if (type.contains("View")) {
 			sql.append("PartnerBankName, PartnerBankCode,");
 		}
-
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(	" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FinTypePartnerBanks");
 		sql.append(type);
 		sql.append(" Where FinType = :FinType");
@@ -142,47 +139,46 @@ public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartner
 				.newInstance(FinTypePartnerBank.class);
 
 		logger.debug(Literal.LEAVING);
-		return this.namedParameterJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
-	
 	@Override
-	public String save(FinTypePartnerBank finTypePartnerBank,TableType tableType) {
+	public String save(FinTypePartnerBank finTypePartnerBank, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		if (finTypePartnerBank.getId() == Long.MIN_VALUE) {
-			finTypePartnerBank.setId(getNextidviewDAO().getNextId("SeqFinTypePartnerBanks"));
+			finTypePartnerBank.setId(getNextValue("SeqFinTypePartnerBanks"));
 			logger.debug("get NextID:" + finTypePartnerBank.getId());
 		}
-		StringBuilder sql =new StringBuilder(" insert into FinTypePartnerBanks");
+		StringBuilder sql = new StringBuilder(" insert into FinTypePartnerBanks");
 		sql.append(tableType.getSuffix());
 		sql.append(" (iD, finType, purpose, paymentMode, partnerBankID, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :iD, :finType, :purpose, :paymentMode, :partnerBankID, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finTypePartnerBank);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(finTypePartnerBank.getID());
-	}	
+	}
 
 	@Override
-	public void update(FinTypePartnerBank finTypePartnerBank,TableType tableType) {
+	public void update(FinTypePartnerBank finTypePartnerBank, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update FinTypePartnerBanks" );
+		StringBuilder sql = new StringBuilder("update FinTypePartnerBanks");
 		sql.append(tableType.getSuffix());
 		sql.append("  set finType = :finType, purpose = :purpose, paymentMode = :paymentMode, ");
 		sql.append(" partnerBankID = :partnerBankID, ");
@@ -190,19 +186,19 @@ public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartner
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where iD = :iD ");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finTypePartnerBank);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -222,7 +218,7 @@ public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartner
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -234,7 +230,7 @@ public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartner
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void deleteByFinType(String finType, String tableType) {
 		logger.debug(Literal.ENTERING);
@@ -250,7 +246,7 @@ public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartner
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypePartnerBank);
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
@@ -259,16 +255,6 @@ public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartner
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
 	/**
 	 * Method for fetch number of records from FinTypePartnerBanks
 	 * 
@@ -294,13 +280,13 @@ public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartner
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug(dae);
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * Method for Fetching Count for Assigned PartnerBank
 	 */
@@ -319,14 +305,14 @@ public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartner
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		try{
-			assignedCount	= this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			assignedCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
 			logger.info(e);
 			assignedCount = 0;
 		}
 		logger.debug("Leaving");
 		return assignedCount;
 	}
-	
-}	
+
+}

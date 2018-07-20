@@ -47,15 +47,7 @@ public class PennantConstants {
 	}
 
 	public enum SeqTables {
-		SeqFinFeeDetail, SeqCustomers, SeqProspectCustomer, SeqCustomerBankInfo, SeqDocumentManager, 
-		SeqCustomerEmpDetails, SeqCustomerDirectorDetail, SeqFinReference, SeqFinGuarantorsDetails, SeqFinInstruction, 
-		SeqFinInsurance, SeqFinJointAccountDetails, SeqMandates, SeqLimitTransactionDetails, SeqLimitReferenceMapping, 
-		SeqCollateral, SeqPostings, SeqFinanceScoreHeader, SeqDocumentDetails, SeqAdvpayment,
-		SeqCollateralMovement,SEQPartnerBank, seqFinLogEntryDetail, SeqFinReceiptHeader, SeqFinReceiptDetail, 
-		SeqFinTypePartnerBanks,SeqFinRepayHeader,SeqFinODPenaltyRates,SeqFinExcessAmount,SeqManualAdviseMovements,
-		SeqBuilderGroup,SeqFeePostings,SeqBuilderProjcet,SeqBuilderCompany,SeqFinFeeReceipts,SeqTaxDetail,
-		SeqFinMaintainInstructions,SeqCustomerAddresses,SeqFinASSETTYPES,SeqReceiptAllocationDetail,SeqInterfaceMapping,
-		SeqMasterMapping,SeqUploadHeader,SeqChequeHeader,SeqChequeDetail,SeqFinTaxDetails,seqCollateralStructure, SeqFinExpenseDetails,
+		SeqCustomers,SeqProspectCustomer,SeqFinReference, SeqPostings,SeqFinODPenaltyRates,SeqFinRepayHeader,
 		SeqFinExpenseMovements,SeqFinTypeExpense, SeqCaste, SeqReligion, SeqServiceTaskDetails, SeqManualDeviations,SeqProductDeviations,
 		SeqAuth_Limits,SeqAuth_Limit_Details,SeqPostingId,SeqBMTQueryCategories,SeqFinLiabilityReq,SeqReceiptNumber,SeqQUERYDETAIL,
 		SeqDepositDetails, SeqDepositMovements, SeqDepositCheques

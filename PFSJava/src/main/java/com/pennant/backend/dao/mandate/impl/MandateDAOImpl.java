@@ -48,8 +48,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -57,11 +55,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -70,24 +66,23 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>Mandate model</b> class.<br>
  * 
  */
-public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements MandateDAO {
-	private static Logger				logger	= Logger.getLogger(MandateDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
+	private static Logger logger = Logger.getLogger(MandateDAOImpl.class);
 
 	public MandateDAOImpl() {
 		super();
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the new Mandate
+	 * This method set the Work Flow id based on the module name and return the
+	 * new Mandate
 	 * 
 	 * @return Mandate
 	 */
@@ -105,7 +100,8 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 	}
 
 	/**
-	 * This method get the module from method getMandate() and set the new record flag as true and return Mandate()
+	 * This method get the module from method getMandate() and set the new
+	 * record flag as true and return Mandate()
 	 * 
 	 * @return Mandate
 	 */
@@ -136,11 +132,14 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		StringBuilder selectSql = new StringBuilder("Select MandateID, CustID, MandateRef, MandateType, BankBranchID,");
 		selectSql.append(" AccNumber, AccHolderName, JointAccHolderName, AccType, OpenMandate,StartDate, ");
 		selectSql.append(" ExpiryDate ,MaxLimit, Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status,");
-		selectSql.append(" ApprovalID, InputDate, Active, Reason, MandateCcy,OrgReference, DocumentName, DocumentRef, ExternalRef,");
-		selectSql.append(" Version ,LastMntBy,LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
+		selectSql.append(
+				" ApprovalID, InputDate, Active, Reason, MandateCcy,OrgReference, DocumentName, DocumentRef, ExternalRef,");
+		selectSql.append(
+				" Version ,LastMntBy,LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
 		selectSql.append(" WorkflowId, BarCodeNumber, SwapIsActive, primarymandateid, EntityCode");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
+			selectSql
+					.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
 			selectSql.append("useExisting, EntityDesc");
 		}
 		selectSql.append(" From Mandates");
@@ -152,8 +151,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		RowMapper<Mandate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Mandate.class);
 
 		try {
-			mandate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			mandate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			mandate = null;
@@ -161,7 +159,6 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		logger.debug("Leaving");
 		return mandate;
 	}
-
 
 	/**
 	 * Fetch the Record Mandate details by key field
@@ -187,7 +184,8 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		selectSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
 		selectSql.append(" WorkflowId, BarCodeNumber, SwapIsActive, EntityCode");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
+			selectSql
+					.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
 			selectSql.append("useExisting, EntityDesc");
 		}
 		selectSql.append(" From Mandates");
@@ -199,8 +197,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		RowMapper<Mandate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Mandate.class);
 
 		try {
-			mandate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			mandate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			mandate = null;
@@ -208,16 +205,15 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		logger.debug("Leaving");
 		return mandate;
 	}
-	
-	
+
 	@Override
 	public Mandate getMandateByOrgReference(final String orgReference, String status, String type) {
 		logger.debug("Entering");
 		Mandate mandate = getMandate();
-		
+
 		mandate.setOrgReference(orgReference);
 		mandate.setStatus(status);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select MandateID, CustID, MandateRef, MandateType, BankBranchID,");
 		selectSql.append(" AccNumber, AccHolderName, JointAccHolderName, AccType, OpenMandate,StartDate, ");
 		selectSql.append(" ExpiryDate ,MaxLimit, Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status,");
@@ -225,20 +221,20 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		selectSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
 		selectSql.append(" WorkflowId,BarCodeNumber, SwapIsActive, EntityCode");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
+			selectSql
+					.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
 			selectSql.append("useExisting, EntityDesc");
 		}
 		selectSql.append(" From Mandates");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where OrgReference =:OrgReference and Status=:Status");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
 		RowMapper<Mandate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Mandate.class);
-		
+
 		try {
-			mandate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			mandate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			mandate = null;
@@ -248,18 +244,9 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 	}
 
 	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
-	/**
-	 * This method Deletes the Record from the Mandates or Mandates_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Mandate by key MandateID
+	 * This method Deletes the Record from the Mandates or Mandates_Temp. if
+	 * Record not deleted then throws DataAccessException with error 41003.
+	 * delete Mandate by key MandateID
 	 * 
 	 * @param Mandate
 	 *            (mandate)
@@ -281,7 +268,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -292,8 +279,9 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 	}
 
 	/**
-	 * This method insert new Records into Mandates or Mandates_Temp. it fetches the available Sequence form SeqMandates
-	 * by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into Mandates or Mandates_Temp. it fetches
+	 * the available Sequence form SeqMandates by using
+	 * getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Mandate
 	 * 
@@ -310,7 +298,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 	public long save(Mandate mandate, String type) {
 		logger.debug("Entering");
 		if (mandate.getId() == Long.MIN_VALUE) {
-			mandate.setId(getNextidviewDAO().getNextId("SeqMandates"));
+			mandate.setId(getNextValue("SeqMandates"));
 			logger.debug("get NextID:" + mandate.getId());
 		}
 
@@ -319,27 +307,30 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		insertSql.append(" (MandateID, CustID, MandateRef, MandateType, BankBranchID, AccNumber, AccHolderName,");
 		insertSql.append(" JointAccHolderName, AccType, OpenMandate, StartDate, ExpiryDate, MaxLimit,");
 		insertSql.append(" Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status, ApprovalID,");
-		insertSql.append(" InputDate, Active, Reason, MandateCcy, DocumentName, DocumentRef, ExternalRef, Version, LastMntBy,");
+		insertSql.append(
+				" InputDate, Active, Reason, MandateCcy, DocumentName, DocumentRef, ExternalRef, Version, LastMntBy,");
 		insertSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,  RecordType,");
 		insertSql.append(" WorkflowId,OrgReference, BarCodeNumber, SwapIsActive, PrimaryMandateId, EntityCode)");
 		insertSql.append(" Values(:MandateID, :CustID, :MandateRef, :MandateType, :BankBranchID, :AccNumber, ");
 		insertSql.append(" :AccHolderName, :JointAccHolderName, :AccType, :OpenMandate, :StartDate, :ExpiryDate,");
 		insertSql.append(" :MaxLimit, :Periodicity, :PhoneCountryCode, :PhoneAreaCode, :PhoneNumber, :Status,");
-		insertSql.append(" :ApprovalID, :InputDate, :Active, :Reason, :MandateCcy, :DocumentName, :DocumentRef, :ExternalRef, :Version,:LastMntBy, :LastMntOn,");
+		insertSql.append(
+				" :ApprovalID, :InputDate, :Active, :Reason, :MandateCcy, :DocumentName, :DocumentRef, :ExternalRef, :Version,:LastMntBy, :LastMntOn,");
 		insertSql.append(" :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType,");
 		insertSql.append(" :WorkflowId, :OrgReference, :BarCodeNumber, :SwapIsActive, :PrimaryMandateId, :EntityCode)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return mandate.getId();
 	}
 
 	/**
-	 * This method updates the Record Mandates or Mandates_Temp. if Record not updated then throws DataAccessException
-	 * with error 41004. update Mandate by key MandateID and Version
+	 * This method updates the Record Mandates or Mandates_Temp. if Record not
+	 * updated then throws DataAccessException with error 41004. update Mandate
+	 * by key MandateID and Version
 	 * 
 	 * @param Mandate
 	 *            (mandate)
@@ -369,7 +360,8 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		updateSql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId,NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, BarCodeNumber = :BarCodeNumber,");
-		updateSql.append(" SwapIsActive = :SwapIsActive, PrimaryMandateId = :PrimaryMandateId, EntityCode = :EntityCode");
+		updateSql.append(
+				" SwapIsActive = :SwapIsActive, PrimaryMandateId = :PrimaryMandateId, EntityCode = :EntityCode");
 		updateSql.append(" Where MandateID =:MandateID");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
@@ -378,7 +370,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -387,8 +379,9 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 	}
 
 	/**
-	 * This method updates the Record Mandates or Mandates_Temp. if Record not updated then throws DataAccessException
-	 * with error 41004. update Mandate by key MandateID and Version
+	 * This method updates the Record Mandates or Mandates_Temp. if Record not
+	 * updated then throws DataAccessException with error 41004. update Mandate
+	 * by key MandateID and Version
 	 * 
 	 * @param Mandate
 	 *            (mandate)
@@ -425,7 +418,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -447,13 +440,13 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		updateSql.append(" Where MandateID = :MandateID");
 
 		logger.debug("updateSql: " + updateSql.toString());
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
 
 	}
 
 	@Override
-	public void updateActive(long mandateID,String status, boolean active) {
+	public void updateActive(long mandateID, String status, boolean active) {
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("MandateID", mandateID);
@@ -465,7 +458,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		updateSql.append(" Where MandateID = :MandateID");
 
 		logger.debug("updateSql: " + updateSql.toString());
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
 
 	}
@@ -484,16 +477,17 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		financeMain.setMandateID(mandateID);
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FinType, FinStatus, FinStartDate,");
-		selectSql.append(" FinAmount, DownPayment, FeeChargeAmt, InsuranceAmt, NumberOfTerms, LovDescFinTypeName,MaxInstAmount,FinRepaymentAmount,FinCurrAssetvalue ");
+		selectSql.append(
+				" FinAmount, DownPayment, FeeChargeAmt, InsuranceAmt, NumberOfTerms, LovDescFinTypeName,MaxInstAmount,FinRepaymentAmount,FinCurrAssetvalue ");
 		selectSql.append(" from MandateEnquiry_view ");
 		selectSql.append(" Where MandateID = :MandateID");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		RowMapper<FinanceEnquiry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceEnquiry.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -529,7 +523,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 
 		List<Mandate> mandates = new ArrayList<>();
 		try {
-			mandates = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			mandates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 			return Collections.emptyList();
@@ -552,7 +546,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 
@@ -572,7 +566,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
@@ -582,37 +576,38 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		mandate.setOpenMandate(true);
 		mandate.setActive(true);
 		mandate.setMandateID(mandateID);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select  MandateType");
 		selectSql.append(" From Mandates");
-		selectSql.append(" Where CustID =:CustID and OpenMandate =:OpenMandate and Active =:Active and MandateID !=:MandateID");
+		selectSql.append(
+				" Where CustID =:CustID and OpenMandate =:OpenMandate and Active =:Active and MandateID !=:MandateID");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
 		RowMapper<Mandate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Mandate.class);
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,	typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
 	public int getSecondaryMandateCount(long mandateID) {
 
 		logger.debug("Entering");
-		
+
 		Mandate mandate = new Mandate();
 		mandate.setPrimaryMandateId(mandateID);
 		mandate.setActive(true);
 
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From Mandates");
 		selectSql.append(" Where PrimaryMandateId =:PrimaryMandateId AND Active =:Active");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 
 	}
-	
+
 	@Override
 	public void updateStatusAfterRegistration(long mandateID, String statusInprocess) {
 		logger.info(Literal.ENTERING);
@@ -624,7 +619,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		paramMap.addValue("STATUS", statusInprocess);
 
 		logger.info("updateSql: " + updateSql.toString());
-		namedParameterJdbcTemplate.update(updateSql.toString(), paramMap);
+		jdbcTemplate.update(updateSql.toString(), paramMap);
 		logger.info(Literal.LEAVING);
 
 	}
@@ -645,7 +640,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		paramMap.addValue("MACHINE_FLAG", "Y");
 		paramMap.addValue("ACTIVE_FLAG", 1);
 		try {
-			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0) {
+			if (this.jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -673,7 +668,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		paramMap.addValue("ACTIVE", 1);
 
 		try {
-			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0) {
+			if (this.jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -682,7 +677,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int getBarCodeCount(String barCode, long mandateID, String type) {
 		Mandate mandate = new Mandate();
@@ -698,7 +693,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
@@ -711,7 +706,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		selectSql.append(" WHERE FINREFERENCE = :FINREFERENCE");
 		source.addValue("FINREFERENCE", finReference);
 
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
 
 	}
 
@@ -729,9 +724,9 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("EntityCode", entityCode);
-		
+
 		try {
-			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0) {
+			if (this.jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -741,5 +736,4 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		return false;
 	}
 
-		
 }

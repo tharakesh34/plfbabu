@@ -63,15 +63,15 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.backend.dao.NextidviewDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>ReturnDataSet model</b> class.<br>
  */
-public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements PostingsDAO {
+public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements PostingsDAO {
 	private static Logger logger = Logger.getLogger(PostingsDAOImpl.class);
 	
 	// Spring Named JDBC Template

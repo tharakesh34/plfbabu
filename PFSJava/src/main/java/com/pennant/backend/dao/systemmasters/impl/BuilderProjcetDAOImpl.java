@@ -42,8 +42,6 @@
 */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -51,47 +49,45 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.systemmasters.BuilderProjcetDAO;
 import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>BuilderProjcet</code> with set of CRUD operations.
+ * Data access layer implementation for <code>BuilderProjcet</code> with set of
+ * CRUD operations.
  */
-public class BuilderProjcetDAOImpl extends BasisNextidDaoImpl<BuilderProjcet> implements BuilderProjcetDAO {
-	private static Logger				logger	= Logger.getLogger(BuilderProjcetDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class BuilderProjcetDAOImpl extends SequenceDao<BuilderProjcet> implements BuilderProjcetDAO {
+	private static Logger logger = Logger.getLogger(BuilderProjcetDAOImpl.class);
 
 	public BuilderProjcetDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public BuilderProjcet getBuilderProjcet(long id,String type) {
+	public BuilderProjcet getBuilderProjcet(long id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, name, builderId, apfNo, ");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			sql.append("builderIdName,");
-		}	
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		}
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From BuilderProjcet");
 		sql.append(type);
 		sql.append(" Where id = :id");
-		
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -102,7 +98,7 @@ public class BuilderProjcetDAOImpl extends BasisNextidDaoImpl<BuilderProjcet> im
 		RowMapper<BuilderProjcet> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BuilderProjcet.class);
 
 		try {
-			builderProjcet = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			builderProjcet = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			builderProjcet = null;
@@ -110,48 +106,52 @@ public class BuilderProjcetDAOImpl extends BasisNextidDaoImpl<BuilderProjcet> im
 
 		logger.debug(Literal.LEAVING);
 		return builderProjcet;
-	}		
-	
+	}
+
 	@Override
-	public String save(BuilderProjcet builderProjcet,TableType tableType) {
+	public String save(BuilderProjcet builderProjcet, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (builderProjcet.getId() == Long.MIN_VALUE) {
-			builderProjcet.setId(getNextId("SeqBuilderProjcet"));
+			builderProjcet.setId(getNextValue("SeqBuilderProjcet"));
 		}
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into BuilderProjcet");
+		StringBuilder sql = new StringBuilder(" insert into BuilderProjcet");
 		sql.append(tableType.getSuffix());
 		sql.append(" (id, name, builderId, apfNo, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :id, :name, :builderId, :apfNo, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		/*// Get the identity sequence number.
-		if (builderProjcet.getId() <= 0) {
-			builderProjcet.setId(getNextidviewDAO().getNextId("SeqBuilderProjcet"));
-		}*/
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		/*
+		 * // Get the identity sequence number. if (builderProjcet.getId() <= 0)
+		 * {
+		 * builderProjcet.setId(getNextidviewDAO().getNextId("SeqBuilderProjcet"
+		 * )); }
+		 */
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(builderProjcet);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(builderProjcet.getId());
-	}	
+	}
 
 	@Override
-	public void update(BuilderProjcet builderProjcet,TableType tableType) {
+	public void update(BuilderProjcet builderProjcet, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update BuilderProjcet" );
+		StringBuilder sql = new StringBuilder("update BuilderProjcet");
 		sql.append(tableType.getSuffix());
 		sql.append("  set name = :name, builderId = :builderId, apfNo = :apfNo, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
@@ -159,18 +159,18 @@ public class BuilderProjcetDAOImpl extends BasisNextidDaoImpl<BuilderProjcet> im
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(builderProjcet);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -190,7 +190,7 @@ public class BuilderProjcetDAOImpl extends BasisNextidDaoImpl<BuilderProjcet> im
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -201,16 +201,6 @@ public class BuilderProjcetDAOImpl extends BasisNextidDaoImpl<BuilderProjcet> im
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -238,8 +228,8 @@ public class BuilderProjcetDAOImpl extends BasisNextidDaoImpl<BuilderProjcet> im
 		paramSource.addValue("id", id);
 		paramSource.addValue("name", name);
 		paramSource.addValue("builderId", builderId);
-		
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -249,5 +239,5 @@ public class BuilderProjcetDAOImpl extends BasisNextidDaoImpl<BuilderProjcet> im
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
-}	
+
+}

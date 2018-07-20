@@ -44,8 +44,6 @@ package com.pennant.backend.dao.interfacemapping.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,25 +51,20 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.interfacemapping.InterfaceMappingDAO;
 import com.pennant.backend.model.interfacemapping.InterfaceMapping;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
-public class InterfaceMappingDAOImpl extends BasisNextidDaoImpl<InterfaceMapping> implements InterfaceMappingDAO {
-	private static Logger				logger	= Logger.getLogger(InterfaceMappingDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
+public class InterfaceMappingDAOImpl extends SequenceDao<InterfaceMapping> implements InterfaceMappingDAO {
+	private static Logger logger = Logger.getLogger(InterfaceMappingDAOImpl.class);
 
 	public InterfaceMappingDAOImpl() {
 		super();
@@ -92,9 +85,11 @@ public class InterfaceMappingDAOImpl extends BasisNextidDaoImpl<InterfaceMapping
 		InterfaceMapping interfaceMapping = new InterfaceMapping();
 		interfaceMapping.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select InterfaceMappingId,InterfaceId,InterfaceName,InterfaceField,MappingTable,MappingColumn,MappingValue,Active");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		
+		StringBuilder selectSql = new StringBuilder(
+				"Select InterfaceMappingId,InterfaceId,InterfaceName,InterfaceField,MappingTable,MappingColumn,MappingValue,Active");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",MappingType, Module ");
 		}
@@ -104,22 +99,24 @@ public class InterfaceMappingDAOImpl extends BasisNextidDaoImpl<InterfaceMapping
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceMapping);
-		RowMapper<InterfaceMapping> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InterfaceMapping.class);
+		RowMapper<InterfaceMapping> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(InterfaceMapping.class);
 
 		try {
-			interfaceMapping = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			interfaceMapping = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			interfaceMapping = null;
 		}
 		logger.debug("Leaving");
-		
+
 		return interfaceMapping;
 	}
 
 	/**
-	 * This method updates the Record InterfaceMapping or InterfaceMapping_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update InterfaceMapping by key InterfaceMappingId and Version
+	 * This method updates the Record InterfaceMapping or InterfaceMapping_Temp.
+	 * if Record not updated then throws DataAccessException with error 41004.
+	 * update InterfaceMapping by key InterfaceMappingId and Version
 	 * 
 	 * @param InterfaceMapping
 	 *            (interfaceMapping)
@@ -135,16 +132,19 @@ public class InterfaceMappingDAOImpl extends BasisNextidDaoImpl<InterfaceMapping
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update InterfaceMapping");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set InterfaceName = :InterfaceName, InterfaceField = :InterfaceField, MappingTable = :MappingTable");
+		updateSql.append(
+				" Set InterfaceName = :InterfaceName, InterfaceField = :InterfaceField, MappingTable = :MappingTable");
 		updateSql.append(", MappingColumn = :MappingColumn, MappingValue = :MappingValue, Active = :Active");
-		updateSql.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode");
-		updateSql.append(" , NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode");
+		updateSql.append(
+				" , NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where InterfaceMappingId =:InterfaceMappingId AND InterfaceId =:InterfaceId");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceMapping);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -154,8 +154,10 @@ public class InterfaceMappingDAOImpl extends BasisNextidDaoImpl<InterfaceMapping
 	}
 
 	/**
-	 * This method Deletes the Record from the InterfaceMapping or InterfaceMapping_Temp. if Record not deleted then
-	 * throws DataAccessException with error 41003. delete InterfaceMapping by key InterfaceMappingId
+	 * This method Deletes the Record from the InterfaceMapping or
+	 * InterfaceMapping_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete InterfaceMapping by key
+	 * InterfaceMappingId
 	 * 
 	 * @param InterfaceMapping
 	 *            (interfaceMapping)
@@ -178,7 +180,7 @@ public class InterfaceMappingDAOImpl extends BasisNextidDaoImpl<InterfaceMapping
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceMapping);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -190,8 +192,9 @@ public class InterfaceMappingDAOImpl extends BasisNextidDaoImpl<InterfaceMapping
 	}
 
 	/**
-	 * This method insert new Records into InterfaceMapping or InterfaceMapping_Temp. it fetches the available Sequence
-	 * form InterfaceMapping by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into InterfaceMapping or
+	 * InterfaceMapping_Temp. it fetches the available Sequence form
+	 * InterfaceMapping by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save InterfaceMapping
 	 * 
@@ -208,7 +211,7 @@ public class InterfaceMappingDAOImpl extends BasisNextidDaoImpl<InterfaceMapping
 		logger.debug("Entering");
 
 		if (interfaceMapping.getId() == Long.MIN_VALUE) {
-			interfaceMapping.setId(getNextidviewDAO().getNextId("SeqInterfaceMapping"));
+			interfaceMapping.setId(getNextValue("SeqInterfaceMapping"));
 			logger.debug("get NextID:" + interfaceMapping.getId());
 		}
 
@@ -226,50 +229,51 @@ public class InterfaceMappingDAOImpl extends BasisNextidDaoImpl<InterfaceMapping
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceMapping);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return interfaceMapping.getId();
 	}
 
 	/**
 	 * method to return table column list
+	 * 
 	 * @param tableName
 	 */
 	@Override
 	public List<String> getTableNameColumnsList(String tableName) {
 		logger.debug("Entering");
-		
+
 		StringBuilder selectQry = new StringBuilder();
 		if (com.pennanttech.pennapps.core.App.DATABASE == com.pennanttech.pennapps.core.App.Database.ORACLE) {
 			selectQry.append("select COLUMN_NAME from USER_TAB_COLS where TABLE_NAME = :TABLE_NAME");
 		}
-		if(com.pennanttech.pennapps.core.App.DATABASE == com.pennanttech.pennapps.core.App.Database.SQL_SERVER){
+		if (com.pennanttech.pennapps.core.App.DATABASE == com.pennanttech.pennapps.core.App.Database.SQL_SERVER) {
 			selectQry.append("SELECT COLUMN_name FROM information_schema.columns WHERE  TABLE_NAME=:TABLE_NAME");
 		}
-		
+
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("TABLE_NAME", tableName);
-		
+
 		logger.debug("selectSql: " + selectQry);
-		
-		return this.namedParameterJdbcTemplate.queryForList(selectQry.toString(), paramSource, String.class);
+
+		return this.jdbcTemplate.queryForList(selectQry.toString(), paramSource, String.class);
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(InterfaceMapping interfaceMapping, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		String whereClause;
-		
-		if(!StringUtils.isEmpty(interfaceMapping.getMappingValue())){
+
+		if (!StringUtils.isEmpty(interfaceMapping.getMappingValue())) {
 			whereClause = "InterfaceId = :InterfaceId And MappingValue = :MappingValue";
-		}
-		else if(!StringUtils.isEmpty(interfaceMapping.getMappingTable())&& !StringUtils.isEmpty(interfaceMapping.getMappingColumn()) ){
+		} else if (!StringUtils.isEmpty(interfaceMapping.getMappingTable())
+				&& !StringUtils.isEmpty(interfaceMapping.getMappingColumn())) {
 			whereClause = "InterfaceId = :InterfaceId And MappingTable = :MappingTable And MappingColumn = :MappingColumn";
-		}else{			
+		} else {
 			whereClause = "InterfaceId = :InterfaceId And MappingTable is null And MappingColumn is null And MappingValue is null";
 		}
-		
+
 		String sql;
 
 		switch (tableType) {
@@ -292,7 +296,7 @@ public class InterfaceMappingDAOImpl extends BasisNextidDaoImpl<InterfaceMapping
 		paramSource.addValue("MappingValue", interfaceMapping.getMappingValue());
 		paramSource.addValue("MappingColumn", interfaceMapping.getMappingColumn());
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -301,14 +305,6 @@ public class InterfaceMappingDAOImpl extends BasisNextidDaoImpl<InterfaceMapping
 
 		logger.debug(Literal.LEAVING);
 		return exists;
-	}
-	/**
-	 * TO Set DataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 }

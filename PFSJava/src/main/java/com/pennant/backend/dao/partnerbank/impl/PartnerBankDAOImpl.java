@@ -47,8 +47,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -57,18 +55,17 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
 import com.pennant.backend.model.partnerbank.PartnerBranchModes;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -78,12 +75,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 
-public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implements PartnerBankDAO {
-
-	private static Logger				logger	= Logger.getLogger(PartnerBankDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements PartnerBankDAO {
+	private static Logger logger = Logger.getLogger(PartnerBankDAOImpl.class);
 
 	public PartnerBankDAOImpl() {
 		super();
@@ -105,12 +98,12 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		partnerBank.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql
-				.append("Select PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
-		selectSql
-				.append(", AcType, AlwFileDownload, InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID, CostCenterID, FileName, Entity");
-		selectSql
-				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				"Select PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
+		selectSql.append(
+				", AcType, AlwFileDownload, InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID, CostCenterID, FileName, Entity");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",BankCodeName,BankBranchCodeName,AcTypeName,Entitydesc");
@@ -125,15 +118,14 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		RowMapper<PartnerBank> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PartnerBank.class);
 
 		try {
-			partnerBank = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			partnerBank = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			partnerBank = null;
 		}
 		logger.debug("Leaving");
 		return partnerBank;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(long partnerBankId, String PartnerBankCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -160,7 +152,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		paramSource.addValue("partnerBankId", partnerBankId);
 		paramSource.addValue("PartnerBankCode", PartnerBankCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -170,33 +162,38 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
-	
+
 	@Override
 	public String save(PartnerBank partnerBank, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into PartnerBanks");
 		sql.append(tableType.getSuffix());
-		sql.append(" ( PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
-		sql.append(", AcType, AlwFileDownload,  InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID, CostCenterID, FileName, Entity ");
-		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values( :PartnerBankId, :PartnerBankCode, :PartnerBankName, :BankCode, :BankBranchCode, :BranchMICRCode, :BranchIFSCCode, :BranchCity, :UtilityCode, :AccountNo ");
-		sql.append(", :AcType, :AlwFileDownload, :InFavourLength, :Active, :AlwDisb, :AlwPayment, :AlwReceipt, :HostGLCode, :ProfitCenterID, :CostCenterID, :FileName, :Entity");
-		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" ( PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
+		sql.append(
+				", AcType, AlwFileDownload,  InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID, CostCenterID, FileName, Entity ");
+		sql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" values( :PartnerBankId, :PartnerBankCode, :PartnerBankName, :BankCode, :BankBranchCode, :BranchMICRCode, :BranchIFSCCode, :BranchCity, :UtilityCode, :AccountNo ");
+		sql.append(
+				", :AcType, :AlwFileDownload, :InFavourLength, :Active, :AlwDisb, :AlwPayment, :AlwReceipt, :HostGLCode, :ProfitCenterID, :CostCenterID, :FileName, :Entity");
+		sql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
-		if(partnerBank.getPartnerBankId() == Long.MIN_VALUE){
-			partnerBank.setPartnerBankId(getNextidviewDAO().getNextId("SEQPartnerBank"));
+		if (partnerBank.getPartnerBankId() == Long.MIN_VALUE) {
+			partnerBank.setPartnerBankId(getNextValue("SEQPartnerBank"));
 		}
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(partnerBank);
-		
+
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -204,7 +201,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(partnerBank.getPartnerBankId());
 	}
-	
+
 	@Override
 	public void update(PartnerBank partnerBank, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -212,17 +209,20 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update PartnerBanks");
 		sql.append(tableType.getSuffix());
-		sql.append(" set PartnerBankName = :PartnerBankName, BankCode = :BankCode, BankBranchCode = :BankBranchCode, BranchMICRCode = :BranchMICRCode, BranchIFSCCode = :BranchIFSCCode, BranchCity = :BranchCity, UtilityCode = :UtilityCode, AccountNo = :AccountNo");
-		sql.append(" , AcType = :AcType, AlwFileDownload = :AlwFileDownload,  InFavourLength = :InFavourLength,  Active = :Active, AlwDisb = :AlwDisb, AlwPayment = :AlwPayment, AlwReceipt = :AlwReceipt, HostGLCode = :HostGLCode, ProfitCenterID = :ProfitCenterID, CostCenterID = :CostCenterID, FileName = :FileName");
+		sql.append(
+				" set PartnerBankName = :PartnerBankName, BankCode = :BankCode, BankBranchCode = :BankBranchCode, BranchMICRCode = :BranchMICRCode, BranchIFSCCode = :BranchIFSCCode, BranchCity = :BranchCity, UtilityCode = :UtilityCode, AccountNo = :AccountNo");
+		sql.append(
+				" , AcType = :AcType, AlwFileDownload = :AlwFileDownload,  InFavourLength = :InFavourLength,  Active = :Active, AlwDisb = :AlwDisb, AlwPayment = :AlwPayment, AlwReceipt = :AlwReceipt, HostGLCode = :HostGLCode, ProfitCenterID = :ProfitCenterID, CostCenterID = :CostCenterID, FileName = :FileName");
 		sql.append(", Entity = :Entity");
-		sql.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(
+				", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where PartnerBankId =:PartnerBankId");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(partnerBank);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -235,20 +235,19 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 	@Override
 	public void delete(PartnerBank partnerBank, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
 
 		StringBuilder sql = new StringBuilder("delete from PartnerBanks");
 		sql.append(tableType.getSuffix());
 		sql.append(" Where PartnerBankId =:PartnerBankId");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(partnerBank);
 		int recordCount = 0;
-		
+
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -262,34 +261,24 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 	}
 
 	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
-	/**
 	 * Method for Saving List Of PartnerBankModes Details
 	 */
-	public void saveList(List<PartnerBankModes> list,long id) {
-	
+	public void saveList(List<PartnerBankModes> list, long id) {
+
 		for (PartnerBankModes partnerBankModes : list) {
 			partnerBankModes.setPartnerBankId(id);
 		}
 		StringBuilder insertSql = new StringBuilder("Insert Into PartnerBankModes");
 		insertSql.append(" ( PartnerBankId, Purpose, PaymentMode)");
 		insertSql.append(" Values(:PartnerBankId,:Purpose, :PaymentMode)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Update List Of PartnerBankModes Details
 	 */
@@ -298,26 +287,26 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update PartnerBankModes");
-		updateSql
-				.append(" Set Purpose= :Purpose, PaymentMode = :PaymentMode");
+		updateSql.append(" Set Purpose= :Purpose, PaymentMode = :PaymentMode");
 		updateSql.append(" Where PartnerBankId =:PartnerBankId  AND PaymentMode =:PaymentMode ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 
-		logger.debug("Leaving");		
+		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * Method for Deletion PartnerBankModes Details  
+	 * Method for Deletion PartnerBankModes Details
+	 * 
 	 * @param partnerBankList
 	 */
-	
+
 	public void deletePartner(PartnerBank partnerBank) {
 		logger.debug("Entering");
-		PartnerBankModes partnerBankModes= new PartnerBankModes();
+		PartnerBankModes partnerBankModes = new PartnerBankModes();
 		partnerBankModes.setPartnerBankId(partnerBank.getPartnerBankId());
 		StringBuilder deleteSql = new StringBuilder("Delete From PartnerBankModes");
 		deleteSql.append(" Where PartnerBankId =:PartnerBankId");
@@ -326,7 +315,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(partnerBankModes);
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			logger.error(e);
 		}
@@ -347,15 +336,15 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 				.newInstance(PartnerBankModes.class);
 		List<PartnerBankModes> PartnerBankModeList = new ArrayList<PartnerBankModes>();
 		try {
-			PartnerBankModeList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			PartnerBankModeList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 			return Collections.emptyList();
 		}
 		logger.debug("Leaving");
-		return PartnerBankModeList;}
+		return PartnerBankModeList;
+	}
 
-	
 	@Override
 	public int geBankCodeCount(String partnerBankCodeValue, String type) {
 		logger.debug("Entering");
@@ -372,7 +361,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		source.addValue("PartnerBankCode", partnerBankCodeValue);
 
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
 			logger.error(e);
 		}
@@ -381,14 +370,15 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 
 		return count;
 	}
-	
+
 	public List<PartnerBranchModes> getPartnerBranchModesId(long id) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PartnerBankId", id);
 
-		StringBuilder selectSql = new StringBuilder("SELECT PartnerBankId, BranchCode, PaymentMode from PartnerBranchModes");
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT PartnerBankId, BranchCode, PaymentMode from PartnerBranchModes");
 		selectSql.append(" Where PartnerBankId =:PartnerBankId");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -396,16 +386,17 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 				.newInstance(PartnerBranchModes.class);
 		List<PartnerBranchModes> PartnerBranchModeList = new ArrayList<PartnerBranchModes>();
 		try {
-			PartnerBranchModeList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			PartnerBranchModeList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 			return Collections.emptyList();
 		}
 		logger.debug("Leaving");
-		return PartnerBranchModeList;}
+		return PartnerBranchModeList;
+	}
 
 	/**
-	 * Method for Deletion PartnerBranchModes Details  
+	 * Method for Deletion PartnerBranchModes Details
 	 */
 	public void deletePartnerBranch(PartnerBank partnerBank) {
 		logger.debug("Entering");
@@ -418,7 +409,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(partnerBranchModes);
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			logger.error(e);
 		}
@@ -436,14 +427,14 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		StringBuilder insertSql = new StringBuilder("Insert Into PartnerBranchModes");
 		insertSql.append(" ( PartnerBankId, BranchCode, PaymentMode)");
 		insertSql.append(" Values(:PartnerBankId, :BranchCode, :PaymentMode)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(partnerBranchModesList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public int getPartnerBankbyBank(String bankCode, String type) {
 		logger.debug("Entering");
@@ -460,12 +451,12 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(partnerBank);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
-	
 	/**
-	 * Method for get total number of records from PartnerBanks master table.<br>
+	 * Method for get total number of records from PartnerBanks master
+	 * table.<br>
 	 * 
 	 * @param entityCode
 	 * 
@@ -486,7 +477,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			recordCount = 0;
@@ -507,7 +498,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		selectSql.append(" WHERE PartnerBankId= :PartnerBankId");
 		logger.debug(Literal.SQL + selectSql.toString());
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug(Literal.EXCEPTION, dae);
 		}

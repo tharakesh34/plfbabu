@@ -45,58 +45,51 @@ package com.pennant.backend.dao.insurancedetails.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>documentDetails model</b> class.<br>
  */
-public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> implements FinInsurancesDAO {
-	private static Logger				logger	= Logger.getLogger(FinInsurancesDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class FinInsurancesDAOImpl extends SequenceDao<FinInsurances> implements FinInsurancesDAO {
+	private static Logger logger = Logger.getLogger(FinInsurancesDAOImpl.class);
 
 	public FinInsurancesDAOImpl() {
 		super();
 	}
 
-
 	@Override
-	public FinInsurances getFinInsuranceByID(FinInsurances finInsurance, String type,boolean isWIF) {
+	public FinInsurances getFinInsuranceByID(FinInsurances finInsurance, String type, boolean isWIF) {
 
 		logger.debug("Entering");
 
 		StringBuilder selectSql = new StringBuilder("SELECT InsId,Reference,Module, InsuranceType, InsReference, ");
-		selectSql
-				.append(" InsuranceReq, Provider,PaymentMethod,CalType,InsuranceRate,WaiverReason,InsuranceFrq,Amount,CalRule,CalPerc,CalOn,InsuranceStatus,PolicyCode,");
+		selectSql.append(
+				" InsuranceReq, Provider,PaymentMethod,CalType,InsuranceRate,WaiverReason,InsuranceFrq,Amount,CalRule,CalPerc,CalOn,InsuranceStatus,PolicyCode,");
 		if (type.contains("View")) {
 			selectSql.append("PolicyDesc,InsuranceTypeDesc,ProviderName,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-        if(!isWIF){
-		selectSql.append(" FROM FinInsurances");
-        }else{
-        	selectSql.append(" FROM WIFFinInsurances");	
-        }
+		if (!isWIF) {
+			selectSql.append(" FROM FinInsurances");
+		} else {
+			selectSql.append(" FROM WIFFinInsurances");
+		}
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where Reference = :Reference AND InsId = :InsId");
 
@@ -105,8 +98,7 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		RowMapper<FinInsurances> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinInsurances.class);
 
 		try {
-			finInsurance = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			finInsurance = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finInsurance = null;
@@ -117,26 +109,26 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 	}
 
 	@Override
-	public List<FinInsurances> getFinInsuranceListByRef(String finReference, String type,boolean isWIF) {
+	public List<FinInsurances> getFinInsuranceListByRef(String finReference, String type, boolean isWIF) {
 
 		logger.debug("Entering");
 		FinInsurances finInsurance = new FinInsurances();
 		finInsurance.setReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder("SELECT InsId,Reference,Module, InsuranceType, InsReference, ");
-		selectSql
-				.append(" InsuranceReq, Provider,PaymentMethod,CalType,InsuranceRate,WaiverReason,InsuranceFrq,Amount,CalRule,CalPerc,CalOn,InsuranceStatus,PolicyCode,");
+		selectSql.append(
+				" InsuranceReq, Provider,PaymentMethod,CalType,InsuranceRate,WaiverReason,InsuranceFrq,Amount,CalRule,CalPerc,CalOn,InsuranceStatus,PolicyCode,");
 		if (type.contains("View")) {
 			selectSql.append("PolicyDesc, InsuranceTypeDesc,ProviderName,");
 		}
 		selectSql.append("Version, LastMntBy, LastMntOn, RecordStatus,");
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		if(!isWIF){
+		if (!isWIF) {
 			selectSql.append(" FROM FinInsurances");
-	        }else{
-	        	selectSql.append(" FROM WIFFinInsurances");	
-	        }
+		} else {
+			selectSql.append(" FROM WIFFinInsurances");
+		}
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where Reference = :Reference");
 
@@ -145,28 +137,29 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		RowMapper<FinInsurances> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinInsurances.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
 	}
 
 	@Override
-	public void update(FinInsurances finInsurance, String type,boolean isWIF) {
+	public void update(FinInsurances finInsurance, String type, boolean isWIF) {
 
 		int recordCount = 0;
 		logger.debug("Entering ");
 
 		StringBuilder updateSql = new StringBuilder("Update ");
-		if(!isWIF){
+		if (!isWIF) {
 			updateSql.append("FinInsurances");
-	        }else{
-	        	updateSql.append("WIFFinInsurances");	
-	        }
+		} else {
+			updateSql.append("WIFFinInsurances");
+		}
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set Reference = :Reference, Module=:Module, InsuranceType = :InsuranceType, ");
 		updateSql.append(" InsuranceReq = :InsuranceReq, Provider = :Provider,PaymentMethod = :PaymentMethod,");
 		updateSql.append(" CalType = :CalType,InsuranceRate =:InsuranceRate,InsReference =:InsReference,");
 		updateSql.append(" WaiverReason=:WaiverReason,InsuranceFrq=:InsuranceFrq,Amount=:Amount,");
-		updateSql.append(" CalRule=:CalRule,CalPerc=:CalPerc,CalOn=:CalOn,InsuranceStatus=:InsuranceStatus, PolicyCode=:PolicyCode,");
+		updateSql.append(
+				" CalRule=:CalRule,CalPerc=:CalPerc,CalOn=:CalOn,InsuranceStatus=:InsuranceStatus, PolicyCode=:PolicyCode,");
 		updateSql.append(" Version=:Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
@@ -178,7 +171,7 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		}
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finInsurance);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -188,13 +181,13 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 	}
 
 	@Override
-	public long save(FinInsurances finInsurance, String type,boolean isWIF) {
+	public long save(FinInsurances finInsurance, String type, boolean isWIF) {
 		logger.debug("Entering ");
-		if (finInsurance.getInsId()==Long.MIN_VALUE){
-			finInsurance.setId(getNextidviewDAO().getNextId("SeqFinInsurance"));
-			logger.debug("get NextID:"+finInsurance.getId());
+		if (finInsurance.getInsId() == Long.MIN_VALUE) {
+			finInsurance.setId(getNextValue("SeqFinInsurance"));
+			logger.debug("get NextID:" + finInsurance.getId());
 		}
-		
+
 		StringBuilder insertSql = new StringBuilder("Insert Into ");
 		if (!isWIF) {
 			insertSql.append("FinInsurances");
@@ -203,24 +196,25 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		}
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (InsId,Reference,Module, InsuranceType, Provider,insuranceReq,");
-		insertSql.append(" PaymentMethod, CalType,InsuranceRate,InsReference,WaiverReason,InsuranceFrq,Amount,CalRule,CalPerc,CalOn,InsuranceStatus,PolicyCode,");
+		insertSql.append(
+				" PaymentMethod, CalType,InsuranceRate,InsReference,WaiverReason,InsuranceFrq,Amount,CalRule,CalPerc,CalOn,InsuranceStatus,PolicyCode,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:InsId,:Reference, :Module, :InsuranceType, :Provider,:insuranceReq,");
-		insertSql
-				.append(" :PaymentMethod, :CalType, :InsuranceRate, :InsReference, :WaiverReason,:InsuranceFrq,:Amount,:CalRule,:CalPerc,:CalOn,:InsuranceStatus,:PolicyCode,");
+		insertSql.append(
+				" :PaymentMethod, :CalType, :InsuranceRate, :InsReference, :WaiverReason,:InsuranceFrq,:Amount,:CalRule,:CalPerc,:CalOn,:InsuranceStatus,:PolicyCode,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finInsurance);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
 		return finInsurance.getId();
 	}
 
 	@Override
-	public void delete(FinInsurances finInsurance, String type,boolean isWIF) {
+	public void delete(FinInsurances finInsurance, String type, boolean isWIF) {
 		logger.debug("Entering");
 		int recordCount = 0;
 
@@ -236,7 +230,7 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finInsurance);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -263,7 +257,7 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finInsurance);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -280,22 +274,12 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finInsurance);
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -312,14 +296,16 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		insertSql.append(StringUtils.trimToEmpty(tableType));
 
 		insertSql.append(" (InsId, InsSchDate, InsuranceRate , InsuranceFrq ,Amount,InsurancePaid,");
-		insertSql.append(" Version , LastMntBy , LastMntOn ,RecordStatus ,RoleCode ,NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId) ");
-		
+		insertSql.append(
+				" Version , LastMntBy , LastMntOn ,RecordStatus ,RoleCode ,NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId) ");
+
 		insertSql.append(" VALUES (:InsId, :InsSchDate, :InsuranceRate , :InsuranceFrq ,:Amount,");
-		insertSql.append(" :Version ,:LastMntBy ,:LastMntOn ,:RecordStatus ,:RoleCode ,:NextRoleCode,:TaskId,:NextTaskId, :RecordType,:WorkflowId ) ");
+		insertSql.append(
+				" :Version ,:LastMntBy ,:LastMntOn ,:RecordStatus ,:RoleCode ,:NextRoleCode,:TaskId,:NextTaskId, :RecordType,:WorkflowId ) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(frqList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -327,14 +313,14 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 	@Override
 	public void deleteFreqBatch(long insId, boolean isWIF, String tableType) {
 		logger.debug("Entering");
-		
+
 		FinSchFrqInsurance finSchFrqInsurance = new FinSchFrqInsurance();
 		finSchFrqInsurance.setInsId(insId);
-		
+
 		StringBuilder deleteSql = new StringBuilder();
-		if(isWIF){
-			deleteSql.append(" DELETE FROM WIFFinSchFrqInsurance");	
-		}else{
+		if (isWIF) {
+			deleteSql.append(" DELETE FROM WIFFinSchFrqInsurance");
+		} else {
 			deleteSql.append(" DELETE FROM FinSchFrqInsurance");
 		}
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
@@ -342,37 +328,39 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSchFrqInsurance);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
 	@Override
-	public List<FinSchFrqInsurance> getFinSchFrqInsuranceFinRef(String finReference, boolean isWIF,
-			String tableType) {
-		
+	public List<FinSchFrqInsurance> getFinSchFrqInsuranceFinRef(String finReference, boolean isWIF, String tableType) {
+
 		logger.debug("Entering");
-		
+
 		FinSchFrqInsurance finSchFrqInsurance = new FinSchFrqInsurance();
 		finSchFrqInsurance.setReference(finReference);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT InsuranceType,Reference,Module,Insreference,InsId, InsSchDate , InsuranceRate , InsuranceFrq ,ClosingBalance, " );
-		selectSql.append(" Amount ,InsurancePaid, Version , LastMntBy , LastMntOn ,RecordStatus ,RoleCode ,NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId " );
-		if(isWIF){
+		selectSql.append(
+				" SELECT InsuranceType,Reference,Module,Insreference,InsId, InsSchDate , InsuranceRate , InsuranceFrq ,ClosingBalance, ");
+		selectSql.append(
+				" Amount ,InsurancePaid, Version , LastMntBy , LastMntOn ,RecordStatus ,RoleCode ,NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId ");
+		if (isWIF) {
 			selectSql.append(" FROM WIFFinSchFrqInsurance");
-		}else {
+		} else {
 			selectSql.append(" FROM FinSchFrqInsurance");
 		}
-		
+
 		selectSql.append(StringUtils.trimToEmpty(tableType));
 		selectSql.append(" WHERE Reference=:Reference ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSchFrqInsurance);
-		RowMapper<FinSchFrqInsurance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSchFrqInsurance.class);
+		RowMapper<FinSchFrqInsurance> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinSchFrqInsurance.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+
 	}
 
 	@Override
@@ -383,8 +371,8 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		finInsurance.setInsuranceType(insuranceType);
 
 		StringBuilder selectSql = new StringBuilder("SELECT InsId,Reference,Module, InsuranceType, InsReference, ");
-		selectSql
-				.append(" InsuranceReq, Provider,PaymentMethod,CalType,InsuranceRate,WaiverReason,InsuranceFrq,Amount,CalRule,CalPerc,CalOn,InsuranceStatus,");
+		selectSql.append(
+				" InsuranceReq, Provider,PaymentMethod,CalType,InsuranceRate,WaiverReason,InsuranceFrq,Amount,CalRule,CalPerc,CalOn,InsuranceStatus,");
 		if (tableType.contains("View")) {
 			selectSql.append(" InsuranceTypeDesc,ProviderName,");
 		}
@@ -400,23 +388,22 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		RowMapper<FinInsurances> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinInsurances.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	@Override
 	public void updateInsSchdPaids(List<FinSchFrqInsurance> updateInsList) {
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinSchFrqInsurance");
 		updateSql.append(" Set InsurancePaid = InsurancePaid + :InsurancePaid ");
 		updateSql.append(" Where InsId =:InsId AND InsSchDate=:InsSchDate ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateInsList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
 
 	@Override
 	public List<FinSchFrqInsurance> getInsScheduleBySchDate(String finReference, Date schDate) {
@@ -424,56 +411,55 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		FinSchFrqInsurance insSchd = new FinSchFrqInsurance();
 		insSchd.setReference(finReference);
 		insSchd.setInsSchDate(schDate);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT InsId, InsSchDate, InsurancePaid " );
+		selectSql.append(" SELECT InsId, InsSchDate, InsurancePaid ");
 		selectSql.append(" FROM FinSchFrqInsurance ");
 		selectSql.append(" WHERE  Reference = :Reference AND InsSchDate=:InsSchDate ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insSchd);
-		RowMapper<FinSchFrqInsurance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSchFrqInsurance.class);
-		List<FinSchFrqInsurance> insList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		RowMapper<FinSchFrqInsurance> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinSchFrqInsurance.class);
+		List<FinSchFrqInsurance> insList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return insList;
 	}
-	
+
 	@Override
 	public List<FinSchFrqInsurance> getInsSchdToPost(String finReference, Date schDate) {
 		logger.debug("Entering");
 		FinSchFrqInsurance insSchd = new FinSchFrqInsurance();
 		insSchd.setReference(finReference);
 		insSchd.setInsSchDate(schDate);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FIN.REFERENCE, INSD.INSSCHDATE, FIN.INSURANCETYPE, " );
+		selectSql.append(" SELECT FIN.REFERENCE, INSD.INSSCHDATE, FIN.INSURANCETYPE, ");
 		selectSql.append(" INSD.AMOUNT, INSD.INSURANCEPAID  FROM FINSCHFRQINSURANCE INSD");
 		selectSql.append(" INNER JOIN FININSURANCES FIN ON INSD.INSID=FIN.INSID");
 		selectSql.append(" WHERE FIN.REFERENCE = :Reference AND INSD.INSSCHDATE=:InsSchDate ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insSchd);
-		RowMapper<FinSchFrqInsurance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSchFrqInsurance.class);
-		List<FinSchFrqInsurance> insList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		RowMapper<FinSchFrqInsurance> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinSchFrqInsurance.class);
+		List<FinSchFrqInsurance> insList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return insList;
 	}
-	
+
 	@Override
 	public void updateInsPaids(List<FinSchFrqInsurance> updateInsList) {
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinSchFrqInsurance");
 		updateSql.append(" Set InsurancePaid = :InsurancePaid ");
 		updateSql.append(" Where InsId =:InsId AND InsSchDate=:InsSchDate ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateInsList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
-	
-	
 
 }

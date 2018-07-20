@@ -2,42 +2,26 @@ package com.pennant.backend.dao.collateral.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.FinAssetTypeDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class FinAssetTypesDAOImpl extends BasisNextidDaoImpl<FinAssetTypes> implements FinAssetTypeDAO {
-private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
-	
+public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements FinAssetTypeDAO {
+	private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
+
 	public FinAssetTypesDAOImpl() {
 		super();
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -45,9 +29,10 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 	 *
 	 * save FinAsset Types
 	 * 
-	 * @param FinAsset Types (finAssetTypes)
-	 * @param  type (String)
-	 * 			""/_Temp          
+	 * @param FinAsset
+	 *            Types (finAssetTypes)
+	 * @param type
+	 *            (String) ""/_Temp
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -59,31 +44,34 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 		StringBuilder query = new StringBuilder();
 
 		if (finAssetTypes.getAssetTypeId() == Long.MIN_VALUE) {
-			finAssetTypes.setAssetTypeId(getNextidviewDAO().getNextId("SeqFinASSETTYPES"));
+			finAssetTypes.setAssetTypeId(getNextValue("SeqFinASSETTYPES"));
 			logger.debug("get NextID:" + finAssetTypes.getAssetTypeId());
 		}
 
 		query.append("Insert Into FinAssetTypes");
 		query.append(StringUtils.trimToEmpty(type));
 		query.append(" (AssetTypeId,Reference, AssetType, SeqNo, ");
-		query.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		query.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		query.append(" Values(:AssetTypeId,:Reference, :AssetType, :SeqNo,");
-		query.append(" :Version ,:LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		query.append(
+				" :Version ,:LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.debug("insertSql: " + query.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAssetTypes);
-		this.namedParameterJdbcTemplate.update(query.toString(), beanParameters);
+		this.jdbcTemplate.update(query.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * This method updates the Record  or FinAssetTypes_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
+	 * This method updates the Record or FinAssetTypes_Temp. if Record not
+	 * updated then throws DataAccessException with error 41004.
 	 * 
-	 * @param FinAssetTypes (finAssetTypes)
-	 * @param  type (String)
-	 * 			""/_Temp          
+	 * @param FinAssetTypes
+	 *            (finAssetTypes)
+	 * @param type
+	 *            (String) ""/_Temp
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -92,32 +80,34 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 	public void update(FinAssetTypes finAssetTypes, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder updateSql =new StringBuilder("Update FinAssetTypes");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		StringBuilder updateSql = new StringBuilder("Update FinAssetTypes");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(
 				" Set AssetTypeId = :AssetTypeId, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, ");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where Reference =:Reference AND AssetType =:AssetType AND SeqNo =:SeqNo ");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAssetTypes);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
-		
+
 	}
 
 	/**
-	 * Method for Fetching List of Assigned FinAssetTypes to the Reference based on Module
+	 * Method for Fetching List of Assigned FinAssetTypes to the Reference based
+	 * on Module
 	 */
 	@Override
 	public List<FinAssetTypes> getFinAssetTypesByFinRef(String reference, String type) {
@@ -138,12 +128,11 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 		RowMapper<FinAssetTypes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinAssetTypes.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
-		        typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
-	 * Method for Fetching List of Assigned FinAssetTypes to the Reference 
+	 * Method for Fetching List of Assigned FinAssetTypes to the Reference
 	 */
 	@Override
 	public FinAssetTypes getFinAssetTypesbyID(FinAssetTypes finAssetTypes, String type) {
@@ -160,10 +149,10 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAssetTypes);
 		RowMapper<FinAssetTypes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinAssetTypes.class);
-		
-		try{
-			finAssetType	= this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			finAssetType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.info(e);
 			finAssetType = null;
 		}
@@ -172,13 +161,14 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 	}
 
 	/**
-	 * This method Deletes the Record from the FinAssetTypes or FinAssetTypes_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete FinAssetTypes
+	 * This method Deletes the Record from the FinAssetTypes or
+	 * FinAssetTypes_Temp. if Record not deleted then throws DataAccessException
+	 * with error 41003. delete FinAssetTypes
 	 * 
-	 * @param FinAssetTypes (finAssetTypes)
-	 * @param  type (String)
-	 * 			""/_Temp          
+	 * @param FinAssetTypes
+	 *            (finAssetTypes)
+	 * @param type
+	 *            (String) ""/_Temp
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -187,23 +177,23 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 	public void delete(FinAssetTypes finAssetTypes, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete FinAssetTypes");
- 		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where Reference = :Reference AND AssetType=:AssetType AND SeqNo=:SeqNo ");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAssetTypes);
-		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		try {
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
-		
+
 	}
 
 	@Override
@@ -219,7 +209,7 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 
 		logger.debug("deleteSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAssetTypes);
-		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}

@@ -42,8 +42,6 @@
 */
 package com.pennant.backend.dao.fees.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -51,30 +49,23 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.fees.FeePostingsDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>VASRecording model</b> class.<br>
  * 
  */
 
-public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implements FeePostingsDAO {
-
+public class FeePostingsDAOImpl extends SequenceDao<FeePostings> implements FeePostingsDAO {
 	private static Logger logger = Logger.getLogger(FeePostingsDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
-	
-	
+
 	@Override
 	public FeePostings getFeePostings() {
 		logger.debug("Entering");
@@ -91,15 +82,6 @@ public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implemen
 		logger.debug("Leaving");
 		return feePostings;
 	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
 
 	@Override
 	public FeePostings getFeePostingsById(long postId, String type) {
@@ -110,7 +92,8 @@ public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implemen
 
 		sql = new StringBuilder(
 				"Select PostId, PostAgainst, Reference, FeeTyeCode, PostingAmount, PostDate, ValueDate,Remarks,PartnerBankId,PostingDivision,");
-		sql.append(" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", partnerBankName,partnerBankAc,partnerBankAcType,accountSetId,DivisionCodeDesc");
 		}
@@ -124,7 +107,7 @@ public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implemen
 		source = new MapSqlParameterSource();
 		source.addValue("PostId", postId);
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		} finally {
@@ -135,52 +118,57 @@ public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implemen
 		return null;
 	}
 
-
 	@Override
 	public void save(FeePostings feePostings, String type) {
 
 		logger.debug("Entering");
 		if (feePostings.getId() == Long.MIN_VALUE) {
-			feePostings.setId(getNextId("SeqFeePostings"));
+			feePostings.setId(getNextValue("SeqFeePostings"));
 		}
-		
-		StringBuilder insertSql =new StringBuilder();
+
+		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("Insert Into FeePostings");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (PostId, PostAgainst, Reference, FeeTyeCode, PostingAmount, PostDate, ValueDate,Remarks,PartnerBankId,PostingDivision,");
+		insertSql.append(
+				" (PostId, PostAgainst, Reference, FeeTyeCode, PostingAmount, PostDate, ValueDate,Remarks,PartnerBankId,PostingDivision,");
 		insertSql.append("  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append("	TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append("  Values(:PostId, :PostAgainst, :Reference, :FeeTyeCode, :PostingAmount, :PostDate, :ValueDate,:Remarks,:PartnerBankId,:PostingDivision,");
-		insertSql.append("  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		insertSql.append(
+				"  Values(:PostId, :PostAgainst, :Reference, :FeeTyeCode, :PostingAmount, :PostDate, :ValueDate,:Remarks,:PartnerBankId,:PostingDivision,");
+		insertSql.append(
+				"  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feePostings);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
-	
+
 	}
-	
+
 	@Override
 	public void update(FeePostings feePostings, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update FeePostings");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set PostId = :PostId, PostAgainst = :PostAgainst, Reference = :Reference, FeeTyeCode = :FeeTyeCode, PostingAmount = :PostingAmount, PostDate = :PostDate, ");
-		updateSql.append(" ValueDate = :ValueDate, Remarks = :Remarks, PartnerBankId = :PartnerBankId, PostingDivision =:PostingDivision,");
-		updateSql.append(" Version= :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		StringBuilder updateSql = new StringBuilder("Update FeePostings");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(
+				" Set PostId = :PostId, PostAgainst = :PostAgainst, Reference = :Reference, FeeTyeCode = :FeeTyeCode, PostingAmount = :PostingAmount, PostDate = :PostDate, ");
+		updateSql.append(
+				" ValueDate = :ValueDate, Remarks = :Remarks, PartnerBankId = :PartnerBankId, PostingDivision =:PostingDivision,");
+		updateSql.append(
+				" Version= :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where PostId= :PostId");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feePostings);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
@@ -200,7 +188,7 @@ public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implemen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feePostings);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -209,7 +197,7 @@ public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implemen
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Fetching Count for Assigned partnerBankId to Different
 	 * Finances/Commitments
@@ -230,7 +218,7 @@ public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implemen
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			assignedCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			assignedCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.info(e);
 			assignedCount = 0;
@@ -238,5 +226,5 @@ public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implemen
 		logger.debug("Leaving");
 		return assignedCount;
 	}
-	
+
 }

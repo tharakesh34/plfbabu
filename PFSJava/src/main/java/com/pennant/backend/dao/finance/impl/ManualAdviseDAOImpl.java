@@ -46,8 +46,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -56,51 +54,50 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>ManualAdvise</code> with set of CRUD operations.
+ * Data access layer implementation for <code>ManualAdvise</code> with set of
+ * CRUD operations.
  */
-public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implements ManualAdviseDAO {
-	private static Logger				logger	= Logger.getLogger(ManualAdviseDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements ManualAdviseDAO {
+	private static Logger logger = Logger.getLogger(ManualAdviseDAOImpl.class);
 
 	public ManualAdviseDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public ManualAdvise getManualAdviseById(long adviseID,String type) {
+	public ManualAdvise getManualAdviseById(long adviseID, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
 		sql.append(" paidAmount, waivedAmount, remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt, ");
 		sql.append(" PaidCGST, PaidSGST, PaidUGST, PaidIGST, ");
-		if(type.contains("View")){
-			sql.append(" FeeTypeCode, FeeTypeDesc, taxApplicable, taxComponent, " );
+		if (type.contains("View")) {
+			sql.append(" FeeTypeCode, FeeTypeDesc, taxApplicable, taxComponent, ");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From ManualAdvise");
 		sql.append(type);
 		sql.append(" Where adviseID = :adviseID");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -111,7 +108,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
 
 		try {
-			manualAdvise = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			manualAdvise = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			manualAdvise = null;
@@ -119,25 +116,26 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		logger.debug(Literal.LEAVING);
 		return manualAdvise;
-	}		
+	}
 
 	@Override
-	public ManualAdvise getManualAdviseByReceiptId(long receiptID,String type) {
+	public ManualAdvise getManualAdviseByReceiptId(long receiptID, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" AdviseID, AdviseType, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID, ReceiptID, ");
 		sql.append(" PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt, BalanceAmt, ");
 		sql.append(" PaidCGST, PaidSGST, PaidUGST, PaidIGST, ");
-		if(type.contains("View")){
-			sql.append(" FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc, taxApplicable, taxComponent, " );
+		if (type.contains("View")) {
+			sql.append(" FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc, taxApplicable, taxComponent, ");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From ManualAdvise");
 		sql.append(type);
 		sql.append(" Where ReceiptID = :ReceiptID");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -148,7 +146,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
 
 		try {
-			manualAdvise = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			manualAdvise = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			manualAdvise = null;
@@ -156,49 +154,53 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		logger.debug(Literal.LEAVING);
 		return manualAdvise;
-	}		
-	
+	}
+
 	@Override
-	public String save(ManualAdvise manualAdvise,TableType tableType) {
+	public String save(ManualAdvise manualAdvise, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into ManualAdvise");
+		StringBuilder sql = new StringBuilder(" insert into ManualAdvise");
 		sql.append(tableType.getSuffix());
 		sql.append("(adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
-		sql.append(" paidAmount, waivedAmount, remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" paidAmount, waivedAmount, remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST, ");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :adviseID, :adviseType, :finReference, :feeTypeID, :sequence, :adviseAmount, :BounceID, :ReceiptID,");
-		sql.append(" :paidAmount, :waivedAmount, :remarks, :ValueDate, :PostDate, :ReservedAmt, :BalanceAmt,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :adviseID, :adviseType, :finReference, :feeTypeID, :sequence, :adviseAmount, :BounceID, :ReceiptID,");
+		sql.append(
+				" :paidAmount, :waivedAmount, :remarks, :ValueDate, :PostDate, :ReservedAmt, :BalanceAmt,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST, ");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		// Get the identity sequence number.
 		if (manualAdvise.getAdviseID() <= 0) {
-			manualAdvise.setAdviseID(getNextidviewDAO().getNextId("seqManualAdvise"));
+			manualAdvise.setAdviseID(getNextValue("seqManualAdvise"));
 		}
 
-		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(manualAdvise.getAdviseID());
-	}	
+	}
 
 	@Override
-	public void update(ManualAdvise manualAdvise,TableType tableType) {
+	public void update(ManualAdvise manualAdvise, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update ManualAdvise" );
+		StringBuilder sql = new StringBuilder("update ManualAdvise");
 		sql.append(tableType.getSuffix());
 		sql.append("  set adviseType = :adviseType, finReference = :finReference, feeTypeID = :feeTypeID, ");
 		sql.append(" sequence = :sequence, adviseAmount = :adviseAmount, paidAmount = :paidAmount, ");
@@ -210,18 +212,18 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where adviseID = :adviseID ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -241,7 +243,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -253,7 +255,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void deleteByAdviseId(ManualAdvise manualAdvise, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -266,35 +268,26 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
-		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		jdbcTemplate.update(sql.toString(), paramSource);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
- 
 	@Override
-	public List<ManualAdvise> getManualAdviseByRef(String finReference , int adviseType, String type) {
+	public List<ManualAdvise> getManualAdviseByRef(String finReference, int adviseType, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" Select AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt, BounceId, ReceiptId,");
-		sql.append(" PaidCGST, PaidSGST, PaidUGST, PaidIGST  " );
+		StringBuilder sql = new StringBuilder(
+				" Select AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt, BounceId, ReceiptId,");
+		sql.append(" PaidCGST, PaidSGST, PaidUGST, PaidIGST  ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(" ,FeeTypeCode, FeeTypeDesc, BounceCode,BounceCodeDesc, taxApplicable, taxComponent ");
 		}
 		sql.append(" From ManualAdvise");
 		sql.append(type);
 		sql.append(" Where FinReference = :FinReference AND AdviseType =:AdviseType ");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -305,13 +298,14 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
 		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
 
-		List<ManualAdvise> adviseList = namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		List<ManualAdvise> adviseList = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		logger.debug(Literal.LEAVING);
 		return adviseList;
-	}	
-	
+	}
+
 	/**
 	 * Method for updating Manual advise Payment Details
+	 * 
 	 * @param adviseID
 	 * @param paidAmount
 	 * @param waivedAmount
@@ -320,42 +314,45 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 	@Override
 	public void updateAdvPayment(ManualAdvise manualAdvise, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
-		StringBuilder	sql =new StringBuilder("update ManualAdvise" );
+
+		StringBuilder sql = new StringBuilder("update ManualAdvise");
 		sql.append(tableType.getSuffix());
 		sql.append(" set  PaidAmount = PaidAmount + :PaidAmount, WaivedAmount = WaivedAmount+:WaivedAmount,  ");
-		sql.append(" PaidCGST=PaidCGST + :PaidCGST, PaidSGST=PaidSGST + :PaidSGST, PaidUGST=PaidUGST + :PaidUGST, PaidIGST=PaidIGST + :PaidIGST ");
+		sql.append(
+				" PaidCGST=PaidCGST + :PaidCGST, PaidSGST=PaidSGST + :PaidSGST, PaidUGST=PaidUGST + :PaidUGST, PaidIGST=PaidIGST + :PaidIGST ");
 		sql.append(" WHERE AdviseID = :AdviseID ");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
-		this.namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		this.jdbcTemplate.update(sql.toString(), paramSource);
 		logger.debug(Literal.LEAVING);
-	}	
-	
+	}
+
 	@Override
 	public void saveMovement(ManualAdviseMovements movement, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into ManualAdviseMovements");
+		StringBuilder sql = new StringBuilder(" insert into ManualAdviseMovements");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" ( MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status, ReceiptID, ReceiptSeqID,PaidCGST, PaidSGST, PaidUGST, PaidIGST)" );
-		sql.append(" VALUES(:MovementID, :AdviseID, :MovementDate, :MovementAmount, :PaidAmount, :WaivedAmount, :Status, :ReceiptID, :ReceiptSeqID,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST)");
-		
+		sql.append(
+				" ( MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status, ReceiptID, ReceiptSeqID,PaidCGST, PaidSGST, PaidUGST, PaidIGST)");
+		sql.append(
+				" VALUES(:MovementID, :AdviseID, :MovementDate, :MovementAmount, :PaidAmount, :WaivedAmount, :Status, :ReceiptID, :ReceiptSeqID,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST)");
+
 		// Get the identity sequence number.
 		if (movement.getMovementID() <= 0) {
-			movement.setMovementID(getNextidviewDAO().getNextId("SeqManualAdviseMovements"));
+			movement.setMovementID(getNextValue("SeqManualAdviseMovements"));
 		}
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(movement);
-		this.namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		this.jdbcTemplate.update(sql.toString(), paramSource);
 		logger.debug(Literal.LEAVING);
-	}	
-	
+	}
+
 	@Override
 	public List<ManualAdviseMovements> getAdviseMovementsByReceipt(long receiptID, String type) {
 		logger.debug("Entering");
@@ -363,7 +360,8 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		ManualAdviseMovements movements = new ManualAdviseMovements();
 		movements.setReceiptID(receiptID);
 
-		StringBuilder selectSql = new StringBuilder(" Select MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, ");
+		StringBuilder selectSql = new StringBuilder(
+				" Select MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, ");
 		selectSql.append(" WaivedAmount, Status, ReceiptID, ReceiptSeqID,PaidCGST, PaidSGST, PaidUGST, PaidIGST ");
 		selectSql.append(" From ManualAdviseMovements");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -374,12 +372,11 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ManualAdviseMovements.class);
 
-		List<ManualAdviseMovements> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		List<ManualAdviseMovements> list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return list;
-	}		
-	
+	}
+
 	@Override
 	public List<ManualAdviseMovements> getAdviseMovements(long id) {
 		logger.debug("Entering");
@@ -389,7 +386,8 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		StringBuilder selectSql = new StringBuilder(" Select T1.MovementID ,T1.MovementDate, T1.MovementAmount, ");
 		selectSql.append(" T1.PaidAmount , T1.WaivedAmount, T1.Status, T2.ReceiptMode ");
-		selectSql.append(" From ManualAdviseMovements T1 LEFT OUTER JOIN FinReceiptHeader T2 ON T1.ReceiptID = T2.ReceiptID ");
+		selectSql.append(
+				" From ManualAdviseMovements T1 LEFT OUTER JOIN FinReceiptHeader T2 ON T1.ReceiptID = T2.ReceiptID ");
 		selectSql.append(" Where AdviseID = :AdviseID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -397,8 +395,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ManualAdviseMovements.class);
 
-		List<ManualAdviseMovements> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		List<ManualAdviseMovements> list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return list;
 	}
@@ -406,7 +403,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 	@Override
 	public void deleteMovementsByReceiptID(long receiptID, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		ManualAdviseMovements movements = new ManualAdviseMovements();
 		movements.setReceiptID(receiptID);
 
@@ -418,7 +415,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(movements);
-		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		jdbcTemplate.update(sql.toString(), paramSource);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -430,9 +427,10 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		movements.setReceiptID(receiptID);
 		movements.setReceiptSeqID(receiptSeqID);
 
-		StringBuilder selectSql = new StringBuilder(" Select MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, ");
+		StringBuilder selectSql = new StringBuilder(
+				" Select MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, ");
 		selectSql.append(" WaivedAmount, Status, ReceiptID, ReceiptSeqID,PaidCGST, PaidSGST, PaidUGST, PaidIGST ");
-		if(StringUtils.contains(type, "View")){
+		if (StringUtils.contains(type, "View")) {
 			selectSql.append(" , FeeTypeCode, FeeTypeDesc ");
 		}
 		selectSql.append(" From ManualAdviseMovements");
@@ -444,8 +442,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ManualAdviseMovements.class);
 
-		List<ManualAdviseMovements> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		List<ManualAdviseMovements> list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return list;
 	}
@@ -453,26 +450,26 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 	@Override
 	public void updateMovementStatus(long receiptID, long receiptSeqID, String status, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		ManualAdviseMovements movements = new ManualAdviseMovements();
 		movements.setReceiptID(receiptID);
 		movements.setReceiptSeqID(receiptSeqID);
 		movements.setStatus(status);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update ManualAdviseMovements" );
+		StringBuilder sql = new StringBuilder("update ManualAdviseMovements");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" set Status = :Status ");
 		sql.append(" Where ReceiptID = :ReceiptID AND ReceiptSeqID=:ReceiptSeqID ");
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(movements);
-		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		jdbcTemplate.update(sql.toString(), paramSource);
 		logger.debug(Literal.LEAVING);
-	}	
-	
+	}
+
 	/**
 	 * Method for Fetch the Reserved Payable Amounts Log details
 	 */
@@ -489,9 +486,11 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reserve);
-		RowMapper<ManualAdviseReserve> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdviseReserve.class);
+		RowMapper<ManualAdviseReserve> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ManualAdviseReserve.class);
 
-		List<ManualAdviseReserve> reserveList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		List<ManualAdviseReserve> reserveList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
 		logger.debug("Leaving");
 		return reserveList;
 	}
@@ -513,10 +512,11 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reserve);
-		RowMapper<ManualAdviseReserve> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdviseReserve.class);
+		RowMapper<ManualAdviseReserve> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ManualAdviseReserve.class);
 
 		try {
-			reserve = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			reserve = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			reserve = null;
@@ -532,12 +532,12 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 	@Override
 	public void savePayableReserveLog(long receiptSeqID, long payAgainstID, BigDecimal reserveAmt) {
 		logger.debug("Entering");
-		
+
 		ManualAdviseReserve reserve = new ManualAdviseReserve();
 		reserve.setReceiptSeqID(receiptSeqID);
 		reserve.setAdviseID(payAgainstID);
 		reserve.setReservedAmt(reserveAmt);
-		
+
 		StringBuilder insertSql = new StringBuilder("Insert Into ManualAdviseReserve ");
 		insertSql.append(" (AdviseID, ReceiptSeqID, ReservedAmt )");
 		insertSql.append(" Values(:AdviseID, :ReceiptSeqID, :ReservedAmt)");
@@ -545,7 +545,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reserve);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -567,16 +567,17 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		updateSql.append(" Where ReceiptSeqID =:ReceiptSeqID AND AdviseID =:AdviseID ");
 
 		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * Method for Deleting Reserved Amounts against Advise ID Processed for Utilization
+	 * Method for Deleting Reserved Amounts against Advise ID Processed for
+	 * Utilization
 	 */
 	@Override
 	public void deletePayableReserve(long receiptID, long payAgainstID) {
@@ -588,12 +589,12 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		StringBuilder updateSql = new StringBuilder("Delete From ManualAdviseReserve ");
 		updateSql.append(" Where ReceiptSeqID =:ReceiptSeqID ");
-		if(payAgainstID != 0){
+		if (payAgainstID != 0) {
 			updateSql.append(" AND AdviseID =:AdviseID ");
 		}
 
 		logger.debug("updateSql: " + updateSql.toString());
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
 	}
 
@@ -614,14 +615,14 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		updateSql.append(" Where AdviseID =:AdviseID");
 
 		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Update utilization amount after amounts Approval
 	 */
@@ -639,14 +640,14 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		updateSql.append(" Where AdviseID =:AdviseID");
 
 		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Update utilization amount after amounts Reversal
 	 */
@@ -664,7 +665,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		updateSql.append(" Where AdviseID =:AdviseID");
 
 		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -680,15 +681,18 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		source.addValue("ReceiptId", receiptId);
 
 		StringBuilder selectSql = new StringBuilder("SELECT T5.schDate	FROM MANUALADVISE M ");
-		selectSql.append(" INNER Join PRESENTMENTDETAILS T4 on T4.RECEIPTID = M.RECEIPTID and M.RECEIPTID !=0 and T4.RECEIPTID !=0 ");
-		selectSql.append(" INNER Join FINSCHEDULEDETAILS T5 on T4.FInreference = T5.FInreference and T4.schdate = T5.schdate ");
-		selectSql.append(" where M.AdviseType <> 2 and	m.ADVISEAMOUNT > 0 and FEETYPEID not in (Select FEETYPEID from FEETYPES) ");
+		selectSql.append(
+				" INNER Join PRESENTMENTDETAILS T4 on T4.RECEIPTID = M.RECEIPTID and M.RECEIPTID !=0 and T4.RECEIPTID !=0 ");
+		selectSql.append(
+				" INNER Join FINSCHEDULEDETAILS T5 on T4.FInreference = T5.FInreference and T4.schdate = T5.schdate ");
+		selectSql.append(
+				" where M.AdviseType <> 2 and	m.ADVISEAMOUNT > 0 and FEETYPEID not in (Select FEETYPEID from FEETYPES) ");
 		selectSql.append(" AND M.ReceiptId =:ReceiptId ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		Date schDate = null;
 		try {
-			schDate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
+			schDate = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
 		} catch (EmptyResultDataAccessException ede) {
 			logger.warn("Warning:", ede);
 		}
@@ -696,20 +700,20 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		return schDate;
 	}
-	
+
 	/**
 	 * Method for Fetch All Bounce ID List using Reference
 	 */
 	@Override
-	public List<Long> getBounceAdvisesListByRef(String finReference , int adviseType, String type) {
+	public List<Long> getBounceAdvisesListByRef(String finReference, int adviseType, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" Select AdviseId " );
+		StringBuilder sql = new StringBuilder(" Select AdviseId ");
 		sql.append(" From ManualAdvise");
 		sql.append(type);
 		sql.append(" Where FinReference = :FinReference AND AdviseType =:AdviseType AND BounceId > 0 ");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -719,10 +723,11 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
 
-		List<Long> bounceIDList = namedParameterJdbcTemplate.queryForList(sql.toString(), paramSource, Long.class);
+		List<Long> bounceIDList = jdbcTemplate.queryForList(sql.toString(), paramSource, Long.class);
 		logger.debug(Literal.LEAVING);
 		return bounceIDList;
 	}
+
 	@Override
 	public FinanceMain getFinanceDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
@@ -743,7 +748,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		RowMapper<FinanceMain> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
-			return namedParameterJdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -767,8 +772,10 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		manualAdvise.setFinReference(finRef);
 
 		StringBuilder selectSql = new StringBuilder(" SELECT ");
-		selectSql.append(" T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence, T1.AdviseAmount, T1.BounceID, T1.ReceiptID, ");
-		selectSql.append(" T1.PaidAmount, T1.WaivedAmount, T1.ValueDate, T1.PostDate, T1.ReservedAmt, T1.BalanceAmt,T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST ");
+		selectSql.append(
+				" T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence, T1.AdviseAmount, T1.BounceID, T1.ReceiptID, ");
+		selectSql.append(
+				" T1.PaidAmount, T1.WaivedAmount, T1.ValueDate, T1.PostDate, T1.ReservedAmt, T1.BalanceAmt,T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST ");
 
 		selectSql.append(" From ManualAdvise T1 ");
 		selectSql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1");
@@ -780,9 +787,8 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		RowMapper<ManualAdvise> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
 
 	@Override
 	public BigDecimal getBalanceAmt(String finReference) {
@@ -797,22 +803,22 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
 
-		balance = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), paramSource, BigDecimal.class);
+		balance = this.jdbcTemplate.queryForObject(selectSql.toString(), paramSource, BigDecimal.class);
 		logger.debug("Leaving");
 		return balance;
 
 	}
-	
+
 	@Override
-	public String getTaxComponent(long adviseID,String type) {
+	public String getTaxComponent(long adviseID, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT TaxComponent ");
 		sql.append(" From ManualAdvise");
 		sql.append(type);
 		sql.append(" Where adviseID = :adviseID");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -822,7 +828,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
 		String taxComponent = null;
 		try {
-			taxComponent = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, String.class);
+			taxComponent = jdbcTemplate.queryForObject(sql.toString(), paramSource, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			taxComponent = null;
@@ -830,5 +836,5 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		logger.debug(Literal.LEAVING);
 		return taxComponent;
-	}		
-}	
+	}
+}

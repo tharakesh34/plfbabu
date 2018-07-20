@@ -61,13 +61,13 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -75,16 +75,13 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 
-public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implements FinFeeDetailDAO {
-
+public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements FinFeeDetailDAO {
 	private static Logger logger = Logger.getLogger(FinFeeDetailDAOImpl.class);
 	
 	public FinFeeDetailDAOImpl() {
 		super();
 	}
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	/**
 	 * This method set the Work Flow id based on the module name and return the new FinFeeDetail 
@@ -159,7 +156,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
 		
 		try {
-			finFeeDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			finFeeDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finFeeDetail = null;
 		}
@@ -200,7 +197,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
 		logger.debug("Leaving");
 		
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
 	/**
@@ -230,7 +227,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
 		logger.debug("Leaving");
 
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
 	@Override
@@ -267,7 +264,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		
 		logger.debug("Leaving");
 		
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
 	
@@ -303,7 +300,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		
 		logger.debug("Leaving");
 		
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
 	/**
@@ -334,7 +331,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		
 		logger.debug("Leaving");
 		
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
 	/**
@@ -380,7 +377,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -406,7 +403,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		logger.debug("Entering");
 		
 		if (finFeeDetail.getFeeID() == Long.MIN_VALUE) {
-			finFeeDetail.setFeeID(getNextidviewDAO().getNextId("SeqFinFeeDetail"));
+			finFeeDetail.setFeeID(getNextValue("SeqFinFeeDetail"));
 			logger.debug("get NextID:" + finFeeDetail.getFeeID());
 		}
 		
@@ -440,7 +437,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		
 		return finFeeDetail.getFeeID();
@@ -491,7 +488,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -534,7 +531,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -561,7 +558,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -584,7 +581,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		logger.debug("deleteSql: " + deleteSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 	}
@@ -616,7 +613,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 			parameter.addValue("FinReference", finFeeDetail.getFinReference());
 			parameter.addValue("FinEvent", finFeeDetail.getFinEvent());
 
-			finSeq = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), parameter, Integer.class);
+			finSeq = this.jdbcTemplate.queryForObject(selectSql.toString(), parameter, Integer.class);
 		} catch (Exception e) {
 			//logger.error("Exception: ", e);
 		} finally {
@@ -667,7 +664,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		
 		FinFeeDetail finFeeDetail = null;
 		try {
-			finFeeDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), parameter, typeRowMapper);
+			finFeeDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), parameter, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finFeeDetail = null;
 		}
@@ -683,7 +680,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 	 */
 	
 	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	@Override
@@ -695,7 +692,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		selectSql.append(" Where FinReference =:FinReference And FeeTypeId = :FeeTypeId ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(taxPercent);
-		int recordCount = this.namedParameterJdbcTemplate.update(selectSql.toString(), paramSource);
+		int recordCount = this.jdbcTemplate.update(selectSql.toString(), paramSource);
 		
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
