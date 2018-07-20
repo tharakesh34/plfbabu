@@ -58,9 +58,7 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Profit Details -->
-	<bean id="profitDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="profitDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl" parent="basicDao"/>
 	<!--============ AEAmounts Util ============== -->
 	<bean name="AEAmounts" class="com.pennant.app.util.AEAmounts">
 		<property name="accrualService" ref="accrualService" />

@@ -108,4 +108,8 @@ public interface FinanceProfitDetailDAO {
 	int getCurOddays(String finReference, String type);
 	
 	boolean isSuspenseFinance(String finReference);
+	
+	BigDecimal getTotalCustomerExposre(long custId);
+	
+	BigDecimal getTotalCoApplicantsExposre(String finReferece);
 }

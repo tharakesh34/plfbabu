@@ -83,9 +83,11 @@ public class Sampling extends AbstractWorkflowEntity {
 	private ExtendedFieldRender extendedFieldRender;
 	private Map<String, ExtendedFieldRender> extFieldRenderList = new LinkedHashMap<>();
 	private List<Customer> customers;
-	private List<DocumentDetails> documents = null;
-	private Map<String, Object> reamrksMap = new HashMap<>();
+	private transient List<DocumentDetails> documents = null;
+	private transient Map<String, Object> reamrksMap = new HashMap<>();
 	private QueryDetail queryDetail = new QueryDetail();
+	private BigDecimal totalCustomerExposre;
+	private BigDecimal totalCoApplicantsExposre;
 
 	/**
 	 * Sampling approve details
@@ -120,7 +122,6 @@ public class Sampling extends AbstractWorkflowEntity {
 		excludeFields.add("custName");
 		excludeFields.add("loanType");
 		excludeFields.add("linkId");
-		excludeFields.add("tenure");
 		excludeFields.add("recommendedAmount");
 		excludeFields.add("custId");
 		excludeFields.add("custShrtN0ame");
@@ -141,8 +142,6 @@ public class Sampling extends AbstractWorkflowEntity {
 		excludeFields.add("incomeLinkId");
 		excludeFields.add("liabilityLinkId");
 		excludeFields.add("collateralLinkId");
-		excludeFields.add("totalIncome");
-		excludeFields.add("totalLiability");
 		excludeFields.add("totalSamplingIncome");
 		excludeFields.add("totalSamplingLiability");
 		excludeFields.add("decisionRemarks");
@@ -160,7 +159,6 @@ public class Sampling extends AbstractWorkflowEntity {
 		excludeFields.add("collateralReference");
 		excludeFields.add("foirAmount");
 		excludeFields.add("irrMax");
-		excludeFields.add("emi");
 		excludeFields.add("custCategory");
 		excludeFields.add("decisionRemarks");
 		excludeFields.add("calculatedRate");
@@ -181,6 +179,9 @@ public class Sampling extends AbstractWorkflowEntity {
 		excludeFields.add("queryDetail");
 		excludeFields.add("samplingTolerance");
 		excludeFields.add("samplingDetailsList");
+		
+		excludeFields.add("totalCustomerExposre");
+		excludeFields.add("totalCoApplicantsExposre");
 
 		return excludeFields;
 	}
@@ -196,12 +197,6 @@ public class Sampling extends AbstractWorkflowEntity {
 	public void setId(long id) {
 		this.id = id;
 	}
-
-	/*
-	 * public long getLinkId() { return linkId; }
-	 * 
-	 * public void setLinkId(long linkId) { this.linkId = linkId; }
-	 */
 
 	public String getKeyReference() {
 		return keyReference;
@@ -725,6 +720,22 @@ public class Sampling extends AbstractWorkflowEntity {
 
 	public void setSamplingTolerance(String samplingTolerance) {
 		this.samplingTolerance = samplingTolerance;
+	}
+
+	public BigDecimal getTotalCustomerExposre() {
+		return totalCustomerExposre == null ? BigDecimal.ZERO : totalCustomerExposre;
+	}
+
+	public void setTotalCustomerExposre(BigDecimal totalCustomerExposre) {
+		this.totalCustomerExposre = totalCustomerExposre;
+	}
+
+	public BigDecimal getTotalCoApplicantsExposre() {
+		return totalCoApplicantsExposre == null ? BigDecimal.ZERO : totalCoApplicantsExposre;
+	}
+
+	public void setTotalCoApplicantsExposre(BigDecimal totalCoApplicantsExposre) {
+		this.totalCoApplicantsExposre = totalCoApplicantsExposre;
 	}
 
 }

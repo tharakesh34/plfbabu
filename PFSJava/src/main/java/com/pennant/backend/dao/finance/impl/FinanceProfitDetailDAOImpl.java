@@ -46,8 +46,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -55,7 +53,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -65,29 +62,18 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.MonthlyAccumulateDetail;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>FinanceProfitDetail model</b> class.<br>
  * 
  */
-public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
-
-	private static Logger				logger	= Logger.getLogger(FinanceProfitDetailDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> implements FinanceProfitDetailDAO {
+	private static Logger logger = Logger.getLogger(FinanceProfitDetailDAOImpl.class);
 
 	public FinanceProfitDetailDAOImpl() {
 		super();
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -121,7 +107,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 				.newInstance(FinanceProfitDetail.class);
 
 		try {
-			finProfitDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -166,7 +152,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceProfitDetail.class);
 
-		List<FinanceProfitDetail> finPftDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(),
+		List<FinanceProfitDetail> finPftDetails = this.jdbcTemplate.query(selectSql.toString(),
 				beanParameters, typeRowMapper);
 
 		logger.debug("Leaving");
@@ -206,7 +192,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceProfitDetail.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -230,7 +216,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 				.newInstance(FinanceProfitDetail.class);
 
 		try {
-			finProfitDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -260,7 +246,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 				.newInstance(FinanceProfitDetail.class);
 
 		try {
-			finProfitDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -291,7 +277,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 				.newInstance(FinanceProfitDetail.class);
 
 		try {
-			finProfitDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -331,7 +317,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 				.newInstance(FinanceProfitDetail.class);
 
 		try {
-			finProfitDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -389,7 +375,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -432,7 +418,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finProfitDetails.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -450,7 +436,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		updateSql.append(" Where FinReference =:FinReference");
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetail);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -465,7 +451,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(pftDetailsList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -527,7 +513,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -545,7 +531,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
 		try {
-			accruedAmount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			accruedAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -560,8 +546,8 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		logger.debug("Entering");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource("");
 		try {
-			this.namedParameterJdbcTemplate.update("DELETE FROM FinPftDetails_Temp", beanParameters);
-			this.namedParameterJdbcTemplate.update("INSERT INTO FinPftDetails_Temp  SELECT * FROM FinPftDetails",
+			this.jdbcTemplate.update("DELETE FROM FinPftDetails_Temp", beanParameters);
+			this.jdbcTemplate.update("INSERT INTO FinPftDetails_Temp  SELECT * FROM FinPftDetails",
 					beanParameters);
 
 		} catch (DataAccessException e) {
@@ -586,7 +572,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeProfitDetail);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -606,7 +592,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -626,7 +612,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -643,7 +629,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accumulateDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -658,7 +644,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		updateSql.append(" Set AcrTsfdInSusp = 0 Where AcrTsfdInSusp != 0");
 
 		logger.debug("updateSql: " + updateSql.toString());
-		this.namedParameterJdbcTemplate.getJdbcOperations().update(updateSql.toString());
+		this.jdbcTemplate.getJdbcOperations().update(updateSql.toString());
 		logger.debug("Leaving");
 	}
 
@@ -671,7 +657,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -732,7 +718,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
@@ -763,7 +749,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
 		beanParameters.addValue("valueDate", valueDate);
 
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
@@ -793,7 +779,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
 		beanParameters.addValue("valueDate", valueDate);
 
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -818,7 +804,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
 		beanParameters.addValue("valueDate", valueDate);
 
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -845,7 +831,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
 		beanParameters.addValue("valueDate", valueDate);
 
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -868,7 +854,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 			logger.debug("selectSql: " + selectSql.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeProfitDetails);
 			logger.debug("Leaving");
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (Exception e) {
 			logger.debug(e);
 		}
@@ -893,11 +879,56 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 			logger.debug("selectSql: " + selectSql.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(source);
 			logger.debug("Leaving");
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Boolean.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Boolean.class);
 		} catch (Exception e) {
 			logger.debug(e);
 		}
 		return false;
+	}
+
+	@Override
+	public BigDecimal getTotalCustomerExposre(long custId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select  coalesce(sum((NSchdPri+NSchdPft)), 0) from FinPftdetails");
+		sql.append(" where finreference in (select finreference from financemain where custId = :custId)");
+		logger.debug(Literal.SQL + sql.toString());
+
+		BigDecimal totalExposer = BigDecimal.ZERO;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("custId", custId);
+
+		try {
+			totalExposer = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return totalExposer;
+	}
+
+	@Override
+	public BigDecimal getTotalCoApplicantsExposre(String finReferece) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select  coalesce(sum((NSchdPri+NSchdPft)), 0) from FinPftdetails");
+		sql.append(" where finreference in (select finreference from financemain where custId in (");
+		sql.append(" select custId from finjointaccountdetails_view where finreference = :finreference))");
+		logger.debug(Literal.SQL + sql.toString());
+
+		BigDecimal totalExposer = BigDecimal.ZERO;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("finreference", finReferece);
+
+		try {
+			totalExposer = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return totalExposer;
 	}
 
 }

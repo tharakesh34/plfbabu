@@ -4577,11 +4577,8 @@
 
 	<!--============ Finance Profit Details ============== -->
 
-	<bean id="profitDetailsDAO"
-		class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-
+	<bean id="profitDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl" parent="basicDao"/>
+	
 	<!--============ Finance Repay Priority Details ============== -->
 
 	<bean id="financeRepayPriorityDAO"

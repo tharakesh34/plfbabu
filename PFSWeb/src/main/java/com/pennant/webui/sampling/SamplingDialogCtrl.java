@@ -1077,9 +1077,11 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				lc.setParent(item);
 
 				lc = new Listcell(custExtLiability.getFinType());
+				lc.setTooltip(custExtLiability.getFinTypeDesc());
 				lc.setParent(item);
 
 				lc = new Listcell(custExtLiability.getLoanBank());
+				lc.setTooltip(custExtLiability.getLoanBankName());
 				lc.setParent(item);
 
 				originalAmount = custExtLiability.getOriginalAmount();
@@ -1151,7 +1153,10 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				lc = new Listcell("");
 				lc.setParent(item);
 				item.setAttribute("data", "");
-
+								
+				totalInstalmentAmount = totalInstalmentAmount.add(sampling.getTotalCoApplicantsExposre());
+				totalInstalmentAmount = totalInstalmentAmount.add(sampling.getTotalCustomerExposre());
+				
 				sampling.setTotalLiability(totalInstalmentAmount);
 				calculateEligibility(false);
 

@@ -26,6 +26,7 @@ import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -63,7 +64,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 	@Autowired
 	protected SamplingDAO samplingDAO;
-
 	@Autowired
 	private AuditHeaderDAO auditHeaderDAO;
 	@Autowired
@@ -92,11 +92,12 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	private CustomerDetailsService customerDetailsService;
 	@Autowired
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
+	@Autowired
+	private FinanceProfitDetailDAO financeProfitDetailDAO;
 
 	@Override
 	public void save(Sampling sampling) {
 		setWorkflowDetails(sampling);
-
 		samplingDAO.save(sampling, TableType.TEMP_TAB);
 	}
 
@@ -540,11 +541,19 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 		fieldsandvalues.put("Total_Co_Applicants_Income", BigDecimal.ZERO);
 		fieldsandvalues.put("Co_Applicants_Obligation_External", BigDecimal.ZERO);
-		fieldsandvalues.put("Co_Applicants_Obligation_Internal", BigDecimal.ZERO);
-		fieldsandvalues.put("Customer_Obligation_Internal", BigDecimal.ZERO);
+		fieldsandvalues.put("Co_Applicants_Obligation_Internal", sampling.getTotalCoApplicantsExposre());
+		fieldsandvalues.put("Customer_Obligation_Internal", sampling.getTotalCustomerExposre());
 
 		ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_FOIRAMT);
 		if (ruleCode != null) {
+			if (!ruleCode.contains("Customer_Obligation_Internal")) {
+				sampling.setTotalCustomerExposre(BigDecimal.ZERO);
+			}
+
+			if (!ruleCode.contains("Co_Applicants_Obligation_External")) {
+				sampling.setTotalCoApplicantsExposre(BigDecimal.ZERO);
+			}
+
 			object = excuteRule(ruleCode, sampling.getFinccy(), fieldsandvalues);
 		}
 		if (object != null) {
@@ -593,7 +602,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		BigDecimal nTimesOfr = (r.add(BigDecimal.ONE)).pow(noOfTerms);
 		BigDecimal numerator = principle.multiply(nTimesOfr).multiply(r);
 		BigDecimal denominator = nTimesOfr.subtract(BigDecimal.ONE);
-		
+
 		BigDecimal emi = numerator.divide(denominator, 10, BigDecimal.ROUND_HALF_DOWN);
 		emi = emi.multiply(new BigDecimal(100));
 		sampling.setEmi(emi);
@@ -608,7 +617,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	public Sampling getSampling(Sampling sampling, String type) {
 		logger.info(Literal.ENTERING);
 		Sampling temp = samplingDAO.getSampling(sampling.getId(), type);
-		
+
 		if (temp != null) {
 			String finReference = sampling.getKeyReference();
 			long custId = 0;
@@ -629,6 +638,10 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 			temp.setCustomerIncomeList(samplingDAO.getIncomes(sampling.getId()));
 			temp.setCustomerExtLiabilityList(samplingDAO.getObligations(sampling.getId()));
+			temp.setCustomerExtLiabilityList(samplingDAO.getObligations(sampling.getId()));
+
+			temp.setTotalCustomerExposre(financeProfitDetailDAO.getTotalCustomerExposre(sampling.getCustId()));
+			temp.setTotalCoApplicantsExposre(financeProfitDetailDAO.getTotalCoApplicantsExposre(finReference));
 
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
 					String.valueOf(sampling.getId()), CollateralConstants.SAMPLING_MODULE, "", "_View");
@@ -642,23 +655,24 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				List<String> collReference = new ArrayList<>();
 				List<SamplingCollateral> collList = temp.getCollaterals();
 				Map<String, ExtendedFieldRender> extFieldRender = new LinkedHashMap<>();
-				
+
 				for (SamplingCollateral collateral : collList) {
 					collReference.add(collateral.getCollateralRef());
-					
+
 					StringBuilder table = new StringBuilder();
 					table.append(CollateralConstants.VERIFICATION_MODULE);
 					table.append("_");
 					table.append(collateral.getCollateralType());
 					table.append("_tv");
-										
+
 					String reference = collateral.getCollateralRef();
-					Map<String, Object> renderMap=null;
+					Map<String, Object> renderMap = null;
 
 					long linkId = samplingDAO.getCollateralLinkId(reference, sampling.getId(), "");
 					String sLinkId = "S".concat(String.valueOf(linkId));
-					
-					renderMap = samplingDAO.getExtendedField(sLinkId, collateral.getSeqNo(), table.toString().toLowerCase(), "_view");
+
+					renderMap = samplingDAO.getExtendedField(sLinkId, collateral.getSeqNo(),
+							table.toString().toLowerCase(), "_view");
 
 					if (MapUtils.isNotEmpty(renderMap)) {
 						List<ExtendedFieldRender> renderList = new ArrayList<>();
@@ -699,7 +713,8 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 						field.setMapValues(extFieldMap);
 						renderList.add(field);
 
-						extFieldRender.put(field.getReference().concat("-").concat(String.valueOf(field.getSeqNo())), field);
+						extFieldRender.put(field.getReference().concat("-").concat(String.valueOf(field.getSeqNo())),
+								field);
 					}
 				}
 				temp.setExtFieldRenderList(extFieldRender);
@@ -721,8 +736,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		logger.info(Literal.LEAVING);
 		return null;
 	}
-	
-	
+
 	private BigDecimal getTotal(List<CustomerIncome> incomes) {
 		BigDecimal total = BigDecimal.ZERO;
 
@@ -750,7 +764,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			sampling.setOriginalTotalIncome(getTotal(incomeDetailDAO.getTotalIncomeByFinReference(keyReference)));
 		}
 
-		sampling.setTotalIncome(getTotal(incomeDetailDAO.getTotalIncomeBySamplingId(sampling.getId())));
+		//sampling.setTotalIncome(getTotal(incomeDetailDAO.getTotalIncomeBySamplingId(sampling.getId())));
 
 		Long liabilityLinkId = samplingDAO.getLinkId(sampling.getId(), "link_sampling_liabilities_snap");
 		if (liabilityLinkId != null && liabilityLinkId != 0) {
@@ -759,10 +773,10 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			sampling.setOriginalTotalLiability(externalLiabilityDAO.getTotalLiabilityByFinReference(keyReference));
 		}
 
-		sampling.setTotalLiability(externalLiabilityDAO.getTotalLiabilityBySamplingId(sampling.getId()));
-		
+		//sampling.setTotalLiability(externalLiabilityDAO.getTotalLiabilityBySamplingId(sampling.getId()));
+
 		List<SamplingCollateral> collaters = samplingDAO.getCollateralTypesBySamplingId(sampling.getId());
-		
+
 		List<String> linkIds = samplingDAO.getCollateralLinkIds(sampling.getId());
 		Set<String> collateralType = new HashSet<>();
 		List<SamplingCollateral> list = new ArrayList<>();
@@ -774,16 +788,16 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				for (SamplingCollateral sc : list) {
 					for (SamplingCollateral cl : collaters) {
 						String linkId = sc.getCollateralRef().replaceAll("S", "");
-						if(StringUtils.equals(cl.getLinkId(), linkId)) {
+						if (StringUtils.equals(cl.getLinkId(), linkId)) {
 							sc.setCollateralRef(cl.getCollateralRef());
 						}
 					}
 				}
-				
+
 				sampling.getCollaterals().addAll(list);
 			}
 		}
-		
+
 		sampling.setReamrksMap(samplingDAO.getRemarks(sampling.getId()));
 
 		String eligibilityRule = null;
@@ -1338,10 +1352,10 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 		String table = "verification_".concat(type.toLowerCase()).concat("_tv");
 		current = getCollateralMap(table, linkId);
-		
+
 		table = "collateral_".concat(type.toLowerCase()).concat("_ed");
 		original = getCollateralMap(table, snapLinkId);
-		
+
 		List<ExtendedFieldData> data = null;
 		for (Entry<String, ExtendedFieldData> currentData : current.entrySet()) {
 			for (Entry<String, ExtendedFieldData> originalData : original.entrySet()) {
@@ -1410,7 +1424,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	private void saveIncomeSnap(Sampling sampling) {
 		List<CustomerIncome> originalList = customerIncomeDAO.getIncomesByFinReference(sampling.getKeyReference());
 		List<CustomerIncome> currentList = customerIncomeDAO.getIncomesBySamplingId(sampling.getId());
-						
+
 		/**
 		 * Preparing income linkid's
 		 */
@@ -1418,7 +1432,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		for (CustomerIncome income : originalList) {
 			linkIds.add(income.getLinkId());
 		}
-		
+
 		/**
 		 * Deleting the incomes captured at customer/loan including co-applicant.
 		 */
@@ -1430,7 +1444,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				// Ignore
 			}
 		}
-						
+
 		/**
 		 * Saving the incomes captured at sampling
 		 */
@@ -1442,7 +1456,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			income.setLastMntBy(sampling.getLastMntBy());
 			incomeDetailDAO.save(income, "");
 		}
-		
+
 		/**
 		 * Saving the incomes captured at customer/loan as snap
 		 */
@@ -1457,9 +1471,10 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	}
 
 	private void saveLiabilitiesSnap(Sampling sampling) {
-		List<CustomerExtLiability> originalList = customerExtLiabilityDAO.getLiabilityByFinReference(sampling.getKeyReference());
+		List<CustomerExtLiability> originalList = customerExtLiabilityDAO
+				.getLiabilityByFinReference(sampling.getKeyReference());
 		List<CustomerExtLiability> currentList = customerExtLiabilityDAO.getLiabilityBySamplingId(sampling.getId());
-		
+
 		/**
 		 * Preparing Liabilities linkid's
 		 */
@@ -1467,7 +1482,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		for (CustomerExtLiability liability : originalList) {
 			linkIds.add(liability.getLinkId());
 		}
-		
+
 		/**
 		 * Deleting the Liabilities captured at customer/loan including co-applicant.
 		 */
@@ -1479,7 +1494,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				// Ignore
 			}
 		}
-						
+
 		/**
 		 * Saving the Liabilities captured at sampling
 		 */
@@ -1491,7 +1506,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			liability.setLastMntBy(sampling.getLastMntBy());
 			externalLiabilityDAO.save(liability, "");
 		}
-		
+
 		/**
 		 * Saving the Liabilities captured at customer/loan as snap
 		 */
@@ -1516,10 +1531,10 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		for (SamplingCollateral collSetup : sampling.getCollaterals()) {
 			long linkId = samplingDAO.getCollateralLinkId(sampling.getId(), collSetup.getCollateralRef());
 			String slinkId = "S".concat(String.valueOf(linkId));
-			
+
 			String table = "verification_".concat(collSetup.getCollateralType().toLowerCase()).concat("_tv");
 			current = getCollateralMap(table, slinkId);
-			
+
 			table = "collateral_".concat(collSetup.getCollateralType().toLowerCase()).concat("_ed");
 			original = extendedFieldDetailsService.getCollateralMap(table, collSetup.getCollateralRef());
 
@@ -1536,7 +1551,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			String referece = collSetup.getCollateralRef();
 			int seqNo = (Integer) newOriginalTemp.get("seqno");
 			try {
-				newOriginalTemp.remove("reference");	
+				newOriginalTemp.remove("reference");
 				newOriginalTemp.put("lastmnton", new Timestamp(System.currentTimeMillis()));
 				newOriginalTemp.put("lastmntby", sampling.getLastMntBy());
 				extendedFieldRenderDAO.update(referece, (Integer) seqNo, newOriginalTemp, "", table);
