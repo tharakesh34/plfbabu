@@ -243,7 +243,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		
 		sql.append(" set DepositType = :DepositType, BranchCode = :BranchCode,");
 		if ("_Temp".equalsIgnoreCase(tableType.getSuffix())) {
-			sql.append(" ReservedAmount = :ReservedAmount,");
+			sql.append(" ActualAmount = :ActualAmount, TransactionAmount = :TransactionAmount, ReservedAmount = :ReservedAmount,");
 		} else {
 			sql.append(" TransactionAmount = TransactionAmount + :ReservedAmount, ReservedAmount = 0,");
 		}
