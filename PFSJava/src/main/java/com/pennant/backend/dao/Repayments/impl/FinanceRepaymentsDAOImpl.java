@@ -47,47 +47,33 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods implementation for the <b>Finance Repayments</b> class.<br>
  * 
  */
-public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepayments> implements FinanceRepaymentsDAO {
-	private static Logger	           logger	= Logger.getLogger(FinanceRepaymentsDAOImpl.class);
+public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> implements FinanceRepaymentsDAO {
+	private static Logger logger = Logger.getLogger(FinanceRepaymentsDAOImpl.class);
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
-
 	public FinanceRepaymentsDAOImpl() {
 		super();
-	}
-
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -103,7 +89,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);
 		try {
-			repaySeq = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+			repaySeq = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
        } catch (EmptyResultDataAccessException e) {
        	logger.warn("Exception: ", e);
        	repaySeq = 0;
@@ -149,7 +135,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return financeRepayments.getId();
@@ -186,7 +172,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		RowMapper<FinanceRepayments> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceRepayments.class);
 
 		logger.debug("Leaving");
-		repaymentList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		repaymentList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		
 		if(repaymentList == null || repaymentList.isEmpty()){
 			selectSql = new StringBuilder(" Select T1.FinReference, T1.FinPostDate, T1.FinRpyFor, T1.FinPaySeq,");
@@ -208,7 +194,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 	 
 			logger.debug("selectSql: " + selectSql.toString());
 			logger.debug("Leaving");
-			repaymentList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+			repaymentList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 		}
 		
 		return repaymentList;
@@ -236,7 +222,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		RowMapper<FinanceRepayments> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceRepayments.class);
 		
 		logger.debug("Leaving");
-		repaymentList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		repaymentList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		
 		return repaymentList;
 	}
@@ -255,7 +241,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		logger.debug("selectSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
    }
 
@@ -273,7 +259,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		logger.debug("selectSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
    }
 
@@ -297,7 +283,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		RowMapper<FinRepayHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinRepayHeader.class);
 
 		try {
-			header = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			header = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			header = null;
@@ -324,7 +310,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		RowMapper<FinRepayHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinRepayHeader.class);
 		
 		try {
-			header = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			header = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			header = null;
@@ -338,7 +324,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		logger.debug("Entering");
 		
 		if (finRepayHeader.getRepayID() == 0 || finRepayHeader.getRepayID() == Long.MIN_VALUE) {
-			finRepayHeader.setRepayID(getNextidviewDAO().getNextId("SeqFinRepayHeader"));
+			finRepayHeader.setRepayID(getNextValue("SeqFinRepayHeader"));
 			logger.debug("get NextID:" + finRepayHeader.getRepayID());
 		}
 		
@@ -353,7 +339,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finRepayHeader);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return finRepayHeader.getRepayID();
@@ -376,7 +362,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finRepayHeader);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -396,7 +382,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		logger.debug("selectSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finRepayHeader);
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
    }
 	
@@ -415,7 +401,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		logger.debug("selectSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
    }
 
@@ -445,7 +431,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		RowMapper<RepayScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RepayScheduleDetail.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
    }
 
 	@Override
@@ -475,7 +461,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(repaySchdList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
    }
@@ -494,7 +480,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		logger.debug("selectSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleDetail);
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
    }
 	
@@ -513,7 +499,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		logger.debug("selectSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleDetail);
 
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
    }
 	
@@ -535,7 +521,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayment);
 		BigDecimal totalPftPaid = BigDecimal.ZERO;
 		try {
-			totalPftPaid = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
+			totalPftPaid = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
        } catch (Exception e) {
        	logger.warn("Exception: ", e);
        	totalPftPaid = BigDecimal.ZERO;
@@ -564,7 +550,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
 		RowMapper<FinRepayHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinRepayHeader.class);
 
-		List<FinRepayHeader> rpyHeaderList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		List<FinRepayHeader> rpyHeaderList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return rpyHeaderList;
 	}
@@ -582,7 +568,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 
 		logger.debug("selectSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 

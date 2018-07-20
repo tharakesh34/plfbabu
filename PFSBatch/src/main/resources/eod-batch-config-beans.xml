@@ -241,9 +241,7 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Finance Repayment -->
-	<bean id="financeRepaymentsDAO" class="com.pennant.backend.dao.Repayments.impl.FinanceRepaymentsDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="financeRepaymentsDAO" class="com.pennant.backend.dao.Repayments.impl.FinanceRepaymentsDAOImpl" parent="sequenceDao"/>
 	<!-- Suspense Posting util -->
 	<bean id="suspensePostingUtil" class="com.pennant.app.util.SuspensePostingUtil">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />

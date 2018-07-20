@@ -6547,12 +6547,7 @@
 	</bean>
 
 	<!--============ Finance Repayment Details ============== -->
-
-	<bean id="financeRepaymentsDAO"
-		class="com.pennant.backend.dao.Repayments.impl.FinanceRepaymentsDAOImpl"
-		parent="basisNextidDao">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="financeRepaymentsDAO" class="com.pennant.backend.dao.Repayments.impl.FinanceRepaymentsDAOImpl" parent="sequenceDao">
 
 	<bean id="finRepayQueueDAO"
 		class="com.pennant.backend.dao.FinRepayQueue.impl.FinRepayQueueDAOImpl"

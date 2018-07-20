@@ -35,9 +35,6 @@ package com.pennant.backend.util;
 
 import com.pennanttech.dataengine.model.DataEngineStatus;
 
- 
-
-
 /**
  * This stores all constants required for running the application
  */
@@ -47,7 +44,7 @@ public class PennantConstants {
 	}
 
 	public enum SeqTables {
-		SeqCustomers,SeqProspectCustomer,SeqFinReference, SeqFinODPenaltyRates,SeqFinRepayHeader,seqCollateralStructure,
+		SeqCustomers,SeqProspectCustomer,SeqFinReference, SeqFinODPenaltyRates,seqCollateralStructure,
 		SeqServiceTaskDetails,SeqReceiptNumber;
 	}
 
