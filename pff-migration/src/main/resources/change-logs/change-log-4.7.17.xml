@@ -12297,5 +12297,26 @@ UNION ALL
 			WHERE NOT  (EXISTS ( SELECT 1 FROM DepositCheques_Temp WHERE DepositCheques_Temp.Id = T1.Id))		
 		</createView>
 	</changeSet>	
+	
+	<changeSet id="311" author="Kesav">
+		<sql>
+			Delete from BMTAEEVENTS where AeEventCode = 'CHQ2BR';
+			insert into BMTAEEVENTS values('CHQ2BR','CHEQUE TO BANK RERVERSAL',1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0, 1, 0, 1);
+						
+			Delete from BMTAMOUNTCODES where AllowedEvent = 'CHQ2BR' And AmountCode = 'ae_transfer';
+			insert into BMTAMOUNTCODES values('CHQ2BR',0,'ae_transfer','CHEQUE TO BANK RERVERSAL',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			
+			Insert Into RMTACCOUNTINGSET Values ((Select Max(AccountSetId) + 1 from RMTACCOUNTINGSET), 'CHQ2BR', 'CHQ2BR', 'Cheque TO BANK RERVERSAL', 0, 0, 1, 1000, Current_TimeStamp, 'Approved', '', '', '', '', '', 0);
+			UPDATE seqRMTACCOUNTINGSET SET SEQNO = (Select Max(AccountSetId) from RMTACCOUNTINGSET);
+						
+			Insert Into RMTTRANSACTIONENTRY Values
+						((Select AccountSetId from RMTACCOUNTINGSET where EventCode = 'CHQ2BR'), '1', 'Deposit Bank A/c', 'C', '0','23122COLL','1000','BUILD','GLCREATE','510','010', 'Result = ae_transfer;', null, ' ', 'D', 0, 0, 1, 0, Current_TimeStamp, 'Approved', '', '', '', '', '', 0, 'E', '0');
+			Insert Into RMTTRANSACTIONENTRY Values
+						((Select AccountSetId from RMTACCOUNTINGSET where EventCode = 'CHQ2BR'), '2', 'Cheque A/c', 'D', '0','BANK','1000','BUILD','GLCREATE','010','510', 'Result = ae_transfer;', null, ' ', 'D', 0, 0, 1, 0, Current_TimeStamp, 'Approved', '', '', '', '', '', 0, 'E', '0');
+						
+			Delete from SMTPARAMETERS where SysParmCode = 'GL_CM_GLHEAD_CHQ2BR';
+			Insert into SMTPARAMETERS  values ('GL_CM_GLHEAD_CHQ2BR','Gold Loan Cheque Management','String',0,(Select AccountSetId from RMTAccountingSet where EVentCode = 'CHQ2BR'),10,0,null,null,'Cheque To Bank Account set Id',1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);					
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
