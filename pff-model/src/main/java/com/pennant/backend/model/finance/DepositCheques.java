@@ -20,6 +20,9 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 	private long				receiptId			= 0;
 	private String				receiptMode;
 	private BigDecimal			amount				= BigDecimal.ZERO;
+	private long				revLinkedTranId;
+	private String				status;
+	
 	private boolean				newRecord			= false;
 	private DepositCheques		befImage;
 
@@ -225,5 +228,21 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 
 	public void setVisible(boolean visible) {
 		this.visible = visible;
+	}
+
+	public long getRevLinkedTranId() {
+		return revLinkedTranId;
+	}
+
+	public void setRevLinkedTranId(long revLinkedTranId) {
+		this.revLinkedTranId = revLinkedTranId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

@@ -558,7 +558,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			this.transactionDate.setValue(DateUtility.getAppDate());
 			depositMovements = new DepositMovements();
 			depositMovements.setRecordType(PennantConstants.RCD_ADD);
-			depositMovements.setTransactionType(PennantConstants.DEPOSIT_MOVEMENT_DEBIT);
+			depositMovements.setTransactionType(CashManagementConstants.DEPOSIT_MOVEMENT_DEBIT);
 			depositMovements.setVersion(1);
 			depositMovements.setNewRecord(true);
 			aDepositDetails.setDepositMovements(depositMovements);
@@ -590,6 +590,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			List<DepositCheques> depositChequesList = this.depositDetailsService.getDepositChequesList();
 			if (CollectionUtils.isNotEmpty(depositChequesList)) {
 				for (DepositCheques depositCheque : depositChequesList) {
+					depositCheque.setStatus(CashManagementConstants.DEPOSIT_CHEQUE_STATUS_APPROVE);
 					depositCheque.setRecordType(PennantConstants.RCD_ADD);
 					depositCheque.setVersion(1);
 					depositCheque.setNewRecord(true);

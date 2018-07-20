@@ -1393,7 +1393,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				DepositMovements depositMovements = new DepositMovements();
 				depositMovements = new DepositMovements();
 				depositMovements.setDepositId(depositDetail.getDepositId());
-				depositMovements.setTransactionType(PennantConstants.DEPOSIT_MOVEMENT_DEBIT);
+				depositMovements.setTransactionType(CashManagementConstants.DEPOSIT_MOVEMENT_CREDIT);
 				depositMovements.setPartnerBankId(partnerBankId);
 				depositMovements.setReceiptId(receiptHeader.getReceiptID());
 				depositMovements.setVersion(1);
