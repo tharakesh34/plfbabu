@@ -1,27 +1,20 @@
 package com.pennant.backend.dao.finance.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class FinODPenaltyRateDAOImpl extends BasisNextidDaoImpl<FinODPenaltyRate> implements FinODPenaltyRateDAO{
-
+public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> implements FinODPenaltyRateDAO{
 	private static Logger logger = Logger.getLogger(FinODPenaltyRateDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public FinODPenaltyRateDAOImpl() {
 		super();
@@ -53,22 +46,13 @@ public class FinODPenaltyRateDAOImpl extends BasisNextidDaoImpl<FinODPenaltyRate
 		RowMapper<FinODPenaltyRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODPenaltyRate.class);
 
 		try {
-			finODPenaltyRate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			finODPenaltyRate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finODPenaltyRate = null;
 		}
 		logger.debug("Leaving");
 		return finODPenaltyRate;
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -86,7 +70,7 @@ public class FinODPenaltyRateDAOImpl extends BasisNextidDaoImpl<FinODPenaltyRate
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODPenaltyRate);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(),  beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(),  beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -106,7 +90,7 @@ public class FinODPenaltyRateDAOImpl extends BasisNextidDaoImpl<FinODPenaltyRate
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODPenaltyRate);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return finODPenaltyRate.getFinReference();
 
@@ -121,7 +105,7 @@ public class FinODPenaltyRateDAOImpl extends BasisNextidDaoImpl<FinODPenaltyRate
 		logger.debug("Entering");
 		
 		if (finODPenaltyRate.getLogKey() == 0 || finODPenaltyRate.getLogKey() == Long.MIN_VALUE) {
-			finODPenaltyRate.setLogKey(getNextidviewDAO().getNextId("SeqFinODPenaltyRates"));
+			finODPenaltyRate.setLogKey(getNextValue("SeqFinODPenaltyRates"));
 			logger.debug("get NextID:" + finODPenaltyRate.getLogKey());
 		}
 
@@ -134,7 +118,7 @@ public class FinODPenaltyRateDAOImpl extends BasisNextidDaoImpl<FinODPenaltyRate
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODPenaltyRate);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -156,7 +140,7 @@ public class FinODPenaltyRateDAOImpl extends BasisNextidDaoImpl<FinODPenaltyRate
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODPenaltyRate);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

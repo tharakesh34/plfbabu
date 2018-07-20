@@ -48,8 +48,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -57,7 +55,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -66,7 +63,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Abuser;
 import com.pennant.backend.model.customermasters.Customer;
@@ -88,6 +84,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -96,12 +93,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>Customer model</b> class.<br>
  * 
  */
-public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements CustomerDAO {
+public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDAO {
 	private static Logger logger = Logger.getLogger(CustomerDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+		
 	public CustomerDAOImpl() {
 		super();
 	}
@@ -260,7 +254,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
 		
 		try{
-			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customer = null;
@@ -296,7 +290,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
 		
 		try{
-			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customer = null;
@@ -304,14 +298,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("Leaving");
 		return customer;
 	}
-	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
+		
 	/**
 	 * This method Deletes the Record from the Customers or Customers_Temp.
 	 * if Record not deleted then throws DataAccessException with  error  41003.
@@ -336,7 +323,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
 		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -363,8 +350,8 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 	public long save(Customer customer,String type) {
 		logger.debug("Entering");
 		
-		if(customer.getCustID()==0 || customer.getCustID()==Long.MIN_VALUE){
-			customer.setCustID(getNextidviewDAO().getNextId("SeqCustomers"));	
+		if (customer.getCustID() == 0 || customer.getCustID() == Long.MIN_VALUE) {
+			customer.setCustID(getNextValue("SeqCustomers"));
 		}
 		//FIXME : To be discussed 
 		
@@ -413,7 +400,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 
         logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 		return customer.getId();
@@ -483,7 +470,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -507,7 +494,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 				"CustID != :CustID and CustCIF = :CustCIF");
 
 		logger.trace(Literal.SQL + sql);
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		if (count > 0) {
 			exists = true;
@@ -538,7 +525,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
 		
 		try{
-			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customer = null;
@@ -562,7 +549,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
 		
 		try{
-			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			if (!type.equals(TableType.TEMP_TAB.getSuffix())) {
 				logger.warn("Exception: ", e);	
@@ -594,7 +581,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<WIFCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(WIFCustomer.class);
 		
 		try{
-			wifCustomer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			wifCustomer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			wifCustomer = null;
@@ -605,7 +592,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 	
 	@Override
 	public String getNewProspectCustomerCIF(){
-		return String.valueOf(getNextidviewDAO().getNextId("SeqProspectCustomer"));
+		return String.valueOf(getNextValue("SeqProspectCustomer"));
 	}
 	
 	@Override
@@ -626,7 +613,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceProfitDetail.class);
 		
 		try{
-			financeProfitDetailsList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			financeProfitDetailsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeProfitDetailsList = null;
@@ -652,7 +639,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 
 		try{
-			custEmpDesg = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			custEmpDesg = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			custEmpDesg = "";
@@ -678,7 +665,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 
 		try{
-			custCurEmpAloctype = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			custCurEmpAloctype = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			custCurEmpAloctype = "";
@@ -704,7 +691,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 
 		try{
-			custRepayOther = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
+			custRepayOther = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			custRepayOther = BigDecimal.ZERO;
@@ -732,7 +719,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
 		try {
-			CustomerIncomeDetailsList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+			CustomerIncomeDetailsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -783,7 +770,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 
 		List<FinanceExposure> financeExposures = new ArrayList<>();
 		try {
-			financeExposures = this.namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+			financeExposures = this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
@@ -829,7 +816,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<FinanceExposure> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
 		
 		try{
-			exposure = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			exposure = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			exposure = null;
@@ -864,7 +851,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		source.addValue("CustID", custID);
 
 		try {
-			result = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source,
+			result = this.jdbcTemplate.queryForObject(sql.toString(), source,
 			        String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -898,7 +885,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(main);
 
 		try{
-			custWorstSts = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			custWorstSts = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			custWorstSts = "";
@@ -927,7 +914,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		
 		try{
-			custWorstSts = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			custWorstSts = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			custWorstSts = "";
@@ -955,7 +942,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 
 		try{
-			jointCustExist = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Boolean.class);
+			jointCustExist = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Boolean.class);
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			jointCustExist = false;
@@ -972,7 +959,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("Entering");
 		
 		if(customer.getCustID() == 0 || customer.getCustID() == Long.MIN_VALUE){
-			customer.setCustID(getNextidviewDAO().getNextId("SeqWIFCustomer"));	
+			customer.setCustID(getNextId("SeqWIFCustomer"));	
 		}
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into WIFCustomers" );
@@ -986,7 +973,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		insertSql.append(" :SalariedCustomer,:EmpName,:EmpDept,:EmpDesg,:TotalIncome,:TotalExpense,:CustSalutationCode,:CustSegment)" );
         logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 		return customer.getCustID();
@@ -1010,7 +997,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -1057,7 +1044,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<WIFCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(WIFCustomer.class);
 		
 		try{
-			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customer = null;
@@ -1091,7 +1078,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		
 		try{
-			custCIF = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);	
+			custCIF = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			custCIF = null;
@@ -1125,7 +1112,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(abuser);
 		
 		try{
-			blackListedDate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Date.class);	
+			blackListedDate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Date.class);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			blackListedDate = null;
@@ -1149,7 +1136,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 	public void updateCustID (String updateSql, Customer customer){
 		logger.debug("Entering");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		this.namedParameterJdbcTemplate.update(updateSql, beanParameters);
+		this.jdbcTemplate.update(updateSql, beanParameters);
 		logger.debug("Leaving");
 	}	
 
@@ -1170,7 +1157,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<ProspectCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProspectCustomer.class);
 		
 		try{
-			prospectCustomer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			prospectCustomer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			prospectCustomer = null;
@@ -1194,7 +1181,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
 		
 		try{
-			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customer = null;
@@ -1223,7 +1210,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		
 		try{
-			custCRCPR = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);	
+			custCRCPR = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			custCRCPR = "";
@@ -1242,7 +1229,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
 	}
@@ -1263,7 +1250,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<AvailPastDue> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AvailPastDue.class);
 		
 		try{
-			pastDue = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			pastDue = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			pastDue = null;
@@ -1288,7 +1275,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
 		
 		try{
-			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customer = null;
@@ -1319,7 +1306,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<FinanceEnquiry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceEnquiry.class);
 		
-		List<FinanceEnquiry> financesList = this.namedParameterJdbcTemplate.query(selectSql.toString(), mapSqlParameterSource,typeRowMapper);
+		List<FinanceEnquiry> financesList = this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource,typeRowMapper);
 		logger.debug("Leaving");
 		return financesList;
 	}
@@ -1337,7 +1324,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 
 		logger.debug("selectSql: " + selectSql.toString());
 		try{
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);	
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;
@@ -1363,7 +1350,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		
 		try{
-			custID = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Long.class );	
+			custID = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Long.class );	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			custID = Long.valueOf(0);
@@ -1388,7 +1375,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		RowMapper<WIFCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(WIFCustomer.class);
 		try{
-			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper );	
+			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper );	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customer = null;
@@ -1413,7 +1400,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 				"CustID != :CustID and CustCRCPR = :CustCRCPR");
 
 		logger.trace(Literal.SQL + sql);
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		if (count > 0) {
 			exists = true;
@@ -1495,7 +1482,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("Leaving");
 		
 		try {
-			objList = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+			objList = this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
 			if(objList != null && !objList.isEmpty()) {
 				return true;
 			}
@@ -1514,7 +1501,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 	 */
 	private void updateCustCIF(String updateSql, MapSqlParameterSource source) {
 		logger.debug("Entering");
-		this.namedParameterJdbcTemplate.update(updateSql, source);
+		this.jdbcTemplate.update(updateSql, source);
 		logger.debug("Leaving");
 	}
 
@@ -1539,7 +1526,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 
 		logger.debug("Leaving");
 		try{
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);	
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			return null;
@@ -1552,18 +1539,19 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 	@Override
     public String getNewCoreCustomerCIF() {
 		logger.debug("Entering");
-		
-		String coreCustCIF = String.valueOf(getNextidviewDAO().getNextId("SeqCorebankCustomer"));
+		// FIXME murthy
+		//String coreCustCIF = String.valueOf(getNextidviewDAO().getNextId("SeqCorebankCustomer"));
 		
 		logger.debug("Leaving");
-		return StringUtils.leftPad(coreCustCIF, 7, "0");
+		//return StringUtils.leftPad(coreCustCIF, 7, "0");
+		return "";
     }
 
 	@Override
     public void updateCorebankCustCIF(String coreCustCIF) {
 		logger.debug("Entering");
-		
-		getNextidviewDAO().setSeqNumber("SeqCorebankCustomer", (Long.parseLong(coreCustCIF)) - 1);
+		// FIXME murthy
+		//getNextidviewDAO().setSeqNumber("SeqCorebankCustomer", (Long.parseLong(coreCustCIF)) - 1);
 		
 		logger.debug("Leaving");
     }
@@ -1583,7 +1571,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aCustomer);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
     }
@@ -1600,7 +1588,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aCustomer);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		
 		logger.debug("Leaving");
     }
@@ -1621,7 +1609,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch(EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return null;
@@ -1647,7 +1635,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("Leaving");
 		try {
 			RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch(EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return null;
@@ -1665,7 +1653,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("Leaving");
 		try {
 			RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
-			custList= (ArrayList<Customer>) this.namedParameterJdbcTemplate.query(queryCode, typeRowMapper);
+			custList= (ArrayList<Customer>) this.jdbcTemplate.query(queryCode, typeRowMapper);
 		} catch(EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return null;
@@ -1701,7 +1689,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch(EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			recordCount = 0;
@@ -1735,7 +1723,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception :", e);
 			recordCount = 0;
@@ -1765,7 +1753,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception :", e);
 			recordCount = 0;
@@ -1787,7 +1775,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("selectSql: " + selectSql.toString());
 		
 		logger.debug("Leaving");
-		this.namedParameterJdbcTemplate.update(selectSql.toString(), source);
+		this.jdbcTemplate.update(selectSql.toString(), source);
     }
 
 	@Override
@@ -1806,7 +1794,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
 		
 		try{
-			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			customer = null;
 		}
@@ -1836,7 +1824,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
 		
 		try{
-			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customer = null;
@@ -1864,7 +1852,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("selectSql: " + selectSql.toString());
 		
 		logger.debug("Leaving");
-		this.namedParameterJdbcTemplate.update(selectSql.toString(), source);
+		this.jdbcTemplate.update(selectSql.toString(), source);
     }
 	
 	@Override
@@ -1877,7 +1865,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("selectSql: " + selectSql.toString());
 		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source,Date.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source,Date.class);
 	}
 	
 	/**
@@ -1920,7 +1908,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
-		List<Customer> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		List<Customer> list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return list;
 	}
@@ -1937,7 +1925,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		updateSql.append(" Where CustID =:CustID");
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
@@ -1964,7 +1952,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource,
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource,
 					Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -1988,7 +1976,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return 0;
@@ -2013,7 +2001,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;
@@ -2042,7 +2030,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;

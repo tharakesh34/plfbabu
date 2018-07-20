@@ -195,9 +195,8 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Customer -->
-	<bean id="customerDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerDAOImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="customerDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerDAOImpl" parent="sequenceDao"/>
+	
 	<!-- Currency -->
 	<bean id="currencyDAO" class="com.pennant.backend.dao.applicationmaster.impl.CurrencyDAOImpl" parent="basicDao"/>
 	<!-- ====================================================== -->
@@ -268,9 +267,8 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
 	<!-- Finance Overdue penalty Rate Details -->
-	<bean id="finODPenaltyRateDAO" class="com.pennant.backend.dao.finance.impl.FinODPenaltyRateDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="finODPenaltyRateDAO" class="com.pennant.backend.dao.finance.impl.FinODPenaltyRateDAOImpl" parent="sequenceDao"/>
+	
 	<!-- +++++++PROVISION CALCULATIONS & POSTINGS ++++++++ -->
 	<!-- Provision Details -->
 	<bean id="provisionDAO" class="com.pennant.backend.dao.financemanagement.impl.ProvisionDAOImpl" parent="basisCodeDAO">

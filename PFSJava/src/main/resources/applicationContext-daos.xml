@@ -2565,12 +2565,7 @@
 	</bean>
 
 	<!--============ Customers ============== -->
-
-	<bean id="customerDAO"
-		class="com.pennant.backend.dao.customermasters.impl.CustomerDAOImpl"
-		parent="basisNextidDao">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="customerDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerDAOImpl" parent="sequenceDao"/>
 
 	<bean id="customerService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -4339,15 +4334,9 @@
 		
 
 	<!-- Finance Overdue penalty Rate Details -->
-
-	<bean id="finODPenaltyRateDAO"
-		class="com.pennant.backend.dao.finance.impl.FinODPenaltyRateDAOImpl"
-		parent="basisNextidDao">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="finODPenaltyRateDAO" class="com.pennant.backend.dao.finance.impl.FinODPenaltyRateDAOImpl" parent="sequenceDao"/>
 
 	<!-- Finance Status Details -->
-
 	<bean id="finStatusDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.FinStatusDetailDAOImpl">
 		<property name="dataSource" ref="dataSource" />
@@ -10398,10 +10387,7 @@
 	<bean id="shortMessageServiceTarget"
 		class="com.pennant.backend.service.sms.impl.ShortMessageServiceImpl" />
 
-	<bean id="serviceTaskDAO"
-		class="com.pennant.backend.dao.servicetasklog.impl.ServiceTaskDAOImpl"
-		parent="basisNextidDao">
-		<property name="dataSource" ref="dataSource" />
+	<bean id="serviceTaskDAO" class="com.pennant.backend.dao.servicetasklog.impl.ServiceTaskDAOImpl" parent="sequenceDao">
 		<property name="transactionManager" ref="transactionManager" />
 	</bean>
 
