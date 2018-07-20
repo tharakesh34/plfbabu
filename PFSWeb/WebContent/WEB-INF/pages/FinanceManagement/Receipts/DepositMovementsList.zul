@@ -88,11 +88,11 @@
 					<listbox id="listBoxDepositMovements" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" 
 							multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
-							<listheader id="listheader_BranchCode" label="${c:l('listheader_BranchCode.label')}" sort="auto"  hflex="min"  />
-							<listheader id="listheader_DepositSlipNumber" label="${c:l('listheader_DepositSlipNumber.label')}" sort="auto"  hflex="min"  />
-							<listheader id="listheader_TransactionDate" label="${c:l('listheader_TransactionDate.label')}" sort="auto"  hflex="min"  />
-							<listheader id="listheader_PartnerBankId" label="${c:l('listheader_DepositBank.label')}" sort="auto"  hflex="min"  />
-							<listheader id="listheader_DepositAmount" label="${c:l('listheader_DepositAmount.label')}" sort="auto"  hflex="min" align="right" />
+							<listheader id="listheader_BranchCode" label="${c:l('listheader_DepositMovementsList_BranchCode.label')}" sort="auto"  hflex="min"  />
+							<listheader id="listheader_DepositSlipNumber" label="${c:l('listheader_DepositMovementsList_DepositSlipNumber.label')}" sort="auto"  hflex="min"  />
+							<listheader id="listheader_TransactionDate" label="${c:l('listheader_DepositMovementsList_TransactionDate.label')}" sort="auto"  hflex="min"  />
+							<listheader id="listheader_PartnerBankId" label="${c:l('listheader_DepositMovementsList_DepositBank.label')}" sort="auto"  hflex="min"  />
+							<listheader id="listheader_DepositAmount" label="${c:l('listheader_DepositMovementsList_DepositAmount.label')}" sort="auto"  hflex="min" align="right" />
 							<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min"  />
 							<listheader id="listheader_RecordType"  label="${c:l('label.RecordType')}" sort="auto" hflex="min"  />
 						</listhead>		

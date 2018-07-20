@@ -73,9 +73,9 @@
 					<listbox id="listBoxDepositDetails" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" 
 							multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
-							<listheader id="listheader_DepositType" label="${c:l('listheader_DepositType.label')}" sort="auto" hflex="min"  />
-							<listheader id="listheader_BranchCode" label="${c:l('listheader_BranchCode.label')}" sort="auto"  hflex="min"  />
-							<listheader id="listheader_AvailableAmount" label="${c:l('listheader_AvailableAmount.label')}" sort="auto"  hflex="min" align="right"  />
+							<listheader id="listheader_DepositType" label="${c:l('listheader_DepositDetailsList_DepositType.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_BranchCode" label="${c:l('listheader_DepositDetailsList_BranchCode.label')}" sort="auto"  hflex="min"  />
+							<listheader id="listheader_AvailableAmount" label="${c:l('listheader_DepositDetailsList_AvailableAmount.label')}" sort="auto"  hflex="min" align="right"  />
 							<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min"  />
 							<listheader id="listheader_RecordType"  label="${c:l('label.RecordType')}" sort="auto" hflex="min"  />
 						</listhead>		
