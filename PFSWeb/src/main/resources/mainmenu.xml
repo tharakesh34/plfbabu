@@ -116,6 +116,8 @@
 				rightName="menuItem_SystemMaster_SubSegment" />
 		</menu>
 		<menu id="menu_Category_CustomerMasters">
+			<menuItem id="menu_Item_Academic" zulNavigation="/WEB-INF/pages/SystemMaster/Academic/AcademicList.zul" 
+			rightName="menuItem_SystemMaster_Academic"/>
 			<menuItem id="menu_Item_Gender"
 				zulNavigation="/WEB-INF/pages/SystemMaster/Gender/GenderList.zul"
 				rightName="menuItem_SystemMaster_Gender" />
