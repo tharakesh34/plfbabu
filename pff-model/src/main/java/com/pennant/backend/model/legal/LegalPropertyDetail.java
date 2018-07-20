@@ -84,6 +84,7 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 	private String registrationOffice;
 	private String registrationDistrict;
 	private String propertyOwner;
+	private String listApplicantNames;
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
@@ -112,6 +113,7 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 		excludeFields.add("propertyTypeName");
 		excludeFields.add("legalReference");
 		excludeFields.add("seqNum");
+		excludeFields.add("listApplicantNames");
 		return excludeFields;
 	}
 
@@ -293,6 +295,14 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 
 	public void setSeqNum(int seqNum) {
 		this.seqNum = seqNum;
+	}
+
+	public String getListApplicantNames() {
+		return listApplicantNames;
+	}
+
+	public void setListApplicantNames(String listApplicantNames) {
+		this.listApplicantNames = listApplicantNames;
 	}
 
 }

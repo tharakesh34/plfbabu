@@ -56,7 +56,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinCovenantType;
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -103,11 +102,11 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private List<LegalECDetail> ecdDetailsList = new ArrayList<>();
 	private List<LegalNote> legalNotesList = new ArrayList<>();
 	private List<FinCovenantType> covenantTypeList = new ArrayList<>();
+	private List<JointAccountDetail> jointAccountDetailList = new ArrayList<>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	
 	
 	// ------------ Document generation required fields---------//
-	private FinanceDetail financeDetail;
 	private String custName;
 	private List<JointAccountDetail> coApplicantList;
 	private List<QueryDetail> queryDetailsList;
@@ -122,7 +121,8 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private String listCoApplicantNames;
 	private String listPropOwnerNames;
 	private String registrationOffice;
-	private boolean modtDoc = false;;
+	private boolean modtDoc = false;
+	private String finTypeDesc;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -158,6 +158,8 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("finAmountWords");
 		excludeFields.add("registrationOffice");
 		excludeFields.add("modtDoc");
+		excludeFields.add("finTypeDesc");
+		excludeFields.add("jointAccountDetailList");
 		return excludeFields;
 	}
 
@@ -452,13 +454,7 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 		this.docImage = docImage;
 	}
 
-	public FinanceDetail getFinanceDetail() {
-		return financeDetail;
-	}
-
-	public void setFinanceDetail(FinanceDetail financeDetail) {
-		this.financeDetail = financeDetail;
-	}
+	 
 
 	public String getCustName() {
 		return custName;
@@ -586,6 +582,22 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setRegistrationOffice(String registrationOffice) {
 		this.registrationOffice = registrationOffice;
+	}
+
+	public String getFinTypeDesc() {
+		return finTypeDesc;
+	}
+
+	public void setFinTypeDesc(String finTypeDesc) {
+		this.finTypeDesc = finTypeDesc;
+	}
+
+	public List<JointAccountDetail> getJointAccountDetailList() {
+		return jointAccountDetailList;
+	}
+
+	public void setJointAccountDetailList(List<JointAccountDetail> jointAccountDetailList) {
+		this.jointAccountDetailList = jointAccountDetailList;
 	}
 
 }

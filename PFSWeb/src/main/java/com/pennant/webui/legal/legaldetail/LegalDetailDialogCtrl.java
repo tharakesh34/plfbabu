@@ -114,9 +114,9 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.util.AgreementEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.AgreementEngine;
 import com.pennant.webui.finance.financemain.FinCovenantTypeListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -1642,7 +1642,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 			// Summary
 			item = new Listitem();
-			listcell = new Listcell("Summmary");
+			listcell = new Listcell("Summary");
 			listcell.setStyle("font-weight:bold");
 			listcell.setParent(item);
 
@@ -1655,7 +1655,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			listcell = new Listcell("");
 			listcell.setParent(item);
 
-			listcell = new Listcell("");
+			listcell = new Listcell("Total Extent or Area");
+			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
 			listcell = new Listcell("");
@@ -2515,7 +2516,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	private String downloadDocument(LegalDetail legalDetail, String template, boolean isPreliminary) throws Exception {
 		logger.debug(Literal.ENTERING);
 		String templateName = "Legal/".concat(template.concat(PennantConstants.DOC_TYPE_WORD_EXT));
-
+		legalDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 		legalDetail = legalDetailService.formatLegalDetails(legalDetail);
 		String fileName = template.concat(PennantConstants.DOC_TYPE_PDF_EXT);
 		AgreementEngine engine = new AgreementEngine("");

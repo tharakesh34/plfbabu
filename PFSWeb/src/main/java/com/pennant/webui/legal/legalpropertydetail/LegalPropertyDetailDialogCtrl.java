@@ -541,12 +541,12 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		if (!this.registrationOffice.isReadonly()) {
 			this.registrationOffice.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_RegistrationOffice.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, false));
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.registrationDistrict.isReadonly()) {
 			this.registrationDistrict.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_RegistrationDistrict.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, false));
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.propertyOwner.isReadonly()) {
 			this.propertyOwner.setConstraint(

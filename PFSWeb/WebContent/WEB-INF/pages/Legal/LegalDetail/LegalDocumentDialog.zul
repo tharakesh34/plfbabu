@@ -125,9 +125,12 @@
 								<row id="row3">
 									<label id="label_DocumentCategory"
 										value="${c:l('label_LegalDocumentDialog_DocumentCategory.value')}" />
-
+									<hbox>
 									<combobox id="documentCategory"
 										width="180px" />
+									<space spacing="3px"/>
+									<label id="documentCategoryLabel"/>
+									</hbox>
 									<label id="label_ScheduleType"
 										value="${c:l('label_LegalDocumentDialog_ScheduleType.value')}" />
 

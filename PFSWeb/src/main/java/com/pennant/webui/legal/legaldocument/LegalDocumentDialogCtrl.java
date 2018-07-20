@@ -44,13 +44,16 @@ package com.pennant.webui.legal.legaldocument;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
@@ -67,6 +70,7 @@ import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Html;
 import org.zkoss.zul.Iframe;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -75,6 +79,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.legal.LegalDocument;
+import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -86,6 +91,9 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -106,6 +114,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	protected Textbox surveyNo;
 	protected Combobox documentTypeMaker;
 	protected Combobox documentCategory;
+	protected Label documentCategoryLabel;
 	protected Combobox scheduleType;
 	protected Groupbox gb_documentBasicDetails;
 
@@ -137,6 +146,11 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	private List<ValueLabel> listDocumentTypeApprove = PennantStaticListUtil.getDocumentTypes();
 	private List<ValueLabel> listDocumentAccepted = PennantStaticListUtil.getDocumentAcceptedList();
 	
+	private Map<String, String> cetegoryDescMap = new HashMap<>();
+	
+	@Autowired
+	private SearchProcessor searchProcessor;
+
 	private boolean enquiry = false;
 
 	/**
@@ -356,7 +370,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 		logger.debug(Literal.LEAVING);
 	}
-
+	
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -368,12 +382,15 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 		List<DocumentDetails> collateralDocumentList = getLegalDetailDialogCtrl().getLegalDetail().getCollateralDocumentList();
 		if (CollectionUtils.isNotEmpty(collateralDocumentList)) {
+			List<String> docCategoryList = new ArrayList<>();
 			for (DocumentDetails documentDetails : collateralDocumentList) {
 				ValueLabel valueLabel = new ValueLabel();
 				valueLabel.setLabel(documentDetails.getDocCategory());
 				valueLabel.setValue(documentDetails.getDocCategory());
 				getListDocumentCategory().add(valueLabel);
+				docCategoryList.add(documentDetails.getDocCategory());
 			}
+			getDocumentTypeDesc(docCategoryList);
 		}
 		
 		// Maker
@@ -383,6 +400,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		this.surveyNo.setValue(aLegalDocument.getSurveyNo());
 		fillComboBox(this.documentTypeMaker, aLegalDocument.getDocumentType(), listDocumentType, "");
 		fillComboBox(this.documentCategory, aLegalDocument.getDocumentCategory(), getListDocumentCategory(), "");
+		setDocumentCategoryDesc(aLegalDocument.getDocumentCategory());
 		fillComboBox(this.scheduleType, aLegalDocument.getScheduleType(), listScheduleType, "");
 
 		// Verifier
@@ -420,7 +438,40 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 		logger.debug(Literal.LEAVING);
 	}
+ 
+	public void onChange$documentCategory(Event event) {
+		logger.debug(Literal.ENTERING);
+		String documentCategory = getComboboxValue(this.documentCategory);
+		setDocumentCategoryDesc(documentCategory);
+		logger.debug(Literal.LEAVING);
+	}
 
+	private void setDocumentCategoryDesc(String documentCategory) {
+		if (cetegoryDescMap.containsKey(documentCategory)) {
+			this.documentCategoryLabel.setValue(cetegoryDescMap.get(documentCategory));
+		} else {
+			this.documentCategoryLabel.setValue("");
+		}
+	}
+
+	/*
+	 * Fetching the document category description
+	 */
+	private void getDocumentTypeDesc(List<String> docCategoryList) {
+		Search search = new Search(DocumentType.class);
+		search.addField("docTypeCode");
+		search.addField("docTypeDesc");
+		search.addTabelName("BMTDocumentTypes");
+		search.addFilter(Filter.in("docTypeCode", docCategoryList));
+		List<DocumentType> list = searchProcessor.getResults(search);
+
+		if (CollectionUtils.isNotEmpty(list)) {
+			for (DocumentType documentType : list) {
+				cetegoryDescMap.put(documentType.getDocTypeCode(), documentType.getDocTypeDesc());
+			}
+		}
+	}
+	
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -1150,5 +1201,11 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	public void setEnquiry(boolean enquiry) {
 		this.enquiry = enquiry;
 	}
+	public SearchProcessor getSearchProcessor() {
+		return searchProcessor;
+	}
 
+	public void setSearchProcessor(SearchProcessor searchProcessor) {
+		this.searchProcessor = searchProcessor;
+	}
 }

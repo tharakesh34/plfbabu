@@ -76,7 +76,6 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.FinCovenantType;
-import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -491,27 +490,30 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				legalDetail.setCustomerList(customersList);
 			}
 			
-			//Finance details
+			// Finance details
 			FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(legalDetail.getLoanReference(), "_View", false);
 			if (financeMain != null) {
 				legalDetail.setFinAmount(financeMain.getFinAssetValue());
 				legalDetail.setFinType(financeMain.getFinType());
 				legalDetail.setFinCcy(financeMain.getFinCcy());
 				legalDetail.setFinNextRoleCode(financeMain.getNextRoleCode());
+				CustomerDetails customerDetails = getCustomerDetailsService()
+						.getCustomerDetailsById(financeMain.getCustID(), false, "_View");
+				legalDetail.setCustName(customerDetails.getCustomer().getCustShrtName());
+				legalDetail.setFinTypeDesc(financeMain.getLovDescFinTypeName());
+				legalDetail.setJointAccountDetailList(getJointAccountDetailService()
+						.getJountAccountDetailByFinRef(financeMain.getFinReference(), "_View"));
+				legalDetail.setStrFinAmoun(PennantApplicationUtil.amountFormate(financeMain.getFinAssetValue(),
+						CurrencyUtil.getFormat(financeMain.getFinCcy())));
+				try {
+					String finAmountWords = NumberToEnglishWords
+							.getAmountInText(PennantApplicationUtil.formateAmount(financeMain.getFinAssetValue(),
+									CurrencyUtil.getFormat(financeMain.getFinCcy())), financeMain.getFinCcy());
+					legalDetail.setFinAmountWords(finAmountWords);
+				} catch (Exception e) {
+					log.warn("Exception while fetching the finamount in words", e);
+				}
 			}
-			
-			//Required for document generation
-			FinanceDetail financeDetail = new FinanceDetail();
-			FinScheduleData scheduleData = new FinScheduleData();
-			scheduleData.setFinanceMain(financeMain);
-			financeDetail.setFinScheduleData(scheduleData);
-			if (financeMain != null && financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
-				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(financeMain.getCustID(), false, "_View"));
-			}
-			if (financeMain != null){
-				financeDetail.setJountAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(financeMain.getFinReference(), "_View"));
-			}
-			legalDetail.setFinanceDetail(financeDetail);
 		}
 		
 		return legalDetail;
@@ -1062,7 +1064,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			}
 
 			for (Long legalId : idLIst) {
-				LegalDetail legalDetail = getLegalDetails(legalId, TableType.MAIN_TAB.getSuffix());
+				LegalDetail legalDetail = getLegalDetails(legalId, "_View");
 				if (legalDetail != null) {
 					legalDetail.setModtDoc(modtDoc);
 					legalDetail.setBranchDesc(aFinanceMain.getLovDescFinBranchName());
@@ -1097,6 +1099,8 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 							DateFormat.SHORT_DATE.getPattern()));
 					legalDocument.setDocumentAcceptedName(PennantStaticListUtil.getlabelDesc(
 							legalDocument.getDocumentAccepted(), PennantStaticListUtil.getDocumentAcceptedList()));
+					legalDocument.setDocumentTypeApproveName(PennantStaticListUtil.getlabelDesc(
+							legalDocument.getDocumentTypeApprove(), PennantStaticListUtil.getDocumentTypes()));
 					seqNum = seqNum + 1;
 					legalDocument.setSeqNum(seqNum);
 				}
@@ -1127,12 +1131,12 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 					if (sb.length() > 0) {
 						sb.append(", ");
 						if (StringUtils.trimToNull(detail.getTitleName()) != null) {
-							sb.append(detail.getTitleName());
+							sb.append(detail.getTitleName()).append(". ");
 						}
 						sb.append(detail.getPropertyOwnersName());
 					} else {
 						if (StringUtils.trimToNull(detail.getTitleName()) != null) {
-							sb.append(detail.getTitleName());
+							sb.append(detail.getTitleName()).append(". ");
 						}
 						sb.append(detail.getPropertyOwnersName());
 					}
@@ -1142,9 +1146,13 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 					detail.setSeqNum(seqNum);
 					StringBuilder modtString = new StringBuilder();
 					if (StringUtils.trimToNull(detail.getTitleName()) != null) {
-						modtString.append(detail.getTitleName());
+						modtString.append(detail.getTitleName()).append(". ");
 					}
-					modtString.append(detail.getPropertyOwnersName()).append(",");
+					modtString.append(detail.getPropertyOwnersName()).append(", ");
+					
+					if (StringUtils.trimToNull(detail.getRelationshipType()) != null) {
+						modtString.append(detail.getRelationshipType()).append(", ");
+					}
 					if (StringUtils.trimToNull(detail.getIDTypeName()) != null) {
 						modtString.append(detail.getIDTypeName()).append("-");
 					}
@@ -1205,7 +1213,11 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 					 * modtString.append(", ").append(addres.getCustAddrZIP());
 					 * } break; } } }
 					 */
-					modtString.append(", ").append(detail.getRemarks());
+					if (StringUtils.trimToNull(detail.getRemarks()) != null) {
+						modtString.append(", ").append(detail.getRemarks()).append(".");
+					} else {
+						modtString.append(".");
+					}
 					detail.setModtString(modtString.toString());
 				}
 			}
@@ -1219,6 +1231,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			int seqNum = 0;
 			legalDetail.setRegistrationOffice(propertyDetailsList.get(0).getRegistrationOffice());
 			for (LegalPropertyDetail detail : propertyDetailsList) {
+				detail.setListApplicantNames(legalDetail.getListApplicantNames());
 				if (StringUtils.trimToNull(detail.getPropertyOwner()) != null) {
 					if (sb.length() > 0) {
 						sb.append(", ").append(detail.getPropertyOwner());
@@ -1234,34 +1247,22 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			legalDetail.setListPropOwnerNames(sb.toString());
 		}
 
-		FinanceDetail financeDetail = legalDetail.getFinanceDetail();
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		legalDetail.setCustName(financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
-		legalDetail.setStrFinAmoun(
-				PennantApplicationUtil.amountFormate(finScheduleData.getFinanceMain().getFinAssetValue(),
-						CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy())));
-
-		String finAmountWords = NumberToEnglishWords.getAmountInText(
-				PennantApplicationUtil.formateAmount(finScheduleData.getFinanceMain().getFinAssetValue(),
-						CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy())),
-				finScheduleData.getFinanceMain().getFinCcy());
-		legalDetail.setFinAmountWords(finAmountWords);
-
 		// Co-applicants
-		List<JointAccountDetail> jointAccountDetails = financeDetail.getJountAccountDetailList();
+		List<JointAccountDetail> jointAccountDetails = legalDetail.getJointAccountDetailList();
 		sb = new StringBuilder();
 		if (CollectionUtils.isNotEmpty(jointAccountDetails)) {
 			for (JointAccountDetail detail : jointAccountDetails) {
 				if (StringUtils.trimToNull(detail.getLovDescCIFName()) != null) {
+					CustomerDetails customerDetails = getCustomerDetailsService().getCustomerDetailsById(detail.getCustID(), false, "_View");
 					if (sb.length() > 0) {
-						sb.append(", ").append(detail.getLovDescCIFName());
+						sb.append(", ").append(detail.getLovDescCIFName()).append(". ").append(customerDetails.getCustomer().getLovDescCustSalutationCodeName());
 					} else {
-						sb.append(detail.getLovDescCIFName());
+						sb.append(detail.getLovDescCIFName()).append(". ").append(customerDetails.getCustomer().getLovDescCustSalutationCodeName());
 					}
 				}
 			}
-			
 		}
+
 		if (sb.length() <= 0) {
 			legalDetail.setListCoApplicantNames("");
 		} else {

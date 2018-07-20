@@ -125,14 +125,21 @@
 									width="200px" />
 								<label id="label_RegistrationOffice"
 									value="${c:l('label_LegalPropertyDetailDialog_RegistrationOffice.value')}" />
-								<textbox id="registrationOffice"
-									maxlength="200" width="200px" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="registrationOffice"
+										maxlength="200" width="200px" />
+								</hbox>
 							</row>
 							<row id="row5">
 								<label id="label_RegistrationDistrict"
 									value="${c:l('label_LegalPropertyDetailDialog_RegistrationDistrict.value')}" />
-								<textbox id="registrationDistrict"
-									maxlength="100" width="200px" />
+								<hbox>
+								<space spacing="2px" sclass="mandatory" />
+									<textbox id="registrationDistrict"
+										maxlength="100" width="200px" />
+								</hbox>
 								<label id="label_PropertyOwner"
 									value="${c:l('label_LegalPropertyDetailDialog_PropertyOwner.value')}" />
 								<textbox id="propertyOwner"
