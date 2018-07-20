@@ -12184,6 +12184,12 @@ UNION ALL
 			WHERE NOT  (EXISTS ( SELECT 1 FROM DepositDetails_Temp WHERE DepositDetails_Temp.DepositId = T1.DepositId))		
 		</createView>
 	</changeSet>
+	<changeSet id="305" author="Kesav">
+		<sql>
+			Delete from ErrorDetails where CODE = '65034';
+			Insert into ERRORDETAILS values ('65034','EN','E','Record is in Deposit Process, Should not allow to do Receipt Realization/ Bounce/ Cancel the record.','test','Approved',null,null,null,null,null,0,Current_TimeStamp,1000,0);		
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
 	
