@@ -45,8 +45,6 @@ package com.pennant.backend.dao.bmtmasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -54,35 +52,30 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rmtmasters.ProductDeviationDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.bmtmasters.ProductDeviation;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>ProductDeviation model</b> class.<br>
  * 
  */
-public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation> implements ProductDeviationDAO {
-
-	private static Logger				logger	= Logger.getLogger(ProductDeviationDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> implements ProductDeviationDAO {
+	private static Logger logger = Logger.getLogger(ProductDeviationDAOImpl.class);
 
 	public ProductDeviationDAOImpl() {
 		super();
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the new Product Deviation
+	 * This method set the Work Flow id based on the module name and return the
+	 * new Product Deviation
 	 * 
 	 * @return Product Deviation
 	 */
@@ -99,8 +92,8 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 	}
 
 	/**
-	 * This method get the module from method getProduct Deviation() and set the new record flag as true and return
-	 * Product Deviation()
+	 * This method get the module from method getProduct Deviation() and set the
+	 * new record flag as true and return Product Deviation()
 	 * 
 	 * @return Product Deviation
 	 */
@@ -146,8 +139,7 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 				.newInstance(ProductDeviation.class);
 
 		try {
-			productDeviation = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			productDeviation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			productDeviation = null;
@@ -157,8 +149,10 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 	}
 
 	/**
-	 * This method updates the Record ProductDeviations or ProductDeviations_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Product Deviation Details by key FinType and Version
+	 * This method updates the Record ProductDeviations or
+	 * ProductDeviations_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Product Deviation Details by
+	 * key FinType and Version
 	 * 
 	 * @param Product
 	 *            Deviation (productDeviation)
@@ -185,10 +179,10 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productDeviation);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-		/*if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}*/
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		/*
+		 * if (recordCount <= 0) { throw new ConcurrencyException(); }
+		 */
 		logger.debug("Leaving");
 
 	}
@@ -207,7 +201,7 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productDeviation);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			/*
 			 * if (recordCount <= 0) { throw new ConcurrencyException(); }
 			 */
@@ -219,8 +213,10 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 	}
 
 	/**
-	 * This method Deletes the Record from the ProductDeviations or ProductDeviations_Temp. if Record not deleted then
-	 * throws DataAccessException with error 41003. delete Product Deviation Details by key ProductCode
+	 * This method Deletes the Record from the ProductDeviations or
+	 * ProductDeviations_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Product Deviation Details by
+	 * key ProductCode
 	 * 
 	 * @param Product
 	 *            Deviation Details (productDeviation)
@@ -245,10 +241,10 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productDeviation);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-			/*if (recordCount <= 0) {
-				throw new ConcurrencyException();
-			}*/
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			/*
+			 * if (recordCount <= 0) { throw new ConcurrencyException(); }
+			 */
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -257,7 +253,8 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 	}
 
 	/**
-	 * This method insert new Records into ProductDeviations or ProductDeviations_Temp.
+	 * This method insert new Records into ProductDeviations or
+	 * ProductDeviations_Temp.
 	 *
 	 * save Product Deviation Details
 	 * 
@@ -273,7 +270,7 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 	public long save(ProductDeviation productDeviation, String type) {
 		logger.debug("Entering");
 		if (productDeviation.getProductDevID() == Long.MIN_VALUE) {
-			productDeviation.setProductDevID(getNextidviewDAO().getNextId("SeqProductDeviations"));
+			productDeviation.setProductDevID(getNextValue("SeqProductDeviations"));
 			logger.debug("get NextID:" + productDeviation.getProductDevID());
 		}
 		StringBuilder insertSql = new StringBuilder();
@@ -289,7 +286,7 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productDeviation);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return productDeviation.getProductDevID();
 	}
@@ -317,7 +314,7 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 				.newInstance(ProductDeviation.class);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -333,8 +330,7 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource,
-					Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;
@@ -344,12 +340,4 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 		return count > 0 ? true : false;
 	}
 
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 }

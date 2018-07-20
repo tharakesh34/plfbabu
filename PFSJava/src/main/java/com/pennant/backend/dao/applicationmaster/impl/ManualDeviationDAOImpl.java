@@ -42,8 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -52,26 +50,24 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.ManualDeviationDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.applicationmaster.ManualDeviation;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>ManualDeviation</code> with set of CRUD operations.
+ * Data access layer implementation for <code>ManualDeviation</code> with set of
+ * CRUD operations.
  */
-public class ManualDeviationDAOImpl extends BasisNextidDaoImpl<ManualDeviation> implements ManualDeviationDAO {
-	private static Logger				logger	= Logger.getLogger(ManualDeviationDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class ManualDeviationDAOImpl extends SequenceDao<ManualDeviation> implements ManualDeviationDAO {
+	private static Logger logger = Logger.getLogger(ManualDeviationDAOImpl.class);
 
 	public ManualDeviationDAOImpl() {
 		super();
@@ -104,7 +100,7 @@ public class ManualDeviationDAOImpl extends BasisNextidDaoImpl<ManualDeviation> 
 		RowMapper<ManualDeviation> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualDeviation.class);
 
 		try {
-			manualDeviation = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			manualDeviation = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			manualDeviation = null;
@@ -133,7 +129,7 @@ public class ManualDeviationDAOImpl extends BasisNextidDaoImpl<ManualDeviation> 
 		RowMapper<ManualDeviation> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualDeviation.class);
 
 		try {
-			manualDeviation = namedParameterJdbcTemplate.queryForObject(DESC_QUERY.toString(), source, rowMapper);
+			manualDeviation = jdbcTemplate.queryForObject(DESC_QUERY.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			manualDeviation = null;
 		}
@@ -168,7 +164,7 @@ public class ManualDeviationDAOImpl extends BasisNextidDaoImpl<ManualDeviation> 
 		paramSource.addValue("deviationID", deviationID);
 		paramSource.addValue("code", code);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -197,7 +193,7 @@ public class ManualDeviationDAOImpl extends BasisNextidDaoImpl<ManualDeviation> 
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (manualDeviation.getId() == Long.MIN_VALUE) {
-			manualDeviation.setId(getNextidviewDAO().getNextId("SeqManualDeviations"));
+			manualDeviation.setId(getNextValue("SeqManualDeviations"));
 			logger.debug("get NextID:" + manualDeviation.getId());
 		}
 
@@ -206,7 +202,7 @@ public class ManualDeviationDAOImpl extends BasisNextidDaoImpl<ManualDeviation> 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualDeviation);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -234,7 +230,7 @@ public class ManualDeviationDAOImpl extends BasisNextidDaoImpl<ManualDeviation> 
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualDeviation);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -260,7 +256,7 @@ public class ManualDeviationDAOImpl extends BasisNextidDaoImpl<ManualDeviation> 
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -273,36 +269,26 @@ public class ManualDeviationDAOImpl extends BasisNextidDaoImpl<ManualDeviation> 
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 	@Override
 	public boolean isExistsFieldCodeID(long fieldCodeID, String type) {
 		logger.debug("Entering");
 		int count = 0;
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("FieldCodeID", fieldCodeID);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT  COUNT(*)  FROM  ManualDeviations");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where Categorization = :FieldCodeID OR Severity = :FieldCodeID");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;
 		}
 		logger.debug("Leaving");
-		
+
 		return count > 0 ? true : false;
 	}
 
@@ -317,6 +303,6 @@ public class ManualDeviationDAOImpl extends BasisNextidDaoImpl<ManualDeviation> 
 		selectSql.append(" Where Code = :DeviationCode");
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),mapSqlParameterSource, Long.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Long.class);
 	}
 }

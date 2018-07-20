@@ -45,8 +45,6 @@ package com.pennant.backend.dao.rmtmasters.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -54,33 +52,29 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rmtmasters.FinTypeExpenseDAO;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
  * DAO methods implementation for the <b>FinTypeExpense model</b> class.<br>
  * 
  */
-public class FinTypeExpenseDAOImpl extends BasisNextidDaoImpl<FinTypeExpense> implements FinTypeExpenseDAO {
-
-	private static Logger				logger	= Logger.getLogger(FinTypeExpenseDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implements FinTypeExpenseDAO {
+	private static Logger logger = Logger.getLogger(FinTypeExpenseDAOImpl.class);
 
 	public FinTypeExpenseDAOImpl() {
 		super();
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the new FinTypeExpense
+	 * This method set the Work Flow id based on the module name and return the
+	 * new FinTypeExpense
 	 * 
 	 * @return FinTypeExpense
 	 */
@@ -93,8 +87,8 @@ public class FinTypeExpenseDAOImpl extends BasisNextidDaoImpl<FinTypeExpense> im
 	}
 
 	/**
-	 * This method get the module from method getFinTypeExpense() and set the new record flag as true and return
-	 * FinTypeExpense()
+	 * This method get the module from method getFinTypeExpense() and set the
+	 * new record flag as true and return FinTypeExpense()
 	 * 
 	 * @return FinTypeExpense
 	 */
@@ -136,8 +130,7 @@ public class FinTypeExpenseDAOImpl extends BasisNextidDaoImpl<FinTypeExpense> im
 		RowMapper<FinTypeExpense> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeExpense.class);
 
 		try {
-			finTypeExpense = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			finTypeExpense = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finTypeExpense = null;
 		}
@@ -164,16 +157,17 @@ public class FinTypeExpenseDAOImpl extends BasisNextidDaoImpl<FinTypeExpense> im
 		logger.debug("selectListSql: " + selectSql.toString());
 		RowMapper<FinTypeExpense> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeExpense.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
 
 	/**
-	 * This method insert new Records into RMTFinTypeExpenses or RMTFinTypeExpenses_Temp.
+	 * This method insert new Records into RMTFinTypeExpenses or
+	 * RMTFinTypeExpenses_Temp.
 	 * 
 	 * save FinTypeExpense
 	 * 
 	 * @param FinTypeExpense
-	 *             (FinTypeExpense)
+	 *            (FinTypeExpense)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return void
@@ -186,7 +180,7 @@ public class FinTypeExpenseDAOImpl extends BasisNextidDaoImpl<FinTypeExpense> im
 		logger.debug("Entering ");
 		// Get the identity sequence number.
 		if (finTypeExpense.getFinTypeExpenseID() <= 0) {
-			finTypeExpense.setFinTypeExpenseID(getNextidviewDAO().getNextId("SeqFinTypeExpense"));
+			finTypeExpense.setFinTypeExpenseID(getNextValue("SeqFinTypeExpense"));
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into FinTypeExpenses");
@@ -202,17 +196,19 @@ public class FinTypeExpenseDAOImpl extends BasisNextidDaoImpl<FinTypeExpense> im
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeExpense);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
 		return finTypeExpense.getId();
 	}
 
 	/**
-	 * This method updates the Record RMTFinTypeExpenses or RMTFinTypeExpenses_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Finance Types by key FinType and Version
+	 * This method updates the Record RMTFinTypeExpenses or
+	 * RMTFinTypeExpenses_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Finance Types by key FinType
+	 * and Version
 	 * 
 	 * @param FinTypeExpense
-	 *            	 (FinTypeExpense)
+	 *            (FinTypeExpense)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return void
@@ -233,17 +229,15 @@ public class FinTypeExpenseDAOImpl extends BasisNextidDaoImpl<FinTypeExpense> im
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(
 				" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		updateSql.append(
-				" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(
-				" Where FinType =:FinType And ExpenseTypeID = :ExpenseTypeID And  FinEvent = :FinEvent");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" Where FinType =:FinType And ExpenseTypeID = :ExpenseTypeID And  FinEvent = :FinEvent");
 
-		/*if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
-		}
-*/
+		/*
+		 * if (!type.endsWith("_Temp")) {
+		 * updateSql.append("  AND Version= :Version-1"); }
+		 */
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeExpense);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -252,11 +246,12 @@ public class FinTypeExpenseDAOImpl extends BasisNextidDaoImpl<FinTypeExpense> im
 	}
 
 	/**
-	 * This method Deletes the Record from the RMTFinTypeExpenses or RMTFinTypeExpenses_Temp. if Record not deleted then
-	 * throws DataAccessException with error 41003. delete Finance Types by key FinType
+	 * This method Deletes the Record from the RMTFinTypeExpenses or
+	 * RMTFinTypeExpenses_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Finance Types by key FinType
 	 * 
 	 * @param FinTypeExpense
-	 *             (FinTypeExpense)
+	 *            (FinTypeExpense)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return void
@@ -270,13 +265,12 @@ public class FinTypeExpenseDAOImpl extends BasisNextidDaoImpl<FinTypeExpense> im
 
 		StringBuilder deleteSql = new StringBuilder("Delete From FinTypeExpenses");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql
-				.append("  Where FinType =:FinType And FinTypeExpenseID = :FinTypeExpenseID ");
+		deleteSql.append("  Where FinType =:FinType And FinTypeExpenseID = :FinTypeExpenseID ");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeExpense);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -292,7 +286,7 @@ public class FinTypeExpenseDAOImpl extends BasisNextidDaoImpl<FinTypeExpense> im
 	 * @param FinTypeExpense
 	 * 
 	 * 
-	 *           (FinTypeExpense)
+	 *            (FinTypeExpense)
 	 * @return FinTypeExpense
 	 */
 
@@ -309,24 +303,15 @@ public class FinTypeExpenseDAOImpl extends BasisNextidDaoImpl<FinTypeExpense> im
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeExpense);
 
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
 	@Override
-	public  FinTypeExpense getFinTypeExpenseByFinType(String finType, long expenseTypeId, String type) {
+	public FinTypeExpense getFinTypeExpenseByFinType(String finType, long expenseTypeId, String type) {
 		logger.debug("Entering");
 		FinTypeExpense finTypeExpense = null;
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
@@ -345,18 +330,18 @@ public class FinTypeExpenseDAOImpl extends BasisNextidDaoImpl<FinTypeExpense> im
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		RowMapper<FinTypeExpense> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeExpense.class);
-				
+
 		try {
-			finTypeExpense = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource,
+			finTypeExpense = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finTypeExpense = null;
 		}
 		logger.debug("Leaving");
 		return finTypeExpense;
-		
+
 	}
-	
+
 	/**
 	 * Method for validating customers in Customer Group
 	 * 
@@ -375,8 +360,7 @@ public class FinTypeExpenseDAOImpl extends BasisNextidDaoImpl<FinTypeExpense> im
 
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource,
-					Integer.class);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;

@@ -42,8 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -52,26 +50,24 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.systemmasters.CasteDAO;
 import com.pennant.backend.model.systemmasters.Caste;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>Academic</code> with set of CRUD operations.
+ * Data access layer implementation for <code>Academic</code> with set of CRUD
+ * operations.
  */
-public class CasteDAOImpl extends BasisNextidDaoImpl<Caste> implements CasteDAO {
-	private static Logger				logger	= Logger.getLogger(CasteDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class CasteDAOImpl extends SequenceDao<Caste> implements CasteDAO {
+	private static Logger logger = Logger.getLogger(CasteDAOImpl.class);
 
 	public CasteDAOImpl() {
 		super();
@@ -95,7 +91,8 @@ public class CasteDAOImpl extends BasisNextidDaoImpl<Caste> implements CasteDAO 
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" Select CasteId, CasteCode, CasteDesc, CasteIsActive,");
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM Caste");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where casteId = :casteId");
@@ -105,7 +102,7 @@ public class CasteDAOImpl extends BasisNextidDaoImpl<Caste> implements CasteDAO 
 		RowMapper<Caste> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Caste.class);
 
 		try {
-			caste = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			caste = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			caste = null;
@@ -140,7 +137,7 @@ public class CasteDAOImpl extends BasisNextidDaoImpl<Caste> implements CasteDAO 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("CasteCode", casteCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -159,13 +156,15 @@ public class CasteDAOImpl extends BasisNextidDaoImpl<Caste> implements CasteDAO 
 		StringBuilder sql = new StringBuilder("Insert into Caste");
 		sql.append(tableType.getSuffix());
 		sql.append(" (CasteId, CasteCode, CasteDesc, CasteIsActive,");
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values (:CasteId, :CasteCode, :CasteDesc, :CasteIsActive,");
-		sql.append("  :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				"  :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
 		if (caste.getCasteId() <= 0) {
-			caste.setCasteId(getNextidviewDAO().getNextId("SeqCaste"));
+			caste.setCasteId(getNextValue("SeqCaste"));
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -173,7 +172,7 @@ public class CasteDAOImpl extends BasisNextidDaoImpl<Caste> implements CasteDAO 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(caste);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -200,7 +199,7 @@ public class CasteDAOImpl extends BasisNextidDaoImpl<Caste> implements CasteDAO 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(caste);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -226,7 +225,7 @@ public class CasteDAOImpl extends BasisNextidDaoImpl<Caste> implements CasteDAO 
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -238,10 +237,10 @@ public class CasteDAOImpl extends BasisNextidDaoImpl<Caste> implements CasteDAO 
 
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 	/**
-	 * Method for get total number of records from BMTAddressTypes master table.<br>
+	 * Method for get total number of records from BMTAddressTypes master
+	 * table.<br>
 	 * 
 	 * @param addrType
 	 * 
@@ -250,35 +249,26 @@ public class CasteDAOImpl extends BasisNextidDaoImpl<Caste> implements CasteDAO 
 	@Override
 	public int getCasteCount(String casteCode) {
 		logger.debug("Entering");
-		
-		MapSqlParameterSource source=new MapSqlParameterSource();
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("casteCode", casteCode);
-		
+
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT COUNT(casteCode) FROM Caste");
 		selectSql.append(" WHERE ");
 		selectSql.append("casteCode = :casteCode");
-		
+
 		logger.debug("Sql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch(EmptyResultDataAccessException dae) {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			recordCount = 0;
 		}
 		logger.debug("Leaving");
-		
+
 		return recordCount;
 	}
 
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 }

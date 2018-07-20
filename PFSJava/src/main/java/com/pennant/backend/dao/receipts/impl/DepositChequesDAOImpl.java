@@ -45,8 +45,6 @@ package com.pennant.backend.dao.receipts.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -54,15 +52,14 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -70,25 +67,14 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>DepositCheques</code> with set of CRUD operations.
  */
-public class DepositChequesDAOImpl extends BasisNextidDaoImpl<DepositCheques> implements DepositChequesDAO {
+public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implements DepositChequesDAO {
 	private static Logger				logger	= Logger.getLogger(DepositChequesDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
 	public DepositChequesDAOImpl() {
 		super();
 	}
 
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
+	
 	@Override
 	public String save(DepositCheques depositCheques, String type) {
 		logger.debug(Literal.ENTERING);
@@ -104,7 +90,7 @@ public class DepositChequesDAOImpl extends BasisNextidDaoImpl<DepositCheques> im
 		
 		// Get the identity sequence number.
 		if (depositCheques.getId() <= 0) {
-			depositCheques.setId(getNextidviewDAO().getNextId("SeqDepositCheques"));
+			depositCheques.setId(getNextValue("SeqDepositCheques"));
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -112,7 +98,7 @@ public class DepositChequesDAOImpl extends BasisNextidDaoImpl<DepositCheques> im
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(depositCheques);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -139,7 +125,7 @@ public class DepositChequesDAOImpl extends BasisNextidDaoImpl<DepositCheques> im
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(depositCheques);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -165,7 +151,7 @@ public class DepositChequesDAOImpl extends BasisNextidDaoImpl<DepositCheques> im
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -195,7 +181,7 @@ public class DepositChequesDAOImpl extends BasisNextidDaoImpl<DepositCheques> im
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(depositCheques);
 
 		try {
-			this.namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			this.jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -226,7 +212,7 @@ public class DepositChequesDAOImpl extends BasisNextidDaoImpl<DepositCheques> im
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositCheques);
 		RowMapper<DepositCheques> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositCheques.class);
-		list = namedParameterJdbcTemplate.query(sql.toString(), beanParameters, rowMapper);
+		list = jdbcTemplate.query(sql.toString(), beanParameters, rowMapper);
 
 		logger.debug(Literal.LEAVING);
 		return list;
@@ -254,7 +240,7 @@ public class DepositChequesDAOImpl extends BasisNextidDaoImpl<DepositCheques> im
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositCheques);
 		RowMapper<DepositCheques> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositCheques.class);
-		list = namedParameterJdbcTemplate.query(sql.toString(), beanParameters, rowMapper);
+		list = jdbcTemplate.query(sql.toString(), beanParameters, rowMapper);
 
 		logger.debug(Literal.LEAVING);
 		return list;
@@ -285,7 +271,7 @@ public class DepositChequesDAOImpl extends BasisNextidDaoImpl<DepositCheques> im
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("Id", id);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {

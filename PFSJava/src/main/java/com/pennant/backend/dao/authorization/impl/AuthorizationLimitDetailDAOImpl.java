@@ -45,8 +45,6 @@ package com.pennant.backend.dao.authorization.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -55,48 +53,48 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.authorization.AuthorizationLimitDetailDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.authorization.AuthorizationLimitDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>AuthorizationLimitDetail</code> with set of CRUD operations.
+ * Data access layer implementation for <code>AuthorizationLimitDetail</code>
+ * with set of CRUD operations.
  */
-public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<AuthorizationLimitDetail> implements AuthorizationLimitDetailDAO {
-	private static Logger				logger	= Logger.getLogger(AuthorizationLimitDetailDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class AuthorizationLimitDetailDAOImpl extends SequenceDao<AuthorizationLimitDetail>
+		implements AuthorizationLimitDetailDAO {
+	private static Logger logger = Logger.getLogger(AuthorizationLimitDetailDAOImpl.class);
 
 	public AuthorizationLimitDetailDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public AuthorizationLimitDetail getAuthorizationLimitDetail(long id,String type) {
+	public AuthorizationLimitDetail getAuthorizationLimitDetail(long id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, authLimitId, code, limitAmount, ");
-	
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(" ProductDesc,CollateralDesc, " );
+			sql.append(" ProductDesc,CollateralDesc, ");
 		}
-	
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From Auth_Limit_Details");
 		sql.append(type);
 		sql.append(" Where id = :id");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -104,10 +102,11 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 		authorizationLimitDetail.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimitDetail);
-		RowMapper<AuthorizationLimitDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AuthorizationLimitDetail.class);
+		RowMapper<AuthorizationLimitDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(AuthorizationLimitDetail.class);
 
 		try {
-			authorizationLimitDetail = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			authorizationLimitDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			authorizationLimitDetail = null;
@@ -115,25 +114,27 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 
 		logger.debug(Literal.LEAVING);
 		return authorizationLimitDetail;
-	}		
-	
+	}
+
 	@Override
-	public AuthorizationLimitDetail getAuthorizationLimitDetailByCode(long authLimitId,String code, TableType tableType) {
+	public AuthorizationLimitDetail getAuthorizationLimitDetailByCode(long authLimitId, String code,
+			TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, authLimitId, code, limitAmount, ");
-	
+
 		if (tableType.getSuffix().contains("View")) {
-			sql.append(" ProductDesc,CollateralDesc, " );
+			sql.append(" ProductDesc,CollateralDesc, ");
 		}
-	
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From Auth_Limit_Details");
 		sql.append(tableType.getSuffix());
 		sql.append(" Where authLimitId=:authLimitId and code = :code");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -142,10 +143,11 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 		authorizationLimitDetail.setCode(code);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimitDetail);
-		RowMapper<AuthorizationLimitDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AuthorizationLimitDetail.class);
+		RowMapper<AuthorizationLimitDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(AuthorizationLimitDetail.class);
 
 		try {
-			authorizationLimitDetail = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			authorizationLimitDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			authorizationLimitDetail = null;
@@ -153,9 +155,10 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 
 		logger.debug(Literal.LEAVING);
 		return authorizationLimitDetail;
-	}	
+	}
+
 	@Override
-	public boolean isDuplicateKey(long id,long authLimitId,String code, TableType tableType) {
+	public boolean isDuplicateKey(long id, long authLimitId, String code, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -170,7 +173,8 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 			sql = QueryUtil.getCountQuery("Auth_Limit_Details_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil.getCountQuery(new String[] { "Auth_Limit_Details_Temp", "Auth_Limit_Details" }, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "Auth_Limit_Details_Temp", "Auth_Limit_Details" },
+					whereClause);
 			break;
 		}
 
@@ -180,8 +184,8 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 		paramSource.addValue("id", id);
 		paramSource.addValue("authLimitId", authLimitId);
 		paramSource.addValue("code", code);
-		
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -191,23 +195,25 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public String save(AuthorizationLimitDetail authorizationLimitDetail,TableType tableType) {
+	public String save(AuthorizationLimitDetail authorizationLimitDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into Auth_Limit_Details");
+		StringBuilder sql = new StringBuilder(" insert into Auth_Limit_Details");
 		sql.append(tableType.getSuffix());
 		sql.append(" (id, authLimitId, code, limitAmount, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :id, :authLimitId, :code, :limitAmount, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
-		if (authorizationLimitDetail.getId()==Long.MIN_VALUE){
-			authorizationLimitDetail.setId(getNextidviewDAO().getNextId("SeqAuth_Limit_Details"));
-			logger.debug("get NextID:"+authorizationLimitDetail.getId());
+		if (authorizationLimitDetail.getId() == Long.MIN_VALUE) {
+			authorizationLimitDetail.setId(getNextValue("SeqAuth_Limit_Details"));
+			logger.debug("get NextID:" + authorizationLimitDetail.getId());
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -215,21 +221,21 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimitDetail);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(authorizationLimitDetail.getId());
-	}	
+	}
 
 	@Override
-	public void update(AuthorizationLimitDetail authorizationLimitDetail,TableType tableType) {
+	public void update(AuthorizationLimitDetail authorizationLimitDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update Auth_Limit_Details" );
+		StringBuilder sql = new StringBuilder("update Auth_Limit_Details");
 		sql.append(tableType.getSuffix());
 		sql.append("  set authLimitId = :authLimitId, code = :code, limitAmount = :limitAmount, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
@@ -237,18 +243,18 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimitDetail);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -268,7 +274,7 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -282,21 +288,22 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 	}
 
 	@Override
-	public List<AuthorizationLimitDetail> getListByAuthLimitId(long authLimitId,String type) {
+	public List<AuthorizationLimitDetail> getListByAuthLimitId(long authLimitId, String type) {
 		logger.debug(Literal.ENTERING);
-		List<AuthorizationLimitDetail> limitDetails= new ArrayList<AuthorizationLimitDetail>();
+		List<AuthorizationLimitDetail> limitDetails = new ArrayList<AuthorizationLimitDetail>();
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, authLimitId, code, limitAmount, ");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(" ProductDesc,CollateralDesc, " );
+			sql.append(" ProductDesc,CollateralDesc, ");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From Auth_Limit_Details");
 		sql.append(type);
 		sql.append(" Where authLimitId = :authLimitId");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -304,10 +311,11 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 		authorizationLimitDetail.setAuthLimitId(authLimitId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimitDetail);
-		RowMapper<AuthorizationLimitDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AuthorizationLimitDetail.class);
+		RowMapper<AuthorizationLimitDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(AuthorizationLimitDetail.class);
 
 		try {
-			limitDetails = namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+			limitDetails = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			authorizationLimitDetail = null;
@@ -315,8 +323,8 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 
 		logger.debug(Literal.LEAVING);
 		return limitDetails;
-	}		
-	
+	}
+
 	@Override
 	public void deleteByAuthLimitId(long authLimitId, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -327,27 +335,18 @@ public class AuthorizationLimitDetailDAOImpl extends BasisNextidDaoImpl<Authoriz
 		sql.append(" where authLimitId = :authLimitId ");
 		AuthorizationLimitDetail authorizationLimitDetail = new AuthorizationLimitDetail();
 		authorizationLimitDetail.setAuthLimitId(authLimitId);
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimitDetail);
-	
+
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
-}	
+
+}

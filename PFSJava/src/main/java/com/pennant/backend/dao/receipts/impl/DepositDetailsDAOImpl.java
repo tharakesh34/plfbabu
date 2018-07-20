@@ -64,6 +64,7 @@ import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -72,22 +73,12 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>Finance Repayments</b> class.<br>
  * 
  */
-public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> implements DepositDetailsDAO {
+public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implements DepositDetailsDAO {
 	private static Logger logger = Logger.getLogger(DepositDetailsDAOImpl.class);
 
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+	
 	public DepositDetailsDAOImpl() {
 		super();
-	}
-	
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -122,7 +113,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		RowMapper<DepositDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositDetails.class);
 
 		try {
-			depositDetails = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			depositDetails = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			depositDetails = null;
@@ -156,7 +147,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		RowMapper<DepositDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositDetails.class);
 
 		try {
-			depositDetails = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			depositDetails = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			depositDetails = null;
@@ -191,7 +182,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("DepositId", depositId);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -216,7 +207,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		
 		// Get the identity sequence number.
 		if (depositDetails.getDepositId() <= 0) {
-			depositDetails.setDepositId(getNextidviewDAO().getNextId("SeqDepositDetails"));
+			depositDetails.setDepositId(getNextValue("SeqDepositDetails"));
 		}
 		
 		// Execute the SQL, binding the arguments.
@@ -224,7 +215,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(depositDetails);
 		
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -255,7 +246,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(depositDetails);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -279,7 +270,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		updateSql.append(" Where DepositId = :DepositId");
 		logger.trace(Literal.SQL + updateSql.toString());
 
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -298,7 +289,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		updateSql.append(" Where DepositId = :DepositId");
 		logger.trace(Literal.SQL + updateSql.toString());
 
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -319,7 +310,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -364,7 +355,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		RowMapper<DepositMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositMovements.class);
 		
 		try {
-			depositMovements = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			depositMovements = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.info("Information: ", e);
 			depositMovements = null;
@@ -388,7 +379,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 
 		// Get the identity sequence number.
 		if (depositMovements.getMovementId() <= 0) {
-			depositMovements.setMovementId(getNextidviewDAO().getNextId("SeqDepositMovements"));
+			depositMovements.setMovementId(getNextValue("SeqDepositMovements"));
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -396,7 +387,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(depositMovements);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -422,7 +413,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(depositMovements);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -446,7 +437,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		updateSql.append(" Where MovementId = :MovementId");
 		logger.trace(Literal.SQL + updateSql.toString());
 
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcTemplate.update(updateSql.toString(), source);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -467,7 +458,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -497,7 +488,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(depositMovements);
 
 		try {
-			this.namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			this.jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -530,7 +521,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		RowMapper<DepositMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositMovements.class);
 		
 		try {
-			depositMovements = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			depositMovements = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			depositMovements = null;
@@ -565,7 +556,7 @@ public class DepositDetailsDAOImpl extends BasisNextidDaoImpl<DepositDetails> im
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("DepositSlipNumber", depositSlipNumber);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {

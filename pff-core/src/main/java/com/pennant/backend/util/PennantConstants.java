@@ -47,10 +47,8 @@ public class PennantConstants {
 	}
 
 	public enum SeqTables {
-		SeqCustomers,SeqProspectCustomer,SeqFinReference, SeqPostings,SeqFinODPenaltyRates,SeqFinRepayHeader,
-		SeqFinExpenseMovements,SeqFinTypeExpense, SeqCaste, SeqReligion, SeqServiceTaskDetails, SeqManualDeviations,SeqProductDeviations,
-		SeqAuth_Limits,SeqAuth_Limit_Details,SeqPostingId,SeqBMTQueryCategories,SeqFinLiabilityReq,SeqReceiptNumber,SeqQUERYDETAIL,
-		SeqDepositDetails, SeqDepositMovements, SeqDepositCheques
+		SeqCustomers,SeqProspectCustomer,SeqFinReference, SeqPostings,SeqFinODPenaltyRates,SeqFinRepayHeader,seqCollateralStructure,
+		SeqServiceTaskDetails,SeqPostingId,SeqReceiptNumber;
 	}
 
 	public static boolean CITY_FREETEXT = false;
