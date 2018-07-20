@@ -774,8 +774,4 @@ public class PennantConstants {
 
 	public static final String COLLATERAL_LTV_CHECK_DISBAMT	= "LTVDISBAMT";		
 	public static final String COLLATERAL_LTV_CHECK_FINAMT	= "LTVFINAMT";	
-	
-	//Deposit Movement Transaction Types
-	public static final String				DEPOSIT_MOVEMENT_CREDIT					= "C";
-	public static final String				DEPOSIT_MOVEMENT_DEBIT					= "D";
 }
