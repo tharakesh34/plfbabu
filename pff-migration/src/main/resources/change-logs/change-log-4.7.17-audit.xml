@@ -608,4 +608,14 @@ update adtCustomers set marginDeviation=0;
 	    </addColumn>
 	 </changeSet>
 	
+	<changeSet id="34" author="Kesav">
+		<comment>RevLinkedTranId, Status Columns added in DepositCheques</comment>
+		<addColumn tableName="AdtDepositCheques">
+			<column name="RevLinkedTranId" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Status" type="varchar(1)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
