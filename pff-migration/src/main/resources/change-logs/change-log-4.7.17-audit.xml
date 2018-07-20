@@ -601,4 +601,11 @@ update adtCustomers set marginDeviation=0;
 		</createTable>
 	</changeSet>
 	
+	 <changeSet id="33" author="Manoj">
+	 <comment>added column to support hidden field in extended Details</comment>
+		<addColumn tableName="adtextendedfielddetail">
+	        <column name="visible"  type="smallint"/>
+	    </addColumn>
+	 </changeSet>
+	
 </databaseChangeLog>
