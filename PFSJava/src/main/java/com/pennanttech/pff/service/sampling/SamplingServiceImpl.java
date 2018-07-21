@@ -536,22 +536,23 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		fieldsandvalues.put("custCtgCode", sampling.getCustCategory());
 		fieldsandvalues.put("custTotalIncome", custTotalIncome);
 		fieldsandvalues.put("Customer_Obligation_External", custTotalExpense);
+		fieldsandvalues.put("custTotalExpense", custTotalExpense);
 		fieldsandvalues.put("finProfitRate", sampling.getInterestRate());
 		fieldsandvalues.put("noOfTerms", sampling.getTenure());
 
 		fieldsandvalues.put("Total_Co_Applicants_Income", BigDecimal.ZERO);
 		fieldsandvalues.put("Co_Applicants_Obligation_External", BigDecimal.ZERO);
-		fieldsandvalues.put("Co_Applicants_Obligation_Internal", sampling.getTotalCoApplicantsExposre());
-		fieldsandvalues.put("Customer_Obligation_Internal", sampling.getTotalCustomerExposre());
+		fieldsandvalues.put("Co_Applicants_Obligation_Internal", sampling.getTotalCoApplicantsIntObligation());
+		fieldsandvalues.put("Customer_Obligation_Internal", sampling.getTotalCustomerIntObligation());
 
 		ruleCode = sampling.getEligibilityRules().get(Sampling.RULE_CODE_FOIRAMT);
 		if (ruleCode != null) {
 			if (!ruleCode.contains("Customer_Obligation_Internal")) {
-				sampling.setTotalCustomerExposre(BigDecimal.ZERO);
+				sampling.setTotalCustomerIntObligation(BigDecimal.ZERO);
 			}
 
 			if (!ruleCode.contains("Co_Applicants_Obligation_External")) {
-				sampling.setTotalCoApplicantsExposre(BigDecimal.ZERO);
+				sampling.setTotalCoApplicantsIntObligation(BigDecimal.ZERO);
 			}
 
 			object = excuteRule(ruleCode, sampling.getFinccy(), fieldsandvalues);
@@ -640,8 +641,8 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			temp.setCustomerExtLiabilityList(samplingDAO.getObligations(sampling.getId()));
 			temp.setCustomerExtLiabilityList(samplingDAO.getObligations(sampling.getId()));
 
-			temp.setTotalCustomerExposre(financeProfitDetailDAO.getTotalCustomerExposre(sampling.getCustId()));
-			temp.setTotalCoApplicantsExposre(financeProfitDetailDAO.getTotalCoApplicantsExposre(finReference));
+			temp.setTotalCustomerIntObligation(financeProfitDetailDAO.getTotalCustomerExposre(sampling.getCustId()));
+			temp.setTotalCoApplicantsIntObligation(financeProfitDetailDAO.getTotalCoApplicantsExposre(finReference));
 
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
 					String.valueOf(sampling.getId()), CollateralConstants.SAMPLING_MODULE, "", "_View");
@@ -761,20 +762,19 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		if (incomeLinkId != null && incomeLinkId != 0) {
 			sampling.setOriginalTotalIncome(getTotal(incomeDetailDAO.getTotalIncomeByLinkId(incomeLinkId)));
 		} else {
-			sampling.setOriginalTotalIncome(getTotal(incomeDetailDAO.getTotalIncomeByFinReference(keyReference)));
+			sampling.setOriginalTotalIncome(sampling.getTotalIncome());
 		}
-
-		//sampling.setTotalIncome(getTotal(incomeDetailDAO.getTotalIncomeBySamplingId(sampling.getId())));
 
 		Long liabilityLinkId = samplingDAO.getLinkId(sampling.getId(), "link_sampling_liabilities_snap");
 		if (liabilityLinkId != null && liabilityLinkId != 0) {
-			sampling.setOriginalTotalLiability(externalLiabilityDAO.getTotalLiabilityByLinkId(liabilityLinkId));
+			BigDecimal amount = externalLiabilityDAO.getTotalLiabilityByLinkId(liabilityLinkId);
+			amount = amount.add(sampling.getTotalCustomerIntObligation());
+			amount = amount.add(sampling.getTotalCoApplicantsIntObligation());
+			sampling.setOriginalTotalLiability(amount);
 		} else {
-			sampling.setOriginalTotalLiability(externalLiabilityDAO.getTotalLiabilityByFinReference(keyReference));
+			sampling.setOriginalTotalLiability(sampling.getTotalLiability());
 		}
-
-		//sampling.setTotalLiability(externalLiabilityDAO.getTotalLiabilityBySamplingId(sampling.getId()));
-
+		
 		List<SamplingCollateral> collaters = samplingDAO.getCollateralTypesBySamplingId(sampling.getId());
 
 		List<String> linkIds = samplingDAO.getCollateralLinkIds(sampling.getId());

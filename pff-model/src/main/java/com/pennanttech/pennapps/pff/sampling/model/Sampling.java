@@ -86,8 +86,8 @@ public class Sampling extends AbstractWorkflowEntity {
 	private transient List<DocumentDetails> documents = null;
 	private transient Map<String, Object> reamrksMap = new HashMap<>();
 	private QueryDetail queryDetail = new QueryDetail();
-	private BigDecimal totalCustomerExposre;
-	private BigDecimal totalCoApplicantsExposre;
+	private BigDecimal totalCustomerIntObligation;
+	private BigDecimal totalCoApplicantsIntObligation;
 
 	/**
 	 * Sampling approve details
@@ -722,20 +722,19 @@ public class Sampling extends AbstractWorkflowEntity {
 		this.samplingTolerance = samplingTolerance;
 	}
 
-	public BigDecimal getTotalCustomerExposre() {
-		return totalCustomerExposre == null ? BigDecimal.ZERO : totalCustomerExposre;
+	public BigDecimal getTotalCustomerIntObligation() {
+		return totalCustomerIntObligation == null ? BigDecimal.ZERO : totalCustomerIntObligation;
 	}
 
-	public void setTotalCustomerExposre(BigDecimal totalCustomerExposre) {
-		this.totalCustomerExposre = totalCustomerExposre;
+	public void setTotalCustomerIntObligation(BigDecimal totalCustomerIntObligation) {
+		this.totalCustomerIntObligation = totalCustomerIntObligation;
 	}
 
-	public BigDecimal getTotalCoApplicantsExposre() {
-		return totalCoApplicantsExposre == null ? BigDecimal.ZERO : totalCoApplicantsExposre;
+	public BigDecimal getTotalCoApplicantsIntObligation() {
+		return totalCoApplicantsIntObligation == null ? BigDecimal.ZERO : totalCoApplicantsIntObligation;
 	}
 
-	public void setTotalCoApplicantsExposre(BigDecimal totalCoApplicantsExposre) {
-		this.totalCoApplicantsExposre = totalCoApplicantsExposre;
+	public void setTotalCoApplicantsIntObligation(BigDecimal totalCoApplicantsIntObligation) {
+		this.totalCoApplicantsIntObligation = totalCoApplicantsIntObligation;
 	}
-
 }

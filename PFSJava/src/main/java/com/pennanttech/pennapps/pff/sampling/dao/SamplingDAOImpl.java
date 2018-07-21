@@ -49,15 +49,16 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append("insert into sampling");
 		sql.append(tableType.getSuffix());
 		sql.append("(id, keyreference, createdby, createdon,");
-		sql.append(" tenure, interestrate, loanEligibility, foireligibility, irreligibility, emi,totalincome,");
-		sql.append(" totalliability, remarks, samplingon, decision, recommendedamount, decisionon,resubmitreason,");
+		sql.append(" tenure, interestrate, loanEligibility, foireligibility, irreligibility, emi, totalincome,");
+		sql.append(" totalliability, remarks, samplingon, decision, recommendedamount, decisionon, resubmitreason,");
+		sql.append(" totalCustomerIntObligation, totalCoApplicantsIntObligation,");
 		sql.append(" version, lastmntby, lastmnton, recordstatus,");
 		sql.append(" rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)");
 		sql.append(" values(");
 		sql.append(" :id, :keyReference, :createdBy, :createdOn,");
-		sql.append(" :tenure, :interestRate, :loanEligibility, :foirEligibility, :irrEligibility, :emi,:totalIncome,");
-		sql.append(
-				" :totalLiability, :remarks, :samplingOn, :decision, :recommendedAmount, :decisionOn,:resubmitReason,");
+		sql.append(" :tenure, :interestRate, :loanEligibility, :foirEligibility, :irrEligibility, :emi,:totalIncome, ");
+		sql.append(" :totalLiability, :remarks, :samplingOn, :decision, :recommendedAmount, :decisionOn, :resubmitReason,");
+		sql.append(" :totalCustomerIntObligation, :totalCoApplicantsIntObligation,");
 		sql.append(" :version, :lastMntBy, :lastMntOn, :recordStatus,");
 		sql.append(" :roleCode, :nextRoleCode, :taskId, :nextTaskId, :recordType, :workflowId)");
 
@@ -214,6 +215,8 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		query.append(StringUtils.trimToEmpty(tableType.getSuffix()));
 		query.append(" set tenure =:tenure, interestrate = :interestRate, loanEligibility = :loanEligibility,");
 		query.append(" foireligibility =:foirEligibility, irreligibility = :irrEligibility, emi = :emi,");
+		query.append(" totalCustomerIntObligation = :totalCustomerIntObligation,");
+		query.append(" totalCoApplicantsIntObligation = :totalCoApplicantsIntObligation,");
 		query.append(
 				" version = :version, lastmntby = :lastMntBy, lastmnton = :lastMntOn, recordstatus = :recordStatus, rolecode = :roleCode,");
 		query.append(

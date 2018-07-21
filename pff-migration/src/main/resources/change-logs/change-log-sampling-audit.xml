@@ -124,4 +124,12 @@
 			columnNames="auditId, AuditDate, auditSeq, auditImage"
 			constraintName="pk_adtsampling_remarks" />
 	</changeSet>
+	<changeSet id="4" author="murthy.y">
+		<renameColumn tableName="adtsampling" oldColumnName="auxiliary1" newColumnName="totalCustomerIntObligation"/>
+		<renameColumn tableName="adtsampling" oldColumnName="auxiliary2" newColumnName="totalCoApplicantsIntObligation"/>
+	</changeSet>
+	<changeSet id="4.1" author="murthy.y">
+		<modifyDataType tableName="adtsampling" columnName="totalCustomerIntObligation" newDataType="decimal(18,0)"/>
+		<modifyDataType tableName="adtsampling" columnName="totalCoApplicantsIntObligation" newDataType="decimal(18,0)"/>
+	</changeSet>
 </databaseChangeLog>

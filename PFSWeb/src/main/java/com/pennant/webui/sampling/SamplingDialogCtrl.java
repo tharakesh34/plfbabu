@@ -1154,8 +1154,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				lc.setParent(item);
 				item.setAttribute("data", "");
 								
-				totalInstalmentAmount = totalInstalmentAmount.add(sampling.getTotalCoApplicantsExposre());
-				totalInstalmentAmount = totalInstalmentAmount.add(sampling.getTotalCustomerExposre());
+				totalInstalmentAmount = totalInstalmentAmount.add(sampling.getTotalCoApplicantsIntObligation());
+				totalInstalmentAmount = totalInstalmentAmount.add(sampling.getTotalCustomerIntObligation());
 				
 				sampling.setTotalLiability(totalInstalmentAmount);
 				calculateEligibility(false);
