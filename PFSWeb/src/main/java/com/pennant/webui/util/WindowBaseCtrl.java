@@ -43,7 +43,6 @@
 package com.pennant.webui.util;
 
 import java.util.List;
-import java.util.Map;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.ext.AfterCompose;
@@ -55,8 +54,6 @@ import org.zkoss.zul.Window;
  */
 public abstract class WindowBaseCtrl extends Window implements AfterCompose {
 	private static final long serialVersionUID = -2179229704315045689L;
-
-	protected transient Map<String, Object>	args;
 
 	public WindowBaseCtrl() {
 		super();

@@ -27,7 +27,7 @@ public class ActivityLogDAOImpl implements ActivityLogDAO {
 		StringBuilder sql = new StringBuilder("select AuditId, AuditDate, Version, RoleCode,");
 		sql.append(" NextRoleCode, RecordStatus, TaskId, NextTaskId, RecordType, WorkflowId, lastMntBy,");
 		sql.append("UserLogin ");
-		if (tableName.equals("FinanceMain")) {
+		if ("FinanceMain".equals(tableName)) {
 			sql.append(", RcdMaintainSts ");
 		}
 		sql.append("from activitylog_view ");

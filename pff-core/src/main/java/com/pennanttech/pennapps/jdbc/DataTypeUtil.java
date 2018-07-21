@@ -18,7 +18,7 @@ import org.apache.commons.lang.StringUtils;
  * A suite of utilities surrounding the use of the {@link DataType}.
  * </p>
  */
-public class DataTypeUtil {
+public final class DataTypeUtil {
 	/**
 	 * Private constructor to hide the implicit public one.
 	 * 
