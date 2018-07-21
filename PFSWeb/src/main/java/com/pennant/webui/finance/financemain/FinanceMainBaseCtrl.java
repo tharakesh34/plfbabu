@@ -15586,7 +15586,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		collateralRuleMap.put("GUIDED_VALUE", guidedValue);
 
 		// (Guided Value/MarketValue)/100
-		if (!marketValue.equals(BigDecimal.ZERO) && !guidedValue.equals(BigDecimal.ZERO)) {
+		if (marketValue.compareTo(BigDecimal.ZERO) != 0  && guidedValue.compareTo(BigDecimal.ZERO) != 0 ) {
 			marketValue_Consider = marketValue.divide(guidedValue, 6, RoundingMode.HALF_UP);
 			//marketValue_Consider  = marketValue_Consider.multiply(new BigDecimal(100)); 
 		}
