@@ -129,13 +129,9 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		MapSqlParameterSource source = null;
 		source = new MapSqlParameterSource();
-
-		if (App.DATABASE == Database.ORACLE) {
-			moduleName = moduleName.toUpperCase();
-			subModuleName = subModuleName.toUpperCase();
-		}
-		source.addValue("ModuleName", moduleName);
-		source.addValue("SubModuleName", subModuleName);
+		
+		source.addValue("ModuleName", moduleName.toUpperCase());
+		source.addValue("SubModuleName", moduleName.toUpperCase());
 		 
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,");
 		selectSql.append(" SubModuleName,Event, TabHeading, NumberOfColumns, ");

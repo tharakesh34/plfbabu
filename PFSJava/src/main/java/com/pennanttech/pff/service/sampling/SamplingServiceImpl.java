@@ -714,8 +714,9 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 						field.setMapValues(extFieldMap);
 						renderList.add(field);
 
-						extFieldRender.put(field.getReference().concat("-").concat(String.valueOf(field.getSeqNo())),
-								field);
+
+						extFieldRender.put(field.getReference().concat("-").concat(String.valueOf(field.getSeqNo())), field);
+
 					}
 				}
 				temp.setExtFieldRenderList(extFieldRender);
@@ -762,18 +763,20 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		if (incomeLinkId != null && incomeLinkId != 0) {
 			sampling.setOriginalTotalIncome(getTotal(incomeDetailDAO.getTotalIncomeByLinkId(incomeLinkId)));
 		} else {
-			sampling.setOriginalTotalIncome(sampling.getTotalIncome());
+			sampling.setOriginalTotalIncome(getTotal(incomeDetailDAO.getTotalIncomeByFinReference(keyReference)));
 		}
 
 		Long liabilityLinkId = samplingDAO.getLinkId(sampling.getId(), "link_sampling_liabilities_snap");
 		if (liabilityLinkId != null && liabilityLinkId != 0) {
-			BigDecimal amount = externalLiabilityDAO.getTotalLiabilityByLinkId(liabilityLinkId);
-			amount = amount.add(sampling.getTotalCustomerIntObligation());
-			amount = amount.add(sampling.getTotalCoApplicantsIntObligation());
-			sampling.setOriginalTotalLiability(amount);
+			sampling.setOriginalTotalLiability(externalLiabilityDAO.getTotalLiabilityByLinkId(liabilityLinkId));
 		} else {
-			sampling.setOriginalTotalLiability(sampling.getTotalLiability());
+			sampling.setOriginalTotalLiability(externalLiabilityDAO.getTotalLiabilityByFinReference(keyReference));
 		}
+		
+		BigDecimal amount = sampling.getOriginalTotalLiability();
+		amount = amount.add(sampling.getTotalCustomerIntObligation());
+		amount = amount.add(sampling.getTotalCoApplicantsIntObligation());
+		sampling.setOriginalTotalLiability(amount);
 		
 		List<SamplingCollateral> collaters = samplingDAO.getCollateralTypesBySamplingId(sampling.getId());
 
@@ -950,6 +953,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			}
 
 			liability.setWorkflowId(0);
+			liability.setCustId(custId);
 
 			if (liability.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
