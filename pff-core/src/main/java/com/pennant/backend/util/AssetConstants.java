@@ -43,7 +43,7 @@ public class AssetConstants {
 	}
 	
 	// Extended Field Detail Module Name
-	public static final String 	EXTENDEDFIELDS_MODULE  	= "AssetType";
+	public static final String 	EXTENDEDFIELDS_MODULE  	= "ASSETTYPE";
 
 	//Authorization purpose Module
 	public static final String AUTH_DEFAULT 			= "DEFAULT";
