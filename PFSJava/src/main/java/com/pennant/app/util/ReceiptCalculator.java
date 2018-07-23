@@ -391,7 +391,16 @@ public class ReceiptCalculator implements Serializable {
 						partAccrualReq = false;
 						BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), valueDate,
 								curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
-						accruedPft = accruedPft.add(prvSchd.getProfitFraction()).add(prvSchd.getProfitBalance()).subtract(prvSchd.getCpzAmount());
+						
+						// Possible Values : NO_ADJ, ADJ_LAST_INST, ADJ_NEXT_INST
+						String roundAdjMth = SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD);
+						
+						BigDecimal calIntFraction = prvSchd.getProfitFraction();
+						if (StringUtils.equals(roundAdjMth, CalculationConstants.PFTFRACTION_NO_ADJ)) {
+							calIntFraction = BigDecimal.ZERO;
+						}
+						
+						accruedPft = accruedPft.add(calIntFraction).add(prvSchd.getProfitBalance()).subtract(prvSchd.getCpzAmount());
 						accruedPft = CalculationUtil.roundAmount(accruedPft, finScheduleData.getFinanceMain().getCalRoundingMode(),
 								finScheduleData.getFinanceMain().getRoundingTarget());
 						if (accruedPft.compareTo(BigDecimal.ZERO) < 0) {
@@ -3010,7 +3019,16 @@ public class ReceiptCalculator implements Serializable {
 									
 									balPft = CalculationUtil.calInterest(prvSchd.getSchDate(), valueDate, curSchd.getBalanceForPftCal(),
 											prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
-									balPft = balPft.add(prvSchd.getProfitFraction().add(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount())));
+									
+									// Possible Values : NO_ADJ, ADJ_LAST_INST, ADJ_NEXT_INST
+									String roundAdjMth = SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD);
+									
+									BigDecimal calIntFraction = prvSchd.getProfitFraction();
+									if (StringUtils.equals(roundAdjMth, CalculationConstants.PFTFRACTION_NO_ADJ)) {
+										calIntFraction = BigDecimal.ZERO;
+									}
+									
+									balPft = balPft.add(calIntFraction.add(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount())));
 									balPft = CalculationUtil.roundAmount(balPft, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
 									if(balPft.compareTo(BigDecimal.ZERO) < 0){
 										balPft = BigDecimal.ZERO;

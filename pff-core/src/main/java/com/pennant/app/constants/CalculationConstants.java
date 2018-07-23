@@ -147,4 +147,11 @@ public class CalculationConstants {
 	public static final String	TDS_PERCENTAGE						= "TDS_PERCENTAGE";
 	public static final String	TDS_ROUNDINGMODE					= "TDS_ROUNDINGMODE";
 	public static final String	TDS_ROUNDINGTARGET					= "TDS_ROUNDINGTARGET";
+	
+	// PROFIT FRACTION ROUNDING METHODS
+	public static final String	PFTFRACTION_NO_ADJ					= "NO_ADJ";
+	public static final String	PFTFRACTION_ADJ_LAST_INST			= "ADJ_LAST_INST";
+	public static final String	PFTFRACTION_ADJ_NEXT_INST			= "ADJ_NEXT_INST";
+	
+	
 }

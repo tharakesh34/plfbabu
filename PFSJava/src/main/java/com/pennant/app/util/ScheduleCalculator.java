@@ -3629,18 +3629,34 @@ public class ScheduleCalculator {
 		curSchd.setDayFactor(
 				CalculationUtil.getInterestDays(prvSchd.getSchDate(), curSchd.getSchDate(), prvSchd.getPftDaysBasis()));
 
+		// Possible Values : NO_ADJ, ADJ_LAST_INST, ADJ_NEXT_INST
+		String roundAdjMth = SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD);
+		
+		BigDecimal prvPftFraction = prvSchd.getProfitFraction();
+		if (StringUtils.equals(roundAdjMth, CalculationConstants.PFTFRACTION_NO_ADJ) || 
+				(StringUtils.equals(roundAdjMth, CalculationConstants.PFTFRACTION_ADJ_LAST_INST)
+				&& DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) != 0)) {
+
+			prvPftFraction = BigDecimal.ZERO;
+		}
+
 		/* Calculate interest and set interest payment details */
 		BigDecimal calint = CalculationUtil.calInterest(prvSchd.getSchDate(), curSchd.getSchDate(),
 				curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 
-		calint = calint.add(prvSchd.getProfitFraction());
+		calint = calint.add(prvPftFraction);
 		BigDecimal calIntRounded = BigDecimal.ZERO;
 		if(calint.compareTo(BigDecimal.ZERO) > 0){
 			calIntRounded = CalculationUtil.roundAmount(calint, finMain.getCalRoundingMode(),
 					finMain.getRoundingTarget());
 		}
 
-		curSchd.setProfitFraction(calint.subtract(calIntRounded));
+		BigDecimal calIntFraction = calint.subtract(calIntRounded);
+		if (StringUtils.equals(roundAdjMth, CalculationConstants.PFTFRACTION_ADJ_LAST_INST)) {
+			calIntFraction = calIntFraction.add(prvSchd.getProfitFraction());
+		}
+
+		curSchd.setProfitFraction(calIntFraction);
 		calint = calIntRounded;
 
 		curSchd.setProfitCalc(calint);
@@ -3718,6 +3734,10 @@ public class ScheduleCalculator {
 		BigDecimal calInt = BigDecimal.valueOf(0.0);
 
 		String repayRateBasis = finMain.getRepayRateBasis();
+		
+		// Possible Values : NO_ADJ, ADJ_LAST_INST, ADJ_NEXT_INST
+		String roundAdjMth = SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD);
+
 		List<FinanceScheduleDetail> schdDetails = finScheduleData.getFinanceScheduleDetails();
 		finMain.setNewMaturityIndex(schdDetails.size() - 1);
 
@@ -3763,6 +3783,14 @@ public class ScheduleCalculator {
 
 			// Calculate Interest
 			if (curSchd.getBalanceForPftCal().compareTo(BigDecimal.ZERO) > 0) {
+				
+				if (StringUtils.equals(roundAdjMth, CalculationConstants.PFTFRACTION_NO_ADJ) || 
+						(StringUtils.equals(roundAdjMth, CalculationConstants.PFTFRACTION_ADJ_LAST_INST)
+						&& DateUtility.compare(curSchd.getSchDate(), finMain.getMaturityDate()) != 0)) {
+
+					calIntFraction = BigDecimal.ZERO;
+				}
+				
 				calInt = CalculationUtil.calInterest(prvSchDate, curSchDate, curSchd.getBalanceForPftCal(),
 						prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 
@@ -3774,6 +3802,11 @@ public class ScheduleCalculator {
 				}
 				calIntFraction = calInt.subtract(calIntRounded);
 				calInt = calIntRounded;
+				
+				if (StringUtils.equals(roundAdjMth, CalculationConstants.PFTFRACTION_ADJ_LAST_INST)) {
+					calIntFraction = calIntFraction.add(prvSchd.getProfitFraction());
+				}
+				
 				curSchd.setRepayComplete(false);
 				curSchd.setProfitFraction(calIntFraction);
 			} else {

@@ -30,6 +30,15 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id = "1" author = "Siva">
+		<comment> Profit Fraction setting based on Parameter </comment>
+		<sql>
+			Delete From SMTparameters where SYSPARMCODE = 'ROUND_ADJ_METHOD';
+	
+			INSERT INTO SMTparameters values('ROUND_ADJ_METHOD', 'Schedule Rounding Fraction Adjustment Method', 'String', 0, 'ADJ_NEXT_INST', 20, 0, NULL, NULL, 
+				'Schedule Rounding Fraction Adjustment Method', 1, 1000, CURRENT_TIMESTAMP, 'Approved','','','','','',0);
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
 	

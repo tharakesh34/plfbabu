@@ -5267,13 +5267,22 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
+	 * @throws Exception 
 	 */
-	public FinanceDetail onExecuteStageAccDetail() throws InterruptedException, IllegalAccessException, InvocationTargetException {
-		getFinanceDetail().setModuleDefiner(FinanceConstants.FINSER_EVENT_RECEIPT);
+	public FinanceDetail onExecuteStageAccDetail() throws Exception {
+		logger.debug("Entering");
+		
+		if(ImplementationConstants.DEPOSIT_PROC_REQ){
+			getAccountingDetailDialogCtrl().getLabel_AccountingDisbCrVal().setValue("");
+			getAccountingDetailDialogCtrl().getLabel_AccountingDisbDrVal().setValue("");
+
+			//Finance Accounting Details Execution
+			executeAccounting(true);
+		}else{
+			getFinanceDetail().setModuleDefiner(FinanceConstants.FINSER_EVENT_RECEIPT);
+		}
+		
+		logger.debug("Leaving");
 		return getFinanceDetail();
 	}
 

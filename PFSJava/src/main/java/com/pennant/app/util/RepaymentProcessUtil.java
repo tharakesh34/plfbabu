@@ -721,7 +721,7 @@ public class RepaymentProcessUtil {
 				}
 
 				//Create log entry for Action for Schedule Modification
-				if (rcpt != 0 && !rpyProcessed) {
+				if (isSchdLogReq && rcpt != 0 && !rpyProcessed) {
 					entryDetail = new FinLogEntryDetail();
 					entryDetail.setFinReference(finReference);
 					entryDetail.setEventAction(receiptHeader.getReceiptPurpose());

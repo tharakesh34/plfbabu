@@ -5856,6 +5856,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			this.row_FinGrcRates.setVisible(false);
 		}
+		
+		onChangeGrcSchdMthd();
 
 		logger.debug("Leaving");
 	}
@@ -8633,13 +8635,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.allowGrcRepay.isChecked()) {
 			readOnlyComponent(false, this.cbGrcSchdMthd);
 			this.space_GrcSchdMthd.setStyle("background-color:red");
-			fillComboBox(this.cbGrcSchdMthd, getFinanceDetail().getFinScheduleData().getFinanceMain().getGrcSchdMthd(),
-					PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,PFTCAP,");
+			fillComboBox(this.cbGrcSchdMthd, getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcSchdMthd(),
+					PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,");
 		} else {
 			readOnlyComponent(true, this.cbGrcSchdMthd);
 			this.cbGrcSchdMthd.setSelectedIndex(0);
 			this.space_GrcSchdMthd.setStyle("background-color:white");
 		}
+		onChangeGrcSchdMthd();
 		logger.debug("Leaving" + event.toString());
 	}
 

@@ -66,4 +66,12 @@ public class SMTParameterConstants {
 	public static final String	NUMBEROF_UNDATED_CHEQUES	= "NUMBEROF_UNDATED_CHEQUES";
 	public static final String	NUMBEROF_PDC_CHEQUES	= "NUMBEROF_PDC_CHEQUES";
 	public static final String	QRY_MGMT_TEMPLATE	= "QRY_MGMT_TEMPLATE";
+	
+	/**
+	 * NO_ADJ 		  = No Adjustment, leave the Profit Fraction
+	 * ADJ_LAST_INST  = All Profit Fractions adjust to last schedule
+	 * ADJ_NEXT_INST  = Profit Fraction adjust to immediate next schedule
+	 * 
+	 */
+	public static final String	ROUND_ADJ_METHOD	= "ROUND_ADJ_METHOD";
 }
