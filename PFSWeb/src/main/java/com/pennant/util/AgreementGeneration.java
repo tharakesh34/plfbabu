@@ -22,7 +22,7 @@
  *                                                                  
  * Creation Date    :  27-07-2015															*
  *                                                                  
- * Modified Date    :  10-05-2018															*
+ * Modified Date    :  23-07-2018															*
  *                                                                  
  * Description 		:												 						*                                 
  *                                                                                          
@@ -30,7 +30,7 @@
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
  * 10-05-2018       Pennant	                 1.0          Updated as part of Agreements     * 
- *                                                                                          * 
+ * 23-07-2018       Pennant                  1.1          Adding the Collateral Extended    * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -95,6 +95,7 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -124,6 +125,7 @@ import com.pennant.backend.model.finance.AgreementDetail.Eligibility;
 import com.pennant.backend.model.finance.AgreementDetail.EmailDetail;
 import com.pennant.backend.model.finance.AgreementDetail.ExceptionList;
 import com.pennant.backend.model.finance.AgreementDetail.ExtendedDetail;
+import com.pennant.backend.model.finance.AgreementDetail.ExtendedDetailCollateral;
 import com.pennant.backend.model.finance.AgreementDetail.ExternalLiabilityDetail;
 import com.pennant.backend.model.finance.AgreementDetail.GroupRecommendation;
 import com.pennant.backend.model.finance.AgreementDetail.InternalLiabilityDetail;
@@ -969,6 +971,18 @@ public class AgreementGeneration implements Serializable {
 			if(CollectionUtils.isEmpty(agreement.getCollateralData())){
 				agreement.getCollateralData().add(agreement.new FinCollaterals());
 			}
+			
+			if (CollectionUtils.isEmpty(agreement.getVasData())) {
+				agreement.setVasData(new ArrayList<AgreementDetail.VasDetails>());
+			}
+			
+			
+			getVasRecordingDetails(agreement,detail, formatter);
+			
+			if (CollectionUtils.isEmpty(agreement.getVasData())) {
+				agreement.getVasData().add(agreement.new VasDetails());
+			}
+			
 
 			if (detail.getFinRepayHeader() != null) {
 				agreement = getFinRepayHeaderDetails(agreement, detail.getFinRepayHeader(), formatter);
@@ -1300,6 +1314,42 @@ public class AgreementGeneration implements Serializable {
 		}
 		logger.debug("Leaving");
 		return agreement;
+	}
+	
+	private AgreementDetail getVasRecordingDetails(AgreementDetail agreement, FinanceDetail detail, int formatter) {
+		
+		List<VASRecording> vasRecordingList = detail.getFinScheduleData().getVasRecordingList();
+		if (CollectionUtils.isNotEmpty(vasRecordingList)) {
+			vasRecordingList.forEach((vasDetails -> {
+				if (null != vasDetails) {
+					com.pennant.backend.model.finance.AgreementDetail.VasDetails vasData = agreement.new VasDetails();
+					vasData.setFee(PennantAppUtil.amountFormate(vasDetails.getFee(), formatter));
+					vasData.setFeeAccounting(String.valueOf(vasDetails.getFeeAccounting()));
+					String feePaymentMode=vasDetails.getFeePaymentMode();
+					if(StringUtils.isNotBlank(feePaymentMode)&&!StringUtils.equals(feePaymentMode, "#")){
+						vasData.setFeePaymentMode(StringUtils.trimToEmpty(vasDetails.getFeePaymentMode()));
+					}vasData.setManufacturerDesc(StringUtils.trimToEmpty(vasDetails.getManufacturerDesc()));
+					vasData.setPostingAgainst(StringUtils.trimToEmpty(vasDetails.getPostingAgainst()));
+					vasData.setProductCode(StringUtils.trimToEmpty(vasDetails.getProductCode()));
+					vasData.setProductCtg(StringUtils.trimToEmpty(vasDetails.getProductCtg()));
+					vasData.setProductCtgDesc(StringUtils.trimToEmpty(vasDetails.getProductCtgDesc()));
+					vasData.setProductDesc(StringUtils.trimToEmpty(vasDetails.getProductDesc()));
+					vasData.setProductType(StringUtils.trimToEmpty(vasDetails.getProductType()));
+					vasData.setProductTypeDesc(StringUtils.trimToEmpty(vasDetails.getProductTypeDesc()));
+					vasData.setRenewalFee(PennantAppUtil.amountFormate(vasDetails.getRenewalFee(), formatter));
+					vasData.setValueDate(vasDetails.getValueDate().toString());
+					vasData.setVasReference(StringUtils.trimToEmpty(vasDetails.getVasReference()));
+					vasData.setVasStatus(StringUtils.trimToEmpty(vasDetails.getVasStatus()));
+					vasData.setVasReference(StringUtils.trimToEmpty(vasDetails.getPrimaryLinkRef()));
+					agreement.getVasData().add(vasData);
+				}
+
+			}));
+
+		}
+		
+		return agreement;
+		
 	}
 
 	/**
@@ -2254,17 +2304,25 @@ public class AgreementGeneration implements Serializable {
 									collateralSetup.getCollateralStructure().getLtvPercentage().doubleValue(), 2));
 						}
 						collateralData.setColAddrCity(StringUtils.trimToEmpty(collateralSetup.getCollateralLoc()));
-						collateralData.setCollateralAmt(PennantAppUtil.amountFormate(collateralSetup.getBankValuation(),formatter));			
+						collateralData.setCollateralBankAmt(PennantAppUtil.amountFormate(collateralSetup.getBankValuation(),formatter));			
 						agreement.getCollateralData().add(collateralData);
 						
 						if(CollectionUtils.isEmpty(agreement.getExtendedDetails())){
 							agreement.setExtendedDetails(new ArrayList<>());
 						}
+						List<ExtendedDetailCollateral> extendedDetailsList = new ArrayList<>();
 						
 						if(CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())){
 							int colCcyFormat = CurrencyUtil.getFormat(collateralSetup.getCollateralCcy());
+							
 							for (ExtendedFieldRender extendedFieldRender : collateralSetup.getExtendedFieldRenderList()) {
 								if(null!=extendedFieldRender&&MapUtils.isNotEmpty(extendedFieldRender.getMapValues())){
+									ExtendedDetailCollateral detailCol=agreement.new ExtendedDetailCollateral();
+									detailCol.setId(String.valueOf(extendedFieldRender.getSeqNo()));
+									if(null!=collateralSetup.getCollateralStructure()){
+										detailCol.setColType(StringUtils.trimToEmpty(collateralSetup.getCollateralStructure().getCollateralDesc()));
+									}
+									detailCol.setExtDtls(new ArrayList<>());
 									Map<String, Object> mapValues = extendedFieldRender.getMapValues();
 									for (String key : mapValues.keySet()) {
 										ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
@@ -2291,11 +2349,14 @@ public class AgreementGeneration implements Serializable {
 											extendedDetail.setValue(StringUtils.EMPTY);
 										}
 										extendedDetail.setFieldType("COLLATERAL");
+										detailCol.getExtDtls().add(extendedDetail);
 										agreement.getExtendedDetails().add(extendedDetail);
 									}
+									extendedDetailsList.add(detailCol);
 								}
 							}
 						}
+						collateralData.setExtendedDetailsList(extendedDetailsList);
 					}
 				}
 			});

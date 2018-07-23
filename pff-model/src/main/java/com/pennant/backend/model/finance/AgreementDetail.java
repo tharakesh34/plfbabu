@@ -22,7 +22,7 @@
  *                                                                  
  * Creation Date    :  27-04-2012															*
  *                                                                  
- * Modified Date    :  10-05-2018															*
+ * Modified Date    :  23-07-2018															*
  *                                                                  
  * Description 		:												 						*                                 
  *                                                                                          
@@ -30,8 +30,8 @@
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
  * 10-05-2018       Pennant	                 1.0          Updated as part of Agreements     * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-07-2018       Pennant                  1.1          Adding the Collateral Extended    * 
+ *                                                        Details                           * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -1904,9 +1904,11 @@ private String custAccount ="";
 		private String collateralType ="";
 		private String reference ="";
 		private String collateralAmt ="";
+		private String collateralBankAmt ="";
 		private String colDesc ="";
 		private String colAddrCity ="";
 		private String colLtv ="";
+		private List<ExtendedDetailCollateral> extendedDetailsList=null;
 		public String getReference() {
 			return reference;
 		}
@@ -1944,7 +1946,52 @@ private String custAccount ="";
 		public void setColLtv(String colLtv) {
 			this.colLtv = colLtv;
 		}
-		
+		public String getCollateralBankAmt() {
+			return collateralBankAmt;
+		}
+		public void setCollateralBankAmt(String collateralBankAmt) {
+			this.collateralBankAmt = collateralBankAmt;
+		}
+		public List<ExtendedDetailCollateral> getExtendedDetailsList() {
+			return extendedDetailsList;
+		}
+		public void setExtendedDetailsList(List<ExtendedDetailCollateral> extendedDetailsList) {
+			this.extendedDetailsList = extendedDetailsList;
+		}
+	}
+	
+	private ExtendedDetailCollateral edc;
+	
+	public ExtendedDetailCollateral getEdc() {
+		return edc;
+	}
+
+	public void setEdc(ExtendedDetailCollateral edc) {
+		this.edc = edc;
+	}
+
+	public class ExtendedDetailCollateral{
+		private String id="";
+		private String colType="";
+		private List<ExtendedDetail> extDtls;
+		public String getId() {
+			return id;
+		}
+		public void setId(String id) {
+			this.id = id;
+		}
+		public List<ExtendedDetail> getExtDtls() {
+			return extDtls;
+		}
+		public void setExtDtls(List<ExtendedDetail> extDtls) {
+			this.extDtls = extDtls;
+		}
+		public String getColType() {
+			return colType;
+		}
+		public void setColType(String colType) {
+			this.colType = colType;
+		}
 	}
 	
 	private List<FinanceScheduleDetail> scheduleData;
@@ -5470,7 +5517,7 @@ private String custAccount ="";
 		private String remarks ="";
 		private String targetDate ="";
 		private String status ="";
-		private String internalUse;
+		private String internalUse = "";
 		
 		public Covenant() {
 		}
@@ -6911,6 +6958,131 @@ private String custAccount ="";
 
 		public void setStatus(String status) {
 			this.status = status;
+		}
+	}
+	
+	private List<VasDetails> vasData;
+	
+	public List<VasDetails> getVasData() {
+		return vasData;
+	}
+
+	public void setVasData(List<VasDetails> vasData) {
+		this.vasData = vasData;
+	}
+
+	public class VasDetails{
+		private String productCode = "";
+		private String productDesc = "";
+		private String postingAgainst = "";
+		private String vasReference = "";
+		private String primaryLinkRef = "";
+		private String fee = "";
+		private String renewalFee = "";
+		private String feePaymentMode = "";
+		private String valueDate = "";
+		private String productType = "";
+		private String productTypeDesc = "";
+		private String productCtg = "";
+		private String productCtgDesc = "";
+		private String manufacturerDesc = "";
+		private String vasStatus = "";
+		private String feeAccounting = "";
+		public String getProductCode() {
+			return productCode;
+		}
+		public void setProductCode(String productCode) {
+			this.productCode = productCode;
+		}
+		public String getProductDesc() {
+			return productDesc;
+		}
+		public void setProductDesc(String productDesc) {
+			this.productDesc = productDesc;
+		}
+		public String getPostingAgainst() {
+			return postingAgainst;
+		}
+		public void setPostingAgainst(String postingAgainst) {
+			this.postingAgainst = postingAgainst;
+		}
+		public String getVasReference() {
+			return vasReference;
+		}
+		public void setVasReference(String vasReference) {
+			this.vasReference = vasReference;
+		}
+		public String getPrimaryLinkRef() {
+			return primaryLinkRef;
+		}
+		public void setPrimaryLinkRef(String primaryLinkRef) {
+			this.primaryLinkRef = primaryLinkRef;
+		}
+		public String getFee() {
+			return fee;
+		}
+		public void setFee(String fee) {
+			this.fee = fee;
+		}
+		public String getRenewalFee() {
+			return renewalFee;
+		}
+		public void setRenewalFee(String renewalFee) {
+			this.renewalFee = renewalFee;
+		}
+		public String getFeePaymentMode() {
+			return feePaymentMode;
+		}
+		public void setFeePaymentMode(String feePaymentMode) {
+			this.feePaymentMode = feePaymentMode;
+		}
+		public String getValueDate() {
+			return valueDate;
+		}
+		public void setValueDate(String valueDate) {
+			this.valueDate = valueDate;
+		}
+		public String getProductType() {
+			return productType;
+		}
+		public void setProductType(String productType) {
+			this.productType = productType;
+		}
+		public String getProductTypeDesc() {
+			return productTypeDesc;
+		}
+		public void setProductTypeDesc(String productTypeDesc) {
+			this.productTypeDesc = productTypeDesc;
+		}
+		public String getProductCtg() {
+			return productCtg;
+		}
+		public void setProductCtg(String productCtg) {
+			this.productCtg = productCtg;
+		}
+		public String getProductCtgDesc() {
+			return productCtgDesc;
+		}
+		public void setProductCtgDesc(String productCtgDesc) {
+			this.productCtgDesc = productCtgDesc;
+		}
+		public String getManufacturerDesc() {
+			return manufacturerDesc;
+		}
+		public void setManufacturerDesc(String manufacturerDesc) {
+			this.manufacturerDesc = manufacturerDesc;
+		}
+		public String getVasStatus() {
+			return vasStatus;
+		}
+		public void setVasStatus(String vasStatus) {
+			this.vasStatus = vasStatus;
+		}
+		public String getFeeAccounting() {
+			return feeAccounting;
+		}
+		public void setFeeAccounting(String feeAccounting) {
+			this.feeAccounting = feeAccounting;
 		}
 	}
 	
