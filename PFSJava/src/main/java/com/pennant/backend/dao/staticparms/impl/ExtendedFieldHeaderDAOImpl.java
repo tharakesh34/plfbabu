@@ -130,7 +130,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		source = new MapSqlParameterSource();
 		
 		source.addValue("ModuleName", moduleName.toUpperCase());
-		source.addValue("SubModuleName", moduleName.toUpperCase());
+		source.addValue("SubModuleName", subModuleName.toUpperCase());
 		 
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,");
 		selectSql.append(" SubModuleName,Event, TabHeading, NumberOfColumns, ");
