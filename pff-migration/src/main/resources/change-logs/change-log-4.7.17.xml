@@ -12338,11 +12338,15 @@ UNION ALL
 	
 	<changeSet id="314" author="Vinay">
 		<sql>
+			update seqsecrights set seqno = (select max(rightid)+1 cnt from secrights);
 			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 			
-			select * from secgroups;
+			insert into secrights values((select max(rightid)+1 from secrights),3,'button_LanguageDialog_btnNew','LanguageDialog',1,'1000',CURRENT_TIMESTAMP,'','','','','','','0');
+			insert into secrights values((select max(rightid)+1 from secrights),3,'button_LanguageDialog_btnDelete','LanguageDialog',1,'1000',CURRENT_TIMESTAMP,'','','','','','','0');
+			insert into secrights values((select max(rightid)+1 from secrights),3,'button_LanguageList_NewLanguage','LanguageList',1,'1000',CURRENT_TIMESTAMP,'','','','','','','0');
+			
 			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LANGUAGE_MAKER', 'Language details for Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
 			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LANGUAGE_APPROVER', 'Language details for Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
 			
@@ -12361,6 +12365,7 @@ UNION ALL
 			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LANGUAGE_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='ADMIN'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
 			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LANGUAGE_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='ADMIN'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
 			
+			update seqsecrights set seqno = (select max(rightid)+1 cnt from secrights);
 			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
