@@ -86,7 +86,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		sql.append(" (Id, MovementId, ReceiptId, ReceiptMode, Amount, Status, RevLinkedTranId,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :Id, :MovementId, :ReceiptId, :ReceiptMode, :Amount,");
+		sql.append(" :Id, :MovementId, :ReceiptId, :ReceiptMode, :Amount, :Status, :RevLinkedTranId,");
 		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		// Get the identity sequence number.
@@ -115,7 +115,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update DepositCheques");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set ReceiptId = :ReceiptId, ReceiptMode = :ReceiptMode, Amount = :Amount,Status=:Status, RevLinkedTranId=:RevLinkedTranId,");
+		sql.append(" Set ReceiptId = :ReceiptId, ReceiptMode = :ReceiptMode, Amount = :Amount, Status = :Status, RevLinkedTranId = :RevLinkedTranId,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -196,7 +196,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		List<DepositCheques> list;
 
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT Id, MovementId, ReceiptId, ReceiptMode, Amount,Status, RevLinkedTranId");
+		StringBuilder sql = new StringBuilder("SELECT Id, MovementId, ReceiptId, ReceiptMode, Amount, Status, RevLinkedTranId,");
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", Receiptpurpose, FavourNumber, ReceivedDate, FundingAc, Remarks, FinReference,  CustShrtName, PartnerBankCode, PartnerBankName");
@@ -325,7 +325,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update DepositCheques");
-		sql.append(" Set Status = :Status , RevLinkedTranId=:RevLinkedTranId ");
+		sql.append(" Set Status = :Status, RevLinkedTranId = :RevLinkedTranId ");
 		sql.append(" where MovementId = :MovementId AND ReceiptId = :ReceiptId ");
 
 		// Execute the SQL, binding the arguments.
