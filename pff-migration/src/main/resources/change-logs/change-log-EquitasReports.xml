@@ -6,6 +6,7 @@
         
         <property name="add.schema" value="dbo." dbms="mssql" />
 	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="add.schema" value=" " dbms="postgresql" />
 	<property name="call.substr" value="substring" dbms="mssql" />
 	<property name="call.substr" value="substr" dbms="oracle" />
 	<property name="call.substr" value="substring" dbms="postgresql" />
@@ -901,5 +902,36 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 	update postings  set  entitycode='ESFB';
 	update data_engine_config set uploadpath='/opt/pennant/PFF/BASE/SAPGL' where  name in ('TRIAL_BALANCE_EXPORT_STATE','TRIAL_BALANCE_EXPORT_CONSOLIDATE');
 	 </sql>
+ </changeSet>
+ <changeSet id="47" author="Jayant">
+ 	<createView viewName="steppolicyheaderdetails_view" replaceIfExists="true">
+ 		SELECT t1.policycode,
+    t1.policydesc,
+    ( SELECT count(steppolicydetail_view.policycode) AS count
+           FROM steppolicydetail_view
+          WHERE steppolicydetail_view.policycode = t1.policycode) AS stepnumber,
+    ${add.schema}fn_list_agg_step_policy('TenorSplitPerc', t1.policycode) AS tenorsplitperc,
+    ${add.schema}fn_list_agg_step_policy('RateMargin', t1.policycode) AS ratemargin,
+    ${add.schema}fn_list_agg_step_policy('EMISplitPerc', t1.policycode) AS emisplitperc,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM steppolicyheader_temp t1
+UNION ALL
+ SELECT t1.policycode,
+    t1.policydesc,
+    ( SELECT count(steppolicydetail_view.policycode) AS count
+           FROM steppolicydetail_view
+          WHERE steppolicydetail_view.policycode = t1.policycode) AS stepnumber,
+           FROM steppolicyheader_temp
+          WHERE steppolicyheader_temp.policycode = t1.policycode))
+ 	</createView>
  </changeSet>
 </databaseChangeLog>
