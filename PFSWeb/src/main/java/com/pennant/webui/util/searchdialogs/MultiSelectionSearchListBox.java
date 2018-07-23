@@ -557,6 +557,12 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		this.jdbcSearchObject.setMaxResults(getPageSize());
 		this.jdbcSearchObject.addTabelName(getModuleMapping().getLovTableName());
 
+		String[] lovFields = getModuleMapping().getLovFields();
+		if (lovFields != null && lovFields.length > 0) {
+			this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
+			this.jdbcSearchObject.addSort(lovFields[1].trim(), false);
+		}
+
 		if (this.filters!=null){
 			for (int i = 0; i < filters.length; i++) {
 				this.jdbcSearchObject.addFilter(filters[i]);
