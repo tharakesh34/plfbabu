@@ -2852,6 +2852,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				fieldVerificationDialogCtrl.doSetLabels(getFinBasicDetails());
 			}
 			break;
+		case AssetConstants.UNIQUE_ID_TVINITIATION:
+			if (tVerificationDialogCtrl != null) {
+				tVerificationDialogCtrl.doSetLabels(getFinBasicDetails());
+			}
+			break;
+		case AssetConstants.UNIQUE_ID_LVINITIATION:
+			if (lVerificationCtrl != null) {
+				lVerificationCtrl.doSetLabels(getFinBasicDetails());
+			}
+			break;
+		case AssetConstants.UNIQUE_ID_RCUINITIATION:
+			if (rcuVerificationDialogCtrl != null) {
+				rcuVerificationDialogCtrl.doSetLabels(getFinBasicDetails());
+			}
+			break;
 		case AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW:
 			appendCreditReviewDetailTab(true);
 			break;
