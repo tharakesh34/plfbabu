@@ -941,6 +941,12 @@
 	UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
 	</sql>
 </changeSet>
+	<changeSet id="10" author="vijaykumar.l">
+		<sql>
+			update ExtendedFieldHeader set modulename = 'ASSETTYPE' where modulename ='AssetType';
+    		update ExtendedFieldHeader_temp set modulename = 'ASSETTYPE' where modulename ='AssetType';
+		</sql>
+	</changeSet>	
 		
 </databaseChangeLog>
 	
