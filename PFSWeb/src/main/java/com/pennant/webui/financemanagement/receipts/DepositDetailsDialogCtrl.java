@@ -214,16 +214,16 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 		this.transactionDate.setFormat(PennantConstants.dateFormat);
 
-		if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(this.depositDetails.getDepositType())) {
-			this.availableAmount.setProperties(true, PennantConstants.defaultCCYDecPos);
-		} else {
-			this.availableAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
-		}
+		this.availableAmount.setProperties(true, PennantConstants.defaultCCYDecPos);
 		this.availableAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.availableAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.availableAmount.setScale(PennantConstants.defaultCCYDecPos);
 
-		this.reservedAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
+		if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(this.depositDetails.getDepositType())) {
+			this.reservedAmount.setProperties(true, PennantConstants.defaultCCYDecPos);
+		} else {
+			this.reservedAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
+		}
 		this.reservedAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.reservedAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.reservedAmount.setScale(PennantConstants.defaultCCYDecPos);
