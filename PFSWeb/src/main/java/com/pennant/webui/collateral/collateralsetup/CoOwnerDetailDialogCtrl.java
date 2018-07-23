@@ -593,7 +593,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		this.coOwnerPercentage.setMaxlength(6);
 		this.coOwnerPercentage.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		this.coOwnerPercentage.setScale(2);
-		this.mobileNo.setMaxlength(10);
+		this.mobileNo.setMaxlength(13);
 		this.emailId.setMaxlength(200);
 		this.remarks.setMaxlength(500);
 		this.coOwnerProofName.setMaxlength(500);
