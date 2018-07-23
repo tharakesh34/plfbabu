@@ -1092,6 +1092,18 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="51_Pre" author="Vinay">
+		<sql>
+			update seqsecrights set seqno = (select max(rightid)+1 cnt from secrights);
+
+			insert into secrights values((select max(rightid)+1 from secrights),3,'button_LanguageDialog_btnNew','LanguageDialog',1,'1000',CURRENT_TIMESTAMP,'','','','','','','0');
+			insert into secrights values((select max(rightid)+1 from secrights),3,'button_LanguageDialog_btnDelete','LanguageDialog',1,'1000',CURRENT_TIMESTAMP,'','','','','','','0');
+			insert into secrights values((select max(rightid)+1 from secrights),3,'button_LanguageList_NewLanguage','LanguageList',1,'1000',CURRENT_TIMESTAMP,'','','','','','','0');
+
+			update seqsecrights set seqno = (select max(rightid)+1 cnt from secrights);
+		</sql>
+	</changeSet>
+	
 	<changeSet id="51" author="Vinay">
 		<sql>
 			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
