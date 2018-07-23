@@ -1506,6 +1506,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			liability.setId(0);
 			liability.setLinkId(0);
 			customerExtLiabilityDAO.setLinkId(liability);
+			liability.setSeqNo(samplingDAO.getNextLiabilitSeq(liability.getLinkId()));
 			liability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			liability.setLastMntBy(sampling.getLastMntBy());
 			externalLiabilityDAO.save(liability, "");
