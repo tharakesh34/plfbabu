@@ -125,4 +125,7 @@ public class ImplementationConstants {
 	public static final boolean	GROUP_BATCH_BY_BANK				= true;	
 	public static final boolean	ALLOW_BARCODE					= false;	
 	public static final boolean	CIBIL_BUTTON_REQ				= false;	
+	
+	// Deposit Process 
+	public static final boolean	DEPOSIT_PROC_REQ				= true;	
 }

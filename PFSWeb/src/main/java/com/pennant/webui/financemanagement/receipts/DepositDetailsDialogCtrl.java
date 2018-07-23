@@ -1131,8 +1131,10 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		readOnlyComponent(isReadOnly("DepositDetailsDialog_PartnerBankId"), this.partnerBankId);
 		readOnlyComponent(true, this.availableAmount);
 		readOnlyComponent(true, this.depositType);
+		
+		String isDepositAmtEdit = SysParamUtil.getValueAsString("DEPOSIT_AMOUNT_EDIT");
 
-		if (CashManagementConstants.DEPOSIT_AMOUNT_EDIT.equals(SysParamUtil.getValueAsString("DEPOSIT_AMOUNT_EDIT"))
+		if (StringUtils.equals(isDepositAmtEdit, PennantConstants.YES)
 				&& CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(this.depositDetails.getDepositType())) {
 			readOnlyComponent(isReadOnly("DepositDetailsDialog_TransactionAmount"), this.reservedAmount);
 		} else {

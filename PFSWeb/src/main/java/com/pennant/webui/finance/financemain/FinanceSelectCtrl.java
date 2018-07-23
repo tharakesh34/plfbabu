@@ -1548,6 +1548,18 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm,valueParm)
 				, getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
+			}else if(receiptData.getReceiptHeader().isDepositProcess()){
+				
+				// If record is in Deposit Process, not allowed to do the Process on Realization
+				String[] errParm= new String[1];
+				String[] valueParm= new String[1];
+				valueParm[0]=aFinanceMain.getId();
+				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"65034", errParm,valueParm)
+						, getUserWorkspace().getUserLanguage());
+				MessageUtil.showError(errorDetails.getError());
+
 			}else{
 				
 				if(isWorkFlowEnabled()){

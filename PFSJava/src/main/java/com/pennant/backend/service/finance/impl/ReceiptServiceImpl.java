@@ -57,6 +57,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.CashManagementConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -70,6 +71,7 @@ import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
+import com.pennant.backend.dao.receipts.DepositChequesDAO;
 import com.pennant.backend.dao.receipts.DepositDetailsDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -88,6 +90,7 @@ import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
@@ -118,6 +121,7 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.service.cashmanagement.impl.CashManagementAccounting;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
@@ -157,6 +161,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private LatePayMarkingService			latePayMarkingService;
 	private BankDetailService				bankDetailService;
 	private DepositDetailsDAO				depositDetailsDAO;
+	private CashManagementAccounting		cashManagementAccounting;
+	private DepositChequesDAO				depositChequesDAO;
 	@Autowired
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
@@ -565,6 +571,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 		}
+		
+		//Save Deposit Details
+		saveDepositDetails(receiptHeader, null);
 
 		// Save Receipt Detail List by setting Receipt Header ID
 		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
@@ -1147,6 +1156,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				getFinODDetailsDAO().updateODDetails(overdueList);
 			}
 		}
+		
+		//Save Deposit Details
+		saveDepositDetails(receiptHeader, PennantConstants.method_doApprove);
 
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
@@ -1346,70 +1358,108 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			getLimitCheckDetails().doProcessLimits(financeMain,	FinanceConstants.AMENDEMENT);
 		}
 		
-		//Save Deposit Details
-		saveDepositDetails(receiptHeader);
-		
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 	
-	public void saveDepositDetails(FinReceiptHeader receiptHeader) {
+	/**
+	 * Method for Saving Deposit Details for Both Receipt Modes of CASH & Cheque/DD
+	 * @param receiptHeader
+	 */
+	private void saveDepositDetails(FinReceiptHeader receiptHeader, String method) {
 		logger.debug("Entering");
 		
-		if (RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())) {
-			BigDecimal actualAmount = BigDecimal.ZERO;
-			long partnerBankId = 0;
-			
-			for (FinReceiptDetail finReceiptDetail : receiptHeader.getReceiptDetails()) {
-				if (RepayConstants.RECEIPTMODE_CASH.equals(finReceiptDetail.getPaymentType())) {
-					partnerBankId = finReceiptDetail.getFundingAc();
-					if (finReceiptDetail.getAmount() != null) {
-						actualAmount = actualAmount.add(finReceiptDetail.getAmount());
-					}
-				}
-			}
-			
-			if (actualAmount.compareTo(BigDecimal.ZERO) > 0) {
-				DepositDetails depositDetail = getDepositDetailsDAO().getDepositDetails(
-						CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH, receiptHeader.getUserDetails().getBranchCode(), "");
-				if (depositDetail == null) {
-					depositDetail = new DepositDetails();
-					depositDetail.setActualAmount(actualAmount);
-					depositDetail.setTransactionAmount(BigDecimal.ZERO);
-					depositDetail.setReservedAmount(BigDecimal.ZERO);
-					depositDetail.setDepositType(CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH);
-					depositDetail.setBranchCode(receiptHeader.getUserDetails().getBranchCode());
-					depositDetail.setVersion(1);
-					depositDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);;
-					depositDetail.setLastMntBy(receiptHeader.getLastMntBy());
-					depositDetail.setLastMntOn(receiptHeader.getLastMntOn());
-					depositDetail.setWorkflowId(0);
-					depositDetail.setNewRecord(true);
-					depositDetail.setDepositId(getDepositDetailsDAO().save(depositDetail, TableType.MAIN_TAB));
-				} else {
-					getDepositDetailsDAO().updateActualAmount(depositDetail.getDepositId(), actualAmount, "");
-				}
-				
-				DepositMovements depositMovements = new DepositMovements();
-				depositMovements = new DepositMovements();
-				depositMovements.setDepositId(depositDetail.getDepositId());
-				depositMovements.setTransactionType(CashManagementConstants.DEPOSIT_MOVEMENT_CREDIT);
-				depositMovements.setPartnerBankId(partnerBankId);
-				depositMovements.setReceiptId(receiptHeader.getReceiptID());
-				depositMovements.setVersion(1);
-				depositMovements.setNewRecord(true);
-				depositMovements.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);;
-				depositMovements.setRecordType(null);
-				depositMovements.setLastMntBy(receiptHeader.getLastMntBy());
-				depositMovements.setLastMntOn(receiptHeader.getLastMntOn());
-				depositMovements.setWorkflowId(0);
-				depositMovements.setTransactionDate(DateUtility.getSysDate());
-				depositDetail.setDepositMovements(depositMovements);
-				
-				getDepositDetailsDAO().saveDepositMovements(depositMovements, "");
-			}
+		// If Process is not required for Client
+		if(!ImplementationConstants.DEPOSIT_PROC_REQ){
+			return;
+		}
+
+		// If Deposit Process is not other than CASH, CHEQUE & DD then no process is executed
+		if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH,receiptHeader.getReceiptMode()) &&
+				!StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE,receiptHeader.getReceiptMode()) &&
+				!StringUtils.equals(RepayConstants.RECEIPTMODE_DD,receiptHeader.getReceiptMode())) {
+			return;
 		}
 		
+		// If Cheque or DD Process , then on deposit process only these executions should be done
+		if(!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH,receiptHeader.getReceiptMode())){
+			if(!receiptHeader.isDepositProcess()){
+				return;
+			}
+		}else if(StringUtils.equals(RepayConstants.RECEIPTMODE_CASH,receiptHeader.getReceiptMode())){
+			if(!StringUtils.equals(method, PennantConstants.method_doApprove)){
+				return;
+			}
+		}
+
+		BigDecimal depositReqAmount = BigDecimal.ZERO;
+		long partnerBankId = 0;
+		String reqReceiptMode = null;
+		Date valueDate = null;
+
+		// Find Amount of Deposited Request
+		for (FinReceiptDetail rcptDetail : receiptHeader.getReceiptDetails()) {
+			
+			// CASH / CHEQUE / DD MODE
+			if (StringUtils.equals(RepayConstants.RECEIPTMODE_CASH,rcptDetail.getPaymentType()) ||
+					StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE,rcptDetail.getPaymentType()) ||
+					StringUtils.equals(RepayConstants.RECEIPTMODE_DD,rcptDetail.getPaymentType())) {
+				
+				if(!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH,rcptDetail.getPaymentType())){
+					partnerBankId = rcptDetail.getFundingAc();
+					reqReceiptMode = CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CHEQUE_DD;
+				}else{
+					reqReceiptMode = CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH;
+				}
+				depositReqAmount = depositReqAmount.add(rcptDetail.getAmount());
+				reqReceiptMode = rcptDetail.getPaymentType();
+				valueDate = rcptDetail.getReceivedDate();
+			}
+		}
+
+		// IF Deposited Requested amount is greater than zero then Deposit process details should be inserted/updated
+		if (depositReqAmount.compareTo(BigDecimal.ZERO) > 0 && StringUtils.isNotBlank(reqReceiptMode)) {
+			
+			// Check Whether Deposit Details record against branch is already exists or not
+			DepositDetails depositDetail = getDepositDetailsDAO().getDepositDetails(reqReceiptMode, receiptHeader.getUserDetails().getBranchCode(), "");
+			
+			if (depositDetail == null) {
+				depositDetail = new DepositDetails();
+				depositDetail.setActualAmount(depositReqAmount);
+				depositDetail.setTransactionAmount(BigDecimal.ZERO);
+				depositDetail.setReservedAmount(BigDecimal.ZERO);
+				depositDetail.setDepositType(reqReceiptMode);
+				depositDetail.setBranchCode(receiptHeader.getUserDetails().getBranchCode());
+				depositDetail.setVersion(1);
+				depositDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);;
+				depositDetail.setLastMntBy(receiptHeader.getLastMntBy());
+				depositDetail.setLastMntOn(receiptHeader.getLastMntOn());
+				depositDetail.setWorkflowId(0);
+				depositDetail.setNewRecord(true);
+				depositDetail.setDepositId(getDepositDetailsDAO().save(depositDetail, TableType.MAIN_TAB));
+			} else {
+				getDepositDetailsDAO().updateActualAmount(depositDetail.getDepositId(), depositReqAmount, "");
+			}
+
+			// Deposit Details movement creation for the increased credit of Available Amount
+			DepositMovements depositMovements = new DepositMovements();
+			depositMovements = new DepositMovements();
+			depositMovements.setDepositId(depositDetail.getDepositId());
+			depositMovements.setTransactionType(CashManagementConstants.DEPOSIT_MOVEMENT_CREDIT);
+			depositMovements.setPartnerBankId(partnerBankId);
+			depositMovements.setReceiptId(receiptHeader.getReceiptID());
+			depositMovements.setTransactionDate(valueDate);
+			depositMovements.setVersion(1);
+			depositMovements.setNewRecord(true);
+			depositMovements.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);;
+			depositMovements.setRecordType(null);
+			depositMovements.setLastMntBy(receiptHeader.getLastMntBy());
+			depositMovements.setLastMntOn(receiptHeader.getLastMntOn());
+			depositMovements.setWorkflowId(0);
+			depositDetail.setDepositMovements(depositMovements);
+			getDepositDetailsDAO().saveDepositMovements(depositMovements, "");
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -1449,6 +1499,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptData rceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader receiptHeader = rceiptData.getReceiptHeader();
 		receiptHeader.setPostBranch(auditHeader.getAuditBranchCode());
+		FinanceMain financeMain = rceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		
+		// Cancel All Transactions done by Finance Reference
+		//=======================================
+		cancelStageAccounting(financeMain.getFinReference(), receiptHeader.getReceiptPurpose());
 		
 		// Bounce Charge Due Postings
 		if(StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)){
@@ -1488,6 +1543,29 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 			}
 		}
+		
+		// Accounting Execution Process for Deposit Reversal
+		if(StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE,receiptHeader.getReceiptMode()) ||
+				StringUtils.equals(RepayConstants.RECEIPTMODE_DD,receiptHeader.getReceiptMode())){
+
+			// Verify Cheque or DD Details exists in Deposited Cheques 
+			DepositCheques depositCheque = getDepositChequesDAO().getDepositChequeByReceiptID(receiptHeader.getReceiptID());
+
+			if(depositCheque != null){
+				DepositMovements movement = getDepositDetailsDAO().getDepositMovementsById(depositCheque.getMovementId(), "_AView");
+				if(movement != null){
+					AEEvent aeEvent = this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_CHEQUETOBANK_REVERSAL,
+							movement.getBranchCode(), movement.getBranchCode(), depositCheque.getAmount(),
+							movement.getPartnerBankId(), movement.getMovementId(), null);
+
+					// Make Deposit Cheque to Reversal Status
+					if(aeEvent.isPostingSucess()){
+						getDepositChequesDAO().reverseChequeStatus(movement.getMovementId(), 
+								receiptHeader.getReceiptID(), aeEvent.getLinkedTranId());
+					}
+				}
+			}
+		}
 
 		tranType = PennantConstants.TRAN_UPD;
 		receiptHeader.setRcdMaintainSts(null);
@@ -1511,8 +1589,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		String finReference = receiptHeader.getReference();
-		FinanceMain financeMain = rceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-
 		if(!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, rceiptData.getSourceId())) {
 
 			// Save Document Details
@@ -3008,6 +3084,22 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setDepositDetailsDAO(DepositDetailsDAO depositDetailsDAO) {
 		this.depositDetailsDAO = depositDetailsDAO;
+	}
+
+	public DepositChequesDAO getDepositChequesDAO() {
+		return depositChequesDAO;
+	}
+
+	public void setDepositChequesDAO(DepositChequesDAO depositChequesDAO) {
+		this.depositChequesDAO = depositChequesDAO;
+	}
+	
+	public CashManagementAccounting getCashManagementAccounting() {
+		return cashManagementAccounting;
+	}
+
+	public void setCashManagementAccounting(CashManagementAccounting cashManagementAccounting) {
+		this.cashManagementAccounting = cashManagementAccounting;
 	}
 
 }

@@ -400,6 +400,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			String recordStatus = "";
 			if (StringUtils.isEmpty(type)) {
 				approveRec = true;
+				depositCheques.setStatus("A");
 				depositCheques.setRoleCode("");
 				depositCheques.setNextRoleCode("");
 				depositCheques.setTaskId("");
@@ -702,19 +703,21 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		DepositDetails depositDetails = new DepositDetails();
 		BeanUtils.copyProperties((DepositDetails) auditHeader.getAuditDetail().getModelData(), depositDetails);
-
-		//generate Accounting
+		
+		// Accounting Execution Process
 		AEEvent aeEvent = null;
+		String eventCode = null;
 		if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(depositDetails.getDepositType())) {
-			aeEvent = this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_CASHTOBANK,
-					depositDetails.getUserDetails().getBranchCode(), depositDetails.getBranchCode(),
-					depositDetails.getReservedAmount(),
-					depositDetails.getDepositMovementsList().get(0).getPartnerBankId(), depositDetails.getId(), null);
+			eventCode = AccountEventConstants.ACCEVENT_CASHTOBANK;
 		} else if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CHEQUE_DD.equals(depositDetails.getDepositType())) {
-			aeEvent = this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_CHEQUETOBANK,
+			eventCode = AccountEventConstants.ACCEVENT_CHEQUETOBANK;
+		}
+		if (StringUtils.isNotEmpty(eventCode)) {
+			aeEvent = this.cashManagementAccounting.generateAccounting(eventCode,
 					depositDetails.getUserDetails().getBranchCode(), depositDetails.getBranchCode(),
 					depositDetails.getReservedAmount(),
-					depositDetails.getDepositMovementsList().get(0).getPartnerBankId(), depositDetails.getId(), null);
+					depositDetails.getDepositMovementsList().get(0).getPartnerBankId(), 
+					depositDetails.getDepositMovementsList().get(0).getMovementId(), null);
 		}
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(depositDetails.getRecordType())) {

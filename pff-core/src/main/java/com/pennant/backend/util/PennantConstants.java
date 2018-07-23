@@ -176,6 +176,7 @@ public class PennantConstants {
 	public static final String method_doCheckPaymentToBank = "doCheckPaymentToBank";
 	public static final String method_doCheckOtherPayments = "doCheckOtherPayments";
 	public static final String method_doCheckCollaterals = "doCheckCollaterals";
+	public static final String method_doCheckDepositProc = "doCheckDeposit";
 	public static final String method_doCheckFurtherWF = "doCheckFurtherWF";
 	
 	public static final String method_externalDedup = "executeExperianDedup";

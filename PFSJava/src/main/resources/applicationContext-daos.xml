@@ -5745,6 +5745,8 @@
 		<property name="feeTypeDAO" ref="feeTypeDAO"/>
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="engineExecution" ref="engineExecution" />
+		<property name="cashManagementAccounting" ref="cashManagementAccounting" />
+		<property name="depositChequesDAO" ref="depositChequesDAO" />
 		
 		<!-- GST Invoice Changes -->
 		<property name="financeDetailService" ref="financeDetailService" />

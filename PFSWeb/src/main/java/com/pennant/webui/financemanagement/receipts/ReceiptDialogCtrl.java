@@ -108,6 +108,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.AEAmounts;
@@ -6255,6 +6256,18 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
 					processCompleted = true;
 				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+					processCompleted = true;
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckDepositProc)) {
+					FinReceiptData tReceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+					
+					// Check whether deposit process already completed or not, if Re-submission allowed on Realization stage
+					// Otherwise till approval of Deposit process , receipt should be wait for realization
+					if(ImplementationConstants.DEPOSIT_PROC_REQ){
+						if(StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE,receiptHeader.getReceiptMode()) ||
+								StringUtils.equals(RepayConstants.RECEIPTMODE_DD,receiptHeader.getReceiptMode())){
+							tReceiptData.getReceiptHeader().setDepositProcess(true);
+						}
+					}
 					processCompleted = true;
 				} else if (StringUtils.trimToEmpty(method).contains(FinanceConstants.method_scheduleChange)) {
 					List<String> finTypeList = getFinanceDetailService().getScheduleEffectModuleList(true);

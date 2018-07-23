@@ -55,6 +55,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.util.CurrencyUtil;
@@ -78,6 +79,8 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
+import com.pennant.backend.dao.receipts.DepositChequesDAO;
+import com.pennant.backend.dao.receipts.DepositDetailsDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -89,6 +92,8 @@ import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.DepositCheques;
+import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
@@ -109,6 +114,7 @@ import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.service.cashmanagement.impl.CashManagementAccounting;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
@@ -160,6 +166,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	//GST Invoice Report
 	private FinanceDetailService 		financeDetailService;
 	private GSTInvoiceTxnService		gstInvoiceTxnService;
+	private CashManagementAccounting	cashManagementAccounting;
+	private DepositChequesDAO			depositChequesDAO;
+	private DepositDetailsDAO			depositDetailsDAO;
 
 	public ReceiptCancellationServiceImpl() {
 		super();
@@ -902,8 +911,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					// GST Invoice Preparation
 					long postingSeqId = 0;	//TODO should be pass linkedTranId
 					FinanceDetail  financeDetail = financeDetailService.getFinSchdDetailById(finReference, "", false);
-					this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetail, null, advMovementsTemp, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference);	
+					this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetail, null, advMovementsTemp, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference);
 				}
+				
 			}
 
 			if(!rpySchdList.isEmpty()){
@@ -1217,6 +1227,29 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 							
 							// Payable Utilize reversals
 							getManualAdviseDAO().reverseUtilise(receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
+						}
+					}
+				}
+			}
+			
+			// Accounting Execution Process for Deposit Reversal
+			if(StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE,receiptHeader.getReceiptMode()) ||
+					StringUtils.equals(RepayConstants.RECEIPTMODE_DD,receiptHeader.getReceiptMode())){
+				
+				// Verify Cheque or DD Details exists in Deposited Cheques 
+				DepositCheques depositCheque = getDepositChequesDAO().getDepositChequeByReceiptID(receiptHeader.getReceiptID());
+				
+				if(depositCheque != null){
+					DepositMovements movement = getDepositDetailsDAO().getDepositMovementsById(depositCheque.getMovementId(), "_AView");
+					if(movement != null){
+						AEEvent aeEvent = this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_CHEQUETOBANK_REVERSAL,
+								movement.getBranchCode(), movement.getBranchCode(), depositCheque.getAmount(),
+								movement.getPartnerBankId(), movement.getMovementId(), null);
+						
+						// Make Deposit Cheque to Reversal Status
+						if(aeEvent.isPostingSucess()){
+							getDepositChequesDAO().reverseChequeStatus(movement.getMovementId(), 
+									receiptHeader.getReceiptID(), aeEvent.getLinkedTranId());
 						}
 					}
 				}
@@ -1608,5 +1641,29 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
+	}
+
+	public CashManagementAccounting getCashManagementAccounting() {
+		return cashManagementAccounting;
+	}
+
+	public void setCashManagementAccounting(CashManagementAccounting cashManagementAccounting) {
+		this.cashManagementAccounting = cashManagementAccounting;
+	}
+
+	public DepositChequesDAO getDepositChequesDAO() {
+		return depositChequesDAO;
+	}
+
+	public void setDepositChequesDAO(DepositChequesDAO depositChequesDAO) {
+		this.depositChequesDAO = depositChequesDAO;
+	}
+
+	public DepositDetailsDAO getDepositDetailsDAO() {
+		return depositDetailsDAO;
+	}
+
+	public void setDepositDetailsDAO(DepositDetailsDAO depositDetailsDAO) {
+		this.depositDetailsDAO = depositDetailsDAO;
 	}
 }

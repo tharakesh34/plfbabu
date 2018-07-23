@@ -49,6 +49,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -82,7 +83,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into DepositCheques");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (Id, MovementId, ReceiptId, ReceiptMode, Amount,");
+		sql.append(" (Id, MovementId, ReceiptId, ReceiptMode, Amount, Status, RevLinkedTranId,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :Id, :MovementId, :ReceiptId, :ReceiptMode, :Amount,");
@@ -114,7 +115,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update DepositCheques");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set ReceiptId = :ReceiptId, ReceiptMode = :ReceiptMode, Amount = :Amount,");
+		sql.append(" Set ReceiptId = :ReceiptId, ReceiptMode = :ReceiptMode, Amount = :Amount,Status=:Status, RevLinkedTranId=:RevLinkedTranId,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -195,7 +196,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		List<DepositCheques> list;
 
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT Id, MovementId, ReceiptId, ReceiptMode, Amount,");
+		StringBuilder sql = new StringBuilder("SELECT Id, MovementId, ReceiptId, ReceiptMode, Amount,Status, RevLinkedTranId");
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", Receiptpurpose, FavourNumber, ReceivedDate, FundingAc, Remarks, FinReference,  CustShrtName, PartnerBankCode, PartnerBankName");
@@ -280,5 +281,59 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 
 		logger.debug(Literal.LEAVING);
 		return exists;
+	}
+
+	@Override
+	public DepositCheques getDepositChequeByReceiptID(long receiptID) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder selectSql = new StringBuilder("SELECT MovementId, Amount ");
+		selectSql.append(" From DepositCheques");
+		selectSql.append(" Where ReceiptId = :ReceiptId ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + selectSql.toString());
+
+		DepositCheques depositCheques = new DepositCheques();
+		depositCheques.setReceiptId(receiptID);
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositCheques);
+		RowMapper<DepositCheques> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositCheques.class);
+
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		return null;
+	
+	}
+
+	@Override
+	public void reverseChequeStatus(long movementId, long receiptID, long linkedTranId) {
+		logger.debug(Literal.ENTERING);
+		
+		DepositCheques depositCheques = new DepositCheques();
+		depositCheques.setReceiptId(receiptID);
+		depositCheques.setMovementId(movementId);
+		depositCheques.setStatus("R");
+		depositCheques.setRevLinkedTranId(linkedTranId);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("update DepositCheques");
+		sql.append(" Set Status = :Status , RevLinkedTranId=:RevLinkedTranId ");
+		sql.append(" where MovementId = :MovementId AND ReceiptId = :ReceiptId ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(depositCheques);
+		jdbcTemplate.update(sql.toString(), paramSource);
+
+		logger.debug(Literal.LEAVING);
 	}
 }	
