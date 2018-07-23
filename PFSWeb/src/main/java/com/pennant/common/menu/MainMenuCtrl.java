@@ -217,16 +217,16 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			// Close previous siblings.
 			Treeitem sibling = treeitem;
 
-			while ((sibling = (sibling.getPreviousSibling() instanceof Treeitem
-					? (Treeitem) sibling.getPreviousSibling() : null)) != null) {
+			while ((sibling = sibling.getPreviousSibling() instanceof Treeitem ? (Treeitem) sibling.getPreviousSibling()
+					: null) != null) {
 				sibling.setOpen(false);
 			}
 
 			// Close next siblings.
 			sibling = treeitem;
 
-			while ((sibling = (sibling.getNextSibling() instanceof Treeitem ? (Treeitem) sibling.getNextSibling()
-					: null)) != null) {
+			while ((sibling = sibling.getNextSibling() instanceof Treeitem ? (Treeitem) sibling.getNextSibling()
+					: null) != null) {
 				sibling.setOpen(false);
 			}
 		}
