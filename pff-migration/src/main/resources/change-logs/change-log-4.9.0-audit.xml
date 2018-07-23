@@ -40,4 +40,10 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="01" author="Durgaprasad.g">
+		<addColumn tableName="AdtRMTFinanceTypes" >
+			<column name="PartiallySecured" type="boolean" defaultValueBoolean="false"/>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
