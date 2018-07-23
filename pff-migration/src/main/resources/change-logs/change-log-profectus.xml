@@ -1147,7 +1147,12 @@
 			delete from SECGROUPRIGHTS where grpid in (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') and RIGHTID in (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerDialog_custCRCPR');
 		</sql>
 	</changeSet>
-	
+	<changeSet id="56" author="Vinay">
+		<sql>
+			delete from errordetails where code='FUF001';
+			insert into errordetails values ('FUF001','EN','E','Fees not paid','','Approved','','','','','','0',CURRENT_TIMESTAMP,'1000',0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
