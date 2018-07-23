@@ -1092,13 +1092,6 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="50" author="Vinay">
-		<sql>
-			delete from STAGETABDETAIL where tabcode='CRTAB';
-			Insert into STAGETABDETAIL values ((select max(TABID)+1 from StageTabDetail),'CRTAB','Credit Review Details',1);
-		</sql>
-	</changeSet>
-	
 	<changeSet id="51" author="Vinay">
 		<sql>
 			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
