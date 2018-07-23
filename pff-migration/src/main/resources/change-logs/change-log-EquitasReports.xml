@@ -64,4 +64,11 @@
 			select deps_restore_dependencies('plf','finguarantorsdetails_temp');
 		</sql>
 	</changeSet>
+	
+	<changeSet id="52" author="Durgaprasad.g">
+		<sql>
+			Update financechecklistref set recordtype = Null;
+			Update financechecklistref_temp set recordtype = Null;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
