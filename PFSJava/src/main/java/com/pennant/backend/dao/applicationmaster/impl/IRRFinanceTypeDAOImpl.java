@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  IRRFinanceTypeDAOImpl.java                                                   * 	  
+ * FileName    		:  IRRFinanceTypeDAOImpl.java                                           * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -31,8 +31,8 @@
  ********************************************************************************************
  * 21-06-2017       PENNANT	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-07-2018       Sai Krishna              0.2          bugs #492 Unable to save & submit * 
+ *                                                        Loan Types                        * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -148,13 +148,14 @@ public class IRRFinanceTypeDAOImpl extends BasisNextidDaoImpl<IRRFinanceType> im
 		logger.debug(Literal.ENTERING);
 		
 		// Prepare the SQL.
+		// 23-07-2018 bugs #492 Unable to save & submit Loan Types due to updating the primary key in the update statement.
 		StringBuilder	sql =new StringBuilder("update IRRFinanceTypes" );
 		sql.append(tableType.getSuffix());
-		sql.append("  set finType = :finType, ");
+		sql.append("  set");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where iRRID = :iRRID ");
+		sql.append(" where iRRID = :iRRID and finType = :finType ");
 		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
 	
 		// Execute the SQL, binding the arguments.
