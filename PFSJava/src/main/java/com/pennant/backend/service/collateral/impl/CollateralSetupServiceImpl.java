@@ -1140,12 +1140,12 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 			if (collateralCheckLists != null && !collateralCheckLists.isEmpty()) {
 				auditDetailMap.put("CheckListDetails", setCheckListsAuditData(collateralSetup, auditTranType, method));
-				auditDetails.addAll(auditDetailMap.get("CheckListDetails"));
+  				auditDetails.addAll(auditDetailMap.get("CheckListDetails"));
 			}
 		}
 
 		// Collateral Extended Field Details
-		if (collateralSetup.getExtendedFieldRenderList() != null
+ 		if (collateralSetup.getExtendedFieldRenderList() != null
 				&& collateralSetup.getExtendedFieldRenderList().size() > 0) {
 			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
 					.setExtendedFieldsAuditData(collateralSetup.getExtendedFieldRenderList(), auditTranType, method));
@@ -1431,7 +1431,6 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
 				if (collChekListRef.getRecordType().equals(PennantConstants.RCD_ADD)) {
 					auditTranType = PennantConstants.TRAN_ADD;
-					collChekListRef.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else if (collChekListRef.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_UPD;
 				} else {
@@ -1445,7 +1444,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			collChekListRef.setRecordStatus("");
 			collChekListRef.setUserDetails(collateralSetup.getUserDetails());
 			collChekListRef.setLastMntOn(collateralSetup.getLastMntOn());
-			collChekListRef.setLastMntBy(collateralSetup.getLastMntBy());
+ 			collChekListRef.setLastMntBy(collateralSetup.getLastMntBy());
 			collChekListRef.setWorkflowId(collateralSetup.getWorkflowId());
 
 			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], collChekListRef.getBefImage(),
@@ -1896,7 +1895,12 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			}
 
 			if (collateralChecklistRef.getRecordType().equals(PennantConstants.RCD_ADD)) {
-				collateralChecklistRef.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				if (StringUtils.isEmpty(tableType)) {
+					collateralChecklistRef.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					collateralChecklistRef.setRecordType("");
+				} else {
+					collateralChecklistRef.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				}
 				getFinanceCheckListReferenceDAO().save(collateralChecklistRef, tableType);
 			} else if (collateralChecklistRef.getRecordType().equals(PennantConstants.RCD_DEL)) {
 				getFinanceCheckListReferenceDAO().delete(collateralChecklistRef, tableType);

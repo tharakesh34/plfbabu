@@ -2295,7 +2295,6 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					details.setRecordStatus(aCollateralSetup.getRecordStatus());
-					details.setWorkflowId(aCollateralSetup.getWorkflowId());
 					details.setTaskId(taskId);
 					details.setNextTaskId(nextTaskId);
 					details.setRoleCode(getRole());
