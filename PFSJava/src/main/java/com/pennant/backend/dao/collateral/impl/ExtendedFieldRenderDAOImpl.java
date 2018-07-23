@@ -72,6 +72,8 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 
 		List<Map<String, Object>> renderMap = null;
 		
+		type = StringUtils.trimToEmpty(type);
+		
 		type = type.toLowerCase();
 
 		StringBuilder sql = new StringBuilder();
