@@ -2131,11 +2131,10 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * @param financeDetail
 	 * @param finServiceInst
 	 * @return
-	 * @throws InterfaceException
 	 * @throws JaxenException
 	 */
 	private FinanceDetail getResponse(FinanceDetail financeDetail, FinServiceInstruction finServiceInst)
-			throws JaxenException, InterfaceException {
+			throws JaxenException {
 		logger.debug("Entering");
 
 		// fees calculation
