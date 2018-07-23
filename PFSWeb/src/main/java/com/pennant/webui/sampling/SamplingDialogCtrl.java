@@ -541,7 +541,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	
 	
 	/**
-	 * View The Collateral Details
+	 * View The Customer Details
 	 */
 	public void onClickCustomerId(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
@@ -647,7 +647,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 	public void onCustomerExtLiabilityItemDoubleClicked(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		// get the selected invoiceHeader object
+		// get the selected external liability object
 		final Listitem item = this.listBoxObligations.getSelectedItem();
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
@@ -713,10 +713,6 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.ENTERING);
 
 		if (!this.loanTenure.isReadonly()) {
-			/*
-			 * throw new WrongValueException(this.loanTenure, Labels.getLabel("AMOUNT_NOT_NEGATIVE", new String[] {
-			 * Labels.getLabel("label_SamplingDialog_LoanTenure.value") }));
-			 */
 			this.loanTenure.setConstraint(
 					new PTNumberValidator(Labels.getLabel("label_SamplingDialog_LoanTenure.value"), true, false));
 		}

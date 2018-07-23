@@ -911,6 +911,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	private void doCheckEnquiry() {
 		if (PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)) {
 			this.bankName.setReadonly(true);
+			this.finDate.setDisabled(true);
 			this.finStatus.setReadonly(true);
 			this.finType.setReadonly(true);
 			this.outStandingBal.setReadonly(true);
@@ -927,8 +928,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			this.pos.setReadonly(true);
 			this.overdue.setReadonly(true);
 			this.emiFoir.setDisabled(true);
-			this.source.setReadonly(true);
-			this.checkedBy.setReadonly(true);
+			this.source.setDisabled(true);
+			this.checkedBy.setDisabled(true);
 			this.securityDetail.setReadonly(true);
 			this.otherFinInstitute.setReadonly(true);
 			this.endUseOfFunds.setReadonly(true);

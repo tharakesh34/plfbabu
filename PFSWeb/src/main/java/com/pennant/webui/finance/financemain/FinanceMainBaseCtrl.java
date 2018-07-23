@@ -6537,7 +6537,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Sampling Approval Details
 		Tab samplingTab = getTab(AssetConstants.UNIQUE_ID_SAMPLINGAPPROVAL);
 		if ((samplingTab != null && samplingTab.isVisible()) && finSamplingDialogCtrl != null) {
-			finSamplingDialogCtrl.doSave(aFinanceDetail, tvInitTab, recSave, userAction);
+			finSamplingDialogCtrl.doSave(aFinanceDetail, samplingTab, recSave, userAction);
 		}
 
 		// save the FinanceMain Extension details
