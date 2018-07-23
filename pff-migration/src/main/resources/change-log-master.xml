@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	
-	<include file="change-logs/change-log-GSTCoreChanges.xml" />
+<!-- 	<include file="change-logs/change-log-GSTCoreChanges.xml" />
 	<include file="change-logs/change-log-verification-fi.xml" />
 	<include file="change-logs/change-log-verification-tv.xml" />
 	<include file="change-logs/change-log-verification-lv.xml" />
@@ -12,6 +12,6 @@
 	<include file="change-logs/change-log-customer-extliability-enhancement.xml"/>
 	<include file="change-logs/change-log-customer-income-enhancement.xml"/>
 	<include file="change-logs/change-log-sampling.xml"/>
-	<include file="change-logs/change-log-legal.xml"/>
-	<include file="change-logs/change-log-4.7.17.xml" />
+	<include file="change-logs/change-log-legal.xml"/> -->
+	<include file="change-logs/change-log-4.9.0.xml" />
 </databaseChangeLog>

@@ -757,13 +757,13 @@
 				rightName="menuItem_FinanceManagement_FinanceTaxDetailUpload" />
 			<menuItem id="menu_Item_PostingDownloads"
 				zulNavigation="/WEB-INF/pages/InterfaceBajaj/PostingsDownloadCtrl.zul"
-				rightName="menuItem_SystemMaster_AddressType" />
+				rightName="menu_Item_PostingsDownload" />
 			<menuItem id="menu_Item_DataEngine_MasterExport"
 				zulNavigation="/WEB-INF/pages/DataEngine/MasterDataExtraction.zul"
 				rightName="menuItem_DataExtraction" />
 			<menuItem id="menu_Item_ExternalUplaods"
 				zulNavigation="/WEB-INF/pages/ExternalUploads/ExternalUploadList.zul"
-				rightName="menuItem_SystemMaster_AddressType" />
+				rightName="menu_Item_ExternalUpload" />
 		</menu>
 	</menu>
 
