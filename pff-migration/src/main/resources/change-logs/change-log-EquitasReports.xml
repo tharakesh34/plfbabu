@@ -934,4 +934,16 @@ UNION ALL
           WHERE steppolicyheader_temp.policycode = t1.policycode))
  	</createView>
  </changeSet>
+ <changeSet id="48" author="PASVarma">
+ 	<modifyDataType tableName="collateralcoowners" columnName="mobileno" newDataType="varchar(13)"/>
+ </changeSet>
+ <changeSet id="49" author="PASVarma">
+ 	<modifyDataType tableName="collateralcoowners_temp" columnName="mobileno" newDataType="varchar(13)"/>
+ </changeSet>
+ <changeSet id="50" author="PASVarma">
+ 	<modifyDataType tableName="FinGuarantorsDetails" columnName="mobileno" newDataType="varchar(13)"/>
+ </changeSet>
+  <changeSet id="51" author="PASVarma">
+ 	<modifyDataType tableName="FinGuarantorsDetails_Temp" columnName="mobileno" newDataType="varchar(13)"/>
+ </changeSet>
 </databaseChangeLog>

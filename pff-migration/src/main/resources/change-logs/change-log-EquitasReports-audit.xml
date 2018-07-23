@@ -152,4 +152,10 @@
 <changeSet id="8" author="Jayant">
 	<addPrimaryKey tableName="AdtReligion" columnNames="AUDITID,AUDITDATE,AUDITSEQ,AUDITIMAGE" constraintName="pk_adtreligion"/>
 </changeSet>
+ <changeSet id="9" author="PASVarma">
+ 	<modifyDataType tableName="AdtFinGuarantorsDetails" columnName="mobileno" newDataType="varchar(13)"/>
+ </changeSet>
+  <changeSet id="10" author="PASVarma">
+ 	<modifyDataType tableName="Adtcollateralcoowners" columnName="mobileno" newDataType="varchar(13)"/>
+ </changeSet>
 </databaseChangeLog>
