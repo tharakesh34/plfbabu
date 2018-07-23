@@ -1158,6 +1158,13 @@
 			insert into errordetails values ('FUF001','EN','E','Fees not paid','','Approved','','','','','','0',CURRENT_TIMESTAMP,'1000',0);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="57" author="Vinay">
+		<sql>
+			delete from LimitCodeDetail where limitcode='FEE_UPFRONT_REQ';
+			Insert into LimitCodeDetail values ((select max(limitid) from LimitCodeDetail)+1,'FEE_UPFRONT_REQ','Upfrent Fee Validation',1);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
