@@ -861,5 +861,86 @@
 			Update financechecklistref_temp set recordtype = Null;
 		</sql>
 	</changeSet>
+
+<changeSet id = "8" author = "Ganesh.p">
+	<comment>Security operations added for PostingsDownload</comment>
+	<sql>
+	DELETE FROM SecOperationRoles Where OprId=(Select OprId  From SecOperations Where OprCode='OPERATION_POSTINGS_DOWNLOAD') AND RoleID=(Select  RoleID  From SecRoles Where RoleCd='Postings_download');
+	DELETE FROM SecRoleGroups Where GrpId=(Select GrpId  From SecGroups Where GrpCode='Postings_Download') AND RoleID=(Select  RoleID  From SecRoles Where RoleCd='Postings_download');
+	DELETE FROM SECGROUPRIGHTS Where GRPID=(SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='Postings_Download') AND RIGHTID=(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_PostingsDownload');
+
+	DELETE FROM SECRIGHTS  WHERE RIGHTNAME='menu_Item_PostingsDownload';
+	DELETE FROM SECGROUPS Where GRPCODE='Postings_Download';
+	DELETE FROM SECROLES Where RoleCd='Postings_download';
+	DELETE FROM SECOPERATIONS Where OprCode='OPERATION_POSTINGS_DOWNLOAD';		
+
+	Insert into SecRights(RightID,RightType,RightName,Page,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) Values
+	((Select MAX(RightID)+1 From SecRights), 0, 'menu_Item_PostingsDownload', 'MENU', 1, 1000, Current_Timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+
+	Insert Into secGroups(GrpID,GrpCode,GrpDesc,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) values
+	((Select MAX(GrpID)+1 From secGroups),'Postings_Download','Postings Download.',0,1000,Current_Timestamp,'Approved','','','','','',0);
+
+	INSERT INTO SecRoles (RoleID,RoleApp,RoleCd,RoleDesc,RoleCategory,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) VALUES
+	((select MAX(RoleID)+1 from SecRoles),1,'Postings_download','Postings file download.','BulkProcessing',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+	INSERT INTO SecOperations (OprID,OprCode,OprDesc,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) VALUES 
+	((select MAX(OprID)+1 from SecOperations),'OPERATION_POSTINGS_DOWNLOAD','Postings Download',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+	
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='Postings_Download') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_PostingsDownload'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SECROLEGROUPS values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='Postings_Download'), (Select  RoleID  From SecRoles Where RoleCd='Postings_download'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SECOPERATIONROLES values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='OPERATION_POSTINGS_DOWNLOAD'), (Select  RoleID  From SecRoles Where RoleCd='Postings_download'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	
+	
+	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+	UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+	UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+	UPDATE SEQSECOPERATIONS SET SEQNO= (SELECT MAX(OPRID) FROM SECOPERATIONS);
+				
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+	UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+	UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+		</sql>
+</changeSet>
+
+<changeSet id = "9" author = "Ganesh.p">
+	<comment>Security operations added for External Upload</comment>
+	<sql>
+	DELETE FROM SecOperationRoles Where OprId=(Select OprId  From SecOperations Where OprCode='OPERATION_EXTERNAL_UPLOAD') AND RoleID=(Select  RoleID  From SecRoles Where RoleCd='External_Upload');
+	DELETE FROM SecRoleGroups Where GrpId=(Select GrpId  From SecGroups Where GrpCode='External_Upload') AND RoleID=(Select  RoleID  From SecRoles Where RoleCd='External_Upload');
+	DELETE FROM SECGROUPRIGHTS Where GRPID=(SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='External_Upload') AND RIGHTID=(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_ExternalUpload');
+
+	DELETE FROM SECRIGHTS  WHERE RIGHTNAME='menu_Item_ExternalUpload';
+	DELETE FROM SECGROUPS Where GRPCODE='External_Upload';
+	DELETE FROM SECROLES Where RoleCd='External_Upload';
+	DELETE FROM SECOPERATIONS Where OprCode='OPERATION_EXTERNAL_UPLOAD';
+	
+	Insert into SecRights(RightID,RightType,RightName,Page,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) Values
+	((Select MAX(RightID)+1 From SecRights), 0, 'menu_Item_ExternalUpload', 'MENU', 1, 1000, Current_Timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+
+	Insert Into secGroups(GrpID,GrpCode,GrpDesc,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) values
+	((Select MAX(GrpID)+1 From secGroups),'External_Upload','External Uploads.',0,1000,Current_Timestamp,'Approved','','','','','',0);
+
+	INSERT INTO SecRoles (RoleID,RoleApp,RoleCd,RoleDesc,RoleCategory,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) VALUES
+	((select MAX(RoleID)+1 from SecRoles),1,'External_Upload','External uploads.','BulkProcessing',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+	INSERT INTO SecOperations (OprID,OprCode,OprDesc,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) VALUES 
+	((select MAX(OprID)+1 from SecOperations),'OPERATION_EXTERNAL_UPLOAD','External Upload',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+	
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='External_Upload') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_ExternalUpload'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='External_Upload'), (Select  RoleID  From SecRoles Where RoleCd='External_Upload'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='OPERATION_EXTERNAL_UPLOAD'), (Select  RoleID  From SecRoles Where RoleCd='External_Upload'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	
+		
+	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+	UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+	UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+	UPDATE SEQSECOPERATIONS SET SEQNO= (SELECT MAX(OPRID) FROM SECOPERATIONS);
+				
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+	UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+	UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+	</sql>
+</changeSet>
+		
 </databaseChangeLog>
 	
