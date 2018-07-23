@@ -854,5 +854,12 @@
 			     LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode;
 		</createView>
 	</changeSet>
+	
+	<changeSet id="07" author="Durgaprasad.g">
+		<sql>
+			Update financechecklistref set recordtype = Null;
+			Update financechecklistref_temp set recordtype = Null;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
