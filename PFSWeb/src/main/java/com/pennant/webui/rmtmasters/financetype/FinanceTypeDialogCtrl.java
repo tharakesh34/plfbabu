@@ -529,6 +529,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	//Collateral LTV Check Details
 	protected Combobox 	finLTVCheck;
 	protected Row 		row_LTVCheck;
+	protected Checkbox 	finCollateralCheck;
+	
+	
 	private ArrayList<ValueLabel> finLVTCheckList = PennantStaticListUtil.getfinLVTCheckList();
 	FinanceType 		fintypeLTVCheck = null;
 
@@ -1075,6 +1078,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finAssetType.setValue(StringUtils.trimToEmpty(aFinanceType.getFinAssetType()));
 		this.collateralType.setValue(StringUtils.trimToEmpty(aFinanceType.getCollateralType()));
 		fillComboBox(this.finLTVCheck, aFinanceType.getFinLTVCheck(), finLVTCheckList, "");
+		this.finCollateralCheck.setChecked(aFinanceType.isPartiallySecured());
 		this.alwEarlyPayMethods.setValue(StringUtils.trimToEmpty(aFinanceType.getAlwEarlyPayMethods()));
 		this.alwEarlyPayMethods.setTooltiptext(getEarlypayMthdDescription(aFinanceType.getAlwEarlyPayMethods()));
 		this.finIsDwPayRequired.setChecked(aFinanceType.isFinIsDwPayRequired());
@@ -1992,6 +1996,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		//LTV Check For Collateral
 		try {
 			aFinanceType.setFinLTVCheck(getComboboxValue(this.finLTVCheck));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		//Partially Secured or not
+		try {
+			aFinanceType.setPartiallySecured(this.finCollateralCheck.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -3921,6 +3932,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.quickDisb.setDisabled(isTrue);
 		this.developerFinance.setDisabled(isTrue);
 		readOnlyComponent(isTrue, this.finLTVCheck);
+		readOnlyComponent(isTrue, this.finCollateralCheck);
 		
 		// Grace Details
 		this.cbfinGrcRvwRateApplFor.setDisabled(isTrue);
@@ -4239,6 +4251,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.cpzAtReAge.setChecked(false);
 		this.fddLockPeriod.setValue(0);
 		this.finLTVCheck.setSelectedIndex(0);
+		this.finCollateralCheck.setChecked(false);
 		if (ImplementationConstants.ALLOW_IRRCODES) {
 			this.alwdIRRDetails.setValue("");
 		}
@@ -6369,6 +6382,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					&& !PennantConstants.List_Select.equals(getComboboxValue(this.finLTVCheck))) {
 				if (StringUtils.isNotEmpty(finType.getFinLTVCheck())) {
 					readOnlyComponent(true, this.finLTVCheck);
+					readOnlyComponent(true, this.finCollateralCheck);
 				}
 			}
 		} else {
@@ -6378,6 +6392,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if(!finLTVCheck.isDisabled()){
 				this.finLTVCheck.setSelectedIndex(0);
 			}
+			this.finCollateralCheck.setChecked(false);
 		}
 		logger.debug("Leaving");
 	}

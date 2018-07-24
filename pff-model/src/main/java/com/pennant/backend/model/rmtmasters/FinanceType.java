@@ -141,6 +141,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean limitRequired;
 	private boolean finCommitmentOvrride;
 	private boolean finCollateralOvrride;
+	private boolean partiallySecured;
 	
 	private boolean finPftUnChanged;
 	private Date startDate;
@@ -1998,6 +1999,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setFinLTVCheck(String finLTVCheck) {
 		this.finLTVCheck = finLTVCheck;
+	}
+
+	public boolean isPartiallySecured() {
+		return partiallySecured;
+	}
+
+	public void setPartiallySecured(boolean partiallySecured) {
+		this.partiallySecured = partiallySecured;
 	}
 
 }

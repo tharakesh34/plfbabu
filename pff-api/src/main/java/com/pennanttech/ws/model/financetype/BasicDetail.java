@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "finCcy", "lovDescFinCcyName", "finDaysCalType", "lovDescFinDaysCalTypeName", "finMinAmount",
 		"finMaxAmount", "finCategory", "finAssetType", "finIsDwPayRequired", "downPayRule",
 		"downPayRuleDesc", "fInIsAlwGrace", "finIsAlwMD", "alwMaxDisbCheckReq", "finDepreciationReq", "limitRequired",
-		"overrideLimit", "finCollateralReq", "finCollateralOvrride", "collateralType", "allowRIAInvestment",
+		"overrideLimit", "finCollateralReq", "finCollateralOvrride", "collateralType", "partiallySecured","allowRIAInvestment",
 		"alwAdvanceRent", "finDivision", "finIsActive", "allowDownpayPgm", "rollOverFinance", "rollOverFrq",
 		"finCommitmentReq", "finCommitmentOvrride", "finAcType", "lovDescFinAcTypeName", "finContingentAcType",
 		"lovDescFinContingentAcTypeName", "finBankContingentAcType", "lovDescFinBankContAcTypeName",
@@ -96,6 +96,8 @@ public class BasicDetail implements Serializable {
 	private boolean finIsOpenNewFinAc;
 	private boolean alwMultiPartyDisb;
 	private boolean tDSApplicable;
+	private boolean partiallySecured;
+	
 
 	public String getFinCcy() {
 		return finCcy;
@@ -455,6 +457,14 @@ public class BasicDetail implements Serializable {
 
 	public void setAlwMaxDisbCheckReq(boolean alwMaxDisbCheckReq) {
 		this.alwMaxDisbCheckReq = alwMaxDisbCheckReq;
+	}
+
+	public boolean isPartiallySecured() {
+		return partiallySecured;
+	}
+
+	public void setPartiallySecured(boolean partiallySecured) {
+		this.partiallySecured = partiallySecured;
 	}
 
 }

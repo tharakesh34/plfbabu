@@ -1370,34 +1370,37 @@ public class FinanceDataValidation {
 					return errorDetails;
 				}*/
 			}
-			if (financeDetail.getFinScheduleData().getFinanceMain().getFinAmount().compareTo(curAssignValue) > 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "Collateral available assign value("
-						+ String.valueOf(curAssignValue) + ")";
-				valueParm[1] = "current assign value(" + financeDetail.getFinScheduleData().getFinanceMain().getFinAmount() + ")";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
-				return errorDetails;
-			}
-			if(PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeDetail.getFinScheduleData().getFinanceType().getFinLTVCheck())){
-				if (totalAvailAssignValue.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue()) < 0) {
+			
+			//Collateral coverage will be calculated based on the flag "Partially Secured?” defined loan type.
+			if (!financeDetail.getFinScheduleData().getFinanceType().isPartiallySecured()) {
+				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+				if (financeMain.getFinAmount().compareTo(curAssignValue) > 0) {
 					String[] valueParm = new String[2];
-					valueParm[0] = "Available assign value(" + String.valueOf(totalAvailAssignValue) + ")";
-					valueParm[1] = "loan amount("
-							+ String.valueOf(financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue()) + ")";
+					valueParm[0] = "Collateral available assign value(" + String.valueOf(curAssignValue) + ")";
+					valueParm[1] = "current assign value(" + financeMain.getFinAmount() + ")";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
 					return errorDetails;
 				}
-			} else {
-				if (totalAvailAssignValue.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount()) < 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "Available assign value(" + String.valueOf(totalAvailAssignValue) + ")";
-					valueParm[1] = "loan amount("
-							+ String.valueOf(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount()) + ")";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
-					return errorDetails;
+				if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeDetail.getFinScheduleData().getFinanceType().getFinLTVCheck())) {
+					if (totalAvailAssignValue.compareTo(financeMain.getFinAssetValue()) < 0) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "Available assign value(" + String.valueOf(totalAvailAssignValue) + ")";
+						valueParm[1] = "loan amount("+ String.valueOf(financeMain.getFinAssetValue())+ ")";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
+						return errorDetails;
+					}
+				} else {
+					if (totalAvailAssignValue.compareTo(financeMain.getFinAmount()) < 0) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "Available assign value(" + String.valueOf(totalAvailAssignValue) + ")";
+						valueParm[1] = "loan amount(" + String.valueOf(financeMain.getFinAmount()) + ")";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
+						return errorDetails;
+					}
 				}
 			}
-			}
+		}
+		
 		return errorDetails;
 	}
 

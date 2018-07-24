@@ -6331,7 +6331,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				getScoringDetailService().validate(financeDetail, auditDetail, errParm, valueParm, usrLanguage);
 
 				// Collateral Details
-				if (financeDetail.getFinScheduleData().getFinanceType().isFinCollateralReq()
+				FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
+				if (financeType.isFinCollateralReq() && (!financeType.isPartiallySecured())
 						&& ImplementationConstants.COLLATERAL_INTERNAL
 						&& financeDetail.getCollateralAssignmentList() != null
 						&& !financeDetail.getCollateralAssignmentList().isEmpty()) {

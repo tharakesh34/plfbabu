@@ -284,10 +284,10 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.util.AgreementEngine;
 import com.pennant.util.AgreementGeneration;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.AgreementEngine;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -6284,11 +6284,26 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				boolean isValid = collateralHeaderDialogCtrl.validCollateralValue(utilizedAmt);
 				if (!isValid) {
 					if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(finType.getFinLTVCheck())) {
-						MessageUtil.showError(Labels.getLabel("label_CollateralAssignment_InSufficient_FinAmt"));
+						String msg = Labels.getLabel("label_CollateralAssignment_InSufficient_FinAmt");
+						if (finType.isPartiallySecured()) {
+							if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+								return;
+							}
+						} else {
+							MessageUtil.showError(msg);
+							return;
+						}
 					} else {
-						MessageUtil.showError(Labels.getLabel("label_CollateralAssignment_InSufficient"));
+						String msg = Labels.getLabel("label_CollateralAssignment_InSufficient");
+						if (finType.isPartiallySecured()) {
+							if (MessageUtil.confirm(msg,MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+								return;
+							}
+						} else {
+							MessageUtil.showError(msg);
+							return;
+						}
 					}
-					return;
 				}
 			}
 

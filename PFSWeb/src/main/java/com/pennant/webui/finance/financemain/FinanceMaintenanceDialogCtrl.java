@@ -2228,14 +2228,29 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 
 				boolean isValid = getCollateralHeaderDialogCtrl().validCollateralValue(utilizedAmt);
+				FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 				if (!isValid) {
-					if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT
-							.equals(getFinanceDetail().getFinScheduleData().getFinanceType().getFinLTVCheck())) {
-						MessageUtil.showError(Labels.getLabel("label_CollateralAssignment_InSufficient_FinAmt"));
+					if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeType.getFinLTVCheck())) {
+						String msg = Labels.getLabel("label_CollateralAssignment_InSufficient_FinAmt");
+						if (financeType.isPartiallySecured()) {
+							if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+								return;
+							}
+						} else {
+							MessageUtil.showError(msg);
+							return;
+						}
 					} else {
-						MessageUtil.showError(Labels.getLabel("label_CollateralAssignment_InSufficient"));
+						String msg = Labels.getLabel("label_CollateralAssignment_InSufficient");
+						if (financeType.isPartiallySecured()) {
+							if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+								return;
+							}
+						} else {
+							MessageUtil.showError(msg);
+							return;
+						}
 					}
-					return;
 				}
 			}
 

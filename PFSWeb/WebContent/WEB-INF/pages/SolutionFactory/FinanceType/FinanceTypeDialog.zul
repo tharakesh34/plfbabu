@@ -532,6 +532,13 @@
 													<space spacing="2px"  sclass="mandatory"/>
 													<combobox id="finLTVCheck" width="200px"/>
 												</hbox>
+												<label
+													id="label_FinanceTypeDialog_PartiallyChecked"
+													value="${c:l('label_FinanceTypeDialog_PartiallyChecked.value')}" />
+												<hbox>
+													<space spacing="2px"/>
+													<checkbox id="finCollateralCheck" width="200px"/>
+												</hbox>
 											</row>
 											<row id="row_ManualSchedule"
 												visible="true">

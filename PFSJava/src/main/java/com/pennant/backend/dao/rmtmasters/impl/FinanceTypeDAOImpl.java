@@ -125,7 +125,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		selectSql.append(" AlwBPI , BpiTreatment , PftDueSchOn , PlanEMIHAlw , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , ");
 		selectSql.append(" PlanEMIHLockPeriod , PlanEMICpz , UnPlanEMIHLockPeriod , UnPlanEMICpz , ReAgeCpz, FddLockPeriod, AlwdRpyMethods,AlwReage,AlwUnPlanEmiHoliday, ");
 		selectSql.append(" MaxUnplannedEmi, MaxReAgeHolidays, RoundingMode, RoundingTarget, FrequencyDays,alwMaxDisbCheckReq,quickDisb, ProfitCenterID, ProductCategory, DeveloperFinance, CostOfFunds,");
-		selectSql.append(" chequeCaptureReq, FinLTVCheck, ");
+		selectSql.append(" chequeCaptureReq, FinLTVCheck, PartiallySecured, ");
 		
 		if (type.contains("View")) {
 			selectSql.append(" FinCategoryDesc, DownPayRuleDesc, lovDescFinContingentAcTypeName,lovDescFinBankContAcTypeName,lovDescFinProvisionAcTypeName,lovDescFinAcTypeName,");
@@ -191,7 +191,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		selectSql.append(" PlanEMIHAlw , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax ,PlanEMIHLockPeriod , PlanEMICpz , ");
 		selectSql.append(" UnPlanEMIHLockPeriod , UnPlanEMICpz , ReAgeCpz, FddLockPeriod, AlwdRpyMethods, MaxUnplannedEmi, ");
 		selectSql.append(" MaxReAgeHolidays, RoundingMode, RoundingTarget, FrequencyDays,AlwReage,AlwUnPlanEmiHoliday,alwMaxDisbCheckReq,quickDisb,ProductCategory,DeveloperFinance, CostOfFunds, ");
-		selectSql.append(" chequeCaptureReq, FinLTVCheck ");
+		selectSql.append(" chequeCaptureReq, FinLTVCheck, PartiallySecured ");
 		if(type.contains("ORGView")){
 			selectSql.append(" ,DownPayRuleDesc, LovDescFinDivisionName , lovDescPromoFinTypeDesc, lovDescDftStepPolicyName, ");
 			selectSql.append(" GrcPricingMethodDesc, RpyPricingMethodDesc, DftStepPolicyType, RpyHierarchy, LovDescEntityCode, LovDescEntityDesc");
@@ -231,7 +231,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinAcType, FinCategory, FinDivision, " );
 		selectSql.append(" FinIsOpenNewFinAc, PftPayAcType,  FinSuspAcType, FinProvisionAcType , " );
 		selectSql.append(" AllowRIAInvestment, FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks,  " );
-		selectSql.append(" PastduePftCalMthd, PastduePftMargin,alwMultiPartyDisb, alwMaxDisbCheckReq, CostOfFunds, FinLTVCheck " );
+		selectSql.append(" PastduePftCalMthd, PastduePftMargin,alwMultiPartyDisb, alwMaxDisbCheckReq, CostOfFunds, FinLTVCheck, PartiallySecured " );
 		selectSql.append(" FROM RMTFinanceTypes");
 		selectSql.append(" Where FinType = :FinType");
 
@@ -260,7 +260,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinAcType, FinCategory, FinDivision, " );
 		selectSql.append(" FinIsOpenNewFinAc, PftPayAcType,  FinSuspAcType, FinProvisionAcType , " );
 		selectSql.append(" AllowRIAInvestment, FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks,  " );
-		selectSql.append(" PastduePftCalMthd, PastduePftMargin,RpyHierarchy, CostOfFunds, FinLTVCheck " );
+		selectSql.append(" PastduePftCalMthd, PastduePftMargin,RpyHierarchy, CostOfFunds, FinLTVCheck, PartiallySecured " );
 		selectSql.append(" FROM RMTFinanceTypes");
 
 		logger.debug("selectListSql: " + selectSql.toString());
@@ -364,7 +364,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		insertSql.append(" ApplyGrcPricing, GrcPricingMethod, ApplyRpyPricing, RpyPricingMethod, RpyHierarchy, DroplineOD, DroppingMethod,RateChgAnyDay, ");
 		insertSql.append(" AlwBPI , BpiTreatment , PftDueSchOn , PlanEMIHAlw , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax ,AlwReage,AlwUnPlanEmiHoliday,QuickDisb, chequeCaptureReq, ");
 		insertSql.append(" PlanEMIHLockPeriod , PlanEMICpz , UnPlanEMIHLockPeriod , UnPlanEMICpz , ReAgeCpz, FddLockPeriod, AlwdRpyMethods,MaxUnplannedEmi, MaxReAgeHolidays, ");
-		insertSql.append(" RoundingMode,RoundingTarget, FrequencyDays,alwMaxDisbCheckReq, ProfitCenterID ,DeveloperFinance, CostOfFunds, FinLTVCheck) ");
+		insertSql.append(" RoundingMode,RoundingTarget, FrequencyDays,alwMaxDisbCheckReq, ProfitCenterID ,DeveloperFinance, CostOfFunds, FinLTVCheck, PartiallySecured) ");
 		insertSql.append(" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, :FinAcType, :FinContingentAcType,"); 
 		insertSql.append(" :FinBankContingentAcType, :FinProvisionAcType,:FinSuspAcType, :FinIsGenRef,");
 		insertSql.append(" :FinMaxAmount, :FinMinAmount,  :FinIsOpenNewFinAc, :FinDftStmtFrq,  :FinIsAlwMD,");
@@ -391,7 +391,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		insertSql.append(" :ApplyGrcPricing, :GrcPricingMethod, :ApplyRpyPricing, :RpyPricingMethod, :RpyHierarchy, :DroplineOD, :DroppingMethod, :RateChgAnyDay,");
 		insertSql.append(" :AlwBPI , :BpiTreatment , :PftDueSchOn , :PlanEMIHAlw , :PlanEMIHMethod , :PlanEMIHMaxPerYear , :PlanEMIHMax , :AlwReage, :AlwUnPlanEmiHoliday, :QuickDisb, :chequeCaptureReq, ");
 		insertSql.append(" :PlanEMIHLockPeriod , :PlanEMICpz , :UnPlanEMIHLockPeriod , :UnPlanEMICpz , :ReAgeCpz, :FddLockPeriod, :AlwdRpyMethods,:MaxUnplannedEmi, :MaxReAgeHolidays,  ");
-		insertSql.append(" :RoundingMode,:RoundingTarget, :FrequencyDays,:AlwMaxDisbCheckReq, :ProfitCenterID, :DeveloperFinance, :CostOfFunds, :FinLTVCheck) ");
+		insertSql.append(" :RoundingMode,:RoundingTarget, :FrequencyDays,:AlwMaxDisbCheckReq, :ProfitCenterID, :DeveloperFinance, :CostOfFunds, :FinLTVCheck, :PartiallySecured) ");
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		financeType.getFinMaxAmount();
@@ -470,7 +470,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		updateSql.append(" PlanEMIHLockPeriod=:PlanEMIHLockPeriod , PlanEMICpz=:PlanEMICpz , UnPlanEMIHLockPeriod=:UnPlanEMIHLockPeriod , UnPlanEMICpz=:UnPlanEMICpz ,AlwReage=:AlwReage,AlwUnPlanEmiHoliday=:AlwUnPlanEmiHoliday, ");
 		updateSql.append(" ReAgeCpz=:ReAgeCpz, FddLockPeriod=:FddLockPeriod, AlwdRpyMethods=:AlwdRpyMethods, MaxUnplannedEmi=:MaxUnplannedEmi, MaxReAgeHolidays=:MaxReAgeHolidays, chequeCaptureReq = :chequeCaptureReq, ");
 		updateSql.append(" RoundingMode=:RoundingMode ,RoundingTarget=:RoundingTarget, FrequencyDays=:FrequencyDays,AlwMaxDisbCheckReq=:AlwMaxDisbCheckReq,QuickDisb=:QuickDisb, ProfitCenterID = :ProfitCenterID, DeveloperFinance = :DeveloperFinance, CostOfFunds = :CostOfFunds,");
-		updateSql.append(" FinLTVCheck = :FinLTVCheck");
+		updateSql.append(" FinLTVCheck = :FinLTVCheck, PartiallySecured = :PartiallySecured");
 		updateSql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_Temp")) {
@@ -801,7 +801,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		FinanceType financeType = new FinanceType();
 		financeType.setFinType(finType);
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinType, FinLTVCheck, FinCollateralReq, CollateralType, RecordType" );
+		StringBuilder selectSql = new StringBuilder("SELECT FinType, FinLTVCheck, FinCollateralReq, CollateralType, PartiallySecured, RecordType" );
 		selectSql.append(" FROM RMTFinanceTypes");
 		selectSql.append(" Where FinType = :FinType");
 
