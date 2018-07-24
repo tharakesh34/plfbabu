@@ -178,7 +178,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		// Get the identity sequence number.
 		if (manualAdvise.getAdviseID() <= 0) {
-			manualAdvise.setAdviseID(getNextValue("seqManualAdvise"));
+			manualAdvise.setAdviseID(getNextId("seqManualAdvise"));
 		}
 
 		// Execute the SQL, binding the arguments.
