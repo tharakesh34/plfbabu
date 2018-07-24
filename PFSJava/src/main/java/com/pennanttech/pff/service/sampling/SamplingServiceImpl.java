@@ -641,7 +641,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			temp.setCustomerExtLiabilityList(samplingDAO.getObligations(sampling.getId()));
 			temp.setCustomerExtLiabilityList(samplingDAO.getObligations(sampling.getId()));
 
-			temp.setTotalCustomerIntObligation(financeProfitDetailDAO.getTotalCustomerExposre(sampling.getCustId()));
+			temp.setTotalCustomerIntObligation(financeProfitDetailDAO.getTotalCustomerExposre(temp.getCustId()));
 			temp.setTotalCoApplicantsIntObligation(financeProfitDetailDAO.getTotalCoApplicantsExposre(finReference));
 
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
