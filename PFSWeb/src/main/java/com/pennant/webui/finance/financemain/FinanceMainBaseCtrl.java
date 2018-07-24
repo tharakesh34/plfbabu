@@ -16169,10 +16169,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (getFinFeeDetailListCtrl() != null) {
 					this.oldVar_finInsuranceList = getFinFeeDetailListCtrl().getFinInsuranceList();
 				}
+				
 				//Prepare Finance Schedule Generator Details List
-				getFinanceDetail().getFinScheduleData().setRepayInstructions(new ArrayList<RepayInstruction>());
-
 				if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+					getFinanceDetail().getFinScheduleData().setRepayInstructions(new ArrayList<RepayInstruction>());
 					getFinanceDetail().getFinScheduleData().setPlanEMIHmonths(new ArrayList<Integer>());
 					getFinanceDetail().getFinScheduleData().setPlanEMIHDates(new ArrayList<Date>());
 					getFinanceDetail().setFinScheduleData(ScheduleGenerator.getNewSchd(validFinScheduleData));

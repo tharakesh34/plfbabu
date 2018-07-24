@@ -187,24 +187,22 @@ public class ScheduleGenerator {
 		} else {
 			newSchdAfter = newGraceEnd;
 		}
-
+		
 		for (int i = 0; i < finScheduleDetails.size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleDetails.get(i);
 
-			if (curSchd.getSchDate().compareTo(prvGraceEnd) == 0) {
+			if (DateUtility.compare(curSchd.getSchDate() , prvGraceEnd) == 0) {
 				newGrcSchdMethod = curSchd.getSchdMethod();
 			}
 
-			if (curSchd.getSchDate().compareTo(newSchdAfter) < 0) {
+			if (DateUtility.compare(curSchd.getSchDate() , newSchdAfter) < 0) {
 				finScheduleData.setScheduleMap(curSchd);
 				iUntouch = i;
 				continue;
 			}
 
 			if (StringUtils.isBlank(newRpySchdMethod)) {
-				if (curSchd.getSchDate().compareTo(prvGraceEnd) > 0) {
-					newRpySchdMethod = curSchd.getSchdMethod();
-				}
+				newRpySchdMethod = financeMain.getScheduleMethod();
 			}
 
 			finScheduleDetails.remove(i);
@@ -232,7 +230,7 @@ public class ScheduleGenerator {
 			//Interest Days basis kept as same for both grace and repayment periods.
 			curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
 
-			if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
+			if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) < 0) {
 				curSchd.setActRate(financeMain.getGrcPftRate());
 				curSchd.setBaseRate(financeMain.getGraceBaseRate());
 				curSchd.setSplRate(financeMain.getGraceSpecialRate());
@@ -249,9 +247,6 @@ public class ScheduleGenerator {
 				curSchd.setAdvPftRate(financeMain.getGrcAdvPftRate());
 				curSchd.setSchdMethod(newGrcSchdMethod);
 				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE);
-				if(curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) == 0){
-					curSchd.setSchdMethod(CalculationConstants.SCHMTHD_PFT);
-				}
 			} else {
 				curSchd.setActRate(financeMain.getRepayProfitRate());
 				curSchd.setCalculatedRate(financeMain.getRepayProfitRate());
@@ -270,7 +265,7 @@ public class ScheduleGenerator {
 					curSchd.setCalculatedRate(financeMain.getRepayProfitRate());
 				}
 
-				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {
+				if (DateUtility.compare(curSchd.getSchDate(),financeMain.getGrcPeriodEndDate()) == 0) {
 					curSchd.setSchdMethod(newGrcSchdMethod);
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
 					curSchd.setRvwOnSchDate(true);

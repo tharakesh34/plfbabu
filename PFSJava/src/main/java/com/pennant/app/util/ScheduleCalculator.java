@@ -1017,7 +1017,7 @@ public class ScheduleCalculator {
 			}
 
 			finMain.setRecalFromDate(curSchd.getSchDate());
-			finMain.setEventFromDate(finMain.getGrcPeriodEndDate());
+			finMain.setEventFromDate(curSchd.getSchDate());
 			finMain.setRecalSchdMethod(finMain.getScheduleMethod());
 			finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			break;
