@@ -9813,30 +9813,31 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-
-		String workflowType = PennantApplicationUtil.getWorkFlowType(financeMain.getWorkflowId());
-		WorkFlowDetails workflow = WorkFlowUtil.getDetailsByType(workflowType);
-		WorkflowEngine workflowEngine = new WorkflowEngine(workflow.getWorkFlowXml());
-
-		List<DocumentDetails> documentList = financeDetail.getDocumentDetailsList();
-
-		// Get the open covenant roles.
-		List<String> covenantRoles = new ArrayList<>();
-
+		WorkflowEngine workflowEngine = null;
 		if (financeDetail.getCovenantTypeList() != null && financeDetail.getCovenantTypeList().size() > 0) {
+			
+			// Get the open covenant roles.
+			List<String> covenantRoles = new ArrayList<>();
+			String workflowType = PennantApplicationUtil.getWorkFlowType(financeMain.getWorkflowId());
+
+			WorkFlowDetails workflow = WorkFlowUtil.getDetailsByType(workflowType);
+			workflowEngine = new WorkflowEngine(workflow.getWorkFlowXml());
+
+			List<DocumentDetails> documentList = financeDetail.getDocumentDetailsList();
+
 			for (FinCovenantType finCovenantType : financeDetail.getCovenantTypeList()) {
 				// Check whether the covenant received or not.
 				if (!isCovenantReceived(documentList, finCovenantType)) {
 					covenantRoles.add(finCovenantType.getMandRole());
 				}
 			}
-		}
 
-		// Check whether any covenant role is prior to next role code.
-		for (String role : covenantRoles) {
-			if (workflowEngine.compareRoles(role, financeMain.getNextRoleCode()) == Flow.SUCCESSOR) {
-				errorDetails.add(new ErrorDetail("CV001"));
-				break;
+			// Check whether any covenant role is prior to next role code.
+			for (String role : covenantRoles) {
+				if (workflowEngine.compareRoles(role, financeMain.getNextRoleCode()) == Flow.SUCCESSOR) {
+					errorDetails.add(new ErrorDetail("CV001"));
+					break;
+				}
 			}
 		}
 
