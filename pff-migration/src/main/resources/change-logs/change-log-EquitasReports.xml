@@ -909,7 +909,7 @@ INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, def
 	update data_engine_config set uploadpath='/opt/pennant/PFF/BASE/SAPGL' where  name in ('TRIAL_BALANCE_EXPORT_STATE','TRIAL_BALANCE_EXPORT_CONSOLIDATE');
 	 </sql>
  </changeSet>
- <changeSet id="47" author="Jayant">
+ <changeSet id="47.1" author="Jayant">
  	<createView viewName="steppolicyheaderdetails_view" replaceIfExists="true">
  		SELECT t1.policycode,
     t1.policydesc,
@@ -936,6 +936,21 @@ UNION ALL
     ( SELECT count(steppolicydetail_view.policycode) AS count
            FROM steppolicydetail_view
           WHERE steppolicydetail_view.policycode = t1.policycode) AS stepnumber,
+    ${add.schema}fn_list_agg_step_policy('TenorSplitPerc', t1.policycode) AS tenorsplitperc,
+    ${add.schema}fn_list_agg_step_policy('RateMargin', t1.policycode) AS ratemargin,
+    ${add.schema}fn_list_agg_step_policy('EMISplitPerc', t1.policycode) AS emisplitperc,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM steppolicyheader t1
+  WHERE NOT (EXISTS ( SELECT 1
            FROM steppolicyheader_temp
           WHERE steppolicyheader_temp.policycode = t1.policycode))
  	</createView>
