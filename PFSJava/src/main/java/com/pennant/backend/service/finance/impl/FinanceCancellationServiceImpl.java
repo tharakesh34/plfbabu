@@ -720,12 +720,16 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
 		if (list!=null && !list.isEmpty()) {
 			for (FinAdvancePayments finAdvPayment : list) {
-				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_PAID) && 
-						!StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, finAdvPayment.getPaymentType()) &&
-						!StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD, finAdvPayment.getPaymentType())) {
+				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_PAID)) {
 					//Disbursement instructions should be cancelled before canceling a loan.
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"60406", errParm, valueParm), usrLanguage));
+				}
+				
+				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON) ) {
+					//Disbursement instructions should be cancelled before canceling a loan.
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
+							"60408", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
@@ -803,7 +807,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 					
 				}
 			}
-			if (auditDetails.size()>0) {
+			if (auditDetails.size() > 0) {
 				finAdvancePaymentsDAO.deleteByFinRef(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), "_Temp");
 			}
 		}
